@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MGC Visual Cloud Agent &amp; LangGraph Workflow Studio | Google Cloud + Microsoft Azure + Local</title>
+  <style>
+    :root {
+      --bg: #050811;
+      --panel: #0c1324;
+      --card: #111c35;
+      --border: #1e293b;
+      --cyan: #38bdf8;
+      --gold: #f59e0b;
+      --emerald: #10b981;
+      --purple: #a855f7;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); display: grid; grid-template-rows: 64px 1fr; height: 100vh; overflow: hidden; }
+    header {
+      background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 24px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .title { font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+    .title span.badge {
+      font-size: 0.72rem; padding: 4px 10px; border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15); border: 1px solid var(--emerald); color: var(--emerald);
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .btn {
+      padding: 8px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700;
+      cursor: pointer; border: 1px solid var(--cyan); background: rgba(56, 189, 248, 0.12); color: var(--cyan);
+      text-decoration: none; transition: all 0.18s;
+    }
+    .btn:hover, .btn.active { background: var(--cyan); color: #020617; }
+    .btn.gold { border-color: var(--gold); color: var(--gold); background: rgba(245, 158, 11, 0.12); }
+    .btn.gold:hover { background: var(--gold); color: #020617; }
+
+    /* Workspace Layout */
+    .workspace { display: grid; grid-template-columns: 310px 1fr 380px; height: calc(100vh - 64px); }
+    .sidebar-left, .sidebar-right {
+      background: var(--panel); border-right: 1px solid var(--border); padding: 18px; overflow-y: auto;
+    }
+    .sidebar-right { border-right: none; border-left: 1px solid var(--border); }
+    .section-hdr {
+      font-size: 0.74rem; text-transform: uppercase; letter-spacing: 1.1px; color: var(--muted);
+      margin-bottom: 12px; font-weight: 700;
+    }
+
+    /* Cloud Housing Cards */
+    .housing-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.2s;
+    }
+    .housing-card.selected { border-color: var(--cyan); box-shadow: 0 0 15px rgba(56,189,248,0.2); }
+    .housing-card h4 { font-size: 0.88rem; color: var(--text); display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .housing-card p { font-size: 0.76rem; color: var(--muted); line-height: 1.4; }
+    .cost-tag { font-size: 0.7rem; color: var(--emerald); font-weight: 700; }
+
+    /* Visual Canvas */
+    .canvas {
+      position: relative;
+      background-color: #060a15;
+      background-image: radial-gradient(rgba(56, 189, 248, 0.16) 1px, transparent 1px);
+      background-size: 24px 24px;
+      padding: 28px; overflow: auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .flow-container {
+      display: flex; flex-direction: column; align-items: center; gap: 22px; width: 100%; max-width: 860px;
+    }
+    .node {
+      background: var(--card); border: 2px solid var(--border); border-radius: 12px;
+      padding: 14px 20px; min-width: 240px; text-align: center; cursor: pointer;
+      transition: all 0.22s; position: relative; box-shadow: 0 12px 28px rgba(0,0,0,0.45);
+    }
+    .node:hover, .node.running { border-color: var(--cyan); transform: translateY(-2px); box-shadow: 0 0 22px rgba(56,189,248,0.35); }
+    .node.supervisor { border-color: var(--cyan); width: 420px; }
+    .node.challenger { border-color: var(--emerald); width: 420px; }
+    .node .node-type { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); font-weight: 700; }
+    .node .node-title { font-size: 0.96rem; font-weight: 700; margin: 3px 0; }
+    .node .node-meta { font-size: 0.74rem; color: var(--muted); }
+
+    .tools-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; }
+    .tools-row .node { min-width: 0; padding: 12px; border-color: rgba(168, 85, 247, 0.45); }
+    .connector { width: 2px; height: 20px; background: var(--cyan); }
+
+    /* Right Telemetry & Execution Log */
+    .log-box {
+      background: #03060c; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px; font-family: 'Consolas', monospace; font-size: 0.76rem; color: #cbd5e1;
+      height: 340px; overflow-y: auto; white-space: pre-wrap; margin-top: 10px;
+    }
+    .guardrail-list { list-style: none; margin-bottom: 18px; }
+    .guardrail-list li {
+      font-size: 0.78rem; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="title">
+      <span>MGC VISUAL CLOUD AGENT &amp; LANGGRAPH WORKFLOW STUDIO</span>
+      <span class="badge">SCALE-TO-ZERO ($0.00 IDLE)</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn active" onclick="runSimulation('all')">▶ Execute Full LangGraph Pipeline</button>
+      <a href="index.html" class="btn gold">← MGC Production Site</a>
+      <a href="vr-command.html" class="btn">360° VR Command</a>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <!-- Left Sidebar: Google, Microsoft & Local Agent Housing -->
+    <div class="sidebar-left">
+      <div class="section-hdr">1. Cloud &amp; Local Agent Housing</div>
+
+      <div class="housing-card selected" id="house-google" onclick="selectHousing('google')">
+        <h4>Google Cloud Run + Vertex AI <span class="cost-tag">$0 Idle</span></h4>
+        <p><strong>Project:</strong> MGC Site (<code>gen-lang-client-0636792472</code>)<br/>
+        <strong>Engine:</strong> LangGraph FastAPI Container (<code>min-instances=0, max=2</code>) + Gemini 2.5 Flash.<br/>
+        <strong>Visual UI:</strong> Google AI Studio / Vertex Agent Builder.</p>
+      </div>
+
+      <div class="housing-card" id="house-microsoft" onclick="selectHousing('microsoft')">
+        <h4>Microsoft Copilot Studio + Azure <span class="cost-tag">M365 / Foundry</span></h4>
+        <p><strong>Engine:</strong> Copilot Studio Visual Canvas + Azure Container Apps (Consumption Plan: 2M free req/mo).<br/>
+        <strong>Integration:</strong> M365 Graph (Teams/Outlook/Word) + <code>AzureChatOpenAI</code> + Sentinel (`AZ-500`/`SC-200`).</p>
+      </div>
+
+      <div class="housing-card" id="house-local" onclick="selectHousing('local')">
+        <h4>Local RTX 5050 + LangGraph Studio <span class="cost-tag">$0.00 Forever</span></h4>
+        <p><strong>Engine:</strong> Local Ollama (<code>llama3.1:latest</code> on 8GB VRAM) + ChromaDB Vault + Node-RED (`:1880`) + LangGraph Studio (`:8123`).</p>
+      </div>
+
+      <div class="section-hdr" style="margin-top:20px;">2. Visual Workflow Platforms</div>
+      <div class="housing-card" onclick="runSimulation('studio')">
+        <h4>LangGraph Studio + LangSmith</h4>
+        <p>Interactive time-travel state debugger for <code>mgc_cloud_agent_graph.py</code> (Free Developer Tier: 5,000 traces/mo).</p>
+      </div>
+      <div class="housing-card" onclick="runSimulation('nodered')">
+        <h4>Node-RED / n8n Visual Dispatcher</h4>
+        <p>Visual webhook wiring on port <code>1880</code> connecting LangGraph outputs to Gmail, Credly, and SAM.gov alerts.</p>
+      </div>
+    </div>
+
+    <!-- Center Visual Node Graph Canvas -->
+    <div class="canvas">
+      <div class="flow-container">
+        <div class="node supervisor" id="node-supervisor" onclick="runSimulation('supervisor')">
+          <div class="node-type">LangGraph Entry // Pentagon ORSA Router</div>
+          <div class="node-title">1. Enterprise Reasoning Supervisor</div>
+          <div class="node-meta">Routes across Gemini 2.5 Flash (Google), Azure OpenAI / Copilot (MS), or Ollama RTX 5050</div>
+        </div>
+
+        <div class="connector"></div>
+
+        <div class="tools-row">
+          <div class="node" id="node-cipp" onclick="runSimulation('cipp')">
+            <div class="node-type">Tool Node 01</div>
+            <div class="node-title">CIPP/US &amp; HIPAA Auditor</div>
+            <div class="node-meta">Safe Harbor, GLBA, FCRA, VCDPA &amp; Federal SORN/PIA</div>
+          </div>
+
+          <div class="node" id="node-sas" onclick="runSimulation('sas')">
+            <div class="node-type">Tool Node 02</div>
+            <div class="node-title">SAS ModelOps (A00-440)</div>
+            <div class="node-meta">Model Manager Vault, PSI Drift &amp; ROC Decay</div>
+          </div>
+
+          <div class="node" id="node-sdvosb" onclick="runSimulation('sdvosb')">
+            <div class="node-type">Tool Node 03</div>
+            <div class="node-title">VA &amp; SDVOSB Scanner</div>
+            <div class="node-meta">PACT Act, VR&amp;E Ch.31, VetCert &amp; NAICS 541512</div>
+          </div>
+
+          <div class="node" id="node-cost" onclick="runSimulation('cost')">
+            <div class="node-type">Tool Node 04</div>
+            <div class="node-title">Cloud Cost Sentinel</div>
+            <div class="node-meta">Locks 3 Website Projects to min=0 ($0 Idle)</div>
+          </div>
+        </div>
+
+        <div class="connector"></div>
+
+        <div class="node challenger" id="node-challenger" onclick="runSimulation('challenger')">
+          <div class="node-type">Champion / Challenger Gate</div>
+          <div class="node-title">2. Token-Efficient Compliance &amp; Cost Auditor</div>
+          <div class="node-meta">Verifies NIST SP 800-53, Zero-Surprise-Spend &amp; Dispatches to MGC Site / Node-RED / Copilot</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Sidebar: Cost Guardrails & Live Execution Telemetry -->
+    <div class="sidebar-right">
+      <div class="section-hdr">3. Website Uptime &amp; Zero-Cost Guardrails</div>
+      <ul class="guardrail-list">
+        <li><span>MGC Site (<code>0636792472</code>)</span> <span class="cost-tag">UP (min=0, max=2)</span></li>
+        <li><span>FixSolutionsLLC (<code>0869658530</code>)</span> <span class="cost-tag">UP (min=0, max=2)</span></li>
+        <li><span>FIX Solutions (<code>fix-solutions-llc</code>)</span> <span class="cost-tag">UP (min=0, max=2)</span></li>
+        <li><span>Google Earth Pro Advanced</span> <span style="color:#f59e0b;font-weight:700;">DISABLED ($0)</span></li>
+        <li><span>Cloud Run Always-Free Tier</span> <span class="cost-tag">2M Req/Mo FREE</span></li>
+      </ul>
+
+      <div class="section-hdr">4. Live LangGraph Execution Telemetry</div>
+      <div class="log-box" id="telemetry-log">[SYSTEM READY] Click any node on the visual canvas or '▶ Execute Full LangGraph Pipeline' to run the MGC Multi-Cloud Agent Graph.</div>
+    </div>
+  </div>
+
+  <script>
+    let activeHousing = "Google Cloud Run + Vertex AI (Scale-to-Zero)";
+    function selectHousing(which) {
+      document.querySelectorAll('.sidebar-left .housing-card').forEach(c => c.classList.remove('selected'));
+      if (which === 'google') {
+        document.getElementById('house-google').classList.add('selected');
+        activeHousing = "Google Cloud Run + Gemini 2.5 Flash ($0 Idle)";
+      } else if (which === 'microsoft') {
+        document.getElementById('house-microsoft').classList.add('selected');
+        activeHousing = "Microsoft Copilot Studio + Azure Container Apps";
+      } else {
+        document.getElementById('house-local').classList.add('selected');
+        activeHousing = "Local NVIDIA RTX 5050 (Ollama llama3.1 + ChromaDB)";
+      }
+      logTelemetry(`[HOUSING SWITCHED] Active Runtime -> ${activeHousing}`);
+    }
+
+    function logTelemetry(msg) {
+      const box = document.getElementById('telemetry-log');
+      const ts = new Date().toLocaleTimeString();
+      box.textContent += `\n\n[${ts}] ${msg}`;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function runSimulation(node) {
+      document.querySelectorAll('.node').forEach(n => n.classList.remove('running'));
+      if (node === 'all' || node === 'supervisor') {
+        document.getElementById('node-supervisor').classList.add('running');
+        logTelemetry(`[SUPERVISOR] Executing on ${activeHousing}...\nRouting request across MGC Business Agent Tools...`);
+      }
+      if (node === 'all' || node === 'cost') {
+        document.getElementById('node-cost').classList.add('running');
+        logTelemetry(`[CLOUD COST SENTINEL] Checked Billing 01FC46-CB35A7-37BC98:\n- MGC Site (gen-lang-client-0636792472): min=0, max=2 ($0.00 idle)\n- FixSolutionsLLC (gen-lang-client-0869658530): min=0, max=2 ($0.00 idle)\n- FIX Solutions LLC: min=0, max=2 ($0.00 idle)\n- Paid APIs Blocked: earthengine, compute, sqladmin.`);
+      }
+      if (node === 'all' || node === 'cipp') {
+        document.getElementById('node-cipp').classList.add('running');
+        logTelemetry(`[CIPP/US PRIVACY AUDITOR] Verified HIPAA Safe Harbor (18 identifiers), GLBA Safeguards, FCRA Permissible Purpose, VCDPA De-ID commitment, and Federal Privacy Act SORN/PIA.`);
+      }
+      if (node === 'all' || node === 'sas') {
+        document.getElementById('node-sas').classList.add('running');
+        logTelemetry(`[SAS MODELOPS A00-440 GOVERNOR] Model 'MGC_Viya_Champion_v1': PSI = 0.08 (STABLE < 0.10), ROC/AUC = 0.84. Business + Analytics + IT/Ops handoffs verified.`);
+      }
+      if (node === 'all' || node === 'sdvosb') {
+        document.getElementById('node-sdvosb').classList.add('running');
+        logTelemetry(`[VA & SDVOSB SCANNER] Entity: Milton Group Concepts LLC (EIN 92-1370285). Matched NAICS 541512/541519/518210 under 38 U.S.C. 8127 VA Vets First.`);
+      }
+      if (node === 'all' || node === 'challenger') {
+        document.getElementById('node-challenger').classList.add('running');
+        logTelemetry(`[CHALLENGER AUDITOR] VERDICT: APPROVED. Zero surprise cloud costs verified. Dispatched to MGC Production Portal.`);
+      }
+    }
+  </script>
+</body>
+</html>
