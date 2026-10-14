@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Milton Group Concepts LLC — 3D Geospatial & Google Earth Command</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --panel: rgba(15, 23, 42, 0.88);
+      --accent: #38bdf8;
+      --gold: #f59e0b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; }
+    #sidebar {
+      width: 360px; background: var(--panel); border-right: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 20px; display: flex; flex-direction: column; gap: 16px; z-index: 10;
+    }
+    .badge {
+      display: inline-block; padding: 4px 8px; font-size: 11px; font-weight: 700;
+      background: rgba(245, 158, 11, 0.15); color: var(--gold); border: 1px solid var(--gold);
+      border-radius: 4px; width: fit-content;
+    }
+    h1 { font-size: 18px; letter-spacing: 0.5px; color: var(--accent); }
+    p.sub { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .node-card {
+      background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .node-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .node-card h3 { font-size: 14px; margin-bottom: 4px; color: #fff; }
+    .node-card span { font-size: 12px; color: var(--muted); display: block; }
+    .api-box {
+      margin-top: auto; padding: 12px; background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; font-size: 12px;
+    }
+    .api-box input {
+      width: 100%; margin-top: 6px; padding: 8px; background: #0f172a; border: 1px solid #334155;
+      color: #fff; border-radius: 4px; font-size: 12px;
+    }
+    .api-box button {
+      width: 100%; margin-top: 8px; padding: 8px; background: var(--accent); color: #0f172a;
+      border: none; border-radius: 4px; font-weight: 700; cursor: pointer;
+    }
+    #viewport { flex: 1; position: relative; background: #020617; }
+    gmp-map-3d, iframe { width: 100%; height: 100%; border: none; display: block; }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <span class="badge">SDVOSB | EIN 92-1370285 | NAICS 541611</span>
+    <h1>MGC 3D Geospatial Command</h1>
+    <p class="sub">Powered by Google Earth 3D (&lt;gmp-map-3d&gt;) &amp; Photorealistic 3D Tiles (Developer API Mode — Zero Per-Seat Cost)</p>
+
+    <div class="node-card" onclick="flyToNode(37.6247, -77.5458, '8401 Mayland Dr #10286, Richmond, VA 23294')">
+      <h3>1. Principal HQ — Richmond, VA</h3>
+      <span>8401 Mayland Dr #10286, Richmond, VA 23294</span>
+      <span>Lat: 37.6247 | Lng: -77.5458</span>
+    </div>
+
+    <div class="node-card" onclick="flyToNode(38.8151, -77.6364, '5716 Caribbean Ct, Haymarket, VA 20169')">
+      <h3>2. NoVA Operations Node</h3>
+      <span>Haymarket / I-66 Logistics Corridor</span>
+      <span>Lat: 38.8151 | Lng: -77.6364</span>
+    </div>
+
+    <div class="node-card" onclick="flyToNode(38.7189, -77.1477, 'Fort Belvoir, VA')">
+      <h3>3. DoD NCR Contracting Hub</h3>
+      <span>Fort Belvoir / National Capital Region</span>
+      <span>Lat: 38.7189 | Lng: -77.1477</span>
+    </div>
+
+    <div class="api-box">
+      <strong>Google Maps 3D Tiles API Key (Optional):</strong>
+      <input type="password" id="apiKeyInput" placeholder="Paste Maps JavaScript 3D API Key..." />
+      <button onclick="enableNative3D()">Activate Native &lt;gmp-map-3d&gt; Mesh</button>
+    </div>
+  </div>
+
+  <div id="viewport">
+    <iframe id="earthFrame" src="https://maps.google.com/maps?q=8401+Mayland+Dr,+Richmond,+VA+23294&t=k&z=18&ie=UTF8&iwloc=&output=embed"></iframe>
+  </div>
+
+  <script>
+    let map3dElement = null;
+
+    function flyToNode(lat, lng, queryLabel) {
+      if (map3dElement) {
+        map3dElement.setAttribute('center', `${lat},${lng},140`);
+        map3dElement.setAttribute('range', '1000');
+        map3dElement.setAttribute('tilt', '65');
+      } else {
+        const frame = document.getElementById('earthFrame');
+        frame.src = `https://maps.google.com/maps?q=${encodeURIComponent(queryLabel)}&ll=${lat},${lng}&t=k&z=18&ie=UTF8&iwloc=&output=embed`;
+      }
+    }
+
+    function enableNative3D() {
+      const key = document.getElementById('apiKeyInput').value.trim();
+      if (!key) return alert('Enter a Google Maps Platform API key from project gen-lang-client-0636792472');
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&v=alpha&libraries=maps3d`;
+      script.async = true;
+      script.onload = () => {
+        const vp = document.getElementById('viewport');
+        vp.innerHTML = `<gmp-map-3d id="mgcMap3d" mode="hybrid" center="37.6247,-77.5458,140" range="1100" tilt="65" heading="25"></gmp-map-3d>`;
+        map3dElement = document.getElementById('mgcMap3d');
+      };
+      document.head.appendChild(script);
+    }
+  </script>
+</body>
+</html>

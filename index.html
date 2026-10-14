@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Milton Group Concepts LLC | Enterprise AI, Regulated Data Commerce & Defense SDVOSB</title>
+  <meta name="description" content="Milton Group Concepts LLC — Service-Disabled Veteran-Owned Small Business (SDVOSB) delivering Enterprise SAS ModelOps, IAPP CIPP Privacy Engineering, Regulated Data Commerce, and Pentagon-grade Cloud/Cyber Architecture." />
+  <style>
+    :root {
+      --bg-primary: #050811;
+      --bg-secondary: #0b1120;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --border: rgba(56, 189, 248, 0.22);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.35);
+      --gold: #f59e0b;
+      --emerald: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
+    body {
+      background: radial-gradient(circle at 15% 15%, #0f172a 0%, #050811 65%);
+      color: var(--text-main);
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+    /* Top Navigation */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(14px);
+      background: rgba(5, 8, 17, 0.88);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand img { height: 44px; width: 44px; border-radius: 8px; object-fit: cover; border: 1px solid var(--gold); }
+    .brand-title { font-size: 1.25rem; font-weight: 800; letter-spacing: 0.5px; }
+    .brand-title span { color: var(--accent); }
+    .brand-sub { font-size: 0.75rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1.2px; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .btn {
+      padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.88rem;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.2s; cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      color: #020617; box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
+    .btn-outline {
+      border: 1px solid var(--gold); color: var(--gold); background: rgba(245, 158, 11, 0.08);
+    }
+    .btn-outline:hover { background: rgba(245, 158, 11, 0.18); }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1280px; margin: 0 auto; padding: 72px 40px 56px;
+      display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: center;
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+    .pill {
+      font-size: 0.76rem; font-weight: 700; padding: 5px 12px; border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12); border: 1px solid var(--accent); color: var(--accent);
+    }
+    .pill.gold { background: rgba(245, 158, 11, 0.14); border-color: var(--gold); color: var(--gold); }
+    .pill.emerald { background: rgba(16, 185, 129, 0.14); border-color: var(--emerald); color: var(--emerald); }
+    .hero h1 {
+      font-size: 2.85rem; line-height: 1.18; font-weight: 800; margin-bottom: 20px;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, #38bdf8, #f59e0b);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p { font-size: 1.08rem; color: var(--text-muted); margin-bottom: 28px; max-width: 680px; }
+    .cta-group { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    /* Telemetry Box */
+    .telemetry-panel {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .telemetry-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-bottom: 16px;
+      font-size: 0.85rem; color: var(--accent); font-weight: 700; letter-spacing: 0.8px;
+    }
+    .stat-row {
+      display: flex; justify-content: space-between; padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem;
+    }
+    .stat-val { color: var(--emerald); font-weight: 700; }
+
+    /* Practice Areas Grid */
+    .section { max-width: 1280px; margin: 0 auto; padding: 48px 40px; }
+    .section-title { font-size: 1.85rem; font-weight: 800; margin-bottom: 8px; }
+    .section-sub { color: var(--text-muted); margin-bottom: 32px; font-size: 0.98rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 28px; transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+    .card-tag {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--gold); font-weight: 700; margin-bottom: 8px; display: block;
+    }
+    .card h3 { font-size: 1.28rem; margin-bottom: 12px; color: var(--text-main); }
+    .card p { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 16px; }
+    .card ul { list-style: none; }
+    .card ul li {
+      font-size: 0.86rem; padding: 6px 0; border-top: 1px solid rgba(255,255,255,0.06);
+      color: #cbd5e1;
+    }
+    .card ul li::before { content: "▹ "; color: var(--accent); font-weight: bold; }
+
+    footer {
+      border-top: 1px solid var(--border); margin-top: 60px; padding: 36px 40px;
+      text-align: center; font-size: 0.85rem; color: var(--text-muted);
+    }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding: 40px 20px; }
+      nav { padding: 14px 20px; flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="brand">
+      <img src="assets/mgc-logo.png" alt="MGC Logo" onerror="this.style.display='none'" />
+      <div>
+        <div class="brand-title">MILTON GROUP CONCEPTS <span>LLC</span></div>
+        <div class="brand-sub">SDVOSB // Regulated Data Commerce &amp; Defense AI Architecture</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#practice-areas">Capabilities</a>
+      <a href="#data-commerce">SAS &amp; CIPP Data Commerce</a>
+      <a href="#federal-sdvosb">Federal SDVOSB</a>
+      <a href="earth-3d.html">3D Geospatial Command</a>
+      <a href="vr-command.html" class="btn btn-outline">Launch WebXR / VR Deck</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <div class="pill-row">
+        <span class="pill gold">SDVOSB Verified Pedigree (USASOC 112th Signal Airborne)</span>
+        <span class="pill">Pentagon ORSA AI Infrastructure</span>
+        <span class="pill emerald">SAS ModelOps (A00-440) + IAPP CIPP/US</span>
+      </div>
+      <h1>Architecting <span>Regulated Data Commerce</span>, Production ModelOps &amp; Zero-Trust Cloud</h1>
+      <p>
+        Founded by U.S. Army Special Operations Communications NCOIC &amp; former Pentagon Operations Research Analyst 
+        <strong>Malik A. Khabir</strong>, Milton Group Concepts LLC bridges high-assurance federal defense engineering 
+        with commercial AI monetization, SAS Viya ModelOps governance, and IAPP CIPP privacy compliance.
+      </p>
+      <div class="cta-group">
+        <a href="#data-commerce" class="btn btn-primary">Explore Data Commerce Platform</a>
+        <a href="earth-3d.html" class="btn btn-outline">3D Geospatial Command (&lt;gmp-map-3d&gt;)</a>
+        <a href="vr-command.html" class="btn btn-outline">Enter VR Spatial Command</a>
+      </div>
+    </div>
+
+    <div class="telemetry-panel">
+      <div class="telemetry-header">
+        <span>MGC ENTERPRISE CREDENTIAL &amp; CONTRACT MATRIX</span>
+        <span>LIVE // V2.6</span>
+      </div>
+      <div class="stat-row"><span>Corporate Entity</span> <span class="stat-val">Milton Group Concepts LLC (VA)</span></div>
+      <div class="stat-row"><span>Federal Set-Aside Eligibility</span> <span class="stat-val">SDVOSB (38 U.S.C. 8127)</span></div>
+      <div class="stat-row"><span>Military &amp; DoD Pedigree</span> <span class="stat-val">USASOC 112th Signal / Pentagon OSD</span></div>
+      <div class="stat-row"><span>Data &amp; Privacy Stack</span> <span class="stat-val">SAS ModelOps + IAPP CIPP/US</span></div>
+      <div class="stat-row"><span>Security &amp; Network Stack</span> <span class="stat-val">AZ-500 | CCNP | CEH | Sec+ | Splunk</span></div>
+      <div class="stat-row"><span>Primary NAICS</span> <span class="stat-val">541512, 541519, 518210, 541611</span></div>
+      <div class="stat-row"><span>Principal Office</span> <span class="stat-val">Richmond &amp; Haymarket, Virginia</span></div>
+    </div>
+  </section>
+
+  <section id="practice-areas" class="section">
+    <div class="section-title">Core Revenue &amp; Capability Pillars</div>
+    <div class="section-sub">Engineered for Fortune 500 Data Monetization, Healthcare/Financial Clean Rooms, and DoD/VA Mission Systems.</div>
+
+    <div class="grid-3" id="data-commerce">
+      <div class="card">
+        <span class="card-tag">Pillar 01 // Data Monetization &amp; Privacy Engineering</span>
+        <h3>Regulated Data Commerce (IAPP CIPP/US &amp; NIST)</h3>
+        <p>Unlocking high-margin B2B and B2G data licensing without regulatory liability across healthcare, defense, and finance.</p>
+        <ul>
+          <li>HIPAA Safe Harbor &amp; Expert Determination De-Identification Pipelines</li>
+          <li>GLBA Safeguards Rule, FCRA Permissible Purpose &amp; CPRA/VCDPA Compliance</li>
+          <li>Federal Privacy Act of 1974 (SORN), E-Gov Section 208 PIAs &amp; OMB M-24-10 AI Governance</li>
+          <li>Splunk &amp; BigQuery Data Clean Room ETL Normalization</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="card-tag">Pillar 02 // Production AI &amp; Decision Intelligence</span>
+        <h3>Enterprise SAS ModelOps &amp; Viya Factory (A00-440)</h3>
+        <p>Operationalizing data science models from SAS Model Studio into governed, drift-monitored production vaults.</p>
+        <ul>
+          <li>SAS Model Manager ('The Vault') Lineage, Auditability &amp; Champion/Challenger Testing</li>
+          <li>Automated Population Stability Index (PSI) &amp; ROC/KS Decay Alerting</li>
+          <li>End-to-End Business + Analytics + IT/Ops Workflow Orchestration</li>
+          <li>Multi-Agent Google Cloud (Vertex AI) &amp; Azure OpenAI Integration</li>
+        </ul>
+      </div>
+
+      <div class="card" id="federal-sdvosb">
+        <span class="card-tag">Pillar 03 // Federal Defense &amp; VA Contracting</span>
+        <h3>Pentagon ORSA &amp; Zero-Trust Cyber Architecture</h3>
+        <p>Battle-tested Special Operations nodal networking and Pentagon AI requirement engineering for federal primes and agencies.</p>
+        <ul>
+          <li>VA 'Vets First' &amp; SBA VetCert SDVOSB Sole-Source &amp; Subcontracting</li>
+          <li>NIST SP 800-53, RMF Authority to Operate (ATO), FISMA &amp; DISA STIG Automation</li>
+          <li>Microsoft Sentinel, Defender for Cloud (AZ-500 / SC-100) &amp; Palo Alto Zero-Trust</li>
+          <li>Multi-Enclave Tactical &amp; Enterprise Routing (CCNP: BGP, OSPF, DMVPN, SATCOM)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 <strong>Milton Group Concepts LLC</strong> | 8401 Mayland Drive, #10286, Richmond, VA 23294 &amp; Haymarket, VA | +1 (804) 760-5797 | <a href="mailto:malik.khabir@miltongroupsecurity.org" style="color:var(--accent);">malik.khabir@miltongroupsecurity.org</a></p>
+  </footer>
+
+</body>
+</html>

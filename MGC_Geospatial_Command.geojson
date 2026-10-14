@@ -1,0 +1,67 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "organization": "Milton Group Concepts LLC",
+    "ein": "92-1370285",
+    "naics": "541611"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "mgc-hq",
+      "properties": {
+        "name": "Milton Group Concepts LLC — Principal HQ",
+        "description": "8401 Mayland Dr #10286, Richmond, VA 23294 | SDVOSB Command & Procurement Readiness (NAICS 541611)",
+        "altitude": 120,
+        "tilt": 65,
+        "heading": 25
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.5458,
+          37.6247,
+          120
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mgc-nova",
+      "properties": {
+        "name": "MGC Northern Virginia Operations Node",
+        "description": "Haymarket / Northern Virginia Corridor (5716 Caribbean Ct, Haymarket, VA 20169)",
+        "altitude": 180,
+        "tilt": 60,
+        "heading": 90
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.6364,
+          38.8151,
+          180
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ft-belvoir-corridor",
+      "properties": {
+        "name": "DoD / Federal Contracting Corridor — NCR",
+        "description": "National Capital Region Defense & Logistics Contracting Target Zone",
+        "altitude": 200,
+        "tilt": 60,
+        "heading": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1477,
+          38.7189,
+          200
+        ]
+      }
+    }
+  ]
+}

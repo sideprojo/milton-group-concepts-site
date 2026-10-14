@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MGC Spatial & VR 3D Command Deck | WebXR + Desktop 3D</title>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; }
+    .hud-overlay {
+      position: fixed; top: 16px; left: 16px; z-index: 999;
+      background: rgba(5, 8, 17, 0.88); border: 1px solid #38bdf8;
+      color: #f8fafc; padding: 14px 20px; border-radius: 10px;
+      max-width: 420px; backdrop-filter: blur(10px);
+    }
+    .hud-overlay h2 { font-size: 1rem; color: #38bdf8; margin: 0 0 6px; }
+    .hud-overlay p { font-size: 0.8rem; color: #94a3b8; margin: 0 0 10px; }
+    .hud-overlay a {
+      display: inline-block; padding: 6px 12px; background: #38bdf8; color: #020617;
+      border-radius: 6px; font-size: 0.78rem; font-weight: 700; text-decoration: none; margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud-overlay">
+    <h2>MGC SPATIAL VR COMMAND DECK (WebXR Ready)</h2>
+    <p>Use <strong>WASD + Mouse</strong> on Desktop, or click the <strong>VR Goggles button (bottom right)</strong> inside Meta Quest / SteamVR / Virtual Desktop to step inside your 360° MGC Operations Room.</p>
+    <a href="index.html">← Back to MGC Site</a>
+    <a href="earth-3d.html">3D Earth Command</a>
+  </div>
+
+  <a-scene background="color: #040711" fog="type: exponential; color: #040711; density: 0.025">
+    <!-- Floor Grid & Ambient Lighting -->
+    <a-light type="ambient" color="#38bdf8" intensity="0.5"></a-light>
+    <a-light type="point" position="0 5 -3" color="#f59e0b" intensity="1.2" distance="25"></a-light>
+    <a-plane position="0 0 -4" rotation="-90 0 0" width="40" height="40" color="#0b1120" material="wireframe: false; roughness: 0.8"></a-plane>
+    <a-plane position="0 0.01 -4" rotation="-90 0 0" width="40" height="40" color="#38bdf8" material="wireframe: true; opacity: 0.25"></a-plane>
+
+    <!-- Center Panel: MGC Site & Data Commerce Status -->
+    <a-entity position="0 2.3 -4.2">
+      <a-plane width="4.4" height="2.4" color="#0f172a" material="opacity: 0.92; shader: flat"></a-plane>
+      <a-plane width="4.46" height="2.46" position="0 0 -0.01" color="#38bdf8" material="shader: flat"></a-plane>
+      <a-text value="MILTON GROUP CONCEPTS LLC\n[SPATIAL COMMAND CENTER]" align="center" position="0 0.82 0.02" width="4.2" color="#38bdf8"></a-text>
+      <a-text value="EIN: 92-1370285 | Org: 412750373714 (SDVOSB)\n- Pillar 1: Regulated Data Commerce (IAPP CIPP/US)\n- Pillar 2: Enterprise SAS ModelOps (A00-440)\n- Pillar 3: Pentagon ORSA & Zero-Trust Cloud\n- Repo: sideprojo/milton-group-concepts-site" align="left" position="-1.95 0.05 0.02" width="3.8" color="#f8fafc"></a-text>
+    </a-entity>
+
+    <!-- Left Wing Panel: Daily Certification & SAS/CIPP Sprint -->
+    <a-entity position="-4.2 2.3 -2.6" rotation="0 35 0">
+      <a-plane width="3.6" height="2.2" color="#0f172a" material="opacity: 0.92; shader: flat"></a-plane>
+      <a-plane width="3.66" height="2.26" position="0 0 -0.01" color="#10b981" material="shader: flat"></a-plane>
+      <a-text value="DAILY CERTIFY ENGINE\nSAS A00-440 + CIPP/US" align="center" position="0 0.72 0.02" width="3.5" color="#10b981"></a-text>
+      <a-text value="1. SAS ModelOps: Business + Analytics + IT\n2. Holdout Validation -> Stops Overfitting\n3. Drift: PSI (Input) vs ROC/KS (Decay)\n4. CIPP/US: HIPAA Safe Harbor / Expert Det.\n5. GLBA (Finance NPI) vs FCRA (Credit CRA)\n6. Federal Privacy Act: SORN & PIA" align="left" position="-1.65 -0.05 0.02" width="3.3" color="#e2e8f0"></a-text>
+    </a-entity>
+
+    <!-- Right Wing Panel: VA Benefits & SDVOSB Contracting -->
+    <a-entity position="4.2 2.3 -2.6" rotation="0 -35 0">
+      <a-plane width="3.6" height="2.2" color="#0f172a" material="opacity: 0.92; shader: flat"></a-plane>
+      <a-plane width="3.66" height="2.26" position="0 0 -0.01" color="#f59e0b" material="shader: flat"></a-plane>
+      <a-text value="VA BENEFITS & SDVOSB\nUSASOC 112th Signal (Airborne)" align="center" position="0 0.72 0.02" width="3.5" color="#f59e0b"></a-text>
+      <a-text value="- DoD ID: 1516730621 (SOJTF-OIR Erbil)\n- PACT Act Presumptive + Airborne Spine/Joints\n- Secondary: Radiculopathy, Migraines, Sleep\n- Ch. 31 VR&E: 100% Exam & SDVOSB Track\n- Next VA Video Appt: Oct 22, 2026 @ 12:00\n- VetCert NAICS: 541512, 541519, 518210" align="left" position="-1.65 -0.05 0.02" width="3.3" color="#e2e8f0"></a-text>
+    </a-entity>
+
+    <!-- Holographic Core Globe -->
+    <a-sphere position="0 1.1 -2.5" radius="0.45" color="#38bdf8" material="wireframe: true" animation="property: rotation; to: 0 360 0; loop: true; dur: 18000; easing: linear"></a-sphere>
+
+    <!-- Camera + Cursor -->
+    <a-entity position="0 1.6 0">
+      <a-camera look-controls wasd-controls>
+        <a-cursor color="#38bdf8"></a-cursor>
+      </a-camera>
+    </a-entity>
+  </a-scene>
+</body>
+</html>
