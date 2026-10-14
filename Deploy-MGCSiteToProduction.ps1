@@ -33,6 +33,7 @@ if ($status) {
     Write-Host "Working tree clean. Pushing latest main to origin..." -ForegroundColor Yellow
 }
 git branch -M main
+gh auth setup-git 2>$null
 git push -u origin main
 
 if ($DeployCloudRun) {
