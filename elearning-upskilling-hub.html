@@ -503,9 +503,13 @@
 
     function initMap() {
       mapInstance = L.map('trace-map', { zoomControl: true }).setView([38.8719, -77.0563], 7);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO'
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
       }).addTo(mapInstance);
+      const tilePane = document.querySelector('#trace-map .leaflet-tile-pane');
+      if (tilePane) {
+        tilePane.style.filter = 'invert(100%) hue-rotate(185deg) brightness(92%) contrast(92%)';
+      }
 
       INSIGHT_ITEMS.forEach(item => {
         const icon = L.divIcon({
