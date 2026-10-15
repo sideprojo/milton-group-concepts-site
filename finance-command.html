@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MGC &amp; F.I.X Internal Finance, Treasury &amp; Payment Command</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #070d19;
+      --navy-panel: rgba(13, 23, 42, 0.88);
+      --navy-card: rgba(19, 32, 59, 0.78);
+      --gold: #C5B358;
+      --gold-bright: #fde047;
+      --blue: #2563eb;
+      --cyan: #38bdf8;
+      --crimson: #dc2626;
+      --emerald: #10b981;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: rgba(197, 179, 88, 0.28);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--navy);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(37, 99, 235, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 88% 12%, rgba(197, 179, 88, 0.14) 0%, transparent 45%),
+        linear-gradient(180deg, rgba(7, 13, 25, 0.92) 0%, rgba(11, 20, 38, 0.98) 100%),
+        url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2000');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+    }
+
+    /* Top Architectural Header Inspired by MGC & F.I.X External Themes */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      background: rgba(7, 13, 25, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .top-bar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--crimson), #ffffff, var(--blue), var(--gold));
+    }
+    .brand-cluster { display: flex; align-items: center; gap: 14px; }
+    .shield-mini {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: linear-gradient(135deg, #1e293b, #0b1426);
+      border: 1.5px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--gold);
+      box-shadow: 0 0 18px rgba(197, 179, 88, 0.3);
+    }
+    .brand-title { font-size: 1.1rem; font-weight: 900; letter-spacing: -0.02em; }
+    .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.2em; }
+
+    .suite-switcher { display: flex; gap: 8px; flex-wrap: wrap; }
+    .suite-link {
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 14px;
+      border-radius: 6px;
+      color: #cbd5e1;
+      border: 1px solid var(--glass-border);
+      background: rgba(15, 23, 42, 0.7);
+      transition: all 0.2s;
+      transform: skewX(-8deg);
+    }
+    .suite-link span { display: inline-block; transform: skewX(8deg); }
+    .suite-link:hover, .suite-link.active {
+      background: var(--gold);
+      color: var(--navy);
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 20px rgba(197, 179, 88, 0.45);
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 32px; }
+
+    /* Hero Banner */
+    .hero-banner {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end;
+      gap: 24px; padding-bottom: 24px; margin-bottom: 28px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+      color: var(--gold); text-transform: uppercase; letter-spacing: 0.22em;
+      background: rgba(197, 179, 88, 0.12); border: 1px solid var(--border);
+      padding: 5px 12px; border-radius: 999px; margin-bottom: 10px;
+    }
+    .hero-banner h1 {
+      font-size: 2.4rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1.1;
+    }
+    .hero-banner h1 em {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-weight: 700; color: var(--gold);
+    }
+
+    /* Entity Filter Pills */
+    .entity-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .entity-btn {
+      padding: 9px 16px; border-radius: 999px; border: 1px solid var(--glass-border);
+      background: rgba(15, 23, 42, 0.75); color: #cbd5e1;
+      font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .entity-btn.active, .entity-btn:hover {
+      background: linear-gradient(135deg, var(--blue), #1d4ed8);
+      color: #fff; border-color: #60a5fa;
+      box-shadow: 0 0 18px rgba(37, 99, 235, 0.45);
+    }
+
+    /* KPI Scoreboard Strip (NBA-Ticker Inspired) */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px; margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--navy-panel);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-top: 3px solid var(--gold);
+      border-radius: 16px 4px 16px 4px;
+      padding: 20px 22px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+    .kpi-card.blue { border-top-color: var(--cyan); }
+    .kpi-card.emerald { border-top-color: var(--emerald); }
+    .kpi-card.crimson { border-top-color: #f87171; }
+    .kpi-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .kpi-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+    .kpi-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: var(--emerald); font-weight: 700; }
+    .kpi-value { font-size: 1.95rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .kpi-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #cbd5e1; }
+
+    /* Main Workspace 2-Column Layout */
+    .workspace-grid {
+      display: grid; grid-template-columns: 1.05fr 1.25fr; gap: 24px; margin-bottom: 28px;
+    }
+    @media (max-width: 1080px) {
+      .workspace-grid { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--navy-panel);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+    }
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border);
+    }
+    .panel-title { font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+    .panel-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 6px; background: rgba(197, 179, 88, 0.15);
+      border: 1px solid var(--border); color: var(--gold); text-transform: uppercase;
+    }
+
+    /* Payment Rail Selector */
+    .rail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
+    .rail-option {
+      padding: 12px 14px; border-radius: 12px; border: 1px solid var(--glass-border);
+      background: rgba(15, 23, 42, 0.65); cursor: pointer; transition: all 0.2s;
+      text-align: left; color: var(--text);
+    }
+    .rail-option.active {
+      border-color: var(--gold);
+      background: rgba(197, 179, 88, 0.14);
+      box-shadow: 0 0 18px rgba(197, 179, 88, 0.2);
+    }
+    .rail-option .rail-name { font-size: 0.82rem; font-weight: 800; display: block; margin-bottom: 2px; }
+    .rail-option .rail-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--gold); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .form-field { margin-bottom: 14px; }
+    .form-field label {
+      display: block; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--muted); margin-bottom: 6px; font-weight: 700;
+    }
+    .form-field input, .form-field select {
+      width: 100%; padding: 11px 14px; border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(7, 13, 25, 0.85); color: var(--text);
+      font-size: 0.88rem; outline: none; transition: border-color 0.2s;
+    }
+    .form-field input:focus, .form-field select:focus { border-color: var(--gold); }
+
+    .btn-gold {
+      width: 100%; padding: 14px 20px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg, var(--gold) 0%, #eab308 100%);
+      color: var(--navy); font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 10px 25px rgba(197, 179, 88, 0.35);
+    }
+    .btn-gold:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+    .btn-blue {
+      padding: 10px 16px; border-radius: 10px; border: 1px solid #60a5fa;
+      background: linear-gradient(135deg, var(--blue), #1d4ed8);
+      color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.74rem;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer;
+    }
+
+    /* Receipt Box */
+    .receipt-box {
+      margin-top: 16px; padding: 16px; border-radius: 12px;
+      background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.4);
+      display: none;
+    }
+    .receipt-box.show { display: block; }
+
+    /* Ledger Table */
+    .ledger-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .ledger-table th {
+      text-align: left; padding: 10px 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+      text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .ledger-table td {
+      padding: 13px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      vertical-align: middle;
+    }
+    .status-chip {
+      display: inline-block; padding: 3px 8px; border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-settled { background: rgba(16, 185, 129, 0.16); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.35); }
+    .status-escrow { background: rgba(56, 189, 248, 0.16); color: var(--cyan); border: 1px solid rgba(56, 189, 248, 0.35); }
+    .status-pending { background: rgba(197, 179, 88, 0.18); color: var(--gold); border: 1px solid rgba(197, 179, 88, 0.4); }
+  </style>
+</head>
+<body>
+  <script src="mgc-guided-security.js"></script>
+
+  <header class="top-bar">
+    <div class="brand-cluster">
+      <div class="shield-mini">MGC</div>
+      <div>
+        <div class="brand-title">FINANCE, TREASURY &amp; PAYMENT COMMAND</div>
+        <div class="brand-sub">Internal Suite • MGC LLC • F.I.X Solutions • White Feather</div>
+      </div>
+    </div>
+    <nav class="suite-switcher">
+      <a href="onboarding-portal.html" class="suite-link"><span>SSO Gate</span></a>
+      <a href="index.html" class="suite-link"><span>Ops Hub</span></a>
+      <a href="finance-command.html" class="suite-link active"><span>1. Finance &amp; Payments</span></a>
+      <a href="elearning-upskilling-hub.html" class="suite-link"><span>2. eLearning &amp; Insights Atlas</span></a>
+      <a href="whitefeather-ecommerce-hub.html" class="suite-link"><span>3. White Feather &amp; eCommerce</span></a>
+      <a href="earth-3d.html" class="suite-link"><span>3D Geospatial</span></a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <div>
+        <div class="eyebrow">● ZERO-TRUST TREASURY • MERCURY SDVOSB • WAWF / ACH / STRIPE</div>
+        <h1>Internal Payment System &amp; <em>Multi-Entity Treasury</em></h1>
+      </div>
+      <div class="entity-tabs" id="entity-tabs">
+        <button class="entity-btn active" onclick="filterEntity('ALL', this)">All Entities ($148,920.00)</button>
+        <button class="entity-btn" onclick="filterEntity('MGC', this)">Milton Group Concepts LLC</button>
+        <button class="entity-btn" onclick="filterEntity('FIX', this)">F.I.X Solutions LLC (VAR)</button>
+        <button class="entity-btn" onclick="filterEntity('WF', this)">White Feather Investments</button>
+      </div>
+    </section>
+
+    <!-- Compact NBA-Scoreboard Style Treasury Strip -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">CONSOLIDATED OPERATING LIQUIDITY</span>
+          <span class="kpi-badge">MERCURY + TREASURY</span>
+        </div>
+        <div class="kpi-value" id="kpi-liquidity">$148,920.00</div>
+        <div class="kpi-sub">EIN 92-1370285 • $0 Monthly Cloud Overhead</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-top">
+          <span class="kpi-label">ACTIVE RECEIVABLES &amp; ESCROW</span>
+          <span class="kpi-badge" style="color:var(--cyan);background:rgba(56,189,248,0.14);">SAM / WAWF / GPC</span>
+        </div>
+        <div class="kpi-value" id="kpi-escrow">$64,500.00</div>
+        <div class="kpi-sub">4 Milestone Invoices Pending Settlement</div>
+      </div>
+      <div class="kpi-card emerald">
+        <div class="kpi-top">
+          <span class="kpi-label">PAYMENT ACCEPTANCE ENGINE</span>
+          <span class="kpi-badge">LIVE TERMINAL</span>
+        </div>
+        <div class="kpi-value">0.00% <span style="font-size:1rem;color:var(--gold);">ACH / FedNow</span></div>
+        <div class="kpi-sub">Instant Invoice Link &amp; GPC Card Routing Active</div>
+      </div>
+      <div class="kpi-card crimson">
+        <div class="kpi-top">
+          <span class="kpi-label">INTERNAL SPLIT &amp; TAX RESERVE</span>
+          <span class="kpi-badge" style="color:#f87171;background:rgba(248,113,113,0.15);">AUTO-RULE 25%</span>
+        </div>
+        <div class="kpi-value" id="kpi-reserve">$37,230.00</div>
+        <div class="kpi-sub">Automated VA/Federal Estimated Reserve Vault</div>
+      </div>
+    </section>
+
+    <section class="workspace-grid">
+      <!-- Left Panel: Payment Acceptance & Checkout Link Generator -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Payment Acceptance &amp; Invoice Terminal</div>
+          <span class="panel-tag">Inbound Settlement</span>
+        </div>
+
+        <div class="rail-grid" id="rail-grid">
+          <button type="button" class="rail-option active" onclick="selectRail('ACH / FedNow Instant ($0 Fee)', 0, this)">
+            <span class="rail-name">ACH / FedNow Direct</span>
+            <span class="rail-meta">0.0% Fee • Same-Day Settlement</span>
+          </button>
+          <button type="button" class="rail-option" onclick="selectRail('SAM.gov WAWF / IPP Federal', 0, this)">
+            <span class="rail-name">SAM.gov WAWF / IPP</span>
+            <span class="rail-meta">SDVOSB Contract EFT • Net-15</span>
+          </button>
+          <button type="button" class="rail-option" onclick="selectRail('Gov Purchase Card (GPC) / Stripe', 0.029, this)">
+            <span class="rail-name">GPC / Commercial Card</span>
+            <span class="rail-meta">Micro-Purchase &lt;$10K • Instant</span>
+          </button>
+          <button type="button" class="rail-option" onclick="selectRail('Milestone Escrow Vault', 0, this)">
+            <span class="rail-name">Milestone Escrow</span>
+            <span class="rail-meta">Multi-Phase Deliverable Lock</span>
+          </button>
+        </div>
+
+        <form onsubmit="processPaymentAcceptance(event)">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Receiving Entity</label>
+              <select id="pay-entity">
+                <option value="MGC">Milton Group Concepts LLC</option>
+                <option value="FIX">F.I.X Solutions LLC (SDVOSB VAR)</option>
+                <option value="WF">White Feather Investments / AI</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Client / Agency / Counterparty</label>
+              <input type="text" id="pay-client" required value="Dept. of Veterans Affairs — VISN 6" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Amount (USD)</label>
+              <input type="number" id="pay-amount" step="0.01" required value="12500.00" oninput="updateNetPreview()" />
+            </div>
+            <div class="form-field">
+              <label>Contract / Deliverable Reference</label>
+              <input type="text" id="pay-ref" required value="NAICS 541519 • Cloud &amp; CIPP Audit" />
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:10px; background:rgba(7,13,25,0.7); border:1px solid var(--glass-border); margin-bottom:16px; font-family:'JetBrains Mono',monospace; font-size:0.75rem;">
+            <span style="color:var(--muted);">Selected Rail: <strong style="color:var(--gold);" id="selected-rail-label">ACH / FedNow Instant ($0 Fee)</strong></span>
+            <span style="color:var(--emerald); font-weight:700;" id="net-settlement-label">Net Deposit: $12,500.00</span>
+          </div>
+
+          <button type="submit" class="btn-gold">Generate Signed Payment Link &amp; Post to Ledger →</button>
+        </form>
+
+        <div class="receipt-box" id="payment-receipt">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <strong style="font-size:0.86rem; color:var(--emerald);">✔ Payment Link &amp; Cryptographic Invoice Generated</strong>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--gold);" id="receipt-hash">SHA256-9F8A2C</span>
+          </div>
+          <p style="font-size:0.78rem; color:#cbd5e1; line-height:1.5;" id="receipt-details"></p>
+        </div>
+      </div>
+
+      <!-- Right Panel: Live Multi-Entity Payment Ledger & Internal Routing -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Live Treasury Ledger &amp; Internal Disbursements</div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn-blue" onclick="triggerInternalTransfer()">+ Internal Entity Transfer</button>
+          </div>
+        </div>
+
+        <table class="ledger-table">
+          <thead>
+            <tr>
+              <th>Entity</th>
+              <th>Counterparty &amp; Reference</th>
+              <th>Payment Rail</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ledger-tbody">
+            <tr data-entity="MGC">
+              <td><strong style="color:var(--cyan);">MGC LLC</strong></td>
+              <td>
+                <div style="font-weight:700;">VA / Defense Health Agency</div>
+                <div style="font-size:0.72rem; color:var(--muted);">SAS ModelOps &amp; CIPP/US Privacy Architecture</div>
+              </td>
+              <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">SAM.gov WAWF EFT</td>
+              <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--emerald);">+$48,500.00</td>
+              <td><span class="status-chip status-settled">SETTLED</span></td>
+            </tr>
+            <tr data-entity="FIX">
+              <td><strong style="color:var(--gold);">F.I.X LLC</strong></td>
+              <td>
+                <div style="font-weight:700;">DoD Tactical Supply Chain Task Order</div>
+                <div style="font-size:0.72rem; color:var(--muted);">NAICS 334111 • Palo Alto &amp; Splunk Hardware VAR</div>
+              </td>
+              <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">Milestone Escrow</td>
+              <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cyan);">+$64,500.00</td>
+              <td><span class="status-chip status-escrow">IN ESCROW</span></td>
+            </tr>
+            <tr data-entity="WF">
+              <td><strong style="color:#a78bfa;">WHITE FEATHER</strong></td>
+              <td>
+                <div style="font-weight:700;">White Feather AI &amp; Digital Commerce Cohort</div>
+                <div style="font-size:0.72rem; color:var(--muted);">Enterprise Agentic Workflow Subscriptions</div>
+              </td>
+              <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">Stripe / ACH Direct</td>
+              <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--emerald);">+$21,420.00</td>
+              <td><span class="status-chip status-settled">SETTLED</span></td>
+            </tr>
+            <tr data-entity="MGC">
+              <td><strong style="color:var(--cyan);">MGC LLC</strong></td>
+              <td>
+                <div style="font-weight:700;"> Commercial Regulated Data Clean-Room</div>
+                <div style="font-size:0.72rem; color:var(--muted);">GLBA / FCRA De-Identified Dataset License</div>
+              </td>
+              <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">ACH / FedNow</td>
+              <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--gold);">+$14,500.00</td>
+              <td><span class="status-chip status-pending">LINK SENT</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let currentRailName = 'ACH / FedNow Instant ($0 Fee)';
+    let currentRailFee = 0;
+    let totalLiquidity = 148920;
+
+    // Pre-fill from eCommerce handoff if URL params exist
+    (function checkUrlHandoff() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('item')) {
+        document.getElementById('pay-ref').value = params.get('item');
+      }
+      if (params.get('amount')) {
+        document.getElementById('pay-amount').value = params.get('amount');
+      }
+      if (params.get('entity')) {
+        document.getElementById('pay-entity').value = params.get('entity');
+      }
+    })();
+
+    function selectRail(name, feeRate, btn) {
+      currentRailName = name;
+      currentRailFee = feeRate;
+      document.querySelectorAll('#rail-grid .rail-option').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('selected-rail-label').textContent = name;
+      updateNetPreview();
+    }
+
+    function updateNetPreview() {
+      const amt = parseFloat(document.getElementById('pay-amount').value) || 0;
+      const net = amt * (1 - currentRailFee);
+      document.getElementById('net-settlement-label').textContent =
+        'Net Deposit: $' + net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function processPaymentAcceptance(e) {
+      e.preventDefault();
+      const entity = document.getElementById('pay-entity').value;
+      const client = document.getElementById('pay-client').value;
+      const amount = parseFloat(document.getElementById('pay-amount').value) || 0;
+      const ref = document.getElementById('pay-ref').value;
+      const net = amount * (1 - currentRailFee);
+
+      totalLiquidity += net;
+      document.getElementById('kpi-liquidity').textContent =
+        '$' + totalLiquidity.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      const tbody = document.getElementById('ledger-tbody');
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-entity', entity);
+      const colorMap = { MGC: 'var(--cyan)', FIX: 'var(--gold)', WF: '#a78bfa' };
+      const labelMap = { MGC: 'MGC LLC', FIX: 'F.I.X LLC', WF: 'WHITE FEATHER' };
+      tr.innerHTML = `
+        <td><strong style="color:${colorMap[entity]};">${labelMap[entity]}</strong></td>
+        <td>
+          <div style="font-weight:700;">${client}</div>
+          <div style="font-size:0.72rem; color:var(--muted);">${ref}</div>
+        </td>
+        <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">${currentRailName.split('(')[0].trim()}</td>
+        <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--emerald);">+$${net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td><span class="status-chip status-settled">AUTHORIZED</span></td>
+      `;
+      tbody.insertBefore(tr, tbody.firstChild);
+
+      const receiptId = 'MGC-PAY-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      document.getElementById('receipt-hash').textContent = receiptId;
+      document.getElementById('receipt-details').innerHTML =
+        `Counterparty: <strong>${client}</strong> • Rail: <strong>${currentRailName}</strong> • Net Credited to <strong>${labelMap[entity]}</strong>: <strong>$${net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>. Checkout URL copied to internal clipboard.`;
+      document.getElementById('payment-receipt').classList.add('show');
+    }
+
+    function triggerInternalTransfer() {
+      const tbody = document.getElementById('ledger-tbody');
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-entity', 'FIX');
+      tr.innerHTML = `
+        <td><strong style="color:var(--gold);">MGC → F.I.X</strong></td>
+        <td>
+          <div style="font-weight:700;">Internal Treasury Allocation (Zero-Fee Book Transfer)</div>
+          <div style="font-size:0.72rem; color:var(--muted);">Hardware VAR Escrow Replenishment</div>
+        </td>
+        <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">Internal Book</td>
+        <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cyan);">$15,000.00</td>
+        <td><span class="status-chip status-settled">CLEARED</span></td>
+      `;
+      tbody.insertBefore(tr, tbody.firstChild);
+    }
+
+    function filterEntity(entityCode, btn) {
+      document.querySelectorAll('#entity-tabs .entity-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('#ledger-tbody tr').forEach(row => {
+        if (entityCode === 'ALL' || row.getAttribute('data-entity') === entityCode) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

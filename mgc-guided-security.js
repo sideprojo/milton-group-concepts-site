@@ -74,62 +74,83 @@
   const pages = [
     { file: 'onboarding-portal.html', label: '1. Onboarding & RBAC', short: 'Onboarding' },
     { file: 'index.html', label: '2. Data Commerce & Ops Hub', short: 'Command Hub' },
-    { file: 'sdvosb-contract-radar.html', label: '3. SAM.gov & USAspending Radar', short: 'Contract Radar' },
-    { file: 'compliance-trust-center.html', label: '4. Compliance & Trust-But-Verify', short: 'Compliance & Security' },
-    { file: 'integrations-connections-hub.html', label: '5. Integrations & Connections', short: 'Integrations Hub' },
-    { file: 'agent-workflow-studio.html', label: '6. LangGraph & Agent Studio', short: 'Agent Studio' },
-    { file: 'earth-3d.html', label: '7. 3D Geospatial Command', short: '3D Earth' },
-    { file: 'vr-command.html', label: '8. 360° WebXR VR Deck', short: 'VR Deck' }
+    { file: 'finance-command.html', label: '3. Finance & Payment System', short: 'Finance & Pay' },
+    { file: 'elearning-upskilling-hub.html', label: '4. eLearning & Insights Atlas', short: 'eLearning Atlas' },
+    { file: 'whitefeather-ecommerce-hub.html', label: '5. White Feather & eCommerce', short: 'eCommerce & News' },
+    { file: 'sdvosb-contract-radar.html', label: '6. SAM.gov & USAspending Radar', short: 'Contract Radar' },
+    { file: 'compliance-trust-center.html', label: '7. Compliance & Trust-But-Verify', short: 'Compliance & Security' },
+    { file: 'integrations-connections-hub.html', label: '8. Integrations & Connections', short: 'Integrations Hub' },
+    { file: 'agent-workflow-studio.html', label: '9. LangGraph & Agent Studio', short: 'Agent Studio' },
+    { file: 'earth-3d.html', label: '10. 3D Geospatial Command', short: '3D Earth' },
+    { file: 'vr-command.html', label: '11. 360° WebXR VR Deck', short: 'VR Deck' }
   ];
 
   const tourStepsByPage = {
     'onboarding-portal.html': {
-      title: 'Step 1 of 8: Zero-Trust Onboarding & Edge JWT Gatekeeper',
-      desc: 'External visitors from miltongroupsecurity.org and F.I.X Solutions authenticate here via Google Workspace SSO, Microsoft Entra ID, or Partner Access Key to receive VIEWER_ONBOARDED clearance.',
+      title: 'Step 1 of 11: Zero-Trust Onboarding & Edge JWT Gatekeeper',
+      desc: 'External visitors from miltongroupsecurity.org and F.I.X Solutions authenticate here via Google Workspace SSO to receive VIEWER_ONBOARDED clearance.',
       nextFile: 'index.html',
-      highlights: ['Option A Edge WebCrypto SHA-256 JWT verification', 'SAM.gov UEI & CAGE validation', 'Direct launchpad into all 8 internal command modules']
+      highlights: ['Option A Edge WebCrypto SHA-256 JWT verification', 'SAM.gov UEI & CAGE validation', 'Direct launchpad into all 11 internal command modules']
     },
     'index.html': {
-      title: 'Step 2 of 8: MGC & F.I.X Internal Data Commerce & Career Hub',
+      title: 'Step 2 of 11: MGC & F.I.X Internal Data Commerce & Career Hub',
       desc: 'Unified executive dashboard combining SDVOSB federal contracting pipelines, SAS Viya ModelOps (A00-440), IAPP CIPP/US & CIPP/G privacy governance, and zero-charge cloud telemetry.',
-      nextFile: 'sdvosb-contract-radar.html',
+      nextFile: 'finance-command.html',
       highlights: ['Live Zero-Charge Cloud Cost Guard ($0.00 idle)', 'Data Commerce & Privacy Engineering products', 'Daily Certification & Contracting readiness']
     },
+    'finance-command.html': {
+      title: 'Step 3 of 11: Internal Finance, Treasury & Payment Acceptance System',
+      desc: 'Multi-entity treasury ledger and payment acceptance terminal for Milton Group Concepts LLC, F.I.X Solutions LLC, and White Feather Investments (ACH/FedNow, SAM.gov WAWF/IPP, GPC/Stripe, Escrow).',
+      nextFile: 'elearning-upskilling-hub.html',
+      highlights: ['Signed Payment Link & Invoice Generator', 'Multi-rail payment acceptance (ACH, WAWF/IPP, Card, Escrow)', 'Multi-entity ledger & FinOps zero-charge guard']
+    },
+    'elearning-upskilling-hub.html': {
+      title: 'Step 4 of 11: eLearning, Career Upskilling & Cross-Industry Insights Atlas',
+      desc: 'Aggregates live intelligence from LinkedIn, Gmail, Industry News, and Procurement News with smooth 3-stage tracing across Visualizations -> Geospatial Map -> Internal Collaborations.',
+      nextFile: 'whitefeather-ecommerce-hub.html',
+      highlights: ['LinkedIn + Gmail + News + Procurement aggregation', 'Smooth 3-Stage Trace (Visuals -> Leaflet Map -> Collaborations)', 'SAS A00-440, Path 4525, CIPP/US & SC-100 upskilling matrix']
+    },
+    'whitefeather-ecommerce-hub.html': {
+      title: 'Step 5 of 11: White Feather, eCommerce & Dual Aggregate News Command',
+      desc: 'Internal storefront & syndicate catalog for White Feather Investments / AI, 4biddenKnowledge affiliates, MGC Data Commerce, and F.I.X VAR, plus 2 built-in NBA-RSS Aggregate News sites.',
+      nextFile: 'sdvosb-contract-radar.html',
+      highlights: ['Direct 1-click checkout handoff to Finance Command', 'White Feather AI & 4biddenKnowledge affiliate programs', 'Dual NBA-RSS Aggregate News portals with ★ KEY TODAY pins']
+    },
     'sdvosb-contract-radar.html': {
-      title: 'Step 3 of 8: Automated SAM.gov & USAspending SDVOSB Contract Radar',
+      title: 'Step 6 of 11: Automated SAM.gov & USAspending SDVOSB Contract Radar',
       desc: 'Option B daily scheduled GitHub Action + live Federal API feed tracking active VA, DoD, and federal contracts in VA/DC/MD across NAICS 541611, 541512, 541614, and 541330.',
       nextFile: 'compliance-trust-center.html',
       highlights: ['Live USAspending.gov v2 Federal API integration', 'NAICS 541611 / 541512 / 541614 / 541330 filters', '1-Click SDVOSB Teaming & RFI Brief Drafter']
     },
     'compliance-trust-center.html': {
-      title: 'Step 4 of 8: Defense-in-Depth & Compliance Center (Trust But Verify)',
+      title: 'Step 7 of 11: Defense-in-Depth & Compliance Center (Trust But Verify)',
       desc: 'Interactive CMMC 2.0 Level 2 (NIST SP 800-171), FedRAMP Moderate, NIST AI RMF, and IAPP CIPP/US & CIPP/G compliance matrix with a live Cryptographic Integrity & Zero-Trust Verification Console.',
       nextFile: 'integrations-connections-hub.html',
       highlights: ['1-Click "Trust But Verify" Cryptographic Audit', 'CMMC 2.0 L2 / NIST 800-171 14-Family Control Tracker', 'Zero-PII/CUI Prompt Sanitization & SSP Exporter']
     },
     'integrations-connections-hub.html': {
-      title: 'Step 5 of 8: Enterprise Integrations & Cloud Connections Hub',
+      title: 'Step 8 of 11: Enterprise Integrations & Cloud Connections Hub',
       desc: 'Live connector matrix linking Google Cloud/Workspace, Microsoft Azure/Entra/Sentinel, SAM.gov & Federal Contracting APIs, Mercury Banking, and Option C Workspace Lead Webhooks.',
       nextFile: 'agent-workflow-studio.html',
       highlights: ['Option A/B/C Status & Workspace Lead Ledger', 'Microsoft Entra ID + Sentinel + Azure AI Foundry', 'Custom Domain & Cloud Run Zero-Charge Connectors']
     },
     'agent-workflow-studio.html': {
-      title: 'Step 6 of 8: Visual Cloud Agent & LangGraph Studio',
+      title: 'Step 9 of 11: Visual Cloud Agent & LangGraph Studio',
       desc: 'Interactive multi-agent supervisor architecture orchestrating Google Vertex AI, Microsoft Azure AI Foundry, and SAS ModelOps Champion/Challenger nodes.',
       nextFile: 'earth-3d.html',
       highlights: ['Supervisor -> Subagent visual DAG execution', 'Champion/Challenger Arbiter evaluation', 'Zero-PII guardrail & cost budget enforcement']
     },
     'earth-3d.html': {
-      title: 'Step 7 of 8: 3D Geospatial & Defense Logistics Command',
+      title: 'Step 10 of 11: 3D Geospatial & Defense Logistics Command',
       desc: 'CesiumJS + GeoJSON 3D globe rendering Richmond HQ, Fort Liberty 25N Signal corridors, and Pentagon AI nodes with a hard billing guard preventing $75/mo Google Earth Pro seat charges.',
       nextFile: 'vr-command.html',
       highlights: ['Interactive 3D camera fly-to presets', 'Zero-seat-cost geospatial telemetry', 'KML/GeoJSON federal corridor overlays']
     },
     'vr-command.html': {
-      title: 'Step 8 of 8: 360° WebXR Spatial Command Deck',
+      title: 'Step 11 of 11: 360° WebXR Spatial Command Deck',
       desc: 'Immersive 3D curved multi-screen spatial operations environment built with A-Frame WebXR for Quest/Vision Pro and desktop 3D mouse-look navigation.',
       nextFile: 'onboarding-portal.html',
-      highlights: ['Curved 360° spatial monitors in 3D space', 'Works in-browser on desktop or VR headset', 'Completes the 8-module MGC Internal Command Tour']
+      highlights: ['Curved 360° spatial monitors in 3D space', 'Works in-browser on desktop or VR headset', 'Completes the 11-module MGC Internal Command Tour']
     }
   };
 

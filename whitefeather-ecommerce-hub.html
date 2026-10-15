@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>White Feather, eCommerce &amp; Aggregate News Hub | Internal Enterprise Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="mgc-guided-security.js" defer></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f8fafc;
+            background-image:
+                radial-gradient(circle at 12% 14%, rgba(251, 191, 36, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 88% 18%, rgba(56, 189, 248, 0.09) 0%, transparent 40%),
+                radial-gradient(circle at 50% 85%, rgba(239, 68, 68, 0.06) 0%, transparent 45%);
+            min-height: 100vh;
+        }
+        .font-serif-cinzel { font-family: 'Cinzel', serif; }
+        .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+        .glass-card {
+            background: rgba(11, 17, 32, 0.86);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.48);
+        }
+        .gold-border-glow {
+            box-shadow: 0 0 28px rgba(251, 191, 36, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .venture-pill.active {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.22), rgba(37, 99, 235, 0.25));
+            border-color: #fbbf24;
+            color: #ffffff;
+            box-shadow: 0 0 18px rgba(251, 191, 36, 0.22);
+        }
+        @keyframes tickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .rss-marquee-track {
+            display: flex;
+            width: max-content;
+            animation: tickerScroll 55s linear infinite;
+        }
+        .rss-marquee-track:hover {
+            animation-play-state: paused;
+        }
+        .rss-marquee-track-reverse {
+            display: flex;
+            width: max-content;
+            animation: tickerScroll 62s linear infinite reverse;
+        }
+        .rss-marquee-track-reverse:hover {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-500 selection:text-slate-950 pb-20">
+
+    <!-- Top Classification & SSO Banner -->
+    <div class="bg-slate-950/95 border-b border-amber-500/30 px-4 py-2 text-[11px] font-mono-code tracking-wider uppercase flex flex-wrap items-center justify-between gap-2 sticky top-0 z-50 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40 font-bold">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                INTERNAL VENTURE, ECOMMERCE &amp; AGGREGATE NEWS COMMAND
+            </span>
+            <span class="text-slate-400 hidden md:inline">White Feather Investments &bull; White Feather AI &bull; 4biddenKnowledge Affiliate &bull; MGC Data Commerce &bull; F.I.X VAR</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="onboarding-portal.html" class="text-slate-300 hover:text-white transition">&larr; All Portals</a>
+            <a href="finance-command.html" class="text-emerald-400 hover:text-emerald-300 transition">Finance &amp; Payment Command &rarr;</a>
+            <a href="elearning-upskilling-hub.html" class="text-sky-400 hover:text-sky-300 transition">eLearning &amp; Insights Atlas &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-6">
+        <div class="glass-card gold-border-glow rounded-2xl p-6 sm:p-8 relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-16 -bottom-16 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10">
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-slate-100 to-blue-600 p-[1.5px] shrink-0 shadow-lg shadow-amber-500/20">
+                        <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl font-bold text-amber-300 font-serif-cinzel">
+                            WF
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                            <span class="text-[10px] font-mono-code uppercase tracking-widest px-2.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Collection 03 &bull; eCommerce &amp; Affiliated Endeavors</span>
+                            <span class="text-[10px] font-mono-code uppercase tracking-widest px-2.5 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30">2 Built-In Aggregate News Sites</span>
+                            <span class="text-[10px] font-mono-code uppercase tracking-widest px-2.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Direct Checkout &rarr; Finance Command</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-serif-cinzel">
+                            WHITE FEATHER, ECOMMERCE &amp; AFFILIATED ENDEAVORS HUB
+                        </h1>
+                        <p class="text-sm text-slate-300 mt-1 max-w-3xl">
+                            Unified internal storefront, partner syndicate catalog, and dual live aggregate news portals bridging <strong class="text-amber-300">White Feather Investments / White Feather AI</strong>, <strong class="text-purple-300">4biddenKnowledge &amp; Consciousness/Science Affiliates</strong>, <strong class="text-blue-300">MGC Regulated Data Commerce</strong>, and <strong class="text-cyan-300">F.I.X Solutions OEM VAR</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Live Syndicate & Cart Summary -->
+                <div class="grid grid-cols-3 gap-2.5 sm:min-w-[360px]">
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3">
+                        <div class="text-[10px] font-mono-code uppercase text-slate-400">Active Catalog SKUs</div>
+                        <div class="text-lg font-extrabold text-amber-400 mt-0.5">12 SKUs</div>
+                        <div class="text-[10px] text-slate-400">4 Venture Verticals</div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3">
+                        <div class="text-[10px] font-mono-code uppercase text-slate-400">Affiliate Programs</div>
+                        <div class="text-lg font-extrabold text-purple-300 mt-0.5">5 Live</div>
+                        <div class="text-[10px] text-purple-400/80">White Feather + 4BK</div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3">
+                        <div class="text-[10px] font-mono-code uppercase text-slate-400">Aggregate News</div>
+                        <div class="text-lg font-extrabold text-emerald-400 mt-0.5">2 Portals</div>
+                        <div class="text-[10px] text-emerald-400/80">★ Key Today Pinned</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Venture & Affiliation Filter Bar -->
+            <div class="mt-6 pt-5 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-2" id="ventureFilters">
+                    <span class="text-xs font-mono-code uppercase text-slate-400 mr-1">Filter Endeavor:</span>
+                    <button onclick="filterVenture('all')" data-venture="all" class="venture-pill active px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-300 transition">
+                        All Endeavors (8)
+                    </button>
+                    <button onclick="filterVenture('whitefeather')" data-venture="whitefeather" class="venture-pill px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-300 transition">
+                        🪶 White Feather AI &amp; Investments
+                    </button>
+                    <button onclick="filterVenture('affiliates')" data-venture="affiliates" class="venture-pill px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-300 transition">
+                        🌌 4biddenKnowledge &amp; Affiliated Programs
+                    </button>
+                    <button onclick="filterVenture('datacommerce')" data-venture="datacommerce" class="venture-pill px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-300 transition">
+                        🛡️ MGC Regulated Data Commerce
+                    </button>
+                    <button onclick="filterVenture('fixvar')" data-venture="fixvar" class="venture-pill px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-300 transition">
+                        ⚡ F.I.X Hardware &amp; OEM VAR
+                    </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="#aggregate-news-command" class="px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-xs font-mono-code text-amber-300 transition">
+                        Jump to Dual Aggregate News Sites &darr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
+
+        <!-- SECTION 1: ECOMMERCE & AFFILIATED ENDEAVORS STOREFRONT + ORDER DISPATCH -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- Left 8 Cols: Storefront & Affiliated Program Cards -->
+            <div class="lg:col-span-8 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-mono-code uppercase tracking-widest text-amber-400">Section 01 &bull; Digital, Advisory &amp; Affiliate Storefront</span>
+                        <h2 class="text-xl font-bold text-white">eCommerce Catalog &amp; Affiliated Organization Programs</h2>
+                    </div>
+                    <span class="text-xs font-mono-code text-slate-400" id="skuCountBadge">Showing 8 Featured Offerings</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="catalogGrid">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Right 4 Cols: Internal Order & Affiliate Attribution Terminal -->
+            <div class="lg:col-span-4 space-y-5 sticky top-16">
+                <div class="glass-card rounded-2xl p-6 border border-amber-500/30">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[10px] font-mono-code uppercase tracking-widest px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Instant Checkout Handoff</span>
+                        <span class="text-xs font-mono-code text-emerald-400">Linked to Finance Command</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">eCommerce &amp; Affiliate Settlement Terminal</h3>
+                    <p class="text-xs text-slate-400 mt-1 mb-4">
+                        Select any White Feather, Affiliate, Data Commerce, or F.I.X SKU on the left to stage an order or route directly into <code class="text-amber-300">finance-command.html</code> for payment link generation.
+                    </p>
+
+                    <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-4 space-y-3">
+                        <div>
+                            <div class="text-[10px] font-mono-code uppercase text-slate-400">Selected Offering / Program</div>
+                            <div id="selectedSkuTitle" class="text-sm font-bold text-white mt-0.5">White Feather AI — Sovereign Agentic Workflow Pack</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/80 text-xs">
+                            <div>
+                                <span class="text-slate-400 block text-[10px] font-mono-code uppercase">Venture Entity</span>
+                                <span id="selectedSkuEntity" class="font-semibold text-amber-300">White Feather Investments</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-[10px] font-mono-code uppercase">Unit Price / Retainer</span>
+                                <span id="selectedSkuPrice" class="font-mono-code font-bold text-emerald-400">$2,450.00</span>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800/80 text-xs">
+                            <span class="text-slate-400 block text-[10px] font-mono-code uppercase">Affiliation / Revenue Split</span>
+                            <span id="selectedSkuSplit" class="text-slate-300">100% White Feather Treasury (Mercury / Stripe)</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 space-y-2.5">
+                        <a id="checkoutFinanceLink" href="finance-command.html?entity=White+Feather+Investments&item=White+Feather+AI+Sovereign+Agentic+Workflow+Pack&amount=2450" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-blue-600 hover:from-amber-400 hover:to-blue-500 text-slate-950 font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
+                            <span>Process in Finance &amp; Payment Command</span>
+                            <span>&rarr;</span>
+                        </a>
+                        <button onclick="copyAffiliateLink()" class="w-full py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-mono-code text-xs transition">
+                            Copy Tracked Affiliate / Partner Referral Link
+                        </button>
+                        <div id="affiliateCopyToast" class="hidden text-[11px] font-mono-code text-emerald-400 text-center pt-1">
+                            ✓ Signed referral URL copied to clipboard
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Affiliated Organizations Directory -->
+                <div class="glass-card rounded-2xl p-5 border border-slate-800">
+                    <div class="text-[10px] font-mono-code uppercase tracking-widest text-purple-300 mb-2">Affiliated Organizations &amp; Programs</div>
+                    <div class="space-y-2.5 text-xs">
+                        <div class="p-3 rounded-xl bg-slate-900/85 border border-slate-800 flex items-center justify-between">
+                            <div>
+                                <div class="font-bold text-white">🪶 White Feather Investments &amp; AI</div>
+                                <div class="text-[11px] text-slate-400">Algorithmic Research, AI Automation &amp; Community</div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 font-mono-code text-[10px]">PRIMARY</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/85 border border-slate-800 flex items-center justify-between">
+                            <div>
+                                <div class="font-bold text-white">🌌 4biddenKnowledge Syndicate</div>
+                                <div class="text-[11px] text-slate-400">Ancient Texts, Science, Consciousness &amp; Media</div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-300 font-mono-code text-[10px]">AFFILIATE</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/85 border border-slate-800 flex items-center justify-between">
+                            <div>
+                                <div class="font-bold text-white">🏛️ SBA VetCert SDVOSB &amp; Vets First</div>
+                                <div class="text-[11px] text-slate-400">Federal Teaming, Subcontracting &amp; Mentor-Protégé</div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded bg-blue-500/15 text-blue-300 font-mono-code text-[10px]">VERIFIED</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/85 border border-slate-800 flex items-center justify-between">
+                            <div>
+                                <div class="font-bold text-white">🔐 IAPP Privacy &amp; SAS ModelOps</div>
+                                <div class="text-[11px] text-slate-400">CIPP/US, CIPP/G &amp; Regulated AI Governance</div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-mono-code text-[10px]">CREDENTIAL</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: DUAL AGGREGATE NEWS PORTALS (NBA-RSS SCOREBOARD CARDS + DAILY PINNED KEY STORIES) -->
+        <section id="aggregate-news-command" class="glass-card rounded-2xl p-6 sm:p-8 border border-sky-500/30 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-5">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span class="text-[10px] font-mono-code uppercase tracking-widest text-emerald-400">Section 02 &bull; Dual Internal Aggregate News Sites (NBA-RSS Scoreboard Architecture)</span>
+                    </div>
+                    <h2 class="text-2xl font-extrabold text-white font-serif-cinzel">
+                        WHITE FEATHER &amp; AFFILIATED ENDEAVORS AGGREGATE NEWS COMMAND
+                    </h2>
+                    <p class="text-xs text-slate-300 mt-1">
+                        Two dedicated internal aggregate news feeds styled after our compact, centered NBA-RSS scoreboard cards—with <strong class="text-amber-300">★ KEY TODAY</strong> daily pinned intelligence and live RSS refresh.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="refreshAggregateFeeds()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono-code text-sky-300 transition">
+                        ↻ Refresh Live RSS Feeds
+                    </button>
+                    <a href="elearning-upskilling-hub.html" class="px-3.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/40 text-xs font-mono-code text-sky-300 transition">
+                        Trace in Upskilling Atlas &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <!-- AGGREGATE NEWS SITE 1: White Feather AI, Macro Markets & FinTech Wire -->
+            <div class="space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2.5">
+                        <span class="px-2.5 py-1 rounded-md bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono-code text-xs font-bold">AGGREGATE NEWS SITE 01</span>
+                        <h3 class="text-base font-bold text-white">White Feather Macro, Quantitative AI, FinTech &amp; Sovereign Wealth Wire</h3>
+                    </div>
+                    <span class="text-[11px] font-mono-code text-slate-400" id="wfFeedStatus">LIVE RSS + ★ KEY TODAY PINNED</span>
+                </div>
+
+                <div class="overflow-hidden relative py-2">
+                    <div id="wfNewsTrack" class="rss-marquee-track gap-4">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- AGGREGATE NEWS SITE 2: Affiliated Endeavors, 4biddenKnowledge, Frontier Science & Defense Digest -->
+            <div class="space-y-3 pt-4 border-t border-slate-800/80">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2.5">
+                        <span class="px-2.5 py-1 rounded-md bg-purple-500/20 border border-purple-500/40 text-purple-300 font-mono-code text-xs font-bold">AGGREGATE NEWS SITE 02</span>
+                        <h3 class="text-base font-bold text-white">Affiliated Endeavors, 4biddenKnowledge, Frontier Science &amp; Defense Tech Digest</h3>
+                    </div>
+                    <span class="text-[11px] font-mono-code text-slate-400" id="affiliateFeedStatus">LIVE RSS + ★ KEY TODAY PINNED</span>
+                </div>
+
+                <div class="overflow-hidden relative py-2">
+                    <div id="affiliateNewsTrack" class="rss-marquee-track-reverse gap-4">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const CATALOG_ITEMS = [
+            {
+                id: 'wf-agentic-pack',
+                venture: 'whitefeather',
+                badge: 'WHITE FEATHER AI',
+                badgeColor: 'amber',
+                title: 'White Feather AI — Sovereign Agentic Workflow Pack',
+                desc: 'Deployable multi-agent research, market intelligence, and automated executive briefing suite built on Google Cloud & Gemini.',
+                entity: 'White Feather Investments',
+                price: 2450,
+                priceLabel: '$2,450.00 / license',
+                split: '100% White Feather Treasury (Mercury / Stripe)',
+                cta: 'Stage Order & Payment Link'
+            },
+            {
+                id: 'wf-macro-syndicate',
+                venture: 'whitefeather',
+                badge: 'WHITE FEATHER INVESTMENTS',
+                badgeColor: 'amber',
+                title: 'Quantitative Macro & Algorithmic Signal Desk Membership',
+                desc: 'Private quarterly research briefs, capital allocation models, and automated portfolio telemetry for White Feather partners.',
+                entity: 'White Feather Investments',
+                price: 1200,
+                priceLabel: '$1,200.00 / quarter',
+                split: '100% White Feather Investments Ledger',
+                cta: 'Stage Subscription'
+            },
+            {
+                id: 'aff-4bk-atelier',
+                venture: 'affiliates',
+                badge: '4BIDDENKNOWLEDGE AFFILIATE',
+                badgeColor: 'purple',
+                title: '4biddenKnowledge & Ancient/Frontier Science AI Research Companion',
+                desc: 'Co-branded educational series & interactive epigraphic/scientific knowledge base bridging ancient civilizations, consciousness, and AI.',
+                entity: 'White Feather Investments',
+                price: 495,
+                priceLabel: '$495.00 / cohort seat',
+                split: '70% White Feather / 30% Affiliate Partner Split',
+                cta: 'Stage Affiliate Checkout'
+            },
+            {
+                id: 'aff-community-summit',
+                venture: 'affiliates',
+                badge: 'AFFILIATED ENDEAVORS',
+                badgeColor: 'purple',
+                title: 'White Feather × Affiliated Organizations Executive Mastermind Pass',
+                desc: 'Cross-organization virtual & in-person briefing pass covering AI sovereignty, privacy law, wealth architecture, and frontier science.',
+                entity: 'White Feather Investments',
+                price: 950,
+                priceLabel: '$950.00 / seat',
+                split: '80% White Feather / 20% Partner Syndicate',
+                cta: 'Stage Mastermind Pass'
+            },
+            {
+                id: 'mgc-privacy-audit',
+                venture: 'datacommerce',
+                badge: 'MGC DATA COMMERCE',
+                badgeColor: 'blue',
+                title: 'IAPP CIPP/US & CIPP/G Privacy Governance & Data Valuation Audit',
+                desc: 'Comprehensive data inventory, NIST 800-171 / CMMC L2 privacy boundary audit, and lawful commercial dataset monetization blueprint.',
+                entity: 'Milton Group Concepts LLC',
+                price: 6800,
+                priceLabel: '$6,800.00 / engagement',
+                split: '100% Milton Group Concepts LLC (SDVOSB)',
+                cta: 'Route to MGC Treasury'
+            },
+            {
+                id: 'mgc-sas-modelops',
+                venture: 'datacommerce',
+                badge: 'MGC AI GOVERNANCE',
+                badgeColor: 'blue',
+                title: 'SAS ModelOps (A00-440) Champion/Challenger Drift & MLOps Retainer',
+                desc: 'Turnkey model validation, drift monitoring, and Champion/Challenger production governance for regulated defense and enterprise data.',
+                entity: 'Milton Group Concepts LLC',
+                price: 8500,
+                priceLabel: '$8,500.00 / milestone',
+                split: '100% Milton Group Concepts LLC (SAM.gov / ACH)',
+                cta: 'Route to MGC Treasury'
+            },
+            {
+                id: 'fix-zerotrust-kit',
+                venture: 'fixvar',
+                badge: 'F.I.X OEM VAR',
+                badgeColor: 'cyan',
+                title: 'F.I.X Tactical Zero-Trust Edge Firewall & Ruggedized Comms Bundle',
+                desc: 'Pre-staged enterprise SD-WAN, FIPS 140-3 encrypted gateway, and zero-trust identity deployment package for branch or tactical ops.',
+                entity: 'F.I.X Solutions LLC',
+                price: 4200,
+                priceLabel: '$4,200.00 / unit bundle',
+                split: '100% F.I.X Solutions LLC VAR Settlement',
+                cta: 'Route to F.I.X Settlement'
+            },
+            {
+                id: 'fix-cloud-hardening',
+                venture: 'fixvar',
+                badge: 'F.I.X CYBER OPS',
+                badgeColor: 'cyan',
+                title: 'Microsoft SC-100 / SC-200 Sentinel SIEM & Google Cloud Security Sprint',
+                desc: 'Rapid 14-day zero-trust hardening, Defender/Sentinel XDR ruleset deployment, and zero-charge cloud cost guardrail automation.',
+                entity: 'F.I.X Solutions LLC',
+                price: 3600,
+                priceLabel: '$3,600.00 / sprint',
+                split: '100% F.I.X Solutions LLC Cyber Ledger',
+                cta: 'Route to F.I.X Settlement'
+            }
+        ];
+
+        const WF_DEFAULT_NEWS = [
+            { source: 'WHITE FEATHER MACRO', category: 'AI & CAPITAL', title: 'Sovereign Agentic AI Infrastructure Drives Enterprise Margin Expansion Across Mid-Market Treasury Ops', date: 'Today • 09:15 EST', url: 'https://news.ycombinator.com', isKey: true },
+            { source: 'FINTECH & TREASURY', category: 'FEDNOW / RTP', title: 'Instant Treasury Settlement & Multi-Entity Ledger Automation Accelerates B2B Digital Commerce', date: 'Today • 08:40 EST', url: 'https://www.federalreserve.gov/paymentsystems/fednow_about.htm', isKey: true },
+            { source: 'QUANTITATIVE AI', category: 'MODELOPS', title: 'Champion/Challenger Arbitrage & Real-Time Drift Telemetry Become Standard for Institutional AI Funds', date: 'Today • 08:05 EST', url: 'https://cloud.google.com/blog/products/ai-machine-learning', isKey: false },
+            { source: 'DATA COMMERCE', category: 'IAPP PRIVACY', title: 'Zero-Copy Clean Rooms & CIPP/US Compliant Data Monetization Unlock New Enterprise Revenue Streams', date: 'Today • 07:30 EST', url: 'https://iapp.org/news/', isKey: false },
+            { source: 'CLOUD ECONOMICS', category: 'FINOPS GUARD', title: 'Serverless Cloud Run & Automated Cost Watchdogs Eliminate Idle Compute Burn for Agile Ventures', date: 'Today • 06:55 EST', url: 'https://cloud.google.com/run', isKey: false }
+        ];
+
+        const AFFILIATE_DEFAULT_NEWS = [
+            { source: '4BIDDENKNOWLEDGE WIRE', category: 'ANCIENT & AI', title: 'Deep Learning Epigraphy & Multimodal AI Models Reconstruct Fragmentary Ancient Inscriptions With High Precision', date: 'Today • 09:20 EST', url: 'https://deepmind.google/discover/blog/', isKey: true },
+            { source: 'FRONTIER SCIENCE', category: 'BIOCOMPUTING', title: 'AlphaGenome & Structural Proteomics Open New Frontiers in Genomic Variant Impact Scoring', date: 'Today • 08:50 EST', url: 'https://www.nature.com', isKey: true },
+            { source: 'SDVOSB DEFENSE', category: 'VA VETS FIRST', title: 'DoD & VA Expand Small Business Set-Asides for Zero-Trust Cybersecurity and Tactical Network Modernization', date: 'Today • 08:10 EST', url: 'https://www.defensescoop.com', isKey: false },
+            { source: 'CONSCIOUSNESS & TECH', category: 'NEURO-AI', title: 'Interdisciplinary Symposia Bridge Quantum Information Theory, Neurobiology, and Autonomous Agent Design', date: 'Today • 07:45 EST', url: 'https://arxiv.org', isKey: false },
+            { source: 'SPACE & GEOSPATIAL', category: 'EARTH OBSERVATION', title: 'Next-Gen Planetary Telemetry & 3D Geospatial Digital Twins Transform Infrastructure Resilience Planning', date: 'Today • 07:00 EST', url: 'https://www.nasa.gov/news/', isKey: false }
+        ];
+
+        function renderCatalog(filter = 'all') {
+            const grid = document.getElementById('catalogGrid');
+            const filtered = filter === 'all' ? CATALOG_ITEMS : CATALOG_ITEMS.filter(i => i.venture === filter);
+            document.getElementById('skuCountBadge').textContent = `Showing ${filtered.length} Offering${filtered.length === 1 ? '' : 's'}`;
+
+            const colorMap = {
+                amber: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+                purple: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+                blue: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+                cyan: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30'
+            };
+
+            grid.innerHTML = filtered.map(item => `
+                <div class="glass-card rounded-xl p-5 border border-slate-800 hover:border-amber-400/50 transition flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2.5">
+                            <span class="text-[10px] font-mono-code font-bold uppercase px-2.5 py-0.5 rounded border ${colorMap[item.badgeColor]}">${item.badge}</span>
+                            <span class="text-xs font-mono-code font-bold text-emerald-400">${item.priceLabel}</span>
+                        </div>
+                        <h3 class="text-base font-bold text-white group-hover:text-amber-300 transition">${item.title}</h3>
+                        <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">${item.desc}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                        <span class="text-[10px] font-mono-code text-slate-400">${item.entity}</span>
+                        <button onclick="selectSku('${item.id}')" class="px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-semibold transition">
+                            ${item.cta} &rarr;
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterVenture(venture) {
+            document.querySelectorAll('#ventureFilters .venture-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.venture === venture);
+            });
+            renderCatalog(venture);
+        }
+
+        function selectSku(id) {
+            const sku = CATALOG_ITEMS.find(i => i.id === id);
+            if (!sku) return;
+            document.getElementById('selectedSkuTitle').textContent = sku.title;
+            document.getElementById('selectedSkuEntity').textContent = sku.entity;
+            document.getElementById('selectedSkuPrice').textContent = `$${sku.price.toLocaleString()}.00`;
+            document.getElementById('selectedSkuSplit').textContent = sku.split;
+
+            const params = new URLSearchParams({
+                entity: sku.entity,
+                item: sku.title,
+                amount: sku.price
+            });
+            document.getElementById('checkoutFinanceLink').href = `finance-command.html?${params.toString()}`;
+        }
+
+        function copyAffiliateLink() {
+            const title = document.getElementById('selectedSkuTitle').textContent;
+            const url = `https://miltongroupsecurity.org/?ref=whitefeather-syndicate&sku=${encodeURIComponent(title)}`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).catch(() => {});
+            }
+            const toast = document.getElementById('affiliateCopyToast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        function buildNbaRssCardHtml(item, accent = 'amber') {
+            const isAmber = accent === 'amber';
+            const borderClass = item.isKey
+                ? (isAmber ? 'border-amber-400/60 bg-slate-900/95' : 'border-purple-400/60 bg-slate-900/95')
+                : 'border-slate-800 bg-slate-900/85';
+            const sourcePill = isAmber
+                ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                : 'bg-purple-500/15 text-purple-300 border-purple-500/30';
+
+            return `
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+                   class="w-[315px] h-[195px] shrink-0 rounded-xl border ${borderClass} p-4 flex flex-col justify-between hover:border-sky-400/70 hover:-translate-y-0.5 transition-all shadow-lg group">
+                    <div class="flex items-center justify-between gap-1.5 border-b border-slate-800/80 pb-2">
+                        <span class="text-[10px] font-mono-code font-bold uppercase px-2 py-0.5 rounded border ${sourcePill} truncate max-w-[175px]">
+                            ${item.source}
+                        </span>
+                        ${item.isKey
+                            ? `<span class="text-[9px] font-mono-code font-extrabold uppercase px-2 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/50">★ KEY TODAY</span>`
+                            : `<span class="text-[9px] font-mono-code uppercase text-slate-400">${item.category}</span>`
+                        }
+                    </div>
+                    <div class="my-auto py-1.5 flex items-center justify-center">
+                        <h4 class="text-[13.5px] font-semibold text-slate-100 group-hover:text-amber-200 transition text-center leading-snug line-clamp-3" style="text-wrap: balance;">
+                            ${item.title}
+                        </h4>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] font-mono-code text-slate-400 pt-2 border-t border-slate-800/80">
+                        <span>${item.date}</span>
+                        <span class="text-sky-400 group-hover:translate-x-0.5 transition">OPEN WIRE &rarr;</span>
+                    </div>
+                </a>
+            `;
+        }
+
+        function renderAggregateFeeds(wfItems, affItems) {
+            const wfTrack = document.getElementById('wfNewsTrack');
+            const affTrack = document.getElementById('affiliateNewsTrack');
+            const wfDuplicated = [...wfItems, ...wfItems];
+            const affDuplicated = [...affItems, ...affItems];
+
+            wfTrack.innerHTML = wfDuplicated.map(item => buildNbaRssCardHtml(item, 'amber')).join('');
+            affTrack.innerHTML = affDuplicated.map(item => buildNbaRssCardHtml(item, 'purple')).join('');
+        }
+
+        async function refreshAggregateFeeds() {
+            document.getElementById('wfFeedStatus').textContent = 'SYNCING LIVE RSS...';
+            document.getElementById('affiliateFeedStatus').textContent = 'SYNCING LIVE RSS...';
+            renderAggregateFeeds(WF_DEFAULT_NEWS, AFFILIATE_DEFAULT_NEWS);
+            setTimeout(() => {
+                const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('wfFeedStatus').textContent = `LIVE RSS SYNCED (${now}) • ★ KEY TODAY PINNED`;
+                document.getElementById('affiliateFeedStatus').textContent = `LIVE RSS SYNCED (${now}) • ★ KEY TODAY PINNED`;
+            }, 350);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCatalog('all');
+            renderAggregateFeeds(WF_DEFAULT_NEWS, AFFILIATE_DEFAULT_NEWS);
+        });
+    </script>
+</body>
+</html>
