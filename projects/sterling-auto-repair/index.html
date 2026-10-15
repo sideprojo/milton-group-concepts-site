@@ -3,23 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sterling Auto Repair | 45911 Transamerica Plaza, Sterling, VA 20166 | Master Mechanical &amp; Collision Center</title>
+  <title>Sterling Auto Repair &amp; Body | 45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</title>
+  <meta name="description" content="Trusted ASE-Certified Mechanical & Collision Auto Repair at 45911 Transamerica Plaza, Suite 102, Sterling, VA 20166. Brakes, Diagnostics, Tires, Alignment, A/C, Transmission & Body Shop. Call (571) 531-0342." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #090d16;
-      --bg-card: #111827;
-      --bg-elevated: #1e293b;
+      --bg-panel: #111827;
+      --bg-card: rgba(20, 29, 47, 0.92);
       --red-primary: #dc2626;
       --red-bright: #ef4444;
-      --gold-accent: #f59e0b;
-      --emerald-ok: #10b981;
-      --blue-info: #3b82f6;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --blue: #3b82f6;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --border-subtle: rgba(148, 163, 184, 0.18);
+      --border-subtle: rgba(148, 163, 184, 0.16);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,57 +33,20 @@
       overflow-x: hidden;
     }
 
-    /* MGC Customer Incentive Showcase Banner */
-    .mgc-incentive-bar {
-      background: linear-gradient(90deg, #061026 0%, #0f172a 50%, #1e1b4b 100%);
-      border-bottom: 1px solid rgba(245, 158, 11, 0.4);
-      padding: 8px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      font-size: 11.5px;
-      position: relative;
-      z-index: 100;
+    /* Smooth Section & Card Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .mgc-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #fbbf24;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .mgc-nav-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .mgc-nav-links a {
-      color: #e2e8f0;
-      text-decoration: none;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      transition: all 0.2s;
-    }
-    .mgc-nav-links a:hover {
-      background: #fbbf24;
-      color: #090d16;
-      border-color: #fbbf24;
+    .animate-in {
+      animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
-    /* Top Shop Utility Bar */
+    /* Top Shop Address, Hours & Dual Phone Utility Bar */
     .top-utility {
-      background: #050811;
+      background: #05080f;
       border-bottom: 1px solid var(--border-subtle);
-      padding: 10px 24px;
+      padding: 9px 24px;
       font-size: 12px;
       color: #cbd5e1;
     }
@@ -98,8 +62,8 @@
     .util-items {
       display: flex;
       flex-wrap: wrap;
-      gap: 18px;
       align-items: center;
+      gap: 18px;
     }
     .util-pill {
       display: inline-flex;
@@ -107,32 +71,34 @@
       gap: 6px;
       font-weight: 600;
     }
-    .rating-pill {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.45);
-      color: #fbbf24;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 11px;
+    .util-pill strong { color: #fff; }
+    .status-open-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      display: inline-block;
     }
 
-    /* Main Sticky Navigation */
+    /* Main Sticky Shop Navigation Header */
     .site-header {
       position: sticky;
       top: 0;
-      z-index: 95;
-      background: rgba(9, 13, 22, 0.94);
-      backdrop-filter: blur(16px);
+      z-index: 1000;
+      background: rgba(9, 13, 22, 0.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--border-subtle);
       padding: 14px 24px;
+      transition: all 0.25s ease;
     }
     .header-inner {
       max-width: 1340px;
       margin: 0 auto;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 16px;
     }
     .brand-logo {
@@ -142,33 +108,33 @@
       text-decoration: none;
       color: #fff;
     }
-    .crest-box {
+    .brand-crest {
       width: 46px;
       height: 46px;
       border-radius: 12px;
       background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-      border: 2px solid #f87171;
+      border: 1px solid rgba(255, 255, 255, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 16px;
-      letter-spacing: -0.04em;
+      font-size: 17px;
+      letter-spacing: -0.03em;
       box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
     }
     .brand-text h1 {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 900;
       letter-spacing: -0.02em;
+      line-height: 1.1;
       text-transform: uppercase;
-      line-height: 1.05;
     }
     .brand-text span {
       display: block;
       font-size: 10.5px;
       font-weight: 700;
       color: #f87171;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       margin-top: 2px;
     }
@@ -193,10 +159,10 @@
       gap: 10px;
     }
     .btn-call {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       color: #fff;
-      padding: 10px 16px;
+      padding: 10px 15px;
       border-radius: 10px;
       font-weight: 800;
       font-size: 13px;
@@ -206,7 +172,7 @@
       gap: 6px;
       transition: all 0.2s;
     }
-    .btn-call:hover { background: rgba(255, 255, 255, 0.16); }
+    .btn-call:hover { background: rgba(255, 255, 255, 0.14); transform: translateY(-1px); }
     .btn-book {
       background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       color: #fff;
@@ -217,7 +183,7 @@
       text-decoration: none;
       border: none;
       cursor: pointer;
-      box-shadow: 0 10px 24px rgba(220, 38, 38, 0.4);
+      box-shadow: 0 10px 24px rgba(220, 38, 38, 0.38);
       transition: all 0.2s;
     }
     .btn-book:hover { transform: translateY(-1px); box-shadow: 0 14px 28px rgba(220, 38, 38, 0.55); }
@@ -225,9 +191,9 @@
     /* Hero Section */
     .hero {
       position: relative;
-      padding: 72px 24px 80px;
+      padding: 64px 24px 72px;
       background:
-        linear-gradient(105deg, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.85) 52%, rgba(9, 13, 22, 0.65) 100%),
+        linear-gradient(105deg, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.85) 54%, rgba(9, 13, 22, 0.65) 100%),
         url('assets/hero_shop_bay.jpg') center/cover no-repeat;
       border-bottom: 1px solid var(--border-subtle);
     }
@@ -235,135 +201,180 @@
       max-width: 1340px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1.25fr 0.95fr;
+      grid-template-columns: 1.22fr 0.98fr;
       gap: 40px;
       align-items: center;
     }
-    .hero-tag {
+    .eyebrow-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 6px 14px;
       border-radius: 999px;
       background: rgba(220, 38, 38, 0.18);
-      border: 1px solid rgba(239, 68, 68, 0.5);
+      border: 1px solid rgba(239, 68, 68, 0.45);
       color: #fca5a5;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 18px;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
     }
     .hero h2 {
-      font-size: 50px;
+      font-size: 46px;
       font-weight: 900;
-      line-height: 1.06;
       letter-spacing: -0.03em;
-      margin-bottom: 18px;
+      line-height: 1.08;
+      margin-bottom: 14px;
     }
     .hero h2 span {
-      color: #ef4444;
+      background: linear-gradient(90deg, #f87171, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .hero p {
-      font-size: 16.5px;
+      font-size: 16px;
       color: #cbd5e1;
-      max-width: 640px;
-      margin-bottom: 26px;
-      line-height: 1.65;
+      max-width: 600px;
+      margin-bottom: 24px;
     }
-    .hero-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 30px;
-    }
+
     .trust-badges {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      padding-top: 22px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      gap: 10px;
+      margin-top: 24px;
     }
-    .trust-item strong {
-      display: block;
-      font-size: 22px;
+    .trust-card {
+      background: rgba(17, 24, 39, 0.86);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 12px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .trust-card:hover { transform: translateY(-2px); border-color: rgba(248, 113, 113, 0.45); }
+    .trust-card .val {
+      font-size: 18px;
       font-weight: 900;
       color: #fff;
       font-family: 'JetBrains Mono', monospace;
     }
-    .trust-item span {
-      font-size: 11.5px;
+    .trust-card .lbl {
+      font-size: 11px;
       color: var(--text-muted);
       font-weight: 600;
+      margin-top: 2px;
     }
 
-    /* Hero Right Card: Quick Appointment & Bay Status */
-    .hero-card {
-      background: rgba(17, 24, 39, 0.94);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+    /* Quick Appointment Booking Card */
+    .booking-card {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(239, 68, 68, 0.4);
       border-radius: 22px;
       padding: 26px;
-      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
     }
-    .bay-live-pill {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      border-radius: 12px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      margin-bottom: 18px;
-      font-size: 12px;
+    .booking-card h3 {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 4px;
     }
-    .pulse-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #10b981;
-      display: inline-block;
-      margin-right: 7px;
-      box-shadow: 0 0 10px #10b981;
+    .booking-card .sub {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
     }
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 11px;
     }
-    .field-group {
-      margin-bottom: 12px;
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    .field-group label {
-      display: block;
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #94a3b8;
-      margin-bottom: 5px;
+      letter-spacing: 0.06em;
+      color: #cbd5e1;
     }
-    .field-group input, .field-group select, .field-group textarea {
-      width: 100%;
-      padding: 11px 13px;
-      border-radius: 10px;
+    .form-control {
       background: #090d16;
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      border-radius: 10px;
+      padding: 10px 12px;
       color: #fff;
       font-size: 13px;
       font-family: inherit;
+      transition: border-color 0.2s;
     }
-    .field-group input:focus, .field-group select:focus {
+    .form-control:focus {
       outline: none;
-      border-color: #ef4444;
+      border-color: var(--red-bright);
+    }
+
+    /* Interactive Symptom / Guided Finder Strip */
+    .symptom-strip {
+      max-width: 1340px;
+      margin: -26px auto 0;
+      position: relative;
+      z-index: 20;
+      padding: 0 24px;
+    }
+    .symptom-box {
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.98), rgba(15, 23, 42, 0.96));
+      border: 1px solid rgba(245, 158, 11, 0.38);
+      border-radius: 20px;
+      padding: 20px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    }
+    .symptom-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .sym-pill {
+      background: rgba(9, 13, 22, 0.85);
+      border: 1px solid var(--border-subtle);
+      color: #e2e8f0;
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sym-pill:hover, .sym-pill.active {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      border-color: #f87171;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.35);
+    }
+    .symptom-result {
+      margin-top: 14px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: rgba(9, 13, 22, 0.78);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.25s ease;
     }
 
     /* Section Containers */
     .section {
+      padding: 64px 24px;
       max-width: 1340px;
       margin: 0 auto;
-      padding: 68px 24px;
     }
     .section-head {
       display: flex;
@@ -371,134 +382,222 @@
       justify-content: space-between;
       align-items: flex-end;
       gap: 16px;
-      margin-bottom: 36px;
-    }
-    .eyebrow {
-      font-size: 11.5px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: #ef4444;
-      margin-bottom: 8px;
+      margin-bottom: 28px;
     }
     .section-head h3 {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 900;
       letter-spacing: -0.02em;
     }
+    .section-head p {
+      color: var(--text-muted);
+      font-size: 14px;
+      max-width: 560px;
+    }
 
-    /* 6 Services Grid */
+    /* Filter Pills */
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .filter-btn {
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid var(--border-subtle);
+      color: #cbd5e1;
+      padding: 8px 15px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--red-primary);
+      border-color: var(--red-bright);
+      color: #fff;
+    }
+
+    /* Services Grid (Clean Progressive Disclosure Cards) */
     .services-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 22px;
     }
     .service-card {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      border-radius: 18px;
+      border-radius: 20px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.25s;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.28s ease, box-shadow 0.28s ease;
     }
     .service-card:hover {
       transform: translateY(-5px);
       border-color: rgba(239, 68, 68, 0.55);
-      box-shadow: 0 22px 45px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55);
     }
     .service-img-wrap {
       position: relative;
-      height: 205px;
+      height: 185px;
       overflow: hidden;
     }
     .service-img-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.4s;
+      transition: transform 0.45s ease;
     }
     .service-card:hover .service-img-wrap img {
-      transform: scale(1.05);
+      transform: scale(1.06);
     }
-    .service-badge {
+    .service-tag {
       position: absolute;
       top: 12px;
       left: 12px;
       background: rgba(9, 13, 22, 0.88);
       backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fbbf24;
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 10.5px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #f8fafc;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .service-price-pill {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(220, 38, 38, 0.92);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
     }
     .service-body {
-      padding: 22px;
+      padding: 20px;
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
     .service-body h4 {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 800;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
+    /* Progressive disclosure: 1-line summary that expands smoothly on card hover */
     .service-body p {
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--text-muted);
-      margin-bottom: 16px;
-      line-height: 1.55;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      transition: all 0.25s ease;
     }
-    .service-tags {
+    .service-card:hover .service-body p {
+      -webkit-line-clamp: 5;
+      color: #cbd5e1;
+    }
+    .service-chips {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
-    .service-tags span {
+    .chip {
       font-size: 11px;
-      padding: 4px 9px;
+      font-weight: 600;
+      padding: 3px 9px;
       border-radius: 6px;
       background: rgba(255, 255, 255, 0.05);
-      color: #cbd5e1;
-      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+    }
+    .service-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 12px;
     }
 
-    /* Interactive Estimator & Live Repair Order Tracker */
+    /* Interactive Cost Estimator & Live Vehicle Tracker Split */
     .interactive-split {
       display: grid;
       grid-template-columns: 1.15fr 0.85fr;
-      gap: 28px;
-    }
-    .tool-panel {
-      background: linear-gradient(145deg, #111827, #0b111e);
+      gap: 26px;
+      background: linear-gradient(145deg, rgba(17, 24, 39, 0.95), rgba(9, 13, 22, 0.98));
       border: 1px solid var(--border-subtle);
-      border-radius: 22px;
-      padding: 28px;
+      border-radius: 24px;
+      padding: 30px;
     }
-    .est-result-box {
-      margin-top: 18px;
-      padding: 20px;
+    .est-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all 0.18s;
+      margin-bottom: 8px;
+    }
+    .est-option:hover, .est-option.selected {
+      background: rgba(220, 38, 38, 0.14);
+      border-color: var(--red-bright);
+    }
+    .est-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: #fca5a5;
+      font-size: 13px;
+    }
+    .est-total-bar {
+      margin-top: 14px;
+      padding: 16px 18px;
       border-radius: 16px;
-      background: rgba(220, 38, 38, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.4);
+      background: #05080f;
+      border: 1px solid rgba(16, 185, 129, 0.4);
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
-    .est-price {
-      font-size: 32px;
-      font-weight: 900;
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
+
+    /* License Plate / Repair Order Progress Tracker */
+    .ro-stage {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      font-size: 12.5px;
+      margin-bottom: 7px;
+      transition: all 0.25s ease;
+    }
+    .ro-stage.done {
+      border-color: rgba(16, 185, 129, 0.45);
+      background: rgba(16, 185, 129, 0.1);
+      color: #d1fae5;
+    }
+    .ro-stage.current {
+      border-color: var(--amber);
+      background: rgba(245, 158, 11, 0.14);
+      color: #fef3c7;
+      font-weight: 700;
     }
 
     /* Real Shop Gallery & Google Maps Section */
@@ -512,7 +611,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: 22px;
-      padding: 28px;
+      padding: 26px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -520,11 +619,11 @@
     .hours-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 16px 0;
+      margin: 14px 0;
       font-size: 13px;
     }
     .hours-table td {
-      padding: 8px 0;
+      padding: 7px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
     .hours-table td:last-child {
@@ -544,19 +643,21 @@
       border: 1px solid var(--border-subtle);
       border-radius: 18px;
       padding: 22px;
+      transition: transform 0.22s ease;
     }
+    .review-card:hover { transform: translateY(-3px); }
     .stars {
       color: #fbbf24;
       font-size: 15px;
       letter-spacing: 2px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     /* Footer */
     footer {
       background: #050811;
       border-top: 1px solid var(--border-subtle);
-      padding: 40px 24px 90px;
+      padding: 36px 24px 90px;
       font-size: 13px;
       color: var(--text-muted);
     }
@@ -571,9 +672,7 @@
     }
 
     /* Mobile Bottom Thumb Bar (Hidden on PC >= 768px) */
-    .mobile-thumb-bar {
-      display: none;
-    }
+    .mobile-thumb-bar { display: none; }
 
     /* Isolated Mobile-Only Styles (< 768px) — PC Version 100% Untouched */
     @media (max-width: 980px) {
@@ -584,20 +683,18 @@
     }
     @media (max-width: 768px) {
       html, body { max-width: 100vw !important; overflow-x: hidden !important; }
-      .mgc-incentive-bar { padding: 8px 12px; max-width: 100vw; overflow-x: hidden; }
-      .mgc-badge { flex-wrap: wrap; font-size: 10px; gap: 4px; line-height: 1.35; }
-      .mgc-nav-links { flex-wrap: wrap; gap: 6px; }
       .top-utility { display: none; }
       .site-header { padding: 12px 16px; }
       .brand-text h1 { font-size: 16px; }
       .header-ctas .btn-call { display: none; }
       .hero { padding: 36px 16px 44px; }
-      .hero h2 { font-size: 32px; }
+      .hero h2 { font-size: 31px; }
       .hero p { font-size: 14.5px; }
       .trust-badges { grid-template-columns: repeat(2, 1fr); }
       .form-grid { grid-template-columns: 1fr; }
-      .section { padding: 44px 16px; }
-      .section-head h3 { font-size: 26px; }
+      .symptom-strip { margin-top: 16px; padding: 0 16px; }
+      .section { padding: 42px 16px; }
+      .section-head h3 { font-size: 25px; }
       .mobile-thumb-bar {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -633,531 +730,700 @@
 </head>
 <body>
 
-  <!-- MGC Customer Incentive Showcase Header -->
-  <div class="mgc-incentive-bar">
-    <div class="mgc-badge">
-      <span>★ MGC &amp; F.I.X SOLUTIONS CUSTOMER INCENTIVE PROTOTYPE</span>
-      <span style="color:#94a3b8;">|</span>
-      <span style="color:#34d399;">CLIENT: STERLING AUTO REPAIR (TRANSAMERICA PLAZA, STERLING VA)</span>
-    </div>
-    <div class="mgc-nav-links">
-      <a href="../../admin-command-portal.html">← Admin Command Portal</a>
-      <a href="../../onboarding-portal.html">Client 2FA Portal</a>
-      <a href="../../saas-apps-and-lms-showcase.html">Monetized Apps &amp; Showcase</a>
-    </div>
-  </div>
-
   <!-- Top Shop Utility Bar -->
   <div class="top-utility">
     <div class="top-utility-inner">
       <div class="util-items">
-        <span class="util-pill">📍 <strong>45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</strong> (Off Old Ox Rd &amp; Rock Hill Rd)</span>
-        <span class="util-pill">🕒 Mon–Fri: 8:00 AM – 6:00 PM &bull; Sat: 8:00 AM – 1:00 PM</span>
+        <span class="util-pill"><span class="status-open-dot"></span> <strong>BAYS OPEN TODAY:</strong> Mon–Fri 8:00 AM – 6:00 PM &bull; Sat 8:30 AM – 3:00 PM</span>
+        <span class="util-pill">📍 <strong>45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</strong> (Off Old Ox Rd / Rt. 606)</span>
       </div>
       <div class="util-items">
-        <span class="rating-pill">★★★★★ 5.0 Verified Google &amp; CARFAX Rating</span>
-        <span class="util-pill" style="color:#34d399;">✔ Same-Day Diagnostics &amp; All Insurance Claims Accepted</span>
+        <span class="util-pill">🛡️ <strong>12-Mo / 12,000-Mi Warranty</strong></span>
+        <span class="util-pill">💳 <strong>Snap Finance &amp; All Major Insurance Accepted</strong></span>
+        <span class="util-pill">📞 <strong>(571) 531-0342</strong> / <strong>(703) 531-7966</strong></span>
       </div>
     </div>
   </div>
 
-  <!-- Main Sticky Header -->
+  <!-- Sticky Main Navigation Header -->
   <header class="site-header">
     <div class="header-inner">
       <a href="#" class="brand-logo">
-        <div class="crest-box">SAR</div>
+        <div class="brand-crest">SAR</div>
         <div class="brand-text">
           <h1>Sterling Auto Repair</h1>
-          <span>Transamerica Plaza &bull; Sterling, VA 20166</span>
+          <span>Mechanical &bull; Diagnostics &bull; Collision &bull; Suite 102</span>
         </div>
       </a>
 
       <nav class="desktop-nav">
-        <a href="#services">Mechanical &amp; Body Services</a>
-        <a href="#estimator">Instant Price Estimator</a>
-        <a href="#tracker">Live Bay RO Tracker</a>
-        <a href="#reviews">5.0★ Customer Reviews</a>
+        <a href="#symptom-finder">Symptom Finder</a>
+        <a href="#services">Repair Services</a>
+        <a href="#estimator">Instant Estimator</a>
+        <a href="#ro-tracker">Track Vehicle</a>
         <a href="#location">Transamerica Plaza Map</a>
+        <a href="#reviews">5.0★ Reviews</a>
       </nav>
 
       <div class="header-ctas">
         <a href="tel:5715310342" class="btn-call">📞 (571) 531-0342</a>
-        <a href="#book-bay" class="btn-book">Schedule Service Bay →</a>
+        <a href="#booking-box" class="btn-book">Schedule Service →</a>
       </div>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="hero" id="book-bay">
+  <section class="hero">
     <div class="hero-inner">
-      <div>
-        <div class="hero-tag">
-          <span>🔧 STERLING’S #1 RATED INDEPENDENT AUTO REPAIR &amp; COLLISION CENTER</span>
+      <div class="animate-in">
+        <div class="eyebrow-badge">
+          <span>★ 5.0 GOOGLE &amp; CARFAX TOP-RATED SHOP</span>
+          <span>&bull;</span>
+          <span>TRANSAMERICA PLAZA SUITE 102</span>
         </div>
         <h2>
-          Honest Master Mechanics at <span>Transamerica Plaza.</span>
+          Honest Diagnostics, Master Mechanical &amp; <span>Collision Care in Sterling, VA.</span>
         </h2>
         <p>
-          Located at <strong>45911 Transamerica Plaza, Suite 102 in Sterling, VA</strong>, Sterling Auto Repair delivers dealership-grade computer diagnostics, precision brake &amp; suspension service, engine &amp; transmission repair, and full collision body work — with transparent upfront pricing and fast turnaround times for Loudoun &amp; Fairfax drivers.
+          Located at <strong>45911 Transamerica Plaza, Suite 102</strong> just off Route 606 near Dulles. ASE-Certified technicians, upfront digital estimates before we turn a wrench, and a <strong>12-Month / 12,000-Mile Warranty</strong> on all Domestic, Asian &amp; European vehicles.
         </p>
 
-        <div class="hero-buttons">
-          <a href="#estimator" class="btn-book" style="padding:14px 24px;font-size:14px;">🧮 Get Instant Repair Estimate</a>
-          <a href="tel:5715310342" class="btn-call" style="padding:14px 22px;font-size:14px;">📞 Call Shop: (571) 531-0342</a>
-          <a href="#location" class="btn-call" style="padding:14px 20px;font-size:14px;">📍 Get Directions (Suite 102)</a>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;">
+          <a href="#estimator" class="btn-book" style="padding:13px 22px;font-size:14px;">🧮 Instant Repair Estimator</a>
+          <a href="#location" class="btn-call" style="padding:13px 20px;font-size:14px;">📍 Get Directions (Suite 102)</a>
         </div>
 
         <div class="trust-badges">
-          <div class="trust-item">
-            <strong>5.0 ★</strong>
-            <span>Verified Google &amp; CARFAX Score</span>
+          <div class="trust-card">
+            <div class="val" style="color:#fbbf24;">5.0 ★</div>
+            <div class="lbl">Google &amp; CARFAX Verified</div>
           </div>
-          <div class="trust-item">
-            <strong>24 Mo</strong>
-            <span>24,000-Mile Warranty on Parts &amp; Labor</span>
+          <div class="trust-card">
+            <div class="val" style="color:#34d399;">12K Mi</div>
+            <div class="lbl">12-Mo Parts &amp; Labor Warranty</div>
           </div>
-          <div class="trust-item">
-            <strong>100%</strong>
-            <span>Domestic, Asian &amp; European Makes</span>
+          <div class="trust-card">
+            <div class="val" style="color:#60a5fa;">ASE</div>
+            <div class="lbl">Certified Master Mechanics</div>
           </div>
-          <div class="trust-item">
-            <strong>Same-Day</strong>
-            <span>Brakes, Oil, Diagnostics &amp; Maintenance</span>
+          <div class="trust-card">
+            <div class="val" style="color:#f87171;">Same-Day</div>
+            <div class="lbl">Diagnostics, Brakes &amp; Oil</div>
           </div>
         </div>
       </div>
 
-      <!-- Hero Right: Express Service Bay Booking Card -->
-      <div class="hero-card">
-        <div class="bay-live-pill">
-          <div><span class="pulse-dot"></span><strong style="color:#34d399;">TRANSAMERICA PLAZA BAYS OPEN</strong></div>
-          <span style="color:#cbd5e1;font-weight:700;">Next Bay Slot: Today</span>
+      <!-- Right Column: Fast Service Appointment Scheduler -->
+      <div class="booking-card animate-in" id="booking-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:10.5px;font-weight:800;color:#34d399;text-transform:uppercase;letter-spacing:0.1em;">● BAY 1 &amp; BAY 3 AVAILABLE TODAY</span>
+          <span style="font-size:11px;color:#94a3b8;font-family:'JetBrains Mono',monospace;">Ste 102</span>
         </div>
-        <h3 style="font-size:21px;font-weight:900;margin-bottom:6px;">Reserve Your Service Bay Online</h3>
-        <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:16px;">
-          No prepayment required. Receive an instant SMS confirmation and upfront digital estimate before any wrench turns.
-        </p>
+        <h3>Book Your Service Bay Online</h3>
+        <p class="sub">No credit card required. Receive an instant confirmation text &amp; upfront quote.</p>
 
-        <form onsubmit="submitBayBooking(event)">
+        <form id="sar-booking-form" onsubmit="submitSterlingBooking(event)">
           <div class="form-grid">
-            <div class="field-group" style="margin-bottom:0;">
-              <label>Your Full Name</label>
-              <input type="text" id="bk-name" required placeholder="John Miller" />
+            <div class="form-group">
+              <label>Your Name *</label>
+              <input type="text" id="bk-name" class="form-control" placeholder="e.g., Alex Carter" required />
             </div>
-            <div class="field-group" style="margin-bottom:0;">
-              <label>Mobile Phone (For SMS Updates)</label>
-              <input type="tel" id="bk-phone" required placeholder="(571) 555-0192" />
+            <div class="form-group">
+              <label>Mobile Phone *</label>
+              <input type="tel" id="bk-phone" class="form-control" placeholder="(703) 555-0192" required />
+            </div>
+            <div class="form-group">
+              <label>Vehicle Year / Make / Model *</label>
+              <input type="text" id="bk-vehicle" class="form-control" placeholder="e.g., 2021 Honda CR-V / Ford F-150" required />
+            </div>
+            <div class="form-group">
+              <label>Preferred Drop-Off Date *</label>
+              <input type="date" id="bk-date" class="form-control" required />
+            </div>
+            <div class="form-group full">
+              <label>Service Needed *</label>
+              <select id="bk-service" class="form-control">
+                <option value="Check Engine Light & Computer Diagnostics">Check Engine Light &amp; Computer Diagnostics ($95 – Waived w/ Repair)</option>
+                <option value="Brake Pads, Rotors & Hydraulic Service">Brake Pads, Rotors &amp; Hydraulic Service</option>
+                <option value="Full Synthetic Oil Change & Multi-Point Inspection">Full Synthetic Oil Change &amp; 50-Point Inspection ($79+)</option>
+                <option value="Tires, Mounting, Balancing & 4-Wheel Laser Alignment">Tires, Balancing &amp; 4-Wheel Laser Alignment</option>
+                <option value="A/C Recharge, Heating, Radiator & Cooling System">A/C Recharge, Heating &amp; Cooling System Repair</option>
+                <option value="Transmission, Timing Chain & Major Engine Service">Transmission, Timing Chain &amp; Major Engine Service</option>
+                <option value="Auto Body, Collision, Bumper & Paint Matching">Auto Body, Collision, Dent &amp; Insurance Claim Estimate</option>
+                <option value="VA State Safety & Northern VA Emissions Prep">VA State Safety &amp; Emissions Readiness Check</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Symptom or Notes (Optional)</label>
+              <input type="text" id="bk-notes" class="form-control" placeholder="e.g., Squeaking when braking, A/C blowing warm, or insurance claim..." />
+            </div>
+            <div class="form-group full" style="margin-top:4px;">
+              <button type="submit" class="btn-book" style="width:100%;padding:13px;font-size:14px;">
+                Confirm Appointment at 45911 Transamerica Plaza →
+              </button>
             </div>
           </div>
-
-          <div class="form-grid">
-            <div class="field-group" style="margin-bottom:0;">
-              <label>Vehicle Year / Make / Model</label>
-              <input type="text" id="bk-vehicle" required placeholder="2021 Honda Accord / F-150" />
-            </div>
-            <div class="field-group" style="margin-bottom:0;">
-              <label>Preferred Date &amp; Drop-Off</label>
-              <input type="date" id="bk-date" required />
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label>Primary Service or Vehicle Symptom</label>
-            <select id="bk-service">
-              <option value="Brake Pads, Rotors & Caliper Service">Brake Pads, Rotors &amp; Caliper Service</option>
-              <option value="Check Engine Light / Computer OBD-II Diagnostics">Check Engine Light / Computer OBD-II Diagnostics</option>
-              <option value="Full Synthetic Oil Change & Multi-Point Inspection">Full Synthetic Oil Change &amp; Multi-Point Inspection</option>
-              <option value="Engine Timing, Cooling, Alternator or Starter Repair">Engine Timing, Cooling, Alternator or Starter Repair</option>
-              <option value="Suspension, Shocks, Struts & 4-Wheel Alignment">Suspension, Shocks, Struts &amp; 4-Wheel Alignment</option>
-              <option value="Transmission & Drivetrain Service">Transmission &amp; Drivetrain Service</option>
-              <option value="Auto Body, Collision Repair & Insurance Claim Estimate">Auto Body, Collision Repair &amp; Insurance Claim Estimate</option>
-              <option value="A/C Recharge, Heating & Electrical Diagnostics">A/C Recharge, Heating &amp; Electrical Diagnostics</option>
-            </select>
-          </div>
-
-          <button type="submit" class="btn-book" style="width:100%;padding:14px;font-size:14px;">
-            ✔ Confirm Service Appointment at Suite 102
-          </button>
-
-          <div id="booking-confirm-box" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:rgba(16,185,129,0.16);border:1px solid rgba(16,185,129,0.5);font-size:12.5px;color:#ecfdf5;"></div>
         </form>
+        <div id="bk-confirm-banner" style="display:none;margin-top:12px;padding:12px;border-radius:10px;background:rgba(16,185,129,0.16);border:1px solid #10b981;color:#d1fae5;font-size:12.5px;font-weight:700;"></div>
       </div>
     </div>
   </section>
 
-  <!-- 6 Core Mechanical & Collision Services with Real Imagery -->
+  <!-- Guided Interactive Symptom Finder (Zero Clutter, Smooth Transitions) -->
+  <div class="symptom-strip" id="symptom-finder">
+    <div class="symptom-box">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;">
+        <div>
+          <span style="font-size:10.5px;font-weight:800;color:#fbbf24;text-transform:uppercase;letter-spacing:0.1em;">🧭 Interactive Vehicle Symptom Guide</span>
+          <h4 style="font-size:18px;font-weight:900;">Not sure what to book? Tap what your car is doing:</h4>
+        </div>
+        <span style="font-size:12px;color:var(--text-muted);">Instant ASE-Technician Recommendation &amp; Price Range</span>
+      </div>
+
+      <div class="symptom-pills">
+        <button class="sym-pill active" onclick="selectSymptom('cel', this)">⚠️ Check Engine Light / Rough Idle</button>
+        <button class="sym-pill" onclick="selectSymptom('brakes', this)">🛑 Squeaking / Grinding Brakes</button>
+        <button class="sym-pill" onclick="selectSymptom('ac', this)">❄️ A/C Blowing Warm / Overheating</button>
+        <button class="sym-pill" onclick="selectSymptom('pull', this)">🛞 Pulling / Steering Vibration</button>
+        <button class="sym-pill" onclick="selectSymptom('body', this)">💥 Bumper Dent / Collision / Paint</button>
+        <button class="sym-pill" onclick="selectSymptom('oil', this)">🛢️ Due for Oil / 30k-60k-90k Service</button>
+      </div>
+
+      <div class="symptom-result" id="symptom-result-box">
+        <div>
+          <div style="font-size:14px;font-weight:800;color:#fff;" id="sym-title">Recommended: OEM Computer &amp; Live-Data Diagnostic Scan</div>
+          <div style="font-size:12.5px;color:#cbd5e1;" id="sym-desc">We pull factory fault codes, inspect ignition/fuel/timing telemetry, and credit the $95 scan fee toward your repair.</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="text-align:right;">
+            <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;">Typical Range</div>
+            <div style="font-size:16px;font-weight:900;color:#34d399;font-family:'JetBrains Mono',monospace;" id="sym-price">$95 Scan (Waived w/ Repair)</div>
+          </div>
+          <button class="btn-book" onclick="applySymptomToBooking()">Select &amp; Book →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Repair & Collision Services Section -->
   <section class="section" id="services">
     <div class="section-head">
       <div>
-        <div class="eyebrow">FULL-SERVICE MECHANICAL &amp; AUTO BODY</div>
-        <h3>Complete Automotive Care Under One Roof</h3>
+        <div class="eyebrow-badge" style="margin-bottom:8px;">FULL-SERVICE MECHANICAL &amp; AUTO BODY</div>
+        <h3>Complete Auto Care Under One Roof</h3>
+        <p>Hover any service card for detailed specs, or click <strong>Book Service</strong> to pre-fill your appointment.</p>
       </div>
-      <p style="color:var(--text-muted);max-width:460px;font-size:13.5px;">
-        Equipped with factory-level scan tools, heavy-duty lifts, and precision alignment &amp; paint bays right off Old Ox Rd (Route 606) in Sterling, VA.
-      </p>
+      <div class="filter-pills">
+        <button class="filter-btn active" onclick="filterServices('all', this)">All Services (6)</button>
+        <button class="filter-btn" onclick="filterServices('mech', this)">Engine, Brakes &amp; Drivetrain</button>
+        <button class="filter-btn" onclick="filterServices('maint', this)">Oil, Tires &amp; Alignment</button>
+        <button class="filter-btn" onclick="filterServices('body', this)">Collision &amp; Body Shop</button>
+      </div>
     </div>
 
-    <div class="services-grid">
-      <!-- Service 1: Uses the actual Google Maps engine photo from 45911 Transamerica Plaza Ste 102! -->
-      <div class="service-card">
+    <div class="services-grid" id="services-grid">
+      <!-- 1. Engine & Computer Diagnostics (Real Transamerica Plaza Bay Photo) -->
+      <article class="service-card" data-cat="mech">
         <div class="service-img-wrap">
-          <img src="assets/sterling_plaza_real_2.jpg" alt="Engine Diagnostics & Mechanical Repair at 45911 Transamerica Plaza" />
-          <span class="service-badge">Real Shop Bay Photo • Ste 102</span>
+          <img src="assets/sterling_plaza_real_2.jpg" alt="Real Engine & Timing Chain Repair at 45911 Transamerica Plaza Ste 102" />
+          <span class="service-tag">📸 Real Suite 102 Shop Bay</span>
+          <span class="service-price-pill">$95 Scan (Waived w/ Repair)</span>
         </div>
         <div class="service-body">
           <div>
-            <h4>Engine Diagnostics, Timing &amp; Mechanical Overhauls</h4>
-            <p>From Check Engine lights and misfires to DOHC timing chains, head gaskets, water pumps, radiators, and alternators — diagnosed accurately the first time.</p>
-            <div class="service-tags">
-              <span>OBD-II Live Telemetry</span>
-              <span>Timing Chains &amp; Belts</span>
-              <span>Cooling Systems</span>
+            <h4>Engine Diagnostics &amp; Mechanical</h4>
+            <p>Factory-level OBD-II telemetry, timing chain &amp; DOHC cylinder head service, starter/alternator electrical troubleshooting, and check-engine resolution.</p>
+            <div class="service-chips">
+              <span class="chip">Check Engine Light</span>
+              <span class="chip">Timing Chains</span>
+              <span class="chip">Alternators &amp; Starters</span>
             </div>
           </div>
-          <button class="btn-book" onclick="prefillService('Engine Timing, Cooling, Alternator or Starter Repair')">Book Engine / Diagnostic Bay →</button>
+          <div class="service-footer">
+            <span style="color:#34d399;font-weight:700;">● Same-Day Turnaround</span>
+            <a href="#booking-box" onclick="prefillService('Check Engine Light & Computer Diagnostics')" style="color:#f87171;font-weight:800;text-decoration:none;">Book Service →</a>
+          </div>
         </div>
-      </div>
+      </article>
 
-      <!-- Service 2: Brakes & Suspension -->
-      <div class="service-card">
+      <!-- 2. Brakes, Rotors & Suspension -->
+      <article class="service-card" data-cat="mech">
         <div class="service-img-wrap">
-          <img src="assets/service_brakes_susp.jpg" alt="Brake & Suspension Service Sterling VA" />
-          <span class="service-badge">Same-Day Turnaround</span>
+          <img src="assets/service_brakes_susp.jpg" alt="Brake Pads, Rotors & Suspension Service in Sterling VA" />
+          <span class="service-tag">Safety Critical</span>
+          <span class="service-price-pill">From $229 / Axle</span>
         </div>
         <div class="service-body">
           <div>
-            <h4>Precision Brakes, Rotors, ABS &amp; Suspension</h4>
-            <p>OEM-grade ceramic brake pads, machined or new rotors, brake fluid flushes, ABS wheel speed sensors, control arms, wheel bearings, struts, and shocks.</p>
-            <div class="service-tags">
-              <span>Ceramic Pads &amp; Rotors</span>
-              <span>Shocks &amp; Struts</span>
-              <span>Steering &amp; Axles</span>
+            <h4>Brakes, Rotors &amp; Suspension</h4>
+            <p>OEM ceramic brake pads, precision coated rotors, ABS sensor diagnostics, struts, shocks, control arms, wheel bearings, and steering rack repair.</p>
+            <div class="service-chips">
+              <span class="chip">Ceramic Pads &amp; Rotors</span>
+              <span class="chip">Struts &amp; Shocks</span>
+              <span class="chip">Control Arms</span>
             </div>
           </div>
-          <button class="btn-book" onclick="prefillService('Brake Pads, Rotors & Caliper Service')">Book Brake &amp; Suspension Bay →</button>
+          <div class="service-footer">
+            <span style="color:#34d399;font-weight:700;">● Free Brake Inspection</span>
+            <a href="#booking-box" onclick="prefillService('Brake Pads, Rotors & Hydraulic Service')" style="color:#f87171;font-weight:800;text-decoration:none;">Book Service →</a>
+          </div>
         </div>
-      </div>
+      </article>
 
-      <!-- Service 3: Collision & Auto Body -->
-      <div class="service-card">
+      <!-- 3. Tires, Mounting & 4-Wheel Laser Alignment -->
+      <article class="service-card" data-cat="maint">
         <div class="service-img-wrap">
-          <img src="assets/service_collision_paint.jpg" alt="Auto Body & Collision Repair Sterling VA" />
-          <span class="service-badge">All Insurance Accepted</span>
+          <img src="assets/service_tires_align.jpg" alt="Tires & 4-Wheel Laser Alignment in Sterling VA" />
+          <span class="service-tag">Tires &amp; Alignment</span>
+          <span class="service-price-pill">Alignment $119</span>
         </div>
         <div class="service-body">
           <div>
-            <h4>Collision Repair, Auto Body &amp; Factory Paint Match</h4>
-            <p>Bumper replacement, dent &amp; scratch removal, computerized frame straightening, PPG computerized color-match refinishing, and direct insurance claim billing.</p>
-            <div class="service-tags">
-              <span>Direct Insurance Claims</span>
-              <span>Frame &amp; Unibody</span>
-              <span>Factory Paint Booth</span>
+            <h4>Tires &amp; 4-Wheel Laser Alignment</h4>
+            <p>Computerized 4-wheel laser alignment, road-force tire balancing, flat repair, TPMS sensor programming, and all major tire brands installed.</p>
+            <div class="service-chips">
+              <span class="chip">4-Wheel Alignment</span>
+              <span class="chip">Road-Force Balance</span>
+              <span class="chip">TPMS Sensors</span>
             </div>
           </div>
-          <button class="btn-book" onclick="prefillService('Auto Body, Collision Repair & Insurance Claim Estimate')">Request Free Body Estimate →</button>
+          <div class="service-footer">
+            <span style="color:#34d399;font-weight:700;">● Protects Tire Life</span>
+            <a href="#booking-box" onclick="prefillService('Tires, Mounting, Balancing & 4-Wheel Laser Alignment')" style="color:#f87171;font-weight:800;text-decoration:none;">Book Service →</a>
+          </div>
         </div>
-      </div>
+      </article>
 
-      <!-- Service 4: Transmission & Drivetrain -->
-      <div class="service-card">
+      <!-- 4. Full Synthetic Oil & Factory Maintenance -->
+      <article class="service-card" data-cat="maint">
         <div class="service-img-wrap">
-          <img src="assets/service_transmission.jpg" alt="Transmission & Drivetrain Repair Sterling VA" />
-          <span class="service-badge">Drivetrain Specialists</span>
+          <img src="assets/service_oil_maint.jpg" alt="Full Synthetic Oil Change & Scheduled Maintenance" />
+          <span class="service-tag">CARFAX Reported</span>
+          <span class="service-price-pill">From $79</span>
         </div>
         <div class="service-body">
           <div>
-            <h4>Transmission, Clutch, AWD &amp; Differential Service</h4>
-            <p>Automatic &amp; manual transmission diagnostics, fluid &amp; filter exchanges, clutch replacements, CV axles, transfer cases, and differential rebuilds.</p>
-            <div class="service-tags">
-              <span>ATF Fluid Exchange</span>
-              <span>Clutch &amp; Flywheel</span>
-              <span>AWD / 4WD Service</span>
+            <h4>Synthetic Oil &amp; 30k/60k/90k Service</h4>
+            <p>Full-synthetic oil &amp; OEM filter changes, 50-point digital safety inspection, Virginia State Inspection prep, and commercial fleet maintenance accounts.</p>
+            <div class="service-chips">
+              <span class="chip">Full Synthetic Oil</span>
+              <span class="chip">30k/60k/90k Mile</span>
+              <span class="chip">VA Inspection Prep</span>
             </div>
           </div>
-          <button class="btn-book" onclick="prefillService('Transmission & Drivetrain Service')">Schedule Transmission Check →</button>
+          <div class="service-footer">
+            <span style="color:#34d399;font-weight:700;">● 45-Min Express Bay</span>
+            <a href="#booking-box" onclick="prefillService('Full Synthetic Oil Change & Multi-Point Inspection')" style="color:#f87171;font-weight:800;text-decoration:none;">Book Service →</a>
+          </div>
         </div>
-      </div>
+      </article>
 
-      <!-- Service 5: Preventive Maintenance & A/C -->
-      <div class="service-card">
+      <!-- 5. Transmission, Cooling & A/C Service -->
+      <article class="service-card" data-cat="mech">
         <div class="service-img-wrap">
-          <img src="assets/service_oil_maint.jpg" alt="Synthetic Oil Change & Factory Maintenance Sterling VA" />
-          <span class="service-badge">30k / 60k / 90k Mile Service</span>
+          <img src="assets/service_transmission.jpg" alt="Transmission, Cooling System & A/C Repair" />
+          <span class="service-tag">Drivetrain &amp; Climate</span>
+          <span class="service-price-pill">A/C Check $149</span>
         </div>
         <div class="service-body">
           <div>
-            <h4>Synthetic Oil, A/C Recharge &amp; Factory Maintenance</h4>
-            <p>Full-synthetic oil changes, 40-point digital safety inspections, R-134a / R-1234yf A/C evacuated recharge, spark plugs, belts, hoses, and commercial fleet service.</p>
-            <div class="service-tags">
-              <span>Full Synthetic Oil</span>
-              <span>A/C Evac &amp; Recharge</span>
-              <span>Fleet Maintenance</span>
+            <h4>Transmission, Cooling &amp; A/C Repair</h4>
+            <p>Transmission fluid exchange &amp; rebuilds, clutch service, radiator &amp; water pump replacement, and R-134a / R-1234yf air conditioning evacuation &amp; recharge.</p>
+            <div class="service-chips">
+              <span class="chip">A/C Recharge</span>
+              <span class="chip">Transmission Service</span>
+              <span class="chip">Radiator &amp; Coolant</span>
             </div>
           </div>
-          <button class="btn-book" onclick="prefillService('Full Synthetic Oil Change & Multi-Point Inspection')">Book Express Maintenance →</button>
+          <div class="service-footer">
+            <span style="color:#34d399;font-weight:700;">● Snap Finance Available</span>
+            <a href="#booking-box" onclick="prefillService('A/C Recharge, Heating, Radiator & Cooling System')" style="color:#f87171;font-weight:800;text-decoration:none;">Book Service →</a>
+          </div>
         </div>
-      </div>
+      </article>
 
-      <!-- Service 6: Tires, Alignment & Inspection Prep -->
-      <div class="service-card">
+      <!-- 6. Auto Body, Collision & Paint Matching -->
+      <article class="service-card" data-cat="body">
         <div class="service-img-wrap">
-          <img src="assets/service_tires_align.jpg" alt="Tires & 4-Wheel Alignment Sterling VA" />
-          <span class="service-badge">Precision Laser Alignment</span>
+          <img src="assets/service_collision_paint.jpg" alt="Auto Body, Collision Repair & Paint Matching in Sterling VA" />
+          <span class="service-tag">Insurance Approved</span>
+          <span class="service-price-pill">Free Written Estimate</span>
         </div>
         <div class="service-body">
           <div>
-            <h4>Tires, 4-Wheel Alignment &amp; VA Safety Inspection Prep</h4>
-            <p>High-speed road-force tire balancing, TPMS sensor programming, 4-wheel laser alignment, and Virginia State Inspection readiness &amp; emissions repairs.</p>
-            <div class="service-tags">
-              <span>4-Wheel Alignment</span>
-              <span>TPMS &amp; Balancing</span>
-              <span>VA Inspection Prep</span>
+            <h4>Collision, Auto Body &amp; Paint Shop</h4>
+            <p>Full collision repair, computerized color-matched paint booth, bumper replacement, dent &amp; scratch removal, frame straightening, and direct insurance billing.</p>
+            <div class="service-chips">
+              <span class="chip">OEM Paint Match</span>
+              <span class="chip">Bumper &amp; Dent Repair</span>
+              <span class="chip">All Insurance Claims</span>
             </div>
           </div>
-          <button class="btn-book" onclick="prefillService('Suspension, Shocks, Struts & 4-Wheel Alignment')">Book Alignment &amp; Tire Bay →</button>
+          <div class="service-footer">
+            <span style="color:#fbbf24;font-weight:700;">● Deductible Assistance</span>
+            <a href="#booking-box" onclick="prefillService('Auto Body, Collision, Bumper & Paint Matching')" style="color:#f87171;font-weight:800;text-decoration:none;">Book Estimate →</a>
+          </div>
         </div>
-      </div>
+      </article>
     </div>
   </section>
 
-  <!-- Interactive Repair Cost Estimator + Live Repair Order (RO) Tracker -->
-  <section class="section" id="estimator" style="padding-top:10px;">
+  <!-- Interactive Repair Cost Estimator + Live Vehicle Status Tracker (No Login Needed) -->
+  <section class="section" id="estimator" style="padding-top:16px;">
     <div class="interactive-split">
-      <!-- Left: Transparent Repair Estimator -->
-      <div class="tool-panel">
-        <div class="eyebrow">TRANSPARENT UPFRONT PRICING FOR STERLING DRIVERS</div>
-        <h3 style="font-size:26px;font-weight:900;margin-bottom:8px;">Interactive Repair &amp; Maintenance Estimator</h3>
-        <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">
-          Select your vehicle class and service below to view our typical Sterling, VA parts-and-labor range before booking your bay.
+      <!-- Left: Instant Transparent Estimator -->
+      <div>
+        <div class="eyebrow-badge" style="margin-bottom:8px;">TRANSPARENT NORTHERN VA PRICING</div>
+        <h3 style="font-size:26px;font-weight:900;margin-bottom:6px;">Instant Repair &amp; Maintenance Estimator</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+          Select your vehicle class and tap the services you need for an immediate parts + labor estimate.
         </p>
 
-        <div class="form-grid">
-          <div class="field-group">
-            <label>1. Select Vehicle Class</label>
-            <select id="est-veh" onchange="calcSterlingEstimate()">
-              <option value="1.0">Sedan / Compact (Civic, Camry, Corolla, Altima)</option>
-              <option value="1.2">Midsize SUV / Crossover (CR-V, RAV4, Explorer, Highlander)</option>
-              <option value="1.35">Pickup Truck / Commercial Van (F-150, Silverado, RAM, Transit)</option>
-              <option value="1.45">European / Luxury (BMW, Mercedes-Benz, Audi, Volvo, Lexus)</option>
-            </select>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+          <button type="button" class="filter-btn active" onclick="setVehicleMultiplier(1.0, this)">🚗 Sedan</button>
+          <button type="button" class="filter-btn" onclick="setVehicleMultiplier(1.15, this)">🚙 SUV / Crossover</button>
+          <button type="button" class="filter-btn" onclick="setVehicleMultiplier(1.25, this)">🛻 Truck / Van</button>
+          <button type="button" class="filter-btn" onclick="setVehicleMultiplier(1.35, this)">🏎️ Euro / Luxury</button>
+        </div>
+
+        <div id="est-options-list">
+          <div class="est-option selected" data-low="79" data-high="109" onclick="toggleEstItem(this)">
+            <div>
+              <div style="font-weight:800;font-size:13.5px;">Full Synthetic Oil, OEM Filter &amp; 50-Point Safety Check</div>
+              <div style="font-size:11.5px;color:var(--text-muted);">Includes fluid top-off, tire pressure &amp; CARFAX history update</div>
+            </div>
+            <div class="est-price">$79 – $109</div>
           </div>
-          <div class="field-group">
-            <label>2. Select Repair or Maintenance Service</label>
-            <select id="est-svc" onchange="calcSterlingEstimate()">
-              <option value="brakes" data-low="245" data-high="385" data-time="1.5 – 2.5 Hours (Same-Day)">Ceramic Brake Pads &amp; Rotor Resurface/Replace (Per Axle)</option>
-              <option value="oil" data-low="69" data-high="98" data-time="45 Minutes (While You Wait)">Full-Synthetic Oil, OEM Filter &amp; 40-Point Inspection</option>
-              <option value="diag" data-low="89" data-high="135" data-time="45 – 60 Minutes">Check Engine / OBD-II &amp; Electrical Diagnostic Scan</option>
-              <option value="ac" data-low="145" data-high="240" data-time="1.5 Hours">A/C System Vacuum Leak Test &amp; Refrigerant Recharge</option>
-              <option value="alt" data-low="380" data-high="620" data-time="2 – 3 Hours (Same-Day)">Alternator / Starter / Battery Charging System Replacement</option>
-              <option value="trans" data-low="185" data-high="295" data-time="1.5 – 2 Hours">Transmission Fluid &amp; Filter Service</option>
-              <option value="body" data-low="450" data-high="1250" data-time="2 – 4 Days (Insurance Approved)">Bumper / Fender Collision Repair &amp; Factory Paint Match</option>
-            </select>
+
+          <div class="est-option" data-low="229" data-high="349" onclick="toggleEstItem(this)">
+            <div>
+              <div style="font-weight:800;font-size:13.5px;">Ceramic Brake Pads &amp; Coated Rotors (Per Axle)</div>
+              <div style="font-size:11.5px;color:var(--text-muted);">Quiet OEM-grade stopping power + hardware lubrication</div>
+            </div>
+            <div class="est-price">$229 – $349</div>
+          </div>
+
+          <div class="est-option" data-low="95" data-high="135" onclick="toggleEstItem(this)">
+            <div>
+              <div style="font-weight:800;font-size:13.5px;">Check Engine / OBD-II Live-Data Computer Diagnostic</div>
+              <div style="font-size:11.5px;color:var(--text-muted);">100% credited toward any approved mechanical repair</div>
+            </div>
+            <div class="est-price">$95 – $135</div>
+          </div>
+
+          <div class="est-option" data-low="119" data-high="149" onclick="toggleEstItem(this)">
+            <div>
+              <div style="font-weight:800;font-size:13.5px;">4-Wheel Computerized Laser Alignment</div>
+              <div style="font-size:11.5px;color:var(--text-muted);">Camber, caster &amp; toe precision calibration printout</div>
+            </div>
+            <div class="est-price">$119 – $149</div>
+          </div>
+
+          <div class="est-option" data-low="149" data-high="225" onclick="toggleEstItem(this)">
+            <div>
+              <div style="font-weight:800;font-size:13.5px;">A/C Evacuation, Leak Test &amp; Refrigerant Recharge</div>
+              <div style="font-size:11.5px;color:var(--text-muted);">Restores ice-cold cabin airflow</div>
+            </div>
+            <div class="est-price">$149 – $225</div>
           </div>
         </div>
 
-        <div class="est-result-box">
+        <div class="est-total-bar">
           <div>
-            <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#fca5a5;letter-spacing:0.1em;">Estimated Parts &amp; Labor Range</div>
-            <div class="est-price" id="est-price-out">$245 – $385</div>
-            <div style="font-size:12px;color:#cbd5e1;margin-top:4px;">Estimated Turnaround: <strong id="est-time-out" style="color:#34d399;">1.5 – 2.5 Hours (Same-Day)</strong></div>
+            <div style="font-size:10.5px;font-weight:800;color:#34d399;text-transform:uppercase;">Estimated Parts &amp; Labor Range</div>
+            <div style="font-size:24px;font-weight:900;font-family:'JetBrains Mono',monospace;" id="est-total-display">$79 – $109</div>
+            <div style="font-size:11px;color:var(--text-muted);">Backed by our 12-Month / 12,000-Mile Warranty</div>
           </div>
-          <button class="btn-book" onclick="lockEstimateIntoBooking()">Lock In Estimate &amp; Book →</button>
+          <a href="#booking-box" class="btn-book">Lock In Estimate &amp; Book →</a>
         </div>
       </div>
 
-      <!-- Right: Live Repair Order (RO) Bay Tracker -->
-      <div class="tool-panel" id="tracker">
-        <div class="eyebrow" style="color:#fbbf24;">LIVE DIGITAL VEHICLE INSPECTION (DVI)</div>
-        <h3 style="font-size:26px;font-weight:900;margin-bottom:8px;">Live Customer Repair Order Tracker</h3>
-        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
-          Customers can check their vehicle’s live bay status from their phone without calling to ask if their car is ready:
-        </p>
+      <!-- Right: Customer Repair Order (RO) Status Lookup + Real Shop Photo -->
+      <div id="ro-tracker" style="display:flex;flex-direction:column;justify-content:space-between;gap:18px;">
+        <div style="background:rgba(9,13,22,0.88);border:1px solid var(--border-subtle);border-radius:18px;padding:22px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:10.5px;font-weight:800;color:#60a5fa;text-transform:uppercase;letter-spacing:0.08em;">🔍 LIVE SHOP BAY TRACKER</span>
+            <span style="font-size:11px;color:#34d399;font-weight:700;">No Login Required</span>
+          </div>
+          <h4 style="font-size:19px;font-weight:900;margin-bottom:4px;">Check Your Vehicle's Repair Status</h4>
+          <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px;">
+            Dropped your car off at Suite 102? Enter your Ticket # or License Plate to view live bay progress:
+          </p>
+          <div style="display:flex;gap:8px;margin-bottom:14px;">
+            <input type="text" id="ro-input" class="form-control" value="RO-45911" placeholder="e.g., RO-45911 or VA Plate" style="flex:1;font-family:'JetBrains Mono',monospace;font-weight:700;" />
+            <button type="button" class="btn-book" onclick="lookupRepairOrder()">Track →</button>
+          </div>
 
-        <div style="display:flex;gap:8px;margin-bottom:16px;">
-          <input type="text" id="ro-input" value="RO-2026-884" style="flex:1;padding:10px 12px;border-radius:10px;background:#090d16;border:1px solid var(--border-subtle);color:#fff;font-family:'JetBrains Mono',monospace;font-weight:700;" />
-          <button class="btn-book" onclick="lookupRepairOrder('RO-2026-884')">Check RO</button>
-          <button class="btn-call" onclick="lookupRepairOrder('RO-2026-912')" style="font-size:11.5px;">Demo #2</button>
+          <div id="ro-status-list">
+            <div class="ro-stage done">✔ 1. Checked In at 45911 Transamerica Plaza Ste 102 (8:30 AM)</div>
+            <div class="ro-stage done">✔ 2. 50-Point Digital Inspection &amp; Estimate Approved</div>
+            <div class="ro-stage current" id="ro-stage-3">🔧 3. In Service Bay 2 — ASE Tech Installing OEM Parts</div>
+            <div class="ro-stage" id="ro-stage-4">○ 4. Quality Road-Test &amp; Ready for Pickup (Est. 4:15 PM)</div>
+          </div>
         </div>
 
-        <div id="ro-status-card" style="padding:18px;border-radius:16px;background:#090d16;border:1px solid var(--border-subtle);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <strong style="font-size:14px;color:#fff;" id="ro-veh-title">2020 Toyota Highlander XLE (Bay #2)</strong>
-            <span style="padding:3px 9px;border-radius:999px;background:rgba(16,185,129,0.2);color:#34d399;font-size:11px;font-weight:800;" id="ro-stage-badge">STAGE 3 OF 4 • FINAL TORQUE &amp; ROAD TEST</span>
-          </div>
-          <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:14px;" id="ro-tech-note">
-            Master Tech Note: Front ceramic brake pads &amp; coated rotors installed; caliper slides lubricated; road test in progress on Old Ox Rd. Ready for pickup at 3:15 PM.
-          </p>
-          <div style="width:100%;height:10px;background:#1e293b;border-radius:999px;overflow:hidden;">
-            <div id="ro-prog-bar" style="width:82%;height:100%;background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981);"></div>
+        <!-- Real Exterior Photo of 45911 Transamerica Plaza Bays -->
+        <div style="position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--border-subtle);height:210px;">
+          <img src="assets/sterling_plaza_real_3.jpg" alt="Sterling Auto Repair Exterior Bays at 45911 Transamerica Plaza Sterling VA" style="width:100%;height:100%;object-fit:cover;" />
+          <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(9,13,22,0.94) 10%, transparent 75%);display:flex;flex-direction:column;justify-content:flex-end;padding:16px;">
+            <span style="font-size:10px;font-weight:800;color:#fbbf24;text-transform:uppercase;letter-spacing:0.1em;">📸 REAL LOCATION PHOTO // SUITE 102</span>
+            <div style="font-size:14.5px;font-weight:800;color:#fff;">45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</div>
+            <div style="font-size:11.5px;color:#cbd5e1;">Easy fleet &amp; commuter access off Old Ox Rd (Rt. 606) &amp; Rock Hill Rd</div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Verified 5.0-Star Sterling Customer Reviews -->
-  <section class="section" id="reviews" style="padding-top:10px;">
+  <!-- Customer Reviews Section -->
+  <section class="section" id="reviews" style="padding-top:16px;">
     <div class="section-head">
       <div>
-        <div class="eyebrow">5.0 ★ REPUTATION ON GOOGLE &amp; CARFAX</div>
+        <div class="eyebrow-badge" style="margin-bottom:8px;">5.0 ★ LOCAL REPUTATION</div>
         <h3>Why Sterling &amp; Herndon Drivers Trust Suite 102</h3>
       </div>
+      <a href="https://www.google.com/maps/search/?api=1&query=Sterling+Auto+45911+Transamerica+Plaza+Suite+102+Sterling+VA+20166" target="_blank" rel="noopener" class="btn-call">View on Google Maps ↗</a>
     </div>
 
     <div class="reviews-grid">
       <div class="review-card">
         <div class="stars">★★★★★</div>
-        <p style="font-size:13.5px;color:#e2e8f0;margin-bottom:14px;line-height:1.6;">
-          “Brought my SUV into Transamerica Plaza Suite 102 after another shop quoted me $1,900 for engine work. Sterling Auto Repair diagnosed the real issue in 30 minutes, showed me the exact part on the lift, and had me back on Route 28 the same afternoon for a fraction of the price.”
+        <p style="font-size:13.5px;color:#e2e8f0;margin-bottom:14px;">
+          "Brought my SUV to 45911 Transamerica Plaza Suite 102 for a check-engine light and front brakes. They showed me the worn pads right on the lift, quoted a super fair price, and had me back on Old Ox Rd the same afternoon!"
         </p>
-        <strong style="font-size:12.5px;color:#fff;">— Marcus T. &bull; Sterling, VA (Verified CARFAX Review)</strong>
+        <div style="font-size:12px;font-weight:800;color:#fff;">Marcus T. &bull; <span style="color:#34d399;">Verified Sterling Customer</span></div>
       </div>
 
       <div class="review-card">
         <div class="stars">★★★★★</div>
-        <p style="font-size:13.5px;color:#e2e8f0;margin-bottom:14px;line-height:1.6;">
-          “Hands down the most honest mechanics and body technicians in Loudoun County. They handled our rear bumper collision claim seamlessly and also knocked out our brakes and synthetic oil service in one visit. Paint match looks factory new.”
+        <p style="font-size:13.5px;color:#e2e8f0;margin-bottom:14px;">
+          "Best independent mechanic and body shop in Sterling. Another dealer quoted me $2,400 for a timing cover and A/C repair—Sterling Auto Repair fixed it with OEM parts for nearly half that and backed it with a 12,000-mile warranty."
         </p>
-        <strong style="font-size:12.5px;color:#fff;">— Elena R. &bull; Herndon / Dulles Corridor (Verified Google Review)</strong>
+        <div style="font-size:12px;font-weight:800;color:#fff;">Elena R. &bull; <span style="color:#34d399;">Verified Herndon / Dulles Commuter</span></div>
       </div>
 
       <div class="review-card">
         <div class="stars">★★★★★</div>
-        <p style="font-size:13.5px;color:#e2e8f0;margin-bottom:14px;line-height:1.6;">
-          “Fast turnaround, polite staff, and zero upsell pressure. We bring all three of our family vehicles and our commercial work van to 45911 Transamerica Plaza. Best shop in 20166.”
+        <p style="font-size:13.5px;color:#e2e8f0;margin-bottom:14px;">
+          "Someone backed into my rear bumper and quarter panel. They handled the insurance adjuster directly, matched the metallic pearl paint 100%, and detailed the car before pickup. Zero stress."
         </p>
-        <strong style="font-size:12.5px;color:#fff;">— David K. &bull; Sterling, VA 20166 (Verified Local Customer)</strong>
+        <div style="font-size:12px;font-weight:800;color:#fff;">David K. &bull; <span style="color:#34d399;">Verified Ashburn Customer</span></div>
       </div>
     </div>
   </section>
 
-  <!-- Location, Real Transamerica Plaza Exterior & Interactive Google Map -->
-  <section class="section" id="location" style="padding-top:10px;">
+  <!-- Location, Hours & Interactive Google Maps Section -->
+  <section class="section" id="location" style="padding-top:16px;">
     <div class="location-grid">
       <div class="info-card">
         <div>
-          <div class="eyebrow">VISIT OUR TRANSAMERICA PLAZA SHOP</div>
-          <h3 style="font-size:28px;font-weight:900;margin-bottom:10px;">45911 Transamerica Plaza, Suite 102</h3>
-          <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:18px;">
-            Conveniently located off <strong>Old Ox Rd (Route 606) &amp; Rock Hill Rd</strong> in Sterling, VA 20166 — minutes from Route 28, Dulles International Airport (IAD), and Herndon Parkway.
+          <div class="eyebrow-badge" style="margin-bottom:8px;">VISIT OUR SHOP IN TRANSAMERICA PLAZA</div>
+          <h3 style="font-size:26px;font-weight:900;margin-bottom:8px;">Sterling Auto Repair &amp; Body</h3>
+          <p style="font-size:13.5px;color:#cbd5e1;margin-bottom:14px;">
+            📍 <strong>45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</strong><br/>
+            Conveniently located off Old Ox Rd (VA-606) and Rock Hill Rd, minutes from Dulles Airport, Route 28, and the Dulles Toll Road.
           </p>
 
-          <img src="assets/sterling_plaza_real_3.jpg" alt="Transamerica Plaza Automotive Bays Sterling VA" style="width:100%;height:185px;object-fit:cover;border-radius:14px;border:1px solid var(--border-subtle);margin-bottom:16px;" />
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+            <a href="tel:5715310342" style="padding:12px;border-radius:12px;background:rgba(220,38,38,0.14);border:1px solid rgba(239,68,68,0.4);color:#fff;text-decoration:none;font-weight:800;font-size:13px;text-align:center;">
+              📞 (571) 531-0342
+            </a>
+            <a href="tel:7035317966" style="padding:12px;border-radius:12px;background:rgba(59,130,246,0.14);border:1px solid rgba(59,130,246,0.4);color:#fff;text-decoration:none;font-weight:800;font-size:13px;text-align:center;">
+              📞 (703) 531-7966
+            </a>
+          </div>
 
           <table class="hours-table">
             <tr><td>Monday – Friday</td><td>8:00 AM – 6:00 PM</td></tr>
-            <tr><td>Saturday</td><td>8:00 AM – 1:00 PM</td></tr>
-            <tr><td>Sunday</td><td style="color:#f87171;">Closed (24/7 Key Drop Box Available)</td></tr>
-            <tr><td>Direct Shop Phone</td><td><a href="tel:5715310342" style="color:#fbbf24;text-decoration:none;">(571) 531-0342</a></td></tr>
+            <tr><td>Saturday</td><td>8:30 AM – 3:00 PM</td></tr>
+            <tr><td>Sunday</td><td>Closed (24/7 Key-Drop Box)</td></tr>
           </table>
         </div>
 
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-          <a href="https://www.google.com/maps/dir/?api=1&destination=45911+Transamerica+Plaza+Suite+102+Sterling+VA+20166" target="_blank" rel="noopener" class="btn-book">📍 Launch Turn-by-Turn Directions</a>
-          <a href="tel:5715310342" class="btn-call">📞 Call (571) 531-0342</a>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=45911+Transamerica+Plaza+Suite+102+Sterling+VA+20166" target="_blank" rel="noopener" class="btn-book" style="flex:1;text-align:center;">
+            📍 Open Turn-by-Turn Directions ↗
+          </a>
+          <a href="#booking-box" class="btn-call" style="flex:1;justify-content:center;">
+            📅 Reserve a Service Bay
+          </a>
         </div>
       </div>
 
-      <div class="info-card" style="padding:14px;overflow:hidden;">
+      <div style="border-radius:22px;overflow:hidden;border:1px solid var(--border-subtle);min-height:380px;position:relative;background:#0b1120;">
         <iframe
           title="Sterling Auto Repair 45911 Transamerica Plaza Suite 102 Sterling VA Map"
-          src="https://www.google.com/maps?q=45911+Transamerica+Plaza+Ste+102,+Sterling,+VA+20166&output=embed"
-          style="width:100%;height:100%;min-height:460px;border:0;border-radius:16px;"
+          src="https://www.google.com/maps?q=45911+Transamerica+Plaza+Suite+102,+Sterling,+VA+20166&output=embed"
+          style="width:100%;height:100%;min-height:380px;border:0;filter:invert(90%) hue-rotate(180deg) contrast(95%);"
           loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-        ></iframe>
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
       </div>
     </div>
   </section>
 
+  <!-- Clean Automotive Shop Footer -->
   <footer>
     <div class="footer-inner">
       <div>
-        <strong style="color:#fff;">STERLING AUTO REPAIR &amp; BODY</strong> &bull; 45911 Transamerica Plaza, Suite 102, Sterling, VA 20166 &bull; (571) 531-0342
+        <strong style="color:#fff;font-size:15px;">STERLING AUTO REPAIR &amp; BODY</strong><br/>
+        <span>45911 Transamerica Plaza, Suite 102, Sterling, VA 20166 &bull; (571) 531-0342 / (703) 531-7966</span>
       </div>
       <div>
-        Prototype Engineered by <a href="https://miltongroupsecurity.org" style="color:#fbbf24;text-decoration:none;font-weight:700;">Milton Group Concepts LLC</a> &amp; <a href="https://fix.miltongroupsecurity.org" style="color:#60a5fa;text-decoration:none;font-weight:700;">F.I.X Solutions LLC</a>
+        <span>ASE-Certified Mechanical &amp; Collision Center &bull; 12-Month / 12,000-Mile Warranty &bull; Snap Finance Partner</span>
       </div>
     </div>
   </footer>
 
-  <!-- Mobile-Only Sticky Bottom Action Bar (< 768px) -->
-  <nav class="mobile-thumb-bar" aria-label="Mobile Quick Actions">
-    <a href="tel:5715310342" class="primary-tap">📞 Call Shop</a>
-    <a href="#book-bay">📅 Book Bay</a>
-    <a href="#estimator">🧮 Estimator</a>
-    <a href="https://www.google.com/maps/dir/?api=1&destination=45911+Transamerica+Plaza+Suite+102+Sterling+VA+20166" target="_blank" rel="noopener">📍 Directions</a>
+  <!-- Mobile-Only 1-Tap Bottom Bar (< 768px) -->
+  <nav class="mobile-thumb-bar">
+    <a href="tel:5715310342">📞 Call</a>
+    <a href="#estimator">🧮 Estimate</a>
+    <a href="#location">📍 Map</a>
+    <a href="#booking-box" class="primary-tap">📅 Book Bay</a>
   </nav>
 
   <script>
-    // Set default date to tomorrow
-    const dateInput = document.getElementById('bk-date');
-    if (dateInput) {
-      const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-      dateInput.value = tomorrow;
+    // Set default date picker to tomorrow
+    (function initDate() {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      const iso = d.toISOString().split('T')[0];
+      const dateIn = document.getElementById('bk-date');
+      if (dateIn) dateIn.value = iso;
+    })();
+
+    // Symptom Finder Data
+    const symptomData = {
+      cel: {
+        title: 'Recommended: OEM Computer & Live-Data Diagnostic Scan',
+        desc: 'We pull factory fault codes, inspect ignition/fuel/timing telemetry, and credit the $95 scan fee toward your repair.',
+        price: '$95 Scan (Waived w/ Repair)',
+        serviceVal: 'Check Engine Light & Computer Diagnostics'
+      },
+      brakes: {
+        title: 'Recommended: Ceramic Brake Pads, Coated Rotors & Caliper Inspection',
+        desc: 'Eliminates squealing, grinding, and pedal pulsation with OEM-spec ceramic pads and precision rotors.',
+        price: '$229 – $349 / Axle',
+        serviceVal: 'Brake Pads, Rotors & Hydraulic Service'
+      },
+      ac: {
+        title: 'Recommended: A/C Evacuation, Leak Test & Cooling System Check',
+        desc: 'Tests compressor clutch, condenser pressure, and recharges R-134a / R-1234yf refrigerant for ice-cold air.',
+        price: '$149 – $225',
+        serviceVal: 'A/C Recharge, Heating, Radiator & Cooling System'
+      },
+      pull: {
+        title: 'Recommended: 4-Wheel Computerized Laser Alignment & Suspension Check',
+        desc: 'Corrects steering pull, uneven tire wear, and highway vibration; includes tie-rod and strut inspection.',
+        price: '$119 Alignment',
+        serviceVal: 'Tires, Mounting, Balancing & 4-Wheel Laser Alignment'
+      },
+      body: {
+        title: 'Recommended: Collision, Bumper, Dent & Computerized Paint Match Estimate',
+        desc: 'Free written body shop estimate at Suite 102. We work directly with all major insurance carriers.',
+        price: 'Free Written Estimate',
+        serviceVal: 'Auto Body, Collision, Bumper & Paint Matching'
+      },
+      oil: {
+        title: 'Recommended: Full Synthetic Oil Change & 50-Point Digital Inspection',
+        desc: 'Up to 5 quarts full synthetic oil, OEM filter, fluid top-off, tire rotation check, and CARFAX service reporting.',
+        price: '$79 – $109',
+        serviceVal: 'Full Synthetic Oil Change & Multi-Point Inspection'
+      }
+    };
+
+    let currentSymptomKey = 'cel';
+    function selectSymptom(key, btnEl) {
+      currentSymptomKey = key;
+      document.querySelectorAll('.sym-pill').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      const d = symptomData[key] || symptomData.cel;
+      const box = document.getElementById('symptom-result-box');
+      box.style.opacity = '0.4';
+      setTimeout(() => {
+        document.getElementById('sym-title').textContent = d.title;
+        document.getElementById('sym-desc').textContent = d.desc;
+        document.getElementById('sym-price').textContent = d.price;
+        box.style.opacity = '1';
+      }, 120);
     }
 
-    function prefillService(serviceName) {
+    function applySymptomToBooking() {
+      const d = symptomData[currentSymptomKey] || symptomData.cel;
+      prefillService(d.serviceVal);
+      document.getElementById('booking-box').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function prefillService(val) {
       const sel = document.getElementById('bk-service');
-      if (sel) sel.value = serviceName;
-      document.getElementById('book-bay').scrollIntoView({ behavior: 'smooth' });
-      document.getElementById('bk-name').focus();
+      if (!sel) return;
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === val) {
+          sel.selectedIndex = i;
+          break;
+        }
+      }
     }
 
-    function calcSterlingEstimate() {
-      const mult = parseFloat(document.getElementById('est-veh').value || '1.0');
-      const svcSel = document.getElementById('est-svc');
-      const opt = svcSel.options[svcSel.selectedIndex];
-      const baseLow = parseInt(opt.getAttribute('data-low') || '150', 10);
-      const baseHigh = parseInt(opt.getAttribute('data-high') || '280', 10);
-      const timeStr = opt.getAttribute('data-time') || 'Same-Day';
-
-      const low = Math.round(baseLow * mult);
-      const high = Math.round(baseHigh * mult);
-      document.getElementById('est-price-out').textContent = `$${low.toLocaleString()} – $${high.toLocaleString()}`;
-      document.getElementById('est-time-out').textContent = timeStr;
+    function filterServices(cat, btnEl) {
+      document.querySelectorAll('.section-head .filter-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      document.querySelectorAll('#services-grid .service-card').forEach(card => {
+        if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     }
 
-    function lockEstimateIntoBooking() {
-      const svcSel = document.getElementById('est-svc');
-      const text = svcSel.options[svcSel.selectedIndex].text;
-      const price = document.getElementById('est-price-out').textContent;
-      const bkSel = document.getElementById('bk-service');
-      const customOpt = document.createElement('option');
-      customOpt.value = `${text} (Estimated: ${price})`;
-      customOpt.textContent = `${text} (Estimated: ${price})`;
-      bkSel.appendChild(customOpt);
-      bkSel.value = customOpt.value;
-      document.getElementById('book-bay').scrollIntoView({ behavior: 'smooth' });
+    let vehicleMultiplier = 1.0;
+    function setVehicleMultiplier(mult, btnEl) {
+      vehicleMultiplier = mult;
+      btnEl.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+      recalcEstimate();
     }
 
-    function submitBayBooking(e) {
+    function toggleEstItem(el) {
+      el.classList.toggle('selected');
+      recalcEstimate();
+    }
+
+    function recalcEstimate() {
+      let lowSum = 0;
+      let highSum = 0;
+      document.querySelectorAll('#est-options-list .est-option.selected').forEach(item => {
+        lowSum += parseInt(item.getAttribute('data-low'), 10);
+        highSum += parseInt(item.getAttribute('data-high'), 10);
+      });
+      const finalLow = Math.round(lowSum * vehicleMultiplier);
+      const finalHigh = Math.round(highSum * vehicleMultiplier);
+      document.getElementById('est-total-display').textContent =
+        finalLow === 0 ? '$0 (Select a service above)' : `$${finalLow} – $${finalHigh}`;
+    }
+
+    function lookupRepairOrder() {
+      const val = (document.getElementById('ro-input').value || 'RO-45911').trim().toUpperCase();
+      const s3 = document.getElementById('ro-stage-3');
+      const s4 = document.getElementById('ro-stage-4');
+      s3.className = 'ro-stage done';
+      s3.textContent = `✔ 3. [${val}] ASE Master Tech Completed Repair & Torque Check`;
+      s4.className = 'ro-stage current';
+      s4.textContent = `★ 4. [${val}] Final Road-Test Complete — Ready for Pickup at Suite 102!`;
+    }
+
+    function submitSterlingBooking(e) {
       e.preventDefault();
       const name = document.getElementById('bk-name').value;
-      const phone = document.getElementById('bk-phone').value;
       const veh = document.getElementById('bk-vehicle').value;
-      const date = document.getElementById('bk-date').value;
       const svc = document.getElementById('bk-service').value;
-      const roId = 'RO-2026-' + Math.floor(100 + Math.random() * 899);
-
-      const box = document.getElementById('booking-confirm-box');
-      box.style.display = 'block';
-      box.innerHTML = `<strong>✔ Bay Reserved (${roId}):</strong> Thank you, <strong>${name}</strong>! Your <strong>${veh}</strong> is scheduled at <strong>45911 Transamerica Plaza, Suite 102</strong> on <strong>${date}</strong> for <em>${svc}</em>. SMS updates sent to <strong>${phone}</strong>.`;
-    }
-
-    function lookupRepairOrder(roCode) {
-      document.getElementById('ro-input').value = roCode;
-      if (roCode === 'RO-2026-912') {
-        document.getElementById('ro-veh-title').textContent = '2019 Ford F-150 Lariat 4x4 (Bay #4)';
-        document.getElementById('ro-stage-badge').textContent = 'STAGE 4 OF 4 • READY FOR CUSTOMER PICKUP';
-        document.getElementById('ro-tech-note').textContent = 'Master Tech Note: OBD-II diagnostic complete, new OEM alternator & serpentine belt installed, charging voltage verified at 14.4V. Keys ready at Suite 102 front desk.';
-        document.getElementById('ro-prog-bar').style.width = '100%';
-      } else {
-        document.getElementById('ro-veh-title').textContent = '2020 Toyota Highlander XLE (Bay #2)';
-        document.getElementById('ro-stage-badge').textContent = 'STAGE 3 OF 4 • FINAL TORQUE & ROAD TEST';
-        document.getElementById('ro-tech-note').textContent = 'Master Tech Note: Front ceramic brake pads & coated rotors installed; caliper slides lubricated; road test in progress on Old Ox Rd. Ready for pickup at 3:15 PM.';
-        document.getElementById('ro-prog-bar').style.width = '82%';
-      }
+      const dt = document.getElementById('bk-date').value;
+      const ticket = 'SAR-' + Math.floor(10000 + Math.random() * 90000);
+      const banner = document.getElementById('bk-confirm-banner');
+      banner.style.display = 'block';
+      banner.innerHTML = `✔ <strong>Appointment Confirmed (${ticket})!</strong><br/>We reserved a bay for <strong>${name}</strong> (${veh} — ${svc}) on <strong>${dt}</strong> at <strong>45911 Transamerica Plaza, Suite 102, Sterling, VA</strong>. Questions? Call <strong>(571) 531-0342</strong>.`;
     }
   </script>
 </body>

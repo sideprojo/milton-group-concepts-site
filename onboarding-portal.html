@@ -148,8 +148,8 @@
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
           <button type="button" onclick="loadClientAccount()" style="padding:8px 10px;border-radius:8px;background:rgba(56,189,248,0.12);border:1px solid var(--cyan);color:#e0f2fe;font-size:0.73rem;font-weight:700;cursor:pointer;text-align:left;">
-            <div style="color:var(--cyan);font-size:0.65rem;text-transform:uppercase;">Verified Client</div>
-            Sterling Auto Repair
+            <div style="color:var(--cyan);font-size:0.65rem;text-transform:uppercase;">Enterprise Client</div>
+            client@miltongroup...
           </button>
           <button type="button" onclick="loadAdminAccount()" style="padding:8px 10px;border-radius:8px;background:rgba(245,158,11,0.14);border:1px solid var(--gold);color:#fef3c7;font-size:0.73rem;font-weight:700;cursor:pointer;text-align:left;">
             <div style="color:var(--gold);font-size:0.65rem;text-transform:uppercase;">Default Admin</div>
@@ -159,11 +159,11 @@
 
         <div class="form-group">
           <label>Full Name / Client Organization</label>
-          <input type="text" id="ob-name" placeholder="Sterling Auto Repair (Transamerica Plaza)" value="Sterling Auto Repair (Suite 102)" />
+          <input type="text" id="ob-name" placeholder="Enterprise Partner Client" value="Enterprise Partner Client" />
         </div>
         <div class="form-group">
           <label>Verified Portal Email</label>
-          <input type="email" id="ob-email" placeholder="service@sterlingautorepairva.com" value="service@sterlingautorepairva.com" />
+          <input type="email" id="ob-email" placeholder="client@miltongroupsecurity.org" value="client@miltongroupsecurity.org" />
         </div>
         <div class="form-group">
           <label>Cryptographic Passphrase</label>
@@ -172,7 +172,6 @@
         <div class="form-group">
           <label>Onboarding Track &amp; Portal Scope</label>
           <select id="ob-track">
-            <option value="CUSTOMER_INCENTIVE_STERLING">Customer Incentive Build: Sterling Auto Repair + Client Suite</option>
             <option value="ALL_INTERNAL_VIEW">Full Executive Evaluation (All Internal Sites — View Only)</option>
             <option value="DATA_COMMERCE_CIPP">Regulated Data Commerce &amp; SAS ModelOps Clean Room</option>
             <option value="SDVOSB_FEDERAL">VA Vets First / DoD SDVOSB Contracting &amp; 3D Geospatial</option>
@@ -282,7 +281,7 @@
 
         <details style="margin-top:16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 14px;">
           <summary style="cursor:pointer;font-size:0.78rem;font-weight:800;color:var(--cyan);list-style:none;display:flex;justify-content:space-between;align-items:center;">
-            <span>🛡️ Active 2FA Verified Session Roster (Root Admin &amp; Sterling Auto Client)</span>
+            <span>🛡️ Active 2FA Verified Session Roster (Root Admin &amp; Enterprise Client)</span>
             <span style="color:var(--muted);font-size:0.72rem;">Click to expand ▾</span>
           </summary>
           <table class="roster-table" style="margin-top:10px;">
@@ -302,8 +301,8 @@
                 <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (440-921)</td>
               </tr>
               <tr>
-                <td><code>service@sterlingautorepairva.com</code></td>
-                <td>STERLING_AUTO_INCENTIVE</td>
+                <td><code>client@miltongroupsecurity.org</code></td>
+                <td>ALL_INTERNAL_VIEW</td>
                 <td style="color:var(--cyan);font-weight:700;">VERIFIED_CLIENT</td>
                 <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (250-100)</td>
               </tr>
@@ -318,11 +317,11 @@
     let mfaBiometricCleared = false;
 
     function loadClientAccount() {
-      document.getElementById('ob-name').value = 'Sterling Auto Repair (45911 Transamerica Plaza Ste 102)';
-      document.getElementById('ob-email').value = 'service@sterlingautorepairva.com';
+      document.getElementById('ob-name').value = 'Enterprise Partner Client';
+      document.getElementById('ob-email').value = 'client@miltongroupsecurity.org';
       document.getElementById('ob-pass').value = 'PASSKEY::VERIFIED_CLIENT';
       document.getElementById('ob-totp').value = '250-100';
-      document.getElementById('ob-track').value = 'CUSTOMER_INCENTIVE_STERLING';
+      document.getElementById('ob-track').value = 'ALL_INTERNAL_VIEW';
     }
 
     function loadAdminAccount() {
