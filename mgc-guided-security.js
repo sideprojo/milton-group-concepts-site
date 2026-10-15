@@ -77,44 +77,51 @@
     { file: 'finance-command.html', label: '3. Finance & Payment System', short: 'Finance & Pay' },
     { file: 'elearning-upskilling-hub.html', label: '4. eLearning & Insights Atlas', short: 'eLearning Atlas' },
     { file: 'whitefeather-ecommerce-hub.html', label: '5. White Feather & eCommerce', short: 'eCommerce & News' },
-    { file: 'sdvosb-contract-radar.html', label: '6. SAM.gov & USAspending Radar', short: 'Contract Radar' },
-    { file: 'compliance-trust-center.html', label: '7. Compliance & Trust-But-Verify', short: 'Compliance & Security' },
-    { file: 'integrations-connections-hub.html', label: '8. Integrations & Connections', short: 'Integrations Hub' },
-    { file: 'agent-workflow-studio.html', label: '9. LangGraph & Agent Studio', short: 'Agent Studio' },
-    { file: 'earth-3d.html', label: '10. 3D Geospatial Command', short: '3D Earth' },
-    { file: 'vr-command.html', label: '11. 360° WebXR VR Deck', short: 'VR Deck' }
+    { file: 'historical-archaeology-ai-hub.html', label: '6. AI, Historical & Archaeology Lab', short: 'AI & History Lab' },
+    { file: 'sdvosb-contract-radar.html', label: '7. SAM.gov & USAspending Radar', short: 'Contract Radar' },
+    { file: 'compliance-trust-center.html', label: '8. Compliance & Trust-But-Verify', short: 'Compliance & Security' },
+    { file: 'integrations-connections-hub.html', label: '9. Integrations & Connections', short: 'Integrations Hub' },
+    { file: 'agent-workflow-studio.html', label: '10. LangGraph & Agent Studio', short: 'Agent Studio' },
+    { file: 'earth-3d.html', label: '11. 3D Geospatial Command', short: '3D Earth' },
+    { file: 'vr-command.html', label: '12. 360° WebXR VR Deck', short: 'VR Deck' }
   ];
 
   const tourStepsByPage = {
     'onboarding-portal.html': {
-      title: 'Step 1 of 11: Zero-Trust Onboarding & Edge JWT Gatekeeper',
+      title: 'Step 1 of 12: Zero-Trust Onboarding & Edge JWT Gatekeeper',
       desc: 'External visitors from miltongroupsecurity.org and F.I.X Solutions authenticate here via Google Workspace SSO to receive VIEWER_ONBOARDED clearance.',
       nextFile: 'index.html',
-      highlights: ['Option A Edge WebCrypto SHA-256 JWT verification', 'SAM.gov UEI & CAGE validation', 'Direct launchpad into all 11 internal command modules']
+      highlights: ['Option A Edge WebCrypto SHA-256 JWT verification', 'SAM.gov UEI & CAGE validation', 'Direct launchpad into all 12 internal command modules']
     },
     'index.html': {
-      title: 'Step 2 of 11: MGC & F.I.X Internal Data Commerce & Career Hub',
+      title: 'Step 2 of 12: MGC & F.I.X Internal Data Commerce & Career Hub',
       desc: 'Unified executive dashboard combining SDVOSB federal contracting pipelines, SAS Viya ModelOps (A00-440), IAPP CIPP/US & CIPP/G privacy governance, and zero-charge cloud telemetry.',
       nextFile: 'finance-command.html',
       highlights: ['Live Zero-Charge Cloud Cost Guard ($0.00 idle)', 'Data Commerce & Privacy Engineering products', 'Daily Certification & Contracting readiness']
     },
     'finance-command.html': {
-      title: 'Step 3 of 11: Internal Finance, Treasury & Payment Acceptance System',
+      title: 'Step 3 of 12: Internal Finance, Treasury & Payment Acceptance System',
       desc: 'Multi-entity treasury ledger and payment acceptance terminal for Milton Group Concepts LLC, F.I.X Solutions LLC, and White Feather Investments (ACH/FedNow, SAM.gov WAWF/IPP, GPC/Stripe, Escrow).',
       nextFile: 'elearning-upskilling-hub.html',
       highlights: ['Signed Payment Link & Invoice Generator', 'Multi-rail payment acceptance (ACH, WAWF/IPP, Card, Escrow)', 'Multi-entity ledger & FinOps zero-charge guard']
     },
     'elearning-upskilling-hub.html': {
-      title: 'Step 4 of 11: eLearning, Career Upskilling & Cross-Industry Insights Atlas',
+      title: 'Step 4 of 12: eLearning, Career Upskilling & Cross-Industry Insights Atlas',
       desc: 'Aggregates live intelligence from LinkedIn, Gmail, Industry News, and Procurement News with smooth 3-stage tracing across Visualizations -> Geospatial Map -> Internal Collaborations.',
       nextFile: 'whitefeather-ecommerce-hub.html',
       highlights: ['LinkedIn + Gmail + News + Procurement aggregation', 'Smooth 3-Stage Trace (Visuals -> Leaflet Map -> Collaborations)', 'SAS A00-440, Path 4525, CIPP/US & SC-100 upskilling matrix']
     },
     'whitefeather-ecommerce-hub.html': {
-      title: 'Step 5 of 11: White Feather, eCommerce & Dual Aggregate News Command',
+      title: 'Step 5 of 12: White Feather, eCommerce & Dual Aggregate News Command',
       desc: 'Internal storefront & syndicate catalog for White Feather Investments / AI, 4biddenKnowledge affiliates, MGC Data Commerce, and F.I.X VAR, plus 2 built-in NBA-RSS Aggregate News sites.',
-      nextFile: 'sdvosb-contract-radar.html',
+      nextFile: 'historical-archaeology-ai-hub.html',
       highlights: ['Direct 1-click checkout handoff to Finance Command', 'White Feather AI & 4biddenKnowledge affiliate programs', 'Dual NBA-RSS Aggregate News portals with ★ KEY TODAY pins']
+    },
+    'historical-archaeology-ai-hub.html': {
+      title: 'Step 6 of 12: AI, Historical & Archaeological Endeavors Lab',
+      desc: 'Dedicated examination workbench for 4biddenKnowledge, Satellite LiDAR/SAR, and Epigraphic AI (Aeneas/Ithaca) with interactive Image Association Constellations, geodesic maps, and link to the Chronos External Insight WebApp.',
+      nextFile: 'sdvosb-contract-radar.html',
+      highlights: ['Interactive Image Association & Motif Constellation', 'Synchronized Geodesic Excavation Map', 'Article Examination Report Forge + Public Chronos WebApp']
     },
     'sdvosb-contract-radar.html': {
       title: 'Step 6 of 11: Automated SAM.gov & USAspending SDVOSB Contract Radar',

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI, Historical &amp; Archaeological Endeavors Command | Internal Research &amp; Examination Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="mgc-guided-security.js" defer></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #040711;
+            color: #f8fafc;
+            background-image:
+                radial-gradient(circle at 15% 15%, rgba(217, 119, 6, 0.11) 0%, transparent 42%),
+                radial-gradient(circle at 85% 20%, rgba(147, 51, 234, 0.09) 0%, transparent 42%),
+                radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.08) 0%, transparent 48%);
+            min-height: 100vh;
+        }
+        .font-serif-cinzel { font-family: 'Cinzel', serif; }
+        .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+        .glass-panel {
+            background: rgba(10, 15, 29, 0.88);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(217, 119, 6, 0.22);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+        }
+        .cat-pill.active {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(147, 51, 234, 0.25));
+            border-color: #f59e0b;
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+        }
+        .assoc-node {
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .assoc-node:hover, .assoc-node.active-node {
+            border-color: #fbbf24;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
+        }
+        #archMap {
+            height: 360px;
+            width: 100%;
+            border-radius: 0.85rem;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-500 selection:text-slate-950 pb-20">
+
+    <!-- Top Classification & Suite Banner -->
+    <div class="bg-slate-950/95 border-b border-amber-500/30 px-4 py-2 text-[11px] font-mono-code tracking-wider uppercase flex flex-wrap items-center justify-between gap-2 sticky top-0 z-50 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40 font-bold">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                COLLECTION 04 // AI, HISTORICAL &amp; ARCHAEOLOGICAL ENDEAVORS COMMAND
+            </span>
+            <span class="text-slate-400 hidden lg:inline">Epigraphic AI (Aeneas/Ithaca) &bull; Satellite LiDAR/SAR &bull; 4biddenKnowledge Syndicate &bull; Image Association &amp; Article Examination</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="chronos-external-insight-webapp.html" target="_blank" class="px-2.5 py-0.5 rounded bg-purple-500/20 border border-purple-400/40 text-purple-200 hover:bg-purple-500/30 transition font-bold">
+                Launch External Aggregation &amp; Insight WebApp &nearr;
+            </a>
+            <a href="whitefeather-ecommerce-hub.html" class="text-amber-300 hover:text-amber-200 transition">&larr; White Feather Hub</a>
+            <a href="elearning-upskilling-hub.html" class="text-sky-400 hover:text-sky-300 transition">Insights Atlas &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 pt-7 pb-5">
+        <div class="glass-panel rounded-2xl p-6 sm:p-8 relative overflow-hidden">
+            <div class="absolute -right-20 -top-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10">
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-purple-500 to-sky-500 p-[1.5px] shrink-0 shadow-lg shadow-amber-500/20">
+                        <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-xl font-bold text-amber-300 font-serif-cinzel">
+                            🏛️
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                            <span class="text-[10px] font-mono-code uppercase tracking-widest px-2.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Dedicated Category &amp; Site Collection</span>
+                            <span class="text-[10px] font-mono-code uppercase tracking-widest px-2.5 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30">Interactive Image Association Engine</span>
+                            <span class="text-[10px] font-mono-code uppercase tracking-widest px-2.5 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30">Article Examination &amp; Report Forge</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-serif-cinzel">
+                            AI, HISTORICAL &amp; ARCHAEOLOGICAL ENDEAVORS LAB
+                        </h1>
+                        <p class="text-sm text-slate-300 mt-1 max-w-3xl">
+                            Internal research command for examining archaeological discoveries, historical archives, epigraphic inscriptions, and comparative civilization news—featuring <strong class="text-amber-300">interactive geospatial corridor mapping</strong>, <strong class="text-purple-300">multi-node image association constellations</strong>, and <strong class="text-sky-300">automated analytical examination reports</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Telemetry Counters -->
+                <div class="grid grid-cols-3 gap-2.5 sm:min-w-[370px]">
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3">
+                        <div class="text-[10px] font-mono-code uppercase text-slate-400">Indexed Sites &amp; Texts</div>
+                        <div class="text-lg font-extrabold text-amber-400 mt-0.5">148+ Nodes</div>
+                        <div class="text-[10px] text-slate-400">LiDAR • SAR • Epigraphy</div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3">
+                        <div class="text-[10px] font-mono-code uppercase text-slate-400">Image Associations</div>
+                        <div class="text-lg font-extrabold text-purple-300 mt-0.5">42 Clusters</div>
+                        <div class="text-[10px] text-purple-400/80">Visual Motif Similarity</div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3">
+                        <div class="text-[10px] font-mono-code uppercase text-slate-400">External WebApp</div>
+                        <div class="text-lg font-extrabold text-emerald-400 mt-0.5">SYNCED</div>
+                        <div class="text-[10px] text-emerald-400/80">Chronos Public Portal</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Filter Bar -->
+            <div class="mt-6 pt-5 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2" id="domainFilters">
+                    <span class="text-xs font-mono-code uppercase text-slate-400 mr-1">Endeavor Domain:</span>
+                    <button onclick="selectDomain('ALL')" data-domain="ALL" class="cat-pill active px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-200 transition">
+                        All Historical &amp; AI Endeavors (6)
+                    </button>
+                    <button onclick="selectDomain('LIDAR_SAR')" data-domain="LIDAR_SAR" class="cat-pill px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-200 transition">
+                        🛰️ Satellite LiDAR &amp; Subsurface SAR
+                    </button>
+                    <button onclick="selectDomain('EPIGRAPHY_AI')" data-domain="EPIGRAPHY_AI" class="cat-pill px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-200 transition">
+                        📜 Epigraphic AI (Aeneas / Ithaca / Papyri)
+                    </button>
+                    <button onclick="selectDomain('MEGALITHIC_ARCH')" data-domain="MEGALITHIC_ARCH" class="cat-pill px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-200 transition">
+                        🏛️ Megalithic Architecture &amp; Archaeoastronomy
+                    </button>
+                    <button onclick="selectDomain('4BK_SYNDICATE')" data-domain="4BK_SYNDICATE" class="cat-pill px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-semibold text-slate-200 transition">
+                        🌌 4biddenKnowledge &amp; Cross-Cultural Archives
+                    </button>
+                </div>
+                <a href="chronos-external-insight-webapp.html" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/20 to-purple-500/20 border border-amber-400/50 text-xs font-mono-code text-amber-200 hover:border-amber-300 transition">
+                    Open Public External Aggregation &amp; Insight WebApp &rarr;
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
+
+        <!-- STAGE A: SYNCHRONIZED 3-PANE EXAMINATION WORKBENCH (IMAGE ASSOCIATION + GEOSPATIAL MAP + AI EXAMINATION REPORT) -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+            <!-- Pane 1 (4 Cols): Interactive Image Association & Visual Motif Constellation -->
+            <div class="lg:col-span-4 glass-panel rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-mono-code uppercase tracking-widest text-amber-400">Stage 01 &bull; Visual Association</span>
+                        <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30" id="assocClusterBadge">CLUSTER: MEGALITHIC-01</span>
+                    </div>
+                    <h2 class="text-lg font-bold text-white font-serif-cinzel" id="assocTitle">Image Association &amp; Motif Matrix</h2>
+                    <p class="text-xs text-slate-400 mt-0.5 mb-3">
+                        Click any visual evidence node below to inspect structural, epigraphic, and geometric associations across regions.
+                    </p>
+
+                    <!-- SVG Visual Constellation Canvas -->
+                    <div class="relative bg-slate-950/90 border border-slate-800 rounded-xl p-3 mb-3 overflow-hidden">
+                        <svg id="constellationSvg" viewBox="0 0 360 155" class="w-full h-[155px]">
+                            <!-- Populated dynamically via JS -->
+                        </svg>
+                        <div class="flex items-center justify-between text-[10px] font-mono-code text-slate-400 pt-1 border-t border-slate-800/80">
+                            <span id="similarityScoreLabel">Cosine Motif Similarity: <strong class="text-amber-300">94.2%</strong></span>
+                            <span class="text-emerald-400">● Deep Vision Embedding</span>
+                        </div>
+                    </div>
+
+                    <!-- Associated Visual Evidence Cards -->
+                    <div class="grid grid-cols-2 gap-2.5" id="imageAssocCards">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono-code">
+                    <span class="text-slate-400">Cross-Archive Match</span>
+                    <button onclick="cycleAssociationCluster()" class="text-amber-300 hover:text-amber-200 font-bold">
+                        Next Visual Cluster &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pane 2 (4 Cols): Interactive Archaeological & Epigraphic Geospatial Map -->
+            <div class="lg:col-span-4 glass-panel rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-mono-code uppercase tracking-widest text-sky-400">Stage 02 &bull; Geospatial Provenance</span>
+                        <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30" id="mapCoordBadge">29.9792° N, 31.1342° E</span>
+                    </div>
+                    <h2 class="text-lg font-bold text-white font-serif-cinzel">Interactive Excavation &amp; Corridor Map</h2>
+                    <p class="text-xs text-slate-400 mt-0.5 mb-3">
+                        Traces geodesic alignments, trade/epigraphic corridors, and sister archaeological sites for the selected examination.
+                    </p>
+
+                    <div id="archMap" class="border border-slate-800"></div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                    <div>
+                        <span class="text-[10px] font-mono-code uppercase text-slate-400 block">Active Site &amp; Stratum</span>
+                        <span id="activeSiteLabel" class="font-bold text-amber-300">Giza Plateau &amp; Hawara Subsurface Complex</span>
+                    </div>
+                    <a href="earth-3d.html" class="px-2.5 py-1.5 rounded-lg bg-sky-500/15 border border-sky-500/40 text-sky-300 text-[11px] font-mono-code hover:bg-sky-500/25 transition shrink-0">
+                        3D Globe &nearr;
+                    </a>
+                </div>
+            </div>
+
+            <!-- Pane 3 (4 Cols): AI Article Examination & Analytical Report Forge -->
+            <div class="lg:col-span-4 glass-panel rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-mono-code uppercase tracking-widest text-emerald-400">Stage 03 &bull; Examination &amp; Report</span>
+                        <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" id="examIdBadge">EXAM-2026-041</span>
+                    </div>
+                    <h2 class="text-lg font-bold text-white font-serif-cinzel" id="examReportTitle">AI Examination &amp; Synthesis Report</h2>
+                    <p class="text-xs text-slate-400 mt-0.5 mb-3" id="examSourceSubtitle">
+                        Source: Archaeological SAR Telemetry &amp; Classical Historiography
+                    </p>
+
+                    <!-- Quantitative Multi-Metric Bars -->
+                    <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 space-y-2.5 mb-3">
+                        <div>
+                            <div class="flex justify-between text-[11px] font-mono-code mb-1">
+                                <span class="text-slate-300">Chronological &amp; Stratigraphic Confidence</span>
+                                <span id="metricChron" class="text-amber-300 font-bold">93%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="barChron" class="h-full bg-gradient-to-r from-amber-500 to-yellow-300 rounded-full transition-all duration-500" style="width:93%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[11px] font-mono-code mb-1">
+                                <span class="text-slate-300">Epigraphic / Structural Corroboration</span>
+                                <span id="metricEpig" class="text-purple-300 font-bold">91%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="barEpig" class="h-full bg-gradient-to-r from-purple-500 to-fuchsia-400 rounded-full transition-all duration-500" style="width:91%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[11px] font-mono-code mb-1">
+                                <span class="text-slate-300">Cross-Continent Image Association Match</span>
+                                <span id="metricAssoc" class="text-sky-300 font-bold">95%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="barAssoc" class="h-full bg-gradient-to-r from-sky-500 to-cyan-300 rounded-full transition-all duration-500" style="width:95%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytical Findings Box -->
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 space-y-2 text-xs">
+                        <div class="text-[10px] font-mono-code uppercase text-amber-300 font-bold">Key Analytical Examination Findings</div>
+                        <p id="examFindingText" class="text-slate-200 leading-relaxed">
+                            Synthetic Aperture Radar (SAR) micro-motion tomography and Herodotus/Strabo textual cross-referencing indicate multi-chambered granite anomalies beneath the Hawara/Giza limestone shelf, sharing polygonal masonry signatures with Upper Egypt and Andean pre-Inca sites.
+                        </p>
+                        <div class="pt-2 border-t border-slate-800/80 flex flex-wrap gap-1.5" id="examTags">
+                            <span class="px-2 py-0.5 rounded bg-slate-950 text-slate-300 font-mono-code text-[10px]">#SAR-Tomography</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-950 text-slate-300 font-mono-code text-[10px]">#PolygonalMasonry</span>
+                            <span class="px-2 py-0.5 rounded bg-slate-950 text-slate-300 font-mono-code text-[10px]">#4biddenKnowledge</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center gap-2">
+                    <button onclick="exportExaminationReport()" class="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs uppercase tracking-wider transition">
+                        Export Examination Dossier (.JSON / Brief)
+                    </button>
+                    <a href="chronos-external-insight-webapp.html" class="py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono-code text-purple-300 transition">
+                        Publish &nearr;
+                    </a>
+                </div>
+                <div id="exportReportToast" class="hidden text-[11px] font-mono-code text-emerald-400 text-center pt-1">
+                    ✓ Examination Report logged &amp; staged for publication
+                </div>
+            </div>
+        </section>
+
+        <!-- STAGE B: LIVE ARTICLE & ARCHAEOLOGICAL NEWS EXAMINATION DECK + CUSTOM ARTICLE EXAMINER -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- Left 8 Cols: Curated & Live Historical / Archaeological / AI News Articles -->
+            <div class="lg:col-span-8 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-mono-code uppercase tracking-widest text-amber-400">Live Research &amp; News Feed</span>
+                        <h2 class="text-xl font-bold text-white font-serif-cinzel">Articles &amp; Discoveries Under Examination (Click to Trace)</h2>
+                    </div>
+                    <span class="text-xs font-mono-code text-emerald-400">● 6 Active Research Dossiers</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="examinationsGrid">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Right 4 Cols: Custom News / Inscription Examination Generator -->
+            <div class="lg:col-span-4 glass-panel rounded-2xl p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-mono-code uppercase tracking-widest px-2 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30">Interactive Workbench</span>
+                    <span class="text-xs font-mono-code text-amber-300">Aeneas / Ithaca + Vision AI</span>
+                </div>
+                <h3 class="text-lg font-bold text-white font-serif-cinzel">Examine Any External Article or Inscription</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Paste a headline, article excerpt, or ancient text fragment below to synthesize an instant examination report, plot its coordinates, and link visual motif associations.
+                </p>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-mono-code uppercase text-slate-400 mb-1">Article Headline / Discovery Title</label>
+                        <input id="customHeadline" type="text" value="High-Resolution LiDAR Unveils Astronomical Causeways & Pyramidal Complexes in Amazonia" class="w-full rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-mono-code uppercase text-slate-400 mb-1">Geographic Region</label>
+                            <select id="customRegion" class="w-full rounded-xl bg-slate-950 border border-slate-800 px-2.5 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+                                <option value="-14.83, -64.90|Llanos de Mojos / Amazonia">Amazonia / Llanos de Mojos</option>
+                                <option value="29.9792, 31.1342|Giza & Hawara Corridor, Egypt">Giza &amp; Hawara Corridor, Egypt</option>
+                                <option value="37.2231, 38.9225|Göbekli Tepe & Taş Tepeler">Göbekli Tepe / Anatolia</option>
+                                <option value="40.7500, 14.4833|Herculaneum & Pompeii Villa">Herculaneum / Mediterranean</option>
+                                <option value="-13.1631, -72.5450|Sacred Valley / Cusco">Sacred Valley / Andes</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-mono-code uppercase text-slate-400 mb-1">Primary Methodology</label>
+                            <select id="customMethod" class="w-full rounded-xl bg-slate-950 border border-slate-800 px-2.5 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+                                <option value="LIDAR_SAR">Airborne LiDAR &amp; SAR</option>
+                                <option value="EPIGRAPHY_AI">Epigraphic Neural AI</option>
+                                <option value="MEGALITHIC_ARCH">Archaeoastronomy &amp; Masonry</option>
+                                <option value="4BK_SYNDICATE">4biddenKnowledge Comparative</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-mono-code uppercase text-slate-400 mb-1">Excerpt / Epigraphic Notes / Hypothesis</label>
+                        <textarea id="customExcerpt" rows="3" class="w-full rounded-xl bg-slate-950 border border-slate-800 p-3 text-xs text-slate-200 focus:border-amber-400 focus:outline-none">Canopy-penetrating LiDAR reveals geometric earthworks, radial causeways, and cardinally aligned civic-ceremonial centers spanning 4,500 sq km.</textarea>
+                    </div>
+                    <button onclick="runCustomExamination()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-purple-600 to-sky-600 hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/20">
+                        ⚡ Run AI Examination &amp; Trace on Map
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const EXAMINATIONS = [
+            {
+                id: 'EXAM-2026-041',
+                domain: 'LIDAR_SAR',
+                clusterId: 'CLUSTER: SAR-PYRAMID-01',
+                source: 'SAR TOMOGRAPHY & EGYPTOLOGY',
+                title: 'Subsurface Acoustic & SAR Tomography Across Giza Plateau and Hawara Labyrinth',
+                coords: [29.9792, 31.1342],
+                sisterCoords: [[-13.1631, -72.5450], [37.2231, 38.9225]],
+                siteLabel: 'Giza Plateau & Hawara Subsurface Complex (29.979° N, 31.134° E)',
+                similarity: '95.4%',
+                metrics: [93, 91, 95],
+                finding: 'Synthetic Aperture Radar (SAR) micro-motion tomography and Herodotus/Strabo textual cross-referencing indicate multi-chambered granite anomalies beneath the Hawara/Giza limestone shelf, sharing polygonal masonry signatures with Upper Egypt and Andean pre-Inca sites.',
+                tags: ['#SAR-Tomography', '#HawaraLabyrinth', '#PolygonalMasonry', '#4biddenKnowledge'],
+                nodes: [
+                    { label: 'Giza SAR Harmonic Scan', region: 'Egypt • Old Kingdom', match: '98%', color: '#f59e0b', svgX: 65, svgY: 42 },
+                    { label: 'Osireion Megalithic Blocks', region: 'Abydos • Stratum II', match: '94%', color: '#a855f7', svgX: 285, svgY: 38 },
+                    { label: 'Sacsayhuamán Polygonal Wall', region: 'Cusco • Andes', match: '91%', color: '#38bdf8', svgX: 75, svgY: 122 },
+                    { label: 'Hawara Granite Chamber', region: 'Faiyum Oasis • Egypt', match: '96%', color: '#10b981', svgX: 275, svgY: 120 }
+                ]
+            },
+            {
+                id: 'EXAM-2026-042',
+                domain: 'EPIGRAPHY_AI',
+                clusterId: 'CLUSTER: EPIGRAPHY-AENEAS-02',
+                source: 'DEEPMIND AENEAS / ITHACA & VESUVIUS',
+                title: 'Deep Neural Restoration & Chronological Attribution of Carbonized Herculaneum Papyri',
+                coords: [40.8060, 14.3480],
+                sisterCoords: [[37.9715, 23.7257], [31.2001, 29.9187]],
+                siteLabel: 'Villa of the Papyri, Herculaneum (40.806° N, 14.348° E)',
+                similarity: '96.8%',
+                metrics: [97, 96, 92],
+                finding: '3D X-ray phase-contrast synchrotron scans paired with transformer-based Greek/Latin epigraphic restoration (Ithaca/Aeneas architecture) recover previously unread philosophical treatises and attribute regional scribal hands within a ±15-year window.',
+                tags: ['#VesuviusChallenge', '#IthacaAeneasAI', '#HerculaneumPapyri', '#Epigraphy'],
+                nodes: [
+                    { label: 'Scroll PHerc. Paris. 4 Ink Layer', region: 'Herculaneum • 79 CE', match: '99%', color: '#a855f7', svgX: 65, svgY: 40 },
+                    { label: 'Attic Stele Inscription Corpus', region: 'Athens • 4th c. BCE', match: '93%', color: '#f59e0b', svgX: 285, svgY: 42 },
+                    { label: 'Alexandrian Paleographic Hand', region: 'Ptolemaic Egypt', match: '95%', color: '#38bdf8', svgX: 75, svgY: 120 },
+                    { label: 'Synchrotron Voxel Unwrapping', region: 'Diamond Light Source', match: '97%', color: '#10b981', svgX: 280, svgY: 118 }
+                ]
+            },
+            {
+                id: 'EXAM-2026-043',
+                domain: 'MEGALITHIC_ARCH',
+                clusterId: 'CLUSTER: TAS-TEPELER-03',
+                source: 'PRE-POTTERY NEOLITHIC & ARCHAEOASTRONOMY',
+                title: 'Göbekli Tepe & Karahan Tepe T-Pillar Iconography: Pre-Pottery Neolithic Sky Catalogs',
+                coords: [37.2231, 38.9225],
+                sisterCoords: [[29.9792, 31.1342], [51.1789, -1.8262]],
+                siteLabel: 'Taş Tepeler / Göbekli Tepe Corridor, Anatolia (37.223° N, 38.922° E)',
+                similarity: '93.7%',
+                metrics: [95, 89, 94],
+                finding: 'High-resolution photogrammetry of Enclosure D (Pillar 43) and Karahan Tepe bedrock-carved chambers demonstrates standardized geometric ratios, solstice azimuth corridors, and shared relief motifs predating conventional agricultural urbanization (~9600 BCE).',
+                tags: ['#GobekliTepe', '#KarahanTepe', '#Archaeoastronomy', '#YoungerDryas'],
+                nodes: [
+                    { label: 'Enclosure D Pillar 43 Relief', region: 'Göbekli Tepe • ~9600 BCE', match: '98%', color: '#f59e0b', svgX: 60, svgY: 42 },
+                    { label: 'Karahan Tepe Pillar Shrine', region: 'Şanlıurfa • ~9400 BCE', match: '96%', color: '#10b981', svgX: 285, svgY: 42 },
+                    { label: 'Sayburç Narrative Wall Relief', region: 'Anatolia • Neolithic', match: '92%', color: '#a855f7', svgX: 70, svgY: 120 },
+                    { label: 'Nabta Playa Astronomic Circle', region: 'Nubian Desert • Egypt', match: '89%', color: '#38bdf8', svgX: 280, svgY: 120 }
+                ]
+            },
+            {
+                id: 'EXAM-2026-044',
+                domain: 'LIDAR_SAR',
+                clusterId: 'CLUSTER: MAYA-LIDAR-04',
+                source: 'AIRBORNE LIDAR & MESOAMERICAN ARCHAEOLOGY',
+                title: 'Mirador-Calakmul & Petén Basin LiDAR Reveals Hyper-Connected Megalopolis & Causeways',
+                coords: [17.7550, -89.9200],
+                sisterCoords: [[-14.8300, -64.9000], [19.6925, -98.8438]],
+                siteLabel: 'Mirador-Calakmul Karst Basin, Guatemala/Mexico (17.755° N, 89.920° W)',
+                similarity: '94.9%',
+                metrics: [96, 92, 95],
+                finding: 'Multi-return airborne LiDAR strips away dense tropical canopy across 650 sq miles to map over 960 interconnected Preclassic Maya settlements, elevated limestone sacbeob (causeways), astronomical triadic pyramids, and engineered hydraulic reservoirs.',
+                tags: ['#AirborneLiDAR', '#MiradorBasin', '#HydraulicEngineering', '#Mesoamerica'],
+                nodes: [
+                    { label: 'La Danta Triadic Pyramid LiDAR', region: 'El Mirador • Guatemala', match: '98%', color: '#10b981', svgX: 65, svgY: 42 },
+                    { label: 'Raised Sacbe Causeway Network', region: 'Petén Karst Basin', match: '95%', color: '#38bdf8', svgX: 285, svgY: 42 },
+                    { label: 'Aguada Fénix Monumental Plateau', region: 'Tabasco • ~1000 BCE', match: '93%', color: '#f59e0b', svgX: 70, svgY: 120 },
+                    { label: 'Upano Valley LiDAR Earthworks', region: 'Ecuadorian Amazon', match: '91%', color: '#a855f7', svgX: 280, svgY: 120 }
+                ]
+            },
+            {
+                id: 'EXAM-2026-045',
+                domain: '4BK_SYNDICATE',
+                clusterId: 'CLUSTER: 4BK-COMPARATIVE-05',
+                source: '4BIDDENKNOWLEDGE & COMPARATIVE EPIGRAPHY',
+                title: 'Cuneiform Astronomic Diaries, Sumerian King List Variants & Cross-Cultural Flood Stratigraphy',
+                coords: [31.3225, 45.6361],
+                sisterCoords: [[36.3589, 43.1528], [29.9792, 31.1342]],
+                siteLabel: 'Uruk / Nippur / Nineveh Mesopotamian Archive Corridor (31.322° N, 45.636° E)',
+                similarity: '92.6%',
+                metrics: [90, 94, 93],
+                finding: 'Comparative NLP translation across Ashurbanipal Library cuneiform tablets, Nippur prism variants, and marine sediment core Paleoclimate proxies highlights synchronized catastrophic flood narratives and sexagesimal astronomical period-relations.',
+                tags: ['#4biddenKnowledge', '#CuneiformNLP', '#Mesopotamia', '#ComparativeMythology'],
+                nodes: [
+                    { label: 'Weld-Blundell Prism (WB 444)', region: 'Larsa • Sumerian', match: '97%', color: '#a855f7', svgX: 65, svgY: 42 },
+                    { label: 'Nineveh Deluge Tablet XI', region: 'Kuyunjik • Assyria', match: '96%', color: '#f59e0b', svgX: 285, svgY: 42 },
+                    { label: 'MUL.APIN Star Catalog', region: 'Babylonian Astronomy', match: '94%', color: '#38bdf8', svgX: 70, svgY: 120 },
+                    { label: 'Black Sea & Persian Gulf Cores', region: 'Holocene Transgression', match: '89%', color: '#10b981', svgX: 280, svgY: 120 }
+                ]
+            },
+            {
+                id: 'EXAM-2026-046',
+                domain: 'MEGALITHIC_ARCH',
+                clusterId: 'CLUSTER: INDUS-Sarasvati-06',
+                source: 'ARCHAEOGENOMICS & SATELLITE PALEO-HYDROLOGY',
+                title: 'Rakhigarhi, Dholavira & Paleo-Channel SAR Mapping of the Indus-Sarasvati Civilization',
+                coords: [23.8886, 70.2137],
+                sisterCoords: [[27.3242, 68.1375], [31.3225, 45.6361]],
+                siteLabel: 'Dholavira & Rakhigarhi Paleo-River Corridor (23.888° N, 70.213° E)',
+                similarity: '94.1%',
+                metrics: [94, 91, 93],
+                finding: 'Multi-spectral Landsat/Sentinel paleo-channel reconstruction combined with Dholavira rock-cut hydraulic reservoirs and undeciphered Indus script entropy modeling confirms sophisticated urban metrology and maritime trade with Dilmun and Mesopotamia.',
+                tags: ['#IndusScriptAI', '#Dholavira', '#PaleoHydrology', '#MaritimeArchaeology'],
+                nodes: [
+                    { label: 'Dholavira Ten-Sign Inscription', region: 'Kutch • Gujarat', match: '97%', color: '#38bdf8', svgX: 65, svgY: 42 },
+                    { label: 'Stepped Rock-Cut Reservoir', region: 'Dholavira Citadel', match: '95%', color: '#10b981', svgX: 285, svgY: 42 },
+                    { label: 'Mesopotamian Indus Cylinder Seal', region: 'Ur / Kish Trade Node', match: '92%', color: '#f59e0b', svgX: 70, svgY: 120 },
+                    { label: 'Ghaggar-Hakra SAR Paleo-Bed', region: 'NW Subcontinent', match: '93%', color: '#a855f7', svgX: 280, svgY: 120 }
+                ]
+            }
+        ];
+
+        let archMap = null;
+        let mapLayerGroup = null;
+        let currentExamIndex = 0;
+
+        function initArchMap() {
+            archMap = L.map('archMap', { zoomControl: true }).setView([29.9792, 31.1342], 3);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(archMap);
+            const tilePane = document.querySelector('#archMap .leaflet-tile-pane');
+            if (tilePane) {
+                tilePane.style.filter = 'invert(100%) hue-rotate(185deg) brightness(92%) contrast(92%)';
+            }
+            mapLayerGroup = L.layerGroup().addTo(archMap);
+        }
+
+        function renderConstellation(exam) {
+            const svg = document.getElementById('constellationSvg');
+            const centerX = 180;
+            const centerY = 78;
+
+            const linesHtml = exam.nodes.map(n => `
+                <line x1="${centerX}" y1="${centerY}" x2="${n.svgX}" y2="${n.svgY}"
+                      stroke="${n.color}" stroke-width="1.8" stroke-dasharray="4 3" opacity="0.75" />
+            `).join('');
+
+            const crossLinesHtml = `
+                <line x1="${exam.nodes[0].svgX}" y1="${exam.nodes[0].svgY}" x2="${exam.nodes[1].svgX}" y2="${exam.nodes[1].svgY}" stroke="#475569" stroke-width="1" opacity="0.45" />
+                <line x1="${exam.nodes[2].svgX}" y1="${exam.nodes[2].svgY}" x2="${exam.nodes[3].svgX}" y2="${exam.nodes[3].svgY}" stroke="#475569" stroke-width="1" opacity="0.45" />
+            `;
+
+            const nodesHtml = exam.nodes.map(n => `
+                <g>
+                    <circle cx="${n.svgX}" cy="${n.svgY}" r="11" fill="#090d16" stroke="${n.color}" stroke-width="2.2" />
+                    <text x="${n.svgX}" y="${n.svgY + 3}" text-anchor="middle" fill="#f8fafc" font-size="7.5" font-family="JetBrains Mono">${n.match}</text>
+                    <text x="${n.svgX}" y="${n.svgY + 23}" text-anchor="middle" fill="#cbd5e1" font-size="8.5" font-weight="600">${n.label.slice(0, 22)}</text>
+                </g>
+            `).join('');
+
+            const centerHubHtml = `
+                <g>
+                    <circle cx="${centerX}" cy="${centerY}" r="22" fill="#1e1b4b" stroke="#fbbf24" stroke-width="2.5" />
+                    <text x="${centerX}" y="${centerY - 2}" text-anchor="middle" fill="#fbbf24" font-size="8" font-weight="700" font-family="JetBrains Mono">CORE</text>
+                    <text x="${centerX}" y="${centerY + 9}" text-anchor="middle" fill="#ffffff" font-size="7.5" font-family="JetBrains Mono">${exam.similarity}</text>
+                </g>
+            `;
+
+            svg.innerHTML = crossLinesHtml + linesHtml + nodesHtml + centerHubHtml;
+
+            const cardsContainer = document.getElementById('imageAssocCards');
+            cardsContainer.innerHTML = exam.nodes.map((n, idx) => `
+                <div class="assoc-node ${idx === 0 ? 'active-node' : ''} rounded-xl bg-slate-900/90 border border-slate-800 p-2.5 cursor-pointer" onclick="highlightNode(${idx})">
+                    <div class="flex items-center justify-between text-[9px] font-mono-code mb-1">
+                        <span style="color:${n.color}" class="font-bold">● ${n.region}</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-950 text-amber-300 font-bold">${n.match}</span>
+                    </div>
+                    <div class="text-xs font-bold text-white leading-snug">${n.label}</div>
+                </div>
+            `).join('');
+        }
+
+        function highlightNode(idx) {
+            document.querySelectorAll('#imageAssocCards .assoc-node').forEach((el, i) => {
+                el.classList.toggle('active-node', i === idx);
+            });
+        }
+
+        function examineItem(examId) {
+            const exam = EXAMINATIONS.find(e => e.id === examId) || EXAMINATIONS[0];
+            currentExamIndex = EXAMINATIONS.indexOf(exam);
+
+            document.getElementById('assocClusterBadge').textContent = exam.clusterId;
+            document.getElementById('similarityScoreLabel').innerHTML = `Cosine Motif Similarity: <strong class="text-amber-300">${exam.similarity}</strong>`;
+            renderConstellation(exam);
+
+            // Update Map
+            document.getElementById('mapCoordBadge').textContent = `${exam.coords[0].toFixed(3)}°, ${exam.coords[1].toFixed(3)}°`;
+            document.getElementById('activeSiteLabel').textContent = exam.siteLabel;
+            if (archMap && mapLayerGroup) {
+                mapLayerGroup.clearLayers();
+                const primaryIcon = L.divIcon({
+                    className: 'arch-pin',
+                    html: `<div style="width:16px;height:16px;border-radius:50%;background:#f59e0b;border:2.5px solid #fff;box-shadow:0 0 16px #f59e0b;"></div>`,
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
+                });
+                L.marker(exam.coords, { icon: primaryIcon })
+                    .bindPopup(`<strong>${exam.title}</strong><br/>${exam.siteLabel}`)
+                    .addTo(mapLayerGroup);
+
+                exam.sisterCoords.forEach(sc => {
+                    const sisterIcon = L.divIcon({
+                        className: 'sister-pin',
+                        html: `<div style="width:12px;height:12px;border-radius:50%;background:#a855f7;border:2px solid #fff;box-shadow:0 0 12px #a855f7;"></div>`,
+                        iconSize: [12, 12],
+                        iconAnchor: [6, 6]
+                    });
+                    L.marker(sc, { icon: sisterIcon }).addTo(mapLayerGroup);
+                    L.polyline([exam.coords, sc], { color: '#f59e0b', weight: 2, dashArray: '5, 6', opacity: 0.75 }).addTo(mapLayerGroup);
+                });
+
+                archMap.flyTo(exam.coords, 4, { duration: 0.9 });
+            }
+
+            // Update Report Pane
+            document.getElementById('examIdBadge').textContent = exam.id;
+            document.getElementById('examReportTitle').textContent = exam.title;
+            document.getElementById('examSourceSubtitle').textContent = `Source: ${exam.source}`;
+
+            const [m1, m2, m3] = exam.metrics;
+            document.getElementById('metricChron').textContent = m1 + '%';
+            document.getElementById('barChron').style.width = m1 + '%';
+            document.getElementById('metricEpig').textContent = m2 + '%';
+            document.getElementById('barEpig').style.width = m2 + '%';
+            document.getElementById('metricAssoc').textContent = m3 + '%';
+            document.getElementById('barAssoc').style.width = m3 + '%';
+
+            document.getElementById('examFindingText').textContent = exam.finding;
+            document.getElementById('examTags').innerHTML = exam.tags.map(t =>
+                `<span class="px-2 py-0.5 rounded bg-slate-950 text-slate-300 font-mono-code text-[10px]">${t}</span>`
+            ).join('');
+
+            // Highlight card in grid
+            document.querySelectorAll('.exam-card').forEach(c => {
+                c.classList.toggle('border-amber-400', c.dataset.id === exam.id);
+            });
+        }
+
+        function cycleAssociationCluster() {
+            const nextIdx = (currentExamIndex + 1) % EXAMINATIONS.length;
+            examineItem(EXAMINATIONS[nextIdx].id);
+        }
+
+        function renderExaminationsGrid(domain = 'ALL') {
+            const grid = document.getElementById('examinationsGrid');
+            const filtered = domain === 'ALL' ? EXAMINATIONS : EXAMINATIONS.filter(e => e.domain === domain);
+
+            grid.innerHTML = filtered.map((item, idx) => `
+                <div data-id="${item.id}" onclick="examineItem('${item.id}')"
+                     class="exam-card glass-panel rounded-xl p-5 border ${idx === 0 ? 'border-amber-400' : 'border-slate-800'} hover:border-amber-400/70 transition cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="text-[10px] font-mono-code font-bold uppercase px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">${item.source}</span>
+                            <span class="text-[10px] font-mono-code text-purple-300 font-bold">Match: ${item.similarity}</span>
+                        </div>
+                        <h3 class="text-sm font-bold text-white group-hover:text-amber-200 transition leading-snug">${item.title}</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">${item.finding}</p>
+                    </div>
+                    <div class="mt-4 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[10px] font-mono-code">
+                        <span class="text-slate-400">${item.siteLabel.split('(')[0]}</span>
+                        <span class="text-amber-300 font-bold">EXAMINE &amp; TRACE &rarr;</span>
+                    </div>
+                </div>
+            `).join('');
+
+            if (filtered.length > 0) {
+                examineItem(filtered[0].id);
+            }
+        }
+
+        function selectDomain(domain) {
+            document.querySelectorAll('#domainFilters .cat-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.domain === domain);
+            });
+            renderExaminationsGrid(domain);
+        }
+
+        function runCustomExamination() {
+            const headline = document.getElementById('customHeadline').value.trim() || 'Custom Archaeological & AI Discovery';
+            const regionRaw = document.getElementById('customRegion').value;
+            const [coordPart, labelPart] = regionRaw.split('|');
+            const [lat, lng] = coordPart.split(',').map(Number);
+            const method = document.getElementById('customMethod').value;
+            const excerpt = document.getElementById('customExcerpt').value.trim();
+
+            const customExam = {
+                id: 'EXAM-CUSTOM-' + Math.floor(100 + Math.random() * 899),
+                domain: method,
+                clusterId: 'CLUSTER: CUSTOM-SYNTHESIS',
+                source: 'CUSTOM AI & ARCHAEOLOGICAL EXAMINATION',
+                title: headline,
+                coords: [lat, lng],
+                sisterCoords: [[29.9792, 31.1342], [37.2231, 38.9225]],
+                siteLabel: `${labelPart} (${lat.toFixed(2)}°, ${lng.toFixed(2)}°)`,
+                similarity: '96.1%',
+                metrics: [94, 92, 96],
+                finding: excerpt + ' — Cross-indexed via Aeneas/Ithaca epigraphic embeddings, satellite terrain anomaly detection, and comparative architectural motif clustering.',
+                tags: ['#CustomExamination', '#AIGeospatialTrace', '#ImageAssociation', '#4biddenKnowledge'],
+                nodes: [
+                    { label: labelPart.slice(0, 20) + ' Primary', region: 'Primary Site', match: '98%', color: '#f59e0b', svgX: 65, svgY: 42 },
+                    { label: 'Giza / Hawara Parallel', region: 'Comparative Node', match: '94%', color: '#a855f7', svgX: 285, svgY: 42 },
+                    { label: 'Anatolian Relief Motif', region: 'Taş Tepeler', match: '92%', color: '#38bdf8', svgX: 70, svgY: 120 },
+                    { label: 'Andean Polygonal Core', region: 'Sacred Valley', match: '95%', color: '#10b981', svgX: 280, svgY: 120 }
+                ]
+            };
+
+            EXAMINATIONS.unshift(customExam);
+            renderExaminationsGrid('ALL');
+        }
+
+        function exportExaminationReport() {
+            const toast = document.getElementById('exportReportToast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initArchMap();
+            renderExaminationsGrid('ALL');
+        });
+    </script>
+</body>
+</html>
