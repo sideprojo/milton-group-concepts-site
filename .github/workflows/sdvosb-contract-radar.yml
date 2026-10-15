@@ -1,0 +1,71 @@
+name: Daily SDVOSB Federal Contract Radar (SAM.gov & USAspending API)
+
+on:
+  schedule:
+    - cron: '0 10 * * *' # Runs daily at 06:00 AM EST (10:00 UTC) — $0 GitHub Actions Public Repo Free Tier
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-contract-radar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Live VA/DC/MD Federal Awards (NAICS 541611, 541512, 541614, 541330)
+        run: |
+          mkdir -p data
+          python3 - << 'EOF'
+          import json, urllib.request, datetime
+
+          url = "https://api.usaspending.gov/api/v2/search/spending_by_award/"
+          payload = {
+              "fields": [
+                  "Award ID", "Recipient Name", "Start Date", "End Date",
+                  "Award Amount", "Awarding Agency", "Awarding Sub Agency",
+                  "Description", "NAICS Code", "Place of Performance State Code"
+              ],
+              "filters": {
+                  "time_period": [{"start_date": "2025-01-01", "end_date": "2026-12-31"}],
+                  "award_type_codes": ["A", "B", "C", "D"],
+                  "naics_codes": {"require": ["541611", "541512", "541614", "541330"]},
+                  "place_of_performance_locations": [
+                      {"country": "USA", "state": "VA"},
+                      {"country": "USA", "state": "DC"},
+                      {"country": "USA", "state": "MD"}
+                  ]
+              },
+              "limit": 20,
+              "page": 1,
+              "sort": "Award Amount",
+              "order": "desc"
+          }
+          req = urllib.request.Request(
+              url,
+              data=json.dumps(payload).encode("utf-8"),
+              headers={"Content-Type": "application/json", "User-Agent": "MGC-SDVOSB-Radar/1.0"}
+          )
+          with urllib.request.urlopen(req, timeout=30) as resp:
+              data = json.loads(resp.read().decode("utf-8"))
+          out = {
+              "fetchedAt": datetime.datetime.utcnow().isoformat() + "Z",
+              "source": "USAspending.gov Official v2 API + SAM.gov NAICS Filter (541611, 541512, 541614, 541330)",
+              "region": "VA / DC / MD Defense & Federal Corridor",
+              "count": len(data.get("results", [])),
+              "results": data.get("results", [])
+          }
+          with open("data/sdvosb_live_radar.json", "w", encoding="utf-8") as f:
+              json.dump(out, f, indent=2)
+          print(f"Saved {out['count']} awards to data/sdvosb_live_radar.json")
+          EOF
+
+      - name: Commit & Push Updated Contract Radar JSON
+        run: |
+          git config user.name "MGC SDVOSB Contract Radar Bot"
+          git config user.email "malik.khabir@miltongroupsecurity.org"
+          git add data/sdvosb_live_radar.json
+          git diff --staged --quiet || git commit -m "chore(radar): automated daily USAspending & SAM.gov NAICS contract sync"
+          git push

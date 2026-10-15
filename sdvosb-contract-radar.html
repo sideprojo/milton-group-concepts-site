@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Milton Group Concepts LLC & F.I.X Solutions | Automated SAM.gov & USAspending SDVOSB Contract Radar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #050a15; color: #f8fafc; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .glass { background: rgba(15, 23, 42, 0.78); backdrop-filter: blur(18px); border: 1px solid rgba(148, 163, 184, 0.22); }
+    .gold-border { border-color: rgba(197, 179, 88, 0.45); }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-amber-400 selection:text-slate-950">
+  <script src="mgc-guided-security.js"></script>
+
+  <main class="max-w-7xl mx-auto px-6 py-10 space-y-10">
+    <!-- Hero Header -->
+    <section class="glass gold-border rounded-3xl p-8 md:p-10">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div class="space-y-3 max-w-3xl">
+          <div class="inline-flex flex-wrap items-center gap-2">
+            <span class="px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-extrabold uppercase tracking-widest">Option B Active • Daily GitHub Action</span>
+            <span class="px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 text-xs font-extrabold uppercase tracking-widest">NAICS 541611 • 541512 • 541614 • 541330</span>
+            <span class="px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/40 text-blue-300 text-xs font-extrabold uppercase tracking-widest">VA • DoD • DHS Corridor (VA/DC/MD)</span>
+          </div>
+          <h1 class="text-3xl md:text-4xl font-black tracking-tight text-white">
+            Automated SAM.gov & USAspending SDVOSB Contract Radar
+          </h1>
+          <p class="text-slate-200 text-sm md:text-base leading-relaxed">
+            Live federal award and recompete intelligence for <strong>Milton Group Concepts LLC</strong> and <strong>F.I.X Solutions LLC</strong>. Automatically synced daily via GitHub Actions (<code>.github/workflows/sdvosb-contract-radar.yml</code>) and queryable live on demand at <strong>$0.00 cost</strong>.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-3 shrink-0">
+          <button onclick="fetchLiveUSAspending()" class="px-6 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs uppercase tracking-widest shadow-lg transition-all">
+            ↻ Refresh Live Federal API Now
+          </button>
+          <span id="radar-sync-time" class="mono text-xs text-center text-emerald-400 font-semibold">Loading live federal feed...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- NAICS Filter Bar & Summary Metrics -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <button onclick="filterByNaics('ALL')" class="glass p-5 rounded-2xl text-left hover:border-amber-400/60 transition-all">
+        <div class="text-[11px] font-extrabold uppercase tracking-widest text-amber-400">All Target NAICS</div>
+        <div class="text-2xl font-black text-white mt-1" id="metric-count">15 Awards</div>
+        <div class="text-xs text-slate-300 mt-1">VA, DC & MD Active Corridor</div>
+      </button>
+      <button onclick="filterByNaics('541611')" class="glass p-5 rounded-2xl text-left hover:border-blue-400/60 transition-all">
+        <div class="text-[11px] font-extrabold uppercase tracking-widest text-blue-400">NAICS 541611</div>
+        <div class="text-lg font-black text-white mt-1">Management Consulting</div>
+        <div class="text-xs text-slate-300 mt-1">MGC Core Advisory & Program Mgmt</div>
+      </button>
+      <button onclick="filterByNaics('541512')" class="glass p-5 rounded-2xl text-left hover:border-emerald-400/60 transition-all">
+        <div class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400">NAICS 541512</div>
+        <div class="text-lg font-black text-white mt-1">Computer Systems Design</div>
+        <div class="text-xs text-slate-300 mt-1">Cloud Agents, AI & Cyber Architecture</div>
+      </button>
+      <button onclick="filterByNaics('541614')" class="glass p-5 rounded-2xl text-left hover:border-purple-400/60 transition-all">
+        <div class="text-[11px] font-extrabold uppercase tracking-widest text-purple-400">NAICS 541614 / 541330</div>
+        <div class="text-lg font-black text-white mt-1">Logistics & Engineering</div>
+        <div class="text-xs text-slate-300 mt-1">F.I.X Solutions Tactical Supply Chain</div>
+      </button>
+    </section>
+
+    <!-- Live Contract Table + 1-Click RFI / Teaming Brief Drafter -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 glass rounded-2xl p-6 space-y-4 overflow-hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400">Verified Federal Procurement Feed</span>
+            <h2 class="text-xl font-bold text-white">Active VA / DoD / Federal Awards & Subcontracting Targets</h2>
+          </div>
+          <span class="mono text-xs text-slate-400" id="active-filter-label">Filter: ALL</span>
+        </div>
+
+        <div class="overflow-x-auto max-h-[540px] overflow-y-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="sticky top-0 bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="py-3 px-3">Award ID / NAICS</th>
+                <th class="py-3 px-3">Agency & Prime Recipient</th>
+                <th class="py-3 px-3">Amount & State</th>
+                <th class="py-3 px-3">Action</th>
+              </tr>
+            </thead>
+            <tbody id="radar-tbody" class="divide-y divide-slate-800/80 text-slate-200">
+              <tr><td colspan="4" class="py-8 text-center text-slate-400">Loading federal contract data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 1-Click SDVOSB RFI & Subcontracting Brief Generator -->
+      <div class="glass rounded-2xl p-6 flex flex-col justify-between space-y-4">
+        <div class="space-y-3">
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-amber-400">Automated Proposal & Teaming Engine</span>
+          <h3 class="text-lg font-bold text-white">1-Click SDVOSB Teaming / RFI Brief</h3>
+          <p class="text-xs text-slate-300">
+            Click <strong>"Draft Brief"</strong> on any federal contract row on the left to automatically generate a tailored SDVOSB Teaming / RFI response letter for <strong>Milton Group Concepts LLC</strong> & <strong>F.I.X Solutions LLC</strong>.
+          </p>
+          <textarea id="rfi-draft" rows="14" class="w-full rounded-xl bg-slate-950 border border-slate-700 p-3.5 text-xs mono text-emerald-200 leading-relaxed">Select any federal contract on the left to generate a tailored SDVOSB Teaming & Capability Brief...</textarea>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="copyRfiDraft()" class="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-widest transition-all">
+            Copy Brief
+          </button>
+          <button onclick="downloadRfiDraft()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-xs uppercase tracking-widest transition-all">
+            Download .TXT
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let allAwards = [];
+
+    function formatCurrency(val) {
+      const num = Number(val) || 0;
+      return '$' + num.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    }
+
+    function renderTable(items) {
+      const tbody = document.getElementById('radar-tbody');
+      document.getElementById('metric-count').textContent = items.length + ' Awards';
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="py-6 text-center text-slate-400">No matching awards for this NAICS filter.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map((r, idx) => {
+        const awardId = r['Award ID'] || 'FED-AWARD';
+        const naics = r['NAICS Code'] || '541611';
+        const agency = r['Awarding Agency'] || 'Federal Agency';
+        const recip = r['Recipient Name'] || 'Prime Contractor';
+        const amt = formatCurrency(r['Award Amount']);
+        const st = r['Place of Performance State Code'] || 'VA';
+        const desc = (r['Description'] || 'Federal engineering, consulting, and technical integration support.').slice(0, 90);
+        return `
+          <tr class="hover:bg-slate-900/70 transition-colors">
+            <td class="py-3 px-3 align-top">
+              <div class="mono font-bold text-amber-300">${awardId}</div>
+              <span class="inline-block mt-1 px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 mono text-[10px]">NAICS ${naics}</span>
+            </td>
+            <td class="py-3 px-3 align-top">
+              <div class="font-bold text-white">${agency}</div>
+              <div class="text-emerald-300 font-semibold text-[11px] mt-0.5">Prime: ${recip}</div>
+              <div class="text-slate-400 text-[11px] mt-1">${desc}...</div>
+            </td>
+            <td class="py-3 px-3 align-top mono">
+              <div class="font-bold text-white">${amt}</div>
+              <div class="text-slate-400 text-[10px] mt-1">${st} • Ends ${r['End Date'] || '2026'}</div>
+            </td>
+            <td class="py-3 px-3 align-top">
+              <button onclick="generateBrief(${idx})" class="px-3 py-1.5 rounded-lg bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/40 text-amber-300 font-extrabold text-[10px] uppercase tracking-wider transition-all">
+                Draft Brief
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterByNaics(code) {
+      document.getElementById('active-filter-label').textContent = 'Filter: ' + code;
+      if (code === 'ALL') {
+        renderTable(allAwards);
+      } else {
+        renderTable(allAwards.filter(a => String(a['NAICS Code'] || '').startsWith(code)));
+      }
+    }
+
+    function generateBrief(idx) {
+      const r = allAwards[idx] || {};
+      const brief = [
+        `SUBJECT: SDVOSB Teaming & Subcontracting Capability Statement — Award ${r['Award ID'] || 'N/A'} (NAICS ${r['NAICS Code'] || '541611'})`,
+        `TO: Federal Captures / Small Business Liaison Officer — ${r['Recipient Name'] || 'Prime Contractor'}`,
+        `AGENCY: ${r['Awarding Agency'] || 'Department of Veterans Affairs / DoD'} (${r['Awarding Sub Agency'] || ''})`,
+        `FROM: Malik A. Khabir, Managing Principal | Milton Group Concepts LLC & F.I.X Solutions LLC (Verified SDVOSB)`,
+        `EIN: 92-1370285 | HQ: 8401 Mayland Dr #10286, Richmond, VA 23294 | Phone: 804-760-5797`,
+        `--------------------------------------------------------------------------------`,
+        `1. EXECUTIVE SUMMARY`,
+        `Milton Group Concepts LLC (MGC) and F.I.X Solutions LLC are Service-Disabled Veteran-Owned Small Businesses (SDVOSB) headquartered in Richmond, Virginia. We are reaching out regarding subcontracting, task-order augmentation, and recompete teaming on ${r['Award ID']} (${formatCurrency(r['Award Amount'])}).`,
+        ``,
+        `2. CORE DIFFERENTIATORS & TECHNICAL ALIGNMENT`,
+        `• USASOC / Airborne 25N Signal & ORSA Operations Research pedigree`,
+        `• Multi-Cloud Agentic AI & ModelOps (Google Cloud Vertex AI, Azure AI Foundry, SAS Viya ModelOps A00-440)`,
+        `• Defense-in-Depth CMMC 2.0 Level 2 / NIST SP 800-171 & IAPP CIPP/US Privacy Governance`,
+        `• F.I.X Solutions Tactical Supply Chain, Procurement & Lifecycle Engineering`,
+        ``,
+        `3. NEXT STEPS`,
+        `We welcome a 15-minute capability briefing to support your SDVOSB small-business participation goals under FAR 52.219-8 / VA Vets First.`,
+        `Contact: contact@miltongroupsecurity.org | Portal: https://sideprojo.github.io/milton-group-concepts-llc/`
+      ].join('\n');
+      document.getElementById('rfi-draft').value = brief;
+    }
+
+    function copyRfiDraft() {
+      const el = document.getElementById('rfi-draft');
+      el.select();
+      navigator.clipboard.writeText(el.value);
+    }
+
+    function downloadRfiDraft() {
+      const text = document.getElementById('rfi-draft').value;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'MGC_FIX_SDVOSB_Teaming_Brief.txt';
+      a.click();
+    }
+
+    async function loadCachedRadar() {
+      try {
+        const res = await fetch('data/sdvosb_live_radar.json');
+        if (res.ok) {
+          const data = await res.json();
+          allAwards = data.results || [];
+          document.getElementById('radar-sync-time').textContent = 'Synced: ' + (data.fetchedAt || '').slice(0, 19).replace('T', ' ') + ' UTC';
+          renderTable(allAwards);
+          if (allAwards.length > 0) generateBrief(0);
+          return;
+        }
+      } catch (e) {}
+      fetchLiveUSAspending();
+    }
+
+    async function fetchLiveUSAspending() {
+      document.getElementById('radar-sync-time').textContent = 'Querying api.usaspending.gov...';
+      try {
+        const res = await fetch('https://api.usaspending.gov/api/v2/search/spending_by_award/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fields: ['Award ID','Recipient Name','Start Date','End Date','Award Amount','Awarding Agency','Awarding Sub Agency','Description','NAICS Code','Place of Performance State Code'],
+            filters: {
+              time_period: [{ start_date: '2025-01-01', end_date: '2026-12-31' }],
+              award_type_codes: ['A','B','C','D'],
+              naics_codes: { require: ['541611','541512','541614','541330'] },
+              place_of_performance_locations: [{ country: 'USA', state: 'VA' }, { country: 'USA', state: 'DC' }, { country: 'USA', state: 'MD' }]
+            },
+            limit: 15,
+            page: 1,
+            sort: 'Award Amount',
+            order: 'desc'
+          })
+        });
+        const data = await res.json();
+        allAwards = data.results || [];
+        document.getElementById('radar-sync-time').textContent = 'Live API Verified: ' + new Date().toLocaleTimeString();
+        renderTable(allAwards);
+        if (allAwards.length > 0) generateBrief(0);
+      } catch (e) {
+        document.getElementById('radar-sync-time').textContent = 'Using cached radar snapshot';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadCachedRadar);
+  </script>
+</body>
+</html>

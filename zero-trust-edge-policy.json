@@ -1,0 +1,35 @@
+{
+  "policyName": "MGC-and-FIX-Internal-Portals-Zero-Trust-Edge-Gate",
+  "version": "2026.10",
+  "costTier": "$0.00/month (Cloudflare Zero Trust Free Plan — 50 Seats / Firebase Auth Spark Free Tier)",
+  "protectedApplications": [
+    "https://sideprojo.github.io/milton-group-concepts-site/*",
+    "https://internal.miltongroupsecurity.org/*",
+    "https://portal.miltongroupsecurity.org/*"
+  ],
+  "sessionDuration": "12h",
+  "identityProviders": [
+    {
+      "provider": "Google Workspace OIDC",
+      "domain": "miltongroupsecurity.org",
+      "ownerEmail": "malik.khabir@miltongroupsecurity.org",
+      "assignedRole": "OWNER_ADMIN"
+    },
+    {
+      "provider": "Microsoft Entra ID (Azure AD B2B / Federal Partner OIDC)",
+      "allowedTenants": ["*.va.gov", "*.mail.mil", "*.gov"],
+      "assignedRole": "VIEWER_ONBOARDED"
+    },
+    {
+      "provider": "One-Time PIN (OTP) + Partner Access Key",
+      "validAccessKeys": ["b30cd4bf8036b366", "c54c9f8b7e3627b3"],
+      "assignedRole": "VIEWER_ONBOARDED"
+    }
+  ],
+  "securityHeaders": {
+    "Content-Security-Policy": "default-src 'self' https:; frame-ancestors 'self';",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  }
+}
