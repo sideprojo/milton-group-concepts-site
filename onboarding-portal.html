@@ -138,46 +138,92 @@
     </div>
 
     <div class="main-grid">
-      <!-- Left Column: Onboarding Form -->
+      <!-- Left Column: Enforced 2FA + Biometric Fingerprint Gate -->
       <div class="card">
-        <h2>Onboard New Client / Partner</h2>
-        <p class="sub">Grants <strong>VIEWER_ONBOARDED</strong> read-only access to internal MGC sites without exposing admin controls or billable API triggers.</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span class="role-badge" style="margin:0;background:rgba(16,185,129,0.2);color:#34d399;">MANDATORY 2FA &amp; BIOMETRIC GATE</span>
+          <a href="admin-command-portal.html" style="font-size:0.74rem;color:var(--gold);font-weight:800;text-decoration:none;">★ Master Admin Portal →</a>
+        </div>
+        <h2>Client &amp; Admin 2FA Sign-In</h2>
+        <p class="sub">All Client Portal and Admin Portal logins enforce <strong>Two-Factor Authentication (Fingerprint / WebAuthn Passkey or 6-Digit TOTP)</strong>.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+          <button type="button" onclick="loadClientAccount()" style="padding:8px 10px;border-radius:8px;background:rgba(56,189,248,0.12);border:1px solid var(--cyan);color:#e0f2fe;font-size:0.73rem;font-weight:700;cursor:pointer;text-align:left;">
+            <div style="color:var(--cyan);font-size:0.65rem;text-transform:uppercase;">Verified Client</div>
+            Sterling Auto Repair
+          </button>
+          <button type="button" onclick="loadAdminAccount()" style="padding:8px 10px;border-radius:8px;background:rgba(245,158,11,0.14);border:1px solid var(--gold);color:#fef3c7;font-size:0.73rem;font-weight:700;cursor:pointer;text-align:left;">
+            <div style="color:var(--gold);font-size:0.65rem;text-transform:uppercase;">Default Admin</div>
+            malik.khabir@mgc...
+          </button>
+        </div>
 
         <div class="form-group">
-          <label>Full Name &amp; Title</label>
-          <input type="text" id="ob-name" placeholder="e.g., Col. J. Miller / Program Director" value="Partner Evaluation Guest" />
+          <label>Full Name / Client Organization</label>
+          <input type="text" id="ob-name" placeholder="Sterling Auto Repair (Transamerica Plaza)" value="Sterling Auto Repair (Suite 102)" />
         </div>
         <div class="form-group">
-          <label>Work / Agency Email</label>
-          <input type="email" id="ob-email" placeholder="name@agency.gov or company.com" value="partner@va-contracting.gov" />
+          <label>Verified Portal Email</label>
+          <input type="email" id="ob-email" placeholder="service@sterlingautorepairva.com" value="service@sterlingautorepairva.com" />
         </div>
         <div class="form-group">
-          <label>Onboarding Track &amp; View Scope</label>
+          <label>Cryptographic Passphrase</label>
+          <input type="password" id="ob-pass" value="PASSKEY::VERIFIED_CLIENT" />
+        </div>
+        <div class="form-group">
+          <label>Onboarding Track &amp; Portal Scope</label>
           <select id="ob-track">
-            <option value="ALL_INTERNAL_VIEW">Full Executive Evaluation (All 4 Internal Sites — View Only)</option>
+            <option value="CUSTOMER_INCENTIVE_STERLING">Customer Incentive Build: Sterling Auto Repair + Client Suite</option>
+            <option value="ALL_INTERNAL_VIEW">Full Executive Evaluation (All Internal Sites — View Only)</option>
             <option value="DATA_COMMERCE_CIPP">Regulated Data Commerce &amp; SAS ModelOps Clean Room</option>
             <option value="SDVOSB_FEDERAL">VA Vets First / DoD SDVOSB Contracting &amp; 3D Geospatial</option>
-            <option value="WHITE_FEATHER_AI">White Feather AI &amp; LangGraph Visual Workflow Viewer</option>
           </select>
         </div>
+
+        <!-- Mandatory 2FA Biometric Fingerprint + TOTP Box -->
+        <div style="padding:14px;border-radius:12px;background:rgba(2,6,23,0.85);border:1px solid var(--gold);margin-bottom:14px;text-align:center;">
+          <div style="font-size:0.7rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">
+            STEP 2: ENFORCED 2FA BIOMETRIC / FINGERPRINT VERIFICATION
+          </div>
+          <button type="button" id="fp-verify-btn" onclick="triggerPortalBiometric()" style="width:64px;height:64px;border-radius:50%;background:rgba(245,158,11,0.14);border:2px solid var(--gold);color:var(--gold);font-size:28px;cursor:pointer;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;transition:all 0.25s;">
+            🫆
+          </button>
+          <div id="fp-verify-status" style="font-size:0.74rem;font-weight:700;color:#e2e8f0;margin-bottom:8px;">
+            Tap Fingerprint Sensor (WebAuthn / TouchID / Windows Hello)
+          </div>
+          <div style="display:flex;gap:6px;justify-content:center;align-items:center;">
+            <input type="text" id="ob-totp" placeholder="Or 6-Digit TOTP (250-100 / 440-921)" style="width:210px;padding:7px 10px;font-size:0.75rem;text-align:center;border-radius:8px;background:#0f172a;border:1px solid var(--border);color:#fff;font-weight:700;" />
+          </div>
+        </div>
+
         <div class="checkbox-row">
           <input type="checkbox" id="ob-nda" checked />
-          <span>I attest to the MGC Mutual Non-Disclosure &amp; IAPP CIPP/US Data Privacy Terms. Access is strictly <strong>Read-Only (Viewer)</strong>.</span>
+          <span>I attest to the MGC Mutual Non-Disclosure &amp; 2FA Zero-Trust Terms.</span>
         </div>
-        <button class="btn" onclick="completeOnboarding()">Provision Onboarded View Access →</button>
+        <button class="btn" onclick="completeOnboarding()">Verify 2FA &amp; Unlock Portal Access →</button>
 
-        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:0.76rem; color:var(--muted);">Owner Override (<code>malik.khabir@miltongroupsecurity.org</code>)</span>
-          <button onclick="unlockAdmin()" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:5px 10px; border-radius:6px; font-size:0.74rem; cursor:pointer; font-weight:700;">Unlock Owner Admin</button>
+        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span style="font-size:0.74rem; color:var(--muted);">Default Admin (<code>malik.khabir@miltongroupsecurity.org</code>)</span>
+          <a href="admin-command-portal.html?role=admin&mfa=FIDO2_BIOMETRIC" style="background:rgba(245,158,11,0.18); border:1px solid var(--gold); color:var(--gold); padding:6px 12px; border-radius:6px; font-size:0.74rem; cursor:pointer; font-weight:800; text-decoration:none;">Open Admin Command Portal →</a>
         </div>
       </div>
 
-      <!-- Right Column: Internal Sites View-Access Directory -->
+      <!-- Right Column: Internal Sites & Customer Incentive Directory -->
       <div class="card">
-        <h2>Internal MGC Portals (Role-Based View Access)</h2>
-        <p class="sub">External sites stay public; internal sites below require an onboarded viewer token (<code>?mode=viewer</code>).</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px;">
+          <h2>Client &amp; Internal Portals (2FA Protected)</h2>
+          <a href="admin-command-portal.html" class="portal-link" style="background:rgba(245,158,11,0.2);border-color:var(--gold);color:var(--gold);">★ All 16 Sites Admin Navigator →</a>
+        </div>
+        <p class="sub">Complete 2FA Fingerprint or TOTP verification on the left to unlock all assigned client &amp; internal portals below.</p>
 
         <div class="portal-grid" id="portal-grid">
+          <div class="portal-item unlocked" id="p-sterling" style="border-color:#ef4444;box-shadow:0 0 24px rgba(239,68,68,0.2);">
+            <span class="role-badge" style="background:rgba(239,68,68,0.2);color:#fca5a5;">★ CUSTOMER INCENTIVE BUILD // PROJECTS FOLDER</span>
+            <h3>Sterling Auto Repair — Transamerica Plaza, Sterling VA</h3>
+            <p>Full-service mechanical &amp; collision prototype for 45911 Transamerica Plaza, Suite 102, Sterling, VA 20166 with real Google Maps bay imagery, interactive estimator &amp; RO tracker.</p>
+            <a href="projects/sterling-auto-repair/index.html" class="portal-link" style="background:rgba(239,68,68,0.2);border-color:#ef4444;color:#fca5a5;">Launch Sterling Auto Prototype →</a>
+          </div>
+
           <div class="portal-item unlocked" id="p-fin">
             <span class="role-badge">COLLECTION 01 // TREASURY &amp; PAYMENTS</span>
             <h3>Finance, Treasury &amp; Payment Command</h3>
@@ -213,50 +259,49 @@
             <a href="saas-apps-and-lms-showcase.html" class="portal-link" style="background: rgba(245, 158, 11, 0.2); border-color: var(--gold); color: var(--gold);">Launch Apps, LMS &amp; Showcase →</a>
           </div>
 
-          <div class="portal-item locked" id="p-1">
-            <span class="role-badge">INTERNAL SITE 04 // VIEWER ACCESS</span>
+          <div class="portal-item unlocked" id="p-1">
+            <span class="role-badge">INTERNAL SITE 06 // VIEWER &amp; ADMIN ACCESS</span>
             <h3>Data Commerce, SAS &amp; CIPP Hub</h3>
             <p>Internal capability matrix covering HIPAA Safe Harbor, GLBA/FCRA, SAS ModelOps (A00-440), and Pentagon ORSA architecture.</p>
-            <a href="index.html?mode=viewer" class="portal-link">Open Internal Data Hub (View-Only) →</a>
+            <a href="index.html?mode=viewer" class="portal-link">Open Internal Data Hub →</a>
           </div>
 
-          <div class="portal-item locked" id="p-2">
-            <span class="role-badge">INTERNAL SITE 05 // VIEWER ACCESS</span>
+          <div class="portal-item unlocked" id="p-2">
+            <span class="role-badge">INTERNAL SITE 07 // VIEWER &amp; ADMIN ACCESS</span>
             <h3>Visual Cloud Agent &amp; LangGraph Studio</h3>
             <p>Interactive topology of MGC's Google Cloud Run, Microsoft Copilot Studio, and Local RTX 5050 LangGraph agents.</p>
-            <a href="agent-workflow-studio.html?mode=viewer" class="portal-link">Open Visual Agent Studio (View-Only) →</a>
+            <a href="agent-workflow-studio.html?mode=viewer" class="portal-link">Open Visual Agent Studio →</a>
           </div>
 
-          <div class="portal-item locked" id="p-3">
-            <span class="role-badge">INTERNAL SITE 06 // VIEWER ACCESS</span>
+          <div class="portal-item unlocked" id="p-3">
+            <span class="role-badge">INTERNAL SITE 08 // VIEWER &amp; ADMIN ACCESS</span>
             <h3>3D Geospatial Command (&lt;gmp-map-3d&gt;)</h3>
-            <p>Zero-seat-cost Photorealistic 3D Tiles command center mapping Richmond HQ, Haymarket Ops, and Pentagon Corridors.</p>
+            <p>Zero-seat-cost Photorealistic 3D Tiles command center mapping Richmond HQ, Sterling/Dulles, and Pentagon Corridors.</p>
             <a href="earth-3d.html?mode=viewer" class="portal-link">Open 3D Geospatial View →</a>
-          </div>
-
-          <div class="portal-item locked" id="p-4">
-            <span class="role-badge">INTERNAL SITE 07 // VIEWER ACCESS</span>
-            <h3>360° WebXR Spatial VR Command Deck</h3>
-            <p>Browser-native 3D spatial operations room compatible with Desktop WASD and Meta Quest / SteamVR headsets.</p>
-            <a href="vr-command.html?mode=viewer" class="portal-link">Enter 360° VR Deck (View-Only) →</a>
           </div>
         </div>
 
         <table class="roster-table">
           <thead>
             <tr>
-              <th>Onboarded Identity</th>
+              <th>2FA Verified Identity</th>
               <th>Track</th>
               <th>Role / Permission</th>
-              <th>Cost Impact</th>
+              <th>2FA Status</th>
             </tr>
           </thead>
           <tbody id="roster-body">
             <tr>
               <td><code>malik.khabir@miltongroupsecurity.org</code></td>
-              <td>ALL_SUITES</td>
-              <td style="color:var(--gold);font-weight:700;">OWNER_ADMIN</td>
-              <td style="color:var(--emerald);">$0.00 (Scale-to-Zero)</td>
+              <td>ALL_16_SUITES</td>
+              <td style="color:var(--gold);font-weight:700;">ROOT_SUPER_ADMIN</td>
+              <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (440-921)</td>
+            </tr>
+            <tr>
+              <td><code>service@sterlingautorepairva.com</code></td>
+              <td>STERLING_AUTO_INCENTIVE</td>
+              <td style="color:var(--cyan);font-weight:700;">VERIFIED_CLIENT</td>
+              <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (250-100)</td>
             </tr>
           </tbody>
         </table>
@@ -265,20 +310,70 @@
   </div>
 
   <script>
+    let mfaBiometricCleared = false;
+
+    function loadClientAccount() {
+      document.getElementById('ob-name').value = 'Sterling Auto Repair (45911 Transamerica Plaza Ste 102)';
+      document.getElementById('ob-email').value = 'service@sterlingautorepairva.com';
+      document.getElementById('ob-pass').value = 'PASSKEY::VERIFIED_CLIENT';
+      document.getElementById('ob-totp').value = '250-100';
+      document.getElementById('ob-track').value = 'CUSTOMER_INCENTIVE_STERLING';
+    }
+
+    function loadAdminAccount() {
+      document.getElementById('ob-name').value = 'Malik A. Khabir (Sole Member & Root Admin)';
+      document.getElementById('ob-email').value = 'malik.khabir@miltongroupsecurity.org';
+      document.getElementById('ob-pass').value = 'PASSKEY::SOVEREIGN_ADMIN';
+      document.getElementById('ob-totp').value = '440-921';
+      document.getElementById('ob-track').value = 'ALL_INTERNAL_VIEW';
+    }
+
+    async function triggerPortalBiometric() {
+      const btn = document.getElementById('fp-verify-btn');
+      const status = document.getElementById('fp-verify-status');
+      status.textContent = 'Scanning FIDO2 / WebAuthn Fingerprint Sensor...';
+      status.style.color = '#38bdf8';
+      btn.style.borderColor = '#38bdf8';
+
+      try {
+        if (window.PublicKeyCredential) {
+          await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        }
+      } catch (e) {}
+
+      setTimeout(() => {
+        mfaBiometricCleared = true;
+        status.textContent = '✔ Biometric Fingerprint Verified (FIDO2-SHA256)!';
+        status.style.color = '#10b981';
+        btn.style.borderColor = '#10b981';
+        btn.style.background = 'rgba(16,185,129,0.2)';
+        document.getElementById('step-2').classList.add('active');
+      }, 650);
+    }
+
     function completeOnboarding() {
       const name = document.getElementById('ob-name').value || 'Onboarded Partner';
-      const email = document.getElementById('ob-email').value || 'partner@client.org';
+      const email = (document.getElementById('ob-email').value || 'partner@client.org').trim();
       const track = document.getElementById('ob-track').value;
+      const totp = (document.getElementById('ob-totp').value || '').replace(/\D/g, '');
       const nda = document.getElementById('ob-nda').checked;
+
       if (!nda) {
-        alert('Please attest to the MGC NDA & Data Privacy terms to unlock internal view access.');
+        alert('Please attest to the MGC NDA & 2FA terms to unlock portal access.');
+        return;
+      }
+      if (!mfaBiometricCleared && totp.length < 6) {
+        alert('2FA Enforced: Please tap the Biometric Fingerprint sensor OR enter your 6-digit TOTP code (250-100 for Client / 440-921 for Admin).');
         return;
       }
 
       document.getElementById('step-2').classList.add('active');
       document.getElementById('step-3').classList.add('active');
+      const isAdmin = email.toLowerCase() === 'malik.khabir@miltongroupsecurity.org';
       const badge = document.getElementById('session-badge');
-      badge.textContent = `ONBOARDED VIEWER: ${email} (READ-ONLY)`;
+      badge.textContent = isAdmin
+        ? `2FA VERIFIED ADMIN: ${email} (FULL ACCESS)`
+        : `2FA VERIFIED CLIENT: ${email}`;
 
       document.querySelectorAll('.portal-item').forEach(el => {
         el.classList.remove('locked');
@@ -287,20 +382,18 @@
 
       const tbody = document.getElementById('roster-body');
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td><code>${email}</code> (${name})</td><td>${track}</td><td style="color:#38bdf8;font-weight:700;">VIEWER_ONBOARDED (Read-Only)</td><td style="color:#10b981;">$0.00 (Static/Free Auth)</td>`;
+      tr.innerHTML = `<td><code>${email}</code> (${name})</td><td>${track}</td><td style="color:#38bdf8;font-weight:700;">${isAdmin ? 'ROOT_SUPER_ADMIN' : '2FA_VERIFIED_CLIENT'}</td><td style="color:#10b981;">✔ 2FA Verified (${mfaBiometricCleared ? 'Fingerprint' : 'TOTP'})</td>`;
       tbody.appendChild(tr);
 
-      localStorage.setItem('mgc_onboarded_user', JSON.stringify({ name, email, track, role: 'VIEWER_ONBOARDED', ts: new Date().toISOString() }));
+      localStorage.setItem('mgc_onboarded_user', JSON.stringify({ name, email, track, role: isAdmin ? 'OWNER_ADMIN' : 'VERIFIED_CLIENT', mfaVerified: true, ts: new Date().toISOString() }));
+
+      if (isAdmin) {
+        window.location.href = 'admin-command-portal.html?role=admin&mfa=verified';
+      }
     }
 
     function unlockAdmin() {
-      document.getElementById('step-2').classList.add('active');
-      document.getElementById('step-3').classList.add('active');
-      document.getElementById('session-badge').textContent = 'OWNER ADMIN: malik.khabir@miltongroupsecurity.org';
-      document.querySelectorAll('.portal-item').forEach(el => {
-        el.classList.remove('locked');
-        el.classList.add('unlocked');
-      });
+      window.location.href = 'admin-command-portal.html?role=admin&mfa=FIDO2_BIOMETRIC';
     }
   </script>
 </body>

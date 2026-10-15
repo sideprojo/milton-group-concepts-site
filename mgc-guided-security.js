@@ -72,30 +72,38 @@
   const currentFile = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
   const pages = [
-    { file: 'onboarding-portal.html', label: '1. Onboarding & RBAC', short: 'Onboarding' },
+    { file: 'admin-command-portal.html', label: '0. Master Admin Command Portal', short: '★ Admin Portal' },
+    { file: 'onboarding-portal.html', label: '1. Client 2FA Portal & RBAC', short: 'Client 2FA' },
     { file: 'index.html', label: '2. Data Commerce & Ops Hub', short: 'Command Hub' },
     { file: 'saas-apps-and-lms-showcase.html', label: '3. Monetized Apps, Course LMS & Showcase', short: '★ Apps & LMS' },
-    { file: 'finance-command.html', label: '4. Finance & Payment System', short: 'Finance & Pay' },
-    { file: 'elearning-upskilling-hub.html', label: '5. eLearning & Insights Atlas', short: 'eLearning Atlas' },
-    { file: 'whitefeather-ecommerce-hub.html', label: '6. White Feather & eCommerce', short: 'eCommerce & News' },
-    { file: 'historical-archaeology-ai-hub.html', label: '7. AI, Historical & Archaeology Lab', short: 'AI & History Lab' },
-    { file: 'sdvosb-contract-radar.html', label: '8. SAM.gov & USAspending Radar', short: 'Contract Radar' },
-    { file: 'compliance-trust-center.html', label: '9. Compliance & Trust-But-Verify', short: 'Compliance & Security' },
-    { file: 'integrations-connections-hub.html', label: '10. Integrations & Connections', short: 'Integrations Hub' },
-    { file: 'agent-workflow-studio.html', label: '11. LangGraph & Agent Studio', short: 'Agent Studio' },
-    { file: 'earth-3d.html', label: '12. 3D Geospatial Command', short: '3D Earth' },
-    { file: 'vr-command.html', label: '13. 360° WebXR VR Deck', short: 'VR Deck' }
+    { file: 'projects/sterling-auto-repair/index.html', label: '4. Customer Incentive: Sterling Auto Repair', short: '🔧 Sterling Auto' },
+    { file: 'finance-command.html', label: '5. Finance & Payment System', short: 'Finance & Pay' },
+    { file: 'elearning-upskilling-hub.html', label: '6. eLearning & Insights Atlas', short: 'eLearning Atlas' },
+    { file: 'whitefeather-ecommerce-hub.html', label: '7. White Feather & eCommerce', short: 'eCommerce & News' },
+    { file: 'historical-archaeology-ai-hub.html', label: '8. AI, Historical & Archaeology Lab', short: 'AI & History Lab' },
+    { file: 'sdvosb-contract-radar.html', label: '9. SAM.gov & USAspending Radar', short: 'Contract Radar' },
+    { file: 'compliance-trust-center.html', label: '10. Compliance & Trust-But-Verify', short: 'Compliance & Security' },
+    { file: 'integrations-connections-hub.html', label: '11. Integrations & Connections', short: 'Integrations Hub' },
+    { file: 'agent-workflow-studio.html', label: '12. LangGraph & Agent Studio', short: 'Agent Studio' },
+    { file: 'earth-3d.html', label: '13. 3D Geospatial Command', short: '3D Earth' },
+    { file: 'vr-command.html', label: '14. 360° WebXR VR Deck', short: 'VR Deck' }
   ];
 
   const tourStepsByPage = {
+    'admin-command-portal.html': {
+      title: 'Master Admin Command Portal (All 16 Sites & 2FA Biometric Control)',
+      desc: 'Root Admin dashboard providing 1-click categorized navigation across all 16 internal/external portals, Customer Incentive Projects (Sterling Auto Repair), and live Mobile/PC Site Quality audits.',
+      nextFile: 'onboarding-portal.html',
+      highlights: ['2FA Biometric & Fingerprint (FIDO2/WebAuthn) Verified', '1-Click All-Sites Navigator & Category Filter', 'Customer Incentive Projects & Site Quality Matrix']
+    },
     'onboarding-portal.html': {
-      title: 'Step 1 of 13: Zero-Trust Onboarding & Edge JWT Gatekeeper',
-      desc: 'External visitors from miltongroupsecurity.org and F.I.X Solutions authenticate here via Google Workspace SSO to receive VIEWER_ONBOARDED clearance.',
+      title: 'Step 1 of 14: Client 2FA Portal & Biometric Gatekeeper',
+      desc: 'External visitors and clients authenticate here with mandatory 2FA (Fingerprint/Passkey or 6-digit TOTP) to access assigned client prototypes (Sterling Auto Repair) or internal modules.',
       nextFile: 'saas-apps-and-lms-showcase.html',
-      highlights: ['Option A Edge WebCrypto SHA-256 JWT verification', 'SAM.gov UEI & CAGE validation', 'Direct launchpad into all 13 internal command modules']
+      highlights: ['Enforced 2FA Fingerprint & TOTP Verification', 'Sterling Auto Repair Customer Incentive Access', 'Direct switch to Master Admin Command Portal']
     },
     'saas-apps-and-lms-showcase.html': {
-      title: 'Step 2 of 13: Monetized Decoupled Apps, Course LMS, Leaderboards & Showcase',
+      title: 'Step 2 of 14: Monetized Decoupled Apps, Course LMS, Leaderboards & Showcase',
       desc: 'Subscription & Pay-Per-View SaaS hub offering decoupled apps (EVE-NG Studio, Tailored Job & Contract Matchmaker, Site Traffic & ROI Simulator, Custom Build Configurator), interactive Course LMS, Leaderboards, AI Coach, and User Profile Settings.',
       nextFile: 'index.html',
       highlights: ['Tiered Monetization & Pay-Per-View User Gate', 'Course-like LMS with Progress Trackers, XP Leaderboards & AI Coach', 'Tailored Job, Contract, Traffic & Custom Build Showcase']
@@ -316,13 +324,15 @@
       .mgc-edge-gate-overlay.active { display: flex; }
       .mgc-mobile-bottom-nav { display: none; }
       @media (max-width: 768px) {
-        .mgc-tbv-topbar { padding: 6px 10px; }
-        .mgc-tbv-inner { flex-direction: column; align-items: stretch; gap: 6px; }
-        .mgc-tbv-brand { justify-content: space-between; width: 100%; font-size: 11px; }
+        html, body { max-width: 100vw !important; overflow-x: hidden !important; }
+        .mgc-tbv-topbar { padding: 6px 10px; max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box; }
+        .mgc-tbv-inner { flex-direction: column; align-items: stretch; gap: 6px; max-width: 100% !important; overflow: hidden; }
+        .mgc-tbv-brand { justify-content: space-between; width: 100%; font-size: 11px; flex-wrap: wrap; gap: 4px; }
         .mgc-tbv-pill { font-size: 9px; padding: 3px 7px; }
         .mgc-tbv-nav {
           flex-wrap: nowrap !important;
           overflow-x: auto !important;
+          max-width: 100% !important;
           -webkit-overflow-scrolling: touch;
           scrollbar-width: none;
           padding-bottom: 2px;

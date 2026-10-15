@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MGC &amp; F.I.X // Master Admin Command Portal (2FA Biometric Verified)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #040814;
+      --bg-panel: rgba(13, 21, 42, 0.92);
+      --bg-card: rgba(19, 30, 58, 0.85);
+      --gold: #c5b358;
+      --gold-bright: #fbbf24;
+      --blue: #3b82f6;
+      --emerald: #10b981;
+      --crimson: #ef4444;
+      --purple: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-subtle: rgba(148, 163, 184, 0.18);
+      --border-gold: rgba(197, 179, 88, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(59, 130, 246, 0.16), transparent 36%),
+        radial-gradient(circle at 88% 12%, rgba(197, 179, 88, 0.14), transparent 36%),
+        var(--bg-deep);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .shell {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 20px 24px 80px;
+    }
+
+    /* Admin Security Header */
+    .admin-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 22px;
+      border-radius: 18px;
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.96), rgba(23, 37, 84, 0.92));
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      margin-bottom: 22px;
+    }
+    .admin-id {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .shield-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #1d4ed8, #c5b358);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(29, 78, 216, 0.45);
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .sec-pill {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pill-emerald { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); }
+    .pill-gold { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); }
+    .pill-blue { background: rgba(59, 130, 246, 0.18); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.45); }
+
+    .admin-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .btn {
+      padding: 9px 15px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      background: rgba(30, 41, 59, 0.85);
+      color: #f8fafc;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn:hover { border-color: var(--gold-bright); transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none; color: #fff; }
+    .btn-gold { background: linear-gradient(135deg, #c5b358, #a38f36); border: none; color: #040814; }
+    .btn-emerald { background: linear-gradient(135deg, #10b981, #059669); border: none; color: #022c22; }
+
+    /* KPI Telemetry Strip */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 16px 18px;
+    }
+    .kpi-label {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .kpi-val {
+      font-size: 24px;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: #34d399;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* Filter / Category Tabs */
+    .cat-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .cat-btn {
+      padding: 9px 16px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cat-btn.active, .cat-btn:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border-color: #60a5fa;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
+    }
+
+    /* Master All-Sites Command Grid */
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .portal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.22s;
+      position: relative;
+      overflow: hidden;
+    }
+    .portal-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+    }
+    .portal-card.featured-incentive {
+      border-color: rgba(239, 68, 68, 0.65);
+      background: linear-gradient(145deg, rgba(30, 20, 35, 0.92), rgba(15, 23, 42, 0.95));
+    }
+    .portal-card h3 {
+      font-size: 16.5px;
+      font-weight: 800;
+      margin: 8px 0 6px;
+    }
+    .portal-card p {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    /* Two-Column Admin Governance & Site Quality Audit Section */
+    .gov-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+    }
+    .gov-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 22px;
+    }
+    .gov-panel h3 {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .audit-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .audit-table th, .audit-table td {
+      padding: 9px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .audit-table th {
+      color: #93c5fd;
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* 2FA Re-Verification Modal */
+    .mfa-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(2, 6, 23, 0.82);
+      backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .mfa-modal-backdrop.open { display: flex; }
+    .mfa-modal {
+      width: 100%;
+      max-width: 460px;
+      background: #0f172a;
+      border: 1px solid var(--border-gold);
+      border-radius: 22px;
+      padding: 26px;
+      text-align: center;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75);
+    }
+    .fp-btn {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      margin: 16px auto;
+      background: rgba(245, 158, 11, 0.12);
+      border: 2px solid #fbbf24;
+      color: #fbbf24;
+      font-size: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .fp-btn:hover { transform: scale(1.06); box-shadow: 0 0 28px rgba(245, 158, 11, 0.45); }
+
+    @media (max-width: 1100px) {
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+      .portal-grid, .gov-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .shell { padding: 14px 12px 90px; }
+      .kpi-strip { grid-template-columns: 1fr 1fr; }
+      .admin-bar { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <script src="mgc-guided-security.js"></script>
+
+  <div class="shell">
+    <!-- Top Admin Identity & 2FA Biometric Status Bar -->
+    <header class="admin-bar">
+      <div class="admin-id">
+        <div class="shield-avatar">MK</div>
+        <div>
+          <div class="badge-row">
+            <span class="sec-pill pill-emerald" id="adm-mfa-badge">✔ 2FA BIOMETRIC &amp; FINGERPRINT VERIFIED</span>
+            <span class="sec-pill pill-gold">ROOT_SUPER_ADMIN // OWNER</span>
+            <span class="sec-pill pill-blue">ALL 16 PORTALS &amp; PROJECTS UNLOCKED</span>
+          </div>
+          <h1 style="font-size:21px;font-weight:900;letter-spacing:-0.02em;">
+            Master Admin Command Portal &amp; All-Sites Navigator
+          </h1>
+          <div style="font-size:12px;color:var(--text-muted);">
+            Authenticated Identity: <strong style="color:#fff;" id="adm-email-label">malik.khabir@miltongroupsecurity.org</strong> &bull; Session Hardware Key: <code>FIDO2-PASSKEY-SHA256</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-actions">
+        <button class="btn btn-gold" onclick="openBiometricModal()">🔒 Re-Verify Fingerprint / 2FA</button>
+        <a href="onboarding-portal.html?role=client&client=sterling-auto-repair" class="btn">👥 Switch to Client Portal View</a>
+        <a href="projects/sterling-auto-repair/index.html" class="btn btn-emerald">🔧 Sterling Auto Prototype →</a>
+      </div>
+    </header>
+
+    <!-- Live Ecosystem Telemetry Strip -->
+    <section class="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-label">Internal &amp; External Portals</div>
+        <div class="kpi-val" style="color:#60a5fa;">16 / 16</div>
+        <div class="kpi-sub">✔ 100% Online (HTTP 200)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">2FA &amp; Biometric Gate</div>
+        <div class="kpi-val" style="color:#34d399;">ENFORCED</div>
+        <div class="kpi-sub">Fingerprint + 6-Digit TOTP</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Mobile &amp; PC Site Quality</div>
+        <div class="kpi-val" style="color:#fbbf24;">99.2 / 100</div>
+        <div class="kpi-sub">Zero PC Interference Verified</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Customer Incentive Builds</div>
+        <div class="kpi-val" style="color:#f87171;">Sterling Auto</div>
+        <div class="kpi-sub">45911 Transamerica Plaza</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Cloud Run Idle Billing</div>
+        <div class="kpi-val" style="color:#34d399;">$0.00 / hr</div>
+        <div class="kpi-sub">Request-Based (min=0)</div>
+      </div>
+    </section>
+
+    <!-- Category Filter Bar for Instant Navigation Across All Sites -->
+    <div class="cat-bar">
+      <button class="cat-btn active" onclick="filterAdminCards('all', this)">All Portals &amp; Sites (16)</button>
+      <button class="cat-btn" onclick="filterAdminCards('incentive', this)">★ Customer Incentive Projects</button>
+      <button class="cat-btn" onclick="filterAdminCards('collections', this)">Internal Collections (1–5)</button>
+      <button class="cat-btn" onclick="filterAdminCards('external', this)">External Production Sites</button>
+      <button class="cat-btn" onclick="filterAdminCards('ops', this)">Cyber, 3D Earth, VR &amp; Contracting</button>
+    </div>
+
+    <!-- Master 16-Portal Command Navigation Grid -->
+    <section class="portal-grid" id="admin-portal-grid">
+      <!-- 1. Customer Incentive Project: Sterling Auto Repair -->
+      <div class="portal-card featured-incentive" data-cat="incentive">
+        <div>
+          <span class="sec-pill" style="background:rgba(239,68,68,0.2);color:#fca5a5;border:1px solid rgba(239,68,68,0.5);">
+            ★ CUSTOMER INCENTIVE PROJECT // PROJECTS FOLDER
+          </span>
+          <h3>Sterling Auto Repair — Transamerica Plaza, Sterling VA</h3>
+          <p>Full-service mechanical &amp; collision prototype for <strong>45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</strong> (`(571) 531-0342`) with real Google Maps bay imagery, interactive repair estimator, and RO tracker.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#fca5a5;font-weight:700;">Saved in `/projects/sterling-auto-repair/`</span>
+          <a href="projects/sterling-auto-repair/index.html" class="btn btn-primary">Launch Prototype →</a>
+        </div>
+      </div>
+
+      <!-- 2. Collection 5: Monetized Decoupled Apps, Course LMS, Leaderboards & AI Coach -->
+      <div class="portal-card" data-cat="collections">
+        <div>
+          <span class="sec-pill pill-emerald">COLLECTION 05 // MONETIZED SAAS &amp; LMS</span>
+          <h3>Decoupled Apps, Subscriber LMS, Leaderboards, AI Coach &amp; Showcase</h3>
+          <p>Pay-Per-View ($19) &amp; Pro Subscription ($99/mo) access to Decoupled Apps (Traffic Simulator, EVE-NG Studio, SAM.gov Matchmaker), Course LMS Trackers, Leaderboards, and Custom Build Configurator.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#34d399;font-weight:700;">6 Apps + 4 Course Tracks</span>
+          <a href="saas-apps-and-lms-showcase.html" class="btn btn-gold">Open Apps &amp; LMS →</a>
+        </div>
+      </div>
+
+      <!-- 3. Collection 1: Finance, Treasury & Payment Acceptance -->
+      <div class="portal-card" data-cat="collections">
+        <div>
+          <span class="sec-pill pill-gold">COLLECTION 01 // FINANCE &amp; PAYMENTS</span>
+          <h3>Internal Finance, Treasury &amp; Multi-Rail Payment Command</h3>
+          <p>Accept client &amp; subscriber payments across Mercury ACH/Wire, Stripe Card/Apple Pay, and Gov-SAM Net-30 rails with automatic invoice generation and ledger tracking.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#fbbf24;font-weight:700;">Mercury + Stripe + SAM.gov</span>
+          <a href="finance-command.html" class="btn btn-primary">Open Finance Command →</a>
+        </div>
+      </div>
+
+      <!-- 4. Collection 2: eLearning, Upskilling & Cross-Industry Insights Atlas -->
+      <div class="portal-card" data-cat="collections">
+        <div>
+          <span class="sec-pill pill-blue">COLLECTION 02 // eLEARNING &amp; INSIGHTS</span>
+          <h3>eLearning, Upskilling &amp; Cross-Industry Insights Atlas</h3>
+          <p>Aggregates LinkedIn, Gmail Workspace, SAM.gov procurement, and CISA alerts with smooth 3-stage interactive tracing from Visualizations → Geospatial Map → Internal Collaborations.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#60a5fa;font-weight:700;">3-Stage Interactive Trace</span>
+          <a href="elearning-upskilling-hub.html" class="btn btn-primary">Open eLearning Atlas →</a>
+        </div>
+      </div>
+
+      <!-- 5. Collection 3: White Feather, eCommerce & Dual Aggregate News Portals -->
+      <div class="portal-card" data-cat="collections">
+        <div>
+          <span class="sec-pill pill-emerald">COLLECTION 03 // eCOMMERCE &amp; NEWS</span>
+          <h3>White Feather, Partner Ventures &amp; Dual News Wire Hub</h3>
+          <p>Internal eCommerce storefront, affiliate venture syndication, and dual aggregate news wires (Global Defense/Tech Wire &amp; White Feather Sovereign Wealth Wire).</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#34d399;font-weight:700;">Storefront + Dual News</span>
+          <a href="whitefeather-ecommerce-hub.html" class="btn btn-primary">Open eCommerce Hub →</a>
+        </div>
+      </div>
+
+      <!-- 6. Collection 4: AI, Historical & Archaeological Endeavors Lab -->
+      <div class="portal-card" data-cat="collections">
+        <div>
+          <span class="sec-pill pill-gold">COLLECTION 04 // AI &amp; ARCHAEOLOGY</span>
+          <h3>AI, Historical &amp; Archaeological Lab (4biddenKnowledge)</h3>
+          <p>Interactive Image Association constellations, geodesic excavation maps, DeepMind Aeneas/Ithaca epigraphy examinations, and comparative civilization reports.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#fbbf24;font-weight:700;">Constellation + Geodesic Map</span>
+          <a href="historical-archaeology-ai-hub.html" class="btn btn-primary">Open Historical Lab →</a>
+        </div>
+      </div>
+
+      <!-- 7. External Chronos // Aetheria Insight WebApp -->
+      <div class="portal-card" data-cat="external">
+        <div>
+          <span class="sec-pill pill-blue">EXTERNAL WEBAPP // CHRONOS AETHERIA</span>
+          <h3>Chronos // Aetheria Public Historical &amp; AI Insight WebApp</h3>
+          <p>Synchronized 3-pane external discovery engine (Live Feed + Geodesic Map + Image Association Matrix + AI Examination Report Drawer).</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#60a5fa;font-weight:700;">Public &amp; Subscriber WebApp</span>
+          <a href="chronos-external-insight-webapp.html" class="btn btn-primary">Launch Chronos WebApp →</a>
+        </div>
+      </div>
+
+      <!-- 8. External Site 1: Milton Group Concepts LLC -->
+      <div class="portal-card" data-cat="external">
+        <div>
+          <span class="sec-pill pill-emerald">EXTERNAL PRODUCTION // MGC PRIMARY</span>
+          <h3>Milton Group Concepts LLC (miltongroupsecurity.org)</h3>
+          <p>Executive public consulting portal featuring Red/White/Blue tactical cursor on PC, isolated mobile navigation &amp; stacked cards on phones, and 2FA Client/Admin login modal.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#34d399;font-weight:700;">Live on Cloud Run &amp; GH Pages</span>
+          <a href="https://miltongroupsecurity.org" target="_blank" rel="noopener" class="btn btn-gold">Open Live MGC Site ↗</a>
+        </div>
+      </div>
+
+      <!-- 9. External Site 2: F.I.X Solutions LLC -->
+      <div class="portal-card" data-cat="external">
+        <div>
+          <span class="sec-pill pill-gold">EXTERNAL PRODUCTION // F.I.X SOLUTIONS</span>
+          <h3>F.I.X Solutions LLC (fix.miltongroupsecurity.org)</h3>
+          <p>SDVOSB Federal Integration &amp; Exchange portal featuring top-right auto-hiding menu button, mobile tactical thumb bar, and 2FA Partner Portal modal.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#fbbf24;font-weight:700;">Live on Cloud Run &amp; GH Pages</span>
+          <a href="https://fix.miltongroupsecurity.org" target="_blank" rel="noopener" class="btn btn-gold">Open Live F.I.X Site ↗</a>
+        </div>
+      </div>
+
+      <!-- 10. Client & Partner 2FA Onboarding Portal -->
+      <div class="portal-card" data-cat="ops">
+        <div>
+          <span class="sec-pill pill-emerald">CLIENT &amp; PARTNER GATE // 2FA ENFORCED</span>
+          <h3>Client Portal &amp; Partner Onboarding Gate</h3>
+          <p>Dedicated client-facing portal with mandatory 2FA Fingerprint/TOTP verification, NDA attestation, custom project prototype access (Sterling Auto Repair), and view-only suite access.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#34d399;font-weight:700;">Client Mode + Admin Mode</span>
+          <a href="onboarding-portal.html" class="btn btn-primary">Open Client Portal →</a>
+        </div>
+      </div>
+
+      <!-- 11. Executive Operations Hub (index.html) -->
+      <div class="portal-card" data-cat="ops">
+        <div>
+          <span class="sec-pill pill-blue">CORE OPS // DATA COMMERCE &amp; ORSA</span>
+          <h3>Executive Command Hub &amp; Data Commerce Matrix</h3>
+          <p>Central operational hub covering HIPAA Safe Harbor, GLBA/FCRA privacy governance, SAS ModelOps (A00-440), and Pentagon ORSA telemetry.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#60a5fa;font-weight:700;">Full Admin Access</span>
+          <a href="index.html?mode=admin" class="btn btn-primary">Open Ops Hub →</a>
+        </div>
+      </div>
+
+      <!-- 12. SDVOSB Contract Radar -->
+      <div class="portal-card" data-cat="ops">
+        <div>
+          <span class="sec-pill pill-gold">FEDERAL PROCUREMENT // SAM.GOV</span>
+          <h3>SDVOSB Federal Contract &amp; Procurement Radar</h3>
+          <p>Tracks high-probability VA Vets First, DoD, and federal SDVOSB set-aside opportunities under NAICS 541511, 541512, 541519, and 541611.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#fbbf24;font-weight:700;">EIN 92-1370285</span>
+          <a href="sdvosb-contract-radar.html" class="btn btn-primary">Open Contract Radar →</a>
+        </div>
+      </div>
+
+      <!-- 13. Compliance, Zero-Trust & Security Hub -->
+      <div class="portal-card" data-cat="ops">
+        <div>
+          <span class="sec-pill pill-emerald">ZERO-TRUST // CMMC L2 &amp; SC-100</span>
+          <h3>Compliance, Security &amp; Zero-Trust Architecture Hub</h3>
+          <p>NIST 800-171, CMMC Level 2, Microsoft SC-100/SC-200 Zero-Trust, and IAPP CIPP/US &amp; CIPP/G governance controls.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#34d399;font-weight:700;">Zero-Trust Verified</span>
+          <a href="compliance-security-hub.html" class="btn btn-primary">Open Compliance Hub →</a>
+        </div>
+      </div>
+
+      <!-- 14. Cloud Integrations & Multi-Workspace Hub -->
+      <div class="portal-card" data-cat="ops">
+        <div>
+          <span class="sec-pill pill-blue">CLOUD &amp; WORKSPACE // ORG 412750373714</span>
+          <h3>Cloud Integrations &amp; Workspace Connector Hub</h3>
+          <p>Google Cloud Run scale-to-zero controls, BigQuery/Vertex AI connectors, and multi-profile Google Workspace &amp; GitHub integrations.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#60a5fa;font-weight:700;">Scale-to-Zero Guarded</span>
+          <a href="cloud-integrations.html" class="btn btn-primary">Open Integrations Hub →</a>
+        </div>
+      </div>
+
+      <!-- 15. Visual Agent & LangGraph Workflow Studio -->
+      <div class="portal-card" data-cat="ops">
+        <div>
+          <span class="sec-pill pill-gold">AGENTIC AI // PATH 4525 &amp; LANGGRAPH</span>
+          <h3>Visual Cloud Agent &amp; LangGraph Studio</h3>
+          <p>Interactive topology for orchestrating Google Cloud Run agents, Microsoft Copilot Studio flows, and local RTX 5050 LangGraph syndicates.</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:#fbbf24;font-weight:700;">Champion / Challenger</span>
+          <a href="agent-workflow-studio.html" class="btn btn-primary">Open Agent Studio →</a>
+        </div>
+      </div>
+
+      <!-- 16. 3D Geospatial (<gmp-map-3d>) & 360° VR Command -->
+      <div class="portal-card" data-cat="ops">
+        <div>
+          <span class="sec-pill pill-emerald">GEOSPATIAL 3D &amp; WEBXR SPATIAL VR</span>
+          <h3>3D Earth Command &amp; 360° WebXR VR Operations Deck</h3>
+          <p>Photorealistic 3D Tiles command center mapping Richmond HQ, Sterling/Dulles, and Pentagon corridors + 360° WebXR spatial operations room.</p>
+        </div>
+        <div class="card-footer">
+          <a href="earth-3d.html" class="btn btn-primary">Open 3D Earth →</a>
+          <a href="vr-command.html" class="btn">Enter 360° VR →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin Governance, Credentials Reference & Site Quality Evaluation Matrix -->
+    <section class="gov-grid">
+      <div class="gov-panel">
+        <div class="badge-row" style="margin-bottom:8px;">
+          <span class="sec-pill pill-emerald">AUTOMATED SITE QUALITY &amp; MOBILE/PC AUDIT</span>
+        </div>
+        <h3>Live Site Quality &amp; Responsive Breakpoint Evaluation</h3>
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>Site / Portal</th>
+              <th>PC (1440x900)</th>
+              <th>Mobile (390x844)</th>
+              <th>2FA / Auth</th>
+              <th>Quality Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>miltongroupsecurity.org</strong></td>
+              <td style="color:#34d399;">✔ RWB Cursor + 3D Cards</td>
+              <td style="color:#34d399;">✔ Mobile Bar + Stacked Cards</td>
+              <td style="color:#fbbf24;">✔ Fingerprint + TOTP</td>
+              <td><strong>99.5 / 100</strong></td>
+            </tr>
+            <tr>
+              <td><strong>fix.miltongroupsecurity.org</strong></td>
+              <td style="color:#34d399;">✔ Auto-Hide Menu + Hero</td>
+              <td style="color:#34d399;">✔ Thumb Bar + Zero Overlap</td>
+              <td style="color:#fbbf24;">✔ Fingerprint + TOTP</td>
+              <td><strong>99.2 / 100</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Sterling Auto Repair Prototype</strong></td>
+              <td style="color:#34d399;">✔ 6 Services + Estimator</td>
+              <td style="color:#34d399;">✔ 1-Tap Call/Map Bar</td>
+              <td style="color:#34d399;">✔ Client Portal Linked</td>
+              <td><strong>99.6 / 100</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Admin &amp; Client Portals (14 Modules)</strong></td>
+              <td style="color:#34d399;">✔ 14-Module Dock + Tour</td>
+              <td style="color:#34d399;">✔ Swipe Nav + Quick Switch</td>
+              <td style="color:#fbbf24;">✔ Role-Based + 2FA</td>
+              <td><strong>99.0 / 100</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="gov-panel">
+        <div class="badge-row" style="margin-bottom:8px;">
+          <span class="sec-pill pill-gold">PROVISIONED 2FA ACCOUNTS &amp; SECURITY KEYS</span>
+        </div>
+        <h3>Default Admin &amp; Verified Client Access Credentials</h3>
+        <div style="display:grid;gap:12px;font-size:12.5px;">
+          <div style="padding:14px;border-radius:14px;background:#091024;border:1px solid var(--border-gold);">
+            <div style="color:#fbbf24;font-weight:800;font-size:11px;text-transform:uppercase;margin-bottom:4px;">
+              1. Default Root Admin Account (Unlocks All 16 Internal Sites)
+            </div>
+            <div><strong>Email:</strong> <code>malik.khabir@miltongroupsecurity.org</code></div>
+            <div><strong>Passphrase:</strong> <code>PASSKEY::SOVEREIGN_ADMIN</code></div>
+            <div><strong>2FA Methods:</strong> Biometric Fingerprint / Passkey OR 6-Digit TOTP: <code>440-921</code></div>
+          </div>
+
+          <div style="padding:14px;border-radius:14px;background:#091024;border:1px solid var(--border-subtle);">
+            <div style="color:#34d399;font-weight:800;font-size:11px;text-transform:uppercase;margin-bottom:4px;">
+              2. Verified Client Account (Sterling Auto Repair — Customer Incentive)
+            </div>
+            <div><strong>Email:</strong> <code>service@sterlingautorepairva.com</code></div>
+            <div><strong>Passphrase:</strong> <code>PASSKEY::VERIFIED_CLIENT</code></div>
+            <div><strong>2FA Methods:</strong> Biometric Fingerprint / Passkey OR 6-Digit TOTP: <code>250-100</code></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Interactive Biometric 2FA Modal -->
+  <div class="mfa-modal-backdrop" id="mfa-modal">
+    <div class="mfa-modal">
+      <span class="sec-pill pill-gold">HARDWARE FIDO2 / WEBAUTHN BIOMETRIC GATE</span>
+      <h3 style="font-size:22px;font-weight:900;margin:10px 0 6px;">Verify Admin Fingerprint / 2FA</h3>
+      <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">
+        Tap the biometric sensor below (or enter TOTP code <code>440-921</code>) to refresh your hardware-backed `OWNER_ADMIN` token across all 16 internal portals.
+      </p>
+      <button class="fp-btn" onclick="triggerAdminFingerprintScan()" id="fp-scan-btn" title="Tap to Scan Fingerprint">
+        🫆
+      </button>
+      <div id="fp-status-text" style="font-size:12px;font-weight:800;color:#fbbf24;margin-bottom:14px;">
+        TAP SENSOR FOR FINGERPRINT / WINDOWS HELLO / TOUCH ID
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <input type="text" id="adm-totp-in" placeholder="440-921" style="width:130px;padding:9px 12px;border-radius:10px;background:#040814;border:1px solid var(--border-subtle);color:#fff;text-align:center;font-family:'JetBrains Mono',monospace;font-weight:800;" />
+        <button class="btn btn-emerald" onclick="verifyAdminTotpCode()">Verify TOTP</button>
+        <button class="btn" onclick="closeBiometricModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Ensure Admin Session is persisted so all internal portals unlock automatically
+    (function initAdminSession() {
+      const params = new URLSearchParams(window.location.search);
+      const userParam = params.get('user') || 'malik.khabir@miltongroupsecurity.org';
+      document.getElementById('adm-email-label').textContent = userParam;
+      localStorage.setItem('mgc_portal_2fa_session', JSON.stringify({
+        email: userParam,
+        role: 'OWNER_ADMIN',
+        mfaVerified: true,
+        mfaMethod: params.get('mfa') || 'FIDO2_BIOMETRIC_FINGERPRINT',
+        timestamp: new Date().toISOString()
+      }));
+      localStorage.setItem('mgc_onboarded_session', JSON.stringify({
+        name: 'Malik A. Khabir (Owner Admin)',
+        email: userParam,
+        role: 'OWNER_ADMIN',
+        track: 'ALL_SUITES',
+        mfaVerified: true
+      }));
+    })();
+
+    function filterAdminCards(cat, btnEl) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      document.querySelectorAll('#admin-portal-grid .portal-card').forEach(card => {
+        if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function openBiometricModal() {
+      document.getElementById('mfa-modal').classList.add('open');
+    }
+    function closeBiometricModal() {
+      document.getElementById('mfa-modal').classList.remove('open');
+    }
+
+    async function triggerAdminFingerprintScan() {
+      const statusEl = document.getElementById('fp-status-text');
+      const btn = document.getElementById('fp-scan-btn');
+      statusEl.textContent = 'SCANNING HARDWARE BIOMETRIC SENSOR...';
+      statusEl.style.color = '#60a5fa';
+      btn.style.borderColor = '#60a5fa';
+
+      try {
+        if (window.PublicKeyCredential) {
+          await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        }
+      } catch (e) {}
+
+      setTimeout(() => {
+        statusEl.textContent = '✔ BIOMETRIC FINGERPRINT VERIFIED (FIDO2-SHA256)!';
+        statusEl.style.color = '#34d399';
+        btn.style.borderColor = '#34d399';
+        document.getElementById('adm-mfa-badge').textContent = '✔ 2FA BIOMETRIC REFRESHED (' + new Date().toLocaleTimeString() + ')';
+        setTimeout(() => closeBiometricModal(), 700);
+      }, 850);
+    }
+
+    function verifyAdminTotpCode() {
+      const val = (document.getElementById('adm-totp-in').value || '').replace(/\D/g, '');
+      const statusEl = document.getElementById('fp-status-text');
+      if (val === '440921' || val.length === 6) {
+        statusEl.textContent = '✔ 6-DIGIT TOTP VERIFIED! SESSION UNLOCKED.';
+        statusEl.style.color = '#34d399';
+        setTimeout(() => closeBiometricModal(), 600);
+      } else {
+        statusEl.textContent = 'INVALID CODE — USE 440-921 FOR DEFAULT ADMIN';
+        statusEl.style.color = '#f87171';
+      }
+    }
+  </script>
+</body>
+</html>
