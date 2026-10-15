@@ -74,90 +74,97 @@
   const pages = [
     { file: 'onboarding-portal.html', label: '1. Onboarding & RBAC', short: 'Onboarding' },
     { file: 'index.html', label: '2. Data Commerce & Ops Hub', short: 'Command Hub' },
-    { file: 'finance-command.html', label: '3. Finance & Payment System', short: 'Finance & Pay' },
-    { file: 'elearning-upskilling-hub.html', label: '4. eLearning & Insights Atlas', short: 'eLearning Atlas' },
-    { file: 'whitefeather-ecommerce-hub.html', label: '5. White Feather & eCommerce', short: 'eCommerce & News' },
-    { file: 'historical-archaeology-ai-hub.html', label: '6. AI, Historical & Archaeology Lab', short: 'AI & History Lab' },
-    { file: 'sdvosb-contract-radar.html', label: '7. SAM.gov & USAspending Radar', short: 'Contract Radar' },
-    { file: 'compliance-trust-center.html', label: '8. Compliance & Trust-But-Verify', short: 'Compliance & Security' },
-    { file: 'integrations-connections-hub.html', label: '9. Integrations & Connections', short: 'Integrations Hub' },
-    { file: 'agent-workflow-studio.html', label: '10. LangGraph & Agent Studio', short: 'Agent Studio' },
-    { file: 'earth-3d.html', label: '11. 3D Geospatial Command', short: '3D Earth' },
-    { file: 'vr-command.html', label: '12. 360° WebXR VR Deck', short: 'VR Deck' }
+    { file: 'saas-apps-and-lms-showcase.html', label: '3. Monetized Apps, Course LMS & Showcase', short: '★ Apps & LMS' },
+    { file: 'finance-command.html', label: '4. Finance & Payment System', short: 'Finance & Pay' },
+    { file: 'elearning-upskilling-hub.html', label: '5. eLearning & Insights Atlas', short: 'eLearning Atlas' },
+    { file: 'whitefeather-ecommerce-hub.html', label: '6. White Feather & eCommerce', short: 'eCommerce & News' },
+    { file: 'historical-archaeology-ai-hub.html', label: '7. AI, Historical & Archaeology Lab', short: 'AI & History Lab' },
+    { file: 'sdvosb-contract-radar.html', label: '8. SAM.gov & USAspending Radar', short: 'Contract Radar' },
+    { file: 'compliance-trust-center.html', label: '9. Compliance & Trust-But-Verify', short: 'Compliance & Security' },
+    { file: 'integrations-connections-hub.html', label: '10. Integrations & Connections', short: 'Integrations Hub' },
+    { file: 'agent-workflow-studio.html', label: '11. LangGraph & Agent Studio', short: 'Agent Studio' },
+    { file: 'earth-3d.html', label: '12. 3D Geospatial Command', short: '3D Earth' },
+    { file: 'vr-command.html', label: '13. 360° WebXR VR Deck', short: 'VR Deck' }
   ];
 
   const tourStepsByPage = {
     'onboarding-portal.html': {
-      title: 'Step 1 of 12: Zero-Trust Onboarding & Edge JWT Gatekeeper',
+      title: 'Step 1 of 13: Zero-Trust Onboarding & Edge JWT Gatekeeper',
       desc: 'External visitors from miltongroupsecurity.org and F.I.X Solutions authenticate here via Google Workspace SSO to receive VIEWER_ONBOARDED clearance.',
+      nextFile: 'saas-apps-and-lms-showcase.html',
+      highlights: ['Option A Edge WebCrypto SHA-256 JWT verification', 'SAM.gov UEI & CAGE validation', 'Direct launchpad into all 13 internal command modules']
+    },
+    'saas-apps-and-lms-showcase.html': {
+      title: 'Step 2 of 13: Monetized Decoupled Apps, Course LMS, Leaderboards & Showcase',
+      desc: 'Subscription & Pay-Per-View SaaS hub offering decoupled apps (EVE-NG Studio, Tailored Job & Contract Matchmaker, Site Traffic & ROI Simulator, Custom Build Configurator), interactive Course LMS, Leaderboards, AI Coach, and User Profile Settings.',
       nextFile: 'index.html',
-      highlights: ['Option A Edge WebCrypto SHA-256 JWT verification', 'SAM.gov UEI & CAGE validation', 'Direct launchpad into all 12 internal command modules']
+      highlights: ['Tiered Monetization & Pay-Per-View User Gate', 'Course-like LMS with Progress Trackers, XP Leaderboards & AI Coach', 'Tailored Job, Contract, Traffic & Custom Build Showcase']
     },
     'index.html': {
-      title: 'Step 2 of 12: MGC & F.I.X Internal Data Commerce & Career Hub',
+      title: 'Step 3 of 13: MGC & F.I.X Internal Data Commerce & Career Hub',
       desc: 'Unified executive dashboard combining SDVOSB federal contracting pipelines, SAS Viya ModelOps (A00-440), IAPP CIPP/US & CIPP/G privacy governance, and zero-charge cloud telemetry.',
       nextFile: 'finance-command.html',
       highlights: ['Live Zero-Charge Cloud Cost Guard ($0.00 idle)', 'Data Commerce & Privacy Engineering products', 'Daily Certification & Contracting readiness']
     },
     'finance-command.html': {
-      title: 'Step 3 of 12: Internal Finance, Treasury & Payment Acceptance System',
+      title: 'Step 4 of 13: Internal Finance, Treasury & Payment Acceptance System',
       desc: 'Multi-entity treasury ledger and payment acceptance terminal for Milton Group Concepts LLC, F.I.X Solutions LLC, and White Feather Investments (ACH/FedNow, SAM.gov WAWF/IPP, GPC/Stripe, Escrow).',
       nextFile: 'elearning-upskilling-hub.html',
       highlights: ['Signed Payment Link & Invoice Generator', 'Multi-rail payment acceptance (ACH, WAWF/IPP, Card, Escrow)', 'Multi-entity ledger & FinOps zero-charge guard']
     },
     'elearning-upskilling-hub.html': {
-      title: 'Step 4 of 12: eLearning, Career Upskilling & Cross-Industry Insights Atlas',
+      title: 'Step 5 of 13: eLearning, Career Upskilling & Cross-Industry Insights Atlas',
       desc: 'Aggregates live intelligence from LinkedIn, Gmail, Industry News, and Procurement News with smooth 3-stage tracing across Visualizations -> Geospatial Map -> Internal Collaborations.',
       nextFile: 'whitefeather-ecommerce-hub.html',
       highlights: ['LinkedIn + Gmail + News + Procurement aggregation', 'Smooth 3-Stage Trace (Visuals -> Leaflet Map -> Collaborations)', 'SAS A00-440, Path 4525, CIPP/US & SC-100 upskilling matrix']
     },
     'whitefeather-ecommerce-hub.html': {
-      title: 'Step 5 of 12: White Feather, eCommerce & Dual Aggregate News Command',
+      title: 'Step 6 of 13: White Feather, eCommerce & Dual Aggregate News Command',
       desc: 'Internal storefront & syndicate catalog for White Feather Investments / AI, 4biddenKnowledge affiliates, MGC Data Commerce, and F.I.X VAR, plus 2 built-in NBA-RSS Aggregate News sites.',
       nextFile: 'historical-archaeology-ai-hub.html',
       highlights: ['Direct 1-click checkout handoff to Finance Command', 'White Feather AI & 4biddenKnowledge affiliate programs', 'Dual NBA-RSS Aggregate News portals with ★ KEY TODAY pins']
     },
     'historical-archaeology-ai-hub.html': {
-      title: 'Step 6 of 12: AI, Historical & Archaeological Endeavors Lab',
+      title: 'Step 7 of 13: AI, Historical & Archaeological Endeavors Lab',
       desc: 'Dedicated examination workbench for 4biddenKnowledge, Satellite LiDAR/SAR, and Epigraphic AI (Aeneas/Ithaca) with interactive Image Association Constellations, geodesic maps, and link to the Chronos External Insight WebApp.',
       nextFile: 'sdvosb-contract-radar.html',
       highlights: ['Interactive Image Association & Motif Constellation', 'Synchronized Geodesic Excavation Map', 'Article Examination Report Forge + Public Chronos WebApp']
     },
     'sdvosb-contract-radar.html': {
-      title: 'Step 6 of 11: Automated SAM.gov & USAspending SDVOSB Contract Radar',
+      title: 'Step 8 of 13: Automated SAM.gov & USAspending SDVOSB Contract Radar',
       desc: 'Option B daily scheduled GitHub Action + live Federal API feed tracking active VA, DoD, and federal contracts in VA/DC/MD across NAICS 541611, 541512, 541614, and 541330.',
       nextFile: 'compliance-trust-center.html',
       highlights: ['Live USAspending.gov v2 Federal API integration', 'NAICS 541611 / 541512 / 541614 / 541330 filters', '1-Click SDVOSB Teaming & RFI Brief Drafter']
     },
     'compliance-trust-center.html': {
-      title: 'Step 7 of 11: Defense-in-Depth & Compliance Center (Trust But Verify)',
+      title: 'Step 9 of 13: Defense-in-Depth & Compliance Center (Trust But Verify)',
       desc: 'Interactive CMMC 2.0 Level 2 (NIST SP 800-171), FedRAMP Moderate, NIST AI RMF, and IAPP CIPP/US & CIPP/G compliance matrix with a live Cryptographic Integrity & Zero-Trust Verification Console.',
       nextFile: 'integrations-connections-hub.html',
       highlights: ['1-Click "Trust But Verify" Cryptographic Audit', 'CMMC 2.0 L2 / NIST 800-171 14-Family Control Tracker', 'Zero-PII/CUI Prompt Sanitization & SSP Exporter']
     },
     'integrations-connections-hub.html': {
-      title: 'Step 8 of 11: Enterprise Integrations & Cloud Connections Hub',
+      title: 'Step 10 of 13: Enterprise Integrations & Cloud Connections Hub',
       desc: 'Live connector matrix linking Google Cloud/Workspace, Microsoft Azure/Entra/Sentinel, SAM.gov & Federal Contracting APIs, Mercury Banking, and Option C Workspace Lead Webhooks.',
       nextFile: 'agent-workflow-studio.html',
       highlights: ['Option A/B/C Status & Workspace Lead Ledger', 'Microsoft Entra ID + Sentinel + Azure AI Foundry', 'Custom Domain & Cloud Run Zero-Charge Connectors']
     },
     'agent-workflow-studio.html': {
-      title: 'Step 9 of 11: Visual Cloud Agent & LangGraph Studio',
+      title: 'Step 11 of 13: Visual Cloud Agent & LangGraph Studio',
       desc: 'Interactive multi-agent supervisor architecture orchestrating Google Vertex AI, Microsoft Azure AI Foundry, and SAS ModelOps Champion/Challenger nodes.',
       nextFile: 'earth-3d.html',
       highlights: ['Supervisor -> Subagent visual DAG execution', 'Champion/Challenger Arbiter evaluation', 'Zero-PII guardrail & cost budget enforcement']
     },
     'earth-3d.html': {
-      title: 'Step 10 of 11: 3D Geospatial & Defense Logistics Command',
+      title: 'Step 12 of 13: 3D Geospatial & Defense Logistics Command',
       desc: 'CesiumJS + GeoJSON 3D globe rendering Richmond HQ, Fort Liberty 25N Signal corridors, and Pentagon AI nodes with a hard billing guard preventing $75/mo Google Earth Pro seat charges.',
       nextFile: 'vr-command.html',
       highlights: ['Interactive 3D camera fly-to presets', 'Zero-seat-cost geospatial telemetry', 'KML/GeoJSON federal corridor overlays']
     },
     'vr-command.html': {
-      title: 'Step 11 of 11: 360° WebXR Spatial Command Deck',
+      title: 'Step 13 of 13: 360° WebXR Spatial Command Deck',
       desc: 'Immersive 3D curved multi-screen spatial operations environment built with A-Frame WebXR for Quest/Vision Pro and desktop 3D mouse-look navigation.',
       nextFile: 'onboarding-portal.html',
-      highlights: ['Curved 360° spatial monitors in 3D space', 'Works in-browser on desktop or VR headset', 'Completes the 11-module MGC Internal Command Tour']
+      highlights: ['Curved 360° spatial monitors in 3D space', 'Works in-browser on desktop or VR headset', 'Completes the 13-module MGC Internal Command Tour']
     }
   };
 
@@ -307,6 +314,68 @@
         font-family: 'Inter', system-ui, sans-serif;
       }
       .mgc-edge-gate-overlay.active { display: flex; }
+      .mgc-mobile-bottom-nav { display: none; }
+      @media (max-width: 768px) {
+        .mgc-tbv-topbar { padding: 6px 10px; }
+        .mgc-tbv-inner { flex-direction: column; align-items: stretch; gap: 6px; }
+        .mgc-tbv-brand { justify-content: space-between; width: 100%; font-size: 11px; }
+        .mgc-tbv-pill { font-size: 9px; padding: 3px 7px; }
+        .mgc-tbv-nav {
+          flex-wrap: nowrap !important;
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          padding-bottom: 2px;
+          gap: 6px;
+        }
+        .mgc-tbv-nav::-webkit-scrollbar { display: none; }
+        .mgc-tbv-link, .mgc-tour-btn, .mgc-lock-btn {
+          white-space: nowrap !important;
+          flex-shrink: 0 !important;
+          font-size: 10.5px;
+          padding: 6px 10px;
+        }
+        .mgc-tour-drawer {
+          bottom: 68px;
+          right: 10px;
+          left: 10px;
+          width: auto;
+          max-width: none;
+          padding: 14px;
+        }
+        .mgc-mobile-bottom-nav {
+          display: flex;
+          position: fixed;
+          bottom: 8px;
+          left: 8px;
+          right: 8px;
+          z-index: 99991;
+          background: rgba(6, 11, 25, 0.96);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(59, 130, 246, 0.4);
+          border-radius: 16px;
+          padding: 6px 8px;
+          justify-content: space-around;
+          align-items: center;
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+          font-family: 'Inter', system-ui, sans-serif;
+        }
+        .mgc-mobile-bottom-nav a {
+          text-decoration: none;
+          font-size: 10px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #cbd5e1;
+          padding: 6px 9px;
+          border-radius: 10px;
+        }
+        .mgc-mobile-bottom-nav a.active {
+          background: #2563eb;
+          color: #ffffff;
+        }
+        body { padding-bottom: 68px !important; }
+      }
     `;
     document.head.appendChild(style);
   }
@@ -341,6 +410,22 @@
       </div>
     `;
     document.body.prepend(bar);
+
+    // 1b. Mobile Bottom Quick-Switch Bar (< 768px Only)
+    const mobileBar = document.createElement('nav');
+    mobileBar.className = 'mgc-mobile-bottom-nav';
+    const quickMobileLinks = [
+      { file: 'index.html', label: 'Hub' },
+      { file: 'saas-apps-and-lms-showcase.html', label: '★ Apps/LMS' },
+      { file: 'finance-command.html', label: 'Finance' },
+      { file: 'elearning-upskilling-hub.html', label: 'Atlas' },
+      { file: 'chronos-external-insight-webapp.html', label: 'Chronos' }
+    ];
+    mobileBar.innerHTML = quickMobileLinks.map(q => {
+      const isAct = currentFile === q.file.toLowerCase();
+      return `<a href="${q.file}" class="${isAct ? 'active' : ''}">${q.label}</a>`;
+    }).join('');
+    document.body.appendChild(mobileBar);
 
     // 2. Option A: Edge JWT Zero-Trust Gate Overlay (for testing or unauthenticated enforcement)
     const gateOverlay = document.createElement('div');
@@ -389,9 +474,11 @@
     `;
     document.body.appendChild(toast);
 
-    // 4. Interactive Guided Experience Drawer
+    // 4. Interactive Guided Experience Drawer (Default closed on mobile < 768px so it never blocks phone screens)
     const stepInfo = tourStepsByPage[currentFile] || tourStepsByPage['index.html'];
-    const tourOpen = localStorage.getItem(TOUR_STATE_KEY) !== 'closed';
+    const isMobileScreen = window.innerWidth <= 768;
+    const savedTourState = localStorage.getItem(TOUR_STATE_KEY);
+    const tourOpen = savedTourState ? savedTourState !== 'closed' : !isMobileScreen;
     const drawer = document.createElement('div');
     drawer.className = 'mgc-tour-drawer' + (tourOpen ? '' : ' hidden');
     drawer.id = 'mgc-tour-drawer';

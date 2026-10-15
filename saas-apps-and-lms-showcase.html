@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MGC & NetPrism | Monetized Decoupled Apps, Course LMS, Leaderboards & Client Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #040814;
+      --bg-panel: rgba(12, 21, 42, 0.88);
+      --bg-card: rgba(15, 23, 42, 0.92);
+      --border-subtle: rgba(148, 163, 184, 0.18);
+      --border-gold: rgba(197, 179, 88, 0.45);
+      --gold: #c5b358;
+      --blue: #3b82f6;
+      --crimson: #ef4444;
+      --emerald: #10b981;
+      --purple: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 15%, rgba(37, 99, 235, 0.18), transparent 40%),
+        radial-gradient(circle at 88% 12%, rgba(220, 38, 38, 0.14), transparent 36%),
+        radial-gradient(circle at 50% 85%, rgba(197, 179, 88, 0.12), transparent 45%),
+        var(--bg-deep);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 20px 24px 80px;
+    }
+    /* Subscriber Top Status Strip */
+    .sub-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 20px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+      margin-bottom: 20px;
+    }
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #dc2626, #ffffff, #2563eb);
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      background: #091024;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .metrics-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .metric-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(2, 6, 23, 0.75);
+      border: 1px solid var(--border-subtle);
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tier-select {
+      background: #0f172a;
+      color: #fbbf24;
+      border: 1px solid var(--border-gold);
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-pay {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #022c22;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .btn-pay:hover { transform: translateY(-1px); }
+
+    /* Hero Banner */
+    .hero-box {
+      padding: 26px 28px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(11, 20, 38, 0.96));
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      margin-bottom: 22px;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+    .hero-title {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin: 8px 0 10px;
+      line-height: 1.15;
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      line-height: 1.6;
+      margin: 0 0 16px;
+    }
+    /* Main Workspace Tabs */
+    .workspace-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+    .ws-tab {
+      background: rgba(15, 23, 42, 0.8);
+      color: #cbd5e1;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ws-tab:hover {
+      border-color: var(--blue);
+      color: #fff;
+    }
+    .ws-tab.active {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border-color: #60a5fa;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+    }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* Grids & Cards */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+    }
+    .app-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .app-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.55);
+    }
+    .app-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border: 1px solid #60a5fa;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.85);
+      color: #e2e8f0;
+      border: 1px solid var(--border-subtle);
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #c5b358, #a38f36);
+      color: #091024;
+      border: none;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    /* Interactive App Workbench */
+    .workbench {
+      margin-top: 22px;
+      background: rgba(9, 15, 32, 0.96);
+      border: 1px solid rgba(59, 130, 246, 0.45);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    }
+    .slider-row {
+      margin-bottom: 14px;
+    }
+    .slider-row label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #cbd5e1;
+    }
+    .slider-row input[type=range] {
+      width: 100%;
+      accent-color: #3b82f6;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .kpi-box {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .kpi-val {
+      font-size: 22px;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 4px;
+    }
+
+    /* Progress Bars & Leaderboard Table */
+    .prog-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    .prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    table.lb-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    table.lb-table th, table.lb-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    table.lb-table th {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    /* Paywall / Tier Lock Banner */
+    .paywall-overlay {
+      background: rgba(2, 6, 23, 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      margin-top: 12px;
+      display: none;
+    }
+    .paywall-overlay.locked { display: block; }
+
+    /* Mobile-Only Responsive Rules (< 768px — Zero PC Interference) */
+    @media (max-width: 768px) {
+      .container { padding: 12px 12px 90px; }
+      .hero-box { grid-template-columns: 1fr; padding: 18px; gap: 16px; }
+      .hero-title { font-size: 22px; }
+      .grid-3, .grid-2, .kpi-grid { grid-template-columns: 1fr !important; }
+      .workspace-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .workspace-tabs::-webkit-scrollbar { display: none; }
+      .ws-tab { white-space: nowrap; flex-shrink: 0; padding: 9px 13px; font-size: 11px; }
+      .sub-strip { padding: 12px; }
+      table.lb-table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- TOP SUBSCRIBER & MONETIZATION BAR -->
+    <div class="sub-strip">
+      <div class="user-badge">
+        <div class="avatar-circle">
+          <div class="avatar-inner" id="ui-avatar-initials">MK</div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <strong id="ui-user-name" style="font-size:14px;">Malik A. Khabir</strong>
+            <span id="ui-tier-badge" style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.4);">
+              TIER 3 • ENTERPRISE & OWNER
+            </span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);" id="ui-user-focus">
+            Focus: Tailored Federal/Commercial Contracts • High-Traffic Web/Apps • EVE-NG Cyber Prototyping
+          </div>
+        </div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric-pill" title="Interactive Sandbox & AI Credits">
+          <span style="color:#60a5fa;">⚡ Credits:</span>
+          <strong id="ui-credits">2,450</strong>
+        </div>
+        <div class="metric-pill" title="Course & Lab XP">
+          <span style="color:#fbbf24;">★ XP:</span>
+          <strong id="ui-xp">18,450</strong>
+        </div>
+        <div class="metric-pill" title="Active Learning & Build Streak">
+          <span style="color:#f87171;">🔥 Streak:</span>
+          <strong>14d</strong>
+        </div>
+        <select id="tier-simulator" class="tier-select" onchange="switchSimulatedTier(this.value)" title="Preview how different paying user tiers experience this platform">
+          <option value="enterprise">View as: Enterprise / Owner ($499/mo — Full Access)</option>
+          <option value="pro">View as: Pro Subscriber ($99/mo — Apps + Course LMS)</option>
+          <option value="ppv">View as: Pay-Per-View Visitor ($19 Pass — Preview Gate)</option>
+        </select>
+        <button class="btn-pay" onclick="openSubscriptionCheckout()">
+          💳 Upgrade / Accept Payment
+        </button>
+      </div>
+    </div>
+
+    <!-- HERO SHOWCASE & MONETIZATION PROPOSITION -->
+    <div class="hero-box">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border-radius:999px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);color:#93c5fd;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;">
+          Monetized Decoupled Apps • Course LMS • Client Showcase
+        </div>
+        <h1 class="hero-title">
+          Build to Customer Satisfaction. Monetize User Views, Decoupled Apps & Tailored Intelligence.
+        </h1>
+        <p class="hero-sub">
+          Offer paying users and enterprise clients tiered access to standalone interactive apps, live EVE-NG network &amp; packet visualizations, tailored job/contract/traffic intelligence, course-style skill trackers, competitive leaderboards, and AI-guided custom builds.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          <button class="btn-primary" onclick="activateMainTab('tab-apps')">🚀 Explore Decoupled Apps</button>
+          <button class="btn-gold" onclick="activateMainTab('tab-lms')">🎓 Open Course LMS &amp; Trackers</button>
+          <button class="btn-secondary" onclick="activateMainTab('tab-custom-build')">🛠 Commission a Custom Build</button>
+          <button class="btn-secondary" onclick="activateMainTab('tab-profile')">⚙ Profile &amp; Subscription Settings</button>
+        </div>
+      </div>
+
+      <div style="background:rgba(2,6,23,0.85);border:1px solid var(--border-gold);border-radius:16px;padding:18px;">
+        <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:10px;">
+          Live Monetization &amp; Traffic Telemetry
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid var(--border-subtle);">
+            <div style="font-size:10px;color:var(--text-muted);">Active App Subscriptions</div>
+            <div style="font-size:18px;font-weight:900;color:#34d399;font-family:'JetBrains Mono',monospace;">$14,850/mo</div>
+          </div>
+          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid var(--border-subtle);">
+            <div style="font-size:10px;color:var(--text-muted);">Pay-Per-View &amp; Sandbox Passes</div>
+            <div style="font-size:18px;font-weight:900;color:#60a5fa;font-family:'JetBrains Mono',monospace;">184 Active</div>
+          </div>
+          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid var(--border-subtle);">
+            <div style="font-size:10px;color:var(--text-muted);">Showcase Conversion Rate</div>
+            <div style="font-size:18px;font-weight:900;color:#fbbf24;font-family:'JetBrains Mono',monospace;">18.4%</div>
+          </div>
+          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid var(--border-subtle);">
+            <div style="font-size:10px;color:var(--text-muted);">Customer Satisfaction (CSAT)</div>
+            <div style="font-size:18px;font-weight:900;color:#f8fafc;font-family:'JetBrains Mono',monospace;">99.4% ★</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN WORKSPACE TABS -->
+    <div class="workspace-tabs">
+      <button class="ws-tab active" data-target="tab-apps" onclick="activateMainTab('tab-apps')">
+        <span>1. Decoupled Apps &amp; Live Simulators (6)</span>
+      </button>
+      <button class="ws-tab" data-target="tab-lms" onclick="activateMainTab('tab-lms')">
+        <span>2. Course LMS, Progress Trackers &amp; Quizzes</span>
+      </button>
+      <button class="ws-tab" data-target="tab-leaderboard" onclick="activateMainTab('tab-leaderboard')">
+        <span>3. Leaderboards &amp; Cohort Rankings</span>
+      </button>
+      <button class="ws-tab" data-target="tab-ai-coach" onclick="activateMainTab('tab-ai-coach')">
+        <span>4. AI Help &amp; Tailored Guidance Coach</span>
+      </button>
+      <button class="ws-tab" data-target="tab-custom-build" onclick="activateMainTab('tab-custom-build')">
+        <span>5. Project Showcase &amp; Custom Build Configurator</span>
+      </button>
+      <button class="ws-tab" data-target="tab-profile" onclick="activateMainTab('tab-profile')">
+        <span>6. User Profile &amp; Subscription Settings</span>
+      </button>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 1: DECOUPLED APPS & INTERACTIVE WORKBENCH                      -->
+    <!-- ================================================================= -->
+    <div id="tab-apps" class="tab-pane active">
+      <div class="grid-3">
+        <!-- App 1: EVE-NG Topology & Cast Recorder -->
+        <div class="app-card">
+          <div>
+            <span class="app-tag" style="background:rgba(59,130,246,0.18);color:#60a5fa;border:1px solid rgba(59,130,246,0.4);">
+              App 01 • Standalone &amp; Coupled
+            </span>
+            <h3 style="margin:0 0 8px;font-size:17px;">EVE-NG &amp; NetPrism Topology + Cast Studio</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
+              Run EVE-NG locally ($0 cloud cost) while sharing live Read-Only Spectator Views, 18 KB <code>.cast</code> CLI recordings, and animated OSPF/BGP/TLS packet flows.
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-primary" onclick="selectAppWorkbench('eve')">Launch Interactive Studio</button>
+            <button class="btn-secondary" onclick="copySpectatorLink()">🔗 Share View Link</button>
+          </div>
+        </div>
+
+        <!-- App 2: Tailored Job, Contract & Procurement Matchmaker -->
+        <div class="app-card">
+          <div>
+            <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
+              App 02 • Career &amp; Revenue Engine
+            </span>
+            <h3 style="margin:0 0 8px;font-size:17px;">Tailored Job, Contract &amp; SAM.gov Matchmaker</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
+              Matches subscriber skills, certifications, and NAICS codes to high-probability federal contracts, SDVOSB set-asides, and principal architect roles.
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-primary" onclick="selectAppWorkbench('contracts')">Open Matchmaker Engine</button>
+            <a href="sdvosb-contract-radar.html" class="btn-secondary">SAM.gov Radar →</a>
+          </div>
+        </div>
+
+        <!-- App 3: Site Traffic, Expected Traffic & Conversion ROI Simulator -->
+        <div class="app-card">
+          <div>
+            <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
+              App 03 • Traffic &amp; Growth Lab
+            </span>
+            <h3 style="margin:0 0 8px;font-size:17px;">Site Traffic, Expected Traffic &amp; ROI Simulator</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
+              Forecast current vs. expected site traffic, subscriber conversion funnels, Cloud Run auto-scaling costs, and customer satisfaction metrics in real time.
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-primary" onclick="selectAppWorkbench('traffic')">Run Traffic Simulator</button>
+            <a href="finance-command.html" class="btn-secondary">Monetization Rail →</a>
+          </div>
+        </div>
+
+        <!-- App 4: Ghost-CLI Kinetic Trainer & Ansible Auto-Grader -->
+        <div class="app-card">
+          <div>
+            <span class="app-tag" style="background:rgba(139,92,246,0.18);color:#c4b5fd;border:1px solid rgba(139,92,246,0.45);">
+              App 04 • Muscle-Memory CLI
+            </span>
+            <h3 style="margin:0 0 8px;font-size:17px;">Ghost-CLI Trainer &amp; Netmiko Auto-Grader</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
+              Decoupled fast-drill terminal for Cisco IOS-XE, Linux (CST200), SQL (SDC200), and declarative Ansible DevNet Playbook verification.
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-primary" onclick="selectAppWorkbench('cli')">Open Ghost-CLI Drill</button>
+            <button class="btn-secondary" onclick="awardUserXP(250, 'Completed Ghost-CLI Ansible Drill')">+250 XP Drill</button>
+          </div>
+        </div>
+
+        <!-- App 5: Chronos // Aetheria Geo-Historical AI WebApp -->
+        <div class="app-card">
+          <div>
+            <span class="app-tag" style="background:rgba(239,68,68,0.18);color:#fca5a5;border:1px solid rgba(239,68,68,0.45);">
+              App 05 • AI &amp; Archaeology
+            </span>
+            <h3 style="margin:0 0 8px;font-size:17px;">Chronos // Aetheria Insight &amp; Map WebApp</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
+              Public &amp; subscriber 3-pane discovery engine combining Image Association Constellations, Geodesic Maps, and DeepMind Epigraphy analysis.
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="chronos-external-insight-webapp.html" class="btn-primary">Open Chronos WebApp</a>
+            <a href="historical-archaeology-ai-hub.html" class="btn-secondary">Internal Lab →</a>
+          </div>
+        </div>
+
+        <!-- App 6: Custom Build & Client Satisfaction Studio -->
+        <div class="app-card">
+          <div>
+            <span class="app-tag" style="background:rgba(14,165,233,0.18);color:#7dd3fc;border:1px solid rgba(14,165,233,0.45);">
+              App 06 • Client Turnkey Forge
+            </span>
+            <h3 style="margin:0 0 8px;font-size:17px;">Custom Project &amp; App Experience Builder</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
+              Interactive showcase configurator where clients test your live projects, customize features for their industry, and submit a paid deposit.
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-gold" onclick="activateMainTab('tab-custom-build')">Configure Client Build →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE INTERACTIVE APP WORKBENCH (SWITCHES BETWEEN TRAFFIC, EVE-NG, CONTRACTS, CLI) -->
+      <div class="workbench" id="active-app-workbench">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-subtle);">
+          <div>
+            <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#34d399;" id="wb-badge">
+              ACTIVE DECOUPLED APP • INTERACTIVE TRAFFIC &amp; MONETIZATION SIMULATOR
+            </span>
+            <h2 style="margin:4px 0 0;font-size:20px;" id="wb-title">
+              Site Architecture, Current vs. Expected Traffic &amp; Subscriber Revenue Simulator
+            </h2>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-secondary" onclick="selectAppWorkbench('traffic')">Traffic &amp; ROI App</button>
+            <button class="btn-secondary" onclick="selectAppWorkbench('eve')">EVE-NG Cast &amp; Packet App</button>
+            <button class="btn-secondary" onclick="selectAppWorkbench('contracts')">Tailored Job/Contract App</button>
+            <button class="btn-secondary" onclick="selectAppWorkbench('cli')">Ghost-CLI Auto-Grader</button>
+          </div>
+        </div>
+
+        <!-- Paywall notice when testing Pay-Per-View tier -->
+        <div id="ppv-gate-banner" class="paywall-overlay">
+          <div style="font-size:14px;font-weight:800;color:#fbbf24;margin-bottom:6px;">
+            🔒 Premium Interactive Controls Require a $19 Pay-Per-View Pass or $99/mo Pro Subscription
+          </div>
+          <div style="font-size:12px;color:#cbd5e1;margin-bottom:12px;">
+            You are currently previewing in Visitor Mode. Unlock full interactive simulation, EVE-NG packet export, and AI tailoring now:
+          </div>
+          <button class="btn-pay" onclick="unlockWithOneClickPass()">⚡ Instant Unlock ($19 Pay-Per-View Pass / Pro Trial)</button>
+        </div>
+
+        <!-- WORKBENCH MODE A: SITE TRAFFIC & EXPECTED TRAFFIC SIMULATOR -->
+        <div id="wb-pane-traffic">
+          <div class="grid-2">
+            <div>
+              <div class="slider-row">
+                <label><span>Current Monthly Site / App Visitors</span><strong id="lbl-cur-traffic">18,500 / mo</strong></label>
+                <input type="range" id="rng-cur-traffic" min="1000" max="250000" step="1000" value="18500" oninput="updateTrafficSim()" />
+              </div>
+              <div class="slider-row">
+                <label><span>Expected Traffic Growth Multiplier (SEO + Syndicate News + Social)</span><strong id="lbl-exp-mult">3.5x (64,750 / mo)</strong></label>
+                <input type="range" id="rng-exp-mult" min="1.2" max="10" step="0.1" value="3.5" oninput="updateTrafficSim()" />
+              </div>
+              <div class="slider-row">
+                <label><span>Paid View / App Subscription Conversion Rate (%)</span><strong id="lbl-conv">2.8%</strong></label>
+                <input type="range" id="rng-conv" min="0.5" max="12" step="0.1" value="2.8" oninput="updateTrafficSim()" />
+              </div>
+              <div class="slider-row">
+                <label><span>Average Revenue Per Paying User / Contract Lead ($)</span><strong id="lbl-arpu">$79 / user</strong></label>
+                <input type="range" id="rng-arpu" min="19" max="499" step="10" value="79" oninput="updateTrafficSim()" />
+              </div>
+            </div>
+
+            <div style="background:rgba(15,23,42,0.9);border:1px solid var(--border-subtle);border-radius:16px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#60a5fa;margin-bottom:8px;">
+                  Real-Time Traffic &amp; Architecture Recommendation
+                </div>
+                <p style="font-size:12.5px;color:#e2e8f0;line-height:1.55;margin:0 0 12px;" id="traffic-arch-advice">
+                  At <strong>64,750 expected monthly visitors</strong>, your Cloud Run Zero-Charge (`min-instances=0`, `nginx:alpine`) architecture keeps idle cost at <strong>$0.00</strong> and active bandwidth under <strong>$4.20/mo</strong> while generating <strong>$143,227/mo</strong> in projected subscriber &amp; lead value.
+                </p>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn-primary" onclick="awardUserXP(150, 'Ran Site Traffic & ROI Simulation')">Save Forecast (+150 XP)</button>
+                <button class="btn-gold" onclick="openSubscriptionCheckout()">Accept Client Payment for This Tier →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-box">
+              <div style="font-size:10.5px;color:var(--text-muted);">Expected Monthly Traffic</div>
+              <div class="kpi-val" style="color:#60a5fa;" id="kpi-exp-visitors">64,750</div>
+            </div>
+            <div class="kpi-box">
+              <div style="font-size:10.5px;color:var(--text-muted);">Projected Paying Users / Leads</div>
+              <div class="kpi-val" style="color:#fbbf24;" id="kpi-paying-users">1,813 / mo</div>
+            </div>
+            <div class="kpi-box">
+              <div style="font-size:10.5px;color:var(--text-muted);">Expected Monthly Revenue</div>
+              <div class="kpi-val" style="color:#34d399;" id="kpi-exp-rev">$143,227</div>
+            </div>
+            <div class="kpi-box">
+              <div style="font-size:10.5px;color:var(--text-muted);">Cloud Run Hosting Overhead</div>
+              <div class="kpi-val" style="color:#f8fafc;" id="kpi-cloud-cost">$4.20 / mo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKBENCH MODE B: LOCAL EVE-NG TOPOLOGY, CAST PLAYER & PACKET ANIMATOR -->
+        <div id="wb-pane-eve" style="display:none;">
+          <div class="grid-2">
+            <div style="background:#050b18;border:1px solid rgba(59,130,246,0.4);border-radius:16px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <span style="font-size:11px;font-weight:800;color:#60a5fa;text-transform:uppercase;">Live Local EVE-NG Topology &amp; Packet Flow</span>
+                <span style="font-size:10px;background:rgba(16,185,129,0.2);color:#34d399;padding:3px 8px;border-radius:999px;font-weight:800;">LOCAL VM • $0.00/MO</span>
+              </div>
+              <svg viewBox="0 0 560 220" style="width:100%;height:auto;background:#020617;border-radius:12px;border:1px solid rgba(148,163,184,0.15);">
+                <!-- Links -->
+                <line x1="110" y1="110" x2="280" y2="55" stroke="#3b82f6" stroke-width="2.5" stroke-dasharray="6 4" />
+                <line x1="110" y1="110" x2="280" y2="165" stroke="#10b981" stroke-width="2.5" stroke-dasharray="6 4" />
+                <line x1="280" y1="55" x2="450" y2="110" stroke="#c5b358" stroke-width="2.5" stroke-dasharray="6 4" />
+                <line x1="280" y1="165" x2="450" y2="110" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="6 4" />
+                <!-- Animated Packet Dots -->
+                <circle r="5" fill="#60a5fa">
+                  <animateMotion dur="2.2s" repeatCount="indefinite" path="M110,110 L280,55 L450,110" />
+                </circle>
+                <circle r="5" fill="#34d399">
+                  <animateMotion dur="2.8s" repeatCount="indefinite" path="M110,110 L280,165 L450,110" />
+                </circle>
+                <!-- Nodes -->
+                <g transform="translate(70,82)">
+                  <rect width="80" height="56" rx="10" fill="#0f172a" stroke="#60a5fa" stroke-width="2" />
+                  <text x="40" y="25" fill="#fff" font-size="11" font-weight="800" text-anchor="middle">R1-CORE</text>
+                  <text x="40" y="42" fill="#93c5fd" font-size="9" font-family="monospace" text-anchor="middle">10.0.0.1</text>
+                </g>
+                <g transform="translate(240,27)">
+                  <rect width="80" height="56" rx="10" fill="#0f172a" stroke="#c5b358" stroke-width="2" />
+                  <text x="40" y="25" fill="#fff" font-size="11" font-weight="800" text-anchor="middle">R2-DIST</text>
+                  <text x="40" y="42" fill="#fde047" font-size="9" font-family="monospace" text-anchor="middle">OSPF Area 0</text>
+                </g>
+                <g transform="translate(240,137)">
+                  <rect width="80" height="56" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2" />
+                  <text x="40" y="25" fill="#fff" font-size="11" font-weight="800" text-anchor="middle">FW1-ZTNA</text>
+                  <text x="40" y="42" fill="#6ee7b7" font-size="9" font-family="monospace" text-anchor="middle">SC-100 Policy</text>
+                </g>
+                <g transform="translate(410,82)">
+                  <rect width="85" height="56" rx="10" fill="#0f172a" stroke="#ef4444" stroke-width="2" />
+                  <text x="42" y="25" fill="#fff" font-size="11" font-weight="800" text-anchor="middle">R3-BGP-EDGE</text>
+                  <text x="42" y="42" fill="#fca5a5" font-size="9" font-family="monospace" text-anchor="middle">AS 65001</text>
+                </g>
+              </svg>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+                <button class="btn-primary" onclick="playCastRecording()">▶ Play .cast Terminal Recording (18 KB)</button>
+                <button class="btn-secondary" onclick="copySpectatorLink()">👁 Copy Spectator View URL</button>
+                <button class="btn-secondary" onclick="exportHtmlSnapshot()">⬇ Export HTML5 Lab Snapshot</button>
+              </div>
+            </div>
+
+            <div style="background:#020617;border:1px solid var(--border-subtle);border-radius:16px;padding:16px;font-family:'JetBrains Mono',monospace;">
+              <div style="font-size:11px;color:#34d399;margin-bottom:8px;">
+                ● xterm.js / asciinema .cast Replay — Lab: CCNP_OSPF_BGP_ZeroTrust.cast
+              </div>
+              <pre id="eve-cast-screen" style="margin:0;font-size:11.5px;line-height:1.55;color:#e2e8f0;white-space:pre-wrap;min-height:190px;">R1-CORE# show ip ospf neighbor
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+10.0.0.2          1   FULL/DR         00:00:38    10.0.12.2       GigabitEthernet0/0
+10.0.0.3          1   FULL/BDR        00:00:35    10.0.13.3       GigabitEthernet0/1
+
+[NETMIKO AUTO-GRADER]: All OSPF adjacencies FULL. BGP AS 65001 prefix verified.
+[RECEIPT]: SHA256-9F8A2C1D • +300 XP Awarded.</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKBENCH MODE C: TAILORED JOB, CONTRACT & PROCUREMENT MATCHMAKER -->
+        <div id="wb-pane-contracts" style="display:none;">
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+            <select id="ContractFilterDomain" class="tier-select" onchange="filterTailoredOpportunities(this.value)">
+              <option value="all">All Tailored Tracks (Jobs + Federal Contracts + Traffic Builds)</option>
+              <option value="sdvosb">SDVOSB Federal Contracts (NAICS 541512 / 541519 / 541611)</option>
+              <option value="architect">Principal AI, Cloud &amp; Network Architect Roles</option>
+              <option value="clientbuild">Commercial High-Traffic Web &amp; App Client Builds</option>
+            </select>
+            <button class="btn-primary" onclick="awardUserXP(200, 'Generated Tailored Contract & Job Match Brief')">⚡ Generate AI Proposal / Match Brief (+200 XP)</button>
+          </div>
+          <div class="grid-3" id="tailored-matches-grid">
+            <div class="app-card" data-cat="sdvosb">
+              <div>
+                <span class="app-tag" style="background:rgba(197,179,88,0.2);color:#fbbf24;">98% Match • SDVOSB Set-Aside</span>
+                <h4 style="margin:0 0 6px;font-size:15px;">VA / DoD Zero-Trust Network &amp; Cloud Modernization</h4>
+                <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">
+                  NAICS 541512 • Est. Value: <strong>$420,000</strong> • Requires SC-100, EVE-NG Topology Proof &amp; NIST 800-171.
+                </p>
+              </div>
+              <a href="sdvosb-contract-radar.html" class="btn-gold" style="text-align:center;text-decoration:none;">Open in Contract Radar →</a>
+            </div>
+            <div class="app-card" data-cat="architect">
+              <div>
+                <span class="app-tag" style="background:rgba(59,130,246,0.2);color:#60a5fa;">96% Match • Principal Role / Retainer</span>
+                <h4 style="margin:0 0 6px;font-size:15px;">Principal Agentic AI &amp; ModelOps Architect</h4>
+                <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">
+                  Comp: <strong>$215,000 – $260,000</strong> • Aligns with Google Path 4525, SAS Viya A00-440 &amp; USASOC 25N background.
+                </p>
+              </div>
+              <button class="btn-primary" onclick="activateMainTab('tab-ai-coach')">Launch AI Interview &amp; Brief Coach</button>
+            </div>
+            <div class="app-card" data-cat="clientbuild">
+              <div>
+                <span class="app-tag" style="background:rgba(16,185,129,0.2);color:#34d399;">95% Match • Turnkey Client Build</span>
+                <h4 style="margin:0 0 6px;font-size:15px;">Enterprise News &amp; Data Commerce Portal Build</h4>
+                <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">
+                  Package Value: <strong>$12,500 + $499/mo</strong> • Uses your live MGC, F.I.X &amp; Chronos showcase templates.
+                </p>
+              </div>
+              <button class="btn-primary" onclick="activateMainTab('tab-custom-build')">Open Client Configurator →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKBENCH MODE D: GHOST-CLI & ANSIBLE AUTO-GRADER -->
+        <div id="wb-pane-cli" style="display:none;">
+          <div style="background:#020617;border:1px solid rgba(139,92,246,0.45);border-radius:16px;padding:18px;font-family:'JetBrains Mono',monospace;">
+            <div style="font-size:11px;color:#c4b5fd;margin-bottom:8px;">
+              GHOST-CLI KINETIC DRILL • Type or click a command to execute &amp; grade:
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+              <button class="btn-secondary" onclick="runGhostCmd('router ospf 1 ; network 10.0.0.0 0.0.255.255 area 0')">IOS-XE: OSPF Area 0</button>
+              <button class="btn-secondary" onclick="runGhostCmd('ansible-playbook -i hosts site_hardening.yml --check')">Ansible: Zero-Trust Playbook</button>
+              <button class="btn-secondary" onclick="runGhostCmd('SELECT contract_id, agency, obligation FROM sdvosb_awards WHERE state = \'VA\' ORDER BY obligation DESC;')">SDC200: 3NF SQL Query</button>
+            </div>
+            <pre id="ghost-cli-out" style="margin:0;padding:12px;background:#091024;border-radius:12px;color:#34d399;font-size:12px;min-height:90px;">root@mgc-netprism:~# Ready for kinetic command execution...</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: COURSE-LIKE LMS, PROGRESS TRACKERS & INTERACTIVE QUIZZES    -->
+    <!-- ================================================================= -->
+    <div id="tab-lms" class="tab-pane">
+      <div class="grid-2">
+        <div>
+          <h3 style="margin:0 0 14px;font-size:18px;">Active Course Tracks &amp; Skill Mastery Trackers</h3>
+          <div style="display:grid;gap:14px;">
+            <!-- Track 1 -->
+            <div class="app-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="app-tag" style="background:rgba(59,130,246,0.2);color:#60a5fa;margin:0;">Track 01 • Network &amp; Cyber</span>
+                <strong style="font-size:12px;color:#34d399;" id="trk1-pct">85% Complete</strong>
+              </div>
+              <h4 style="margin:8px 0 4px;font-size:16px;">Local EVE-NG Prototyping, CCNP ENCOR &amp; Ansible DevNet</h4>
+              <div class="prog-track"><div class="prog-fill" id="trk1-bar" style="width:85%;"></div></div>
+              <p style="font-size:12px;color:var(--text-muted);margin:6px 0 12px;">
+                Modules: Headless VirtualBox Automation • OSPF/BGP Multi-Area • Netmiko Auto-Grader • <code>.cast</code> Replay Sharing.
+              </p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn-primary" onclick="completeCourseModule(1)">✓ Complete Next Lab Step (+300 XP)</button>
+                <button class="btn-secondary" onclick="activateMainTab('tab-apps');selectAppWorkbench('eve');">Open EVE-NG Lab</button>
+              </div>
+            </div>
+
+            <!-- Track 2 -->
+            <div class="app-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="app-tag" style="background:rgba(197,179,88,0.2);color:#fbbf24;margin:0;">Track 02 • Contracting &amp; Traffic</span>
+                <strong style="font-size:12px;color:#34d399;" id="trk2-pct">92% Complete</strong>
+              </div>
+              <h4 style="margin:8px 0 4px;font-size:16px;">Tailored SDVOSB Federal Contracting, Site Traffic &amp; SaaS Monetization</h4>
+              <div class="prog-track"><div class="prog-fill" id="trk2-bar" style="width:92%;"></div></div>
+              <p style="font-size:12px;color:var(--text-muted);margin:6px 0 12px;">
+                Modules: SAM.gov &amp; USAspending APIs • High-Converting Showcase Sites • Multi-Rail Payment Acceptance • Traffic Scaling.
+              </p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn-primary" onclick="completeCourseModule(2)">✓ Complete Next Milestone (+300 XP)</button>
+                <button class="btn-secondary" onclick="activateMainTab('tab-apps');selectAppWorkbench('traffic');">Open Traffic Simulator</button>
+              </div>
+            </div>
+
+            <!-- Track 3 -->
+            <div class="app-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="app-tag" style="background:rgba(16,185,129,0.2);color:#34d399;margin:0;">Track 03 • AI, ModelOps &amp; Privacy</span>
+                <strong style="font-size:12px;color:#34d399;" id="trk3-pct">78% Complete</strong>
+              </div>
+              <h4 style="margin:8px 0 4px;font-size:16px;">Google Agentic Architect (Path 4525), SAS ModelOps (A00-440) &amp; CIPP/US</h4>
+              <div class="prog-track"><div class="prog-fill" id="trk3-bar" style="width:78%;"></div></div>
+              <p style="font-size:12px;color:var(--text-muted);margin:6px 0 12px;">
+                Modules: Multi-Agent LangGraph Supervision • Champion/Challenger Drift • Zero-Trust CMMC L2 &amp; Privacy Governance.
+              </p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn-primary" onclick="completeCourseModule(3)">✓ Complete Next Milestone (+300 XP)</button>
+                <a href="elearning-upskilling-hub.html" class="btn-secondary">Open Insights Atlas →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Course Checkpoint & Certificate Generator -->
+        <div class="app-card" style="justify-content:flex-start;gap:14px;">
+          <span class="app-tag" style="background:rgba(139,92,246,0.2);color:#c4b5fd;width:fit-content;">
+            Interactive Mastery Verification
+          </span>
+          <h3 style="margin:0;font-size:18px;">Live Scenario Challenge &amp; Credential Issuer</h3>
+          <p style="font-size:12.5px;color:var(--text-muted);margin:0;">
+            Answer the real-world architecture &amp; monetization checkpoint below to earn XP and climb the cohort leaderboard:
+          </p>
+          <div style="padding:16px;background:#091024;border-radius:14px;border:1px solid var(--border-subtle);">
+            <div style="font-size:13px;font-weight:700;margin-bottom:10px;">
+              Scenario: A client expects traffic to surge from 15,000 to 90,000 monthly visits on their showcase portal while keeping idle cloud cost at $0.00 and recording EVE-NG lab demos in under 100 KB. Which architecture combination satisfies all 3 requirements?
+            </div>
+            <div style="display:grid;gap:8px;">
+              <button class="btn-secondary" style="justify-content:flex-start;text-align:left;" onclick="gradeLmsQuiz(true)">
+                A) Cloud Run Request-Based (min-instances=0, nginx:alpine) + Local EVE-NG VM + .cast JSON Terminal Replay
+              </button>
+              <button class="btn-secondary" style="justify-content:flex-start;text-align:left;" onclick="gradeLmsQuiz(false)">
+                B) Always-on GCP n2-standard-4 VM + Raw 4K MP4 Screen Recordings + Instance-Based Billing
+              </button>
+            </div>
+            <div id="lms-quiz-feedback" style="margin-top:12px;font-size:12px;font-weight:700;color:#34d399;display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: LEADERBOARDS & COHORT RANKINGS                              -->
+    <!-- ================================================================= -->
+    <div id="tab-leaderboard" class="tab-pane">
+      <div class="app-card">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;">
+          <div>
+            <h3 style="margin:0;font-size:18px;">Global &amp; Cohort Leaderboard (Live XP, Labs &amp; Traffic/Contract ROI)</h3>
+            <p style="margin:4px 0 0;font-size:12px;color:var(--text-muted);">
+              Tracks verified lab completions, traffic/contract simulation accuracy, and active streaks across subscribers.
+            </p>
+          </div>
+          <button class="btn-primary" onclick="awardUserXP(100, 'Daily Leaderboard Check-In')">+100 XP Daily Check-In</button>
+        </div>
+
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Operator / Subscriber</th>
+              <th>Subscription Tier</th>
+              <th>Primary Specialty</th>
+              <th>Verified Labs / Builds</th>
+              <th>Streak</th>
+              <th>Total XP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(16,185,129,0.1);">
+              <td><strong>#1 🏆</strong></td>
+              <td><strong id="lb-user-name">Malik A. Khabir (You)</strong></td>
+              <td><span style="color:#34d399;font-weight:800;">Enterprise / Owner</span></td>
+              <td>Full-Stack AI, EVE-NG, SDVOSB &amp; Traffic Architecture</td>
+              <td>48 Verified</td>
+              <td>14d 🔥</td>
+              <td><strong id="lb-user-xp" style="color:#fbbf24;font-family:'JetBrains Mono',monospace;">18,450 XP</strong></td>
+            </tr>
+            <tr>
+              <td><strong>#2 🥈</strong></td>
+              <td>Vanguard_NetOps_VA</td>
+              <td><span style="color:#60a5fa;font-weight:700;">Pro Subscriber ($99/mo)</span></td>
+              <td>CCNP ENCOR &amp; Ansible Playbooks</td>
+              <td>39 Verified</td>
+              <td>11d 🔥</td>
+              <td style="font-family:'JetBrains Mono',monospace;">15,200 XP</td>
+            </tr>
+            <tr>
+              <td><strong>#3 🥉</strong></td>
+              <td>Apex_GovCon_Architect</td>
+              <td><span style="color:#60a5fa;font-weight:700;">Pro Subscriber ($99/mo)</span></td>
+              <td>SAM.gov Procurement &amp; High-Traffic Portals</td>
+              <td>34 Verified</td>
+              <td>9d 🔥</td>
+              <td style="font-family:'JetBrains Mono',monospace;">13,890 XP</td>
+            </tr>
+            <tr>
+              <td><strong>#4</strong></td>
+              <td>Sentinel_ZeroTrust_DC</td>
+              <td><span style="color:#c4b5fd;font-weight:700;">Enterprise Team Seat</span></td>
+              <td>Microsoft SC-100 / SC-200 &amp; CMMC L2</td>
+              <td>29 Verified</td>
+              <td>7d</td>
+              <td style="font-family:'JetBrains Mono',monospace;">11,450 XP</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 4: AI HELP & TAILORED GUIDANCE COACH                           -->
+    <!-- ================================================================= -->
+    <div id="tab-ai-coach" class="tab-pane">
+      <div class="grid-2">
+        <div class="app-card">
+          <span class="app-tag" style="background:rgba(59,130,246,0.2);color:#60a5fa;width:fit-content;">
+            Embedded AI Help &amp; Strategy Coach
+          </span>
+          <h3 style="margin:6px 0 8px;font-size:18px;">Tailored Job, Contract, Site Traffic &amp; Lab Advisor</h3>
+          <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 14px;">
+            Select a quick-prompt or enter your custom goal to generate an actionable execution blueprint:
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+            <button class="btn-secondary" onclick="runAiCoachPrompt('traffic')">📈 Grow Site Traffic &amp; Monetize Views</button>
+            <button class="btn-secondary" onclick="runAiCoachPrompt('contracts')">🏛 Win SDVOSB &amp; Commercial Contracts</button>
+            <button class="btn-secondary" onclick="runAiCoachPrompt('eveng')">🖧 EVE-NG Local Lab &amp; Spectator Setup</button>
+            <button class="btn-secondary" onclick="runAiCoachPrompt('career')">🎯 Tailored High-Comp Architect Roles</button>
+          </div>
+          <textarea id="ai-coach-input" rows="3" placeholder="Ask for tailored guidance on jobs, contracts, expected site traffic, EVE-NG labs, or client builds..." style="width:100%;padding:12px;border-radius:12px;background:#020617;border:1px solid var(--border-subtle);color:#fff;font-family:inherit;font-size:12.5px;margin-bottom:10px;"></textarea>
+          <button class="btn-primary" onclick="runAiCoachCustom()">✨ Generate Tailored AI Guidance Blueprint (+150 XP)</button>
+        </div>
+
+        <div class="app-card" style="background:#050b18;">
+          <div style="font-size:11px;font-weight:800;color:#fbbf24;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">
+            AI Coach Actionable Output &amp; Deep-Links
+          </div>
+          <div id="ai-coach-output" style="font-size:13px;line-height:1.65;color:#e2e8f0;">
+            <strong>Ready.</strong> Click any prompt chip on the left to generate a step-by-step roadmap tailored to your active portfolio (<code>miltongroupsecurity.org</code>, <code>fix.miltongroupsecurity.org</code>, <code>Chronos // Aetheria</code>, and <code>Local EVE-NG NetPrism</code>).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 5: PROJECT SHOWCASE & CUSTOM BUILD CONFIGURATOR                -->
+    <!-- ================================================================= -->
+    <div id="tab-custom-build" class="tab-pane">
+      <div class="grid-2">
+        <div class="app-card">
+          <span class="app-tag" style="background:rgba(197,179,88,0.2);color:#fbbf24;width:fit-content;">
+            Build to Customer Satisfaction • Interactive Scope &amp; Pricing
+          </span>
+          <h3 style="margin:6px 0 8px;font-size:19px;">Client Custom Build &amp; App Experience Configurator</h3>
+          <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 14px;">
+            Use your live projects as a showcase. Clients select the exact modules and expected traffic scale they need, preview the architecture, and submit payment directly into Finance Command:
+          </p>
+
+          <div style="display:grid;gap:10px;margin-bottom:16px;">
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#091024;border-radius:12px;border:1px solid var(--border-subtle);cursor:pointer;">
+              <span><input type="checkbox" class="cb-mod" value="3500" checked onchange="calcCustomBuild()" /> <strong>Executive External Brand &amp; Mobile/PC Site</strong> (Inspired by MGC &amp; F.I.X)</span>
+              <strong style="color:#34d399;">$3,500</strong>
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#091024;border-radius:12px;border:1px solid var(--border-subtle);cursor:pointer;">
+              <span><input type="checkbox" class="cb-mod" value="4200" checked onchange="calcCustomBuild()" /> <strong>Decoupled SaaS App, Subscriber Gate &amp; Multi-Rail Payment System</strong></span>
+              <strong style="color:#34d399;">$4,200</strong>
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#091024;border-radius:12px;border:1px solid var(--border-subtle);cursor:pointer;">
+              <span><input type="checkbox" class="cb-mod" value="2800" checked onchange="calcCustomBuild()" /> <strong>Live NBA-RSS Intelligence Wire, Maps &amp; Insight Visualizations</strong> (Chronos)</span>
+              <strong style="color:#34d399;">$2,800</strong>
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#091024;border-radius:12px;border:1px solid var(--border-subtle);cursor:pointer;">
+              <span><input type="checkbox" class="cb-mod" value="3000" onchange="calcCustomBuild()" /> <strong>Course LMS, Leaderboards, AI Coach &amp; EVE-NG Network Sandbox</strong></span>
+              <strong style="color:#34d399;">$3,000</strong>
+            </label>
+          </div>
+        </div>
+
+        <div class="app-card" style="justify-content:space-between;">
+          <div>
+            <span class="app-tag" style="background:rgba(16,185,129,0.2);color:#34d399;width:fit-content;">
+              Turnkey Proposal &amp; Instant Payment Handoff
+            </span>
+            <h3 style="margin:6px 0 8px;font-size:18px;">Configured Build Summary</h3>
+            <div style="font-size:32px;font-weight:900;color:#fbbf24;font-family:'JetBrains Mono',monospace;margin:10px 0;" id="custom-build-total">
+              $10,500
+            </div>
+            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;">
+              Includes dedicated mobile + PC responsive engineering, Cloud Run Zero-Charge deployment, Workspace SSO hardening, and 99.4% Customer Satisfaction SLA.
+            </p>
+            <div style="margin-top:12px;padding:12px;background:#091024;border-radius:12px;border:1px solid var(--border-subtle);font-size:12px;">
+              <strong>Live Showcase Proof Links Included:</strong><br/>
+              • <a href="https://miltongroupsecurity.org" target="_blank" style="color:#60a5fa;">miltongroupsecurity.org</a> (Enterprise &amp; RWB Cursor)<br/>
+              • <a href="https://fix.miltongroupsecurity.org" target="_blank" style="color:#60a5fa;">fix.miltongroupsecurity.org</a> (Defense Procurement &amp; Live RSS)<br/>
+              • <a href="chronos-external-insight-webapp.html" style="color:#60a5fa;">Chronos // Aetheria</a> (3-Pane Insight WebApp)
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+            <button class="btn-pay" style="flex:1;padding:12px;" onclick="sendBuildToFinance()">
+              💳 Accept Client Payment / Generate Signed Invoice →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 6: USER PROFILE & SUBSCRIPTION SETTINGS                        -->
+    <!-- ================================================================= -->
+    <div id="tab-profile" class="tab-pane">
+      <div class="grid-2">
+        <div class="app-card">
+          <h3 style="margin:0 0 14px;font-size:18px;">Subscriber Profile &amp; Tailoring Settings</h3>
+          <div style="display:grid;gap:12px;">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">Display Name &amp; Callsign</label>
+              <input id="prof-name" type="text" value="Malik A. Khabir" style="width:100%;padding:10px 12px;border-radius:10px;background:#091024;border:1px solid var(--border-subtle);color:#fff;font-size:13px;" />
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">Primary Tailoring Focus (Jobs, Contracts, Site Traffic, Labs)</label>
+              <input id="prof-focus" type="text" value="Focus: Tailored Federal/Commercial Contracts • High-Traffic Web/Apps • EVE-NG Cyber Prototyping" style="width:100%;padding:10px 12px;border-radius:10px;background:#091024;border:1px solid var(--border-subtle);color:#fff;font-size:13px;" />
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">Default Payment Acceptance Rail</label>
+              <select id="prof-rail" style="width:100%;padding:10px 12px;border-radius:10px;background:#091024;border:1px solid var(--border-subtle);color:#fff;font-size:13px;">
+                <option value="stripe">Stripe / Commercial Card &amp; Government Purchase Card (GPC)</option>
+                <option value="ach">Mercury Treasury ACH / FedNow Instant Settlement</option>
+                <option value="wawf">SAM.gov WAWF / IPP Federal Contract Invoicing</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="saveProfileSettings()">💾 Save Profile &amp; Tailoring Preferences</button>
+            <div id="prof-save-msg" style="font-size:12px;color:#34d399;font-weight:700;display:none;">
+              ✓ Profile settings saved to local session &amp; synced across decoupled apps!
+            </div>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <h3 style="margin:0 0 14px;font-size:18px;">Subscription Plan &amp; Monetization Access Matrix</h3>
+          <div style="display:grid;gap:10px;font-size:12.5px;">
+            <div style="padding:12px;border-radius:12px;background:#091024;border:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <strong>Tier 1: Pay-Per-View / Sandbox Pass</strong>
+                <div style="color:var(--text-muted);font-size:11px;">Single-session interactive view, 250 interaction credits</div>
+              </div>
+              <button class="btn-secondary" onclick="checkoutSpecificTier('Pay-Per-View Sandbox Pass', 19)">$19 Pass</button>
+            </div>
+            <div style="padding:12px;border-radius:12px;background:#091024;border:1px solid rgba(59,130,246,0.5);display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <strong>Tier 2: Pro App &amp; Course LMS Subscriber</strong>
+                <div style="color:var(--text-muted);font-size:11px;">All 6 decoupled apps, Course LMS, Leaderboards &amp; AI Coach</div>
+              </div>
+              <button class="btn-primary" onclick="checkoutSpecificTier('Pro App & LMS Subscription', 99)">$99 / mo</button>
+            </div>
+            <div style="padding:12px;border-radius:12px;background:#091024;border:1px solid var(--border-gold);display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <strong>Tier 3: Enterprise / Agency Custom Build &amp; Seats</strong>
+                <div style="color:var(--text-muted);font-size:11px;">Unlimited credits, Custom Build SLA, Dedicated EVE-NG &amp; Traffic Insights</div>
+              </div>
+              <button class="btn-gold" onclick="checkoutSpecificTier('Enterprise Custom Build & Seat License', 499)">$499 / mo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="mgc-guided-security.js"></script>
+  <script>
+    let userXP = parseInt(localStorage.getItem('mgc_lms_xp') || '18450', 10);
+    let userCredits = parseInt(localStorage.getItem('mgc_app_credits') || '2450', 10);
+    let currentTier = localStorage.getItem('mgc_sim_tier') || 'enterprise';
+
+    function renderTopStats() {
+      document.getElementById('ui-xp').textContent = userXP.toLocaleString();
+      document.getElementById('lb-user-xp').textContent = userXP.toLocaleString() + ' XP';
+      document.getElementById('ui-credits').textContent = userCredits.toLocaleString();
+      const savedName = localStorage.getItem('mgc_prof_name');
+      const savedFocus = localStorage.getItem('mgc_prof_focus');
+      if (savedName) {
+        document.getElementById('ui-user-name').textContent = savedName;
+        document.getElementById('lb-user-name').textContent = savedName + ' (You)';
+        document.getElementById('prof-name').value = savedName;
+      }
+      if (savedFocus) {
+        document.getElementById('ui-user-focus').textContent = savedFocus;
+        document.getElementById('prof-focus').value = savedFocus;
+      }
+    }
+
+    function activateMainTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.ws-tab').forEach(b => b.classList.remove('active'));
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+      const btn = document.querySelector(`.ws-tab[data-target="${tabId}"]`);
+      if (btn) btn.classList.add('active');
+    }
+
+    function switchSimulatedTier(tier) {
+      currentTier = tier;
+      localStorage.setItem('mgc_sim_tier', tier);
+      const badge = document.getElementById('ui-tier-badge');
+      const gate = document.getElementById('ppv-gate-banner');
+      if (tier === 'enterprise') {
+        badge.textContent = 'TIER 3 • ENTERPRISE & OWNER';
+        badge.style.background = 'rgba(16,185,129,0.2)';
+        badge.style.color = '#34d399';
+        gate.classList.remove('locked');
+      } else if (tier === 'pro') {
+        badge.textContent = 'TIER 2 • PRO SUBSCRIBER ($99/MO)';
+        badge.style.background = 'rgba(59,130,246,0.2)';
+        badge.style.color = '#60a5fa';
+        gate.classList.remove('locked');
+      } else {
+        badge.textContent = 'TIER 1 • VISITOR / PAY-PER-VIEW PREVIEW';
+        badge.style.background = 'rgba(251,191,36,0.2)';
+        badge.style.color = '#fbbf24';
+        gate.classList.add('locked');
+      }
+    }
+
+    function unlockWithOneClickPass() {
+      document.getElementById('tier-simulator').value = 'pro';
+      switchSimulatedTier('pro');
+      awardUserXP(200, 'Unlocked Pro Subscriber Interactive Access');
+    }
+
+    function selectAppWorkbench(mode) {
+      ['traffic', 'eve', 'contracts', 'cli'].forEach(m => {
+        document.getElementById('wb-pane-' + m).style.display = (m === mode) ? 'block' : 'none';
+      });
+      const titles = {
+        traffic: 'Site Architecture, Current vs. Expected Traffic & Subscriber Revenue Simulator',
+        eve: 'Local EVE-NG Network Studio, .cast Terminal Replay & Live Packet Animator',
+        contracts: 'Tailored Job, Federal Contract (SDVOSB) & Commercial Build Matchmaker',
+        cli: 'Ghost-CLI Kinetic Muscle-Memory Trainer & Ansible Playbook Auto-Grader'
+      };
+      document.getElementById('wb-title').textContent = titles[mode] || titles.traffic;
+      if (userCredits > 0) {
+        userCredits -= 5;
+        localStorage.setItem('mgc_app_credits', String(userCredits));
+        renderTopStats();
+      }
+    }
+
+    function updateTrafficSim() {
+      const cur = parseFloat(document.getElementById('rng-cur-traffic').value);
+      const mult = parseFloat(document.getElementById('rng-exp-mult').value);
+      const conv = parseFloat(document.getElementById('rng-conv').value);
+      const arpu = parseFloat(document.getElementById('rng-arpu').value);
+
+      const expVisitors = Math.round(cur * mult);
+      const payingUsers = Math.round(expVisitors * (conv / 100));
+      const expRev = payingUsers * arpu;
+      const cloudCost = expVisitors <= 50000 ? 2.80 : (expVisitors * 0.000085);
+
+      document.getElementById('lbl-cur-traffic').textContent = cur.toLocaleString() + ' / mo';
+      document.getElementById('lbl-exp-mult').textContent = mult.toFixed(1) + 'x (' + expVisitors.toLocaleString() + ' / mo)';
+      document.getElementById('lbl-conv').textContent = conv.toFixed(1) + '%';
+      document.getElementById('lbl-arpu').textContent = '$' + arpu + ' / user';
+
+      document.getElementById('kpi-exp-visitors').textContent = expVisitors.toLocaleString();
+      document.getElementById('kpi-paying-users').textContent = payingUsers.toLocaleString() + ' / mo';
+      document.getElementById('kpi-exp-rev').textContent = '$' + expRev.toLocaleString();
+      document.getElementById('kpi-cloud-cost').textContent = '$' + cloudCost.toFixed(2) + ' / mo';
+
+      document.getElementById('traffic-arch-advice').innerHTML =
+        `At <strong>${expVisitors.toLocaleString()} expected monthly visitors</strong>, your Cloud Run Zero-Charge (<code>min-instances=0</code>, <code>nginx:alpine</code>) architecture keeps idle cost at <strong>$0.00</strong> and active bandwidth around <strong>$${cloudCost.toFixed(2)}/mo</strong> while generating <strong>$${expRev.toLocaleString()}/mo</strong> across <strong>${payingUsers.toLocaleString()} paying subscribers/leads</strong>.`;
+    }
+
+    function playCastRecording() {
+      const screen = document.getElementById('eve-cast-screen');
+      const frames = [
+        "R1-CORE# conf t\nR1-CORE(config)# router ospf 1\nR1-CORE(config-router)# network 10.0.0.0 0.0.255.255 area 0",
+        "R1-CORE# show ip ospf neighbor\nNeighbor ID     Pri   State           Dead Time   Address         Interface\n10.0.0.2          1   FULL/DR         00:00:39    10.0.12.2       Gi0/0\n10.0.0.3          1   FULL/BDR        00:00:37    10.0.13.3       Gi0/1",
+        "R3-BGP-EDGE# show ip bgp summary\nBGP router identifier 10.0.0.3, local AS number 65001\nNeighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd\n192.0.2.1       4        65000     142     145       12    0    0 02:14:09        8",
+        "[NETMIKO AUTO-GRADER]: OSPF Area 0 + eBGP AS 65001 + SC-100 Firewall Policy VERIFIED.\n[CAST RECORDING]: Saved 18.4 KB .cast replay • +250 XP Awarded!"
+      ];
+      let idx = 0;
+      screen.textContent = "▶ Playing 18.4 KB .cast recording...\n";
+      const timer = setInterval(() => {
+        if (idx < frames.length) {
+          screen.textContent += "\n" + frames[idx] + "\n";
+          idx++;
+        } else {
+          clearInterval(timer);
+          awardUserXP(250, 'Played & Verified Local EVE-NG .cast Recording');
+        }
+      }, 450);
+    }
+
+    function copySpectatorLink() {
+      const url = window.location.origin + window.location.pathname + '?mode=eve_spectator&ro=1';
+      if (navigator.clipboard) navigator.clipboard.writeText(url);
+      alert('Read-Only Spectator Link copied to clipboard:\n' + url);
+    }
+
+    function exportHtmlSnapshot() {
+      awardUserXP(200, 'Exported Self-Contained HTML5 Lab Snapshot');
+      alert('Self-Contained HTML5 Lab Snapshot (118 KB) generated and logged to your portfolio!');
+    }
+
+    function filterTailoredOpportunities(cat) {
+      document.querySelectorAll('#tailored-matches-grid .app-card').forEach(card => {
+        card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'flex' : 'none';
+      });
+    }
+
+    function runGhostCmd(cmd) {
+      const out = document.getElementById('ghost-cli-out');
+      out.textContent = `root@mgc-netprism:~# ${cmd}\n[EXECUTING AGAINST LOCAL SANDBOX]...\n✓ Syntax & Telemetry Verified (100% Accuracy) • +150 XP Awarded.`;
+      awardUserXP(150, 'Executed Ghost-CLI Command');
+    }
+
+    function completeCourseModule(trackNum) {
+      const bar = document.getElementById('trk' + trackNum + '-bar');
+      const pct = document.getElementById('trk' + trackNum + '-pct');
+      if (bar && pct) {
+        bar.style.width = '100%';
+        pct.textContent = '100% Complete ★';
+      }
+      awardUserXP(300, 'Completed Course Track 0' + trackNum + ' Milestone');
+    }
+
+    function gradeLmsQuiz(correct) {
+      const fb = document.getElementById('lms-quiz-feedback');
+      fb.style.display = 'block';
+      if (correct) {
+        fb.style.color = '#34d399';
+        fb.textContent = '✓ Correct! Cloud Run Request-Based (min-instances=0) + Local EVE-NG + .cast JSON Replay achieves $0.00 idle cost and 99.8% smaller recordings. (+400 XP Awarded!)';
+        awardUserXP(400, 'Passed Architecture & Monetization Mastery Quiz');
+      } else {
+        fb.style.color = '#f87171';
+        fb.textContent = '✗ Not quite — Always-on GCP VMs and raw 4K MP4 files incur high monthly compute and storage overhead. Try Option A!';
+      }
+    }
+
+    function runAiCoachPrompt(topic) {
+      const out = document.getElementById('ai-coach-output');
+      const blueprints = {
+        traffic: `<strong>📈 Site Traffic, Expected Traffic & Monetization Blueprint:</strong><br/>
+          1. <strong>Funnel Entry:</strong> Use your live NBA-RSS news wires on <code>fix.miltongroupsecurity.org</code> and <code>Chronos // Aetheria</code> to capture organic daily search & industry traffic.<br/>
+          2. <strong>Monetized Conversion:</strong> Route visitors into the <strong>$19 Pay-Per-View Sandbox</strong> or <strong>$99/mo Pro App Subscription</strong> using the interactive Traffic & EVE-NG simulators.<br/>
+          3. <strong>Zero-Charge Scaling:</strong> Keep all portals on Cloud Run <code>Request-based</code> billing (<code>min-instances=0</code>) so 65,000+ monthly visits cost under $5/mo while generating $14,000–$140,000/mo in subscriptions & client builds.`,
+        contracts: `<strong>🏛 Tailored SDVOSB Federal & Commercial Contract Blueprint:</strong><br/>
+          1. <strong>Target Vehicles:</strong> Focus on NAICS <code>541512</code> (Computer Systems Design), <code>541519</code>, and <code>541611</code> in VA/DC/MD.<br/>
+          2. <strong>Live Technical Proof:</strong> Attach your interactive <strong>HTML5 EVE-NG Zero-Trust Topology Snapshot</strong> and <strong>CMMC L2 / NIST 800-171 Trust Center</strong> link directly in capability statements.<br/>
+          3. <strong>Payment Rail:</strong> Accept government GPC cards, ACH/FedNow, or SAM.gov WAWF/IPP directly inside <a href="finance-command.html" style="color:#34d399;">Finance Command</a>.`,
+        eveng: `<strong>🖧 Local EVE-NG + Decoupled App Monetization Blueprint:</strong><br/>
+          1. Run EVE-NG locally via <code>Automate-EveLocalVM.ps1</code> ($0/mo cloud cost).<br/>
+          2. Record all CLI labs as 18 KB <code>.cast</code> files and stream live Read-Only Spectator views to paying subscribers.<br/>
+          3. Pair every lab with the <strong>Netmiko/Ansible Auto-Grader</strong> so learners earn verifiable XP and leaderboard ranks.`,
+        career: `<strong>🎯 High-Compensation Principal Architect Positioning:</strong><br/>
+          1. Combine your <strong>USASOC 25N Signal</strong> background with <strong>Google Cloud Agentic Architect (Path 4525)</strong>, <strong>SAS ModelOps (A00-440)</strong>, and <strong>Microsoft SC-100</strong>.<br/>
+          2. Use this live 13-module ecosystem as a working executive demonstration during interviews and client briefings.`
+      };
+      out.innerHTML = blueprints[topic] || blueprints.traffic;
+      awardUserXP(150, 'Consulted AI Guidance Coach');
+    }
+
+    function runAiCoachCustom() {
+      const q = (document.getElementById('ai-coach-input').value || '').trim();
+      const out = document.getElementById('ai-coach-output');
+      out.innerHTML = `<strong>✨ Custom Tailored Blueprint for: "${q || 'Full-Stack Monetization & Growth'}"</strong><br/>
+        • <strong>Step 1 (Showcase & Traffic):</strong> Present your live mobile + PC responsive portals to demonstrate immediate production readiness.<br/>
+        • <strong>Step 2 (User-Level Monetization):</strong> Gate deep simulator actions behind the Tier 1 ($19) / Tier 2 ($99/mo) / Tier 3 ($499/mo) checkout rail.<br/>
+        • <strong>Step 3 (Customer Satisfaction SLA):</strong> Use the Custom Build Configurator in Tab 5 to lock scope and collect the initial deposit via Finance Command.`;
+      awardUserXP(150, 'Generated Custom AI Blueprint');
+    }
+
+    function calcCustomBuild() {
+      let sum = 0;
+      document.querySelectorAll('.cb-mod:checked').forEach(cb => {
+        sum += parseInt(cb.value, 10);
+      });
+      document.getElementById('custom-build-total').textContent = '$' + sum.toLocaleString();
+      return sum;
+    }
+
+    function sendBuildToFinance() {
+      const total = calcCustomBuild();
+      window.location.href = `finance-command.html?item=Custom_Client_Showcase_Build&amount=${total}`;
+    }
+
+    function openSubscriptionCheckout() {
+      window.location.href = `finance-command.html?item=Pro_App_And_LMS_Subscription&amount=99`;
+    }
+
+    function checkoutSpecificTier(item, amount) {
+      window.location.href = `finance-command.html?item=${encodeURIComponent(item)}&amount=${amount}`;
+    }
+
+    function saveProfileSettings() {
+      const n = document.getElementById('prof-name').value.trim();
+      const f = document.getElementById('prof-focus').value.trim();
+      if (n) localStorage.setItem('mgc_prof_name', n);
+      if (f) localStorage.setItem('mgc_prof_focus', f);
+      renderTopStats();
+      const msg = document.getElementById('prof-save-msg');
+      msg.style.display = 'block';
+      setTimeout(() => { msg.style.display = 'none'; }, 3500);
+    }
+
+    function awardUserXP(pts, reason) {
+      userXP += pts;
+      localStorage.setItem('mgc_lms_xp', String(userXP));
+      renderTopStats();
+    }
+
+    renderTopStats();
+  </script>
+</body>
+</html>
