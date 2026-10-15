@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sterling Auto Repair &amp; Body | Interactive Vehicle Care • 45911 Transamerica Plaza, Sterling VA</title>
+  <title>Sterling Auto Repair &amp; Body | 45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</title>
+  <meta name="description" content="Sterling's trusted mechanical & collision repair shop at 45911 Transamerica Plaza, Suite 102, Sterling, VA. Build your instant car quote online, book service, or call (571) 531-0342." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #070a12;
-      --panel: #0e1422;
-      --card: #131b2e;
+      --bg: #080c16;
+      --panel: #0f1628;
+      --card: #151f36;
       --red: #ef4444;
       --red-dark: #dc2626;
       --amber: #f59e0b;
@@ -19,25 +20,27 @@
       --blue: #3b82f6;
       --text: #f8fafc;
       --muted: #94a3b8;
-      --border: rgba(148, 163, 184, 0.16);
+      --border: rgba(148, 163, 184, 0.18);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: radial-gradient(circle at 50% 0%, #172036 0%, var(--bg) 65%);
+      background: var(--bg);
       color: var(--text);
+      line-height: 1.5;
       overflow-x: hidden;
     }
 
-    /* Compact Top Bar */
+    /* Top Shop Welcome & Hours Bar */
     .topbar {
-      background: #04060b;
+      background: #04070e;
       border-bottom: 1px solid var(--border);
       padding: 8px 24px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
+      color: #cbd5e1;
     }
     .topbar-inner {
       max-width: 1360px;
@@ -48,7 +51,7 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-    .live-dot {
+    .open-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
@@ -58,15 +61,16 @@
       margin-right: 6px;
     }
 
-    /* Sticky Header */
+    /* Sticky Customer Navigation */
     .header {
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: rgba(7, 10, 18, 0.9);
+      background: rgba(8, 12, 22, 0.92);
       backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--border);
-      padding: 12px 24px;
+      padding: 13px 24px;
     }
     .header-inner {
       max-width: 1360px;
@@ -84,39 +88,39 @@
       color: #fff;
     }
     .brand-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: linear-gradient(135deg, var(--red), #991b1b);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
       font-size: 16px;
-      box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
     }
     .brand-title {
-      font-size: 18px;
+      font-size: 18.5px;
       font-weight: 900;
       letter-spacing: -0.02em;
       text-transform: uppercase;
     }
     .brand-sub {
-      font-size: 10px;
-      font-weight: 800;
+      font-size: 10.5px;
+      font-weight: 700;
       color: #f87171;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
     .nav-links {
       display: flex;
-      gap: 20px;
+      gap: 22px;
     }
     .nav-links a {
       color: #cbd5e1;
       text-decoration: none;
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 700;
       transition: color 0.2s;
     }
@@ -128,336 +132,208 @@
       gap: 10px;
     }
     .btn {
-      padding: 10px 16px;
-      border-radius: 10px;
+      padding: 10px 18px;
+      border-radius: 11px;
       font-size: 13px;
       font-weight: 800;
       text-decoration: none;
       cursor: pointer;
       border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.07);
       color: #fff;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      gap: 7px;
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .btn:hover { transform: translateY(-2px); border-color: #fff; }
+    .btn:hover { transform: translateY(-2px); border-color: #fff; background: rgba(255, 255, 255, 0.12); }
     .btn-red {
       background: linear-gradient(135deg, var(--red), var(--red-dark));
       border: none;
-      box-shadow: 0 8px 22px rgba(239, 68, 68, 0.4);
+      box-shadow: 0 10px 24px rgba(239, 68, 68, 0.4);
     }
-
-    /* ============================================================================
-       1. "MY GARAGE" VISUAL VEHICLE SELECTOR BAR (FIRESTONE / TIRE RACK STYLE)
-       ============================================================================ */
-    .garage-bar {
-      max-width: 1360px;
-      margin: 20px auto 0;
-      padding: 0 24px;
-    }
-    .garage-box {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-    }
-    .body-pills {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .car-type-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: #cbd5e1;
-      padding: 8px 14px;
-      border-radius: 12px;
-      font-size: 12.5px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-    .car-type-btn.active, .car-type-btn:hover {
-      background: rgba(239, 68, 68, 0.16);
-      border-color: var(--red);
-      color: #fff;
-      transform: translateY(-1px);
-    }
-    .garage-selects {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .g-select {
-      background: #070a12;
-      color: #fff;
-      border: 1px solid var(--border);
-      padding: 9px 12px;
-      border-radius: 10px;
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .plate-box {
-      display: inline-flex;
-      align-items: center;
-      background: #fef08a;
-      color: #0f172a;
-      border: 2px solid #eab308;
-      border-radius: 8px;
-      padding: 4px 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 800;
-      font-size: 12px;
-      gap: 6px;
-    }
-    .plate-box input {
-      background: transparent;
+    .btn-red:hover { background: linear-gradient(135deg, #f87171, var(--red)); }
+    .btn-emerald {
+      background: linear-gradient(135deg, var(--emerald), #059669);
       border: none;
-      color: #0f172a;
-      font-family: inherit;
-      font-weight: 900;
-      width: 82px;
-      text-transform: uppercase;
-      outline: none;
+      color: #022c22;
+      box-shadow: 0 10px 24px rgba(16, 185, 129, 0.35);
     }
 
     /* ============================================================================
-       2. INTERACTIVE CAR HOTSPOT X-RAY DIAGRAM + INSTANT BAY BOOKER HERO
+       SECTION 1: WELCOMING AUTOMOTIVE COVER PAGE (HERO BANNER)
        ============================================================================ */
-    .car-stage-section {
-      max-width: 1360px;
-      margin: 18px auto 0;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: 1.35fr 0.85fr;
-      gap: 22px;
-      align-items: stretch;
-    }
-    .car-canvas-card {
-      background:
-        radial-gradient(circle at 50% 55%, rgba(59, 130, 246, 0.16), transparent 60%),
-        linear-gradient(180deg, #0e1526 0%, #090d18 100%);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 22px 24px;
+    .cover-hero {
       position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
+      padding: 64px 24px 54px;
+      background:
+        linear-gradient(100deg, rgba(8, 12, 22, 0.95) 0%, rgba(8, 12, 22, 0.84) 55%, rgba(8, 12, 22, 0.58) 100%),
+        url('assets/hero_shop_bay.jpg') center/cover no-repeat;
+      border-bottom: 1px solid var(--border);
     }
-    .canvas-header {
-      display: flex;
-      justify-content: space-between;
+    .cover-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 36px;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
     }
-    .active-car-pill {
+    .cover-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(59, 130, 246, 0.15);
-      border: 1px solid rgba(59, 130, 246, 0.45);
-      color: #93c5fd;
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
       font-size: 11.5px;
       font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
     }
-
-    /* Interactive SVG Car Container */
-    .svg-car-wrap {
-      position: relative;
-      width: 100%;
-      margin: 10px 0;
+    .cover-hero h1 {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+    .cover-hero h1 span {
+      background: linear-gradient(90deg, #f87171, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .cover-sub {
+      font-size: 16.5px;
+      color: #e2e8f0;
+      max-width: 600px;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+    .cover-ctas {
       display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .car-svg {
-      width: 100%;
-      max-width: 720px;
-      height: auto;
-      filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.75));
-      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    /* Pulsing Hotspots on the Car */
-    @keyframes pulseRing {
-      0% { r: 11px; opacity: 0.9; }
-      100% { r: 24px; opacity: 0; }
-    }
-    .hotspot-group {
-      cursor: pointer;
-    }
-    .hotspot-ring {
-      fill: none;
-      stroke: var(--red);
-      stroke-width: 2.5;
-      animation: pulseRing 1.8s infinite;
-    }
-    .hotspot-dot {
-      fill: var(--red);
-      stroke: #ffffff;
-      stroke-width: 2.5;
-      transition: all 0.2s;
-    }
-    .hotspot-group:hover .hotspot-dot,
-    .hotspot-group.selected .hotspot-dot {
-      fill: var(--emerald);
-      r: 12px;
-    }
-    .hotspot-group.selected .hotspot-ring {
-      stroke: var(--emerald);
-    }
-
-    /* Quick Zone Bar Under the Car */
-    .zone-strip {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .zone-chip {
-      background: rgba(19, 27, 46, 0.9);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 8px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .zone-chip:hover, .zone-chip.active {
-      border-color: var(--emerald);
-      background: rgba(16, 185, 129, 0.14);
-      transform: translateY(-2px);
-    }
-    .zone-chip .z-icon { font-size: 18px; display: block; margin-bottom: 3px; }
-    .zone-chip .z-name { font-size: 11px; font-weight: 800; display: block; color: #fff; }
-    .zone-chip .z-price { font-size: 10.5px; font-weight: 800; color: #34d399; font-family: 'JetBrains Mono', monospace; }
-
-    /* Right Panel: Selected Car Part Inspector + 1-Tap Time Slot Booker */
-    .inspector-card {
-      background: var(--panel);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      border-radius: 24px;
-      padding: 22px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 14px;
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55);
-    }
-    .selected-zone-banner {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-wrap: wrap;
       gap: 12px;
+      margin-bottom: 28px;
     }
-    .kpi-mini-grid {
+
+    /* 4 Customer Confidence Badges */
+    .trust-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
     }
-    .kpi-mini {
-      background: #070a12;
+    .trust-badge {
+      background: rgba(15, 22, 40, 0.88);
+      backdrop-filter: blur(10px);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
+      border-radius: 14px;
+      padding: 12px 14px;
     }
-    .kpi-mini .v {
-      font-size: 15px;
+    .trust-badge .big {
+      font-size: 18px;
       font-weight: 900;
       font-family: 'JetBrains Mono', monospace;
-      color: #fff;
     }
-    .kpi-mini .l {
-      font-size: 10px;
+    .trust-badge .small {
+      font-size: 11px;
       font-weight: 700;
       color: var(--muted);
-      text-transform: uppercase;
       margin-top: 2px;
     }
 
-    /* Visual Time Slot Pills (Caliber / Firestone Style) */
-    .slot-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
+    /* Right Cover Card: Real Transamerica Plaza Suite 102 Welcome Card */
+    .cover-shop-card {
+      background: rgba(15, 22, 40, 0.94);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 25px 55px rgba(0, 0, 0, 0.65);
     }
-    .slot-btn {
-      background: #070a12;
-      border: 1px solid var(--border);
-      color: #cbd5e1;
-      padding: 8px 6px;
-      border-radius: 9px;
-      font-size: 11.5px;
-      font-weight: 800;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.18s;
+    .cover-shop-img {
+      position: relative;
+      height: 185px;
     }
-    .slot-btn.active, .slot-btn:hover {
-      background: var(--red);
-      border-color: #f87171;
-      color: #fff;
-    }
-
-    .quick-inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .q-in {
-      background: #070a12;
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 12.5px;
-      font-weight: 600;
+    .cover-shop-img img {
       width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cover-shop-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(8, 12, 22, 0.88);
+      border: 1px solid rgba(251, 191, 36, 0.5);
+      color: #fbbf24;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .cover-shop-body {
+      padding: 20px;
+    }
+    .how-it-works-strip {
+      max-width: 1360px;
+      margin: 22px auto 0;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .how-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 22, 40, 0.75);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 12px;
+    }
+    .how-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--red);
+      color: #fff;
+      font-weight: 900;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
     /* ============================================================================
-       3. VISUAL PHOTO SERVICE TILES (ZERO PARAGRAPH CLUTTER)
+       SECTION 2: VISUAL SERVICE PHOTO CARDS (CLICK TO ADD TO QUOTE)
        ============================================================================ */
     .section {
       max-width: 1360px;
-      margin: 42px auto 0;
+      margin: 48px auto 0;
       padding: 0 24px;
     }
-    .sec-bar {
+    .sec-head {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
-    .sec-bar h2 {
-      font-size: 24px;
+    .sec-head h2 {
+      font-size: 28px;
       font-weight: 900;
       letter-spacing: -0.02em;
+    }
+    .sec-head p {
+      font-size: 13.5px;
+      color: var(--muted);
     }
 
     .photo-grid {
@@ -467,26 +343,32 @@
     }
     .photo-tile {
       position: relative;
-      height: 230px;
+      height: 235px;
       border-radius: 20px;
       overflow: hidden;
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
       cursor: pointer;
-      group: true;
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .photo-tile:hover {
+      transform: translateY(-4px);
+      border-color: rgba(239, 68, 68, 0.65);
+    }
+    .photo-tile.in-quote {
+      border-color: var(--emerald);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.28);
     }
     .photo-tile img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.45s ease;
     }
-    .photo-tile:hover img {
-      transform: scale(1.07);
-    }
+    .photo-tile:hover img { transform: scale(1.06); }
     .tile-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(7, 10, 18, 0.96) 12%, rgba(7, 10, 18, 0.35) 60%, transparent 100%);
+      background: linear-gradient(to top, rgba(8, 12, 22, 0.96) 14%, rgba(8, 12, 22, 0.35) 60%, transparent 100%);
       padding: 18px;
       display: flex;
       flex-direction: column;
@@ -498,11 +380,11 @@
       align-items: center;
     }
     .tile-badge {
-      background: rgba(7, 10, 18, 0.85);
+      background: rgba(8, 12, 22, 0.86);
       backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: #fff;
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 800;
       text-transform: uppercase;
       padding: 4px 10px;
@@ -524,42 +406,233 @@
       gap: 10px;
     }
     .tile-bottom h3 {
-      font-size: 18px;
+      font-size: 18.5px;
       font-weight: 900;
       line-height: 1.15;
     }
     .tile-bottom span {
-      font-size: 11.5px;
-      color: #34d399;
-      font-weight: 700;
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 600;
       display: block;
       margin-top: 3px;
     }
-    .tile-add-btn {
-      background: rgba(255, 255, 255, 0.14);
+    .tile-quote-btn {
+      padding: 8px 13px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.3);
       color: #fff;
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      white-space: nowrap;
       transition: all 0.2s;
     }
-    .photo-tile:hover .tile-add-btn {
+    .photo-tile.in-quote .tile-quote-btn {
       background: var(--emerald);
       border-color: var(--emerald);
-      color: #04130e;
+      color: #022c22;
     }
 
     /* ============================================================================
-       4. VISUAL BAY TRACKER + REAL TRANSAMERICA PLAZA SHOP & MAP
+       SECTION 3: INTERACTIVE CAR HOTSPOT BUILDER + CUSTOMER-FRIENDLY SUBMIT QUOTE
        ============================================================================ */
+    .quote-builder-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.95fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+    .car-canvas-card {
+      background:
+        radial-gradient(circle at 50% 52%, rgba(59, 130, 246, 0.16), transparent 60%),
+        linear-gradient(180deg, #0f1628 0%, #090d18 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    /* Garage Vehicle Bar Inside Builder */
+    .garage-bar-inline {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .body-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .car-type-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .car-type-btn.active, .car-type-btn:hover {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: var(--red);
+      color: #fff;
+    }
+    .g-select {
+      background: #080c16;
+      color: #fff;
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Interactive SVG Car */
+    .svg-car-wrap {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 0;
+    }
+    .car-svg {
+      width: 100%;
+      max-width: 680px;
+      height: auto;
+      filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.75));
+      transition: transform 0.3s ease;
+    }
+    @keyframes pulseRing {
+      0% { r: 11px; opacity: 0.85; }
+      100% { r: 23px; opacity: 0; }
+    }
+    .hotspot-group { cursor: pointer; }
+    .hotspot-ring {
+      fill: none;
+      stroke: var(--red);
+      stroke-width: 2.5;
+      animation: pulseRing 1.8s infinite;
+    }
+    .hotspot-dot {
+      fill: var(--red);
+      stroke: #ffffff;
+      stroke-width: 2.5;
+      transition: all 0.2s;
+    }
+    .hotspot-group.selected .hotspot-dot { fill: var(--emerald); r: 12px; }
+    .hotspot-group.selected .hotspot-ring { stroke: var(--emerald); }
+
+    .zone-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 7px;
+    }
+    .zone-chip {
+      background: rgba(21, 31, 54, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .zone-chip.active {
+      border-color: var(--emerald);
+      background: rgba(16, 185, 129, 0.16);
+    }
+    .zone-chip .z-icon { font-size: 16px; display: block; }
+    .zone-chip .z-name { font-size: 10.5px; font-weight: 800; display: block; color: #fff; margin: 2px 0; }
+    .zone-chip .z-price { font-size: 10px; font-weight: 800; color: #34d399; font-family: 'JetBrains Mono', monospace; }
+
+    /* Right Card: Customer-Friendly Submit Quote Form & Live Estimate Cart */
+    .submit-quote-card {
+      background: var(--panel);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      border-radius: 24px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.6);
+    }
+    .quote-items-box {
+      background: #080c16;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      max-height: 175px;
+      overflow-y: auto;
+    }
+    .quote-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12.5px;
+    }
+    .quote-line:last-child { border-bottom: none; }
+    .quote-total-banner {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .form-full { grid-column: 1 / -1; }
+    .f-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .f-input {
+      width: 100%;
+      background: #080c16;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    .f-input:focus { outline: none; border-color: var(--emerald); }
+
+    /* Customer Reviews + Tracker & Map */
+    .reviews-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .rev-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
     .bottom-split {
       display: grid;
       grid-template-columns: 1fr 1.15fr;
@@ -582,59 +655,45 @@
       gap: 8px;
     }
     .bay-step {
-      background: #070a12;
+      background: #080c16;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 12px 8px;
+      padding: 11px 8px;
       text-align: center;
       font-size: 11px;
       font-weight: 800;
       color: var(--muted);
     }
-    .bay-step.done {
-      border-color: rgba(16, 185, 129, 0.5);
-      background: rgba(16, 185, 129, 0.12);
-      color: #34d399;
-    }
-    .bay-step.active {
-      border-color: var(--amber);
-      background: rgba(245, 158, 11, 0.16);
-      color: #fbbf24;
-    }
+    .bay-step.done { border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.12); color: #34d399; }
+    .bay-step.active { border-color: var(--amber); background: rgba(245, 158, 11, 0.16); color: #fbbf24; }
 
-    /* Brand Logos Strip */
-    .makes-strip {
-      max-width: 1360px;
-      margin: 32px auto;
-      padding: 0 24px;
+    /* Quote Submitted Modal Receipt */
+    .quote-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(4, 7, 14, 0.85);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-    .makes-row {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 10px;
-    }
-    .make-pill {
+    .quote-modal-backdrop.open { display: flex; }
+    .quote-modal-box {
+      width: 100%;
+      max-width: 540px;
       background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
-      font-size: 12px;
-      font-weight: 800;
-      color: #cbd5e1;
-      cursor: pointer;
-      transition: all 0.18s;
-    }
-    .make-pill:hover {
-      border-color: var(--red);
-      color: #fff;
-      transform: translateY(-2px);
+      border: 2px solid var(--emerald);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
     }
 
     footer {
-      background: #04060b;
+      background: #04070e;
       border-top: 1px solid var(--border);
-      padding: 26px 24px 86px;
+      padding: 28px 24px 86px;
       font-size: 12.5px;
       color: var(--muted);
     }
@@ -648,26 +707,26 @@
       gap: 12px;
     }
 
-    /* Mobile Thumb Bar (< 768px) */
     .mobile-thumb-bar { display: none; }
 
     @media (max-width: 1024px) {
-      .car-stage-section, .photo-grid, .bottom-split { grid-template-columns: 1fr; }
+      .cover-inner, .photo-grid, .quote-builder-grid, .reviews-row, .bottom-split, .how-it-works-strip {
+        grid-template-columns: 1fr;
+      }
       .zone-strip { grid-template-columns: repeat(3, 1fr); }
-      .makes-row { grid-template-columns: repeat(4, 1fr); }
       .nav-links { display: none; }
     }
     @media (max-width: 768px) {
       html, body { max-width: 100vw !important; overflow-x: hidden !important; }
       .topbar { display: none; }
       .header { padding: 10px 14px; }
-      .garage-bar, .car-stage-section, .section, .makes-strip { padding: 0 14px; }
-      .garage-box { padding: 12px; }
-      .car-canvas-card, .inspector-card, .visual-card { padding: 16px; }
-      .zone-strip { grid-template-columns: repeat(2, 1fr); }
-      .slot-grid { grid-template-columns: repeat(2, 1fr); }
-      .bay-progress-visual { grid-template-columns: repeat(2, 1fr); }
-      .makes-row { grid-template-columns: repeat(2, 1fr); }
+      .cover-hero { padding: 32px 16px; }
+      .cover-inner > * { min-width: 0; max-width: 100%; }
+      .cover-hero h1 { font-size: 30px; }
+      .trust-row { grid-template-columns: repeat(2, 1fr); }
+      .section { padding: 0 14px; margin-top: 34px; }
+      .car-canvas-card, .submit-quote-card, .visual-card { padding: 16px; }
+      .zone-strip, .form-grid, .bay-progress-visual { grid-template-columns: repeat(2, 1fr); }
       .mobile-thumb-bar {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -677,7 +736,7 @@
         left: 0;
         right: 0;
         z-index: 999;
-        background: rgba(7, 10, 18, 0.96);
+        background: rgba(8, 12, 22, 0.96);
         backdrop-filter: blur(16px);
         border-top: 1px solid rgba(239, 68, 68, 0.4);
         padding: 8px 10px;
@@ -698,317 +757,159 @@
 </head>
 <body>
 
-  <!-- Compact Shop Status Bar -->
+  <!-- Top Address & Hours Bar -->
   <div class="topbar">
     <div class="topbar-inner">
-      <div><span class="live-dot"></span>45911 Transamerica Plaza, Suite 102, Sterling, VA 20166 &bull; Mon–Fri 8AM–6PM | Sat 8:30AM–3PM</div>
+      <div><span class="open-dot"></span><strong>OPEN TODAY:</strong> Mon–Fri 8:00 AM – 6:00 PM &bull; Sat 8:30 AM – 3:00 PM &bull; <strong>45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</strong></div>
       <div style="display:flex;gap:16px;">
         <span style="color:#fbbf24;">★ 5.0 Google &amp; CARFAX</span>
-        <span style="color:#34d399;">🛡️ 12-Mo / 12K-Mi Warranty</span>
-        <span>📞 (571) 531-0342</span>
+        <span style="color:#34d399;">🛡️ 12-Mo / 12,000-Mi Warranty</span>
+        <span>📞 (571) 531-0342 / (703) 531-7966</span>
       </div>
     </div>
   </div>
 
-  <!-- Sticky Navigation -->
+  <!-- Sticky Navigation Header -->
   <header class="header">
     <div class="header-inner">
-      <a href="#" class="brand">
+      <a href="#top-cover" class="brand">
         <div class="brand-badge">SAR</div>
         <div>
           <div class="brand-title">Sterling Auto Repair</div>
-          <div class="brand-sub">Transamerica Plaza Suite 102 &bull; Sterling VA</div>
+          <div class="brand-sub">Mechanical &bull; Collision &bull; Suite 102</div>
         </div>
       </a>
 
       <nav class="nav-links">
-        <a href="#car-visualizer">Interactive Car</a>
-        <a href="#visual-services">Service Bays</a>
-        <a href="#live-tracker">Track Vehicle</a>
-        <a href="#shop-map">Suite 102 Map</a>
+        <a href="#top-cover">Home</a>
+        <a href="#visual-services">Services &amp; Pricing</a>
+        <a href="#quote-builder">Interactive Car &amp; Submit Quote</a>
+        <a href="#live-tracker">Track My Car</a>
+        <a href="#shop-map">Directions</a>
       </nav>
 
       <div class="header-actions">
         <a href="tel:5715310342" class="btn">📞 (571) 531-0342</a>
-        <a href="#instant-book" class="btn btn-red">Book Bay →</a>
+        <a href="#quote-builder" class="btn btn-red">🧾 Get Instant Quote →</a>
       </div>
     </div>
   </header>
 
-  <!-- 1. "MY GARAGE" VISUAL VEHICLE SELECTOR BAR (FIRESTONE / TIRE RACK STYLE) -->
-  <section class="garage-bar" id="car-visualizer">
-    <div class="garage-box">
-      <div class="body-pills">
-        <button class="car-type-btn active" onclick="selectCarBody('Sedan', '2022 Honda Accord Sport', this)">🚗 Sedan / Coupe</button>
-        <button class="car-type-btn" onclick="selectCarBody('SUV', '2023 Toyota Highlander AWD', this)">🚙 SUV / Crossover</button>
-        <button class="car-type-btn" onclick="selectCarBody('Truck', '2022 Ford F-150 4x4', this)">🛻 Pickup / Work Van</button>
-        <button class="car-type-btn" onclick="selectCarBody('Euro', '2023 BMW M340i xDrive', this)">🏎️ Euro / Performance</button>
+  <!-- ============================================================================
+       SECTION 1: WELCOMING AUTOMOTIVE COVER PAGE (HERO BANNER)
+       ============================================================================ -->
+  <section class="cover-hero" id="top-cover">
+    <div class="cover-inner">
+      <!-- Left: Welcoming Customer Headline, CTAs & Trust Badges -->
+      <div>
+        <div class="cover-pill">
+          <span>★ STERLING'S #1 RATED INDEPENDENT SHOP</span>
+          <span>&bull;</span>
+          <span>45911 TRANSAMERICA PLAZA STE 102</span>
+        </div>
+        <h1>
+          Honest Car Care, Upfront Quotes &amp; <span>Master Repair in Sterling, VA.</span>
+        </h1>
+        <p class="cover-sub">
+          From check-engine diagnostics, brakes, and full-synthetic oil changes to collision &amp; paint work—get an instant online quote in 30 seconds before you ever hand over your keys.
+        </p>
+
+        <div class="cover-ctas">
+          <a href="#quote-builder" class="btn btn-red" style="padding:14px 24px;font-size:15px;">
+            🚗 Build &amp; Submit My Free Quote →
+          </a>
+          <a href="#visual-services" class="btn" style="padding:14px 20px;font-size:14px;">
+            🔧 Browse Services &amp; Prices
+          </a>
+          <a href="tel:5715310342" class="btn" style="padding:14px 18px;font-size:14px;">
+            📞 Call (571) 531-0342
+          </a>
+        </div>
+
+        <div class="trust-row">
+          <div class="trust-badge">
+            <div class="big" style="color:#fbbf24;">5.0 ★</div>
+            <div class="small">Google &amp; CARFAX Rated</div>
+          </div>
+          <div class="trust-badge">
+            <div class="big" style="color:#34d399;">12K Mi</div>
+            <div class="small">12-Mo Parts &amp; Labor Warranty</div>
+          </div>
+          <div class="trust-badge">
+            <div class="big" style="color:#60a5fa;">ASE</div>
+            <div class="small">Certified Master Mechanics</div>
+          </div>
+          <div class="trust-badge">
+            <div class="big" style="color:#f87171;">$0 Est.</div>
+            <div class="small">Snap Finance &amp; All Insurance</div>
+          </div>
+        </div>
       </div>
 
-      <div class="garage-selects">
-        <select class="g-select" id="sel-year" onchange="updateGarageLabel()">
-          <option>2026</option><option>2025</option><option>2024</option><option selected>2023</option><option>2022</option><option>2021</option><option>2020</option><option>2019</option><option>2018</option>
-        </select>
-        <select class="g-select" id="sel-make" onchange="updateGarageLabel()">
-          <option selected>Toyota</option><option>Honda</option><option>Ford</option><option>BMW</option><option>Mercedes-Benz</option><option>Chevrolet</option><option>Subaru</option><option>Audi</option><option>Hyundai</option><option>Jeep</option>
-        </select>
-        <div class="plate-box" title="Quick Virginia License Plate Lookup">
-          <span>VA</span>
-          <input type="text" id="va-plate" value="STR-102" placeholder="PLATE #" onchange="lookupPlate()" />
+      <!-- Right: Real Transamerica Plaza Suite 102 Shop Welcome Card -->
+      <div class="cover-shop-card">
+        <div class="cover-shop-img">
+          <img src="assets/sterling_plaza_real_3.jpg" alt="Sterling Auto Repair at 45911 Transamerica Plaza Suite 102 Sterling VA" />
+          <span class="cover-shop-tag">📸 OUR SHOP AT TRANSAMERICA PLAZA STE 102</span>
+        </div>
+        <div class="cover-shop-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:11px;font-weight:800;color:#34d399;text-transform:uppercase;">● BAYS OPEN FOR DROP-OFF &amp; WALK-INS</span>
+            <span style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;">Rt. 606 / Old Ox Rd</span>
+          </div>
+          <h2 style="font-size:20px;font-weight:900;margin-bottom:6px;">Visit Suite 102 or Get Your Quote Online</h2>
+          <p style="font-size:13px;color:#cbd5e1;margin-bottom:14px;">
+            📍 <strong>45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</strong><br/>
+            All Domestic, Asian &amp; European makes serviced with OEM parts.
+          </p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <a href="#quote-builder" class="btn btn-emerald" style="justify-content:center;">🧾 Submit a Quote</a>
+            <a href="#shop-map" class="btn" style="justify-content:center;">📍 Map &amp; Hours</a>
+          </div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- 2. INTERACTIVE CAR HOTSPOT DIAGRAM + 1-CLICK SERVICE BAY BOOKER -->
-  <section class="car-stage-section">
-    <!-- Left: Interactive Car X-Ray & Hotspot Visualizer -->
-    <div class="car-canvas-card">
-      <div class="canvas-header">
+    <!-- 3-Step Customer Journey Bar -->
+    <div class="how-it-works-strip">
+      <div class="how-step">
+        <div class="how-num">1</div>
         <div>
-          <span style="font-size:11px;font-weight:800;color:#fbbf24;text-transform:uppercase;letter-spacing:0.08em;">● TAP ANY PULSING ZONE ON THE CAR</span>
-          <h1 style="font-size:24px;font-weight:900;letter-spacing:-0.02em;">Interactive Vehicle Diagnostic &amp; Quote Builder</h1>
-        </div>
-        <div class="active-car-pill" id="active-garage-pill">🚗 Active Vehicle: 2023 Toyota Camry SE</div>
-      </div>
-
-      <!-- High-Contrast Interactive SVG Sports Sedan / Coupe Blueprint with 6 Hotspots -->
-      <div class="svg-car-wrap">
-        <svg class="car-svg" id="interactive-car-svg" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="carBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#1e293b" />
-              <stop offset="50%" stop-color="#334155" />
-              <stop offset="100%" stop-color="#0f172a" />
-            </linearGradient>
-            <linearGradient id="glassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.38" />
-              <stop offset="100%" stop-color="#0284c7" stop-opacity="0.12" />
-            </linearGradient>
-            <linearGradient id="neonRim" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#ef4444" />
-              <stop offset="50%" stop-color="#f59e0b" />
-              <stop offset="100%" stop-color="#3b82f6" />
-            </linearGradient>
-          </defs>
-
-          <!-- Ground Shadow & Laser Alignment Grid Line -->
-          <ellipse cx="400" cy="272" rx="345" ry="18" fill="rgba(0,0,0,0.65)" />
-          <line x1="40" y1="272" x2="760" y2="272" stroke="url(#neonRim)" stroke-width="2" stroke-dasharray="8 6" opacity="0.65" />
-
-          <!-- Main Aerodynamic Car Silhouette -->
-          <path id="svg-body-path" d="M 75 215
-                   L 95 168
-                   Q 118 152 195 144
-                   L 285 92
-                   Q 315 78 445 78
-                   Q 545 78 605 128
-                   L 705 148
-                   Q 735 158 742 195
-                   L 745 232
-                   Q 740 248 705 248
-                   L 652 248
-                   A 58 58 0 0 0 536 248
-                   L 274 248
-                   A 58 58 0 0 0 158 248
-                   L 95 248
-                   Q 72 245 75 215 Z"
-                fill="url(#carBodyGrad)" stroke="#64748b" stroke-width="2.5" />
-
-          <!-- Cabin Windows / Greenhouse -->
-          <path d="M 212 142 L 292 94 Q 320 84 425 84 L 425 142 Z" fill="url(#glassGrad)" stroke="#94a3b8" stroke-width="1.5" />
-          <path d="M 435 84 Q 525 85 585 132 L 585 142 L 435 142 Z" fill="url(#glassGrad)" stroke="#94a3b8" stroke-width="1.5" />
-
-          <!-- Internal X-Ray Engine Block & Drivetrain Schematic Lines -->
-          <rect x="132" y="162" width="76" height="48" rx="8" fill="rgba(239,68,68,0.18)" stroke="#f87171" stroke-width="1.5" stroke-dasharray="4 2" />
-          <path d="M 208 188 L 575 218" stroke="#fbbf24" stroke-width="3" stroke-dasharray="6 4" opacity="0.7" />
-
-          <!-- Headlight & Taillight LED Signatures -->
-          <path d="M 88 176 L 125 168 L 118 184 L 84 188 Z" fill="#38bdf8" />
-          <path d="M 712 158 L 740 166 L 738 182 L 708 176 Z" fill="#ef4444" />
-
-          <!-- Front Wheel, Tire & Glowing Brake Rotor -->
-          <g transform="translate(216, 224)">
-            <circle r="48" fill="#090d16" stroke="#475569" stroke-width="6" />
-            <circle r="34" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
-            <circle r="24" fill="none" stroke="#ef4444" stroke-width="5" stroke-dasharray="18 6" />
-            <circle r="10" fill="#cbd5e1" />
-          </g>
-
-          <!-- Rear Wheel, Tire & Glowing Brake Rotor -->
-          <g transform="translate(594, 224)">
-            <circle r="48" fill="#090d16" stroke="#475569" stroke-width="6" />
-            <circle r="34" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
-            <circle r="24" fill="none" stroke="#ef4444" stroke-width="5" stroke-dasharray="18 6" />
-            <circle r="10" fill="#cbd5e1" />
-          </g>
-
-          <!-- INTERACTIVE HOTSPOT 1: ENGINE & DIAGNOSTICS -->
-          <g class="hotspot-group selected" id="hs-engine" onclick="selectCarZone('engine')" transform="translate(168, 178)">
-            <circle class="hotspot-ring" r="14" />
-            <circle class="hotspot-dot" r="10" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">1</text>
-          </g>
-
-          <!-- INTERACTIVE HOTSPOT 2: BRAKES & ROTORS -->
-          <g class="hotspot-group" id="hs-brakes" onclick="selectCarZone('brakes')" transform="translate(216, 224)">
-            <circle class="hotspot-ring" r="14" />
-            <circle class="hotspot-dot" r="10" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">2</text>
-          </g>
-
-          <!-- INTERACTIVE HOTSPOT 3: OIL & FACTORY MAINTENANCE -->
-          <g class="hotspot-group" id="hs-oil" onclick="selectCarZone('oil')" transform="translate(310, 198)">
-            <circle class="hotspot-ring" r="14" />
-            <circle class="hotspot-dot" r="10" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">3</text>
-          </g>
-
-          <!-- INTERACTIVE HOTSPOT 4: A/C & CABIN CLIMATE -->
-          <g class="hotspot-group" id="hs-ac" onclick="selectCarZone('ac')" transform="translate(385, 126)">
-            <circle class="hotspot-ring" r="14" />
-            <circle class="hotspot-dot" r="10" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">4</text>
-          </g>
-
-          <!-- INTERACTIVE HOTSPOT 5: TIRES & 4-WHEEL LASER ALIGNMENT -->
-          <g class="hotspot-group" id="hs-tires" onclick="selectCarZone('tires')" transform="translate(594, 224)">
-            <circle class="hotspot-ring" r="14" />
-            <circle class="hotspot-dot" r="10" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">5</text>
-          </g>
-
-          <!-- INTERACTIVE HOTSPOT 6: COLLISION, BUMPER & PAINT -->
-          <g class="hotspot-group" id="hs-body" onclick="selectCarZone('body')" transform="translate(715, 178)">
-            <circle class="hotspot-ring" r="14" />
-            <circle class="hotspot-dot" r="10" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">6</text>
-          </g>
-        </svg>
-      </div>
-
-      <!-- 6 Visual Zone Selector Chips Under the Car -->
-      <div class="zone-strip">
-        <div class="zone-chip active" id="chip-engine" onclick="selectCarZone('engine')">
-          <span class="z-icon">⚡</span>
-          <span class="z-name">1. Engine / Scan</span>
-          <span class="z-price">$95 (Waived)</span>
-        </div>
-        <div class="zone-chip" id="chip-brakes" onclick="selectCarZone('brakes')">
-          <span class="z-icon">🛑</span>
-          <span class="z-name">2. Brakes / Rotors</span>
-          <span class="z-price">From $229</span>
-        </div>
-        <div class="zone-chip" id="chip-oil" onclick="selectCarZone('oil')">
-          <span class="z-icon">🛢️</span>
-          <span class="z-name">3. Synthetic Oil</span>
-          <span class="z-price">From $79</span>
-        </div>
-        <div class="zone-chip" id="chip-ac" onclick="selectCarZone('ac')">
-          <span class="z-icon">❄️</span>
-          <span class="z-name">4. A/C &amp; Cooling</span>
-          <span class="z-price">From $149</span>
-        </div>
-        <div class="zone-chip" id="chip-tires" onclick="selectCarZone('tires')">
-          <span class="z-icon">🛞</span>
-          <span class="z-name">5. Tires / Align</span>
-          <span class="z-price">$119 Align</span>
-        </div>
-        <div class="zone-chip" id="chip-body" onclick="selectCarZone('body')">
-          <span class="z-icon">💥</span>
-          <span class="z-name">6. Body &amp; Paint</span>
-          <span class="z-price">Free Est.</span>
+          <div style="font-size:13px;font-weight:800;">Pick Your Car &amp; Tap Zones</div>
+          <div style="font-size:11.5px;color:var(--muted);">Use the visual car diagram or service cards below</div>
         </div>
       </div>
-    </div>
-
-    <!-- Right: Visual Zone Spec Card + 1-Tap Bay Time Slot Booker -->
-    <div class="inspector-card" id="instant-book">
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="font-size:10.5px;font-weight:800;color:#34d399;text-transform:uppercase;letter-spacing:0.08em;">● SUITE 102 BAY SCHEDULER</span>
-          <span style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;">45911 Transamerica Plz</span>
-        </div>
-
-        <!-- Active Car Zone Spec Box -->
-        <div class="selected-zone-banner">
-          <div>
-            <div style="font-size:10px;font-weight:800;color:#f87171;text-transform:uppercase;" id="insp-zone-tag">ZONE 01 // ENGINE BAY</div>
-            <div style="font-size:17px;font-weight:900;color:#fff;" id="insp-zone-title">Engine Diagnostics &amp; Mechanical</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:20px;font-weight:900;color:#34d399;font-family:'JetBrains Mono',monospace;" id="insp-zone-price">$95</div>
-            <div style="font-size:10px;color:var(--muted);">Waived w/ Repair</div>
-          </div>
-        </div>
-
-        <!-- 3 Visual Numbers Only (Zero Paragraph Clutter) -->
-        <div class="kpi-mini-grid" style="margin-top:10px;">
-          <div class="kpi-mini">
-            <div class="v" id="insp-time">45 Min</div>
-            <div class="l">Bay Time</div>
-          </div>
-          <div class="kpi-mini">
-            <div class="v" style="color:#fbbf24;">12K Mi</div>
-            <div class="l">Warranty</div>
-          </div>
-          <div class="kpi-mini">
-            <div class="v" style="color:#60a5fa;">ASE</div>
-            <div class="l">Master Tech</div>
-          </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div>
+          <div style="font-size:13px;font-weight:800;">See Instant Price &amp; Submit Quote</div>
+          <div style="font-size:11.5px;color:var(--muted);">Get an itemized written quote or lock in a drop-off time</div>
         </div>
       </div>
-
-      <!-- Visual Time Slot Picker -->
-      <div>
-        <div style="font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;margin-bottom:6px;">
-          Select Today / Tomorrow Drop-Off Slot:
-        </div>
-        <div class="slot-grid">
-          <button type="button" class="slot-btn active" onclick="pickSlot(this)">8:30 AM</button>
-          <button type="button" class="slot-btn" onclick="pickSlot(this)">10:30 AM</button>
-          <button type="button" class="slot-btn" onclick="pickSlot(this)">1:30 PM</button>
-          <button type="button" class="slot-btn" onclick="pickSlot(this)">3:30 PM</button>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div>
+          <div style="font-size:13px;font-weight:800;">Drop Off at Suite 102 &amp; Track Live</div>
+          <div style="font-size:11.5px;color:var(--muted);">Backed by our 12-Month / 12,000-Mile Warranty</div>
         </div>
       </div>
-
-      <!-- 2-Field Frictionless Booking -->
-      <form onsubmit="submitQuickBay(event)" style="display:grid;gap:8px;">
-        <div class="quick-inputs">
-          <input type="text" id="q-name" class="q-in" placeholder="Your Name *" required />
-          <input type="tel" id="q-phone" class="q-in" placeholder="Mobile # for Text Quote *" required />
-        </div>
-        <button type="submit" class="btn btn-red" style="width:100%;justify-content:center;padding:13px;font-size:14px;">
-          Reserve Service Bay at Suite 102 →
-        </button>
-      </form>
-      <div id="quick-book-toast" style="display:none;padding:10px 12px;border-radius:10px;background:rgba(16,185,129,0.18);border:1px solid #10b981;color:#d1fae5;font-size:12px;font-weight:700;"></div>
     </div>
   </section>
 
-  <!-- Popular Makes Serviced Bar -->
-  <div class="makes-strip">
-    <div class="makes-row">
-      <div class="make-pill" onclick="setMake('Toyota')">TOYOTA / LEXUS</div>
-      <div class="make-pill" onclick="setMake('Honda')">HONDA / ACURA</div>
-      <div class="make-pill" onclick="setMake('Ford')">FORD / LINCOLN</div>
-      <div class="make-pill" onclick="setMake('BMW')">BMW / MINI</div>
-      <div class="make-pill" onclick="setMake('Mercedes-Benz')">MERCEDES / AUDI</div>
-      <div class="make-pill" onclick="setMake('Chevrolet')">CHEVY / GMC</div>
-      <div class="make-pill" onclick="setMake('Subaru')">SUBARU / MAZDA</div>
-      <div class="make-pill" onclick="setMake('Jeep')">JEEP / RAM / DODGE</div>
-    </div>
-  </div>
-
-  <!-- 3. VISUAL PHOTO SERVICE TILES (IMAGE-FIRST, ZERO TEXT WALLS) -->
+  <!-- ============================================================================
+       SECTION 2: VISUAL SERVICE PHOTO CARDS (CLICK TO ADD TO QUOTE)
+       ============================================================================ -->
   <section class="section" id="visual-services">
-    <div class="sec-bar">
-      <h2>Visual Service Bays &amp; Upfront Pricing</h2>
-      <span style="font-size:12.5px;color:var(--muted);">Tap any bay card to load into the Interactive Car Builder above</span>
+    <div class="sec-head">
+      <div>
+        <h2>Popular Services &amp; Transparent Pricing</h2>
+        <p>Click any service card to add or remove it from your <strong>Instant Quote</strong> below.</p>
+      </div>
+      <a href="#quote-builder" class="btn btn-red">Go to My Quote Cart (<span id="top-cart-count">1</span>) →</a>
     </div>
 
     <div class="photo-grid">
-      <div class="photo-tile" onclick="selectCarZone('engine'); window.scrollTo({top:0,behavior:'smooth'});">
+      <div class="photo-tile in-quote" id="tile-engine" onclick="toggleQuoteService('engine')">
         <img src="assets/sterling_plaza_real_2.jpg" alt="Real Suite 102 Engine & Timing Chain Bay" />
         <div class="tile-overlay">
           <div class="tile-top">
@@ -1017,83 +918,83 @@
           </div>
           <div class="tile-bottom">
             <div>
-              <h3>Engine Diagnostics &amp; Timing</h3>
-              <span>● Same-Day OBD-II &amp; Mechanical</span>
+              <h3>Engine Diagnostics &amp; Mechanical</h3>
+              <span>Check Engine Light &bull; Timing &bull; Starters</span>
             </div>
-            <div class="tile-add-btn">+</div>
+            <div class="tile-quote-btn" id="btn-tile-engine">✔ In Quote</div>
           </div>
         </div>
       </div>
 
-      <div class="photo-tile" onclick="selectCarZone('brakes'); window.scrollTo({top:0,behavior:'smooth'});">
+      <div class="photo-tile" id="tile-brakes" onclick="toggleQuoteService('brakes')">
         <img src="assets/service_brakes_susp.jpg" alt="Ceramic Brakes, Rotors & Suspension" />
         <div class="tile-overlay">
           <div class="tile-top">
             <span class="tile-badge">OEM Ceramic</span>
-            <span class="tile-price">From $229</span>
+            <span class="tile-price">$229 – $349</span>
           </div>
           <div class="tile-bottom">
             <div>
               <h3>Brakes, Rotors &amp; Suspension</h3>
-              <span>● Free Lift Brake Check</span>
+              <span>Pads &bull; Coated Rotors &bull; Struts &amp; Shocks</span>
             </div>
-            <div class="tile-add-btn">+</div>
+            <div class="tile-quote-btn" id="btn-tile-brakes">+ Add to Quote</div>
           </div>
         </div>
       </div>
 
-      <div class="photo-tile" onclick="selectCarZone('tires'); window.scrollTo({top:0,behavior:'smooth'});">
-        <img src="assets/service_tires_align.jpg" alt="Tires & 4-Wheel Laser Alignment" />
-        <div class="tile-overlay">
-          <div class="tile-top">
-            <span class="tile-badge">Laser Spec</span>
-            <span class="tile-price">$119 Align</span>
-          </div>
-          <div class="tile-bottom">
-            <div>
-              <h3>Tires &amp; 4-Wheel Alignment</h3>
-              <span>● Road-Force Balance &amp; TPMS</span>
-            </div>
-            <div class="tile-add-btn">+</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="photo-tile" onclick="selectCarZone('oil'); window.scrollTo({top:0,behavior:'smooth'});">
+      <div class="photo-tile" id="tile-oil" onclick="toggleQuoteService('oil')">
         <img src="assets/service_oil_maint.jpg" alt="Full Synthetic Oil & Scheduled Maintenance" />
         <div class="tile-overlay">
           <div class="tile-top">
             <span class="tile-badge">CARFAX Logged</span>
-            <span class="tile-price">From $79</span>
+            <span class="tile-price">$79 – $109</span>
           </div>
           <div class="tile-bottom">
             <div>
               <h3>Full Synthetic Oil &amp; VA Prep</h3>
-              <span>● 45-Min Express Service</span>
+              <span>50-Point Safety Check &bull; 30k/60k/90k</span>
             </div>
-            <div class="tile-add-btn">+</div>
+            <div class="tile-quote-btn" id="btn-tile-oil">+ Add to Quote</div>
           </div>
         </div>
       </div>
 
-      <div class="photo-tile" onclick="selectCarZone('ac'); window.scrollTo({top:0,behavior:'smooth'});">
+      <div class="photo-tile" id="tile-tires" onclick="toggleQuoteService('tires')">
+        <img src="assets/service_tires_align.jpg" alt="Tires & 4-Wheel Laser Alignment" />
+        <div class="tile-overlay">
+          <div class="tile-top">
+            <span class="tile-badge">Laser Spec</span>
+            <span class="tile-price">$119 – $149</span>
+          </div>
+          <div class="tile-bottom">
+            <div>
+              <h3>Tires &amp; 4-Wheel Alignment</h3>
+              <span>Laser Alignment &bull; Balancing &bull; TPMS</span>
+            </div>
+            <div class="tile-quote-btn" id="btn-tile-tires">+ Add to Quote</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-tile" id="tile-ac" onclick="toggleQuoteService('ac')">
         <img src="assets/service_transmission.jpg" alt="Transmission, Cooling & A/C Recharge" />
         <div class="tile-overlay">
           <div class="tile-top">
             <span class="tile-badge">Snap Finance</span>
-            <span class="tile-price">From $149</span>
+            <span class="tile-price">$149 – $225</span>
           </div>
           <div class="tile-bottom">
             <div>
               <h3>A/C, Cooling &amp; Transmission</h3>
-              <span>● R-134a / R-1234yf Recharge</span>
+              <span>Ice-Cold Recharge &bull; Radiators &bull; Fluid</span>
             </div>
-            <div class="tile-add-btn">+</div>
+            <div class="tile-quote-btn" id="btn-tile-ac">+ Add to Quote</div>
           </div>
         </div>
       </div>
 
-      <div class="photo-tile" onclick="selectCarZone('body'); window.scrollTo({top:0,behavior:'smooth'});">
+      <div class="photo-tile" id="tile-body" onclick="toggleQuoteService('body')">
         <img src="assets/service_collision_paint.jpg" alt="Collision, Bumper & Paint Booth" />
         <div class="tile-overlay">
           <div class="tile-top">
@@ -1103,68 +1004,304 @@
           <div class="tile-bottom">
             <div>
               <h3>Collision, Dent &amp; Paint Shop</h3>
-              <span>● Computerized Color Match</span>
+              <span>Bumper Repair &bull; Color Match &bull; Claims</span>
             </div>
-            <div class="tile-add-btn">+</div>
+            <div class="tile-quote-btn" id="btn-tile-body">+ Add to Quote</div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 4. VISUAL REPAIR TRACKER + REAL TRANSAMERICA PLAZA PHOTO & MAP -->
-  <section class="section bottom-split" id="live-tracker">
-    <!-- Left: Visual 4-Step Tracker + Real Exterior Shop Photo -->
-    <div class="visual-card">
+  <!-- ============================================================================
+       SECTION 3: INTERACTIVE CAR HOTSPOT BUILDER + CUSTOMER-FRIENDLY SUBMIT QUOTE
+       ============================================================================ -->
+  <section class="section" id="quote-builder">
+    <div class="sec-head">
       <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <h3 style="font-size:19px;font-weight:900;">🔍 Live Bay Tracker (No Login)</h3>
-          <div style="display:flex;gap:6px;">
-            <input type="text" id="ro-code" value="RO-45911" style="background:#070a12;border:1px solid var(--border);color:#fff;padding:6px 10px;border-radius:8px;width:110px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;" />
-            <button type="button" class="btn btn-red" style="padding:6px 12px;font-size:12px;" onclick="advanceTracker()">Track</button>
+        <h2>Interactive Car Visualizer &amp; Customer Quote Request</h2>
+        <p>Tap one or more zones on the car to build your estimate, then submit your quote or book a drop-off time.</p>
+      </div>
+    </div>
+
+    <div class="quote-builder-grid">
+      <!-- Left: My Garage Selector + Interactive SVG Car Hotspot Diagram -->
+      <div class="car-canvas-card">
+        <div class="garage-bar-inline">
+          <div class="body-pills">
+            <button type="button" class="car-type-btn active" onclick="selectCarBody('Sedan', 1.0, this)">🚗 Sedan</button>
+            <button type="button" class="car-type-btn" onclick="selectCarBody('SUV', 1.15, this)">🚙 SUV</button>
+            <button type="button" class="car-type-btn" onclick="selectCarBody('Truck', 1.25, this)">🛻 Truck / Van</button>
+            <button type="button" class="car-type-btn" onclick="selectCarBody('Euro', 1.35, this)">🏎️ Euro / Luxury</button>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <select class="g-select" id="sel-year" onchange="updateVehicleSummary()">
+              <option>2026</option><option>2025</option><option>2024</option><option selected>2023</option><option>2022</option><option>2021</option><option>2020</option><option>2019</option><option>2018</option>
+            </select>
+            <select class="g-select" id="sel-make" onchange="updateVehicleSummary()">
+              <option selected>Toyota</option><option>Honda</option><option>Ford</option><option>BMW</option><option>Mercedes-Benz</option><option>Chevrolet</option><option>Subaru</option><option>Hyundai</option><option>Jeep</option>
+            </select>
+            <input type="text" id="sel-model" value="Camry SE" placeholder="Model" onchange="updateVehicleSummary()" style="background:#080c16;border:1px solid var(--border);color:#fff;padding:7px 10px;border-radius:9px;width:96px;font-size:12px;font-weight:700;" />
           </div>
         </div>
 
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:11px;font-weight:800;color:#fbbf24;text-transform:uppercase;">● TAP PULSING NUMBERS ON THE CAR TO ADD / REMOVE SERVICES</span>
+          <span style="font-size:12px;font-weight:800;color:#93c5fd;" id="car-active-label">2023 Toyota Camry SE (Sedan)</span>
+        </div>
+
+        <!-- Interactive SVG Car Blueprint -->
+        <div class="svg-car-wrap">
+          <svg class="car-svg" id="interactive-car-svg" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="carBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1e293b" />
+                <stop offset="50%" stop-color="#334155" />
+                <stop offset="100%" stop-color="#0f172a" />
+              </linearGradient>
+              <linearGradient id="glassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.38" />
+                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.12" />
+              </linearGradient>
+            </defs>
+
+            <ellipse cx="400" cy="258" rx="340" ry="16" fill="rgba(0,0,0,0.65)" />
+            <line x1="45" y1="258" x2="755" y2="258" stroke="#3b82f6" stroke-width="2" stroke-dasharray="8 6" opacity="0.5" />
+
+            <path d="M 75 205 L 95 158 Q 118 142 195 134 L 285 82 Q 315 68 445 68 Q 545 68 605 118 L 705 138 Q 735 148 742 185 L 745 222 Q 740 238 705 238 L 652 238 A 58 58 0 0 0 536 238 L 274 238 A 58 58 0 0 0 158 238 L 95 238 Q 72 235 75 205 Z"
+                  fill="url(#carBodyGrad)" stroke="#64748b" stroke-width="2.5" />
+
+            <path d="M 212 132 L 292 84 Q 320 74 425 74 L 425 132 Z" fill="url(#glassGrad)" stroke="#94a3b8" stroke-width="1.5" />
+            <path d="M 435 74 Q 525 75 585 122 L 585 132 L 435 132 Z" fill="url(#glassGrad)" stroke="#94a3b8" stroke-width="1.5" />
+
+            <rect x="132" y="152" width="76" height="46" rx="8" fill="rgba(239,68,68,0.18)" stroke="#f87171" stroke-width="1.5" stroke-dasharray="4 2" />
+            <path d="M 208 178 L 575 208" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="6 4" opacity="0.7" />
+
+            <path d="M 88 166 L 125 158 L 118 174 L 84 178 Z" fill="#38bdf8" />
+            <path d="M 712 148 L 740 156 L 738 172 L 708 166 Z" fill="#ef4444" />
+
+            <g transform="translate(216, 214)">
+              <circle r="46" fill="#090d16" stroke="#475569" stroke-width="6" />
+              <circle r="32" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
+              <circle r="22" fill="none" stroke="#ef4444" stroke-width="4" stroke-dasharray="16 6" />
+            </g>
+            <g transform="translate(594, 214)">
+              <circle r="46" fill="#090d16" stroke="#475569" stroke-width="6" />
+              <circle r="32" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
+              <circle r="22" fill="none" stroke="#ef4444" stroke-width="4" stroke-dasharray="16 6" />
+            </g>
+
+            <!-- 6 Interactive Hotspots -->
+            <g class="hotspot-group selected" id="hs-engine" onclick="toggleQuoteService('engine')" transform="translate(168, 168)">
+              <circle class="hotspot-ring" r="14" /><circle class="hotspot-dot" r="10" />
+              <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">1</text>
+            </g>
+            <g class="hotspot-group" id="hs-brakes" onclick="toggleQuoteService('brakes')" transform="translate(216, 214)">
+              <circle class="hotspot-ring" r="14" /><circle class="hotspot-dot" r="10" />
+              <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">2</text>
+            </g>
+            <g class="hotspot-group" id="hs-oil" onclick="toggleQuoteService('oil')" transform="translate(310, 188)">
+              <circle class="hotspot-ring" r="14" /><circle class="hotspot-dot" r="10" />
+              <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">3</text>
+            </g>
+            <g class="hotspot-group" id="hs-ac" onclick="toggleQuoteService('ac')" transform="translate(385, 116)">
+              <circle class="hotspot-ring" r="14" /><circle class="hotspot-dot" r="10" />
+              <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">4</text>
+            </g>
+            <g class="hotspot-group" id="hs-tires" onclick="toggleQuoteService('tires')" transform="translate(594, 214)">
+              <circle class="hotspot-ring" r="14" /><circle class="hotspot-dot" r="10" />
+              <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">5</text>
+            </g>
+            <g class="hotspot-group" id="hs-body" onclick="toggleQuoteService('body')" transform="translate(715, 168)">
+              <circle class="hotspot-ring" r="14" /><circle class="hotspot-dot" r="10" />
+              <text y="4" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">6</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- 6 Quick Zone Toggle Chips -->
+        <div class="zone-strip">
+          <div class="zone-chip active" id="chip-engine" onclick="toggleQuoteService('engine')">
+            <span class="z-icon">⚡</span><span class="z-name">1. Engine Scan</span><span class="z-price">$95</span>
+          </div>
+          <div class="zone-chip" id="chip-brakes" onclick="toggleQuoteService('brakes')">
+            <span class="z-icon">🛑</span><span class="z-name">2. Brakes</span><span class="z-price">$229+</span>
+          </div>
+          <div class="zone-chip" id="chip-oil" onclick="toggleQuoteService('oil')">
+            <span class="z-icon">🛢️</span><span class="z-name">3. Oil Change</span><span class="z-price">$79+</span>
+          </div>
+          <div class="zone-chip" id="chip-ac" onclick="toggleQuoteService('ac')">
+            <span class="z-icon">❄️</span><span class="z-name">4. A/C Service</span><span class="z-price">$149+</span>
+          </div>
+          <div class="zone-chip" id="chip-tires" onclick="toggleQuoteService('tires')">
+            <span class="z-icon">🛞</span><span class="z-name">5. Alignment</span><span class="z-price">$119</span>
+          </div>
+          <div class="zone-chip" id="chip-body" onclick="toggleQuoteService('body')">
+            <span class="z-icon">💥</span><span class="z-name">6. Collision</span><span class="z-price">Free Est</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Customer-Friendly Live Quote Summary & Submit Quote Form -->
+      <div class="submit-quote-card" id="submit-quote-box">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:11px;font-weight:800;color:#34d399;text-transform:uppercase;letter-spacing:0.08em;">🧾 YOUR INSTANT QUOTE &amp; REQUEST</span>
+            <span style="font-size:11px;color:var(--muted);">No Obligation &bull; 12K-Mi Warranty</span>
+          </div>
+          <h3 style="font-size:21px;font-weight:900;margin-bottom:10px;">Review Estimate &amp; Submit Quote</h3>
+
+          <!-- Itemized Selected Services List -->
+          <div class="quote-items-box" id="quote-items-list"></div>
+
+          <!-- Total Estimate Banner -->
+          <div class="quote-total-banner" style="margin-top:10px;">
+            <div>
+              <div style="font-size:10.5px;font-weight:800;color:#34d399;text-transform:uppercase;">Estimated Parts &amp; Labor</div>
+              <div style="font-size:23px;font-weight:900;font-family:'JetBrains Mono',monospace;" id="quote-total-range">$95 – $135</div>
+            </div>
+            <div style="text-align:right;font-size:11px;color:#cbd5e1;">
+              <div>✔ Upfront Approval</div>
+              <div>✔ Snap Finance Eligible</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer-Friendly Submit Quote Form -->
+        <form onsubmit="handleCustomerQuoteSubmit(event)" style="display:grid;gap:10px;">
+          <div class="form-grid">
+            <div>
+              <label class="f-label">Your Name *</label>
+              <input type="text" id="cust-name" class="f-input" placeholder="e.g., Jordan Taylor" required />
+            </div>
+            <div>
+              <label class="f-label">Mobile Phone (For SMS Quote) *</label>
+              <input type="tel" id="cust-phone" class="f-input" placeholder="(703) 555-0148" required />
+            </div>
+            <div>
+              <label class="f-label">Email (Optional)</label>
+              <input type="email" id="cust-email" class="f-input" placeholder="you@email.com" />
+            </div>
+            <div>
+              <label class="f-label">How Would You Like to Proceed?</label>
+              <select id="cust-mode" class="f-input">
+                <option value="Text/Email Written Quote + Hold Bay">Send Written Quote &amp; Hold a Service Bay</option>
+                <option value="Drop Off Today / Tomorrow (8:30 AM)">Book Morning Drop-Off (8:30 AM)</option>
+                <option value="Drop Off Afternoon (1:30 PM)">Book Afternoon Drop-Off (1:30 PM)</option>
+                <option value="Just Text Me the Price Quote First">Just Text Me the Written Quote First</option>
+              </select>
+            </div>
+            <div class="form-full">
+              <label class="f-label">Describe Any Symptoms, Sounds, or Insurance Info (Optional)</label>
+              <input type="text" id="cust-notes" class="f-input" placeholder="e.g., Squeaking when braking, check-engine light blinking, or bumper scratch..." />
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.4fr 0.6fr;gap:8px;margin-top:4px;">
+            <button type="submit" class="btn btn-emerald" style="justify-content:center;padding:13px;font-size:14px;">
+              ✅ Submit My Quote Request →
+            </button>
+            <button type="button" class="btn" onclick="window.print()" style="justify-content:center;padding:13px;font-size:12.5px;">
+              🖨️ Print Quote
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================================
+       SECTION 4: VERIFIED STERLING CUSTOMER REVIEWS
+       ============================================================================ -->
+  <section class="section">
+    <div class="sec-head">
+      <div>
+        <h2>5.0 ★ Rated by Sterling &amp; Dulles Drivers</h2>
+        <p>Real feedback from drivers visiting 45911 Transamerica Plaza, Suite 102.</p>
+      </div>
+    </div>
+    <div class="reviews-row">
+      <div class="rev-card">
+        <div style="color:#fbbf24;font-size:15px;margin-bottom:6px;">★★★★★</div>
+        <p style="font-size:13px;color:#e2e8f0;margin-bottom:10px;">"Submitted my quote online for front brakes and an oil change. The price at Suite 102 matched the estimate to the penny and they finished in 90 minutes."</p>
+        <div style="font-size:12px;font-weight:800;">Marcus T. &bull; <span style="color:#34d399;">2021 Honda CR-V</span></div>
+      </div>
+      <div class="rev-card">
+        <div style="color:#fbbf24;font-size:15px;margin-bottom:6px;">★★★★★</div>
+        <p style="font-size:13px;color:#e2e8f0;margin-bottom:10px;">"Honest diagnostics! Saved me over $1,100 compared to the dealership quote on my timing cover and A/C compressor, with a 12,000-mile warranty."</p>
+        <div style="font-size:12px;font-weight:800;">Elena R. &bull; <span style="color:#34d399;">2020 BMW X3</span></div>
+      </div>
+      <div class="rev-card">
+        <div style="color:#fbbf24;font-size:15px;margin-bottom:6px;">★★★★★</div>
+        <p style="font-size:13px;color:#e2e8f0;margin-bottom:10px;">"Flawless rear bumper &amp; quarter-panel paint match after a parking lot hit. Handled our insurance claim directly and kept us updated at every step."</p>
+        <div style="font-size:12px;font-weight:800;">David K. &bull; <span style="color:#34d399;">2022 Ford F-150</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================================
+       SECTION 5: LIVE VEHICLE TRACKER + SUITE 102 MAP
+       ============================================================================ -->
+  <section class="section bottom-split" id="live-tracker">
+    <div class="visual-card">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <h3 style="font-size:19px;font-weight:900;">🔍 Track Your Car in Our Bays (No Login)</h3>
+          <div style="display:flex;gap:6px;">
+            <input type="text" id="ro-code" value="RO-45911" style="background:#080c16;border:1px solid var(--border);color:#fff;padding:6px 10px;border-radius:8px;width:110px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;" />
+            <button type="button" class="btn btn-red" style="padding:6px 12px;font-size:12px;" onclick="advanceTracker()">Track</button>
+          </div>
+        </div>
         <div class="bay-progress-visual">
           <div class="bay-step done">✔ 1. Checked In<br/><span style="font-size:10px;">Suite 102</span></div>
-          <div class="bay-step done">✔ 2. Digital Scan<br/><span style="font-size:10px;">Photos Sent</span></div>
-          <div class="bay-step active" id="trk-step-3">🔧 3. On Lift<br/><span style="font-size:10px;">Bay 2 Active</span></div>
+          <div class="bay-step done">✔ 2. Quote Approved<br/><span style="font-size:10px;">Digital Scan</span></div>
+          <div class="bay-step active" id="trk-step-3">🔧 3. In Service Bay<br/><span style="font-size:10px;">ASE Tech Active</span></div>
           <div class="bay-step" id="trk-step-4">○ 4. Ready<br/><span style="font-size:10px;">Est. 4:15 PM</span></div>
         </div>
       </div>
 
-      <!-- Real Photo of 45911 Transamerica Plaza Bays -->
-      <div style="position:relative;height:215px;border-radius:16px;overflow:hidden;border:1px solid var(--border);">
-        <img src="assets/sterling_plaza_real_3.jpg" alt="45911 Transamerica Plaza Suite 102 Exterior Bays" style="width:100%;height:100%;object-fit:cover;" />
-        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(7,10,18,0.92), transparent 70%);padding:14px;display:flex;justify-content:space-between;align-items:flex-end;">
-          <div>
-            <div style="font-size:10px;font-weight:800;color:#fbbf24;">📸 ACTUAL SHOP EXTERIOR</div>
-            <div style="font-size:14px;font-weight:900;">45911 Transamerica Plaza, Suite 102</div>
-          </div>
-          <a href="tel:5715310342" class="btn btn-red" style="padding:7px 12px;font-size:11.5px;">📞 (571) 531-0342</a>
+      <div style="background:#080c16;border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:11px;font-weight:800;color:#fbbf24;text-transform:uppercase;">📍 DIRECT SHOP CONTACT &amp; HOURS</div>
+          <div style="font-size:15px;font-weight:900;margin-top:2px;">45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</div>
+          <div style="font-size:12px;color:var(--muted);">Mon–Fri: 8:00 AM – 6:00 PM &bull; Sat: 8:30 AM – 3:00 PM &bull; 24/7 Key-Drop</div>
         </div>
+        <a href="tel:5715310342" class="btn btn-red">📞 (571) 531-0342</a>
       </div>
     </div>
 
-    <!-- Right: Google Map + Direct Directions -->
-    <div class="visual-card" id="shop-map" style="padding:0;overflow:hidden;position:relative;min-height:340px;">
+    <div class="visual-card" id="shop-map" style="padding:0;overflow:hidden;position:relative;min-height:310px;">
       <iframe
         title="Sterling Auto Repair 45911 Transamerica Plaza Suite 102 Map"
         src="https://www.google.com/maps?q=45911+Transamerica+Plaza+Suite+102,+Sterling,+VA+20166&output=embed"
-        style="width:100%;height:100%;min-height:340px;border:0;filter:invert(90%) hue-rotate(180deg) contrast(95%);"
+        style="width:100%;height:100%;min-height:310px;border:0;filter:invert(90%) hue-rotate(180deg) contrast(95%);"
         loading="lazy">
       </iframe>
-      <div style="position:absolute;bottom:14px;left:14px;right:14px;background:rgba(7,10,18,0.94);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-        <div>
-          <div style="font-size:13.5px;font-weight:900;">📍 45911 Transamerica Plaza, Ste 102, Sterling, VA 20166</div>
-          <div style="font-size:11.5px;color:var(--muted);">Off Old Ox Rd (Rt. 606) &bull; (571) 531-0342 / (703) 531-7966</div>
-        </div>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=45911+Transamerica+Plaza+Suite+102+Sterling+VA+20166" target="_blank" rel="noopener" class="btn btn-red" style="padding:8px 14px;font-size:12px;">
+      <div style="position:absolute;bottom:12px;left:12px;right:12px;background:rgba(8,12,22,0.94);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div style="font-size:12.5px;font-weight:800;">📍 45911 Transamerica Plaza, Ste 102 (Off Old Ox Rd / Rt. 606)</div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=45911+Transamerica+Plaza+Suite+102+Sterling+VA+20166" target="_blank" rel="noopener" class="btn btn-red" style="padding:7px 12px;font-size:11.5px;">
           Get Directions ↗
         </a>
       </div>
     </div>
   </section>
+
+  <!-- Customer Quote Confirmation Modal Receipt -->
+  <div class="quote-modal-backdrop" id="quote-confirm-modal" onclick="closeQuoteModal()">
+    <div class="quote-modal-box" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:11px;font-weight:800;color:#34d399;text-transform:uppercase;letter-spacing:0.1em;">✔ OFFICIAL QUOTE &amp; SERVICE REQUEST RECEIVED</span>
+        <button onclick="closeQuoteModal()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">✕</button>
+      </div>
+      <h3 style="font-size:24px;font-weight:900;margin-bottom:6px;" id="modal-quote-title">Quote #SAR-84920 Confirmed!</h3>
+      <p style="font-size:13px;color:#cbd5e1;margin-bottom:14px;" id="modal-quote-sub"></p>
+      <div id="modal-quote-details" style="background:#080c16;border:1px solid var(--border);border-radius:14px;padding:14px;font-size:12.5px;margin-bottom:16px;"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-emerald" style="flex:1;justify-content:center;" onclick="window.print()">🖨️ Print / Save PDF</button>
+        <button class="btn btn-red" style="flex:1;justify-content:center;" onclick="closeQuoteModal()">Done ✓</button>
+      </div>
+    </div>
+  </div>
 
   <footer>
     <div class="footer-inner">
@@ -1173,72 +1310,126 @@
     </div>
   </footer>
 
-  <!-- Mobile Bottom Bar (< 768px) -->
+  <!-- Mobile Bottom Thumb Bar (< 768px) -->
   <nav class="mobile-thumb-bar">
     <a href="tel:5715310342">📞 Call</a>
-    <a href="#car-visualizer">🚗 Car</a>
+    <a href="#visual-services">🔧 Services</a>
     <a href="#shop-map">📍 Map</a>
-    <a href="#instant-book" class="primary-tap">📅 Book Bay</a>
+    <a href="#quote-builder" class="primary-tap">🧾 Get Quote</a>
   </nav>
 
   <script>
-    const zones = {
-      engine: { tag: 'ZONE 01 // ENGINE BAY', title: 'Engine Diagnostics & Mechanical', price: '$95', time: '45 Min' },
-      brakes: { tag: 'ZONE 02 // WHEELS & HYDRAULICS', title: 'Ceramic Brake Pads & Rotors', price: '$229', time: '90 Min' },
-      oil:    { tag: 'ZONE 03 // LUBRICATION & FLUIDS', title: 'Full Synthetic Oil & 50-Pt Check', price: '$79', time: '35 Min' },
-      ac:     { tag: 'ZONE 04 // CABIN CLIMATE & COOLING', title: 'A/C Recharge & Cooling System', price: '$149', time: '60 Min' },
-      tires:  { tag: 'ZONE 05 // CHASSIS & ALIGNMENT', title: 'Tires & 4-Wheel Laser Alignment', price: '$119', time: '60 Min' },
-      body:   { tag: 'ZONE 06 // EXTERIOR & COLLISION', title: 'Collision, Dent & OEM Paint Match', price: 'FREE', time: '20 Min Est' }
+    const catalog = {
+      engine: { name: '1. Engine & Check-Engine Computer Scan', low: 95, high: 135, note: 'Waived w/ Repair' },
+      brakes: { name: '2. Ceramic Brake Pads & Coated Rotors', low: 229, high: 349, note: 'Per Axle' },
+      oil:    { name: '3. Full Synthetic Oil & 50-Pt Inspection', low: 79, high: 109, note: 'CARFAX Logged' },
+      ac:     { name: '4. A/C Recharge & Cooling System Check', low: 149, high: 225, note: 'R-134a / R-1234yf' },
+      tires:  { name: '5. 4-Wheel Computerized Laser Alignment', low: 119, high: 149, note: 'Laser Spec' },
+      body:   { name: '6. Collision, Bumper, Dent & Paint Estimate', low: 0, high: 0, note: 'Free Written Est.' }
     };
 
-    function selectCarZone(key) {
-      const z = zones[key] || zones.engine;
-      document.querySelectorAll('.hotspot-group').forEach(g => g.classList.remove('selected'));
-      const hs = document.getElementById('hs-' + key);
-      if (hs) hs.classList.add('selected');
+    const selectedServices = new Set(['engine']);
+    let bodyMultiplier = 1.0;
+    let bodyLabel = 'Sedan';
 
-      document.querySelectorAll('.zone-chip').forEach(c => c.classList.remove('active'));
-      const chip = document.getElementById('chip-' + key);
-      if (chip) chip.classList.add('active');
-
-      document.getElementById('insp-zone-tag').textContent = z.tag;
-      document.getElementById('insp-zone-title').textContent = z.title;
-      document.getElementById('insp-zone-price').textContent = z.price;
-      document.getElementById('insp-time').textContent = z.time;
+    function toggleQuoteService(key) {
+      if (selectedServices.has(key) && selectedServices.size > 1) {
+        selectedServices.delete(key);
+      } else {
+        selectedServices.add(key);
+      }
+      renderQuoteState();
     }
 
-    function selectCarBody(type, sampleLabel, btnEl) {
+    function selectCarBody(label, mult, btnEl) {
+      bodyLabel = label;
+      bodyMultiplier = mult;
       document.querySelectorAll('.car-type-btn').forEach(b => b.classList.remove('active'));
       if (btnEl) btnEl.classList.add('active');
-      document.getElementById('active-garage-pill').textContent = '🚗 Active Vehicle: ' + sampleLabel;
-      const svg = document.getElementById('interactive-car-svg');
-      svg.style.transform = 'scale(0.96)';
-      setTimeout(() => { svg.style.transform = 'scale(1)'; }, 180);
+      updateVehicleSummary();
+      renderQuoteState();
     }
 
-    function updateGarageLabel() {
+    function updateVehicleSummary() {
       const yr = document.getElementById('sel-year').value;
       const mk = document.getElementById('sel-make').value;
-      document.getElementById('active-garage-pill').textContent = `🚗 Active Vehicle: ${yr} ${mk}`;
+      const md = document.getElementById('sel-model').value || '';
+      document.getElementById('car-active-label').textContent = `${yr} ${mk} ${md} (${bodyLabel})`;
     }
 
-    function setMake(mk) {
-      const sel = document.getElementById('sel-make');
-      for (let i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].text === mk) { sel.selectedIndex = i; break; }
-      }
-      updateGarageLabel();
-      document.getElementById('car-visualizer').scrollIntoView({ behavior: 'smooth' });
+    function renderQuoteState() {
+      let lowTotal = 0;
+      let highTotal = 0;
+      const listEl = document.getElementById('quote-items-list');
+      let html = '';
+
+      Object.keys(catalog).forEach(k => {
+        const isSel = selectedServices.has(k);
+        const hs = document.getElementById('hs-' + k);
+        const chip = document.getElementById('chip-' + k);
+        const tile = document.getElementById('tile-' + k);
+        const tileBtn = document.getElementById('btn-tile-' + k);
+
+        if (hs) hs.classList.toggle('selected', isSel);
+        if (chip) chip.classList.toggle('active', isSel);
+        if (tile) tile.classList.toggle('in-quote', isSel);
+        if (tileBtn) tileBtn.textContent = isSel ? '✔ In Quote' : '+ Add to Quote';
+
+        if (isSel) {
+          const item = catalog[k];
+          const l = Math.round(item.low * bodyMultiplier);
+          const h = Math.round(item.high * bodyMultiplier);
+          lowTotal += l;
+          highTotal += h;
+          const priceStr = l === 0 ? 'FREE ESTIMATE' : `$${l} – $${h}`;
+          html += `
+            <div class="quote-line">
+              <div>
+                <strong>${item.name}</strong>
+                <span style="font-size:11px;color:#94a3b8;margin-left:6px;">(${item.note})</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-weight:800;color:#34d399;">${priceStr}</span>
+                <button type="button" onclick="toggleQuoteService('${k}')" style="background:none;border:none;color:#f87171;cursor:pointer;font-size:12px;" title="Remove">✕</button>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      listEl.innerHTML = html;
+      document.getElementById('top-cart-count').textContent = String(selectedServices.size);
+      document.getElementById('quote-total-range').textContent =
+        lowTotal === 0 ? 'Free Collision Estimate' : `$${lowTotal} – $${highTotal}`;
     }
 
-    function lookupPlate() {
-      const p = (document.getElementById('va-plate').value || 'STR-102').toUpperCase();
-      document.getElementById('active-garage-pill').textContent = `🚗 VA Plate [${p}] Verified • 2023 Toyota Camry SE`;
+    function handleCustomerQuoteSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('cust-name').value;
+      const phone = document.getElementById('cust-phone').value;
+      const mode = document.getElementById('cust-mode').value;
+      const notes = document.getElementById('cust-notes').value || 'Standard inspection & upfront quote';
+      const veh = document.getElementById('car-active-label').textContent;
+      const range = document.getElementById('quote-total-range').textContent;
+      const qNum = 'SAR-' + Math.floor(10000 + Math.random() * 90000);
+
+      const svcs = Array.from(selectedServices).map(k => catalog[k].name).join('<br/>• ');
+
+      document.getElementById('modal-quote-title').textContent = `Quote #${qNum} Submitted!`;
+      document.getElementById('modal-quote-sub').innerHTML =
+        `Thank you, <strong>${name}</strong>! We have texted your instant quote summary to <strong>${phone}</strong> and reserved your priority request at <strong>45911 Transamerica Plaza, Suite 102</strong>.`;
+      document.getElementById('modal-quote-details').innerHTML = `
+        <div style="margin-bottom:6px;"><strong>Vehicle:</strong> ${veh}</div>
+        <div style="margin-bottom:6px;"><strong>Selected Services:</strong><br/>• ${svcs}</div>
+        <div style="margin-bottom:6px;"><strong>Estimated Total:</strong> <span style="color:#34d399;font-weight:900;">${range}</span> (12-Mo / 12,000-Mi Warranty)</div>
+        <div style="margin-bottom:6px;"><strong>Preferred Action:</strong> ${mode}</div>
+        <div><strong>Customer Notes:</strong> ${notes}</div>
+      `;
+      document.getElementById('quote-confirm-modal').classList.add('open');
     }
 
-    function pickSlot(btnEl) {
-      btnEl.parentElement.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
-      btnEl.classList.add('active');
+    function closeQuoteModal() {
+      document.getElementById('quote-confirm-modal').classList.remove('open');
     }
 
     function advanceTracker() {
@@ -1246,17 +1437,10 @@
       document.getElementById('trk-step-3').className = 'bay-step done';
       document.getElementById('trk-step-3').innerHTML = `✔ 3. Torque Verified<br/><span style="font-size:10px;">${code}</span>`;
       document.getElementById('trk-step-4').className = 'bay-step active';
-      document.getElementById('trk-step-4').innerHTML = `★ 4. Ready Now!<br/><span style="font-size:10px;">Suite 102</span>`;
+      document.getElementById('trk-step-4').innerHTML = `★ 4. Ready for Pickup!<br/><span style="font-size:10px;">Suite 102</span>`;
     }
 
-    function submitQuickBay(e) {
-      e.preventDefault();
-      const name = document.getElementById('q-name').value;
-      const svc = document.getElementById('insp-zone-title').textContent;
-      const toast = document.getElementById('quick-book-toast');
-      toast.style.display = 'block';
-      toast.textContent = `✔ Bay Reserved for ${name} (${svc}) at 45911 Transamerica Plaza Ste 102! Confirmation text sent.`;
-    }
+    renderQuoteState();
   </script>
 </body>
 </html>
