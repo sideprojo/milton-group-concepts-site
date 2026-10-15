@@ -101,38 +101,37 @@
 <body>
   <script src="mgc-guided-security.js"></script>
 
-  <header>
+  <header style="padding: 12px 28px;">
     <div class="brand">
       <img src="assets/mgc-logo.png" alt="MGC" onerror="this.style.display='none'" />
       <div>
-        <h1>MGC &amp; F.I.X SOLUTIONS <span>// INTERNAL PORTALS ONBOARDING GATE</span></h1>
-        <div style="font-size:0.74rem; color:var(--muted);">External Public Sites: <strong>miltongroupsecurity.org</strong> &amp; <strong>F.I.X Solutions LLC (VAR)</strong> → Onboarded View-Only Access to Internal Suites</div>
+        <h1>MGC &amp; F.I.X <span>// CLIENT &amp; PARTNER 2FA GATE</span></h1>
       </div>
     </div>
-    <div class="status-pill" id="session-badge">INTERNAL GATE // GUEST (PRE-ONBOARDING)</div>
+    <div class="status-pill" id="session-badge">2FA BIOMETRIC GATE // READY</div>
   </header>
 
-  <div class="container">
-    <div class="stepper">
+  <div class="container" style="padding-top: 22px;">
+    <div class="stepper" style="margin-bottom: 22px;">
       <div class="step active" id="step-1">
         <div class="step-num">1</div>
         <div>
-          <h4>External Site Referral &amp; NDA</h4>
-          <p>Visitor arrives from external <strong>MGC</strong> or <strong>F.I.X Solutions</strong> site</p>
+          <h4>1. Select Identity</h4>
+          <p>Client or Root Admin preset</p>
         </div>
       </div>
       <div class="step" id="step-2">
         <div class="step-num">2</div>
         <div>
-          <h4>Zero-Cost SSO / Token Provisioning</h4>
-          <p>Firebase Auth (<code>smiling-man-ace8f</code>) / Google IAP / Entra ID (50K MAU Free)</p>
+          <h4>2. Biometric / TOTP 2FA</h4>
+          <p>Fingerprint sensor or 6-digit code</p>
         </div>
       </div>
       <div class="step" id="step-3">
         <div class="step-num">3</div>
         <div>
-          <h4>Onboarded View-Only Portal Access</h4>
-          <p>Unlocks read-only view access to internal MGC dashboards ($0 compute risk)</p>
+          <h4>3. Launch Assigned Portals</h4>
+          <p>Instant verified suite access</p>
         </div>
       </div>
     </div>
@@ -281,30 +280,36 @@
           </div>
         </div>
 
-        <table class="roster-table">
-          <thead>
-            <tr>
-              <th>2FA Verified Identity</th>
-              <th>Track</th>
-              <th>Role / Permission</th>
-              <th>2FA Status</th>
-            </tr>
-          </thead>
-          <tbody id="roster-body">
-            <tr>
-              <td><code>malik.khabir@miltongroupsecurity.org</code></td>
-              <td>ALL_16_SUITES</td>
-              <td style="color:var(--gold);font-weight:700;">ROOT_SUPER_ADMIN</td>
-              <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (440-921)</td>
-            </tr>
-            <tr>
-              <td><code>service@sterlingautorepairva.com</code></td>
-              <td>STERLING_AUTO_INCENTIVE</td>
-              <td style="color:var(--cyan);font-weight:700;">VERIFIED_CLIENT</td>
-              <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (250-100)</td>
-            </tr>
-          </tbody>
-        </table>
+        <details style="margin-top:16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 14px;">
+          <summary style="cursor:pointer;font-size:0.78rem;font-weight:800;color:var(--cyan);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+            <span>🛡️ Active 2FA Verified Session Roster (Root Admin &amp; Sterling Auto Client)</span>
+            <span style="color:var(--muted);font-size:0.72rem;">Click to expand ▾</span>
+          </summary>
+          <table class="roster-table" style="margin-top:10px;">
+            <thead>
+              <tr>
+                <th>2FA Verified Identity</th>
+                <th>Track</th>
+                <th>Role / Permission</th>
+                <th>2FA Status</th>
+              </tr>
+            </thead>
+            <tbody id="roster-body">
+              <tr>
+                <td><code>malik.khabir@miltongroupsecurity.org</code></td>
+                <td>ALL_16_SUITES</td>
+                <td style="color:var(--gold);font-weight:700;">ROOT_SUPER_ADMIN</td>
+                <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (440-921)</td>
+              </tr>
+              <tr>
+                <td><code>service@sterlingautorepairva.com</code></td>
+                <td>STERLING_AUTO_INCENTIVE</td>
+                <td style="color:var(--cyan);font-weight:700;">VERIFIED_CLIENT</td>
+                <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (250-100)</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
       </div>
     </div>
   </div>
