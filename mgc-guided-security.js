@@ -338,22 +338,22 @@
         border: 1px solid transparent;
         color: #cbd5e1;
         font-family: inherit;
-        font-size: 0.78rem;
+        font-size: 0.74rem;
         font-weight: 700;
-        padding: 0.5rem 0.7rem;
-        min-height: 2.5rem;
+        padding: 0.4rem 0.52rem;
+        min-height: 2.35rem;
         border-radius: 0.5rem;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
+        gap: 0.28rem;
         transition: all 0.16s ease;
         white-space: nowrap;
       }
       .os-menu-trigger:hover, .os-menu-wrap.open .os-menu-trigger {
-        background: rgba(30, 58, 138, 0.45);
+        background: rgba(161, 161, 170, 0.18);
         color: #ffffff;
-        border-color: rgba(252, 211, 77, 0.35);
+        border-color: rgba(255, 255, 255, 0.35);
       }
       .os-caret {
         font-size: 0.65rem;
@@ -430,24 +430,26 @@
       /* Google-Style Omnibox Search Bar */
       .os-omnibox {
         position: relative;
-        width: clamp(11rem, 16vw, 15.5rem);
+        width: clamp(8.2rem, 10.5vw, 11rem);
+        flex-shrink: 0;
       }
       .os-search-btn {
         width: 100%;
-        min-height: 2.35rem;
-        background: rgba(15, 23, 42, 0.8);
+        min-height: 2.25rem;
+        background: rgba(9, 9, 11, 0.85);
         border: 1px solid var(--os-border);
         border-radius: 999px;
-        padding: 0.4rem 0.85rem;
+        padding: 0.35rem 0.65rem;
         color: #cbd5e1;
         font-family: inherit;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.4rem;
+        gap: 0.35rem;
         cursor: pointer;
         transition: all 0.18s;
+        white-space: nowrap;
       }
       .os-search-btn:hover {
         border-color: var(--mgc-gold);
@@ -1404,7 +1406,7 @@
         <!-- Google Omnibox Search Trigger -->
         <div class="os-omnibox">
           <button type="button" class="os-search-btn" id="os-omnibox-trigger" aria-label="Search portals, courses, tools">
-            <span>🔍 Search portals, courses, tools...</span>
+            <span>🔍 Search Portals</span>
             <span class="os-kbd">⌘K</span>
           </button>
         </div>
