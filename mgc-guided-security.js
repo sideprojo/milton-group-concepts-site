@@ -1,11 +1,22 @@
 /**
- * MGC & F.I.X Enterprise OS Shell ("Google + Microsoft + LinkedIn + Canvas" Paradigm)
- * - Authentic MGC Logo (assets/mgc-logo.png) & Logo Thematic Palette (Obsidian, Slate-Navy, Silver, Gold, Crimson, Cobalt, Emerald)
- * - Google Workspace 9-Dot Waffle App Launcher + Omnibox Search (Ctrl+K)
- * - Microsoft 365 Fluent Categorized Top Dropdown Menus (▾)
- * - Instructure Canvas Persistent Left Icon Rail (68px)
- * - LinkedIn-Style Profile & View Density Dropdown (Me ▾)
- * - Automatic Multi-Page Sub-View Paginator (<section> & .tab-pane support)
+ * MGC & F.I.X Enterprise OS Shell & Responsive Web Design Engine
+ * Built on the Researched Web Design Principles from "Responsible Responsive Principles" (Lessons 1–6):
+ *
+ * 1. RESPONSIVE LAYOUT (Lessons 2 & 4):
+ *    - Mobile-First Progression: Single-column stack (<768px) -> 2-column Tablet Grid (768px–1023px) -> Multi-column Desktop Grid (>=1024px)
+ *    - Flexbox (1D Layout): Topbar, toolbars, pill bars, and action groups with flex-wrap
+ *    - CSS Grid (2D Layout): Dashboard cards, KPI ribbons, and multi-pane workspaces
+ *
+ * 2. RESPONSIVE STYLING (Lesson 3):
+ *    - Relative CSS Units (%, rem, em, vw, min()) instead of rigid fixed pixel widths
+ *    - Fluid Typography via clamp(min, preferred, max) + text-wrap: balance for smooth scaling
+ *    - Flexible Media & Responsive Tables: max-width: 100%; height: auto; and auto-wrapped scrollable data tables
+ *
+ * 3. RESPONSIVE BEHAVIOR & NAVIGATION PATTERNS (Lesson 5 & WCAG 2.1 AA):
+ *    - Pattern 1 (Desktop >=1024px): Categorized Dropdown Navigation (Command & Auth ▾, Apps & Labs ▾, Canvas Academy ▾, Commerce & Gov ▾) + 9-Dot Waffle
+ *    - Pattern 2 & 3 (Tablet & Mobile <1024px): Labeled Hamburger Button (☰ Menu) + Off-Canvas Slide-Out Navigation Drawer with Backdrop Scrim
+ *    - Accessibility: 44px minimum touch targets, :focus-visible keyboard rings, @media (prefers-reduced-motion: reduce), @media (forced-colors: active)
+ *    - Note: Step-gated SCORM workflows belong exclusively to elearning-upskilling-hub.html (learning/skilling portal).
  */
 (function () {
   const SESSION_KEY = 'mgc_onboarded_session';
@@ -59,7 +70,7 @@
   const session = getVerifiedSession();
   const currentFile = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
-  // 16-Portal Ecosystem Registry Categorized for Dropdowns, Waffle Menu & Canvas Rail
+  // 16-Portal Ecosystem Registry Categorized for Desktop Dropdowns, Off-Canvas Drawer, Waffle & Canvas Rail
   const pages = [
     { file: 'admin-command-portal.html', icon: '🛡️', label: 'Admin Hub', full: 'Master Admin Command Hub', cat: 'Command & Auth', tag: 'All 16 Portals', color: '#2563eb', rail: true },
     { file: 'onboarding-portal.html', icon: '🫆', label: 'Client 2FA', full: 'Client 2FA & Biometric Gate', cat: 'Command & Auth', tag: 'Passkey + TOTP', color: '#16a34a', rail: true },
@@ -97,56 +108,152 @@
     style.id = 'mgc-os-shell-styles';
     style.textContent = `
       /* ======================================================================
-         MGC LOGO THEMATIC ENTERPRISE SHELL (Obsidian, Slate-Navy, Silver, Gold, Crimson & Cobalt)
+         MGC ENTERPRISE SHELL & RESPONSIVE WEB DESIGN ARCHITECTURE
+         1. Fluid Layouts (%, rem, min(), CSS Grid 2D + Flexbox 1D)
+         2. Fluid Typography (clamp() + text-wrap: balance)
+         3. Content-Driven Media Queries (Mobile <768px | Tablet 768-1023px | Desktop >=1024px)
+         4. Responsive Navigation (Desktop Dropdowns + Mobile/Tablet Labeled Hamburger Off-Canvas Drawer)
+         5. Flexible Media & Accessible 44px Touch Targets
          ====================================================================== */
       :root {
-        --os-top-h: 58px;
-        --os-rail-w: 68px;
-        --os-bg: rgba(2, 6, 23, 0.92);
+        --os-top-h: 3.75rem; /* 60px */
+        --os-rail-w: 4.25rem; /* 68px */
+        --os-bg: rgba(2, 6, 23, 0.95);
         --os-border: rgba(203, 213, 225, 0.16);
         --mgc-gold: #fcd34d;
         --mgc-crimson: #dc2626;
         --mgc-cobalt: #2563eb;
         --mgc-emerald: #16a34a;
+        --focus-ring: #ffbf47;
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        max-width: 100vw;
+        overflow-x: hidden;
+      }
+
+      /* Lesson 2 & 5: Flexible Media Globally Across All Internal Portals */
+      img, svg, video, canvas, iframe {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Lesson 3: Fluid Typography with clamp(min, preferred, max) & Balanced Headings */
+      h1, .hub-title, .hero h1, .hero-banner h1 {
+        font-size: clamp(1.35rem, 2.2vw + 0.55rem, 2.35rem) !important;
+        line-height: 1.18 !important;
+        text-wrap: balance;
+      }
+      h2, .panel-title, .card h2 {
+        font-size: clamp(1.12rem, 1.5vw + 0.45rem, 1.5rem) !important;
+        line-height: 1.25 !important;
+        text-wrap: balance;
+      }
+      h3 {
+        font-size: clamp(0.98rem, 1.1vw + 0.35rem, 1.2rem);
+        line-height: 1.3;
+      }
+
+      /* Lesson 3: Fluid Container Widths Using Relative Units (min() & rem) */
+      .shell, .container, main {
+        width: min(1400px, 100%);
+        margin-inline: auto;
+        padding-inline: clamp(0.875rem, 2.5vw, 2rem);
+      }
+
+      /* Responsive Table Wrapper for Data Ledgers & Matrices */
+      .mgc-table-scroll {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Accessibility: Keyboard Focus Rings (WCAG 2.1 AA) */
+      #mgc-os-shell button:focus-visible,
+      #mgc-os-shell a:focus-visible,
+      #mgc-os-shell select:focus-visible,
+      #mgc-os-shell input:focus-visible,
+      #mgc-subpage-bar button:focus-visible {
+        outline: 3px solid var(--focus-ring);
+        outline-offset: 2px;
       }
 
       body {
         padding-top: var(--os-top-h) !important;
         padding-left: var(--os-rail-w) !important;
-        transition: opacity 0.22s ease;
       }
 
-      /* 1. TOP BAR */
+      /* Hide duplicate internal headers/navs so there is only 1 unified topbar */
+      body > nav:not(#mgc-os-topbar),
+      body > .top-bar,
+      body > header:not(#mgc-os-topbar):not(.max-w-7xl) {
+        display: none !important;
+      }
+
+      /* 1. TOP BAR (Flexbox 1D Navigation Layout) */
       #mgc-os-topbar {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         height: var(--os-top-h);
-        background: linear-gradient(90deg, rgba(2, 6, 23, 0.96) 0%, rgba(15, 23, 42, 0.94) 60%, rgba(23, 37, 84, 0.92) 100%);
+        background: linear-gradient(90deg, rgba(2, 6, 23, 0.97) 0%, rgba(15, 23, 42, 0.95) 60%, rgba(23, 37, 84, 0.93) 100%);
         backdrop-filter: blur(22px);
         -webkit-backdrop-filter: blur(22px);
-        border-bottom: 1px solid rgba(252, 211, 77, 0.25);
+        border-bottom: 1px solid rgba(252, 211, 77, 0.26);
         z-index: 99990;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 18px 0 12px;
+        padding: 0 clamp(0.65rem, 1.8vw, 1.15rem);
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         user-select: none;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        gap: 0.5rem;
       }
 
       .os-left {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 0.5rem;
+        min-width: 0;
       }
 
-      /* Google 9-Dot Waffle Button */
+      /* Lesson 5: Labeled Hamburger Button (Hidden on Desktop >=1024px, Shown on Tablet/Mobile <1024px) */
+      .os-hamburger-btn {
+        display: none;
+        min-height: 2.75rem; /* 44px WCAG touch target */
+        padding: 0.45rem 0.75rem;
+        border-radius: 0.625rem;
+        border: 1px solid rgba(252, 211, 77, 0.4);
+        background: rgba(30, 58, 138, 0.38);
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        cursor: pointer;
+        align-items: center;
+        gap: 0.45rem;
+        flex-shrink: 0;
+        transition: background 0.18s ease, border-color 0.18s ease;
+      }
+      .os-hamburger-btn:hover,
+      .os-hamburger-btn[aria-expanded="true"] {
+        background: rgba(37, 99, 235, 0.45);
+        border-color: var(--mgc-gold);
+      }
+
+      /* Google 9-Dot Waffle Button (44x44px Accessible Target) */
       .os-waffle-btn {
-        width: 40px;
-        height: 40px;
+        width: 2.75rem;
+        height: 2.75rem;
+        min-width: 2.75rem;
+        min-height: 2.75rem;
         border-radius: 50%;
         border: 1px solid transparent;
         background: transparent;
@@ -155,16 +262,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-shrink: 0;
         transition: all 0.18s;
       }
       .os-waffle-btn:hover, .os-waffle-btn.active {
-        background: rgba(37, 99, 235, 0.2);
+        background: rgba(37, 99, 235, 0.22);
         border-color: rgba(252, 211, 77, 0.4);
         color: #ffffff;
       }
       .os-waffle-svg {
-        width: 20px;
-        height: 20px;
+        width: 1.25rem;
+        height: 1.25rem;
         fill: currentColor;
       }
 
@@ -172,28 +280,30 @@
       .os-brand {
         display: flex;
         align-items: center;
-        gap: 9px;
+        gap: 0.55rem;
         text-decoration: none;
         color: #ffffff;
         font-weight: 900;
-        font-size: 14.5px;
+        font-size: 0.875rem;
         letter-spacing: 0.04em;
-        padding-right: 12px;
+        padding-right: 0.75rem;
         border-right: 1px solid var(--os-border);
+        white-space: nowrap;
+        min-height: 2.75rem;
       }
       .os-brand-logo-img {
-        height: 30px;
+        height: 1.875rem;
         width: auto;
-        border-radius: 6px;
+        border-radius: 0.375rem;
         border: 1px solid rgba(252, 211, 77, 0.45);
         background: #0f172a;
       }
 
-      /* Microsoft Fluent Categorized Top Dropdown Menus */
+      /* Lesson 5 Pattern 1: Desktop Categorized Dropdown Navigation */
       .os-menus {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 0.25rem;
       }
       .os-menu-wrap {
         position: relative;
@@ -203,15 +313,17 @@
         border: 1px solid transparent;
         color: #cbd5e1;
         font-family: inherit;
-        font-size: 12.5px;
+        font-size: 0.78rem;
         font-weight: 700;
-        padding: 7px 12px;
-        border-radius: 8px;
+        padding: 0.5rem 0.7rem;
+        min-height: 2.5rem;
+        border-radius: 0.5rem;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 0.35rem;
         transition: all 0.16s ease;
+        white-space: nowrap;
       }
       .os-menu-trigger:hover, .os-menu-wrap.open .os-menu-trigger {
         background: rgba(30, 58, 138, 0.45);
@@ -219,7 +331,7 @@
         border-color: rgba(252, 211, 77, 0.35);
       }
       .os-caret {
-        font-size: 10px;
+        font-size: 0.65rem;
         color: var(--mgc-gold);
         transition: transform 0.2s ease;
       }
@@ -230,18 +342,18 @@
       /* Fluent Dropdown Flyout Panel */
       .os-dropdown-panel {
         position: absolute;
-        top: calc(100% + 8px);
+        top: calc(100% + 0.5rem);
         left: 0;
-        min-width: 275px;
+        min-width: 17.5rem;
         background: rgba(9, 14, 28, 0.98);
         backdrop-filter: blur(24px);
         border: 1px solid rgba(252, 211, 77, 0.32);
-        border-radius: 14px;
-        padding: 8px;
+        border-radius: 0.875rem;
+        padding: 0.5rem;
         box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
         display: none;
         flex-direction: column;
-        gap: 3px;
+        gap: 0.2rem;
         animation: osDropFade 0.16s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .os-menu-wrap.open .os-dropdown-panel {
@@ -255,9 +367,10 @@
       .os-drop-item {
         display: flex;
         align-items: center;
-        gap: 11px;
-        padding: 9px 11px;
-        border-radius: 10px;
+        gap: 0.7rem;
+        padding: 0.55rem 0.7rem;
+        min-height: 2.75rem;
+        border-radius: 0.625rem;
         text-decoration: none;
         color: #f8fafc;
         transition: background 0.15s;
@@ -266,25 +379,25 @@
         background: linear-gradient(90deg, rgba(30, 58, 138, 0.55), rgba(127, 29, 29, 0.35));
       }
       .os-drop-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 9px;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.55rem;
         background: rgba(255, 255, 255, 0.06);
         border: 1px solid rgba(255, 255, 255, 0.12);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 15px;
+        font-size: 0.95rem;
         flex-shrink: 0;
       }
       .os-drop-title {
-        font-size: 12.5px;
+        font-size: 0.78rem;
         font-weight: 700;
         color: #ffffff;
         display: block;
       }
       .os-drop-sub {
-        font-size: 10.5px;
+        font-size: 0.66rem;
         color: #cbd5e1;
         display: block;
       }
@@ -292,20 +405,22 @@
       /* Google-Style Omnibox Search Bar */
       .os-omnibox {
         position: relative;
-        width: 265px;
+        width: clamp(11rem, 16vw, 15.5rem);
       }
       .os-search-btn {
         width: 100%;
+        min-height: 2.35rem;
         background: rgba(15, 23, 42, 0.8);
         border: 1px solid var(--os-border);
         border-radius: 999px;
-        padding: 7px 14px;
+        padding: 0.4rem 0.85rem;
         color: #cbd5e1;
         font-family: inherit;
-        font-size: 12px;
+        font-size: 0.75rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 0.4rem;
         cursor: pointer;
         transition: all 0.18s;
       }
@@ -317,30 +432,33 @@
         background: rgba(2, 6, 23, 0.7);
         border: 1px solid rgba(252, 211, 77, 0.3);
         color: var(--mgc-gold);
-        padding: 1px 6px;
-        border-radius: 5px;
-        font-size: 10px;
+        padding: 0.1rem 0.35rem;
+        border-radius: 0.3rem;
+        font-size: 0.625rem;
         font-family: monospace;
       }
 
-      /* Right Controls: Sub-Page Jump Dropdown + LinkedIn Profile Menu */
+      /* Right Controls: Section Jump Select + LinkedIn Profile Menu */
       .os-right {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 0.5rem;
       }
 
       .os-page-select {
         background: rgba(30, 58, 138, 0.35);
         border: 1px solid rgba(252, 211, 77, 0.4);
         color: var(--mgc-gold);
-        padding: 6px 11px;
-        border-radius: 8px;
+        padding: 0.4rem 0.65rem;
+        min-height: 2.35rem;
+        border-radius: 0.5rem;
         font-family: inherit;
-        font-size: 12px;
+        font-size: 0.75rem;
         font-weight: 700;
         outline: none;
         cursor: pointer;
+        max-width: 13.5rem;
+        text-overflow: ellipsis;
       }
       .os-page-select option {
         background: #090e1c;
@@ -352,19 +470,20 @@
         background: rgba(15, 23, 42, 0.85);
         border: 1px solid rgba(252, 211, 77, 0.35);
         border-radius: 999px;
-        padding: 4px 10px 4px 5px;
+        padding: 0.25rem 0.65rem 0.25rem 0.3rem;
+        min-height: 2.45rem;
         display: inline-flex;
         align-items: center;
-        gap: 7px;
+        gap: 0.45rem;
         color: #ffffff;
         font-family: inherit;
-        font-size: 12px;
+        font-size: 0.75rem;
         font-weight: 700;
         cursor: pointer;
       }
       .os-avatar {
-        width: 26px;
-        height: 26px;
+        width: 1.65rem;
+        height: 1.65rem;
         border-radius: 50%;
         background: linear-gradient(135deg, #dc2626, #1e3a8a);
         border: 1px solid var(--mgc-gold);
@@ -373,22 +492,89 @@
         align-items: center;
         justify-content: center;
         font-weight: 900;
-        font-size: 10.5px;
+        font-size: 0.66rem;
       }
 
-      /* 2. GOOGLE 9-DOT WAFFLE POPOVER GRID */
+      /* 2. LESSON 5 PATTERN 2 & 3: OFF-CANVAS NAVIGATION DRAWER + SCRIM (Mobile & Tablet) */
+      #os-offcanvas-scrim {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 23, 0.72);
+        backdrop-filter: blur(6px);
+        z-index: 99996;
+        display: none;
+      }
+      #os-offcanvas-scrim.open {
+        display: block;
+      }
+      #os-offcanvas-drawer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: min(21rem, 86vw);
+        background: linear-gradient(180deg, #060b19 0%, #0f172a 100%);
+        border-right: 1px solid rgba(252, 211, 77, 0.35);
+        box-shadow: 24px 0 60px rgba(0, 0, 0, 0.85);
+        z-index: 99997;
+        transform: translateX(-102%);
+        transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        font-family: 'Inter', sans-serif;
+      }
+      #os-offcanvas-drawer.open {
+        transform: translateX(0);
+      }
+      .os-drawer-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid rgba(252, 211, 77, 0.22);
+      }
+      .os-drawer-close {
+        min-width: 2.75rem;
+        min-height: 2.75rem;
+        border-radius: 0.625rem;
+        border: 1px solid rgba(203, 213, 225, 0.25);
+        background: rgba(15, 23, 42, 0.85);
+        color: #f8fafc;
+        font-weight: 800;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+      .os-drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0.85rem 1rem 1.5rem;
+      }
+      .os-drawer-cat {
+        margin-bottom: 1rem;
+      }
+      .os-drawer-cat-title {
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--mgc-gold);
+        padding: 0.25rem 0.4rem;
+        margin-bottom: 0.35rem;
+      }
+
+      /* 3. GOOGLE 9-DOT WAFFLE POPOVER GRID */
       #os-waffle-popover {
         position: fixed;
-        top: 66px;
-        left: 14px;
-        width: 345px;
-        max-height: calc(100vh - 84px);
+        top: 4.1rem;
+        left: 0.875rem;
+        width: min(21.5rem, calc(100vw - 1.75rem));
+        max-height: calc(100vh - 5.25rem);
         overflow-y: auto;
         background: rgba(9, 14, 28, 0.98);
         backdrop-filter: blur(26px);
         border: 1px solid rgba(252, 211, 77, 0.35);
-        border-radius: 22px;
-        padding: 18px;
+        border-radius: 1.35rem;
+        padding: 1.1rem;
         box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
         z-index: 99995;
         display: none;
@@ -398,15 +584,16 @@
       .waffle-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+        gap: 0.625rem;
       }
       .waffle-tile {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 12px 6px;
-        border-radius: 14px;
+        padding: 0.75rem 0.375rem;
+        min-height: 4.75rem;
+        border-radius: 0.875rem;
         text-decoration: none;
         color: #e2e8f0;
         transition: all 0.16s;
@@ -418,24 +605,24 @@
         transform: translateY(-2px);
       }
       .waffle-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 0.75rem;
         background: rgba(15, 23, 42, 0.9);
         border: 1px solid rgba(255, 255, 255, 0.14);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 20px;
-        margin-bottom: 6px;
+        font-size: 1.25rem;
+        margin-bottom: 0.35rem;
       }
       .waffle-label {
-        font-size: 11px;
+        font-size: 0.69rem;
         font-weight: 700;
         line-height: 1.2;
       }
 
-      /* 3. INSTRUCTURE CANVAS LEFT ICON RAIL (68px) */
+      /* 4. INSTRUCTURE CANVAS LEFT ICON RAIL (68px Desktop / Bottom Mobile Dock) */
       #mgc-os-rail {
         position: fixed;
         top: var(--os-top-h);
@@ -449,26 +636,28 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        padding: 12px 0;
+        padding: 0.75rem 0;
         font-family: 'Inter', sans-serif;
       }
       .rail-group {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
+        gap: 0.375rem;
         width: 100%;
       }
       .rail-item {
-        width: 54px;
-        padding: 8px 4px;
-        border-radius: 12px;
+        width: 3.375rem;
+        min-height: 2.85rem;
+        padding: 0.45rem 0.25rem;
+        border-radius: 0.75rem;
         text-decoration: none;
         color: #94a3b8;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 3px;
+        justify-content: center;
+        gap: 0.2rem;
         transition: all 0.18s ease;
         position: relative;
       }
@@ -483,84 +672,81 @@
       .rail-item.active::before {
         content: '';
         position: absolute;
-        left: -7px;
-        top: 10px;
-        bottom: 10px;
-        width: 3.5px;
-        border-radius: 4px;
+        left: -0.4rem;
+        top: 0.6rem;
+        bottom: 0.6rem;
+        width: 0.22rem;
+        border-radius: 0.25rem;
         background: var(--mgc-gold);
       }
-      .rail-ico { font-size: 18px; line-height: 1; }
-      .rail-txt { font-size: 9.5px; font-weight: 700; letter-spacing: 0.01em; text-align: center; }
+      .rail-ico { font-size: 1.125rem; line-height: 1; }
+      .rail-txt { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.01em; text-align: center; }
 
-      /* 4. AUTOMATIC SUB-PAGE VIEW BAR */
+      /* 5. CLEAN NON-LEARNING SECTION FILTER BAR (Flexbox 1D Toolbar, Full View Default) */
       #mgc-subpage-bar {
-        max-width: 1400px;
-        margin: 14px auto 12px;
-        padding: 8px 14px;
-        background: rgba(9, 14, 28, 0.85);
-        backdrop-filter: blur(14px);
-        border: 1px solid rgba(252, 211, 77, 0.25);
-        border-radius: 14px;
+        width: min(1380px, 100%);
+        margin: 0.85rem auto 1rem;
+        padding: 0.6rem 0.85rem;
+        background: linear-gradient(90deg, rgba(9, 14, 28, 0.94), rgba(15, 23, 42, 0.9));
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(203, 213, 225, 0.2);
+        border-radius: 0.875rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
+        gap: 0.6rem;
         flex-wrap: wrap;
         font-family: 'Inter', sans-serif;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
       }
       .sp-tabs {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 0.4rem;
         flex-wrap: wrap;
       }
       .sp-tab {
-        background: transparent;
-        border: 1px solid transparent;
+        background: rgba(15, 23, 42, 0.78);
+        border: 1px solid rgba(203, 213, 225, 0.16);
         color: #cbd5e1;
-        padding: 6px 13px;
-        border-radius: 9px;
-        font-size: 12px;
+        padding: 0.45rem 0.8rem;
+        border-radius: 0.6rem;
+        font-size: 0.75rem;
         font-weight: 700;
         cursor: pointer;
-        transition: all 0.18s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.16s ease;
+        min-height: 2.35rem;
       }
       .sp-tab:hover {
         color: #ffffff;
-        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(252, 211, 77, 0.4);
+        background: rgba(30, 58, 138, 0.35);
       }
       .sp-tab.active {
         background: linear-gradient(135deg, #1e3a8a, #2563eb);
-        border-color: rgba(252, 211, 77, 0.45);
+        border-color: rgba(252, 211, 77, 0.6);
         color: #ffffff;
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
       }
 
-      /* 5. ANTI-CLUTTER CLEAN UI ENGINE */
-      body.mgc-clean-ui p {
+      /* 6. ANTI-CLUTTER CLEAN UI ENGINE */
+      body.mgc-clean-ui .portal-card p,
+      body.mgc-clean-ui .app-card p,
+      body.mgc-clean-ui .course-card p {
         display: -webkit-box;
-        -webkit-line-clamp: 1;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-      }
-      body.mgc-clean-ui .portal-card p,
-      body.mgc-clean-ui .card p,
-      body.mgc-clean-ui .glass-card p,
-      body.mgc-clean-ui .course-card p {
-        margin-bottom: 8px !important;
-        font-size: 12px !important;
-        opacity: 0.82;
+        margin-bottom: 0.5rem !important;
+        font-size: 0.78rem !important;
       }
       body.mgc-clean-ui .admin-bar,
-      body.mgc-clean-ui .hero-box,
-      body.mgc-clean-ui > header:not(#mgc-os-topbar) {
+      body.mgc-clean-ui .hero-box {
         display: none !important;
-      }
-      body.mgc-clean-ui .sub-strip {
-        padding: 10px 16px !important;
-        margin-bottom: 14px !important;
       }
 
       /* Command Palette Modal (Ctrl+K) */
@@ -573,64 +759,223 @@
         display: none;
         align-items: flex-start;
         justify-content: center;
-        padding: 80px 16px 20px;
+        padding: 4.5rem 0.875rem 1.25rem;
         font-family: 'Inter', sans-serif;
       }
       #os-cmd-backdrop.open { display: flex; }
       .os-cmd-modal {
         width: 100%;
-        max-width: 640px;
+        max-width: 40rem;
         background: #090e1c;
         border: 1px solid rgba(252, 211, 77, 0.35);
-        border-radius: 20px;
+        border-radius: 1.25rem;
         overflow: hidden;
         box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9);
       }
 
-      @media (max-width: 960px) {
-        .os-menus, .os-omnibox { display: none; }
+      /* ======================================================================
+         LESSON 5: CONTENT-DRIVEN MEDIA QUERIES & BREAKPOINTS
+         - Tablet Breakpoint (< 1024px): Labeled Hamburger Menu + 2-Column Grids
+         - Smartphone Breakpoint (< 768px): 1-Column Stack + Bottom Dock + 44px Touch Targets
+         ====================================================================== */
+      @media (max-width: 1024px) {
+        /* Switch from Desktop Dropdown Bar to Labeled Hamburger Off-Canvas Pattern */
+        .os-menus {
+          display: none !important;
+        }
+        .os-hamburger-btn {
+          display: inline-flex !important;
+        }
+
+        /* Reflow 4-column grids into balanced 2-column Tablet CSS Grids */
+        .app-grid,
+        .metric-row,
+        .kpi-grid,
+        .tools-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+
+        /* Reflow multi-pane desktop workspaces cleanly on Tablet */
+        .workspace,
+        .workspace-grid,
+        .main-grid,
+        .hero {
+          grid-template-columns: 1fr !important;
+          height: auto !important;
+        }
+        .sidebar-left,
+        .sidebar-right {
+          border-right: none !important;
+          border-left: none !important;
+          border-bottom: 1px solid rgba(203, 213, 225, 0.16) !important;
+        }
+        body {
+          height: auto !important;
+          overflow-y: auto !important;
+          display: block !important;
+        }
       }
-      @media (max-width: 768px) {
+
+      @media (max-width: 860px) {
+        .os-omnibox {
+          display: none !important;
+        }
+        .stepper,
+        .portal-grid,
+        .grid-3 {
+          grid-template-columns: 1fr !important;
+        }
+        .node.supervisor,
+        .node.challenger {
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+      }
+
+      @media (max-width: 767px) {
         body {
           padding-left: 0 !important;
-          padding-bottom: 68px !important;
+          padding-bottom: 4.75rem !important;
+          display: block !important;
+          height: auto !important;
+          overflow-y: auto !important;
         }
+
+        .shell, .container, main {
+          padding-left: 0.875rem !important;
+          padding-right: 0.875rem !important;
+        }
+
+        .os-brand span {
+          display: none;
+        }
+        .os-brand {
+          padding-right: 0.25rem;
+          border-right: none;
+        }
+
+        /* Lesson 4 & 5: Mobile Single-Column Vertical Stack */
+        .app-grid,
+        .metric-row,
+        .kpi-grid,
+        .tools-row,
+        .rail-grid,
+        .form-row,
+        #os-cmd-results {
+          grid-template-columns: 1fr !important;
+        }
+
+        .hub-toolbar,
+        .hero-banner,
+        .panel-header {
+          padding: 0.875rem 1rem !important;
+          flex-direction: column !important;
+          align-items: stretch !important;
+          gap: 0.75rem !important;
+        }
+
+        .toolbar-controls,
+        .entity-tabs,
+        .header-actions {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .fluent-select,
+        .entity-btn {
+          flex: 1 1 auto;
+          min-height: 2.75rem; /* 44px touch target on mobile */
+        }
+
+        .os-page-select {
+          max-width: 9.25rem;
+          font-size: 0.7rem;
+          min-height: 2.5rem;
+          padding: 0.3rem 0.5rem;
+        }
+
+        #mgc-subpage-bar {
+          margin: 0.65rem auto;
+          padding: 0.6rem 0.75rem;
+        }
+        .sp-tabs {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          width: 100%;
+          padding-bottom: 0.2rem;
+          -webkit-overflow-scrolling: touch;
+        }
+        .sp-tab {
+          white-space: nowrap;
+          flex-shrink: 0;
+          min-height: 2.6rem;
+        }
+
+        /* Canvas Left Rail converts into Fixed Bottom Touch Dock on Mobile */
         #mgc-os-rail {
           top: auto;
           bottom: 0;
           left: 0;
           right: 0;
           width: 100%;
-          height: 60px;
+          height: 3.875rem;
           flex-direction: row;
-          padding: 0 8px;
+          padding: 0 0.35rem;
           border-right: none;
-          border-top: 1px solid rgba(252, 211, 77, 0.25);
+          border-top: 1px solid rgba(252, 211, 77, 0.3);
+          background: rgba(2, 6, 23, 0.98);
         }
         .rail-group {
           flex-direction: row;
           justify-content: space-around;
         }
         .rail-group.rail-bottom { display: none; }
+        .rail-item {
+          width: auto;
+          min-width: 3rem;
+          min-height: 2.75rem;
+          padding: 0.35rem 0.25rem;
+        }
         .rail-item.active::before { display: none; }
+      }
+
+      /* Accessibility: Reduced Motion & High-Contrast Forced Colors (Lessons 3–6) */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+
+      @media (forced-colors: active) {
+        #mgc-os-topbar,
+        #mgc-os-rail,
+        .os-dropdown-panel,
+        #os-offcanvas-drawer {
+          border: 1px solid CanvasText;
+        }
       }
     `;
     document.head.appendChild(style);
 
-    // Group pages by category for Microsoft Fluent Top Dropdowns
+    // Group pages by category for Desktop Dropdowns & Mobile/Tablet Off-Canvas Drawer
     const categories = ['Command & Auth', 'Apps & Labs', 'Canvas Academy', 'Commerce & Gov'];
     const menusHtml = categories.map(cat => {
       const items = pages.filter(p => p.cat === cat);
       const isCatActive = items.some(p => p.file.toLowerCase() === currentFile);
       return `
         <div class="os-menu-wrap" data-os-menu>
-          <button type="button" class="os-menu-trigger" style="${isCatActive ? 'color:#fcd34d;' : ''}">
+          <button type="button" class="os-menu-trigger" aria-expanded="false" style="${isCatActive ? 'color:#fcd34d;' : ''}">
             <span>${cat}</span>
             <span class="os-caret">▾</span>
           </button>
-          <div class="os-dropdown-panel">
+          <div class="os-dropdown-panel" role="menu">
             ${items.map(item => `
-              <a href="${item.file}" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
+              <a href="${item.file}" role="menuitem" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
                 <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
                 <span>
                   <span class="os-drop-title">${item.full}</span>
@@ -643,16 +988,40 @@
       `;
     }).join('');
 
+    const drawerCategoriesHtml = categories.map(cat => {
+      const items = pages.filter(p => p.cat === cat);
+      return `
+        <div class="os-drawer-cat">
+          <div class="os-drawer-cat-title">${cat}</div>
+          ${items.map(item => `
+            <a href="${item.file}" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
+              <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
+              <span>
+                <span class="os-drop-title">${item.full}</span>
+                <span class="os-drop-sub">${item.tag}</span>
+              </span>
+            </a>
+          `).join('')}
+        </div>
+      `;
+    }).join('');
+
     const railItems = pages.filter(p => p.rail);
 
     const shellWrapper = document.createElement('div');
     shellWrapper.id = 'mgc-os-shell';
     shellWrapper.innerHTML = `
       <!-- 1. TOP BAR -->
-      <header id="mgc-os-topbar">
+      <header id="mgc-os-topbar" role="banner">
         <div class="os-left">
-          <button type="button" class="os-waffle-btn" id="os-waffle-trigger" title="Google-Style 9-Dot App Launcher">
-            <svg class="os-waffle-svg" viewBox="0 0 24 24">
+          <!-- Lesson 5 Pattern 2 & 3: Labeled Hamburger Button for Tablet/Mobile (<1024px) -->
+          <button type="button" class="os-hamburger-btn" id="os-hamburger-trigger" aria-expanded="false" aria-controls="os-offcanvas-drawer" title="Open Navigation Drawer">
+            <span aria-hidden="true">☰</span>
+            <span>Menu</span>
+          </button>
+
+          <button type="button" class="os-waffle-btn" id="os-waffle-trigger" aria-label="All 16 Workspace Apps" title="Google-Style 9-Dot App Launcher">
+            <svg class="os-waffle-svg" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM16,6c0,1.1 0.9,2 2,2s2,-0.9 2,-2 -0.9,-2 -2,-2 -2,0.9 -2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z"/>
             </svg>
           </button>
@@ -662,26 +1031,26 @@
             <span>MGC WORKSPACE</span>
           </a>
 
-          <!-- Microsoft Fluent Categorized Dropdown Menus -->
-          <div class="os-menus">
+          <!-- Lesson 5 Pattern 1: Desktop Categorized Dropdown Navigation (>=1024px) -->
+          <nav class="os-menus" aria-label="Primary Workspace Categories">
             ${menusHtml}
-          </div>
+          </nav>
         </div>
 
         <!-- Google Omnibox Search Trigger -->
         <div class="os-omnibox">
-          <button type="button" class="os-search-btn" id="os-omnibox-trigger">
+          <button type="button" class="os-search-btn" id="os-omnibox-trigger" aria-label="Search portals, courses, tools">
             <span>🔍 Search portals, courses, tools...</span>
             <span class="os-kbd">⌘K</span>
           </button>
         </div>
 
-        <!-- Right: Sub-Page Jump Dropdown + LinkedIn Profile Menu -->
+        <!-- Right: Section Jump Dropdown + LinkedIn Profile Menu -->
         <div class="os-right">
-          <select id="os-subpage-select" class="os-page-select" title="Jump to Page Section" style="display:none;"></select>
+          <select id="os-subpage-select" class="os-page-select" aria-label="Jump to Page Section" title="Filter or Jump to Page Section" style="display:none;"></select>
 
           <div class="os-menu-wrap" data-os-menu>
-            <button type="button" class="os-profile-btn">
+            <button type="button" class="os-profile-btn" aria-expanded="false">
               <span class="os-avatar">MK</span>
               <span>Me</span>
               <span class="os-caret">▾</span>
@@ -717,7 +1086,29 @@
         </div>
       </header>
 
-      <!-- 2. GOOGLE 9-DOT WAFFLE APP LAUNCHER POPOVER -->
+      <!-- 2. LESSON 5 PATTERN 2 & 3: OFF-CANVAS SLIDE-OUT NAVIGATION DRAWER (<1024px) -->
+      <div id="os-offcanvas-scrim" aria-hidden="true"></div>
+      <aside id="os-offcanvas-drawer" aria-label="Mobile & Tablet Workspace Navigation">
+        <div class="os-drawer-hdr">
+          <div style="display:flex;align-items:center;gap:0.55rem;">
+            <img src="assets/mgc-logo.png" alt="MGC" style="height:28px;width:auto;border-radius:6px;border:1px solid rgba(252,211,77,0.45);" onerror="this.style.display='none'" />
+            <div>
+              <div style="font-size:0.82rem;font-weight:900;color:#fff;letter-spacing:0.04em;">MGC WORKSPACE</div>
+              <div style="font-size:0.65rem;color:#fcd34d;font-weight:700;">16 Enterprise Portals</div>
+            </div>
+          </div>
+          <button type="button" class="os-drawer-close" id="os-drawer-close-btn" aria-label="Close Navigation Drawer">✕</button>
+        </div>
+        <div class="os-drawer-body">
+          <button type="button" id="os-drawer-search-btn" style="width:100%;min-height:2.75rem;margin-bottom:0.9rem;background:rgba(30,58,138,0.35);border:1px solid rgba(252,211,77,0.35);border-radius:0.65rem;color:#f8fafc;font-weight:700;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 0.85rem;">
+            <span>🔍 Quick Search All Portals</span>
+            <span class="os-kbd">⌘K</span>
+          </button>
+          ${drawerCategoriesHtml}
+        </div>
+      </aside>
+
+      <!-- 3. GOOGLE 9-DOT WAFFLE APP LAUNCHER POPOVER -->
       <div id="os-waffle-popover">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px;">
           <span style="font-size:11px;font-weight:800;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;">All 16 Workspace Apps</span>
@@ -733,8 +1124,8 @@
         </div>
       </div>
 
-      <!-- 3. INSTRUCTURE CANVAS LEFT ICON RAIL -->
-      <aside id="mgc-os-rail">
+      <!-- 4. INSTRUCTURE CANVAS LEFT ICON RAIL -->
+      <aside id="mgc-os-rail" aria-label="Quick Launch Dock">
         <div class="rail-group">
           ${railItems.map(p => `
             <a href="${p.file}" class="rail-item ${p.file.toLowerCase() === currentFile ? 'active' : ''}" title="${p.full}">
@@ -751,13 +1142,13 @@
         </div>
       </aside>
 
-      <!-- 4. OMNIBOX SEARCH MODAL (Ctrl+K) -->
-      <div id="os-cmd-backdrop">
+      <!-- 5. OMNIBOX SEARCH MODAL (Ctrl+K) -->
+      <div id="os-cmd-backdrop" role="dialog" aria-modal="true" aria-label="Search Workspace Portals">
         <div class="os-cmd-modal">
           <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;gap:10px;align-items:center;">
             <span>🔍</span>
             <input id="os-cmd-input" type="text" placeholder="Type a portal, course, or tool name..." style="flex:1;background:transparent;border:none;color:#fff;font-size:14px;outline:none;" />
-            <button type="button" id="os-cmd-close" style="background:rgba(255,255,255,0.08);border:none;color:#cbd5e1;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">ESC</button>
+            <button type="button" id="os-cmd-close" style="background:rgba(255,255,255,0.08);border:none;color:#cbd5e1;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;min-height:36px;">ESC</button>
           </div>
           <div id="os-cmd-results" style="max-height:360px;overflow-y:auto;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
         </div>
@@ -766,19 +1157,52 @@
 
     document.body.prepend(shellWrapper);
 
-    // Wire Dropdown Menus & Waffle Popover
+    // Wire Dropdown Menus, Waffle Popover & Off-Canvas Hamburger Drawer
     const waffleBtn = document.getElementById('os-waffle-trigger');
     const wafflePop = document.getElementById('os-waffle-popover');
     const menuWraps = document.querySelectorAll('[data-os-menu]');
+    const hamburgerBtn = document.getElementById('os-hamburger-trigger');
+    const offcanvasDrawer = document.getElementById('os-offcanvas-drawer');
+    const offcanvasScrim = document.getElementById('os-offcanvas-scrim');
+    const drawerCloseBtn = document.getElementById('os-drawer-close-btn');
+
+    function closeOffcanvasDrawer() {
+      offcanvasDrawer.classList.remove('open');
+      offcanvasScrim.classList.remove('open');
+      hamburgerBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    function openOffcanvasDrawer() {
+      closeAllPopovers();
+      offcanvasDrawer.classList.add('open');
+      offcanvasScrim.classList.add('open');
+      hamburgerBtn.setAttribute('aria-expanded', 'true');
+    }
 
     function closeAllPopovers() {
       wafflePop.classList.remove('open');
       waffleBtn.classList.remove('active');
-      menuWraps.forEach(w => w.classList.remove('open'));
+      menuWraps.forEach(w => {
+        w.classList.remove('open');
+        const btn = w.querySelector('button');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
     }
+
+    hamburgerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (offcanvasDrawer.classList.contains('open')) {
+        closeOffcanvasDrawer();
+      } else {
+        openOffcanvasDrawer();
+      }
+    });
+    drawerCloseBtn.addEventListener('click', closeOffcanvasDrawer);
+    offcanvasScrim.addEventListener('click', closeOffcanvasDrawer);
 
     waffleBtn.addEventListener('click', (e) => {
       e.stopPropagation();
+      closeOffcanvasDrawer();
       const wasOpen = wafflePop.classList.contains('open');
       closeAllPopovers();
       if (!wasOpen) {
@@ -791,14 +1215,19 @@
       const btn = wrap.querySelector('button');
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        closeOffcanvasDrawer();
         const wasOpen = wrap.classList.contains('open');
         closeAllPopovers();
-        if (!wasOpen) wrap.classList.add('open');
+        if (!wasOpen) {
+          wrap.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
       });
     });
 
     document.addEventListener('click', () => closeAllPopovers());
     wafflePop.addEventListener('click', e => e.stopPropagation());
+    offcanvasDrawer.addEventListener('click', e => e.stopPropagation());
 
     // Wire Minimalist UI Toggle
     document.getElementById('os-toggle-clean').addEventListener('click', (e) => {
@@ -830,6 +1259,7 @@
 
     function openCmd() {
       closeAllPopovers();
+      closeOffcanvasDrawer();
       cmdBackdrop.classList.add('open');
       cmdInput.value = '';
       renderCmdList('');
@@ -838,6 +1268,7 @@
 
     document.getElementById('os-omnibox-trigger').addEventListener('click', openCmd);
     document.getElementById('rail-cmd-btn').addEventListener('click', openCmd);
+    document.getElementById('os-drawer-search-btn').addEventListener('click', openCmd);
     document.getElementById('os-cmd-close').addEventListener('click', () => cmdBackdrop.classList.remove('open'));
     cmdBackdrop.addEventListener('click', (e) => { if (e.target === cmdBackdrop) cmdBackdrop.classList.remove('open'); });
     cmdInput.addEventListener('input', e => renderCmdList(e.target.value));
@@ -848,17 +1279,43 @@
         openCmd();
       } else if (e.key === 'Escape') {
         closeAllPopovers();
+        closeOffcanvasDrawer();
         cmdBackdrop.classList.remove('open');
       }
     });
 
-    setupSubPagePagination();
+    enhanceResponsiveTablesAndMedia();
+    setupSectionNavigation();
   }
 
-  function setupSubPagePagination() {
+  /**
+   * Lesson 2 & 5: Ensure wide data tables wrap in a flexible horizontal scroll container
+   * so they never break mobile/tablet layouts or force horizontal page scrolling.
+   */
+  function enhanceResponsiveTablesAndMedia() {
+    const tables = document.querySelectorAll('table');
+    tables.forEach(tbl => {
+      const parent = tbl.parentElement;
+      if (!parent) return;
+      const cs = window.getComputedStyle(parent);
+      if (cs.overflowX !== 'auto' && cs.overflowX !== 'scroll' && !parent.classList.contains('mgc-table-scroll')) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mgc-table-scroll';
+        parent.insertBefore(wrapper, tbl);
+        wrapper.appendChild(tbl);
+      }
+    });
+  }
+
+  /**
+   * Clean Non-Learning Section Filter & Quick Jump Bar
+   * - Never step-gates 2D CSS Grid workspaces (e.g. agent-workflow-studio.html, onboarding-portal.html).
+   * - Defaults to Full Responsive Page View ('all') on non-learning portals while allowing instant section filtering.
+   */
+  function setupSectionNavigation() {
     const selectEl = document.getElementById('os-subpage-select');
 
-    // Case A: Page uses .workspace-tabs / .tab-pane (e.g. saas-apps-and-lms-showcase.html)
+    // Case A: Page uses .workspace-tabs / .ws-tab (e.g. elearning-upskilling-hub.html & saas-apps-and-lms-showcase.html)
     const wsTabs = Array.from(document.querySelectorAll('.workspace-tabs .ws-tab'));
     if (wsTabs.length > 1) {
       selectEl.style.display = 'inline-block';
@@ -873,14 +1330,17 @@
       return;
     }
 
-    // Case B: Page uses multiple <section> elements
-    const sections = Array.from(document.querySelectorAll('main > section, .shell > section, body > section, [data-subpage]'));
+    // Case B: Detect top-level vertical <section> blocks on non-learning internal sites
+    // (Do NOT split 2D CSS Grid workspaces like .workspace > div or .main-grid > .card)
+    const sections = Array.from(document.querySelectorAll('main > section, .shell > section, .container > section, body > section, [data-subpage]'));
     if (sections.length <= 1) return;
 
     selectEl.style.display = 'inline-block';
 
     const bar = document.createElement('div');
     bar.id = 'mgc-subpage-bar';
+    bar.setAttribute('role', 'region');
+    bar.setAttribute('aria-label', 'Page Section Filter');
 
     const tabsWrap = document.createElement('div');
     tabsWrap.className = 'sp-tabs';
@@ -888,18 +1348,41 @@
     const labels = sections.map((sec, idx) => {
       const explicit = sec.getAttribute('data-subpage-title');
       if (explicit) return explicit;
-      const h = sec.querySelector('h1, h2, h3');
+      const h = sec.querySelector('h1, h2, h3, .section-hdr, .panel-title, .kpi-label, .eyebrow');
       if (h) {
-        const txt = h.textContent.trim().replace(/\s+/g, ' ');
+        const txt = h.textContent.trim().replace(/\s+/g, ' ').replace(/^[0-9]+\.\s*/, '');
         return txt.length > 26 ? txt.slice(0, 24) + '…' : txt;
       }
-      return `Page ${idx + 1}`;
+      return `Section ${idx + 1}`;
     });
 
-    selectEl.innerHTML = labels.map((lbl, i) => `<option value="${i}">📄 ${i + 1}. ${lbl}</option>`).join('') +
-      `<option value="all">📑 Show All Sections</option>`;
+    selectEl.innerHTML = `<option value="all">📑 All Sections (${sections.length})</option>` +
+      labels.map((lbl, i) => `<option value="${i}">§ ${i + 1}. ${lbl}</option>`).join('');
 
-    function activateSubPage(targetIdx) {
+    let activeView = 'all';
+
+    function renderSectionFilterPills() {
+      tabsWrap.innerHTML = '';
+
+      const allBtn = document.createElement('button');
+      allBtn.type = 'button';
+      allBtn.className = 'sp-tab' + (activeView === 'all' ? ' active' : '');
+      allBtn.textContent = `📑 All Sections (${sections.length})`;
+      allBtn.addEventListener('click', () => setSectionView('all'));
+      tabsWrap.appendChild(allBtn);
+
+      labels.forEach((lbl, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'sp-tab' + (String(idx) === String(activeView) ? ' active' : '');
+        btn.textContent = `${idx + 1}. ${lbl}`;
+        btn.addEventListener('click', () => setSectionView(idx));
+        tabsWrap.appendChild(btn);
+      });
+    }
+
+    function setSectionView(targetIdx) {
+      activeView = targetIdx;
       sections.forEach((sec, idx) => {
         if (targetIdx === 'all' || idx === Number(targetIdx)) {
           sec.style.display = '';
@@ -907,40 +1390,21 @@
           sec.style.display = 'none';
         }
       });
-      Array.from(tabsWrap.children).forEach((btn, idx) => {
-        btn.classList.toggle('active', String(idx) === String(targetIdx));
-      });
+      renderSectionFilterPills();
       selectEl.value = String(targetIdx);
+      window.dispatchEvent(new CustomEvent('mgc-subpage-changed', { detail: { index: targetIdx } }));
     }
 
-    labels.forEach((lbl, idx) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'sp-tab' + (idx === 0 ? ' active' : '');
-      btn.textContent = `${idx + 1}. ${lbl}`;
-      btn.addEventListener('click', () => activateSubPage(idx));
-      tabsWrap.appendChild(btn);
-    });
-
-    const rightControls = document.createElement('div');
-    rightControls.style.cssText = 'display:flex;align-items:center;gap:6px;';
-    const allBtn = document.createElement('button');
-    allBtn.type = 'button';
-    allBtn.className = 'sp-tab';
-    allBtn.textContent = '📑 All';
-    allBtn.addEventListener('click', () => activateSubPage('all'));
-    rightControls.appendChild(allBtn);
-
     bar.appendChild(tabsWrap);
-    bar.appendChild(rightControls);
 
     const firstSection = sections[0];
     if (firstSection && firstSection.parentNode) {
       firstSection.parentNode.insertBefore(bar, firstSection);
     }
 
-    selectEl.addEventListener('change', (e) => activateSubPage(e.target.value));
-    activateSubPage(0);
+    selectEl.addEventListener('change', (e) => setSectionView(e.target.value));
+    // Default to full responsive layout ('all') so non-learning sites are never step-gated
+    setSectionView('all');
   }
 
   if (document.readyState === 'loading') {

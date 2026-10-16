@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -18,30 +18,30 @@
       --muted: #94a3b8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
-    body { background: var(--bg); color: var(--text); display: grid; grid-template-rows: 64px 1fr; height: 100vh; overflow: hidden; }
-    header {
-      background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 24px;
-      display: flex; justify-content: space-between; align-items: center;
+    body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+    .studio-toolbar {
+      background: var(--panel); border-bottom: 1px solid var(--border); padding: 0.85rem 1.5rem;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem;
     }
-    .title { font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+    .title { font-size: clamp(0.95rem, 1.5vw, 1.1rem); font-weight: 800; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
     .title span.badge {
       font-size: 0.72rem; padding: 4px 10px; border-radius: 999px;
       background: rgba(16, 185, 129, 0.15); border: 1px solid var(--emerald); color: var(--emerald);
     }
-    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .header-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     .btn {
-      padding: 8px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700;
+      padding: 0.55rem 0.95rem; min-height: 2.5rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
       cursor: pointer; border: 1px solid var(--cyan); background: rgba(56, 189, 248, 0.12); color: var(--cyan);
-      text-decoration: none; transition: all 0.18s;
+      text-decoration: none; transition: all 0.18s; display: inline-flex; align-items: center;
     }
     .btn:hover, .btn.active { background: var(--cyan); color: #020617; }
     .btn.gold { border-color: var(--gold); color: var(--gold); background: rgba(245, 158, 11, 0.12); }
     .btn.gold:hover { background: var(--gold); color: #020617; }
 
-    /* Workspace Layout */
-    .workspace { display: grid; grid-template-columns: 310px 1fr 380px; height: calc(100vh - 64px); }
+    /* Workspace 2D CSS Grid Layout (3 Columns Desktop -> 1 Column Tablet/Mobile) */
+    .workspace { display: grid; grid-template-columns: 300px minmax(0, 1fr) 360px; min-height: calc(100vh - 118px); }
     .sidebar-left, .sidebar-right {
-      background: var(--panel); border-right: 1px solid var(--border); padding: 18px; overflow-y: auto;
+      background: var(--panel); border-right: 1px solid var(--border); padding: 1.15rem; overflow-y: auto;
     }
     .sidebar-right { border-right: none; border-left: 1px solid var(--border); }
     .section-hdr {
@@ -65,25 +65,25 @@
       background-color: #060a15;
       background-image: radial-gradient(rgba(56, 189, 248, 0.16) 1px, transparent 1px);
       background-size: 24px 24px;
-      padding: 28px; overflow: auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: clamp(1rem, 2.5vw, 1.75rem); overflow: auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
     .flow-container {
       display: flex; flex-direction: column; align-items: center; gap: 22px; width: 100%; max-width: 860px;
     }
     .node {
       background: var(--card); border: 2px solid var(--border); border-radius: 12px;
-      padding: 14px 20px; min-width: 240px; text-align: center; cursor: pointer;
+      padding: 14px 20px; width: min(100%, 420px); text-align: center; cursor: pointer;
       transition: all 0.22s; position: relative; box-shadow: 0 12px 28px rgba(0,0,0,0.45);
     }
     .node:hover, .node.running { border-color: var(--cyan); transform: translateY(-2px); box-shadow: 0 0 22px rgba(56,189,248,0.35); }
-    .node.supervisor { border-color: var(--cyan); width: 420px; }
-    .node.challenger { border-color: var(--emerald); width: 420px; }
+    .node.supervisor { border-color: var(--cyan); width: min(100%, 420px); }
+    .node.challenger { border-color: var(--emerald); width: min(100%, 420px); }
     .node .node-type { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); font-weight: 700; }
     .node .node-title { font-size: 0.96rem; font-weight: 700; margin: 3px 0; }
     .node .node-meta { font-size: 0.74rem; color: var(--muted); }
 
-    .tools-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; }
-    .tools-row .node { min-width: 0; padding: 12px; border-color: rgba(168, 85, 247, 0.45); }
+    .tools-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; width: 100%; }
+    .tools-row .node { width: 100%; min-width: 0; padding: 12px; border-color: rgba(168, 85, 247, 0.45); }
     .connector { width: 2px; height: 20px; background: var(--cyan); }
 
     /* Right Telemetry & Execution Log */
@@ -102,7 +102,7 @@
 <body>
   <script src="mgc-guided-security.js"></script>
 
-  <header>
+  <div class="studio-toolbar">
     <div class="title">
       <span>MGC VISUAL CLOUD AGENT &amp; LANGGRAPH WORKFLOW STUDIO</span>
       <span class="badge">SCALE-TO-ZERO ($0.00 IDLE)</span>
@@ -112,7 +112,7 @@
       <a href="index.html" class="btn gold">← MGC Production Site</a>
       <a href="vr-command.html" class="btn">360° VR Command</a>
     </div>
-  </header>
+  </div>
 
   <div class="workspace">
     <!-- Left Sidebar: Google, Microsoft & Local Agent Housing -->

@@ -569,7 +569,13 @@
             initExternalMap();
             renderExternalRss();
             loadWebAppCase(0);
+            window.addEventListener('mgc-subpage-changed', () => {
+                if (typeof extMap !== 'undefined' && extMap) {
+                    setTimeout(() => extMap.invalidateSize(), 120);
+                }
+            });
         });
     </script>
+    <script src="mgc-guided-security.js"></script>
 </body>
 </html>
