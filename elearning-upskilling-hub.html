@@ -11,96 +11,90 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root {
-      --obsidian: #020617;
-      --slate-navy: #0f172a;
-      --navy-card: rgba(15, 23, 42, 0.92);
-      --gold: #f59e0b;
-      --gold-bright: #fcd34d;
-      --crimson: #dc2626;
-      --cobalt: #2563eb;
-      --emerald: #16a34a;
-      --silver: #cbd5e1;
-      --muted: #94a3b8;
-      --border: rgba(148, 163, 184, 0.2);
-      --border-gold: rgba(245, 158, 11, 0.45);
+      --obsidian: #09090B;
+      --slate-navy: #141519;
+      --navy-card: rgba(20, 21, 25, 0.96);
+      --gold: #D4D4D8;
+      --gold-bright: #FFFFFF;
+      --crimson: #3F3F46;
+      --cobalt: #27272A;
+      --emerald: #FFFFFF;
+      --silver: #D4D4D8;
+      --muted: #A1A1AA;
+      --border: rgba(161, 161, 170, 0.25);
+      --border-gold: rgba(255, 255, 255, 0.42);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background:
-        radial-gradient(circle at 12% 14%, rgba(37, 99, 235, 0.16), transparent 40%),
-        radial-gradient(circle at 88% 12%, rgba(220, 38, 38, 0.12), transparent 36%),
-        radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.1), transparent 45%),
+        radial-gradient(circle at 15% 12%, rgba(161, 161, 170, 0.10), transparent 42%),
+        radial-gradient(circle at 85% 15%, rgba(82, 82, 91, 0.14), transparent 40%),
         var(--obsidian);
-      color: #ffffff;
+      color: #FAFAFA;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
     .container {
-      max-width: 1460px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 18px 22px 80px;
+      padding: 12px 18px 64px;
     }
 
-    /* Executive Header Bar */
+    /* Compact 1-Line Monochrome MGC Canvas Command Bar */
     .exec-strip {
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: 14px; padding: 15px 20px; border-radius: 18px;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.96));
-      border: 1px solid var(--border-gold);
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
-      margin-bottom: 16px; position: relative; overflow: hidden;
+      gap: 10px; padding: 10px 16px; border-radius: 12px;
+      background: linear-gradient(135deg, #09090B, #18181B);
+      border: 1px solid rgba(161, 161, 170, 0.38);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+      margin-bottom: 12px; position: relative; overflow: hidden;
     }
-    .exec-strip::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--crimson), var(--gold-bright), var(--cobalt), var(--emerald));
-    }
-    .exec-left { display: flex; align-items: center; gap: 14px; }
+    .exec-left { display: flex; align-items: center; gap: 10px; }
     .exec-logo {
-      width: 44px; height: 44px; border-radius: 11px;
-      object-fit: contain; background: #020617;
-      border: 1.5px solid var(--gold-bright); padding: 3px;
+      width: 34px; height: 34px; border-radius: 8px;
+      object-fit: contain; background: #09090B;
+      border: 1px solid #A1A1AA; padding: 2px;
     }
     .exec-eyebrow {
-      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.14em; color: var(--gold-bright); margin-bottom: 2px;
+      font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.12em; color: #A1A1AA;
     }
     .exec-title {
-      font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 900;
-      letter-spacing: -0.02em; color: #ffffff;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 900;
+      letter-spacing: -0.01em; color: #FFFFFF;
     }
     .exec-right { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
     .stat-pill {
-      padding: 6px 11px; border-radius: 999px;
-      background: rgba(2, 6, 23, 0.85); border: 1px solid var(--border);
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
-      color: var(--silver); display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border-radius: 999px;
+      background: #09090B; border: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+      color: var(--silver); display: inline-flex; align-items: center; gap: 5px;
     }
     .quick-select {
-      background: #020617; color: var(--gold-bright);
-      border: 1px solid var(--border-gold); border-radius: 10px;
-      padding: 7px 11px; font-size: 11.5px; font-weight: 800; cursor: pointer;
+      background: #09090B; color: #FFFFFF;
+      border: 1px solid #52525B; border-radius: 8px;
+      padding: 6px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer;
     }
 
-    /* Main Workspace Tabs */
+    /* Compact 1-Line Workspace Pills */
     .workspace-tabs {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      margin-bottom: 16px; padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 6px;
+      align-items: center;
     }
     .ws-tab {
-      background: rgba(15, 23, 42, 0.85); color: var(--silver);
-      border: 1px solid var(--border); border-radius: 11px;
-      padding: 10px 15px; font-size: 12px; font-weight: 800;
-      cursor: pointer; transition: all 0.2s;
-      display: inline-flex; align-items: center; gap: 8px;
+      background: #141519; color: #D4D4D8;
+      border: 1px solid #3F3F46; border-radius: 8px;
+      padding: 6px 11px; font-size: 11.5px; font-weight: 700;
+      cursor: pointer; transition: all 0.18s;
+      display: inline-flex; align-items: center; gap: 6px;
     }
-    .ws-tab:hover { border-color: var(--gold-bright); color: #ffffff; }
+    .ws-tab:hover { border-color: #FFFFFF; color: #FFFFFF; }
     .ws-tab.active {
-      background: linear-gradient(135deg, var(--cobalt), #1d4ed8);
-      color: #ffffff; border-color: #60a5fa;
-      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+      background: #FFFFFF;
+      color: #09090B; border-color: #FFFFFF;
+      font-weight: 900;
     }
 
     .tab-pane { display: none; }
@@ -325,23 +319,23 @@
       align-items: center; justify-content: center; gap: 6px;
       border: 1px solid transparent; transition: all 0.16s;
     }
-    .btn-gold { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #020617; }
-    .btn-blue { background: linear-gradient(135deg, var(--cobalt), #1d4ed8); color: #ffffff; border-color: #60a5fa; }
-    .btn-emerald { background: linear-gradient(135deg, #22c55e, #16a34a); color: #022c22; }
-    .btn-crimson { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; }
-    .btn-ghost { background: rgba(2, 6, 23, 0.8); color: var(--silver); border-color: var(--border); }
-    .btn-ghost:hover { border-color: var(--gold-bright); color: #ffffff; }
+    .btn-gold { background: #FFFFFF; color: #09090B; border-color: #FFFFFF; }
+    .btn-blue { background: #27272A; color: #FFFFFF; border-color: #71717A; }
+    .btn-emerald { background: #FFFFFF; color: #09090B; border-color: #D4D4D8; }
+    .btn-crimson { background: #18181B; color: #FFFFFF; border-color: #A1A1AA; }
+    .btn-ghost { background: #09090B; color: #D4D4D8; border-color: #3F3F46; }
+    .btn-ghost:hover { border-color: #FFFFFF; color: #FFFFFF; }
 
     .quiz-option {
       width: 100%; text-align: left; padding: 12px 15px;
-      border-radius: 11px; background: rgba(2, 6, 23, 0.85);
+      border-radius: 11px; background: #09090B;
       border: 1px solid var(--border); color: #ffffff;
       font-size: 12.5px; font-weight: 600; cursor: pointer;
       margin-bottom: 8px; display: block; transition: all 0.15s;
     }
-    .quiz-option:hover { border-color: var(--gold-bright); background: rgba(30, 58, 138, 0.3); }
-    .quiz-option.correct { border-color: #22c55e; background: rgba(22, 163, 74, 0.22); color: #86efac; }
-    .quiz-option.wrong { border-color: var(--crimson); background: rgba(220, 38, 38, 0.2); color: #fca5a5; }
+    .quiz-option:hover { border-color: #FFFFFF; background: #18181B; }
+    .quiz-option.correct { border-color: #FFFFFF; background: #27272A; color: #FFFFFF; }
+    .quiz-option.wrong { border-color: #71717A; background: #18181B; color: #A1A1AA; }
 
     table.cost-table { width: 100%; border-collapse: collapse; font-size: 12px; }
     table.cost-table th, table.cost-table td {
@@ -356,17 +350,18 @@
 
     /* ===================================================================
        RUSTICI ENGINE / ARTICULATE RISE 360 MODERN SCORM PLAYER ARCHITECTURE
+       (Monochrome Gray, Black & White MGC Edition)
        =================================================================== */
     .scorm-player-shell {
       display: grid;
-      grid-template-columns: 295px 1fr;
-      min-height: 760px;
-      border-radius: 18px;
+      grid-template-columns: 275px 1fr;
+      min-height: 720px;
+      border-radius: 14px;
       overflow: hidden;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(161, 161, 170, 0.42);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
       background: #ffffff;
-      color: #14211b;
+      color: #09090B;
       transition: grid-template-columns 0.25s ease;
     }
     .scorm-player-shell.sidebar-collapsed {
@@ -379,22 +374,23 @@
       border-right: none;
     }
 
-    /* Left SCORM Sidebar (Emerald Rise Header + Clean White Outline List) */
+    /* Left SCORM Sidebar (Monochrome Obsidian Black Header + Clean Gray/White Outline List) */
     .scorm-sidebar {
-      background: #f4f5f7;
-      border-right: 1px solid #d8dee4;
+      background: #F4F4F5;
+      border-right: 1px solid #D4D4D8;
       display: flex;
       flex-direction: column;
-      height: 820px;
+      height: 780px;
       overflow: hidden;
     }
     .scorm-sidebar-brand {
-      background: #12b84b;
-      color: #06210f;
-      padding: 20px 18px 16px;
+      background: linear-gradient(135deg, #09090B, #18181B);
+      color: #FFFFFF;
+      padding: 16px 16px 14px;
+      border-bottom: 1px solid #3F3F46;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       flex-shrink: 0;
     }
     .scorm-brand-top {
@@ -404,83 +400,83 @@
     }
     .scorm-course-title {
       font-family: 'Inter', sans-serif;
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 800;
       line-height: 1.28;
-      color: #04140a;
+      color: #FFFFFF;
       letter-spacing: -0.01em;
     }
     .scorm-progress-meta {
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #052612;
+      color: #A1A1AA;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .scorm-progress-track {
       width: 100%;
-      height: 5px;
+      height: 4px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.24);
+      background: #27272A;
       overflow: hidden;
     }
     .scorm-progress-fill {
       height: 100%;
-      background: #ffffff;
+      background: #FFFFFF;
       border-radius: 999px;
       transition: width 0.35s ease;
     }
     .scorm-filter-box {
-      padding: 10px 12px;
-      background: #eaedf1;
-      border-bottom: 1px solid #d1d5db;
+      padding: 8px 10px;
+      background: #E4E4E7;
+      border-bottom: 1px solid #D4D4D8;
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
     .scorm-filter-select, .scorm-filter-input {
       width: 100%;
-      padding: 7px 10px;
-      border-radius: 7px;
-      border: 1px solid #cbd5e1;
+      padding: 6px 9px;
+      border-radius: 6px;
+      border: 1px solid #A1A1AA;
       background: #ffffff;
-      color: #0f172a;
-      font-size: 11.5px;
+      color: #09090B;
+      font-size: 11px;
       font-weight: 600;
     }
     .scorm-outline-scroll {
       flex: 1;
       overflow-y: auto;
-      background: #f4f5f7;
+      background: #F4F4F5;
     }
-    .scorm-outline-scroll::-webkit-scrollbar { width: 6px; }
-    .scorm-outline-scroll::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 999px; }
+    .scorm-outline-scroll::-webkit-scrollbar { width: 5px; }
+    .scorm-outline-scroll::-webkit-scrollbar-thumb { background: #71717A; border-radius: 999px; }
 
     .scorm-lesson-item {
       width: 100%;
       text-align: left;
-      padding: 14px 16px;
-      background: #f4f5f7;
+      padding: 11px 14px;
+      background: #F4F4F5;
       border: none;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid #E4E4E7;
       border-left: 4px solid transparent;
       cursor: pointer;
       transition: all 0.16s ease;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      color: #1e293b;
+      gap: 4px;
+      color: #18181B;
     }
     .scorm-lesson-item:hover {
       background: #ffffff;
     }
     .scorm-lesson-item.active {
       background: #ffffff;
-      border-left-color: #12b84b;
-      box-shadow: inset 0 0 0 1px rgba(18, 184, 75, 0.08);
+      border-left-color: #09090B;
+      box-shadow: inset 0 0 0 1px rgba(9, 9, 11, 0.08);
     }
     .scorm-lesson-row-top {
       display: flex;
@@ -489,28 +485,28 @@
       width: 100%;
     }
     .scorm-lesson-lines-icon {
-      font-size: 12px;
-      color: #64748b;
+      font-size: 11px;
+      color: #52525B;
       font-weight: 900;
       letter-spacing: 0.04em;
     }
     .scorm-lesson-title {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
-      color: #0f172a;
-      line-height: 1.35;
+      color: #09090B;
+      line-height: 1.32;
     }
     .scorm-lesson-sub {
-      font-size: 11px;
-      color: #475569;
+      font-size: 10.5px;
+      color: #52525B;
       font-family: 'JetBrains Mono', monospace;
     }
 
     /* Right SCORM Main Stage (Scrollable Paced Lesson Canvas) */
     .scorm-main-stage {
       background: #ffffff;
-      color: #14211b;
-      height: 820px;
+      color: #09090B;
+      height: 780px;
       overflow-y: auto;
       scroll-behavior: smooth;
       position: relative;
@@ -519,38 +515,35 @@
       position: sticky;
       top: 0;
       z-index: 30;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(8px);
-      border-bottom: 1px solid #e2e8f0;
-      padding: 10px 24px;
+      border-bottom: 1px solid #E4E4E7;
+      padding: 8px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     .scorm-hamburger-btn {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border-radius: 6px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #A1A1AA;
       background: #ffffff;
-      color: #0f172a;
-      font-size: 16px;
+      color: #09090B;
+      font-size: 15px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
     }
-    .scorm-hamburger-btn:hover { background: #f1f5f9; }
+    .scorm-hamburger-btn:hover { background: #F4F4F5; }
 
-    /* Rise 360 Course Overview Cover Banner (with Angled Slice) */
+    /* Rise 360 Course Overview Cover Banner (Monochrome MGC) */
     .scorm-cover-hero {
-      background:
-        linear-gradient(125deg, rgba(2, 6, 23, 0.88), rgba(15, 23, 42, 0.82), rgba(6, 78, 59, 0.78)),
-        radial-gradient(circle at 80% 25%, rgba(18, 184, 75, 0.32), transparent 55%);
+      background: linear-gradient(125deg, #09090B, #18181B, #27272A);
       color: #ffffff;
-      padding: 58px 56px 86px;
+      padding: 44px 48px 68px;
       clip-path: polygon(0 0, 100% 0, 100% 84%, 22% 100%, 0 89%);
       position: relative;
     }
@@ -558,27 +551,28 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .scorm-author-avatar {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      background: #6366f1;
+      background: #27272A;
+      border: 1px solid #A1A1AA;
       color: #ffffff;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       display: inline-flex;
       align-items: center;
       justify-content: center;
     }
     .scorm-start-pill {
-      margin-top: 22px;
-      padding: 13px 34px;
+      margin-top: 18px;
+      padding: 11px 28px;
       border-radius: 999px;
       background: #ffffff;
-      color: #0f172a;
-      font-size: 12px;
+      color: #09090B;
+      font-size: 11.5px;
       font-weight: 900;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -587,34 +581,34 @@
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
       transition: transform 0.15s ease;
     }
-    .scorm-start-pill:hover { transform: translateY(-2px); background: #dcfce7; }
+    .scorm-start-pill:hover { transform: translateY(-2px); background: #E4E4E7; }
 
-    /* Lesson Hero Banner */
+    /* Lesson Hero Banner (Monochrome Black & Steel Gray) */
     .scorm-lesson-banner {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #064e3b 100%);
+      background: linear-gradient(135deg, #09090B 0%, #18181B 60%, #27272A 100%);
       color: #ffffff;
-      padding: 44px 52px;
-      border-bottom: 4px solid #12b84b;
+      padding: 28px 36px;
+      border-bottom: 3px solid #A1A1AA;
     }
     .scorm-lesson-banner h2 {
       font-family: 'Outfit', sans-serif;
-      font-size: 30px;
+      font-size: 24px;
       font-weight: 800;
-      line-height: 1.2;
+      line-height: 1.22;
       max-width: 780px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     /* Paced Content Blocks */
     .scorm-block {
-      padding: 40px 52px;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 26px 36px;
+      border-bottom: 1px solid #E4E4E7;
     }
     .scorm-block.mint-tint {
-      background: #e8f8ee;
+      background: #F4F4F5;
     }
     .scorm-block.slate-tint {
-      background: #f4f8f8;
+      background: #FAFAFA;
     }
     .scorm-block-inner {
       max-width: 960px;
@@ -622,36 +616,36 @@
     }
     .scorm-hook-heading {
       font-family: 'Outfit', sans-serif;
-      font-size: 27px;
+      font-size: 21px;
       font-weight: 800;
-      color: #0a1410;
+      color: #09090B;
       line-height: 1.28;
-      margin-bottom: 22px;
+      margin-bottom: 16px;
     }
 
     /* Numbered Learning Objectives List (Rise 360 Style) */
     .scorm-obj-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin: 20px 0 8px;
+      gap: 12px;
+      margin: 14px 0 4px;
     }
     .scorm-obj-row {
       display: flex;
       align-items: flex-start;
-      gap: 18px;
-      font-size: 15.5px;
-      line-height: 1.55;
-      color: #1e293b;
+      gap: 14px;
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: #18181B;
     }
     .scorm-obj-circle {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background: #12b84b;
-      color: #04140a;
+      background: #09090B;
+      color: #FFFFFF;
       font-weight: 800;
-      font-size: 14px;
+      font-size: 13px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -662,196 +656,196 @@
     .scorm-split-50 {
       display: grid;
       grid-template-columns: 1.08fr 0.92fr;
-      gap: 32px;
+      gap: 24px;
       align-items: center;
     }
     .scorm-visual-card {
       background: #ffffff;
       border-radius: 12px;
-      padding: 16px;
-      border: 1px solid #cfe3d6;
-      box-shadow: 0 10px 28px rgba(16, 33, 27, 0.08);
+      padding: 14px;
+      border: 1px solid #D4D4D8;
+      box-shadow: 0 8px 22px rgba(9, 9, 11, 0.06);
     }
     .scorm-visual-caption {
-      font-size: 12.5px;
-      color: #334155;
-      margin-top: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #cbd5e1;
+      font-size: 12px;
+      color: #52525B;
+      margin-top: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #E4E4E7;
       line-height: 1.45;
     }
     .scorm-narrative-copy {
-      font-size: 16.5px;
-      line-height: 1.72;
-      color: #14211b;
+      font-size: 15px;
+      line-height: 1.65;
+      color: #18181B;
     }
     .scorm-narrative-copy h4 {
-      color: #064e3b !important;
+      color: #09090B !important;
       font-family: 'Outfit', sans-serif;
-      font-size: 19px;
+      font-size: 17px;
       font-weight: 800;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       line-height: 1.3;
     }
     .scorm-narrative-copy code {
-      background: #dcfce7;
-      color: #065f46;
+      background: #E4E4E7;
+      color: #09090B;
       padding: 2px 6px;
       border-radius: 5px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
     }
 
     /* Progressive [ CONTINUE ] Step Gate Bar */
     .scorm-continue-wrap {
-      padding: 22px 52px;
+      padding: 18px 36px;
       background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid #E4E4E7;
       text-align: center;
     }
     .scorm-continue-btn {
       width: 100%;
-      max-width: 720px;
-      padding: 15px 28px;
-      border-radius: 4px;
-      background: #1ed760;
-      color: #052612;
-      font-size: 12.5px;
+      max-width: 680px;
+      padding: 13px 24px;
+      border-radius: 6px;
+      background: #09090B;
+      color: #FFFFFF;
+      font-size: 12px;
       font-weight: 800;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      border: none;
+      border: 1px solid #27272A;
       cursor: pointer;
       transition: all 0.18s ease;
-      box-shadow: 0 6px 18px rgba(18, 184, 75, 0.25);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
     }
     .scorm-continue-btn:hover {
-      background: #16a34a;
+      background: #27272A;
       color: #ffffff;
       transform: translateY(-1px);
     }
 
-    /* Embedded HTML5 Interactive Playground Widget (Rise srcdoc style) */
+    /* Embedded HTML5 Interactive Playground Widget */
     .scorm-playground-card {
       background: #ffffff;
-      border: 1px solid #b8d0c4;
-      border-radius: 16px;
-      padding: 22px;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      border: 1px solid #D4D4D8;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(9, 9, 11, 0.06);
     }
     .scorm-step-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
+      gap: 14px;
+      margin-bottom: 14px;
     }
     .scorm-step-box {
-      background: #f4f8f8;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 14px 16px;
+      background: #F4F4F5;
+      border: 1px solid #D4D4D8;
+      border-radius: 10px;
+      padding: 12px 14px;
     }
     .scorm-step-title {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 8px;
+      color: #09090B;
+      margin-bottom: 6px;
       display: block;
     }
 
     /* Gated Knowledge Check Card (1:1 Rise 360 Style) */
     .scorm-kc-card {
-      max-width: 780px;
+      max-width: 760px;
       margin: 0 auto;
       background: #ffffff;
-      border-radius: 8px;
-      padding: 38px 46px;
-      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.1);
-      border: 1px solid #d1fae5;
+      border-radius: 10px;
+      padding: 28px 34px;
+      box-shadow: 0 12px 30px rgba(9, 9, 11, 0.08);
+      border: 1px solid #D4D4D8;
     }
     .scorm-kc-req-badge {
       float: right;
-      background: #f1f5f9;
-      color: #334155;
-      font-size: 11.5px;
+      background: #F4F4F5;
+      color: #27272A;
+      font-size: 11px;
       font-weight: 600;
-      padding: 5px 11px;
+      padding: 4px 10px;
       border-radius: 4px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .scorm-kc-question {
       clear: both;
-      font-size: 16.5px;
-      line-height: 1.6;
-      color: #0f172a;
+      font-size: 15.5px;
+      line-height: 1.55;
+      color: #09090B;
       font-weight: 500;
-      padding-bottom: 18px;
-      border-bottom: 1px solid #cbd5e1;
-      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #D4D4D8;
+      margin-bottom: 16px;
     }
     .scorm-kc-radio-row {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 13px 16px;
+      gap: 12px;
+      padding: 11px 14px;
       border-radius: 8px;
       border: 1px solid transparent;
       cursor: pointer;
-      font-size: 15px;
-      color: #1e293b;
+      font-size: 14px;
+      color: #18181B;
       transition: all 0.15s;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .scorm-kc-radio-row:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
+      background: #F4F4F5;
+      border-color: #D4D4D8;
     }
     .scorm-kc-radio-row.selected {
-      background: #ecfdf5;
-      border-color: #12b84b;
+      background: #F4F4F5;
+      border-color: #09090B;
       font-weight: 700;
     }
     .scorm-kc-radio-circle {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
-      border: 2px solid #94a3b8;
+      border: 2px solid #71717A;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
     .scorm-kc-radio-row.selected .scorm-kc-radio-circle {
-      border-color: #12b84b;
-      background: #12b84b;
+      border-color: #09090B;
+      background: #09090B;
       box-shadow: inset 0 0 0 3px #ffffff;
     }
     .scorm-kc-submit-btn {
       display: block;
-      margin: 24px auto 0;
-      padding: 11px 42px;
+      margin: 20px auto 0;
+      padding: 10px 38px;
       border-radius: 999px;
-      background: #12b84b;
-      color: #04140a;
-      font-size: 12px;
+      background: #09090B;
+      color: #FFFFFF;
+      font-size: 11.5px;
       font-weight: 800;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      border: none;
+      border: 1px solid #27272A;
       cursor: pointer;
       transition: all 0.15s;
     }
-    .scorm-kc-submit-btn:hover { background: #15803d; color: #ffffff; }
+    .scorm-kc-submit-btn:hover { background: #27272A; color: #ffffff; }
 
     /* Interactive Concept Sorting Activity */
     .scorm-sort-chip {
-      padding: 8px 13px;
+      padding: 7px 12px;
       border-radius: 999px;
       background: #ffffff;
-      border: 1.5px solid #0f6f5e;
-      color: #0f172a;
-      font-size: 12px;
+      border: 1.5px solid #27272A;
+      color: #09090B;
+      font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
@@ -860,20 +854,20 @@
       transition: all 0.15s;
     }
     .scorm-sort-chip.active-sort {
-      background: #0f6f5e;
+      background: #09090B;
       color: #ffffff;
-      box-shadow: 0 0 0 3px #ffbf47;
+      box-shadow: 0 0 0 2px #A1A1AA;
     }
     .scorm-sort-bucket {
       background: #ffffff;
-      border: 2px dashed #94a3b8;
-      border-radius: 12px;
-      padding: 14px;
-      min-height: 110px;
+      border: 2px dashed #A1A1AA;
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 95px;
       cursor: pointer;
       transition: all 0.15s;
     }
-    .scorm-sort-bucket:hover { border-color: #12b84b; background: #f0fdf4; }
+    .scorm-sort-bucket:hover { border-color: #09090B; background: #F4F4F5; }
 
     /* ===================================================================
        5 RESPONSIVE DESIGN PRINCIPLES + RADIAL LABELED GRAPHIC HOTSPOTS
@@ -995,52 +989,48 @@
   <script src="mgc-guided-security.js"></script>
 
   <main class="container">
-    <!-- TOP EXECUTIVE COMMAND BAR -->
+    <!-- SINGLE 1-LINE MGC MONOCHROME CANVAS COMMAND BAR (DECLUTTERED) -->
     <div class="exec-strip">
       <div class="exec-left">
         <img src="assets/mgc-logo.png" alt="MGC Logo" class="exec-logo" onerror="this.style.display='none'" />
         <div>
-          <div class="exec-eyebrow">● RUSTICI SCORM / RISE 360 PACED PLAYER • 15 MULTI-VENDOR EVE-NG TOPOLOGIES • $0 LOCAL + CLOUD RUN</div>
-          <h1 class="exec-title">EVE-NG Network Engineering, SCORM Interactive Player &amp; Career Command</h1>
+          <div class="exec-eyebrow">MILTON GROUP CONCEPTS LLC • MONOCHROME CANVAS LMS</div>
+          <h1 class="exec-title">EVE-NG Topologies, Career &amp; VA Command</h1>
         </div>
+      </div>
+
+      <!-- Compact 1-Line Workspace Pills -->
+      <div class="workspace-tabs">
+        <button class="ws-tab active" data-target="tab-eveng-academy" onclick="switchPortalTab('tab-eveng-academy')">
+          <span>1. SCORM Labs (15)</span>
+        </button>
+        <button class="ws-tab" data-target="tab-career-radar" onclick="switchPortalTab('tab-career-radar')">
+          <span>2. Career, NC &amp; VA</span>
+        </button>
+        <button class="ws-tab" data-target="tab-single-exam" onclick="switchPortalTab('tab-single-exam')">
+          <span>3. Exam Pools</span>
+        </button>
+        <button class="ws-tab" data-target="tab-eveng-cost" onclick="switchPortalTab('tab-eveng-cost')">
+          <span>4. Cost &amp; RAM</span>
+        </button>
+        <button class="ws-tab" data-target="tab-geo-atlas" onclick="switchPortalTab('tab-geo-atlas')">
+          <span>5. NC Map</span>
+        </button>
       </div>
 
       <div class="exec-right">
-        <div class="stat-pill" title="Current Topology RAM Requirement (Optimized IOL/vSRX vs Heavy QEMU)">
-          <span style="color:#60a5fa;">🧠 Topo RAM:</span>
-          <strong id="top-ram-pill" style="color:#fff;">4.5 GB (Opt)</strong>
-        </div>
-        <div class="stat-pill">
-          <span style="color:#4ade80;">💰 Cloud/Lic Cost:</span>
-          <strong style="color:#fff;">$0.00 / MO</strong>
-        </div>
-        <div class="stat-pill">
-          <span style="color:var(--gold-bright);">★ Lab XP:</span>
-          <strong id="cert-xp-val" style="color:#fff;">19,550</strong>
-        </div>
+        <span style="display:none;"><strong id="top-ram-pill">4.5 GB (Opt)</strong><strong id="cert-xp-val">19,550</strong></span>
+        <select class="quick-select" id="canvas-main-view-select" onchange="switchPortalTab(this.value)" aria-label="Switch Canvas View">
+          <option value="tab-eveng-academy">📂 View 1: SCORM 15-Topology Player</option>
+          <option value="tab-career-radar">📂 View 2: Career, NC Relocation, VA &amp; AI</option>
+          <option value="tab-single-exam">📂 View 3: Single-Exam Practice Pools</option>
+          <option value="tab-eveng-cost">📂 View 4: EVE-NG Cost &amp; RAM Optimizer</option>
+          <option value="tab-geo-atlas">📂 View 5: NC &amp; VA Geospatial Atlas</option>
+        </select>
         <select class="quick-select" id="quick-topo-dropdown" onchange="jumpLabQuick(this.value)" aria-label="Quick Jump Across All 15 EVE-NG Topologies">
-          <option value="">🖧 Jump to Any of 15 Topologies ▾</option>
+          <option value="">🖧 Jump to Topology (1–15) ▾</option>
         </select>
       </div>
-    </div>
-
-    <!-- SEAMLESS SUB-PAGE NAVIGATION -->
-    <div class="workspace-tabs">
-      <button class="ws-tab active" data-target="tab-eveng-academy" onclick="switchPortalTab('tab-eveng-academy')">
-        <span>🖧 1. SCORM Paced Player: 15 EVE-NG Topologies &amp; Interactive Labs</span>
-      </button>
-      <button class="ws-tab" data-target="tab-eveng-cost" onclick="switchPortalTab('tab-eveng-cost')">
-        <span>💰 2. EVE-NG Cost Analysis, RAM Optimizer &amp; Live VM Bridge</span>
-      </button>
-      <button class="ws-tab" data-target="tab-single-exam" onclick="switchPortalTab('tab-single-exam')">
-        <span>🎯 3. Strictly Isolated Single-Exam Practice Pools</span>
-      </button>
-      <button class="ws-tab" data-target="tab-career-radar" onclick="switchPortalTab('tab-career-radar')">
-        <span>💼 4. Principal Architect Career &amp; SDVOSB Positioning</span>
-      </button>
-      <button class="ws-tab" data-target="tab-geo-atlas" onclick="switchPortalTab('tab-geo-atlas')">
-        <span>🗺️ 5. Geospatial Corridor Atlas</span>
-      </button>
     </div>
 
     <!-- =================================================================== -->
@@ -1048,19 +1038,19 @@
     <!-- =================================================================== -->
     <div id="tab-eveng-academy" class="tab-pane active">
       <div class="scorm-player-shell" id="scorm-player-shell">
-        <!-- LEFT SCORM SIDEBAR: EMERALD HEADER + % COMPLETE + 15 LESSON PIE RINGS -->
+        <!-- LEFT SCORM SIDEBAR: MONOCHROME BLACK/GRAY HEADER + 15 LESSON PIE RINGS -->
         <aside class="scorm-sidebar">
           <div class="scorm-sidebar-brand">
             <div class="scorm-brand-top">
-              <span style="font-size:10px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;background:rgba(0,0,0,0.15);padding:3px 8px;border-radius:4px;">
-                SCORM 2004 / RISE 360
+              <span style="font-size:9.5px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;background:#27272A;color:#E4E4E7;padding:3px 7px;border-radius:4px;border:1px solid #52525B;">
+                MGC SCORM 2004
               </span>
-              <button onclick="document.getElementById('syl-search-input').focus()" style="background:transparent;border:none;font-size:15px;cursor:pointer;color:#04140a;" title="Search Topologies">
+              <button onclick="document.getElementById('syl-search-input').focus()" style="background:transparent;border:none;font-size:14px;cursor:pointer;color:#FFFFFF;" title="Search Topologies">
                 🔍
               </button>
             </div>
             <div class="scorm-course-title">
-              Multi-Vendor EVE-NG CCNP &amp; JNCIP Architecture
+              15 Multi-Vendor EVE-NG Topologies
             </div>
             <div class="scorm-progress-meta">
               <span id="scorm-overall-pct-text">25% COMPLETE</span>
@@ -1080,52 +1070,49 @@
               <option value="SEC_DEFENSE">Zero-Trust IPsec, NGFW &amp; USASOC (3)</option>
               <option value="AUTOMATION">DevNet Ansible, NETCONF &amp; gNMI (1)</option>
             </select>
-            <input type="text" class="scorm-filter-input" id="syl-search-input" placeholder="🔍 Search lesson (e.g. OSPF, EVPN, vSRX)..." oninput="filterSyllabusList()" />
+            <input type="text" class="scorm-filter-input" id="syl-search-input" placeholder="🔍 Filter topology..." oninput="filterSyllabusList()" />
           </div>
 
           <!-- 15 Topology Lessons with Dynamic SVG Progress Pie Rings -->
           <div class="scorm-outline-scroll" id="syllabus-items-container"></div>
         </aside>
 
-        <!-- RIGHT SCORM MAIN LESSON CANVAS (PROGRESSIVE STEP-GATED FLOW) -->
+        <!-- RIGHT SCORM MAIN LESSON CANVAS (CLEAN PROGRESSIVE STEP-GATED FLOW) -->
         <div class="scorm-main-stage" id="scorm-main-stage">
-          <!-- Sticky Top SCORM Controls Bar + Responsive Breakpoint Simulator -->
+          <!-- Clean 1-Line Sticky Top SCORM Bar -->
           <div class="scorm-topbar">
             <div style="display:flex;align-items:center;gap:10px;">
               <button class="scorm-hamburger-btn" onclick="toggleScormSidebar()" title="Toggle Course Outline Sidebar">
                 ☰
               </button>
-              <span style="font-size:11.5px;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:0.08em;" id="tut-lab-badge">
+              <span style="font-size:11px;font-weight:800;color:#27272A;text-transform:uppercase;letter-spacing:0.08em;" id="tut-lab-badge">
                 LESSON 1 OF 15
               </span>
             </div>
             <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
-              <!-- Live Responsive Breakpoint Switcher (Tests the 5 Responsive Principles!) -->
-              <div style="display:inline-flex;background:#f1f5f9;padding:3px;border-radius:8px;border:1px solid #cbd5e1;" title="Test Responsive Breakpoints & Fluid Layout">
-                <button class="btn" id="vp-btn-desktop" style="padding:4px 8px;font-size:10.5px;background:#0f172a;color:#fff;" onclick="setScormViewportSim('desktop')">🖥️ Desktop</button>
-                <button class="btn" id="vp-btn-tablet" style="padding:4px 8px;font-size:10.5px;background:transparent;color:#334155;" onclick="setScormViewportSim('tablet')">📟 Tablet</button>
-                <button class="btn" id="vp-btn-mobile" style="padding:4px 8px;font-size:10.5px;background:transparent;color:#334155;" onclick="setScormViewportSim('mobile')">📱 Mobile</button>
-              </div>
-              <button class="btn" style="background:#f1f5f9;color:#0f172a;border:1px solid #cbd5e1;" onclick="toggleCourseCoverOverview()">
-                📖 Cover
-              </button>
-              <button class="btn" style="background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7;" onclick="unlockAllScormStages()">
+              <select onchange="if(this.value==='cover'){toggleCourseCoverOverview();this.value='desktop';}else{setScormViewportSim(this.value);}" style="background:#F4F4F5;color:#09090B;border:1px solid #A1A1AA;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:700;cursor:pointer;">
+                <option value="desktop">🖥️ Viewport: Desktop (Full)</option>
+                <option value="tablet">📟 Viewport: Tablet (768px)</option>
+                <option value="mobile">📱 Viewport: Mobile (410px)</option>
+                <option value="cover">📖 Toggle Course Cover Overview</option>
+              </select>
+              <button class="btn" style="background:#09090B;color:#FFFFFF;border:1px solid #27272A;padding:5px 10px;font-size:11px;" onclick="unlockAllScormStages()">
                 🔓 Unlock All 4 Stages
               </button>
-              <button class="btn" style="background:#fef3c7;color:#92400e;border:1px solid #fcd34d;" onclick="downloadCurrentUnlTopology()">
+              <button class="btn" style="background:#F4F4F5;color:#09090B;border:1px solid #A1A1AA;padding:5px 10px;font-size:11px;" onclick="downloadCurrentUnlTopology()">
                 ⬇ .unl XML
               </button>
             </div>
           </div>
 
-          <!-- OPTIONAL COURSE COVER OVERVIEW (Rise 360 Angled Hero Banner) -->
+          <!-- OPTIONAL COURSE COVER OVERVIEW (Monochrome Hero Banner) -->
           <div id="scorm-cover-view" style="display:none;">
             <div class="scorm-cover-hero">
               <div class="scorm-author-row">
                 <span class="scorm-author-avatar">MK</span>
-                <span style="font-size:13.5px;font-weight:700;color:#e2e8f0;">Malik A. Khabir • Principal Enterprise &amp; Cloud Network Architect</span>
+                <span style="font-size:13px;font-weight:700;color:#D4D4D8;">Malik A. Khabir • Principal Enterprise &amp; Cloud Network Architect</span>
               </div>
-              <h2 style="font-family:'Outfit',sans-serif;font-size:38px;font-weight:900;max-width:740px;line-height:1.15;">
+              <h2 style="font-family:'Outfit',sans-serif;font-size:32px;font-weight:900;max-width:740px;line-height:1.15;">
                 Multi-Vendor EVE-NG CCNP &amp; JNCIP Interactive Engineering Course
               </h2>
               <button class="scorm-start-pill" onclick="toggleCourseCoverOverview()">
@@ -1134,9 +1121,9 @@
             </div>
             <div class="scorm-block">
               <div class="scorm-block-inner">
-                <h3 style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:10px;">Welcome to the Interactive SCORM Topology Workbench!</h3>
+                <h3 style="font-size:18px;font-weight:800;color:#09090B;margin-bottom:8px;">Welcome to the Interactive SCORM Topology Workbench</h3>
                 <p class="scorm-narrative-copy">
-                  Inspired by modern Articulate Rise 360 and RusticiEngine SCORM pacing, each of the <strong>15 Multi-Vendor EVE-NG Topologies</strong> is structured into <strong>4 bite-sized, step-gated stages</strong>. Instead of overwhelming walls of text, you unlock each stage sequentially via <strong>CONTINUE</strong> gates: starting with Learning Objectives &amp; Visual Architecture, followed by the Interactive Packet/Chaos Playground, the Dual-Vendor CLI &amp; Concept Sorting Lab, and a Gated Scenario Knowledge Check.
+                  Each of the <strong>15 Multi-Vendor EVE-NG Topologies</strong> is structured into <strong>4 clean, step-gated stages</strong>: Learning Objectives &amp; Visual Architecture, Interactive Packet/Chaos Playground, Dual-Vendor CLI &amp; Concept Sorting Lab, and Scenario Knowledge Check.
                 </p>
               </div>
             </div>
@@ -1144,11 +1131,11 @@
 
           <!-- ACTIVE LESSON VIEW (4 PROGRESSIVE STEP-GATED BLOCKS) -->
           <div id="scorm-lesson-view">
-            <!-- STAGE 1: LESSON BANNER + NUMBERED OBJECTIVES + 50/50 VISUAL HOOK + 5-SPOKE RADIAL GRAPHIC -->
+            <!-- STAGE 1: LESSON BANNER + NUMBERED OBJECTIVES + 50/50 VISUAL HOOK -->
             <div id="scorm-stage-1">
               <div class="scorm-lesson-banner">
-                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#4ade80;letter-spacing:0.12em;text-transform:uppercase;" id="scorm-stage-indicator">
-                  STAGE 1 OF 4 • OBJECTIVES, 50/50 VISUAL SPLIT &amp; 5-SPOKE INTERACTIVE HUB
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:800;color:#D4D4D8;letter-spacing:0.12em;text-transform:uppercase;" id="scorm-stage-indicator">
+                  STAGE 1 OF 4 • OBJECTIVES &amp; 50/50 ARCHITECTURE SPLIT
                 </div>
                 <h2 id="tut-lab-title">Topology 01: Multi-Area OSPFv2/OSPFv3 &amp; BFD Sub-50ms Ring</h2>
               </div>
@@ -1156,14 +1143,14 @@
               <!-- Numbered Objectives Block -->
               <div class="scorm-block">
                 <div class="scorm-block-inner">
-                  <h3 style="font-family:'Outfit',sans-serif;font-size:25px;font-weight:800;color:#0f172a;">
-                    After completing this lesson, you'll be able to:
+                  <h3 style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;color:#09090B;">
+                    Lesson Objectives
                   </h3>
                   <div class="scorm-obj-list" id="scorm-objectives-list"></div>
                 </div>
               </div>
 
-              <!-- 50/50 Split Visual + Concise Explanation on Mint Band (Exact Rise 360 Layout!) -->
+              <!-- 50/50 Split Visual + Concise Explanation on Light Gray Band -->
               <div class="scorm-block mint-tint">
                 <div class="scorm-block-inner">
                   <h3 class="scorm-hook-heading" id="scorm-hook-question">
@@ -1171,7 +1158,7 @@
                   </h3>
                   <div class="scorm-split-50">
                     <div class="scorm-visual-card">
-                      <div id="scorm-stage1-mini-svg" style="background:#020617;border-radius:8px;overflow:hidden;"></div>
+                      <div id="scorm-stage1-mini-svg" style="background:#09090B;border-radius:8px;overflow:hidden;"></div>
                       <div class="scorm-visual-caption" id="scorm-visual-caption-text">
                         The same multi-vendor topology automatically adapts across Cisco IOS-XE and Juniper Junos control planes while maintaining sub-50ms BFD failover.
                       </div>
@@ -1180,42 +1167,40 @@
                       <div class="scorm-narrative-copy" id="scorm-stage1-narrative"></div>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              <!-- NEW: 5-SPOKE RADIAL LABELED GRAPHIC HOTSPOT DIAGRAM (EXACT MATCH TO UPLOADED DIAGRAM!) -->
-              <div class="scorm-block">
-                <div class="scorm-block-inner">
-                  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;">
-                    <div>
-                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#1d70db;text-transform:uppercase;letter-spacing:0.1em;">
-                        INTERACTIVE LABELED GRAPHIC • CLICK ANY NUMBERED SPOKE (1–5)
-                      </span>
-                      <h3 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#0f172a;margin-top:2px;" id="radial-hub-heading">
-                        The 5 Core Responsive Design &amp; Architecture Principles
-                      </h3>
+                  <!-- Collapsible 5-Spoke Architecture Diagram (Decluttered Drawer) -->
+                  <details style="margin-top:16px;background:#ffffff;border:1px solid #D4D4D8;border-radius:10px;padding:10px 14px;">
+                    <summary style="cursor:pointer;font-size:12.5px;font-weight:800;color:#09090B;display:flex;justify-content:space-between;align-items:center;">
+                      <span>▾ Interactive 5-Spoke Architecture &amp; Responsive Design Diagram (Click to Expand)</span>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#52525B;">5 Hotspots</span>
+                    </summary>
+                    <div style="margin-top:12px;">
+                      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;">
+                        <h4 style="font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;color:#09090B;" id="radial-hub-heading">
+                          The 5 Core Responsive Design &amp; Architecture Principles
+                        </h4>
+                        <div class="btn-row">
+                          <button class="btn" id="btn-radial-resp" style="background:#09090B;color:#ffffff;font-weight:800;" onclick="switchRadialGraphicMode('responsive')">
+                            📱 5 Responsive Principles
+                          </button>
+                          <button class="btn" id="btn-radial-net" style="background:#F4F4F5;color:#09090B;border:1px solid #A1A1AA;font-weight:800;" onclick="switchRadialGraphicMode('network')">
+                            🖧 5 Topology Pillars
+                          </button>
+                        </div>
+                      </div>
+                      <div class="radial-graphic-stage">
+                        <div class="radial-svg-wrap" id="radial-labeled-graphic-svg"></div>
+                        <div class="radial-hotspot-card" id="radial-hotspot-detail-card"></div>
+                      </div>
                     </div>
-                    <div class="btn-row">
-                      <button class="btn" id="btn-radial-resp" style="background:#1d70db;color:#ffffff;font-weight:800;" onclick="switchRadialGraphicMode('responsive')">
-                        📱 5 Responsive Design Principles
-                      </button>
-                      <button class="btn" id="btn-radial-net" style="background:#f1f5f9;color:#0f172a;border:1px solid #cbd5e1;font-weight:800;" onclick="switchRadialGraphicMode('network')">
-                        🖧 5 Topology Architecture Pillars
-                      </button>
-                    </div>
-                  </div>
-
-                  <div class="radial-graphic-stage">
-                    <div class="radial-svg-wrap" id="radial-labeled-graphic-svg"></div>
-                    <div class="radial-hotspot-card" id="radial-hotspot-detail-card"></div>
-                  </div>
+                  </details>
                 </div>
               </div>
 
               <!-- CONTINUE GATE 1 -> UNLOCKS STAGE 2 -->
               <div class="scorm-continue-wrap" id="scorm-gate-1">
                 <button class="scorm-continue-btn" onclick="unlockScormStage(2)">
-                  CONTINUE
+                  CONTINUE TO STAGE 2 (INTERACTIVE PACKET PLAYGROUND) →
                 </button>
               </div>
             </div>
@@ -1559,153 +1544,151 @@
     <!-- TAB 4: IMMEDIATE WORK, NC RELOCATION, VA BENEFITS & AI MONETIZATION -->
     <!-- =================================================================== -->
     <div id="tab-career-radar" class="tab-pane">
-      <!-- SUB-PAGE & DROPDOWN NAVIGATION BAR (ANTI-CLUTTER MULTI-PAGE CONTROLLER) -->
-      <div class="card" style="margin-bottom:14px;padding:12px 16px;background:rgba(9,14,28,0.95);border-color:rgba(59,130,246,0.45);">
-        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
+      <!-- CLEAN 1-LINE MONOCHROME SUB-PAGE & DROPDOWN CONTROLLER -->
+      <div class="card" style="margin-bottom:12px;padding:10px 14px;background:#09090B;border-color:#3F3F46;">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;">
           <div style="display:flex;flex-wrap:wrap;gap:6px;" id="career-subpage-pills">
-            <button class="btn btn-crimson" id="csub-btn-4a" onclick="switchCareerSubPage('4a')" style="font-size:11.5px;padding:7px 12px;">💼 Page 4A: 12 NC &amp; Remote Employers</button>
-            <button class="btn btn-ghost" id="csub-btn-4b" onclick="switchCareerSubPage('4b')" style="font-size:11.5px;padding:7px 12px;">🏡 Page 4B: NC Relocation Matrix</button>
-            <button class="btn btn-ghost" id="csub-btn-4c" onclick="switchCareerSubPage('4c')" style="font-size:11.5px;padding:7px 12px;">🎖️ Page 4C: VA Benefits &amp; Oct 22 Appt</button>
-            <button class="btn btn-ghost" id="csub-btn-4d" onclick="switchCareerSubPage('4d')" style="font-size:11.5px;padding:7px 12px;">💸 Page 4D: AI, Social &amp; Ad Monetization</button>
-            <button class="btn btn-ghost" id="csub-btn-all" onclick="switchCareerSubPage('all')" style="font-size:11.5px;padding:7px 12px;">📑 View All (4)</button>
+            <button class="btn btn-gold" id="csub-btn-4a" onclick="switchCareerSubPage('4a')" style="font-size:11px;padding:6px 11px;">1. NC &amp; Remote Jobs (12)</button>
+            <button class="btn btn-ghost" id="csub-btn-4b" onclick="switchCareerSubPage('4b')" style="font-size:11px;padding:6px 11px;">2. NC Relocation (3 Zones)</button>
+            <button class="btn btn-ghost" id="csub-btn-4c" onclick="switchCareerSubPage('4c')" style="font-size:11px;padding:6px 11px;">3. VA Benefits &amp; Oct 22</button>
+            <button class="btn btn-ghost" id="csub-btn-4d" onclick="switchCareerSubPage('4d')" style="font-size:11px;padding:6px 11px;">4. AI &amp; Ad Monetization</button>
+            <button class="btn btn-ghost" id="csub-btn-all" onclick="switchCareerSubPage('all')" style="font-size:11px;padding:6px 11px;">📑 All (4)</button>
           </div>
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
-            <select id="career-subpage-select" onchange="switchCareerSubPage(this.value)" style="background:#020617;color:#f8fafc;border:1px solid rgba(59,130,246,0.5);border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+            <select id="career-subpage-select" onchange="switchCareerSubPage(this.value)" style="background:#09090B;color:#FFFFFF;border:1px solid #52525B;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">
               <option value="4a">📂 Sub-Page 1 of 4: Immediate NC &amp; Remote Jobs</option>
               <option value="4b">📂 Sub-Page 2 of 4: NC Relocation Corridor Matrix</option>
               <option value="4c">📂 Sub-Page 3 of 4: VA Benefits &amp; Oct 22 Maximizer</option>
               <option value="4d">📂 Sub-Page 4 of 4: AI, Social &amp; Ad Monetization</option>
               <option value="all">📑 Show All 4 Sub-Pages Stacked</option>
             </select>
-            <select onchange="if(this.value){if(this.value.startsWith('http'))window.open(this.value,'_blank');else window.location.href=this.value;this.value='';}" style="background:#020617;color:#fcd34d;border:1px solid rgba(245,158,11,0.5);border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+            <select onchange="if(this.value){if(this.value.startsWith('http'))window.open(this.value,'_blank');else window.location.href=this.value;this.value='';}" style="background:#18181B;color:#FFFFFF;border:1px solid #A1A1AA;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">
               <option value="">⚡ Direct Portal &amp; External Jump ▾</option>
-              <option value="https://www.clearancejobs.com/jobs?keywords=25N+Network+Engineer+Fort+Liberty">🔥 ClearanceJobs: Fort Bragg 25N ↗</option>
-              <option value="https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Architect&location=Raleigh-Durham-Chapel%20Hill%20Area">🌲 LinkedIn: Raleigh / RTP / Cary Jobs ↗</option>
-              <option value="https://www.ecpi.edu/locations/raleigh-nc">🏫 ECPI Raleigh Campus ($2,172/mo BAH) ↗</option>
-              <option value="https://www.va.gov/disability/how-to-file-claim/">🎖️ VA Form 21-526EZ &amp; PACT Act ↗</option>
-              <option value="https://www.va.gov/careers-employment/vocational-rehabilitation/">🎓 VA Chapter 31 VR&amp;E (28-1900) ↗</option>
-              <option value="projects/sterling-auto-repair/index.html">🚗 Sterling Auto ($1,500 B2B Client Demo) →</option>
-              <option value="whitefeather-ecommerce-hub.html">🛍️ White Feather Digital Storefront →</option>
+              <option value="https://www.clearancejobs.com/jobs?keywords=25N+Network+Engineer+Fort+Liberty">ClearanceJobs: Fort Bragg 25N ↗</option>
+              <option value="https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Architect&location=Raleigh-Durham-Chapel%20Hill%20Area">LinkedIn: Raleigh / RTP / Cary Jobs ↗</option>
+              <option value="https://www.ecpi.edu/locations/raleigh-nc">ECPI Raleigh Campus ($2,172/mo BAH) ↗</option>
+              <option value="https://www.va.gov/disability/how-to-file-claim/">VA Form 21-526EZ &amp; PACT Act ↗</option>
+              <option value="https://www.va.gov/careers-employment/vocational-rehabilitation/">VA Chapter 31 VR&amp;E (28-1900) ↗</option>
+              <option value="projects/sterling-auto-repair/index.html">Sterling Auto ($1,500 B2B Client Demo) →</option>
+              <option value="whitefeather-ecommerce-hub.html">White Feather Digital Storefront →</option>
             </select>
           </div>
         </div>
       </div>
 
-      <!-- SUB-PAGE 4A: IMMEDIATE WORK & FAST-CASHFLOW JOB BOARD -->
-      <div class="card career-subpage-pane" id="csub-pane-4a" style="margin-bottom:14px;border-color:rgba(220,38,38,0.55);">
+      <!-- SUB-PAGE 4A: IMMEDIATE WORK & FAST-CASHFLOW JOB BOARD (MGC MONOCHROME) -->
+      <div class="card career-subpage-pane" id="csub-pane-4a" style="margin-bottom:12px;border-color:#52525B;">
         <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
           <div>
-            <span class="badge" style="background:rgba(220,38,38,0.22);color:#fca5a5;">SUB-PAGE 4A • 12 IMMEDIATE HIRING EMPLOYERS &amp; 48-HR CASHFLOW</span>
-            <h3 style="margin-top:4px;font-size:18px;">Fort Bragg 25N/USASOC Primes • Raleigh/RTP Near ECPI • 7-Day Remote AI</h3>
+            <span class="badge" style="background:#27272A;color:#FFFFFF;border:1px solid #52525B;">SUB-PAGE 1 OF 4 • 12 IMMEDIATE HIRING EMPLOYERS &amp; 48-HR CASHFLOW</span>
+            <h3 style="margin-top:4px;font-size:17px;color:#FFFFFF;">Fort Bragg 25N/USASOC Primes • Raleigh/RTP Near ECPI • 7-Day Remote AI</h3>
           </div>
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
-            <select id="job-track-filter" onchange="filterCareerJobTracks(this.value)" style="background:#020617;color:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+            <select id="job-track-filter" onchange="filterCareerJobTracks(this.value)" style="background:#09090B;color:#FFFFFF;border:1px solid #52525B;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">
               <option value="all">🔍 Filter Track: All 3 Hiring Tracks (12 Roles)</option>
               <option value="t1">Track 1: Fort Bragg / USASOC 25N ($115K–$168K)</option>
               <option value="t2">Track 2: Raleigh / RTP / Cary Near ECPI ($125K–$190K)</option>
               <option value="t3">Track 3: 48-Hr Remote AI &amp; Fast Staffing ($45–$85/hr)</option>
             </select>
-            <a href="https://www.clearancejobs.com/jobs?keywords=25N+Network+Engineer+Fort+Liberty" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:6px 10px;font-size:11px;">🔥 Bragg 25N ↗</a>
-            <a href="https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Architect&location=Raleigh-Durham-Chapel%20Hill%20Area" target="_blank" rel="noopener" class="btn btn-blue" style="padding:6px 10px;font-size:11px;">🌲 RTP Jobs ↗</a>
           </div>
         </div>
 
         <div class="grid-3" id="career-job-tracks-grid" style="margin-top:12px;">
           <!-- Track 1: Fort Bragg -->
-          <div data-job-track="t1" style="background:#020617;border:1px solid rgba(220,38,38,0.45);border-radius:12px;padding:12px;">
-            <span class="badge" style="background:rgba(220,38,38,0.2);color:#fca5a5;">TRACK 1 • FORT BRAGG (USASOC / 112TH SIGNAL)</span>
-            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Cleared Tactical &amp; Enterprise Network ($115K–$168K)</h4>
-            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+          <div data-job-track="t1" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:12px;">
+            <span class="badge" style="background:#18181B;color:#E4E4E7;border:1px solid #52525B;">TRACK 1 • FORT BRAGG (USASOC / 112TH SIGNAL)</span>
+            <h4 style="margin:6px 0 8px;font-size:13.5px;color:#FFFFFF;">Cleared Tactical &amp; Enterprise Network ($115K–$168K)</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_1',this.checked?'1':'0')" /><span><strong>GDIT (Fort Bragg):</strong> 25N / CCNP SATCOM</span></label>
-                <a href="https://www.gdit.com/careers/search/?q=Fort+Liberty+Network" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://www.gdit.com/careers/search/?q=Fort+Liberty+Network" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_2',this.checked?'1':'0')" /><span><strong>CACI (USASOC):</strong> SOF C4ISR Transport</span></label>
-                <a href="https://careers.caci.com/global/en/search-results?keywords=Fort%20Liberty%20Network" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://careers.caci.com/global/en/search-results?keywords=Fort%20Liberty%20Network" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_3',this.checked?'1':'0')" /><span><strong>Booz Allen:</strong> Zero-Trust &amp; ORSA AI Lead</span></label>
-                <a href="https://careers.boozallen.com/jobs/search?q=Fayetteville+North+Carolina" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://careers.boozallen.com/jobs/search?q=Fayetteville+North+Carolina" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_4',this.checked?'1':'0')" /><span><strong>Jacobs / SITEC III:</strong> BGP/MPLS/EVPN</span></label>
-                <a href="https://www.clearancejobs.com/jobs?keywords=Network+Engineer+Fayetteville+NC" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://www.clearancejobs.com/jobs?keywords=Network+Engineer+Fayetteville+NC" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
             </div>
-            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
-              <summary style="cursor:pointer;font-weight:700;color:#fca5a5;">▾ 112th Signal (SO) (Airborne) Fast-Track Advantage</summary>
+            <details style="margin-top:8px;font-size:11px;color:#A1A1AA;">
+              <summary style="cursor:pointer;font-weight:700;color:#FFFFFF;">▾ 112th Signal (SO) (Airborne) Advantage</summary>
               <p style="margin-top:5px;line-height:1.45;">Your prior assignment at 112th Signal Bn (USASOC) + SOJTF-OIR Erbil gives you direct familiarity with USASOC SIPR/NIPR/JWICS enclaves on Yadkin &amp; Reilly Rd.</p>
             </details>
           </div>
 
           <!-- Track 2: Raleigh / RTP -->
-          <div data-job-track="t2" style="background:#020617;border:1px solid rgba(37,99,235,0.45);border-radius:12px;padding:12px;">
-            <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;">TRACK 2 • RALEIGH / RTP (NEAR ECPI 27604)</span>
-            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Cloud, AI ModelOps &amp; Network Primes ($125K–$190K)</h4>
-            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+          <div data-job-track="t2" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:12px;">
+            <span class="badge" style="background:#18181B;color:#E4E4E7;border:1px solid #52525B;">TRACK 2 • RALEIGH / RTP (NEAR ECPI 27604)</span>
+            <h4 style="margin:6px 0 8px;font-size:13.5px;color:#FFFFFF;">Cloud, AI ModelOps &amp; Network Primes ($125K–$190K)</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_5',this.checked?'1':'0')" /><span><strong>Cisco (RTP Campus):</strong> Federal NCE Engineer</span></label>
-                <a href="https://jobs.cisco.com/jobs/SearchJobs/RTP%20North%20Carolina" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://jobs.cisco.com/jobs/SearchJobs/RTP%20North%20Carolina" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_6',this.checked?'1':'0')" /><span><strong>SAS (Cary World HQ):</strong> ModelOps A00-440</span></label>
-                <a href="https://www.sas.com/en_us/careers.html" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://www.sas.com/en_us/careers.html" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_7',this.checked?'1':'0')" /><span><strong>Red Hat (Raleigh HQ):</strong> Ansible Cloud Lead</span></label>
-                <a href="https://www.redhat.com/en/jobs" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://www.redhat.com/en/jobs" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_8',this.checked?'1':'0')" /><span><strong>Fidelity / NetApp (RTP):</strong> AZ-500 Cloud Sec</span></label>
-                <a href="https://jobs.fidelity.com/en/jobs/?search=Network+Cloud&location=Durham%2C+NC" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://jobs.fidelity.com/en/jobs/?search=Network+Cloud&location=Durham%2C+NC" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
             </div>
-            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
-              <summary style="cursor:pointer;font-weight:700;color:#93c5fd;">▾ ECPI Raleigh (4101 Capital Blvd) Proximity</summary>
+            <details style="margin-top:8px;font-size:11px;color:#A1A1AA;">
+              <summary style="cursor:pointer;font-weight:700;color:#FFFFFF;">▾ ECPI Raleigh (4101 Capital Blvd) Proximity</summary>
               <p style="margin-top:5px;line-height:1.45;">All 4 employers are 12–22 mins from ECPI Raleigh Campus (`ZIP 27604`), letting you stack a `$145K+` salary with `$2,172/mo` tax-free GI Bill/VR&amp;E BAH.</p>
             </details>
           </div>
 
           <!-- Track 3: Immediate 48-Hr Remote Cashflow -->
-          <div data-job-track="t3" style="background:#020617;border:1px solid rgba(22,163,74,0.45);border-radius:12px;padding:12px;">
-            <span class="badge" style="background:rgba(22,163,74,0.2);color:#86efac;">TRACK 3 • 48-HR TO 7-DAY CASHFLOW</span>
-            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Immediate Weekly Payouts ($45–$85/hr + Staffing)</h4>
-            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+          <div data-job-track="t3" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:12px;">
+            <span class="badge" style="background:#18181B;color:#E4E4E7;border:1px solid #52525B;">TRACK 3 • 48-HR TO 7-DAY CASHFLOW</span>
+            <h4 style="margin:6px 0 8px;font-size:13.5px;color:#FFFFFF;">Immediate Weekly Payouts ($45–$85/hr + Staffing)</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_9',this.checked?'1':'0')" /><span><strong>DataAnnotation / Outlier:</strong> AI RLHF ($45–$85/hr)</span></label>
-                <a href="https://www.dataannotation.tech/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Start ↗</a>
+                <a href="https://www.dataannotation.tech/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Start ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_10',this.checked?'1':'0')" /><span><strong>Apex / TEKsystems:</strong> 7-Day NC DoD Contract</span></label>
-                <a href="https://www.apexsystems.com/search-results?keywords=Network%20Engineer&location=North%20Carolina" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://www.apexsystems.com/search-results?keywords=Network%20Engineer&location=North%20Carolina" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_11',this.checked?'1':'0')" /><span><strong>USAJOBS 2210 / 1515:</strong> 10-Pt Vet Direct-Hire</span></label>
-                <a href="https://www.usajobs.gov/Search/Results?l=Fort%20Liberty%2C%20North%20Carolina&l=Raleigh%2C%20North%20Carolina&k=2210" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+                <a href="https://www.usajobs.gov/Search/Results?l=Fort%20Liberty%2C%20North%20Carolina&l=Raleigh%2C%20North%20Carolina&k=2210" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Apply ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_12',this.checked?'1':'0')" /><span><strong>B2B Local AI Setup ($1,500):</strong> Pitch 5 Shops</span></label>
-                <a href="projects/sterling-auto-repair/index.html" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Demo →</a>
+                <a href="projects/sterling-auto-repair/index.html" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Demo →</a>
               </div>
             </div>
-            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
-              <summary style="cursor:pointer;font-weight:700;color:#86efac;">▾ 48-Hour Immediate Cashflow Playbook</summary>
+            <details style="margin-top:8px;font-size:11px;color:#A1A1AA;">
+              <summary style="cursor:pointer;font-weight:700;color:#FFFFFF;">▾ 48-Hour Immediate Cashflow Playbook</summary>
               <p style="margin-top:5px;line-height:1.45;">Complete the 60-min Python/Network evaluation on DataAnnotation today for weekly PayPal payouts while pitching local NC shops on the `$1,500` Sterling Auto AI template.</p>
             </details>
           </div>
         </div>
       </div>
 
-      <!-- SUB-PAGE 4B: NORTH CAROLINA RELOCATION CORRIDOR PLANNER -->
-      <div class="card career-subpage-pane" id="csub-pane-4b" style="display:none;margin-bottom:14px;border-color:rgba(59,130,246,0.55);">
+      <!-- SUB-PAGE 4B: NORTH CAROLINA RELOCATION CORRIDOR PLANNER (MGC MONOCHROME) -->
+      <div class="card career-subpage-pane" id="csub-pane-4b" style="display:none;margin-bottom:12px;border-color:#52525B;">
         <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
           <div>
-            <span class="badge" style="background:rgba(37,99,235,0.22);color:#93c5fd;">SUB-PAGE 4B • NC RELOCATION CORRIDOR MATRIX (ECPI RALEIGH ↔ SANFORD/LILLINGTON ↔ FORT BRAGG)</span>
-            <h3 style="margin-top:4px;font-size:18px;">Compare Commute, Rent/VA $0-Down Loan &amp; $2,172/mo ECPI Raleigh BAH</h3>
+            <span class="badge" style="background:#27272A;color:#FFFFFF;border:1px solid #52525B;">SUB-PAGE 2 OF 4 • NC RELOCATION CORRIDOR MATRIX (ECPI RALEIGH ↔ SANFORD/LILLINGTON ↔ FORT BRAGG)</span>
+            <h3 style="margin-top:4px;font-size:17px;color:#FFFFFF;">Compare Commute, Rent/VA $0-Down Loan &amp; $2,172/mo ECPI Raleigh BAH</h3>
           </div>
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
-            <select onchange="filterRelocationZones(this.value)" style="background:#020617;color:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+            <select onchange="filterRelocationZones(this.value)" style="background:#09090B;color:#FFFFFF;border:1px solid #52525B;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">
               <option value="all">📍 View: Compare All 3 NC Relocation Zones</option>
               <option value="z1">⭐ Option 1: Sanford / Lillington Midpoint (35m to Both)</option>
               <option value="z2">🏫 Option 2: Near ECPI Raleigh 27604 ($2,172/mo BAH)</option>
@@ -1717,116 +1700,116 @@
 
         <div class="grid-3" id="nc-reloc-zones-grid" style="margin-top:12px;">
           <!-- Zone 1 -->
-          <div data-reloc-zone="z1" style="background:#020617;border:1px solid rgba(252,211,77,0.45);border-radius:12px;padding:12px;">
-            <span class="badge" style="background:rgba(245,158,11,0.22);color:#fcd34d;">⭐ OPTION 1: IN-BETWEEN MIDPOINT (US-1 / US-401)</span>
-            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Sanford (27330) • Lillington (27546) • Southern Pines</h4>
-            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+          <div data-reloc-zone="z1" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:12px;">
+            <span class="badge" style="background:#18181B;color:#FFFFFF;border:1px solid #52525B;">⭐ OPTION 1: IN-BETWEEN MIDPOINT (US-1 / US-401)</span>
+            <h4 style="margin:6px 0 8px;font-size:13.5px;color:#FFFFFF;">Sanford (27330) • Lillington (27546) • Southern Pines</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_1',this.checked?'1':'0')" /><span>Tour Sanford US-1 Rentals ($1,350–$1,650)</span></label>
-                <a href="https://www.zillow.com/sanford-nc/rentals/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Zillow ↗</a>
+                <a href="https://www.zillow.com/sanford-nc/rentals/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Zillow ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_2',this.checked?'1':'0')" /><span>Tour Lillington / US-401 Midpoint Homes</span></label>
-                <a href="https://www.zillow.com/lillington-nc/rentals/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Zillow ↗</a>
+                <a href="https://www.zillow.com/lillington-nc/rentals/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Zillow ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_3',this.checked?'1':'0')" /><span>Fly Interactive Map to Sanford Midpoint</span></label>
-                <button class="btn btn-ghost" style="padding:3px 8px;font-size:10.5px;" onclick="switchPortalTab('tab-geo-atlas');setTimeout(()=>flyCorridor(0),200)">Map →</button>
+                <button class="btn btn-ghost" style="padding:3px 8px;font-size:10px;" onclick="switchPortalTab('tab-geo-atlas');setTimeout(()=>flyCorridor(0),200)">Map →</button>
               </div>
             </div>
-            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
-              <summary style="cursor:pointer;font-weight:700;color:#fcd34d;">▾ Commute &amp; BAH Arbitrage Math</summary>
+            <details style="margin-top:8px;font-size:11px;color:#A1A1AA;">
+              <summary style="cursor:pointer;font-weight:700;color:#FFFFFF;">▾ Commute &amp; BAH Arbitrage Math</summary>
               <p style="margin-top:5px;line-height:1.45;">35 mins to Fort Bragg AND 35 mins to ECPI Raleigh (`27604`). Take 1 hybrid class in Raleigh to collect `$2,172/mo` BAH while paying `$1,450/mo` midpoint housing.</p>
             </details>
           </div>
 
           <!-- Zone 2 -->
-          <div data-reloc-zone="z2" style="background:#020617;border:1px solid rgba(37,99,235,0.45);border-radius:12px;padding:12px;">
-            <span class="badge" style="background:rgba(37,99,235,0.22);color:#93c5fd;">🏫 OPTION 2: NEAR ECPI RALEIGH (ZIP 27604)</span>
-            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Raleigh (4101 Capital Blvd) • Cary • RTP</h4>
-            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+          <div data-reloc-zone="z2" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:12px;">
+            <span class="badge" style="background:#18181B;color:#FFFFFF;border:1px solid #52525B;">🏫 OPTION 2: NEAR ECPI RALEIGH (ZIP 27604)</span>
+            <h4 style="margin:6px 0 8px;font-size:13.5px;color:#FFFFFF;">Raleigh (4101 Capital Blvd) • Cary • RTP</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_4',this.checked?'1':'0')" /><span>Register 1 Hybrid Class @ ECPI Raleigh</span></label>
-                <a href="https://www.ecpi.edu/locations/raleigh-nc" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">ECPI ↗</a>
+                <a href="https://www.ecpi.edu/locations/raleigh-nc" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10px;text-decoration:none;">ECPI ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_5',this.checked?'1':'0')" /><span>Check Raleigh 27604 / Cary Apartments</span></label>
-                <a href="https://www.zillow.com/raleigh-nc-27604/rentals/" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Zillow ↗</a>
+                <a href="https://www.zillow.com/raleigh-nc-27604/rentals/" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10px;text-decoration:none;">Zillow ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_6',this.checked?'1':'0')" /><span>Fly Map to ECPI Raleigh &amp; RTP Corridor</span></label>
-                <button class="btn btn-ghost" style="padding:3px 8px;font-size:10.5px;" onclick="switchPortalTab('tab-geo-atlas');setTimeout(()=>flyCorridor(1),200)">Map →</button>
+                <button class="btn btn-ghost" style="padding:3px 8px;font-size:10px;" onclick="switchPortalTab('tab-geo-atlas');setTimeout(()=>flyCorridor(1),200)">Map →</button>
               </div>
             </div>
-            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
-              <summary style="cursor:pointer;font-weight:700;color:#93c5fd;">▾ +$1,054/mo Tax-Free BAH Boost Details</summary>
+            <details style="margin-top:8px;font-size:11px;color:#A1A1AA;">
+              <summary style="cursor:pointer;font-weight:700;color:#FFFFFF;">▾ +$1,054/mo Tax-Free BAH Boost Details</summary>
               <p style="margin-top:5px;line-height:1.45;">1 resident class at ECPI Raleigh (`4101 Capital Blvd`) upgrades GI Bill/VR&amp;E MHA from `$1,118/mo` (online) to **`~$2,172/mo` tax-free**.</p>
             </details>
           </div>
 
           <!-- Zone 3 -->
-          <div data-reloc-zone="z3" style="background:#020617;border:1px solid rgba(22,163,74,0.45);border-radius:12px;padding:12px;">
-            <span class="badge" style="background:rgba(22,163,74,0.22);color:#86efac;">🪖 OPTION 3: NEAR FORT BRAGG (ZIP 28310)</span>
-            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Fayetteville (Haymount) • Raeford • Spring Lake</h4>
-            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+          <div data-reloc-zone="z3" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:12px;">
+            <span class="badge" style="background:#18181B;color:#FFFFFF;border:1px solid #52525B;">🪖 OPTION 3: NEAR FORT BRAGG (ZIP 28310)</span>
+            <h4 style="margin:6px 0 8px;font-size:13.5px;color:#FFFFFF;">Fayetteville (Haymount) • Raeford • Spring Lake</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_7',this.checked?'1':'0')" /><span>Check Haymount / Raeford Homes ($1,150+)</span></label>
-                <a href="https://www.zillow.com/fayetteville-nc/rentals/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Zillow ↗</a>
+                <a href="https://www.zillow.com/fayetteville-nc/rentals/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">Zillow ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_8',this.checked?'1':'0')" /><span>Register @ Fayetteville VA Health Center</span></label>
-                <a href="https://www.va.gov/fayetteville-coastal-health-care/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">VA Care ↗</a>
+                <a href="https://www.va.gov/fayetteville-coastal-health-care/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">VA Care ↗</a>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#141519;border:1px solid #27272A;border-radius:8px;">
                 <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_9',this.checked?'1':'0')" /><span>Request VA $0-Down Home Loan COE</span></label>
-                <a href="https://www.va.gov/housing-assistance/home-loans/how-to-request-coe/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">VA COE ↗</a>
+                <a href="https://www.va.gov/housing-assistance/home-loans/how-to-request-coe/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10px;text-decoration:none;">VA COE ↗</a>
               </div>
             </div>
-            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
-              <summary style="cursor:pointer;font-weight:700;color:#86efac;">▾ On-Post USASOC &amp; 4-Plex House-Hack Note</summary>
+            <details style="margin-top:8px;font-size:11px;color:#A1A1AA;">
+              <summary style="cursor:pointer;font-weight:700;color:#FFFFFF;">▾ On-Post USASOC &amp; 4-Plex House-Hack Note</summary>
               <p style="margin-top:5px;line-height:1.45;">10 mins to USASOC HQ &amp; Womack AMC. Use your `$0-Down` VA Loan on a duplex/fourplex near Fort Bragg so tenant rent covers 100% of the mortgage.</p>
             </details>
           </div>
         </div>
       </div>
 
-      <!-- SUB-PAGE 4C: VA BENEFITS MAXIMIZER -->
-      <div class="card career-subpage-pane" id="csub-pane-4c" style="display:none;margin-bottom:14px;border-color:rgba(22,163,74,0.55);">
+      <!-- SUB-PAGE 4C: VA BENEFITS MAXIMIZER (MGC MONOCHROME) -->
+      <div class="card career-subpage-pane" id="csub-pane-4c" style="display:none;margin-bottom:12px;border-color:#52525B;">
         <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
           <div>
-            <span class="badge" style="background:rgba(22,163,74,0.22);color:#86efac;">SUB-PAGE 4C • VA BENEFITS MAXIMIZER (EDIPI 1516730621 • OCT 22, 2026 12:00 PM VA APPT)</span>
-            <h3 style="margin-top:4px;font-size:18px;">PACT Act Erbil • Airborne Secondary Chain • Ch. 31 VR&amp;E ($2,172/mo) • $0-Down VA Loan</h3>
+            <span class="badge" style="background:#27272A;color:#FFFFFF;border:1px solid #52525B;">SUB-PAGE 3 OF 4 • VA BENEFITS MAXIMIZER (EDIPI 1516730621 • OCT 22, 2026 12:00 PM VA APPT)</span>
+            <h3 style="margin-top:4px;font-size:17px;color:#FFFFFF;">PACT Act Erbil • Airborne Secondary Chain • Ch. 31 VR&amp;E ($2,172/mo) • $0-Down VA Loan</h3>
           </div>
           <div class="btn-row">
-            <a href="https://www.va.gov/health-care/send-receive-messages/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:6px 10px;font-size:11px;">💬 My HealtheVet Message ↗</a>
+            <a href="https://www.va.gov/health-care/send-receive-messages/" target="_blank" rel="noopener" class="btn btn-blue" style="padding:6px 10px;font-size:11px;">💬 My HealtheVet Message ↗</a>
             <a href="https://www.va.gov/disability/file-disability-claim-form-21-526ez/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:6px 10px;font-size:11px;">📄 File VA 21-526EZ ↗</a>
           </div>
         </div>
 
         <div class="grid-2" style="margin-top:12px;">
-          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:11.5px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;">
               <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_1',this.checked?'1':'0')" /><span><strong>1. PACT Act Erbil (`SOJTF-OIR`) Presumptives:</strong> Rhinitis, Sinusitis, Migraines, IBS</span></label>
-              <a href="https://www.va.gov/resources/the-pact-act-and-your-va-benefits/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">PACT Act ↗</a>
+              <a href="https://www.va.gov/resources/the-pact-act-and-your-va-benefits/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10px;text-decoration:none;flex-shrink:0;">PACT Act ↗</a>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;">
               <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_2',this.checked?'1':'0')" /><span><strong>2. Airborne 25N Secondary Chain (`38 CFR § 3.310`):</strong> Bilateral Radiculopathy &amp; DDD</span></label>
-              <a href="https://www.va.gov/disability/file-disability-claim-form-21-526ez/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">File 526EZ ↗</a>
+              <a href="https://www.va.gov/disability/file-disability-claim-form-21-526ez/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10px;text-decoration:none;flex-shrink:0;">File 526EZ ↗</a>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;">
               <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_3',this.checked?'1':'0')" /><span><strong>3. Chapter 31 VR&amp;E (`28-1900`):</strong> 100% Tuition + `$2,172/mo` BAH + 128GB Workstation</span></label>
-              <a href="https://www.va.gov/careers-employment/vocational-rehabilitation/how-to-apply/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Apply VR&amp;E ↗</a>
+              <a href="https://www.va.gov/careers-employment/vocational-rehabilitation/how-to-apply/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10px;text-decoration:none;flex-shrink:0;">Apply VR&amp;E ↗</a>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;">
               <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_4',this.checked?'1':'0')" /><span><strong>4. NC Veteran Property Tax Exclusion (`NC GS 105-277.1C`) &amp; `$0-Down` COE</strong></span></label>
-              <a href="https://www.milvets.nc.gov/benefits-services" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">NC4VETS ↗</a>
+              <a href="https://www.milvets.nc.gov/benefits-services" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10px;text-decoration:none;flex-shrink:0;">NC4VETS ↗</a>
             </div>
           </div>
 
-          <div style="background:#020617;border:1px solid var(--border);border-radius:12px;padding:12px;">
-            <div style="font-size:12px;font-weight:800;color:#86efac;margin-bottom:6px;">📅 CONFIRMED: THURSDAY, OCT 22, 2026 @ 12:00 PM EDT (VA VIDEO CONNECT)</div>
-            <details open style="font-size:11.5px;color:var(--silver);margin-bottom:8px;">
-              <summary style="cursor:pointer;font-weight:700;color:#fff;">▾ Pre-Appointment Secure Message Checklist (48 Hours Prior)</summary>
+          <div style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:12px;">
+            <div style="font-size:11.5px;font-weight:800;color:#FFFFFF;margin-bottom:6px;">📅 CONFIRMED: THURSDAY, OCT 22, 2026 @ 12:00 PM EDT (VA VIDEO CONNECT)</div>
+            <details open style="font-size:11px;color:#D4D4D8;margin-bottom:8px;">
+              <summary style="cursor:pointer;font-weight:700;color:#FFFFFF;">▾ Pre-Appointment Secure Message Checklist (48 Hours Prior)</summary>
               <ul style="padding-left:16px;margin-top:6px;line-height:1.5;">
                 <li>Send My HealtheVet message documenting occupational/sleep impact &amp; prostrating frequency.</li>
                 <li>Request DBQ documentation for Lumbar/Cervical Radiculopathy (Bilateral Factor `+10%`).</li>
@@ -1837,15 +1820,15 @@
         </div>
       </div>
 
-      <!-- SUB-PAGE 4D: IMMEDIATE AI, SOCIAL MEDIA, PAID ADS & PRODUCT MONETIZATION -->
-      <div class="card career-subpage-pane" id="csub-pane-4d" style="display:none;margin-bottom:14px;border-color:rgba(245,158,11,0.55);">
+      <!-- SUB-PAGE 4D: IMMEDIATE AI, SOCIAL MEDIA, PAID ADS & PRODUCT MONETIZATION (MGC MONOCHROME) -->
+      <div class="card career-subpage-pane" id="csub-pane-4d" style="display:none;margin-bottom:12px;border-color:#52525B;">
         <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
           <div>
-            <span class="badge" style="background:rgba(245,158,11,0.22);color:#fcd34d;">SUB-PAGE 4D • IMMEDIATE AI, SOCIAL MEDIA, PAID ADS &amp; DIGITAL PRODUCTS</span>
-            <h3 style="margin-top:4px;font-size:18px;">4 Live Revenue Streams + Ready-to-Copy Ad, Reel &amp; Cover Scripts</h3>
+            <span class="badge" style="background:#27272A;color:#FFFFFF;border:1px solid #52525B;">SUB-PAGE 4 OF 4 • IMMEDIATE AI, SOCIAL MEDIA, PAID ADS &amp; DIGITAL PRODUCTS</span>
+            <h3 style="margin-top:4px;font-size:17px;color:#FFFFFF;">4 Live Revenue Streams + Ready-to-Copy Ad, Reel &amp; Cover Scripts</h3>
           </div>
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
-            <select onchange="copyCareerSnippet(this.value)" style="background:#020617;color:#fcd34d;border:1px solid rgba(245,158,11,0.5);border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+            <select onchange="copyCareerSnippet(this.value)" style="background:#09090B;color:#FFFFFF;border:1px solid #52525B;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;">
               <option value="b2b_ad">📋 Select &amp; Copy Script: LinkedIn/Meta B2B Ad</option>
               <option value="reel_script">🎬 Select &amp; Copy: 60s TikTok/Shorts/Reels Script</option>
               <option value="nc_cover">📨 Select &amp; Copy: Fort Bragg / RTP Cover Letter</option>
@@ -1857,42 +1840,42 @@
         </div>
 
         <div class="grid-2" style="margin-top:12px;">
-          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:11.5px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;">
               <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_1',this.checked?'1':'0')" /><span><strong>1. B2B Local AI Web + 24/7 Agent ($1,500 + $497/mo):</strong> Pitch NC/VA shops</span></label>
-              <a href="projects/sterling-auto-repair/index.html" class="btn btn-gold" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Client Demo →</a>
+              <a href="projects/sterling-auto-repair/index.html" class="btn btn-gold" style="padding:4px 9px;font-size:10px;text-decoration:none;flex-shrink:0;">Client Demo →</a>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;">
               <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_2',this.checked?'1':'0')" /><span><strong>2. Digital Product #1 ($79):</strong> 15-Topology EVE-NG `.unl` + Ansible Pack</span></label>
-              <a href="whitefeather-ecommerce-hub.html" class="btn btn-gold" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Storefront →</a>
+              <a href="whitefeather-ecommerce-hub.html" class="btn btn-gold" style="padding:4px 9px;font-size:10px;text-decoration:none;flex-shrink:0;">Storefront →</a>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;">
               <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_3',this.checked?'1':'0')" /><span><strong>3. White Feather AI Cohort ($97/mo):</strong> Cleared Cyber &amp; Agentic AI Skool</span></label>
-              <a href="https://www.skool.com/white-feather-ai/plans" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Open Skool ↗</a>
+              <a href="https://www.skool.com/white-feather-ai/plans" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10px;text-decoration:none;flex-shrink:0;">Open Skool ↗</a>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;">
               <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_4',this.checked?'1':'0')" /><span><strong>4. Geo-Fenced NC/VA B2B Paid Ads ($10/day):</strong> Fort Bragg &amp; RTP Radius</span></label>
-              <a href="https://www.linkedin.com/campaignmanager/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Ads Mgr ↗</a>
+              <a href="https://www.linkedin.com/campaignmanager/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10px;text-decoration:none;flex-shrink:0;">Ads Mgr ↗</a>
             </div>
           </div>
 
-          <div style="background:#020617;border:1px solid var(--border);border-radius:12px;padding:12px;">
+          <div style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:12px;">
             <div class="btn-row" style="margin-bottom:8px;">
-              <button class="btn btn-gold" style="padding:5px 9px;font-size:11px;" onclick="copyCareerSnippet('b2b_ad')">📣 B2B Ad</button>
-              <button class="btn btn-blue" style="padding:5px 9px;font-size:11px;" onclick="copyCareerSnippet('reel_script')">🎬 60s Reel</button>
-              <button class="btn btn-ghost" style="padding:5px 9px;font-size:11px;" onclick="copyCareerSnippet('nc_cover')">📨 NC Pitch</button>
-              <button class="btn btn-ghost" style="padding:5px 9px;font-size:11px;" onclick="copyCareerSnippet('headline')">💼 Headline</button>
+              <button class="btn btn-gold" style="padding:5px 9px;font-size:10.5px;" onclick="copyCareerSnippet('b2b_ad')">📣 B2B Ad</button>
+              <button class="btn btn-blue" style="padding:5px 9px;font-size:10.5px;" onclick="copyCareerSnippet('reel_script')">🎬 60s Reel</button>
+              <button class="btn btn-ghost" style="padding:5px 9px;font-size:10.5px;" onclick="copyCareerSnippet('nc_cover')">📨 NC Pitch</button>
+              <button class="btn btn-ghost" style="padding:5px 9px;font-size:10.5px;" onclick="copyCareerSnippet('headline')">💼 Headline</button>
             </div>
-            <pre id="career-snippet-preview" style="margin:0;padding:10px;border-radius:8px;background:#070b14;border:1px solid var(--border);color:#93c5fd;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:pre-wrap;max-height:150px;overflow-y:auto;line-height:1.45;">Select a script from the dropdown or buttons above to copy ready-to-launch Ad Copy, 60s Reel Script, or NC Cover Pitch...</pre>
+            <pre id="career-snippet-preview" style="margin:0;padding:10px;border-radius:8px;background:#141519;border:1px solid #27272A;color:#E4E4E7;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:pre-wrap;max-height:150px;overflow-y:auto;line-height:1.45;">Select a script from the dropdown or buttons above to copy ready-to-launch Ad Copy, 60s Reel Script, or NC Cover Pitch...</pre>
           </div>
         </div>
       </div>
 
       <!-- SUB-PAGE FOOTER PAGINATION BAR -->
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(9,14,28,0.9);border:1px solid var(--border);border-radius:10px;">
-        <button class="btn btn-ghost" onclick="stepCareerSubPage(-1)" style="font-size:11.5px;padding:6px 12px;">← Previous Sub-Page</button>
-        <span id="career-subpage-indicator" style="font-size:11.5px;font-weight:800;color:var(--silver);">Sub-Page 1 of 4 • Use Dropdown or Pills Above to Switch Views</span>
-        <button class="btn btn-blue" onclick="stepCareerSubPage(1)" style="font-size:11.5px;padding:6px 12px;">Next Sub-Page →</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;">
+        <button class="btn btn-ghost" onclick="stepCareerSubPage(-1)" style="font-size:11px;padding:5px 11px;">← Previous Sub-Page</button>
+        <span id="career-subpage-indicator" style="font-size:11px;font-weight:800;color:#D4D4D8;">Sub-Page 1 of 4 • Use Dropdown or Pills Above to Switch Views</span>
+        <button class="btn btn-gold" onclick="stepCareerSubPage(1)" style="font-size:11px;padding:5px 11px;">Next Sub-Page →</button>
       </div>
     </div>
 
@@ -2673,7 +2656,7 @@
     function renderScormProgressRing(pct) {
       if (pct >= 100) {
         return `<svg width="20" height="20" viewBox="0 0 20 20" aria-label="100% Complete">
-          <circle cx="10" cy="10" r="9" fill="#12b84b" />
+          <circle cx="10" cy="10" r="9" fill="#09090B" />
           <path d="M6 10.3L8.6 13L14.2 7.2" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>`;
       }
@@ -2681,8 +2664,8 @@
       const c = 2 * Math.PI * r;
       const offset = c - (pct / 100) * c;
       return `<svg width="20" height="20" viewBox="0 0 20 20" aria-label="${pct}% Complete">
-        <circle cx="10" cy="10" r="${r}" fill="none" stroke="#cbd5e1" stroke-width="2" />
-        ${pct > 0 ? `<circle cx="10" cy="10" r="${r}" fill="none" stroke="#12b84b" stroke-width="2.2" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" transform="rotate(-90 10 10)" />` : ''}
+        <circle cx="10" cy="10" r="${r}" fill="none" stroke="#D4D4D8" stroke-width="2" />
+        ${pct > 0 ? `<circle cx="10" cy="10" r="${r}" fill="none" stroke="#09090B" stroke-width="2.2" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" transform="rotate(-90 10 10)" />` : ''}
       </svg>`;
     }
 
@@ -3840,6 +3823,8 @@ ${nodesXml}
       if (target) target.classList.add('active');
       const btn = document.querySelector(`.ws-tab[data-target="${tabId}"]`);
       if (btn) btn.classList.add('active');
+      const mainSel = document.getElementById('canvas-main-view-select');
+      if (mainSel) mainSel.value = tabId;
 
       if (tabId === 'tab-geo-atlas') {
         setTimeout(() => {
@@ -3867,10 +3852,10 @@ ${nodesXml}
         const pane = document.getElementById('csub-pane-' + k);
         const btn = document.getElementById('csub-btn-' + k);
         if (pane) pane.style.display = (pageKey === 'all' || pageKey === k) ? 'block' : 'none';
-        if (btn) btn.className = (pageKey === k) ? 'btn btn-crimson' : 'btn btn-ghost';
+        if (btn) btn.className = (pageKey === k) ? 'btn btn-gold' : 'btn btn-ghost';
       });
       const allBtn = document.getElementById('csub-btn-all');
-      if (allBtn) allBtn.className = (pageKey === 'all') ? 'btn btn-blue' : 'btn btn-ghost';
+      if (allBtn) allBtn.className = (pageKey === 'all') ? 'btn btn-gold' : 'btn btn-ghost';
       const sel = document.getElementById('career-subpage-select');
       if (sel) sel.value = pageKey;
       const ind = document.getElementById('career-subpage-indicator');

@@ -87,11 +87,11 @@
   const session = getVerifiedSession();
   const currentFile = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
-  // 16-Portal Ecosystem Registry — Evenly Split: 8 MGC Thematic Portals & 8 F.I.X Solutions Thematic Portals
+  // 16-Portal Ecosystem Registry — Evenly Split: 8 MGC Thematic Portals (Gray/Black/White) & 8 F.I.X Solutions Thematic Portals (Navy/Slate/Gold)
   const pages = [
-    { file: 'admin-command-portal.html', icon: '🛡️', label: 'Admin Hub', full: 'Master Admin Command Hub', cat: 'Command & Auth', tag: 'All 16 Portals', color: '#2563eb', rail: true, brand: 'MGC' },
-    { file: 'onboarding-portal.html', icon: '🫆', label: 'Client 2FA', full: 'Client 2FA & Biometric Gate', cat: 'Command & Auth', tag: 'Passkey + TOTP', color: '#dc2626', rail: true, brand: 'MGC' },
-    { file: 'index.html', icon: '📊', label: 'Ops Hub', full: 'Executive Data & Ops Hub', cat: 'Command & Auth', tag: 'Cloud & Telemetry', color: '#2563eb', rail: true, brand: 'MGC' },
+    { file: 'admin-command-portal.html', icon: '🛡️', label: 'Admin Hub', full: 'Master Admin Command Hub', cat: 'Command & Auth', tag: 'All 16 Portals', color: '#e4e4e7', rail: true, brand: 'MGC' },
+    { file: 'onboarding-portal.html', icon: '🫆', label: 'Client 2FA', full: 'Client 2FA & Biometric Gate', cat: 'Command & Auth', tag: 'Passkey + TOTP', color: '#a1a1aa', rail: true, brand: 'MGC' },
+    { file: 'index.html', icon: '📊', label: 'Ops Hub', full: 'Executive Data & Ops Hub', cat: 'Command & Auth', tag: 'Cloud & Telemetry', color: '#e4e4e7', rail: true, brand: 'MGC' },
     { file: 'integrations-connections-hub.html', icon: '🔌', label: 'Integrations', full: 'Cloud & API Integrations', cat: 'Command & Auth', tag: 'GCP • Azure • OAuth', color: '#C5B358', rail: false, brand: 'FIX' },
 
     { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', label: 'SaaS Apps', full: 'Monetized Apps & Simulators', cat: 'Apps & Labs', tag: 'Pay-Per-View Apps', color: '#C5B358', rail: true, brand: 'FIX' },
@@ -99,22 +99,22 @@
     { file: 'earth-3d.html', icon: '🌍', label: '3D Earth', full: '3D Geospatial Command', cat: 'Apps & Labs', tag: 'WebGL 3D Globe', color: '#C5B358', rail: false, brand: 'FIX' },
     { file: 'vr-command.html', icon: '🥽', label: '360° VR', full: '360° WebXR Spatial Deck', cat: 'Apps & Labs', tag: 'Spatial Command', color: '#C5B358', rail: false, brand: 'FIX' },
 
-    { file: 'elearning-upskilling-hub.html', icon: '🎓', label: 'Canvas LMS', full: 'Canvas Academy & NC Career Hub', cat: 'Canvas Academy', tag: 'EVE-NG & Career/VA', color: '#dc2626', rail: true, brand: 'MGC' },
-    { file: 'historical-archaeology-ai-hub.html', icon: '🏛️', label: 'History Lab', full: 'Historical & Archaeology AI', cat: 'Canvas Academy', tag: 'LiDAR & Epigraphy', color: '#2563eb', rail: false, brand: 'MGC' },
-    { file: 'chronos-external-insight-webapp.html', icon: '🌐', label: 'Chronos App', full: 'Chronos Discovery WebApp', cat: 'Canvas Academy', tag: '3-Pane Explorer', color: '#2563eb', rail: false, brand: 'MGC' },
+    { file: 'elearning-upskilling-hub.html', icon: '🎓', label: 'Canvas LMS', full: 'Canvas Academy & NC Career Hub', cat: 'Canvas Academy', tag: 'EVE-NG & Career/VA', color: '#ffffff', rail: true, brand: 'MGC' },
+    { file: 'historical-archaeology-ai-hub.html', icon: '🏛️', label: 'History Lab', full: 'Historical & Archaeology AI', cat: 'Canvas Academy', tag: 'LiDAR & Epigraphy', color: '#a1a1aa', rail: false, brand: 'MGC' },
+    { file: 'chronos-external-insight-webapp.html', icon: '🌐', label: 'Chronos App', full: 'Chronos Discovery WebApp', cat: 'Canvas Academy', tag: '3-Pane Explorer', color: '#e4e4e7', rail: false, brand: 'MGC' },
 
     { file: 'projects/sterling-auto-repair/index.html', icon: '🚗', label: 'Sterling Auto', full: 'Sterling Auto Repair', cat: 'Commerce & Gov', tag: 'Customer Website', color: '#C5B358', rail: true, brand: 'FIX' },
     { file: 'finance-command.html', icon: '💳', label: 'Finance', full: 'Finance, WAWF & VA Treasury', cat: 'Commerce & Gov', tag: 'Stripe • ACH • WAWF', color: '#C5B358', rail: true, brand: 'FIX' },
-    { file: 'whitefeather-ecommerce-hub.html', icon: '🛍️', label: 'eCommerce', full: 'White Feather AI & Social Ads Hub', cat: 'Commerce & Gov', tag: 'AI Products & Ads', color: '#dc2626', rail: false, brand: 'MGC' },
+    { file: 'whitefeather-ecommerce-hub.html', icon: '🛍️', label: 'eCommerce', full: 'White Feather AI & Social Ads Hub', cat: 'Commerce & Gov', tag: 'AI Products & Ads', color: '#ffffff', rail: false, brand: 'MGC' },
     { file: 'sdvosb-contract-radar.html', icon: '🎯', label: 'SAM Radar', full: 'SDVOSB Contract Radar', cat: 'Commerce & Gov', tag: 'VA & DoD Pipeline', color: '#C5B358', rail: false, brand: 'FIX' },
-    { file: 'compliance-trust-center.html', icon: '🔒', label: 'Zero-Trust', full: 'Compliance & Trust Center', cat: 'Commerce & Gov', tag: 'CMMC 2.0 • SC-100', color: '#2563eb', rail: false, brand: 'MGC' }
+    { file: 'compliance-trust-center.html', icon: '🔒', label: 'Zero-Trust', full: 'Compliance & Trust Center', cat: 'Commerce & Gov', tag: 'CMMC 2.0 • SC-100', color: '#a1a1aa', rail: false, brand: 'MGC' }
   ];
 
   const currentPageEntry = pages.find(p => p.file.toLowerCase() === currentFile) || pages[0];
   const defaultPageBrand = currentPageEntry ? currentPageEntry.brand : 'MGC';
 
-  // Authentic Inline SVG Logos for MGC (Crimson/Cobalt/White Shield) and F.I.X (Vanguard Gold/Mission Navy Cyber Shield)
-  const MGC_SHIELD_SVG = `<svg viewBox="0 0 100 100" class="os-brand-logo-svg" xmlns="http://www.w3.org/2000/svg" aria-label="Milton Group Concepts LLC Shield"><defs><linearGradient id="mgcBlue" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#1E3A8A"/></linearGradient><linearGradient id="mgcRed" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EF4444"/><stop offset="100%" stop-color="#991B1B"/></linearGradient></defs><path d="M50 6 L88 20 L88 50 C88 74 50 94 50 94 C50 94 12 74 12 50 L12 20 Z" fill="#070B14" stroke="#F8FAFC" stroke-width="3.5"/><path d="M50 11 L50 89 C50 89 17 71 17 50 L17 23 Z" fill="url(#mgcBlue)"/><path d="M50 11 L83 23 L83 50 C83 71 50 89 50 89 Z" fill="url(#mgcRed)"/><path d="M30 62 L30 36 L41 36 L50 50 L59 36 L70 36 L70 62 L61 62 L61 47 L50 61 L39 47 L39 62 Z" fill="#FFFFFF"/></svg>`;
+  // Authentic Inline SVG Logos for MGC (Monochrome Gray, Black & White Shield matching mgc-logo.png) and F.I.X (Vanguard Gold/Mission Navy Cyber Shield)
+  const MGC_SHIELD_SVG = `<svg viewBox="0 0 100 100" class="os-brand-logo-svg" xmlns="http://www.w3.org/2000/svg" aria-label="Milton Group Concepts LLC Shield"><defs><linearGradient id="mgcDark" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#27272A"/><stop offset="100%" stop-color="#09090B"/></linearGradient><linearGradient id="mgcSteel" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#71717A"/><stop offset="100%" stop-color="#18181B"/></linearGradient></defs><rect x="4" y="4" width="92" height="92" rx="18" fill="#09090B" stroke="#A1A1AA" stroke-width="3"/><path d="M50 10 L84 22 L84 50 C84 72 50 90 50 90 C50 90 16 72 16 50 L16 22 Z" fill="url(#mgcDark)" stroke="#FFFFFF" stroke-width="3"/><path d="M50 14 L80 25 L80 50 C80 69 50 86 50 86 Z" fill="url(#mgcSteel)" opacity="0.65"/><text x="50" y="58" text-anchor="middle" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-weight="900" font-size="24" letter-spacing="1">MGC</text></svg>`;
 
   const FIX_SHIELD_SVG = `<svg viewBox="0 0 400 400" class="os-brand-logo-svg" xmlns="http://www.w3.org/2000/svg" aria-label="F.I.X Solutions LLC Cyber Shield"><defs><linearGradient id="fixGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FDE047"/><stop offset="100%" stop-color="#C5B358"/></linearGradient><linearGradient id="fixNavyGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1E293B"/><stop offset="100%" stop-color="#0B1426"/></linearGradient></defs><circle cx="200" cy="200" r="182" fill="none" stroke="url(#fixGoldGrad)" stroke-width="8" stroke-dasharray="16 12" opacity="0.75"/><path d="M 200 28 L 342 70 L 342 200 C 342 302 200 364 200 364 C 200 364 58 302 58 200 L 58 70 Z" fill="url(#fixNavyGrad)" stroke="url(#fixGoldGrad)" stroke-width="12"/><g fill="url(#fixGoldGrad)"><path d="M 90 225 L 90 125 L 152 125 L 162 142 L 118 142 L 118 165 L 146 165 L 156 182 L 118 182 L 118 225 Z"/><polygon points="166,210 178,210 183,225 171,225"/><polygon points="190,125 218,125 218,225 190,225"/><polygon points="225,210 237,210 242,225 230,225"/><path d="M 250 125 L 272 125 L 284 158 L 296 125 L 318 125 L 296 175 L 318 225 L 296 225 L 284 192 L 272 225 L 250 225 L 272 175 Z"/></g></svg>`;
 
@@ -1012,9 +1012,9 @@
         white-space: nowrap;
       }
       .os-brand-badge.mgc {
-        background: linear-gradient(135deg, rgba(220, 38, 38, 0.25), rgba(37, 99, 235, 0.35));
-        border-color: rgba(239, 68, 68, 0.6);
-        color: #f8fafc;
+        background: linear-gradient(135deg, #27272A, #09090B);
+        border-color: #A1A1AA;
+        color: #FFFFFF;
       }
       .os-brand-badge.fix {
         background: linear-gradient(135deg, rgba(197, 179, 88, 0.28), rgba(11, 20, 38, 0.92));
@@ -1031,9 +1031,9 @@
         flex-shrink: 0;
       }
       .os-item-brand-pill.mgc {
-        background: rgba(220, 38, 38, 0.22);
-        border: 1px solid rgba(37, 99, 235, 0.55);
-        color: #93c5fd;
+        background: rgba(161, 161, 170, 0.18);
+        border: 1px solid rgba(228, 228, 231, 0.45);
+        color: #FFFFFF;
       }
       .os-item-brand-pill.fix {
         background: rgba(197, 179, 88, 0.2);
@@ -1041,22 +1041,55 @@
         color: #FDE047;
       }
 
-      /* MGC Logo Thematic Palette Overrides (8 Portals) */
+      /* MGC Logo Thematic Palette Overrides (8 Portals — Monochrome Gray, Black & White) */
       body.theme-mgc {
-        --os-border: rgba(59, 130, 246, 0.28);
-        --mgc-gold: #f8fafc;
+        --os-border: rgba(161, 161, 170, 0.28);
+        --mgc-gold: #ffffff;
+        --gold: #e4e4e7;
+        --gold-light: #ffffff;
+        --gold-bright: #ffffff;
+        --cobalt: #d4d4d8;
+        --crimson: #52525b;
+        --border: rgba(161, 161, 170, 0.24);
+        --border-gold: rgba(255, 255, 255, 0.38);
         background:
-          radial-gradient(circle at 14% 12%, rgba(37, 99, 235, 0.26), transparent 42%),
-          radial-gradient(circle at 86% 14%, rgba(220, 38, 38, 0.22), transparent 40%),
-          #070B14 !important;
+          radial-gradient(circle at 18% 12%, rgba(161, 161, 170, 0.12), transparent 42%),
+          radial-gradient(circle at 82% 16%, rgba(82, 82, 91, 0.16), transparent 44%),
+          #09090B !important;
+        color: #FAFAFA !important;
       }
       body.theme-mgc #mgc-os-topbar {
-        background: linear-gradient(90deg, #070B14 0%, #0F172A 48%, #1E1B4B 100%);
-        border-bottom: 2px solid #DC2626;
+        background: linear-gradient(90deg, #050507 0%, #121316 52%, #1F2127 100%);
+        border-bottom: 1.5px solid #A1A1AA;
       }
       body.theme-mgc #mgc-os-rail {
-        background: linear-gradient(180deg, #070B14 0%, #0F172A 100%);
-        border-right: 1px solid rgba(37, 99, 235, 0.38);
+        background: linear-gradient(180deg, #050507 0%, #141519 100%);
+        border-right: 1px solid rgba(161, 161, 170, 0.32);
+      }
+      body.theme-mgc .hub-toolbar,
+      body.theme-mgc .exec-strip,
+      body.theme-mgc .hero,
+      body.theme-mgc .hero-banner,
+      body.theme-mgc #mgc-subpage-bar {
+        background: linear-gradient(135deg, #09090B, #18181B) !important;
+        border-color: rgba(161, 161, 170, 0.42) !important;
+      }
+      body.theme-mgc .card,
+      body.theme-mgc .app-card,
+      body.theme-mgc .portal-card,
+      body.theme-mgc .metric-pill,
+      body.theme-mgc .kpi-card {
+        background: rgba(18, 19, 23, 0.94) !important;
+        border-color: rgba(161, 161, 170, 0.25) !important;
+      }
+      body.theme-mgc .sp-tab.active,
+      body.theme-mgc .ws-tab.active,
+      body.theme-mgc .btn-open,
+      body.theme-mgc .btn-primary {
+        background: linear-gradient(135deg, #FFFFFF, #D4D4D8) !important;
+        color: #09090B !important;
+        border-color: #FFFFFF !important;
+        font-weight: 900 !important;
       }
 
       /* F.I.X Solutions Logo Thematic Palette Overrides (8 Portals) */
@@ -1113,9 +1146,9 @@
         margin: 1.25rem auto 2rem;
         padding: 1.25rem;
         border-radius: 1.15rem;
-        background: rgba(9, 14, 28, 0.94);
+        background: rgba(12, 13, 16, 0.96);
         border: 1px solid var(--os-border);
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
         font-family: 'Inter', sans-serif;
       }
       body.theme-fix #mgc-portal-action-suite {
@@ -1123,8 +1156,8 @@
         border-color: rgba(197, 179, 88, 0.45);
       }
       body.theme-mgc #mgc-portal-action-suite {
-        background: linear-gradient(145deg, rgba(7, 11, 20, 0.96), rgba(15, 23, 42, 0.92));
-        border-color: rgba(37, 99, 235, 0.45);
+        background: linear-gradient(145deg, #09090B, #18181B);
+        border-color: rgba(161, 161, 170, 0.42);
       }
       .pas-grid {
         display: grid;
@@ -1136,8 +1169,8 @@
         .pas-grid { grid-template-columns: 1fr; }
       }
       .pas-card {
-        background: rgba(2, 6, 23, 0.78);
-        border: 1px solid rgba(203, 213, 225, 0.16);
+        background: rgba(9, 9, 11, 0.85);
+        border: 1px solid rgba(161, 161, 170, 0.22);
         border-radius: 0.9rem;
         padding: 1rem;
         display: flex;
@@ -1151,17 +1184,17 @@
         justify-content: space-between;
         gap: 0.65rem;
         font-size: 0.76rem;
-        color: #e2e8f0;
+        color: #f4f4f5;
         padding: 0.42rem 0.55rem;
         border-radius: 0.5rem;
-        background: rgba(15, 23, 42, 0.55);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(24, 24, 27, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         margin-bottom: 0.4rem;
         transition: background 0.15s, border-color 0.15s;
       }
       .pas-check-item:hover {
-        background: rgba(255, 255, 255, 0.07);
-        border-color: rgba(255, 255, 255, 0.16);
+        background: rgba(39, 39, 42, 0.9);
+        border-color: rgba(255, 255, 255, 0.22);
       }
       .pas-check-label {
         display: flex;
@@ -1172,7 +1205,7 @@
         min-width: 0;
       }
       .pas-check-item input[type="checkbox"] {
-        accent-color: #16a34a;
+        accent-color: #ffffff;
         width: 0.95rem;
         height: 0.95rem;
         cursor: pointer;
@@ -1189,15 +1222,15 @@
         text-decoration: none;
         white-space: nowrap;
         flex-shrink: 0;
-        background: rgba(37, 99, 235, 0.22);
-        border: 1px solid rgba(59, 130, 246, 0.48);
-        color: #93c5fd;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(212, 212, 216, 0.45);
+        color: #ffffff;
         transition: all 0.15s;
       }
       .pas-inline-link:hover {
         transform: translateY(-1px);
-        background: rgba(37, 99, 235, 0.38);
-        color: #ffffff;
+        background: #ffffff;
+        color: #09090b;
       }
       body.theme-fix .pas-inline-link {
         background: rgba(197, 179, 88, 0.18);
@@ -1209,9 +1242,9 @@
         color: #ffffff;
       }
       .pas-select {
-        background: rgba(2, 6, 23, 0.92);
+        background: #09090b;
         color: #f8fafc;
-        border: 1px solid rgba(148, 163, 184, 0.38);
+        border: 1px solid rgba(161, 161, 170, 0.45);
         border-radius: 0.55rem;
         padding: 0.38rem 0.65rem;
         font-size: 0.72rem;
@@ -1219,6 +1252,7 @@
         cursor: pointer;
       }
       body.theme-fix .pas-select {
+        background: rgba(2, 6, 23, 0.92);
         border-color: rgba(197, 179, 88, 0.55);
         color: #FDE047;
       }
@@ -1230,7 +1264,7 @@
       .pas-details summary {
         font-size: 0.7rem;
         font-weight: 800;
-        color: #94a3b8;
+        color: #a1a1aa;
         cursor: pointer;
         user-select: none;
         list-style: none;
@@ -1251,9 +1285,9 @@
         font-size: 0.7rem;
         font-weight: 800;
         text-decoration: none;
-        background: rgba(37, 99, 235, 0.22);
-        border: 1px solid rgba(59, 130, 246, 0.45);
-        color: #93c5fd;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(212, 212, 216, 0.42);
+        color: #ffffff;
         transition: all 0.15s;
       }
       body.theme-fix .pas-link-btn {
@@ -1908,7 +1942,7 @@
    * Ensures every portal has concrete modules, direct clickable links, and persistent checkable action items.
    */
   function injectPortalModuleActionSuite() {
-    if (document.getElementById('mgc-portal-action-suite')) return;
+    if (currentFile === 'elearning-upskilling-hub.html' || document.getElementById('mgc-portal-action-suite')) return;
 
     const PORTAL_MODULES = {
       'sdvosb-contract-radar.html': {
@@ -2059,8 +2093,8 @@
     suite.innerHTML = `
       <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.1);">
         <div>
-          <span style="font-size:0.66rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:${defaultPageBrand === 'FIX' ? '#FDE047' : '#93c5fd'};">
-            ● ${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS THEME (MISSION NAVY & VANGUARD GOLD)' : 'MGC WORKSPACE THEME (SOVEREIGN CRIMSON, COBALT & WHITE)'} • ANTI-CLUTTER SUB-PAGE MODULES
+          <span style="font-size:0.66rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:${defaultPageBrand === 'FIX' ? '#FDE047' : '#E4E4E7'};">
+            ● ${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS THEME (MISSION NAVY & VANGUARD GOLD)' : 'MGC WORKSPACE THEME (OBSIDIAN BLACK, STEEL GRAY & CRISP WHITE)'} • ANTI-CLUTTER SUB-PAGE MODULES
           </span>
           <h2 style="font-size:1.1rem;font-weight:900;color:#ffffff;margin-top:0.18rem;">${cfg.heading}</h2>
         </div>

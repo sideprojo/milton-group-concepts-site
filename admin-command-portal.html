@@ -377,31 +377,31 @@
           </div>
         </div>
 
-        <div class="showcase-box" style="border-color:rgba(220,38,38,0.55);">
+        <div class="showcase-box" style="border-color:rgba(212,212,216,0.45);">
           <div class="ac-top">
             <div class="ac-icon">🎓</div>
-            <span class="ac-cat-tag">MGC Theme • NC Relocation + Fort Bragg/RTP Jobs + VA</span>
+            <span class="ac-cat-tag" style="border-color:#A1A1AA;color:#FFFFFF;">MGC Theme • NC Relocation + Fort Bragg/RTP Jobs + VA</span>
           </div>
           <div>
             <div class="ac-title" style="font-size:22px;">Canvas Academy, 15 EVE-NG Labs &amp; NC Career Hub</div>
             <div class="ac-sub">Immediate Fort Bragg (USASOC 25N) &amp; Raleigh/RTP Jobs • Sanford/Lillington/Raleigh Relocation • VA Ch. 31 VR&amp;E ($2,172/mo BAH)</div>
           </div>
           <div class="ac-bottom">
-            <a href="elearning-upskilling-hub.html" class="btn-open">Open NC Career, VA &amp; EVE-NG Hub ↗</a>
+            <a href="elearning-upskilling-hub.html" class="btn-open" style="background:linear-gradient(135deg,#FFFFFF,#D4D4D8);color:#09090B;">Open NC Career, VA &amp; EVE-NG Hub ↗</a>
           </div>
         </div>
 
-        <div class="showcase-box" style="border-color:rgba(220,38,38,0.55);">
+        <div class="showcase-box" style="border-color:rgba(212,212,216,0.45);">
           <div class="ac-top">
             <div class="ac-icon">🛍️</div>
-            <span class="ac-cat-tag">MGC Theme • Immediate AI &amp; Social Ad Monetization</span>
+            <span class="ac-cat-tag" style="border-color:#A1A1AA;color:#FFFFFF;">MGC Theme • Immediate AI &amp; Social Ad Monetization</span>
           </div>
           <div>
             <div class="ac-title" style="font-size:22px;">White Feather AI, Social Ads &amp; Digital Storefront</div>
             <div class="ac-sub">$79 EVE-NG Lab Bundle • $97/mo White Feather AI Skool • Copy-Ready LinkedIn/Meta/TikTok Ad Scripts &amp; B2B Outreach</div>
           </div>
           <div class="ac-bottom">
-            <a href="whitefeather-ecommerce-hub.html" class="btn-open">Open AI Monetization &amp; Ads Hub ↗</a>
+            <a href="whitefeather-ecommerce-hub.html" class="btn-open" style="background:linear-gradient(135deg,#FFFFFF,#D4D4D8);color:#09090B;">Open AI Monetization &amp; Ads Hub ↗</a>
           </div>
         </div>
 
@@ -500,17 +500,17 @@
         const isFix = p.brand === 'FIX';
         const cardStyle = isFix
           ? 'border-color:rgba(197,179,88,0.45);background:linear-gradient(145deg,rgba(11,20,38,0.92),rgba(45,55,72,0.78));'
-          : 'border-color:rgba(37,99,235,0.45);background:linear-gradient(145deg,rgba(7,11,20,0.92),rgba(30,58,138,0.32));';
+          : 'border-color:rgba(212,212,216,0.38);background:linear-gradient(145deg,#09090B,#18181B);';
         const tagStyle = isFix
           ? 'background:rgba(197,179,88,0.2);border-color:#C5B358;color:#FDE047;'
-          : 'background:rgba(220,38,38,0.2);border-color:rgba(59,130,246,0.55);color:#93c5fd;';
+          : 'background:rgba(255,255,255,0.1);border-color:#A1A1AA;color:#FFFFFF;';
         const btnStyle = isFix
           ? 'background:linear-gradient(135deg,#C5B358,#A18A38);color:#0B1426;border-color:#FDE047;'
-          : 'background:linear-gradient(135deg,#1e3a8a,#dc2626);color:#ffffff;border-color:#93c5fd;';
+          : 'background:linear-gradient(135deg,#FFFFFF,#D4D4D8);color:#09090B;border-color:#FFFFFF;font-weight:900;';
         return `
           <div class="app-card ${p.featured ? 'featured' : ''}" style="${cardStyle}">
             <div class="ac-top">
-              <div class="ac-icon" style="${isFix ? 'border-color:#C5B358;' : 'border-color:#3b82f6;'}">${p.icon}</div>
+              <div class="ac-icon" style="${isFix ? 'border-color:#C5B358;' : 'border-color:#A1A1AA;background:rgba(255,255,255,0.06);'}">${p.icon}</div>
               <span class="ac-cat-tag" style="${tagStyle}">${p.badge}</span>
             </div>
             <div>
