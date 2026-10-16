@@ -237,13 +237,17 @@
   initIndexedDB();
   const commit = () => db.save(S);
 
+  const ALLOWED_SSO = ['google', 'microsoft', 'apple'];
+
   const me = () => {
-    const uidVal = S.currentUser || sessionStorage.getItem('mgcw.uid') || '';
-    if (uidVal && S.users[uidVal]) return S.users[uidVal];
-    // Bridge with OS 2FA Session if authenticated there
+    if (localStorage.getItem('mgc_edge_gate_locked') === '1') return null;
+    if (S.currentUser && S.users[S.currentUser]) return S.users[S.currentUser];
+    // Bridge with OS Federated SSO Session (must be Google, Microsoft, or Apple SSO)
     try {
       const osSess = JSON.parse(localStorage.getItem('mgc_onboarded_session') || 'null');
-      if (osSess && osSess.email && localStorage.getItem('mgc_edge_gate_locked') !== '1') {
+      if (osSess && osSess.email && osSess.ssoVerified === true && ALLOWED_SSO.includes(String(osSess.ssoProvider || '').toLowerCase())) {
+        const uidVal = sessionStorage.getItem('mgcw.uid') || '';
+        if (uidVal && S.users[uidVal]) return S.users[uidVal];
         const found = Object.values(S.users).find(u => u.email.toLowerCase() === osSess.email.toLowerCase());
         if (found) {
           sessionStorage.setItem('mgcw.uid', found.id);
@@ -254,18 +258,22 @@
     return null;
   };
 
-  const signInAs = (id) => {
+  const signInAs = (id, provider = 'google') => {
+    const cleanProv = ALLOWED_SSO.includes(String(provider || '').toLowerCase()) ? String(provider).toLowerCase() : 'google';
     sessionStorage.setItem('mgcw.uid', id);
+    sessionStorage.setItem('mgcw.sso_provider', cleanProv);
     const u = S.users[id];
     if (u) {
       const sessionObj = {
         email: u.email,
         name: u.name,
         org: u.brand === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC',
-        role: u.role === 'owner' ? 'OWNER_ADMIN (2FA VERIFIED)' : 'VERIFIED_MEMBER',
+        role: u.role === 'owner' ? 'OWNER_ADMIN (SSO VERIFIED)' : 'VERIFIED_MEMBER (SSO)',
+        ssoVerified: true,
+        ssoProvider: cleanProv,
         access: u.role === 'owner' ? 'INTERNAL_SUITE_FULL' : 'MEMBER_SCOPED',
         verifiedAt: now(),
-        integrityHash: 'SHA256-' + btoa(u.email + ':' + u.role + ':MGC-2026').slice(0, 16),
+        integrityHash: 'SHA256-' + btoa(u.email + ':' + cleanProv + ':' + u.role + ':MGC-2026').slice(0, 16),
         zeroChargeGuard: 'ACTIVE_MIN0_MAX2'
       };
       localStorage.setItem('mgc_onboarded_session', JSON.stringify(sessionObj));
@@ -274,15 +282,16 @@
     if (serverSyncOk && u && u.email) {
       try {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/auth/google', false);
+        xhr.open('POST', '/api/auth/sso', false);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({ email: u.email }));
+        xhr.send(JSON.stringify({ provider: cleanProv, email: u.email }));
       } catch (_) {}
     }
   };
 
   const signOut = () => {
     sessionStorage.removeItem('mgcw.uid');
+    sessionStorage.removeItem('mgcw.sso_provider');
     localStorage.removeItem('mgc_onboarded_session');
     localStorage.setItem('mgc_edge_gate_locked', '1');
     if (serverSyncOk) location.href = '/api/auth/logout';

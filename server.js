@@ -402,6 +402,13 @@ function parseCookies(req) {
   return out;
 }
 
+const ALLOWED_SSO_PROVIDERS = new Set(['google', 'microsoft', 'apple']);
+const SSO_PROVIDER_LABELS = {
+  google: 'Google SSO',
+  microsoft: 'Microsoft SSO',
+  apple: 'Apple SSO'
+};
+
 function getAuthenticatedUser(req) {
   const cookies = parseCookies(req);
   const authHeader = req.headers.authorization || '';
@@ -409,7 +416,10 @@ function getAuthenticatedUser(req) {
   const token = bearer || cookies.mgcw_session;
   const claims = verifyToken(token);
   if (!claims || !claims.uid) return null;
-  return S.users[claims.uid] || null;
+  if (!claims.ssoVerified || !ALLOWED_SSO_PROVIDERS.has(claims.provider)) return null;
+  const u = S.users[claims.uid] || null;
+  if (u) u.ssoProvider = claims.provider;
+  return u;
 }
 
 function findOrCreateUserByEmail(email, name, method) {
@@ -430,7 +440,7 @@ function findOrCreateUserByEmail(email, name, method) {
     role: 'member',
     status: 'requested',
     brand: 'MGC',
-    quote: { interest: 'ai-web', note: `Created via ${method || 'sign-in'}` },
+    quote: { interest: 'ai-web', note: `Created via ${method || 'SSO'}` },
     plan: { base: false, addons: [] },
     pages: {},
     checklist: {},
@@ -438,8 +448,8 @@ function findOrCreateUserByEmail(email, name, method) {
   };
   S.requests.unshift({ id: uid('r'), uid: id, status: 'requested', created: now() });
   notifyUser(id, 'Request received', 'Welcome! Your workspace request is under review. You will be notified as soon as your pages are built.');
-  notifyUser('owner', 'New sign-in access request', `${displayName} (${cleanEmail}) signed in via ${method || 'auth'}.`, 'in-app + email + push');
-  logAudit(id, 'auth.signup', `${cleanEmail} (${method || 'auth'})`);
+  notifyUser('owner', 'New SSO sign-in access request', `${displayName} (${cleanEmail}) authenticated via ${method || 'SSO'}.`, 'in-app + email + push');
+  logAudit(id, 'auth.signup', `${cleanEmail} (${method || 'SSO'})`);
   saveState(S);
   return S.users[id];
 }
@@ -449,6 +459,8 @@ function scopeStateForUser(u) {
     return {
       v: 1,
       currentUser: null,
+      ssoEnforced: true,
+      allowedSsoProviders: ['google', 'microsoft', 'apple'],
       users: {},
       shares: [],
       tasks: [],
@@ -461,7 +473,7 @@ function scopeStateForUser(u) {
     };
   }
   if (u.role === 'owner') {
-    return { ...S, currentUser: u.id };
+    return { ...S, currentUser: u.id, ssoProvider: u.ssoProvider || 'google', ssoEnforced: true };
   }
   // Scoped member view: only their own profile, their own notifications, shared projects, and shared items
   const allowedProjects = {};
@@ -476,6 +488,8 @@ function scopeStateForUser(u) {
   return {
     v: 1,
     currentUser: u.id,
+    ssoProvider: u.ssoProvider || 'google',
+    ssoEnforced: true,
     users: { [u.id]: u },
     shares: myShares,
     tasks: [],
@@ -566,81 +580,78 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, service: 'mgc-command-workspace', ts: now() });
     }
 
-    /* ---------- Auth Endpoints (Google Sign-In + Passwordless Email Link) ---------- */
+    /* ---------- Enforced SSO Auth Endpoints (ONLY Google, Microsoft, or Apple SSO) ---------- */
     if (pathname === '/api/auth/config' && req.method === 'GET') {
       return sendJson(res, 200, {
+        ssoEnforced: true,
+        allowedProviders: ['google', 'microsoft', 'apple'],
+        passwordAuthAllowed: false,
+        emailLinkAllowed: false,
         firebaseProjectId: process.env.FIREBASE_PROJECT_ID || 'gen-lang-client-0636792472',
-        firebaseApiKey: process.env.FIREBASE_API_KEY || null,
         firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN || 'gen-lang-client-0636792472.firebaseapp.com',
-        methods: ['google', 'emailLink']
+        oidcProviders: {
+          google: { issuer: 'https://accounts.google.com', clientId: process.env.GOOGLE_CLIENT_ID || 'mgc-google-sso-client' },
+          microsoft: { issuer: 'https://login.microsoftonline.com/common/v2.0', clientId: process.env.MICROSOFT_CLIENT_ID || 'mgc-entra-sso-client' },
+          apple: { issuer: 'https://appleid.apple.com', clientId: process.env.APPLE_CLIENT_ID || 'org.miltongroupsecurity.sso' }
+        }
       });
     }
 
-    // Passwordless Email Link Step 1: Request magic sign-in link
-    if (pathname === '/api/auth/email-link' && req.method === 'POST') {
+    // Explicitly block non-SSO methods (email-link / password)
+    if (pathname === '/api/auth/email-link' || pathname === '/api/auth/verify-link' || pathname === '/api/auth/password') {
+      return sendJson(res, 403, {
+        ok: false,
+        error: 'SSO Policy Enforced: Password and email-link sign-in are disabled. Please sign in exclusively with Google, Microsoft, or Apple SSO.'
+      });
+    }
+
+    // Unified Federated SSO Exchange (/api/auth/sso, /api/auth/google, /api/auth/microsoft, /api/auth/apple)
+    if ((pathname === '/api/auth/sso' || pathname === '/api/auth/google' || pathname === '/api/auth/microsoft' || pathname === '/api/auth/apple') && req.method === 'POST') {
       const body = await readJsonBody(req);
-      const email = String(body.email || '').trim().toLowerCase();
-      const nextUrl = String(body.next || '').trim();
-      if (!/^\S+@\S+\.\S+$/.test(email)) {
-        return sendJson(res, 400, { ok: false, error: 'Please enter a valid email address.' });
-      }
-      const magicToken = signToken({ purpose: 'email_link', email, name: body.name || '', next: nextUrl }, 900); // 15 min expiry
-      const verifyUrl = `/api/auth/verify-link?token=${encodeURIComponent(magicToken)}`;
-      logAudit(email, 'auth.email_link.sent', `Magic link issued for ${email}`);
-      saveState(S);
-      return sendJson(res, 200, {
-        ok: true,
-        email,
-        message: 'Sign-in link generated (expires in 15 minutes).',
-        verifyUrl
-      });
-    }
+      const routeProvider = pathname.endsWith('/google') ? 'google' : pathname.endsWith('/microsoft') ? 'microsoft' : pathname.endsWith('/apple') ? 'apple' : '';
+      const provider = String(body.provider || routeProvider || '').trim().toLowerCase();
 
-    // Passwordless Email Link Step 2: Verify magic link and set HttpOnly session cookie
-    if (pathname === '/api/auth/verify-link' && req.method === 'GET') {
-      const token = parsedUrl.searchParams.get('token') || '';
-      const claims = verifyToken(token);
-      if (!claims || claims.purpose !== 'email_link' || !claims.email) {
-        res.writeHead(401, { 'Content-Type': 'text/html; charset=utf-8' });
-        return res.end(renderLockedHtml(null, 'Sign-in link expired or invalid', 'Please request a fresh passwordless email sign-in link.', '/login.html', 'Back to Sign In →'));
+      if (!ALLOWED_SSO_PROVIDERS.has(provider)) {
+        return sendJson(res, 403, {
+          ok: false,
+          error: 'SSO Policy Enforced: Only Google, Microsoft, or Apple SSO is permitted.'
+        });
       }
-      const user = findOrCreateUserByEmail(claims.email, claims.name, 'Email Link');
-      const sessionToken = signToken({ uid: user.id, email: user.email, role: user.role });
-      logAudit(user.id, 'auth.signin.email_link', user.email);
-      saveState(S);
-      const target = claims.next && claims.next.startsWith('/') ? claims.next : (user.role === 'owner' ? '/access-admin.html' : '/member-portal.html');
-      res.writeHead(302, {
-        'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`,
-        'Location': target
-      });
-      return res.end();
-    }
 
-    // Google Sign-In / OAuth Token Exchange
-    if (pathname === '/api/auth/google' && req.method === 'POST') {
-      const body = await readJsonBody(req);
       let email = String(body.email || '').trim().toLowerCase();
       let name = String(body.name || '').trim();
-      // If a Firebase/Google ID token is supplied, decode its verified email payload
+      // If a federated OIDC ID token (Google / Microsoft Entra / Apple) is supplied, decode its verified email payload
       if (body.idToken && typeof body.idToken === 'string' && body.idToken.split('.').length === 3) {
         try {
           const payload = JSON.parse(Buffer.from(body.idToken.split('.')[1], 'base64url').toString('utf8'));
-          if (payload.email) email = String(payload.email).toLowerCase();
+          if (payload.email || payload.preferred_username) email = String(payload.email || payload.preferred_username).toLowerCase();
           if (payload.name) name = payload.name;
         } catch (_) {}
       }
       if (!/^\S+@\S+\.\S+$/.test(email)) {
-        return sendJson(res, 400, { ok: false, error: 'Valid Google account email required.' });
+        return sendJson(res, 400, { ok: false, error: `Valid ${SSO_PROVIDER_LABELS[provider]} account email required.` });
       }
-      const user = findOrCreateUserByEmail(email, name, 'Google');
-      const sessionToken = signToken({ uid: user.id, email: user.email, role: user.role });
-      logAudit(user.id, 'auth.signin.google', user.email);
+      const user = findOrCreateUserByEmail(email, name, SSO_PROVIDER_LABELS[provider]);
+      user.ssoProvider = provider;
+      const sessionToken = signToken({
+        uid: user.id,
+        email: user.email,
+        role: user.role,
+        provider,
+        ssoVerified: true
+      });
+      logAudit(user.id, `auth.sso.${provider}`, `${user.email} via ${SSO_PROVIDER_LABELS[provider]}`);
       saveState(S);
       const target = body.next && String(body.next).startsWith('/') ? body.next : (user.role === 'owner' ? '/access-admin.html' : '/member-portal.html');
       return sendJson(res, 200, {
         ok: true,
         uid: user.id,
+        email: user.email,
+        name: user.name,
         role: user.role,
+        provider,
+        providerLabel: SSO_PROVIDER_LABELS[provider],
+        ssoVerified: true,
         redirect: target
       }, {
         'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
@@ -706,12 +717,15 @@ const server = http.createServer(async (req, res) => {
       const body = await readJsonBody(req);
       const act = body.action;
 
-      // Public action: submit access request
+      // Public action: submit access request (with SSO provider selection: google, microsoft, or apple)
       if (act === 'submitRequest') {
         const d = body.data || {};
         if (!d.name || !/^\S+@\S+\.\S+$/.test(String(d.email || ''))) {
-          return sendJson(res, 400, { ok: false, error: 'Name and valid email required.' });
+          return sendJson(res, 400, { ok: false, error: 'Name and valid SSO account email required.' });
         }
+        const provider = ALLOWED_SSO_PROVIDERS.has(String(d.ssoProvider || '').toLowerCase())
+          ? String(d.ssoProvider).toLowerCase()
+          : 'google';
         const cleanEmail = String(d.email).trim().toLowerCase();
         const id = uid('u');
         S.users[id] = {
@@ -721,6 +735,7 @@ const server = http.createServer(async (req, res) => {
           role: OWNER_EMAILS.has(cleanEmail) ? 'owner' : 'member',
           status: OWNER_EMAILS.has(cleanEmail) ? 'active' : 'requested',
           brand: d.brand === 'FIX' ? 'FIX' : 'MGC',
+          ssoProvider: provider,
           quote: { interest: TAILOR[d.interest] ? d.interest : 'ai-web', note: String(d.note || '').slice(0, 500) },
           plan: { base: OWNER_EMAILS.has(cleanEmail), addons: [] },
           pages: {},
@@ -729,11 +744,11 @@ const server = http.createServer(async (req, res) => {
         };
         S.requests.unshift({ id: uid('r'), uid: id, status: 'requested', created: now() });
         notifyUser(id, 'Request received', 'Thanks! Your access request is under review. You will be notified when your pages are ready.');
-        notifyUser('owner', 'New access request', `${S.users[id].name} requested access (${(TAILOR[S.users[id].quote.interest] || {}).label}).`, 'in-app + email + push');
-        logAudit(id, 'request.created', cleanEmail);
+        notifyUser('owner', 'New access request', `${S.users[id].name} requested access via ${SSO_PROVIDER_LABELS[provider]} (${(TAILOR[S.users[id].quote.interest] || {}).label}).`, 'in-app + email + push');
+        logAudit(id, `request.created.${provider}`, cleanEmail);
         saveState(S);
-        const sessionToken = signToken({ uid: id, email: cleanEmail, role: S.users[id].role });
-        return sendJson(res, 200, { ok: true, uid: id, state: scopeStateForUser(S.users[id]) }, {
+        const sessionToken = signToken({ uid: id, email: cleanEmail, role: S.users[id].role, provider, ssoVerified: true });
+        return sendJson(res, 200, { ok: true, uid: id, provider, ssoVerified: true, state: scopeStateForUser(S.users[id]) }, {
           'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
         });
       }

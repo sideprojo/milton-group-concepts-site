@@ -96,7 +96,7 @@
   const needsActive = ['actions', 'resources', 'workflows'];
 
   function render() {
-    if (!u) { app.innerHTML = '<div class="card lock"><h1>Sign in required</h1><p>Use <a href="login.html">Google or Email Link Sign-In</a>, or <a href="request-access.html">request access</a>.</p></div>'; W.header('member-portal.html'); return; }
+    if (!u) { app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Federated SSO Enforced</span><h1 style="margin-top:10px">Single Sign-On Required</h1><p>Authenticate with <b>Google</b>, <b>Microsoft</b>, or <b>Apple</b> SSO to open your workspace.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=/member-portal.html">Sign In with SSO →</a></div></div>'; W.header('member-portal.html'); return; }
     let body;
     if (u.status === 'denied') body = '';
     else if (needsActive.includes(tab) && u.role !== 'owner' && !W.subActive(u)) body = '<div class="card lock"><h2>🔒 Locked until your workspace is active</h2><p>Complete the steps above to unlock this section.</p></div>';

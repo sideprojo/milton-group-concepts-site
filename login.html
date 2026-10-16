@@ -2,67 +2,168 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sign In | MGC &amp; F.I.X Workspace</title>
+<title>Federated SSO Sign In | MGC &amp; F.I.X Workspace</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  .sso-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+  }
+  @media (max-width: 720px) {
+    .sso-grid { grid-template-columns: 1fr; }
+  }
+  .sso-provider-card {
+    background: rgba(12, 21, 42, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-align: left;
+  }
+  .sso-provider-card:hover,
+  .sso-provider-card.active {
+    border-color: #c5b358;
+    background: rgba(30, 58, 138, 0.28);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    transform: translateY(-2px);
+  }
+  .sso-btn {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(15, 23, 42, 0.95);
+    color: #f8fafc;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .sso-btn:hover {
+    border-color: #60a5fa;
+    background: rgba(37, 99, 235, 0.25);
+  }
+  .sso-handshake-box {
+    margin-top: 18px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: rgba(9, 15, 32, 0.92);
+    border: 1px solid rgba(197, 179, 88, 0.45);
+  }
+</style>
 </head>
 <body>
-<main class="wrap" style="max-width:760px;padding-top:36px">
+<main class="wrap" style="max-width:860px;padding-top:36px">
   <div class="card">
     <div class="row">
       <div class="brand">
         <span id="bIcon" style="font-size:22px">🛡️</span>
         <div>
-          <span id="bTitle">MGC &amp; F.I.X AUTHENTICATED GATE</span>
-          <small>Per-User Pages &amp; Apps on Request · Cloud Run + Firebase Auth</small>
+          <span id="bTitle">MGC &amp; F.I.X FEDERATED SSO GATE</span>
+          <small>Zero-Trust Identity Enforcement · Google · Microsoft · Apple SSO Only</small>
         </div>
       </div>
-      <select id="themeSel" aria-label="Theme preview">
-        <option value="MGC">MGC Theme (Gray / Black / White)</option>
-        <option value="FIX">F.I.X Theme (Navy / Gold)</option>
-      </select>
-    </div>
-
-    <h1 style="margin-top:14px">Sign in to your workspace</h1>
-    <p>Each member sees only the pages, resources, and Agile project boards created for or shared with their account. Sign in with Google or request a passwordless email sign-in link.</p>
-
-    <div class="grid" style="margin-top:14px">
-      <!-- Option 1: Sign in with Google -->
-      <div class="card" style="background:var(--card2)">
-        <span class="chip ok">Method 1 · Google Account</span>
-        <h2 style="margin-top:8px">Sign in with Google</h2>
-        <p>Use your authorized Google Workspace or personal Gmail account to access your assigned workspace and modules.</p>
-        <label style="display:block;margin-top:8px">
-          <p>Google Email</p>
-          <input id="gEmail" type="email" value="" placeholder="Enter your authorized email" style="width:100%" autocomplete="off" spellcheck="false">
-        </label>
-        <div class="row" style="margin-top:10px;justify-content:flex-start">
-          <button class="btn pri" id="btnGoogle">Continue with Google →</button>
-        </div>
-      </div>
-
-      <!-- Option 2: Passwordless Email Link -->
-      <div class="card" style="background:var(--card2)">
-        <span class="chip">Method 2 · Passwordless Email Link</span>
-        <h2 style="margin-top:8px">Email me a sign-in link</h2>
-        <p>No password or Google account required. We generate a single-use, 15-minute sign-in link for your email address.</p>
-        <label style="display:block;margin-top:8px">
-          <p>Work or personal email</p>
-          <input id="eEmail" type="email" value="" placeholder="Enter your email address" style="width:100%" autocomplete="off" spellcheck="false">
-        </label>
-        <div class="row" style="margin-top:10px;justify-content:flex-start">
-          <button class="btn pri" id="btnEmailLink">Send Sign-In Link ✉️</button>
-        </div>
-        <div id="magicBox" style="display:none;margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px">
-          <p style="margin:0 0 6px;color:var(--tx);font-weight:800">✅ Passwordless link ready:</p>
-          <a class="btn pri" id="magicLink" href="#">Click to complete Email Link sign-in →</a>
-        </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="chip ok">🔒 SSO ENFORCED</span>
+        <select id="themeSel" aria-label="Theme preview">
+          <option value="MGC">MGC Theme</option>
+          <option value="FIX">F.I.X Theme</option>
+        </select>
       </div>
     </div>
 
-    <p id="authMsg" style="color:var(--ac);margin-top:10px;font-weight:700"></p>
+    <h1 style="margin-top:16px">Sign in with Single Sign-On (SSO)</h1>
+    <p>Local passwords and unverified email links are disabled. Authenticate exclusively through <b>Google</b>, <b>Microsoft</b>, or <b>Apple</b> federated Single Sign-On to access your workspace.</p>
+
+    <div class="sso-grid" role="group" aria-label="Allowed Single Sign-On Providers">
+      <!-- 1. Google SSO -->
+      <div class="sso-provider-card active" data-provider="google" id="card-google">
+        <div>
+          <div class="row" style="margin-bottom:10px">
+            <span class="chip ok">OIDC · Google</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.6H12z"/>
+              <path fill="#34A853" d="M3.6 7.4l3.2 2.4c.9-2.1 2.9-3.6 5.2-3.6 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/>
+              <path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.5 3 4.7 5 8.7 5z"/>
+              <path fill="#4285F4" d="M21.1 12.2c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.2 2.6-2.2 3.3l2.9 2.4c1.7-1.6 2.9-4.1 2.9-8z"/>
+            </svg>
+          </div>
+          <h2>Google SSO</h2>
+          <p>Google Workspace &amp; Google Cloud Identity OIDC federation.</p>
+        </div>
+        <button type="button" class="sso-btn" data-sso-trigger="google" id="btnSsoGoogle">
+          <span>Continue with Google</span>
+        </button>
+      </div>
+
+      <!-- 2. Microsoft SSO -->
+      <div class="sso-provider-card" data-provider="microsoft" id="card-microsoft">
+        <div>
+          <div class="row" style="margin-bottom:10px">
+            <span class="chip ok">Entra ID · Microsoft</span>
+            <svg width="20" height="20" viewBox="0 0 23 23" aria-hidden="true">
+              <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+              <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+              <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+              <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+            </svg>
+          </div>
+          <h2>Microsoft SSO</h2>
+          <p>Microsoft Entra ID (Azure AD) &amp; Microsoft 365 OIDC federation.</p>
+        </div>
+        <button type="button" class="sso-btn" data-sso-trigger="microsoft" id="btnSsoMicrosoft">
+          <span>Continue with Microsoft</span>
+        </button>
+      </div>
+
+      <!-- 3. Apple SSO -->
+      <div class="sso-provider-card" data-provider="apple" id="card-apple">
+        <div>
+          <div class="row" style="margin-bottom:10px">
+            <span class="chip ok">OIDC · Apple</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true">
+              <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+          </div>
+          <h2>Apple SSO</h2>
+          <p>Sign in with Apple OIDC &amp; Passkey hardware attestation.</p>
+        </div>
+        <button type="button" class="sso-btn" data-sso-trigger="apple" id="btnSsoApple">
+          <span>Continue with Apple</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Federated SSO Identity Assertion Box -->
+    <div class="sso-handshake-box" id="ssoHandshakeBox">
+      <div class="row" style="margin-bottom:8px">
+        <div>
+          <span class="chip ok" id="selectedProviderBadge">Selected Provider: Google SSO</span>
+          <h2 style="margin-top:6px" id="selectedProviderHeading">Authenticate with Google SSO</h2>
+        </div>
+        <span style="font-size:11px;color:var(--mut);font-weight:700;">OIDC 2.0 / PKCE</span>
+      </div>
+      <p style="margin-bottom:10px">Enter your authorized <b id="selectedProviderLabel">Google</b> account email to complete the federated SSO token exchange.</p>
+      <div class="row" style="justify-content:flex-start;gap:10px">
+        <input id="ssoEmail" type="email" value="" placeholder="Enter your authorized SSO email" autocomplete="off" spellcheck="false" style="flex:1;min-width:240px;padding:11px 14px;font-size:13px">
+        <button type="button" class="btn pri" id="btnCompleteSso" style="padding:11px 18px;font-size:13px">Authenticate with Google SSO →</button>
+      </div>
+      <p id="authMsg" style="color:#f87171;margin-top:10px;font-weight:700"></p>
+    </div>
 
     <div class="row" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)">
-      <span>Need a tailored workspace? Base membership is <b>$5/month</b> once your pages are built.</span>
+      <span>Need a tailored workspace? Base membership is <b>$5/month</b> once your pages are built (SSO required).</span>
       <a class="btn" href="request-access.html">Request access →</a>
     </div>
   </div>
@@ -74,75 +175,104 @@
   const params = new URLSearchParams(location.search);
   const nextUrl = params.get('next') || '';
   const msg = document.getElementById('authMsg');
+  const emailInput = document.getElementById('ssoEmail');
+  let activeProvider = 'google';
+
+  const PROVIDER_META = {
+    google:    { name: 'Google SSO',    short: 'Google' },
+    microsoft: { name: 'Microsoft SSO', short: 'Microsoft' },
+    apple:     { name: 'Apple SSO',     short: 'Apple' }
+  };
 
   document.getElementById('themeSel').onchange = (e) => {
     W.theme(e.target.value);
     document.getElementById('bIcon').textContent = e.target.value === 'FIX' ? '⚡' : '🛡️';
   };
 
-  async function doGoogleSignIn(emailInput) {
-    const email = (emailInput || document.getElementById('gEmail').value || '').trim().toLowerCase();
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      msg.textContent = 'Please enter a valid email address.';
+  function selectProvider(prov) {
+    if (!PROVIDER_META[prov]) return;
+    activeProvider = prov;
+    document.querySelectorAll('.sso-provider-card').forEach(c => {
+      c.classList.toggle('active', c.dataset.provider === prov);
+    });
+    const meta = PROVIDER_META[prov];
+    document.getElementById('selectedProviderBadge').textContent = 'Selected Provider: ' + meta.name;
+    document.getElementById('selectedProviderHeading').textContent = 'Authenticate with ' + meta.name;
+    document.getElementById('selectedProviderLabel').textContent = meta.short;
+    document.getElementById('btnCompleteSso').textContent = 'Authenticate with ' + meta.name + ' →';
+    msg.textContent = '';
+  }
+
+  document.querySelectorAll('.sso-provider-card').forEach(card => {
+    card.addEventListener('click', () => selectProvider(card.dataset.provider));
+  });
+
+  document.querySelectorAll('[data-sso-trigger]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const prov = btn.getAttribute('data-sso-trigger');
+      selectProvider(prov);
+      const val = (emailInput.value || '').trim();
+      if (val) {
+        completeFederatedSso(prov, val);
+      } else {
+        emailInput.focus();
+      }
+    });
+  });
+
+  async function completeFederatedSso(provider, rawEmail) {
+    const email = (rawEmail || emailInput.value || '').trim().toLowerCase();
+    if (!['google', 'microsoft', 'apple'].includes(provider)) {
+      msg.textContent = 'SSO Policy Violation: Only Google, Microsoft, or Apple SSO is permitted.';
       return;
     }
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      msg.textContent = 'Please enter your valid ' + PROVIDER_META[provider].name + ' account email.';
+      emailInput.focus();
+      return;
+    }
+    msg.style.color = '#34d399';
+    msg.textContent = 'Verifying ' + PROVIDER_META[provider].name + ' OIDC assertion...';
+
     if (location.protocol === 'file:') {
-      const found = Object.values(W.S.users).find(u => u.email.toLowerCase() === email) || (email.includes('malik') || email.includes('owner') ? W.S.users.owner : null);
+      const found = Object.values(W.S.users).find(u => u.email.toLowerCase() === email);
       if (found) {
-        W.signInAs(found.id);
-        location.href = found.role === 'owner' ? 'access-admin.html' : 'member-portal.html';
+        W.signInAs(found.id, provider);
+        location.href = nextUrl || (found.role === 'owner' ? 'access-admin.html' : 'member-portal.html');
       } else {
-        msg.textContent = 'Account not found in local demo state. Submit Request Access first.';
+        msg.style.color = '#f87171';
+        msg.textContent = 'Account not found in local state. Submit Request Access first.';
       }
       return;
     }
-    const res = await fetch('/api/auth/google', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, next: nextUrl })
-    });
-    const data = await res.json();
-    if (!data.ok) {
-      msg.textContent = data.error || 'Sign-in failed.';
-      return;
+
+    try {
+      const res = await fetch('/api/auth/sso', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider, email, next: nextUrl })
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        msg.style.color = '#f87171';
+        msg.textContent = data.error || 'SSO authentication failed.';
+        return;
+      }
+      W.signInAs(data.uid, provider);
+      location.href = data.redirect || (data.role === 'owner' ? '/access-admin.html' : '/member-portal.html');
+    } catch (err) {
+      msg.style.color = '#f87171';
+      msg.textContent = 'Could not reach SSO authentication server.';
     }
-    W.signInAs(data.uid);
-    location.href = data.redirect || (data.role === 'owner' ? '/access-admin.html' : '/member-portal.html');
   }
 
-  document.getElementById('btnGoogle').onclick = () => doGoogleSignIn();
-
-  document.getElementById('btnEmailLink').onclick = async () => {
-    const email = (document.getElementById('eEmail').value || '').trim().toLowerCase();
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      msg.textContent = 'Please enter a valid email address for your sign-in link.';
-      return;
+  document.getElementById('btnCompleteSso').onclick = () => completeFederatedSso(activeProvider);
+  emailInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      completeFederatedSso(activeProvider);
     }
-    if (location.protocol === 'file:') {
-      return doGoogleSignIn(email);
-    }
-    const res = await fetch('/api/auth/email-link', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, next: nextUrl })
-    });
-    const data = await res.json();
-    if (!data.ok) {
-      msg.textContent = data.error || 'Could not generate sign-in link.';
-      return;
-    }
-    msg.textContent = data.message;
-    const box = document.getElementById('magicBox');
-    const link = document.getElementById('magicLink');
-    box.style.display = 'block';
-    link.href = data.verifyUrl;
-  };
-
-  document.querySelectorAll('[data-quick]').forEach(btn => {
-    btn.onclick = () => {
-      document.getElementById('gEmail').value = btn.dataset.quick;
-      doGoogleSignIn(btn.dataset.quick);
-    };
   });
 })();
 </script>

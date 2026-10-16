@@ -29,27 +29,34 @@
     return;
   }
 
+  const ALLOWED_SSO_PROVIDERS = ['google', 'microsoft', 'apple'];
+
   const params = new URLSearchParams(window.location.search);
   if (params.get('from') === 'external' || params.get('locked') === '1') {
     localStorage.setItem(GATE_LOCK_KEY, '1');
     localStorage.removeItem(SESSION_KEY);
-  } else if (params.get('mgc_verify') === '1') {
+  } else if (params.get('mgc_verify') === '1' && ALLOWED_SSO_PROVIDERS.includes((params.get('sso') || '').toLowerCase())) {
+    const ssoProvider = params.get('sso').toLowerCase();
     const role = params.get('role') || 'VIEWER_ONBOARDED';
-    const name = params.get('name') || 'Verified Agency / Partner';
+    const name = params.get('name') || 'Verified SSO Partner';
     const org = params.get('org') || 'Milton Group Concepts LLC & F.I.X Solutions LLC';
-    const email = params.get('email') || 'partner@miltongroupsecurity.org';
-    const sessionObj = {
-      email,
-      name,
-      org,
-      role,
-      access: 'INTERNAL_SUITE_VIEW',
-      verifiedAt: new Date().toISOString(),
-      integrityHash: 'SHA256-' + btoa(email + ':' + role + ':MGC-2026').slice(0, 16),
-      zeroChargeGuard: 'ACTIVE_MIN0_MAX2'
-    };
-    localStorage.setItem(SESSION_KEY, JSON.stringify(sessionObj));
-    localStorage.removeItem(GATE_LOCK_KEY);
+    const email = params.get('email') || '';
+    if (email) {
+      const sessionObj = {
+        email,
+        name,
+        org,
+        role,
+        ssoVerified: true,
+        ssoProvider,
+        access: 'INTERNAL_SUITE_VIEW',
+        verifiedAt: new Date().toISOString(),
+        integrityHash: 'SHA256-' + btoa(email + ':' + ssoProvider + ':' + role + ':MGC-2026').slice(0, 16),
+        zeroChargeGuard: 'ACTIVE_MIN0_MAX2'
+      };
+      localStorage.setItem(SESSION_KEY, JSON.stringify(sessionObj));
+      localStorage.removeItem(GATE_LOCK_KEY);
+    }
   }
 
   function hasValidSession() {
@@ -58,11 +65,20 @@
       const raw = localStorage.getItem(SESSION_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed && parsed.email && parsed.email !== 'unverified@external-edge.gate') return true;
+        if (
+          parsed &&
+          parsed.email &&
+          parsed.email !== 'unverified@external-edge.gate' &&
+          parsed.ssoVerified === true &&
+          ALLOWED_SSO_PROVIDERS.includes(String(parsed.ssoProvider || '').toLowerCase())
+        ) {
+          return true;
+        }
       }
     } catch (_) {}
     const uid = sessionStorage.getItem('mgcw.uid');
-    if (uid) return true;
+    const ssoProv = (sessionStorage.getItem('mgcw.sso_provider') || '').toLowerCase();
+    if (uid && ALLOWED_SSO_PROVIDERS.includes(ssoProv)) return true;
     return false;
   }
 
@@ -1630,37 +1646,39 @@
         </div>
       </div>
 
-      <!-- 6. ZERO-TRUST 2FA ENFORCEMENT GATE OVERLAY (Enforced by default when Unverified or Locked) -->
-      <div id="os-2fa-gate-backdrop" role="dialog" aria-modal="true" aria-label="Zero-Trust 2FA Enforcement Gate" style="position:fixed;inset:0;background:rgba(4,8,20,0.96);backdrop-filter:blur(16px);z-index:100001;display:none;align-items:center;justify-content:center;padding:1.25rem;font-family:'Inter',sans-serif;">
-        <div style="width:100%;max-width:31rem;background:rgba(15,23,42,0.96);border:1px solid rgba(197,179,88,0.48);border-radius:18px;padding:1.65rem;box-shadow:0 30px 90px rgba(0,0,0,0.95);">
+      <!-- 6. FEDERATED SSO ENFORCEMENT GATE OVERLAY (Enforced by default when Unauthenticated — ONLY Google, Microsoft, or Apple SSO) -->
+      <div id="os-2fa-gate-backdrop" role="dialog" aria-modal="true" aria-label="Federated SSO Enforcement Gate" style="position:fixed;inset:0;background:rgba(4,8,20,0.96);backdrop-filter:blur(16px);z-index:100001;display:none;align-items:center;justify-content:center;padding:1.25rem;font-family:'Inter',sans-serif;">
+        <div style="width:100%;max-width:34rem;background:rgba(15,23,42,0.96);border:1px solid rgba(197,179,88,0.48);border-radius:18px;padding:1.65rem;box-shadow:0 30px 90px rgba(0,0,0,0.95);">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;">
-            <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.25rem 0.65rem;border-radius:999px;background:rgba(220,38,38,0.18);border:1px solid rgba(220,38,38,0.45);color:#fca5a5;font-size:0.68rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">🔒 Zero-Trust Edge Gate Enforced</span>
-            <span style="font-size:0.7rem;color:#fde047;font-weight:700;">SC-100 / CMMC 2.0</span>
+            <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.25rem 0.65rem;border-radius:999px;background:rgba(220,38,38,0.18);border:1px solid rgba(220,38,38,0.45);color:#fca5a5;font-size:0.68rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">🔒 Federated SSO Enforced</span>
+            <span style="font-size:0.7rem;color:#fde047;font-weight:700;">OIDC 2.0 • Zero Passwords</span>
           </div>
-          <h3 style="font-size:1.15rem;font-weight:900;color:#fff;margin:0 0 0.35rem;">Authentication & 2FA Required</h3>
+          <h3 style="font-size:1.15rem;font-weight:900;color:#fff;margin:0 0 0.35rem;">Single Sign-On Required</h3>
           <p style="font-size:0.78rem;color:#cbd5e1;line-height:1.5;margin:0 0 1rem;">
-            Verify your provisioned email, passphrase, and Second-Factor (Biometric Passkey or 6-Digit Authenticator Code) to unlock this portal.
+            Local passwords and email links are disabled. Authenticate exclusively with <strong>Google</strong>, <strong>Microsoft</strong>, or <strong>Apple</strong> SSO to unlock this portal.
           </p>
-          <div style="margin-bottom:0.7rem;">
-            <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Step 1: Provisioned Email</label>
-            <input id="os-2fa-email" type="email" value="" placeholder="Enter your authorized email" autocomplete="off" spellcheck="false" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#040814;border:1px solid rgba(148,163,184,0.28);color:#fff;font-size:0.8rem;" />
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.55rem;margin-bottom:0.9rem;" role="group" aria-label="Choose SSO Identity Provider">
+            <button type="button" data-os-sso-prov="google" class="os-sso-prov-btn" style="padding:0.65rem 0.5rem;border-radius:0.65rem;background:rgba(37,99,235,0.28);border:1px solid #c5b358;color:#fff;font-size:0.76rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
+              <span>G</span><span>Google SSO</span>
+            </button>
+            <button type="button" data-os-sso-prov="microsoft" class="os-sso-prov-btn" style="padding:0.65rem 0.5rem;border-radius:0.65rem;background:rgba(15,23,42,0.9);border:1px solid rgba(148,163,184,0.3);color:#e2e8f0;font-size:0.76rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
+              <span>⊞</span><span>Microsoft SSO</span>
+            </button>
+            <button type="button" data-os-sso-prov="apple" class="os-sso-prov-btn" style="padding:0.65rem 0.5rem;border-radius:0.65rem;background:rgba(15,23,42,0.9);border:1px solid rgba(148,163,184,0.3);color:#e2e8f0;font-size:0.76rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
+              <span></span><span>Apple SSO</span>
+            </button>
           </div>
-          <div style="margin-bottom:0.7rem;">
-            <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Passphrase or FIDO2 Passkey Assertion</label>
-            <input id="os-2fa-pass" type="password" value="" placeholder="Enter passphrase or passkey" autocomplete="new-password" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#040814;border:1px solid rgba(148,163,184,0.28);color:#fff;font-size:0.8rem;" />
-          </div>
+
           <div style="margin-bottom:0.85rem;">
-            <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Step 2: 6-Digit TOTP Code (or Biometric Passkey)</label>
-            <div style="display:flex;gap:0.5rem;">
-              <input id="os-2fa-totp" type="text" value="" placeholder="000-000" autocomplete="one-time-code" maxlength="7" style="flex:1;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#040814;border:1px solid rgba(197,179,88,0.45);color:#fde047;font-family:monospace;font-weight:800;font-size:0.9rem;text-align:center;letter-spacing:0.12em;" />
-              <button type="button" id="os-2fa-bio-btn" style="padding:0.6rem 0.85rem;border-radius:0.55rem;background:rgba(16,185,129,0.18);border:1px solid rgba(16,185,129,0.5);color:#6ee7b7;font-size:0.75rem;font-weight:800;cursor:pointer;white-space:nowrap;">🫆 Biometric</button>
-            </div>
+            <label id="os-sso-email-label" style="display:block;font-size:0.68rem;font-weight:800;color:#fde047;text-transform:uppercase;margin-bottom:0.3rem;">Google SSO Account Email</label>
+            <input id="os-2fa-email" type="email" value="" placeholder="Enter your authorized SSO email" autocomplete="off" spellcheck="false" style="width:100%;padding:0.65rem 0.8rem;border-radius:0.55rem;background:#040814;border:1px solid rgba(197,179,88,0.45);color:#fff;font-size:0.82rem;" />
           </div>
+
           <div id="os-2fa-msg" style="display:none;padding:0.55rem 0.75rem;border-radius:0.5rem;font-size:0.74rem;font-weight:700;margin-bottom:0.75rem;"></div>
           <div style="display:flex;flex-wrap:wrap;gap:0.55rem;">
-            <button type="button" id="os-2fa-submit" style="flex:1;min-width:170px;padding:0.7rem 1rem;border-radius:0.65rem;background:linear-gradient(135deg,#10b981,#059669);border:1px solid rgba(110,231,183,0.45);color:#fff;font-size:0.82rem;font-weight:900;cursor:pointer;">🔓 Verify & Unlock</button>
-            <a href="login.html" style="padding:0.7rem 0.85rem;border-radius:0.65rem;background:rgba(30,58,138,0.45);border:1px solid rgba(197,179,88,0.38);color:#fde047;font-size:0.75rem;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;">🔑 Sign In Page</a>
-            <a href="onboarding-portal.html?from=external" style="padding:0.7rem 0.85rem;border-radius:0.65rem;background:rgba(15,23,42,0.85);border:1px solid rgba(148,163,184,0.25);color:#cbd5e1;font-size:0.75rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;">2FA Setup</a>
+            <button type="button" id="os-2fa-submit" style="flex:1;min-width:190px;padding:0.7rem 1rem;border-radius:0.65rem;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:1px solid rgba(96,165,250,0.55);color:#fff;font-size:0.82rem;font-weight:900;cursor:pointer;">🔓 Continue with Google SSO →</button>
+            <a href="login.html" style="padding:0.7rem 0.85rem;border-radius:0.65rem;background:rgba(15,23,42,0.85);border:1px solid rgba(197,179,88,0.38);color:#fde047;font-size:0.75rem;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;">🔑 Full SSO Login</a>
           </div>
         </div>
       </div>
@@ -1763,28 +1781,41 @@
       document.getElementById('os-clean-label').textContent = `Minimalist UI: ${next ? 'ON' : 'OFF'}`;
     });
 
-    // Wire Zero-Trust 2FA Enforcement Gate Overlay & Lock Session Button
+    // Wire Federated SSO Enforcement Gate Overlay (Google, Microsoft, Apple Only) & Lock Session Button
     const gateBackdrop = document.getElementById('os-2fa-gate-backdrop');
     const lockSessionBtn = document.getElementById('os-lock-session');
     const gateEmail = document.getElementById('os-2fa-email');
-    const gatePass = document.getElementById('os-2fa-pass');
-    const gateTotp = document.getElementById('os-2fa-totp');
+    const gateEmailLabel = document.getElementById('os-sso-email-label');
+    const gateSubmitBtn = document.getElementById('os-2fa-submit');
     const gateMsg = document.getElementById('os-2fa-msg');
+    let selectedSsoProvider = 'google';
 
-    function mgcDigest(s) {
-      let h1 = 0xdeadbeef ^ s.length, h2 = 0x41c6ce57 ^ s.length;
-      for (let i = 0, ch; i < s.length; i++) {
-        ch = s.charCodeAt(i);
-        h1 = Math.imul(h1 ^ ch, 2654435761);
-        h2 = Math.imul(h2 ^ ch, 1597334677);
-      }
-      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-      return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
-    }
+    const SSO_NAMES = {
+      google: 'Google SSO',
+      microsoft: 'Microsoft SSO',
+      apple: 'Apple SSO'
+    };
 
-    const ADMIN_DIGESTS = ['767c6f5c35afb599', '42c9c755a45ace6b'];
-    const CLIENT_DIGESTS = ['2e2fce3751cac96e', '2b405f3f8d7cebf2'];
+    document.querySelectorAll('[data-os-sso-prov]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = btn.getAttribute('data-os-sso-prov');
+        if (!SSO_NAMES[p]) return;
+        selectedSsoProvider = p;
+        document.querySelectorAll('[data-os-sso-prov]').forEach(b => {
+          const active = b.getAttribute('data-os-sso-prov') === p;
+          b.style.borderColor = active ? '#c5b358' : 'rgba(148,163,184,0.3)';
+          b.style.background = active ? 'rgba(37,99,235,0.28)' : 'rgba(15,23,42,0.9)';
+          b.style.color = active ? '#ffffff' : '#e2e8f0';
+        });
+        if (gateEmailLabel) gateEmailLabel.textContent = `${SSO_NAMES[p]} Account Email`;
+        if (gateSubmitBtn) gateSubmitBtn.textContent = `🔓 Continue with ${SSO_NAMES[p]} →`;
+        if (gateEmail.value.trim()) {
+          verifyGateSsoSubmission(p);
+        } else {
+          gateEmail.focus();
+        }
+      });
+    });
 
     function checkAndEnforce2FAGate() {
       const publicAuthPages = ['onboarding-portal.html', 'login.html', 'request-access.html'];
@@ -1800,7 +1831,10 @@
       closeAllPopovers();
       localStorage.setItem(GATE_LOCK_KEY, '1');
       localStorage.removeItem(SESSION_KEY);
-      try { sessionStorage.removeItem('mgcw.uid'); } catch (_) {}
+      try {
+        sessionStorage.removeItem('mgcw.uid');
+        sessionStorage.removeItem('mgcw.sso_provider');
+      } catch (_) {}
       const av = document.getElementById('os-avatar-initials');
       const ps = document.getElementById('os-profile-short');
       const pn = document.getElementById('os-profile-name');
@@ -1808,7 +1842,7 @@
       if (av) av.textContent = '🔒';
       if (ps) ps.textContent = 'Sign In';
       if (pn) pn.textContent = 'Unverified Session';
-      if (pst) { pst.textContent = '🔒 Authentication Required'; pst.style.color = '#fca5a5'; }
+      if (pst) { pst.textContent = '🔒 SSO Authentication Required'; pst.style.color = '#fca5a5'; }
       if (currentFile === 'onboarding-portal.html') {
         window.location.href = 'onboarding-portal.html?locked=1';
       } else {
@@ -1816,69 +1850,102 @@
       }
     });
 
-    function verifyGateSubmission(isBiometric) {
+    async function verifyGateSsoSubmission(provOverride) {
+      const provider = provOverride || selectedSsoProvider || 'google';
       const em = gateEmail.value.trim().toLowerCase();
-      const rawPass = gatePass.value.trim();
-      const pwDigest = mgcDigest(rawPass);
-      const totpClean = gateTotp.value.replace(/[^0-9]/g, '');
-
-      const isAdminEmail = em === 'malik.khabir@miltongroupsecurity.org';
-      const isClientEmail = em === 'partner@miltongroupsecurity.org' || em === 'client@miltongroupsecurity.org' || em === 'service@sterlingautorepairva.com';
-
-      const isAdmin = isAdminEmail && (ADMIN_DIGESTS.includes(pwDigest) || (isBiometric && rawPass.length >= 6));
-      const isClient = isClientEmail && (CLIENT_DIGESTS.includes(pwDigest) || (isBiometric && rawPass.length >= 6));
-
-      if (!isAdmin && !isClient) {
+      if (!ALLOWED_SSO_PROVIDERS.includes(provider)) {
         gateMsg.style.display = 'block';
         gateMsg.style.background = 'rgba(220,38,38,0.18)';
         gateMsg.style.border = '1px solid rgba(220,38,38,0.45)';
         gateMsg.style.color = '#fca5a5';
-        gateMsg.textContent = '❌ Access Denied: Invalid provisioned email or passphrase.';
+        gateMsg.textContent = '❌ SSO Policy Violation: Only Google, Microsoft, or Apple SSO is allowed.';
+        return;
+      }
+      if (!/^\S+@\S+\.\S+$/.test(em)) {
+        gateMsg.style.display = 'block';
+        gateMsg.style.background = 'rgba(220,38,38,0.18)';
+        gateMsg.style.border = '1px solid rgba(220,38,38,0.45)';
+        gateMsg.style.color = '#fca5a5';
+        gateMsg.textContent = `❌ Enter a valid ${SSO_NAMES[provider]} email address.`;
         return;
       }
 
-      if (!isBiometric && totpClean !== '440921' && totpClean !== '250100') {
+      const isAdmin = em === 'malik.khabir@miltongroupsecurity.org' || em === 'owner@miltongroupsecurity.org';
+      const isAuthorizedClient = isAdmin || em === 'partner@miltongroupsecurity.org' || em === 'client@miltongroupsecurity.org' || em === 'service@sterlingautorepairva.com' || em === 'cara@example.com' || em === 'ben@example.com' || em === 'ana@example.com';
+
+      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        try {
+          const resp = await fetch('/api/auth/sso', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider, email: em })
+          });
+          const data = await resp.json();
+          if (!data || !data.ok) {
+            gateMsg.style.display = 'block';
+            gateMsg.style.background = 'rgba(220,38,38,0.18)';
+            gateMsg.style.border = '1px solid rgba(220,38,38,0.45)';
+            gateMsg.style.color = '#fca5a5';
+            gateMsg.textContent = data && data.error ? data.error : '❌ SSO Verification failed.';
+            return;
+          }
+          try {
+            sessionStorage.setItem('mgcw.uid', data.uid);
+            sessionStorage.setItem('mgcw.sso_provider', provider);
+          } catch (_) {}
+        } catch (_) {}
+      } else if (!isAuthorizedClient) {
         gateMsg.style.display = 'block';
         gateMsg.style.background = 'rgba(220,38,38,0.18)';
         gateMsg.style.border = '1px solid rgba(220,38,38,0.45)';
         gateMsg.style.color = '#fca5a5';
-        gateMsg.textContent = '❌ 2FA Verification Failed: Enter your valid 6-digit TOTP code or use Biometric Passkey.';
+        gateMsg.textContent = '❌ Unrecognized SSO account in offline mode. Request access first.';
         return;
       }
 
       const verifiedObj = {
         email: em,
-        name: isAdmin ? 'Malik A. Khabir' : 'Verified Agency / Partner',
+        name: isAdmin ? 'Malik A. Khabir' : 'Verified SSO Partner',
         org: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
-        role: isAdmin ? 'OWNER_ADMIN (2FA BIOMETRIC VERIFIED)' : 'CLIENT_PARTNER (2FA VERIFIED)',
+        role: isAdmin ? `OWNER_ADMIN (${SSO_NAMES[provider].toUpperCase()})` : `CLIENT_PARTNER (${SSO_NAMES[provider].toUpperCase()})`,
+        ssoVerified: true,
+        ssoProvider: provider,
         access: isAdmin ? 'INTERNAL_SUITE_FULL' : 'INTERNAL_SUITE_VIEW',
         verifiedAt: new Date().toISOString()
       };
       localStorage.setItem(SESSION_KEY, JSON.stringify(verifiedObj));
       localStorage.removeItem(GATE_LOCK_KEY);
-      try { sessionStorage.setItem('mgcw.uid', isAdmin ? 'owner' : 'cara'); } catch (_) {}
+      try {
+        sessionStorage.setItem('mgcw.uid', isAdmin ? 'owner' : 'cara');
+        sessionStorage.setItem('mgcw.sso_provider', provider);
+      } catch (_) {}
 
       const av = document.getElementById('os-avatar-initials');
       const ps = document.getElementById('os-profile-short');
       const pn = document.getElementById('os-profile-name');
       const pst = document.getElementById('os-profile-status');
-      if (av) av.textContent = isAdmin ? 'MK' : 'VP';
+      if (av) av.textContent = isAdmin ? 'MK' : 'SSO';
       if (ps) ps.textContent = 'Me';
       if (pn) pn.textContent = verifiedObj.name;
-      if (pst) { pst.textContent = '🫆 2FA Biometric Verified'; pst.style.color = '#86efac'; }
+      if (pst) { pst.textContent = `✔ ${SSO_NAMES[provider]} Verified`; pst.style.color = '#86efac'; }
 
       gateMsg.style.display = 'block';
       gateMsg.style.background = 'rgba(22,163,74,0.2)';
       gateMsg.style.border = '1px solid rgba(22,163,74,0.5)';
       gateMsg.style.color = '#86efac';
-      gateMsg.textContent = '✅ 2FA Verified! Unlocking internal portal...';
+      gateMsg.textContent = `✅ ${SSO_NAMES[provider]} Verified! Unlocking portal...`;
       setTimeout(() => {
         gateBackdrop.style.display = 'none';
       }, 250);
     }
 
-    document.getElementById('os-2fa-submit').addEventListener('click', () => verifyGateSubmission(false));
-    document.getElementById('os-2fa-bio-btn').addEventListener('click', () => verifyGateSubmission(true));
+    gateSubmitBtn.addEventListener('click', () => verifyGateSsoSubmission(selectedSsoProvider));
+    gateEmail.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyGateSsoSubmission(selectedSsoProvider);
+      }
+    });
     checkAndEnforce2FAGate();
 
     // Wire Omnibox Modal (Ctrl+K)

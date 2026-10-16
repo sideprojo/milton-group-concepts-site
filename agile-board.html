@@ -23,7 +23,7 @@
   const u = W.me();
   const COLS = [['backlog', 'Backlog'], ['ready', 'Ready'], ['progress', 'In progress'], ['review', 'Review'], ['done', 'Done']];
   let pid = null, view = 'board';
-  if (!u) { app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Zero-Trust Authentication Enforced</span><h1 style="margin-top:10px">Sign in required</h1><p>Please authenticate with your authorized Google Workspace account or Passwordless Email Link to access Agile Projects.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=agile-board.html">Sign In to Workspace →</a></div></div>'; W.header('agile-board.html'); return; }
+  if (!u) { app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Federated SSO Enforced</span><h1 style="margin-top:10px">Single Sign-On Required</h1><p>Please authenticate exclusively with <b>Google</b>, <b>Microsoft</b>, or <b>Apple</b> SSO to access Agile Projects.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=/agile-board.html">Sign In with SSO →</a></div></div>'; W.header('agile-board.html'); return; }
   if (u.role !== 'owner' && !W.can(u, 'page', 'agile', 'view')) {
     app.innerHTML = '<div class="card lock"><h1>🔒 Agile Board locked</h1><p>Your Agile Board is not built yet, or your workspace is not active. Check <a href="member-portal.html">My Workspace</a>.</p></div>'; W.header('agile-board.html'); return;
   }

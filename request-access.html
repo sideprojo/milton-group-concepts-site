@@ -12,12 +12,13 @@
     <p>Tell us what you need. We review every request personally and build your pages for you. <b>$5/month</b> once approved; add individual pages only if you want them.</p>
     <div class="grid" style="margin-top:10px">
       <label><p>Name</p><input id="name" value="" placeholder="Enter your full name" style="width:100%" autocomplete="off"></label>
-      <label><p>Email</p><input id="email" type="email" value="" placeholder="Enter your email address" style="width:100%" autocomplete="off" spellcheck="false"></label>
+      <label><p>Federated SSO Provider (Required)</p><select id="ssoProvider" style="width:100%"><option value="google">Google SSO (Google Workspace / Gmail)</option><option value="microsoft">Microsoft SSO (Entra ID / Microsoft 365)</option><option value="apple">Apple SSO (Sign in with Apple)</option></select></label>
+      <label><p>SSO Account Email</p><input id="email" type="email" value="" placeholder="Enter your authorized SSO email" style="width:100%" autocomplete="off" spellcheck="false"></label>
       <label><p>Which company's services?</p><select id="brand" style="width:100%"><option value="MGC">Milton Group Concepts (AI, cyber, training)</option><option value="FIX">F.I.X Solutions (federal &amp; contracting)</option></select></label>
       <label><p>Main goal (tailors your pages)</p><select id="interest" style="width:100%"></select></label>
     </div>
     <label><p>Anything we should know? (optional)</p><textarea id="note" rows="3" style="width:100%"></textarea></label>
-    <div class="row" style="margin-top:10px"><span class="chip">No charge until approved</span><button class="btn pri" id="go">Submit request</button></div>
+    <div class="row" style="margin-top:10px"><span class="chip">No charge until approved · SSO Enforced</span><button class="btn pri" id="go">Submit request</button></div>
     <p id="err" style="color:var(--ac)"></p>
   </div>
   <div class="card lock" id="done" style="display:none"><h1>Request received ✅</h1><p>You will be notified when it is approved and your pages are ready. Nothing else is needed from you.</p><a class="btn pri" href="member-portal.html" id="track">Track my request</a></div>
@@ -30,9 +31,10 @@
   sel.innerHTML = Object.entries(W.TAILOR).map(([k, v]) => '<option value="' + k + '">' + W.esc(v.label) + '</option>').join('');
   document.getElementById('brand').onchange = (e) => W.theme(e.target.value);
   document.getElementById('go').onclick = () => {
-    const d = { name: document.getElementById('name').value.trim(), email: document.getElementById('email').value.trim(), brand: document.getElementById('brand').value, interest: sel.value, note: document.getElementById('note').value.trim().slice(0, 500) };
-    if (!d.name || !/^\S+@\S+\.\S+$/.test(d.email)) { document.getElementById('err').textContent = 'Please enter your name and a valid email.'; return; }
-    const id = W.submitRequest(d); W.signInAs(id);
+    const ssoProvider = document.getElementById('ssoProvider').value;
+    const d = { name: document.getElementById('name').value.trim(), email: document.getElementById('email').value.trim(), ssoProvider, brand: document.getElementById('brand').value, interest: sel.value, note: document.getElementById('note').value.trim().slice(0, 500) };
+    if (!d.name || !/^\S+@\S+\.\S+$/.test(d.email)) { document.getElementById('err').textContent = 'Please enter your name and a valid SSO email.'; return; }
+    const id = W.submitRequest(d); W.signInAs(id, ssoProvider);
     document.getElementById('form').style.display = 'none'; document.getElementById('done').style.display = 'block';
   };
 })();
