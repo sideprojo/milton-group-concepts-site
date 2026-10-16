@@ -1622,6 +1622,11 @@
 
     document.body.prepend(shellWrapper);
 
+    // Workspace prototype pages are withheld from the public build; don't advertise dead links there.
+    if (!(location.protocol === 'file:' || ['localhost', '127.0.0.1', ''].includes(location.hostname))) {
+      shellWrapper.querySelectorAll('a[href="access-admin.html"], a[href="member-portal.html"], a[href="agile-board.html"]').forEach(a => a.remove());
+    }
+
     // Wire Dropdown Menus, Waffle Popover & Off-Canvas Hamburger Drawer
     const waffleBtn = document.getElementById('os-waffle-trigger');
     const wafflePop = document.getElementById('os-waffle-popover');

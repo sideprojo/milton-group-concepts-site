@@ -204,12 +204,13 @@
     const links = [['member-portal.html', 'My Workspace'], ['agile-board.html', 'Agile Board']].concat(u && u.role === 'owner' ? [['access-admin.html', 'Access Admin']] : []);
     const opts = Object.values(S.users).map(x => '<option value="' + x.id + '"' + (u && u.id === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>').join('');
     const nav = '<div class="nav">' + links.map(l => '<a class="btn' + (l[0] === active ? ' pri' : '') + '" href="' + l[0] + '">' + l[1] + '</a>').join('') + '</div>';
-    const right = '<div class="nav"><span class="demo" title="Real sign-in = Firebase Auth. This switcher exists only so you can review each user\'s view.">DEMO sign-in</span><select id="w-as" aria-label="View as user"><option value="">— signed out —</option>' + opts + '</select>' + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + '<button class="btn" id="w-reset" title="Reset demo data">↺</button></div>';
+    const isLocal = location.protocol === 'file:' || ['localhost', '127.0.0.1', ''].includes(location.hostname);
+    const right = '<div class="nav">' + (isLocal ? '<span class="demo" title="Real sign-in = Firebase Auth. This switcher exists only so you can review each user\'s view.">DEMO sign-in</span><select id="w-as" aria-label="View as user"><option value="">— signed out —</option>' + opts + '</select>' : '') + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + (isLocal ? '<button class="btn" id="w-reset" title="Reset demo data">↺</button>' : '') + '</div>';
     const el = document.createElement('div'); el.className = 'bar';
     el.innerHTML = '<div class="brand"><span style="font-size:20px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE') + '<small>' + (u ? esc(STATUS_LABEL[u.status]) + ' · ' + u.role : 'signed out') + '</small></div></div>' + nav + right;
     const host = document.querySelector('.wrap'); host.prepend(el);
-    el.querySelector('#w-as').onchange = (e) => { if (e.target.value) signInAs(e.target.value); else sessionStorage.removeItem('mgcw.uid'); location.reload(); };
-    el.querySelector('#w-reset').onclick = () => { if (confirm('Reset all demo data?')) { db.reset(); location.reload(); } };
+    const asEl = el.querySelector('#w-as'); if (asEl) asEl.onchange = (e) => { if (e.target.value) signInAs(e.target.value); else sessionStorage.removeItem('mgcw.uid'); location.reload(); };
+    const rsEl = el.querySelector('#w-reset'); if (rsEl) rsEl.onclick = () => { if (confirm('Reset all demo data?')) { db.reset(); location.reload(); } };
   }
 
   global.MGCW = { CATALOG, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, commit, me, signInAs, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive };
