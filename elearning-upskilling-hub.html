@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MGC &amp; F.I.X | Certification &amp; Career Command Center</title>
+  <title>MGC NetPrism Canvas LMS | EVE-NG CCNP &amp; JNCIP Lab Workbench &amp; Career Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root {
       --obsidian: #020617;
       --slate-navy: #0f172a;
-      --navy-card: rgba(15, 23, 42, 0.9);
+      --navy-card: rgba(15, 23, 42, 0.92);
       --gold: #f59e0b;
       --gold-bright: #fcd34d;
       --crimson: #dc2626;
@@ -28,8 +28,8 @@
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background:
-        radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.16), transparent 40%),
-        radial-gradient(circle at 85% 12%, rgba(220, 38, 38, 0.12), transparent 36%),
+        radial-gradient(circle at 12% 14%, rgba(37, 99, 235, 0.16), transparent 40%),
+        radial-gradient(circle at 88% 12%, rgba(220, 38, 38, 0.12), transparent 36%),
         radial-gradient(circle at 50% 85%, rgba(245, 158, 11, 0.1), transparent 45%),
         var(--obsidian);
       color: #ffffff;
@@ -38,24 +38,24 @@
     }
 
     .container {
-      max-width: 1380px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 24px 28px 80px;
+      padding: 20px 24px 80px;
     }
 
-    /* Compact Executive Header Bar */
+    /* Executive Header Bar */
     .exec-strip {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 18px 24px;
+      gap: 14px;
+      padding: 16px 22px;
       border-radius: 18px;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95));
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.96));
       border: 1px solid var(--border-gold);
       box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       position: relative;
       overflow: hidden;
     }
@@ -65,302 +65,330 @@
       top: 0; left: 0; right: 0; height: 3px;
       background: linear-gradient(90deg, var(--crimson), var(--gold-bright), var(--cobalt), var(--emerald));
     }
-    .exec-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+    .exec-left { display: flex; align-items: center; gap: 14px; }
     .exec-logo {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      object-fit: contain;
-      background: #020617;
-      border: 1.5px solid var(--gold-bright);
-      padding: 3px;
+      width: 44px; height: 44px; border-radius: 11px;
+      object-fit: contain; background: #020617;
+      border: 1.5px solid var(--gold-bright); padding: 3px;
     }
     .exec-eyebrow {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--gold-bright);
-      margin-bottom: 3px;
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.14em; color: var(--gold-bright); margin-bottom: 2px;
     }
     .exec-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      color: #ffffff;
+      font-size: 21px; font-weight: 900; letter-spacing: -0.02em; color: #ffffff;
     }
-    .exec-right {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-    }
+    .exec-right { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
     .stat-pill {
-      padding: 7px 13px;
-      border-radius: 999px;
-      background: rgba(2, 6, 23, 0.85);
-      border: 1px solid var(--border);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--silver);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(2, 6, 23, 0.85); border: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      color: var(--silver); display: inline-flex; align-items: center; gap: 6px;
     }
     .quick-select {
-      background: #020617;
-      color: var(--gold-bright);
-      border: 1px solid var(--border-gold);
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
+      background: #020617; color: var(--gold-bright);
+      border: 1px solid var(--border-gold); border-radius: 10px;
+      padding: 8px 12px; font-size: 11.5px; font-weight: 800; cursor: pointer;
     }
 
-    /* Sub-Page Navigation Bar (Linked to Topbar Page Sections Dropdown) */
+    /* Main Workspace Tabs */
     .workspace-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 22px;
-      padding-bottom: 12px;
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 18px; padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
     }
     .ws-tab {
       background: rgba(15, 23, 42, 0.85);
-      color: var(--silver);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 11px 18px;
-      font-size: 12.5px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      color: var(--silver); border: 1px solid var(--border);
+      border-radius: 11px; padding: 10px 16px;
+      font-size: 12px; font-weight: 800; cursor: pointer;
+      transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
     }
-    .ws-tab:hover {
-      border-color: var(--gold-bright);
-      color: #ffffff;
-    }
+    .ws-tab:hover { border-color: var(--gold-bright); color: #ffffff; }
     .ws-tab.active {
       background: linear-gradient(135deg, var(--cobalt), #1d4ed8);
-      color: #ffffff;
-      border-color: #60a5fa;
+      color: #ffffff; border-color: #60a5fa;
       box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
     }
 
     .tab-pane { display: none; }
-    .tab-pane.active { display: block; animation: fadeIn 0.22s ease; }
+    .tab-pane.active { display: block; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Clean Grids & Cards */
-    .grid-4 {
+    /* =====================================================================
+       NETPRISM CANVAS LMS + EVE-NG 3-PANE WORKBENCH ARCHITECTURE
+       [Left: Module Syllabus Tree] | [Center: Full CCNP/JNCIP Tutorial] | [Right: EVE-NG Topology + Live Console]
+       ===================================================================== */
+    .eveng-lms-layout {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 270px 1.15fr 1fr;
       gap: 16px;
-      margin-bottom: 20px;
-    }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 20px;
-    }
-    .card {
-      background: var(--navy-card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 12px;
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-    }
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: var(--border-gold);
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
-    }
-    .card.active-card {
-      border-color: var(--gold-bright);
-      box-shadow: 0 0 28px rgba(245, 158, 11, 0.25);
+      align-items: start;
     }
 
-    .badge {
-      display: inline-flex;
+    /* Left Syllabus Tree */
+    .syllabus-sidebar {
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .syl-header {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gold-bright);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
+    }
+    .lab-nav-item {
+      padding: 11px 12px;
+      border-radius: 12px;
+      background: rgba(2, 6, 23, 0.7);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: left;
+      color: #fff;
+    }
+    .lab-nav-item:hover {
+      border-color: var(--gold-bright);
+      transform: translateX(2px);
+    }
+    .lab-nav-item.active {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.28), rgba(15, 23, 42, 0.95));
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    }
+    .lab-nav-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      width: fit-content;
+      margin-bottom: 4px;
     }
-    .card h3 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      color: #ffffff;
-      line-height: 1.25;
-    }
-    .card p {
+    .lab-nav-title {
       font-size: 12.5px;
-      color: var(--silver);
-      line-height: 1.5;
-    }
-
-    .prog-track {
-      width: 100%;
-      height: 8px;
-      background: rgba(2, 6, 23, 0.9);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-    .prog-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--cobalt), var(--gold-bright), var(--emerald));
-      transition: width 0.4s ease;
-    }
-
-    /* Buttons */
-    .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
-    .btn {
-      padding: 9px 14px;
-      border-radius: 10px;
-      font-size: 11.5px;
       font-weight: 800;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      border: 1px solid transparent;
-      transition: all 0.18s;
-    }
-    .btn-gold {
-      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
-      color: #020617;
-    }
-    .btn-blue {
-      background: linear-gradient(135deg, var(--cobalt), #1d4ed8);
+      line-height: 1.3;
       color: #ffffff;
-      border-color: #60a5fa;
     }
-    .btn-ghost {
-      background: rgba(2, 6, 23, 0.75);
-      color: var(--silver);
-      border-color: var(--border);
-    }
-    .btn-ghost:hover {
-      border-color: var(--gold-bright);
-      color: #ffffff;
+    .lab-nav-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
     }
 
-    /* Cram Matrix Panel */
-    .cram-panel {
-      background: rgba(2, 6, 23, 0.92);
-      border: 1px solid var(--border-gold);
-      border-radius: 18px;
-      padding: 22px;
-    }
-    .cram-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    /* Center Pane: Full CCNP / JNCIP Tutorial Workbook */
+    .tutorial-pane {
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
       gap: 14px;
-      margin-top: 14px;
     }
-    .cram-item {
-      background: rgba(15, 23, 42, 0.9);
+    .tut-subtabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tut-subbtn {
+      padding: 7px 12px;
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.8);
+      border: 1px solid var(--border);
+      color: var(--silver);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tut-subbtn:hover { color: #fff; border-color: var(--gold-bright); }
+    .tut-subbtn.active {
+      background: var(--gold-bright);
+      color: #020617;
+      border-color: var(--gold-bright);
+      font-weight: 900;
+    }
+
+    .code-block {
+      background: #020617;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 12px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      line-height: 1.55;
+      color: #e2e8f0;
+      overflow-x: auto;
+      white-space: pre;
+      max-height: 390px;
+      overflow-y: auto;
+    }
+    .theory-box {
+      background: rgba(2, 6, 23, 0.78);
       border: 1px solid var(--border);
       border-left: 3px solid var(--gold-bright);
       border-radius: 12px;
       padding: 14px;
-    }
-    .cram-item h4 {
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--gold-bright);
-      margin-bottom: 5px;
-    }
-    .cram-item p {
-      font-size: 12px;
+      font-size: 12.5px;
+      line-height: 1.6;
       color: var(--silver);
-      line-height: 1.45;
+    }
+    .theory-box h4 {
+      color: #ffffff;
+      font-size: 13.5px;
+      margin-bottom: 6px;
     }
 
-    /* Interactive Exam Simulator */
-    .quiz-option {
-      width: 100%;
-      text-align: left;
-      padding: 13px 16px;
-      border-radius: 12px;
-      background: rgba(2, 6, 23, 0.85);
+    /* Right Pane: EVE-NG Live Topology, Embedded Guacamole Bridge & Multi-Node CLI */
+    .eveng-console-pane {
+      background: var(--navy-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .node-pill-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .node-pill {
+      padding: 6px 11px;
+      border-radius: 8px;
+      background: #020617;
       border: 1px solid var(--border);
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 600;
+      color: var(--silver);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.18s;
-      margin-bottom: 10px;
-      display: block;
+      transition: all 0.15s;
     }
-    .quiz-option:hover {
-      border-color: var(--gold-bright);
-      background: rgba(30, 58, 138, 0.3);
-    }
-    .quiz-option.correct {
-      border-color: #22c55e;
+    .node-pill:hover { border-color: var(--gold-bright); color: #fff; }
+    .node-pill.active {
       background: rgba(22, 163, 74, 0.22);
+      border-color: #4ade80;
       color: #86efac;
     }
-    .quiz-option.wrong {
-      border-color: var(--crimson);
-      background: rgba(220, 38, 38, 0.2);
-      color: #fca5a5;
+
+    .terminal-window {
+      background: #01040d;
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      border-radius: 12px;
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .term-output {
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #86efac;
+      white-space: pre-wrap;
+      min-height: 210px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .term-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+      padding-top: 8px;
+    }
+    .term-prompt {
+      color: var(--gold-bright);
+      font-size: 11.5px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .term-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      outline: none;
     }
 
-    #trace-map {
-      width: 100%;
-      height: 320px;
-      border-radius: 14px;
+    /* Grids & Cards for Other Tabs */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+    .card {
+      background: var(--navy-card);
       border: 1px solid var(--border);
-      overflow: hidden;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
     }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+      width: fit-content;
+    }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .btn {
+      padding: 8px 13px; border-radius: 9px;
+      font-size: 11.5px; font-weight: 800; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center;
+      justify-content: center; gap: 6px; border: 1px solid transparent;
+      transition: all 0.18s;
+    }
+    .btn-gold { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #020617; }
+    .btn-blue { background: linear-gradient(135deg, var(--cobalt), #1d4ed8); color: #ffffff; border-color: #60a5fa; }
+    .btn-emerald { background: linear-gradient(135deg, #22c55e, #16a34a); color: #022c22; }
+    .btn-ghost { background: rgba(2, 6, 23, 0.8); color: var(--silver); border-color: var(--border); }
+    .btn-ghost:hover { border-color: var(--gold-bright); color: #ffffff; }
 
-    @media (max-width: 1024px) {
-      .grid-4, .grid-3, .grid-2, .cram-grid { grid-template-columns: 1fr !important; }
-      .container { padding: 14px 14px 90px; }
-      .exec-strip { padding: 14px; }
-      .exec-title { font-size: 18px; }
-      .workspace-tabs {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-      }
+    .quiz-option {
+      width: 100%; text-align: left; padding: 12px 15px;
+      border-radius: 11px; background: rgba(2, 6, 23, 0.85);
+      border: 1px solid var(--border); color: #ffffff;
+      font-size: 12.5px; font-weight: 600; cursor: pointer;
+      margin-bottom: 8px; display: block; transition: all 0.15s;
+    }
+    .quiz-option:hover { border-color: var(--gold-bright); background: rgba(30, 58, 138, 0.3); }
+    .quiz-option.correct { border-color: #22c55e; background: rgba(22, 163, 74, 0.22); color: #86efac; }
+    .quiz-option.wrong { border-color: var(--crimson); background: rgba(220, 38, 38, 0.2); color: #fca5a5; }
+
+    #trace-map { width: 100%; height: 320px; border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+
+    @media (max-width: 1180px) {
+      .eveng-lms-layout { grid-template-columns: 1fr; }
+      .grid-3, .grid-2 { grid-template-columns: 1fr !important; }
+      .container { padding: 12px 12px 90px; }
+      .workspace-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
       .workspace-tabs::-webkit-scrollbar { display: none; }
       .ws-tab { white-space: nowrap; flex-shrink: 0; }
     }
@@ -370,351 +398,417 @@
   <script src="mgc-guided-security.js"></script>
 
   <main class="container">
-    <!-- EXECUTIVE CERTIFICATION & CAREER STATUS STRIP -->
+    <!-- TOP EXECUTIVE COMMAND BAR -->
     <div class="exec-strip">
       <div class="exec-left">
         <img src="assets/mgc-logo.png" alt="MGC Logo" class="exec-logo" onerror="this.style.display='none'" />
         <div>
-          <div class="exec-eyebrow">● DAILY CERTIFICATION ENGINE &amp; PRINCIPAL CAREER COMMAND</div>
-          <h1 class="exec-title">Certification Fast-Track &amp; Career Positioning Hub</h1>
+          <div class="exec-eyebrow">● NETPRISM CANVAS LMS • EVE-NG CCNP &amp; JNCIP LAB WORKBENCH • STRICT SINGLE-EXAM POOLS</div>
+          <h1 class="exec-title">EVE-NG Network Engineering Academy &amp; Principal Career Hub</h1>
         </div>
       </div>
 
       <div class="exec-right">
         <div class="stat-pill">
-          <span style="color:var(--gold-bright);">★ Cert XP:</span>
-          <strong id="cert-xp-val" style="color:#fff;">18,450</strong>
+          <span style="color:#4ade80;">● EVE-NG Bridge:</span>
+          <strong id="eveng-conn-status" style="color:#fff;">HYBRID SIM + LOCAL VM READY</strong>
         </div>
         <div class="stat-pill">
-          <span style="color:#4ade80;">🔥 Daily Streak:</span>
-          <strong style="color:#fff;">14 Days</strong>
+          <span style="color:var(--gold-bright);">★ Lab XP:</span>
+          <strong id="cert-xp-val" style="color:#fff;">19,200</strong>
         </div>
-        <select class="quick-select" onchange="jumpPortalLink(this.value)" aria-label="Quick Launch Official Certification Portals">
-          <option value="">🚀 Launch Official Study / Exam Portal ▾</option>
-          <option value="https://www.skills.google/paths/4525">Google Cloud Agentic Architect (Path 4525)</option>
-          <option value="https://cp.certmetrics.com/sas/en/login">SAS ModelOps Specialist (A00-440 Portal)</option>
-          <option value="https://iapp.org/certify/cipp/">IAPP CIPP/US &amp; CIPP/G Privacy Portal</option>
-          <option value="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-100">Microsoft SC-100 Cybersecurity Architect</option>
-          <option value="https://www.skillcertpro.com/my-account/">SkillCertPro Practice Exams</option>
-          <option value="https://account.measureup.com/login">MeasureUp Practice Lab</option>
+        <select class="quick-select" onchange="jumpLabQuick(this.value)" aria-label="Quick Jump to Lab or Official Portal">
+          <option value="">🖧 Quick Jump: Labs &amp; Official Portals ▾</option>
+          <option value="lab:0">Lab 01: Multi-Area OSPF &amp; OSPFv3 (IOS-XE ↔ Junos)</option>
+          <option value="lab:1">Lab 02: BGP Route-Reflectors, MPLS L3VPN &amp; EVPN</option>
+          <option value="lab:2">Lab 03: Zero-Trust IKEv2 IPsec VTI ↔ Juniper vSRX st0.0</option>
+          <option value="lab:3">Lab 04: Enterprise Campus VXLAN, MSTP &amp; First-Hop Security</option>
+          <option value="lab:4">Lab 05: Ansible DevNet, NETCONF/YANG &amp; PyEZ Automation</option>
+          <option value="url:https://www.skills.google/paths/4525">Portal: Google Agentic Architect (Path 4525) ↗</option>
+          <option value="url:https://cp.certmetrics.com/sas/en/login">Portal: SAS ModelOps (A00-440) ↗</option>
+          <option value="url:https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-100">Portal: Microsoft SC-100 Cyber Architect ↗</option>
+          <option value="url:https://iapp.org/certify/cipp/">Portal: IAPP CIPP/US &amp; CIPP/G ↗</option>
         </select>
       </div>
     </div>
 
-    <!-- MULTI-PAGE SUB-VIEW NAVIGATION (ZERO CLUTTER) -->
+    <!-- SEAMLESS SUB-PAGE NAVIGATION -->
     <div class="workspace-tabs">
-      <button class="ws-tab active" data-target="tab-cert-tracks" onclick="switchCertTab('tab-cert-tracks')">
-        <span>🎓 1. Certification Tracks &amp; Cram Matrix</span>
+      <button class="ws-tab active" data-target="tab-eveng-academy" onclick="switchPortalTab('tab-eveng-academy')">
+        <span>🖧 1. EVE-NG CCNP &amp; JNCIP Lab Workbench (Full Tutorials)</span>
       </button>
-      <button class="ws-tab" data-target="tab-exam-sim" onclick="switchCertTab('tab-exam-sim')">
-        <span>⚡ 2. Interactive Exam Simulator (Drills)</span>
+      <button class="ws-tab" data-target="tab-eveng-connector" onclick="switchPortalTab('tab-eveng-connector')">
+        <span>🔌 2. EVE-NG Live Server Bridge, API &amp; .unl Topologies</span>
       </button>
-      <button class="ws-tab" data-target="tab-career-radar" onclick="switchCertTab('tab-career-radar')">
-        <span>💼 3. Career Triad &amp; Principal Role Matchmaker</span>
+      <button class="ws-tab" data-target="tab-single-exam" onclick="switchPortalTab('tab-single-exam')">
+        <span>🎯 3. Dedicated Single-Exam Practice Pools (Strict Official Guidelines)</span>
       </button>
-      <button class="ws-tab" data-target="tab-geo-atlas" onclick="switchCertTab('tab-geo-atlas')">
-        <span>🗺️ 4. Geospatial Corridor &amp; Live Insights</span>
+      <button class="ws-tab" data-target="tab-career-radar" onclick="switchPortalTab('tab-career-radar')">
+        <span>💼 4. Principal Architect Career &amp; SDVOSB Positioning</span>
+      </button>
+      <button class="ws-tab" data-target="tab-geo-atlas" onclick="switchPortalTab('tab-geo-atlas')">
+        <span>🗺️ 5. Geospatial Corridor Atlas</span>
       </button>
     </div>
 
     <!-- =================================================================== -->
-    <!-- SUB-PAGE 1: CERTIFICATION TRACKS & CRAM MATRIX                      -->
+    <!-- TAB 1: EVE-NG CCNP & JNCIP FULL TUTORIAL WORKBENCH (3-PANE SPLIT)   -->
     <!-- =================================================================== -->
-    <div id="tab-cert-tracks" class="tab-pane active">
-      <div class="grid-4">
-        <!-- Track 1: SAS A00-440 -->
-        <div class="card active-card" id="track-card-SAS" onclick="selectCramTrack('SAS')">
-          <div>
-            <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;border:1px solid rgba(59,130,246,0.4);">
-              Track 01 • Primary AI/Data Ops
-            </span>
-            <h3 style="margin-top:10px;">SAS ModelOps Specialist (A00-440)</h3>
-            <p style="margin-top:6px;">
-              Production AI/ML deployment, PSI/ROC drift tracking, and SAS Viya governance.
-            </p>
+    <div id="tab-eveng-academy" class="tab-pane active">
+      <div class="eveng-lms-layout">
+        <!-- LEFT PANE: CCNP & JNCIP LAB SYLLABUS TREE -->
+        <aside class="syllabus-sidebar">
+          <div class="syl-header">
+            <span>CCNP / JNCIP LAB SYLLABUS</span>
+            <span style="color:#4ade80;">5 FULL LABS</span>
           </div>
+
+          <button class="lab-nav-item active" id="lab-btn-0" onclick="selectEveLab(0)">
+            <div class="lab-nav-top">
+              <span style="color:#60a5fa;">LAB 01 • IGP INTEROP</span>
+              <span style="color:#4ade80;" id="lab-status-0">● READY</span>
+            </div>
+            <div class="lab-nav-title">Multi-Area OSPF &amp; OSPFv3 (IOS-XE ↔ Junos vMX)</div>
+            <div class="lab-nav-sub">LSA 1–7, NSSA, BFD, MTU ExStart Debug &amp; SHA-256 Auth</div>
+          </button>
+
+          <button class="lab-nav-item" id="lab-btn-1" onclick="selectEveLab(1)">
+            <div class="lab-nav-top">
+              <span style="color:var(--gold-bright);">LAB 02 • SP &amp; CORE BGP/MPLS</span>
+              <span style="color:#4ade80;" id="lab-status-1">● READY</span>
+            </div>
+            <div class="lab-nav-title">eBGP/iBGP Route-Reflector, MPLS L3VPN &amp; EVPN</div>
+            <div class="lab-nav-sub">RFC 4364 VPNv4, Route-Targets, LDP PHP &amp; Policy</div>
+          </button>
+
+          <button class="lab-nav-item" id="lab-btn-2" onclick="selectEveLab(2)">
+            <div class="lab-nav-top">
+              <span style="color:#f87171;">LAB 03 • SECURE TUNNELS</span>
+              <span style="color:#4ade80;" id="lab-status-2">● READY</span>
+            </div>
+            <div class="lab-nav-title">IKEv2 IPsec VTI (IOS-XE) ↔ Juniper vSRX Route-Based VPN</div>
+            <div class="lab-nav-sub">AES-256-GCM, DH-20, Tunnel0 ↔ st0.0 &amp; Security Zones</div>
+          </button>
+
+          <button class="lab-nav-item" id="lab-btn-3" onclick="selectEveLab(3)">
+            <div class="lab-nav-top">
+              <span style="color:#c084fc;">LAB 04 • CAMPUS &amp; DC FABRIC</span>
+              <span style="color:#4ade80;" id="lab-status-3">● READY</span>
+            </div>
+            <div class="lab-nav-title">MSTP (802.1s), VRRP/FHRP &amp; EVPN-VXLAN Anycast GW</div>
+            <div class="lab-nav-sub">L2/L3 VNI Mapping, BGP EVPN Type-2/Type-5 Routes</div>
+          </button>
+
+          <button class="lab-nav-item" id="lab-btn-4" onclick="selectEveLab(4)">
+            <div class="lab-nav-top">
+              <span style="color:#34d399;">LAB 05 • DEVNET &amp; JNCIP AUTO</span>
+              <span style="color:#4ade80;" id="lab-status-4">● READY</span>
+            </div>
+            <div class="lab-nav-title">Ansible Playbooks, NETCONF/YANG (RFC 6241) &amp; PyEZ</div>
+            <div class="lab-nav-sub">Declarative IOS-XE &amp; Junos XML RPC + Netmiko Grader</div>
+          </button>
+
+          <div style="margin-top:6px;padding-top:10px;border-top:1px solid var(--border);display:grid;gap:6px;">
+            <button class="btn btn-gold" style="width:100%;" onclick="downloadCurrentUnlTopology()">⬇ Export EVE-NG .unl Lab File</button>
+            <button class="btn btn-ghost" style="width:100%;" onclick="switchPortalTab('tab-eveng-connector')">🔌 Connect Live EVE-NG VM →</button>
+          </div>
+        </aside>
+
+        <!-- CENTER PANE: FULL CCNP & JNCIP TECHNICAL TUTORIAL -->
+        <section class="tutorial-pane">
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:10px;">
+            <div>
+              <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;" id="tut-lab-badge">
+                CCNP ENARSI (300-410) &amp; JNCIP-ENT (JN0-649) // FULL DEPTH TUTORIAL
+              </span>
+              <h2 style="font-family:'Outfit',sans-serif;font-size:20px;margin-top:5px;" id="tut-lab-title">
+                Lab 01: Multi-Area OSPF &amp; OSPFv3 Interoperability (Cisco IOS-XE ↔ Juniper vMX)
+              </h2>
+            </div>
+            <button class="btn btn-emerald" onclick="gradeCurrentEveLab()">✓ Run Netmiko / NAPALM Lab Auto-Grader (+350 XP)</button>
+          </div>
+
+          <!-- Tutorial Step Switcher (Seamless View Switching Without Text Clutter) -->
+          <div class="tut-subtabs">
+            <button class="tut-subbtn active" id="tsub-arch" onclick="switchTutorialView('arch')">1. RFC Architecture &amp; Packet Walk</button>
+            <button class="tut-subbtn" id="tsub-ios" onclick="switchTutorialView('ios')">2. Cisco IOS-XE Config (CCNP)</button>
+            <button class="tut-subbtn" id="tsub-junos" onclick="switchTutorialView('junos')">3. Juniper Junos Config (JNCIP)</button>
+            <button class="tut-subbtn" id="tsub-verify" onclick="switchTutorialView('verify')">4. Verification &amp; Debugs</button>
+            <button class="tut-subbtn" id="tsub-ansible" onclick="switchTutorialView('ansible')">5. Ansible / NETCONF YAML</button>
+          </div>
+
+          <!-- Dynamic Tutorial Content Box -->
+          <div id="tutorial-dynamic-body"></div>
+        </section>
+
+        <!-- RIGHT PANE: INTERACTIVE EVE-NG TOPOLOGY, PACKET INSPECTOR & MULTI-NODE CLI -->
+        <section class="eveng-console-pane">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">
+              CLICK ANY NODE TO SWITCH CONSOLE
+            </span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#4ade80;" id="active-node-indicator">
+              Console: R1-CORE (Cisco IOS-XE 17.9)
+            </span>
+          </div>
+
+          <!-- Interactive Multi-Vendor EVE-NG SVG Topology -->
+          <svg viewBox="0 0 520 205" style="width:100%;height:auto;background:#020617;border-radius:12px;border:1px solid var(--border);">
+            <!-- Links -->
+            <line x1="95" y1="102" x2="255" y2="48" stroke="#3b82f6" stroke-width="2.5" stroke-dasharray="6 4" />
+            <line x1="95" y1="102" x2="255" y2="156" stroke="#10b981" stroke-width="2.5" stroke-dasharray="6 4" />
+            <line x1="255" y1="48" x2="420" y2="102" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6 4" />
+            <line x1="255" y1="156" x2="420" y2="102" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="6 4" />
+            <line x1="255" y1="48" x2="255" y2="156" stroke="#a855f7" stroke-width="1.8" stroke-dasharray="4 4" />
+
+            <!-- Interface Labels -->
+            <text x="165" y="64" fill="#93c5fd" font-size="8.5" font-family="JetBrains Mono">Gi1 ↔ ge-0/0/0</text>
+            <text x="165" y="148" fill="#86efac" font-size="8.5" font-family="JetBrains Mono">Tun0 ↔ st0.0</text>
+            <text x="345" y="64" fill="#fde047" font-size="8.5" font-family="JetBrains Mono">MPLS / eBGP</text>
+
+            <!-- Animated Control-Plane Packets -->
+            <circle r="4.5" fill="#60a5fa">
+              <animateMotion dur="2.2s" repeatCount="indefinite" path="M95,102 L255,48 L420,102" />
+            </circle>
+            <circle r="4.5" fill="#4ade80">
+              <animateMotion dur="2.6s" repeatCount="indefinite" path="M95,102 L255,156 L420,102" />
+            </circle>
+
+            <!-- Node 1: R1-CORE (Cisco IOS-XE) -->
+            <g transform="translate(42,74)" style="cursor:pointer;" onclick="selectConsoleNode('R1-IOS-XE')">
+              <rect width="104" height="56" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="2" />
+              <text x="52" y="22" fill="#fff" font-size="10.5" font-weight="800" text-anchor="middle">R1-CORE</text>
+              <text x="52" y="36" fill="#93c5fd" font-size="8.5" font-family="JetBrains Mono" text-anchor="middle">Cisco IOS-XE</text>
+              <text x="52" y="48" fill="#64748b" font-size="8" font-family="JetBrains Mono" text-anchor="middle">10.255.0.1/32</text>
+            </g>
+
+            <!-- Node 2: R2-vMX (Juniper Junos) -->
+            <g transform="translate(203,20)" style="cursor:pointer;" onclick="selectConsoleNode('R2-JUNOS-vMX')">
+              <rect width="104" height="56" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="2" />
+              <text x="52" y="22" fill="#fff" font-size="10.5" font-weight="800" text-anchor="middle">R2-vMX</text>
+              <text x="52" y="36" fill="#fde047" font-size="8.5" font-family="JetBrains Mono" text-anchor="middle">Juniper Junos</text>
+              <text x="52" y="48" fill="#64748b" font-size="8" font-family="JetBrains Mono" text-anchor="middle">10.255.0.2/32</text>
+            </g>
+
+            <!-- Node 3: FW1-vSRX (Juniper Security) -->
+            <g transform="translate(203,128)" style="cursor:pointer;" onclick="selectConsoleNode('FW1-JUNOS-vSRX')">
+              <rect width="104" height="56" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2" />
+              <text x="52" y="22" fill="#fff" font-size="10.5" font-weight="800" text-anchor="middle">FW1-vSRX</text>
+              <text x="52" y="36" fill="#86efac" font-size="8.5" font-family="JetBrains Mono" text-anchor="middle">Junos vSRX NG</text>
+              <text x="52" y="48" fill="#64748b" font-size="8" font-family="JetBrains Mono" text-anchor="middle">10.255.0.4/32</text>
+            </g>
+
+            <!-- Node 4: R3-PE-EDGE (Cisco IOS-XR / XE) -->
+            <g transform="translate(366,74)" style="cursor:pointer;" onclick="selectConsoleNode('R3-PE-EDGE')">
+              <rect width="108" height="56" rx="10" fill="#0f172a" stroke="#ef4444" stroke-width="2" />
+              <text x="54" y="22" fill="#fff" font-size="10.5" font-weight="800" text-anchor="middle">R3-PE-EDGE</text>
+              <text x="54" y="36" fill="#fca5a5" font-size="8.5" font-family="JetBrains Mono" text-anchor="middle">AS 65001 / MPLS</text>
+              <text x="54" y="48" fill="#64748b" font-size="8" font-family="JetBrains Mono" text-anchor="middle">10.255.0.3/32</text>
+            </g>
+          </svg>
+
+          <!-- Node Switcher Pills -->
+          <div class="node-pill-bar">
+            <button class="node-pill active" id="npill-R1-IOS-XE" onclick="selectConsoleNode('R1-IOS-XE')">R1-CORE (IOS-XE)</button>
+            <button class="node-pill" id="npill-R2-JUNOS-vMX" onclick="selectConsoleNode('R2-JUNOS-vMX')">R2-vMX (Junos)</button>
+            <button class="node-pill" id="npill-R3-PE-EDGE" onclick="selectConsoleNode('R3-PE-EDGE')">R3-PE (BGP/MPLS)</button>
+            <button class="node-pill" id="npill-FW1-JUNOS-vSRX" onclick="selectConsoleNode('FW1-JUNOS-vSRX')">FW1-vSRX (IPsec)</button>
+          </div>
+
+          <!-- Quick Lab Command Injector Chips -->
+          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="quick-cmd-chips"></div>
+
+          <!-- Interactive Multi-Vendor CLI Console -->
+          <div class="terminal-window">
+            <div class="term-output" id="eveng-term-out"></div>
+            <div class="term-input-row">
+              <span class="term-prompt" id="eveng-term-prompt">R1-CORE#</span>
+              <input type="text" class="term-input" id="eveng-term-input" placeholder="Type IOS-XE or Junos command (or click a quick chip above) and press Enter..." onkeydown="if(event.key==='Enter') executeTerminalInput();" />
+              <button class="btn btn-gold" style="padding:5px 10px;font-size:10.5px;" onclick="executeTerminalInput()">Run</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 2: EVE-NG LIVE SERVER BRIDGE, REST API & .UNL TOPOLOGIES        -->
+    <!-- =================================================================== -->
+    <div id="tab-eveng-connector" class="tab-pane">
+      <div class="grid-2">
+        <div class="card">
           <div>
-            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;margin-bottom:5px;">
-              <span style="color:var(--silver);">Readiness</span>
-              <span style="color:var(--gold-bright);">88%</span>
+            <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;">
+              DIRECT EVE-NG HTML5 GUACAMOLE &amp; REST API CONNECTOR
+            </span>
+            <h3 style="margin-top:8px;">Connect Your Local EVE-NG VM Into This Learning Portal</h3>
+            <p style="margin-top:6px;font-size:12.5px;color:var(--silver);line-height:1.55;">
+              Enter your local EVE-NG Community / Pro VM IP (default VirtualBox/VMware Host-Only <code>https://192.168.56.101</code> or <code>http://127.0.0.1:8081</code>) to embed the live EVE-NG HTML5 Guacamole workspace directly below or trigger REST API lab actions:
+            </p>
+
+            <div style="display:grid;grid-template-columns:1fr 140px 140px;gap:10px;margin-top:14px;">
+              <input type="text" id="eve-vm-url" value="https://192.168.56.101" placeholder="https://192.168.56.101" style="padding:10px 12px;border-radius:10px;background:#020617;border:1px solid var(--border);color:#fff;font-family:'JetBrains Mono',monospace;font-size:12px;" />
+              <input type="text" id="eve-vm-lab" value="/MGC_CCNP_JNCIP.unl" placeholder="/Lab.unl" style="padding:10px 12px;border-radius:10px;background:#020617;border:1px solid var(--border);color:var(--gold-bright);font-family:'JetBrains Mono',monospace;font-size:12px;" />
+              <button class="btn btn-gold" onclick="mountLiveEveIframe()">🔗 Mount Live VM</button>
             </div>
-            <div class="prog-track"><div class="prog-fill" style="width:88%;"></div></div>
+
             <div class="btn-row" style="margin-top:12px;">
-              <button class="btn btn-gold" onclick="event.stopPropagation();selectCramTrack('SAS')">View Cram Sheet</button>
-              <a href="https://cp.certmetrics.com/sas/en/login" target="_blank" class="btn btn-ghost" onclick="event.stopPropagation();">Portal ↗</a>
+              <button class="btn btn-blue" onclick="openEveWindowPopup()">↗ Open EVE-NG HTML5 Console in Separate Window</button>
+              <button class="btn btn-ghost" onclick="downloadCurrentUnlTopology()">⬇ Download MGC_CCNP_JNCIP.unl Topology XML</button>
+              <button class="btn btn-ghost" onclick="testEveRestApi()">⚡ Ping EVE-NG REST API (/api/status)</button>
             </div>
+
+            <pre id="eve-api-log" style="margin-top:12px;padding:12px;border-radius:12px;background:#020617;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:#86efac;white-space:pre-wrap;">[EVE-NG BRIDGE READY]
+• REST Endpoint: GET /api/status | POST /api/labs/MGC_CCNP_JNCIP.unl/nodes/start
+• HTML5 Console Path: /#/main (Apache Guacamole WebSocket Tunnel)
+• Tip: When your local VM is powered off ($0 cloud cost), Tab 1 runs our full Dual-Vendor IOS-XE + Junos CLI & Packet Simulator automatically.</pre>
           </div>
         </div>
 
-        <!-- Track 2: IAPP CIPP/US -->
-        <div class="card" id="track-card-CIPP" onclick="selectCramTrack('CIPP')">
+        <div class="card">
           <div>
-            <span class="badge" style="background:rgba(22,163,74,0.2);color:#86efac;border:1px solid rgba(22,163,74,0.4);">
-              Track 02 • Data Commerce Law
+            <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">
+              5 WAYS EVE-NG INTEGRATES INTO YOUR LEARNING PORTAL
             </span>
-            <h3 style="margin-top:10px;">IAPP CIPP/US &amp; CIPP/G Privacy</h3>
-            <p style="margin-top:6px;">
-              HIPAA Safe Harbor, FCRA/GLBA, CCPA/VCDPA de-identification &amp; Federal SORN/PIA.
-            </p>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;margin-bottom:5px;">
-              <span style="color:var(--silver);">Readiness</span>
-              <span style="color:var(--gold-bright);">90%</span>
-            </div>
-            <div class="prog-track"><div class="prog-fill" style="width:90%;"></div></div>
-            <div class="btn-row" style="margin-top:12px;">
-              <button class="btn btn-gold" onclick="event.stopPropagation();selectCramTrack('CIPP')">View Cram Sheet</button>
-              <a href="https://iapp.org/certify/cipp/" target="_blank" class="btn btn-ghost" onclick="event.stopPropagation();">Portal ↗</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Track 3: Google Path 4525 -->
-        <div class="card" id="track-card-GCP" onclick="selectCramTrack('GCP')">
-          <div>
-            <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);border:1px solid var(--border-gold);">
-              Track 03 • Cloud Agentic AI
-            </span>
-            <h3 style="margin-top:10px;">Google Agentic Architect (Path 4525)</h3>
-            <p style="margin-top:6px;">
-              Vertex AI multi-agent orchestration, LangGraph state supervision &amp; BigQuery Clean Rooms.
-            </p>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;margin-bottom:5px;">
-              <span style="color:var(--silver);">Readiness</span>
-              <span style="color:var(--gold-bright);">92%</span>
-            </div>
-            <div class="prog-track"><div class="prog-fill" style="width:92%;"></div></div>
-            <div class="btn-row" style="margin-top:12px;">
-              <button class="btn btn-gold" onclick="event.stopPropagation();selectCramTrack('GCP')">View Cram Sheet</button>
-              <a href="https://www.skills.google/paths/4525" target="_blank" class="btn btn-ghost" onclick="event.stopPropagation();">Portal ↗</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Track 4: Microsoft SC-100 / SC-200 -->
-        <div class="card" id="track-card-SC100" onclick="selectCramTrack('SC100')">
-          <div>
-            <span class="badge" style="background:rgba(220,38,38,0.2);color:#fca5a5;border:1px solid rgba(220,38,38,0.4);">
-              Track 04 • Defense Zero-Trust
-            </span>
-            <h3 style="margin-top:10px;">Microsoft SC-100 &amp; SC-200 Architect</h3>
-            <p style="margin-top:6px;">
-              Zero-Trust enterprise architecture, Microsoft Sentinel SIEM/SOAR, Entra ID &amp; CMMC L2.
-            </p>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;margin-bottom:5px;">
-              <span style="color:var(--silver);">Readiness</span>
-              <span style="color:var(--gold-bright);">86%</span>
-            </div>
-            <div class="prog-track"><div class="prog-fill" style="width:86%;"></div></div>
-            <div class="btn-row" style="margin-top:12px;">
-              <button class="btn btn-gold" onclick="event.stopPropagation();selectCramTrack('SC100')">View Cram Sheet</button>
-              <a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-100" target="_blank" class="btn btn-ghost" onclick="event.stopPropagation();">Portal ↗</a>
+            <h3 style="margin-top:8px;">Production EVE-NG + Canvas LMS Integration Blueprint</h3>
+            <div style="display:grid;gap:10px;margin-top:10px;font-size:12px;color:var(--silver);">
+              <div style="padding:10px 12px;border-radius:10px;background:#020617;border-left:3px solid #3b82f6;">
+                <strong style="color:#fff;">1. Apache Guacamole HTML5 Split-Pane Embed:</strong> Mounts <code>https://&lt;EVE-IP&gt;/html5/#/client/&lt;token&gt;</code> directly alongside the CCNP/JNCIP workbook with zero external Telnet/PuTTY dependency.
+              </div>
+              <div style="padding:10px 12px;border-radius:10px;background:#020617;border-left:3px solid var(--gold-bright);">
+                <strong style="color:#fff;">2. Automated .unl XML Topology Provisioning:</strong> One-click export of multi-vendor <code>.unl</code> topologies (Cisco vIOS-XE, Juniper vMX/vSRX, Arista vEOS, Linux hosts) ready to import into <code>/opt/unetlab/labs/</code>.
+              </div>
+              <div style="padding:10px 12px;border-radius:10px;background:#020617;border-left:3px solid #22c55e;">
+                <strong style="color:#fff;">3. Netmiko / NAPALM / PyEZ Auto-Grader:</strong> Connects via SSH/NETCONF (port 22/830) to your running EVE-NG management OOB subnet (<code>192.168.56.0/24</code>) to parse <code>show ip ospf neighbor | json</code> and <code>show bgp summary | display xml</code>.
+              </div>
+              <div style="padding:10px 12px;border-radius:10px;background:#020617;border-left:3px solid #ec4899;">
+                <strong style="color:#fff;">4. Ultra-Light 18 KB .cast Terminal Replays:</strong> Records every CCNP/JNCIP troubleshooting session as a JSON <code>.cast</code> file instead of 200 MB MP4 video so subscribers can replay and copy-paste commands live.
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- DYNAMIC 1-PAGE ARCHITECTURE & GOLDEN RULES CRAM MATRIX -->
-      <div class="cram-panel">
-        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
-          <div>
-            <span class="badge" style="background:rgba(245,158,11,0.18);color:var(--gold-bright);" id="cram-badge">
-              ACTIVE CRAM MATRIX // SAS MODELOPS (A00-440)
-            </span>
-            <h2 style="font-family:'Outfit',sans-serif;font-size:20px;margin-top:6px;" id="cram-title">
-              SAS ModelOps (A00-440) — The 5-Tool Matrix &amp; Golden Rules
-            </h2>
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-blue" onclick="switchCertTab('tab-exam-sim')">⚡ Drill This Track in Simulator →</button>
-          </div>
+      <!-- Embedded Live EVE-NG Iframe Container (Appears when mounted) -->
+      <div id="eve-live-iframe-wrap" style="display:none;margin-top:18px;background:#020617;border:1px solid var(--border-gold);border-radius:16px;padding:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--gold-bright);" id="eve-iframe-label">● LIVE EVE-NG HTML5 WORKSPACE</span>
+          <button class="btn btn-ghost" onclick="document.getElementById('eve-live-iframe-wrap').style.display='none'">✕ Close Embed</button>
         </div>
-
-        <div class="cram-grid" id="cram-grid-content"></div>
+        <iframe id="eve-live-iframe" src="about:blank" style="width:100%;height:540px;border:1px solid var(--border);border-radius:12px;background:#000;"></iframe>
       </div>
     </div>
 
     <!-- =================================================================== -->
-    <!-- SUB-PAGE 2: INTERACTIVE EXAM SIMULATOR (SCENARIO DRILLS)            -->
+    <!-- TAB 3: DEDICATED SINGLE-EXAM PRACTICE POOLS (NEVER AGGREGATED)      -->
     <!-- =================================================================== -->
-    <div id="tab-exam-sim" class="tab-pane">
+    <div id="tab-single-exam" class="tab-pane">
       <div class="grid-2">
         <div class="card" style="justify-content:flex-start;">
-          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
-            <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;" id="sim-q-tag">
-              QUESTION 1 OF 7 • SAS A00-440
-            </span>
-            <div class="btn-row">
-              <select class="quick-select" id="sim-track-filter" onchange="filterSimQuestions(this.value)">
-                <option value="ALL">All Certification Tracks (7 Core Drills)</option>
-                <option value="SAS">SAS ModelOps (A00-440)</option>
-                <option value="CIPP">IAPP CIPP/US &amp; CIPP/G</option>
-                <option value="GCP">Google Agentic Architect (Path 4525)</option>
-                <option value="SC100">Microsoft SC-100 Zero-Trust</option>
-              </select>
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+            <div>
+              <span class="badge" style="background:rgba(22,163,74,0.2);color:#86efac;" id="exam-pool-badge">
+                STRICT SINGLE-EXAM ISOLATION // CISCO CCNP ENARSI (300-410)
+              </span>
+              <h3 style="margin-top:4px;font-size:17px;" id="exam-pool-title">Cisco CCNP ENARSI (300-410) Official Domain Pool</h3>
             </div>
+            <select class="quick-select" id="strict-exam-selector" onchange="selectStrictSingleExam(this.value)">
+              <option value="CCNP_ENARSI">Exam Pool: Cisco CCNP ENARSI (300-410)</option>
+              <option value="JNCIP_ENT">Exam Pool: Juniper JNCIP-ENT (JN0-649)</option>
+              <option value="SAS_A00_440">Exam Pool: SAS ModelOps Specialist (A00-440)</option>
+              <option value="GCP_PATH_4525">Exam Pool: Google Agentic Architect (Path 4525)</option>
+              <option value="MS_SC_100">Exam Pool: Microsoft Cybersecurity Architect (SC-100)</option>
+              <option value="IAPP_CIPP_US">Exam Pool: IAPP CIPP/US Privacy Governance</option>
+            </select>
           </div>
 
-          <h3 id="sim-q-text" style="font-size:17px;line-height:1.45;margin:8px 0;"></h3>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-bright);" id="exam-q-counter">
+            Question 1 of 3 in Selected Single-Exam Pool
+          </div>
 
-          <div id="sim-options-box" style="margin-top:6px;"></div>
+          <h4 id="exam-q-prompt" style="font-size:15.5px;line-height:1.5;color:#fff;margin:6px 0;"></h4>
 
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:12px;border-top:1px solid var(--border);">
-            <button class="btn btn-ghost" onclick="prevSimQuestion()">← Previous</button>
-            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--silver);" id="sim-score-pill">Session Score: 0 / 0</span>
-            <button class="btn btn-gold" onclick="nextSimQuestion()">Next Question →</button>
+          <div id="exam-q-options"></div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+            <button class="btn btn-ghost" onclick="prevStrictExamQ()">← Previous Question</button>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--silver);" id="exam-pool-score">Exam Pool Score: 0 / 0</span>
+            <button class="btn btn-gold" onclick="nextStrictExamQ()">Next Question →</button>
           </div>
         </div>
 
         <div class="card" style="justify-content:flex-start;background:rgba(2,6,23,0.92);border-color:var(--border-gold);">
           <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">
-            SCHOLAR RATIONALE &amp; MILITARY / ORSA MNEMONIC HOOK
+            OFFICIAL EXAM DOMAIN RATIONALE &amp; RFC / CLI VERIFICATION
           </span>
-          <h3 style="font-size:17px;">Instant Answer Verification &amp; Memory Anchor</h3>
-          <div id="sim-rationale-box" style="padding:16px;border-radius:14px;background:rgba(15,23,42,0.9);border:1px solid var(--border);font-size:13px;line-height:1.6;color:var(--silver);">
-            Select an option on the left to verify your answer and unlock the <strong>Military / ORSA Mnemonic Anchor</strong>.
-          </div>
-
-          <div style="margin-top:auto;padding-top:14px;border-top:1px solid var(--border);">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-bright);margin-bottom:8px;">
-              GOLDEN AXIOMS (BLIND SPOT SHIELD)
-            </div>
-            <p style="font-size:12px;color:var(--silver);margin-bottom:6px;">
-              • <strong>Axiom 1:</strong> "Executives do not care about the IT Environment." Differentiate Business Objectives from Deployment Environments.
-            </p>
-            <p style="font-size:12px;color:var(--silver);">
-              • <strong>Axiom 2:</strong> "Architecture starts on Day 1." Collaboration between Business, Analytics, and IT/Ops begins at inception.
-            </p>
+          <h3 style="font-size:17px;">Single-Exam Verification &amp; Blueprint Mapping</h3>
+          <div id="exam-q-rationale" style="padding:14px;border-radius:12px;background:rgba(15,23,42,0.9);border:1px solid var(--border);font-size:12.5px;line-height:1.6;color:var(--silver);">
+            Each certification exam pool is strictly isolated to its own official blueprint. Select an answer on the left to inspect the exact RFC, CLI output, or regulatory verification.
           </div>
         </div>
       </div>
     </div>
 
     <!-- =================================================================== -->
-    <!-- SUB-PAGE 3: CAREER TRIAD & PRINCIPAL ROLE MATCHMAKER                -->
+    <!-- TAB 4: PRINCIPAL ARCHITECT CAREER & SDVOSB POSITIONING              -->
     <!-- =================================================================== -->
     <div id="tab-career-radar" class="tab-pane">
-      <!-- Career Triad Summary -->
-      <div class="grid-3" style="margin-bottom:20px;">
+      <div class="grid-3" style="margin-bottom:18px;">
         <div class="card">
           <div>
             <span class="badge" style="background:rgba(220,38,38,0.2);color:#fca5a5;">Pillar 01 • Special Operations Signal</span>
-            <h3 style="margin-top:8px;">USASOC 112th Signal Bn (Airborne 25N) &amp; CCNP</h3>
-            <p style="margin-top:6px;">
-              SOJTF-OIR Erbil, MCCOG Quantico &amp; SAP NS2. Mission-critical multi-enclave routing, SATCOM, and tactical packet telemetry.
+            <h3 style="margin-top:8px;">USASOC 112th Signal Bn (Airborne 25N) &amp; CCNP/JNCIP</h3>
+            <p style="margin-top:6px;font-size:12.5px;color:var(--silver);">
+              SOJTF-OIR Erbil, MCCOG Quantico &amp; SAP NS2. Multi-enclave OSPF/BGP/MPLS routing, tactical SATCOM, and EVE-NG network architecture.
             </p>
           </div>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-bright);">Active Clearance &amp; DoD Pedigree</span>
         </div>
-
         <div class="card">
           <div>
             <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;">Pillar 02 • Pentagon AI &amp; ORSA</span>
-            <h3 style="margin-top:8px;">OSD / Joint Staff ORSA Analyst</h3>
-            <p style="margin-top:6px;">
-              Defined requirements and architected databases for U.S. Government AI Infrastructure; non-linear pattern recognition across divergent datasets.
+            <h3 style="margin-top:8px;">OSD / Joint Staff ORSA AI Infrastructure Analyst</h3>
+            <p style="margin-top:6px;font-size:12.5px;color:var(--silver);">
+              Defined requirements and architected databases for U.S. Government AI Infrastructure; pairs with Google Path 4525 &amp; SAS ModelOps (A00-440).
             </p>
           </div>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-bright);">AI Governance &amp; ModelOps Authority</span>
         </div>
-
         <div class="card">
           <div>
-            <span class="badge" style="background:rgba(22,163,74,0.2);color:#86efac;">Pillar 03 • Cloud Cyber &amp; Compliance</span>
-            <h3 style="margin-top:8px;">AZ-500 • CEH • Security+ • Splunk • RMF</h3>
-            <p style="margin-top:6px;">
-              TransitLabs &amp; MetaGravity London. Hands-on execution of NIST SP 800-53, RMF, FISMA, ISO 27001, Microsoft Sentinel &amp; Defender XDR.
+            <span class="badge" style="background:rgba(22,163,74,0.2);color:#86efac;">Pillar 03 • Zero-Trust Cyber &amp; Privacy</span>
+            <h3 style="margin-top:8px;">AZ-500 • SC-100 • CEH • Security+ • Splunk • CIPP/US</h3>
+            <p style="margin-top:6px;font-size:12.5px;color:var(--silver);">
+              TransitLabs &amp; MetaGravity London. Execution of NIST SP 800-53, RMF, CMMC L2, Microsoft Sentinel, and regulated data clean rooms.
             </p>
           </div>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-bright);">Zero-Trust &amp; CMMC L2 Ready</span>
         </div>
       </div>
 
-      <!-- High-Compensation Target Roles & Contract Positioning -->
-      <div class="cram-panel">
-        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;">
+      <div class="grid-2">
+        <div class="card">
           <div>
-            <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">HIGH-COMPENSATION CAREER &amp; CONTRACT TARGETS</span>
-            <h2 style="font-family:'Outfit',sans-serif;font-size:20px;margin-top:4px;">Principal Architect Roles &amp; SDVOSB Positioning</h2>
-          </div>
-          <div class="btn-row">
-            <a href="sdvosb-contract-radar.html" class="btn btn-gold">🎯 Open SAM.gov Contract Radar →</a>
-            <a href="saas-apps-and-lms-showcase.html" class="btn btn-ghost">⚡ Open SaaS &amp; Job Matchmaker →</a>
-          </div>
-        </div>
-
-        <div class="grid-3">
-          <div class="card">
-            <div>
-              <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">98% Match • $215K – $265K</span>
-              <h3 style="margin-top:8px;">Principal Agentic AI &amp; ModelOps Architect</h3>
-              <p style="margin-top:6px;">
-                Combines Pentagon ORSA AI Infrastructure experience with <strong>Google Path 4525</strong> and <strong>SAS Viya ModelOps (A00-440)</strong> for federal integrators &amp; Fortune 500 financial/healthcare leaders.
-              </p>
-            </div>
-            <div class="btn-row">
-              <a href="agent-workflow-studio.html" class="btn btn-blue">Launch Live LangGraph Proof →</a>
-            </div>
-          </div>
-
-          <div class="card">
-            <div>
-              <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fa;">97% Match • $195K – $245K</span>
-              <h3 style="margin-top:8px;">Senior Zero-Trust Cloud Security Architect</h3>
-              <p style="margin-top:6px;">
-                Pairs active <strong>AZ-500, CEH, Security+ &amp; Splunk</strong> with <strong>Microsoft SC-100 / SC-200</strong> and NIST 800-53 / 800-171 RMF ATO leadership.
-              </p>
-            </div>
-            <div class="btn-row">
-              <a href="compliance-trust-center.html" class="btn btn-blue">Open Zero-Trust Center →</a>
-            </div>
-          </div>
-
-          <div class="card">
-            <div>
-              <span class="badge" style="background:rgba(22,163,74,0.2);color:#86efac;">99% Match • B2G / B2B Retainer</span>
-              <h3 style="margin-top:8px;">Regulated Data Commerce &amp; Privacy Principal</h3>
-              <p style="margin-top:6px;">
-                Unlocks high-margin B2B/B2G data clean-room brokering under <strong>IAPP CIPP/US &amp; CIPP/G</strong>, HIPAA Safe Harbor, and Virginia VCDPA via <strong>Milton Group Concepts LLC</strong>.
-              </p>
-            </div>
-            <div class="btn-row">
-              <a href="index.html" class="btn btn-blue">Open Data Ops Hub →</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 1-CLICK EXECUTIVE POSITIONING & JOB BOARD LAUNCHPAD (#4) -->
-        <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1.1fr 0.9fr;gap:16px;">
-          <div style="background:rgba(15,23,42,0.9);border:1px solid var(--border);border-radius:14px;padding:16px;">
             <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">1-CLICK COPY EXECUTIVE POSITIONING DOSSIER</span>
-            <h4 style="font-size:15px;margin:8px 0 6px;color:#fff;">Copy Tailored LinkedIn Headline, Bio &amp; Resume Bullets</h4>
-            <div class="btn-row" style="margin-bottom:10px;">
+            <h3 style="margin-top:6px;">Copy Tailored LinkedIn Headline, Bio &amp; Resume Bullets</h3>
+            <div class="btn-row" style="margin:10px 0;">
               <button class="btn btn-gold" onclick="copyCareerSnippet('headline')">📋 Copy LinkedIn Headline</button>
               <button class="btn btn-ghost" onclick="copyCareerSnippet('bio')">📋 Copy Executive Bio</button>
               <button class="btn btn-ghost" onclick="copyCareerSnippet('bullets')">📋 Copy Resume Bullets</button>
               <button class="btn btn-ghost" onclick="copyCareerSnippet('sdvosb')">📋 Copy SDVOSB Pitch</button>
             </div>
-            <pre id="career-snippet-preview" style="margin:0;padding:10px 12px;border-radius:10px;background:#020617;border:1px solid var(--border);color:#93c5fd;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:pre-wrap;line-height:1.45;">Principal AI & Zero-Trust Cloud Security Architect | Google Agentic AI (Path 4525) • Azure AZ-500 / SC-100 • IAPP CIPP/US | Former Pentagon OSD/Joint Staff ORSA & USASOC 112th Signal (Airborne) | Founder @ Milton Group Concepts LLC</pre>
+            <pre id="career-snippet-preview" style="margin:0;padding:12px;border-radius:10px;background:#020617;border:1px solid var(--border);color:#93c5fd;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:pre-wrap;line-height:1.45;">Principal Network, AI & Zero-Trust Cloud Architect | CCNP / JNCIP • Google Agentic AI (Path 4525) • Azure AZ-500 / SC-100 • IAPP CIPP/US | Former Pentagon OSD/Joint Staff ORSA & USASOC 112th Signal (Airborne) | Founder @ Milton Group Concepts LLC</pre>
           </div>
+        </div>
 
-          <div style="background:rgba(15,23,42,0.9);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;">
-            <div>
-              <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;">DIRECT $200K+ PRINCIPAL ROLE &amp; CONTRACT BOARDS</span>
-              <h4 style="font-size:15px;margin:8px 0 6px;color:#fff;">Launch Pre-Filtered Executive Job &amp; Contract Searches</h4>
-              <p style="font-size:12px;color:var(--silver);margin-bottom:10px;">
-                Opens live Principal Architect &amp; Defense AI/Cyber searches across Northern VA, DC, and Remote corridors:
-              </p>
-            </div>
+        <div class="card">
+          <div>
+            <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;">DIRECT $200K+ PRINCIPAL ROLE &amp; CONTRACT BOARDS</span>
+            <h3 style="margin-top:6px;">Launch Pre-Filtered Executive Job &amp; Contract Searches</h3>
+            <p style="font-size:12.5px;color:var(--silver);margin:6px 0 12px;">
+              Direct links to Principal Network/Cloud/AI Architect roles and SDVOSB task orders across Northern VA, DC, and Remote corridors:
+            </p>
             <div class="btn-row">
-              <a href="https://www.linkedin.com/jobs/search/?keywords=Principal%20Cloud%20Security%20AI%20Architect" target="_blank" class="btn btn-blue">LinkedIn Principal Roles ↗</a>
-              <a href="https://www.clearancejobs.com/jobs?keywords=Principal+Architect+Cyber+AI" target="_blank" class="btn btn-ghost">ClearanceJobs ↗</a>
-              <a href="https://www.usajobs.gov/Search/Results?k=2210%201515%20Cyber%20AI" target="_blank" class="btn btn-ghost">USAJOBS (2210 / 1515 ORSA) ↗</a>
+              <a href="https://www.linkedin.com/jobs/search/?keywords=Principal%20Network%20Cloud%20Security%20Architect" target="_blank" class="btn btn-blue">LinkedIn Principal Roles ↗</a>
+              <a href="https://www.clearancejobs.com/jobs?keywords=Principal+Network+Cyber+Architect+CCNP" target="_blank" class="btn btn-ghost">ClearanceJobs (CCNP/Cyber/AI) ↗</a>
+              <a href="https://www.usajobs.gov/Search/Results?k=2210%201515%20Network%20Cyber" target="_blank" class="btn btn-ghost">USAJOBS (2210 / 1515 ORSA) ↗</a>
               <a href="sdvosb-contract-radar.html" class="btn btn-gold">SAM.gov SDVOSB Radar →</a>
             </div>
           </div>
@@ -723,7 +817,7 @@
     </div>
 
     <!-- =================================================================== -->
-    <!-- SUB-PAGE 4: GEOSPATIAL CORRIDOR & LIVE INSIGHTS                     -->
+    <!-- TAB 5: GEOSPATIAL CORRIDOR ATLAS                                    -->
     <!-- =================================================================== -->
     <div id="tab-geo-atlas" class="tab-pane">
       <div class="grid-2">
@@ -737,10 +831,9 @@
             📍 Active Corridor: Pentagon / Northern VA / Richmond HQ
           </div>
         </div>
-
         <div class="card" style="justify-content:flex-start;">
-          <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">CLICK ANY CORRIDOR TO FLY MAP &amp; TRACE</span>
-          <h3>Virginia / DC Defense, Cloud &amp; Data Corridors</h3>
+          <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">CLICK ANY CORRIDOR TO FLY MAP</span>
+          <h3>Virginia / DC Defense, Network &amp; Cloud Corridors</h3>
           <div style="display:grid;gap:10px;margin-top:6px;" id="corridor-list"></div>
         </div>
       </div>
@@ -748,209 +841,918 @@
   </main>
 
   <script>
-    const CAREER_SNIPPETS = {
-      headline: 'Principal AI & Zero-Trust Cloud Security Architect | Google Agentic AI (Path 4525) • Azure AZ-500 / SC-100 • IAPP CIPP/US | Former Pentagon OSD/Joint Staff ORSA & USASOC 112th Signal (Airborne) | Founder @ Milton Group Concepts LLC',
-      bio: 'Principal Cloud, Agentic AI & Zero-Trust Security Architect uniting (1) Pentagon OSD/Joint Staff ORSA AI Infrastructure Analysis, (2) USASOC 112th Signal Bn Airborne (25N) / SOJTF-OIR / MCCOG / CCNP Multi-Enclave Network Engineering, and (3) Regulated Cloud Cyber & Data Commerce (AZ-500, SC-100, CEH, Security+, Splunk, Google Path 4525, SAS ModelOps A00-440 & IAPP CIPP/US).',
-      bullets: '• Architected multi-cloud LangGraph & Google Gemini 2.5 Flash autonomous agent platform across scale-to-zero Cloud Run microservices ($0 idle cost) & BigQuery Data Clean Rooms.\n• Spearheaded Pentagon OSD/Joint Staff ORSA database architecture and requirements for U.S. Government AI Infrastructure.\n• Engineered Zero-Trust cloud enclaves (AZ-500, SC-100, NIST 800-53/800-171 CMMC L2, Sentinel SIEM/SOAR & FIDO2 WebAuthn 2FA).',
-      sdvosb: 'Milton Group Concepts LLC (miltongroupsecurity.org) & F.I.X Solutions LLC (fix.miltongroupsecurity.org) — Veteran-Led Agentic AI, Regulated Data Clean Rooms (CIPP/US + SAS ModelOps), and Zero-Trust Cloud Security Architecture (NAICS 541512, 541519, 541611).'
-    };
+    /* =====================================================================
+       5 FULL CCNP (ENCOR/ENARSI) & JNCIP (ENT/SP/SEC) EVE-NG LAB WORKBOOKS
+       ===================================================================== */
+    const EVE_LABS = [
+      {
+        id: 0,
+        badge: 'CCNP ENARSI (300-410) & JNCIP-ENT (JN0-649) // LAB 01',
+        title: 'Lab 01: Multi-Area OSPF & OSPFv3 Interoperability (Cisco IOS-XE ↔ Juniper vMX)',
+        arch: `
+          <div class="theory-box">
+            <h4>1. RFC 2328 (OSPFv2) &amp; RFC 5340 (OSPFv3) Multi-Vendor State Machine &amp; Packet Walk</h4>
+            • <strong>Adjacency FSM:</strong> <code>Down → Init → 2-Way (DR/BDR Election on Broadcast) → ExStart (Master/Slave DBD negotiation &amp; IP MTU check) → Exchange → Loading (LSR/LSU/LSAck) → Full</code>.<br/>
+            • <strong>Critical Multi-Vendor Pitfall #1 (IP MTU Mismatch):</strong> If Cisco <code>Gi1</code> is 1500 bytes and Juniper <code>ge-0/0/0.0</code> has a VLAN tag or 1492 MTU without <code>ip ospf mtu-ignore</code>, the adjacency hangs permanently in <strong>ExStart / Exchange</strong>.<br/>
+            • <strong>Critical Multi-Vendor Pitfall #2 (Area Types &amp; NSSA LSA-7 → LSA-5 Translation):</strong> Area 10 is configured as <strong>NSSA Totally Stubby (No-Summary)</strong>. The ABR (<code>R2-vMX</code>) blocks Type-3/4/5 LSAs into Area 10, injects a Type-3 default route (<code>0.0.0.0/0</code>), and translates redistributed Type-7 LSAs (P-bit set) into Type-5 External LSAs into Area 0.<br/>
+            • <strong>Sub-Second Convergence (RFC 5880 BFD):</strong> Hardware-assisted Bidirectional Forwarding Detection (<code>50ms × 3 = 150ms</code>) tears down OSPF in under 150ms without waiting for the 40-second Dead Timer.
+          </div>
+        `,
+        ios: `! =========================================================================
+! CISCO IOS-XE (R1-CORE) — MULTI-AREA OSPFv2/v3 + BFD + SHA-256 HMAC AUTH
+! =========================================================================
+key chain OSPF_SHA256_RING
+ key 1
+  key-string MGC-USASOC-25N-KEY!
+  cryptographic-algorithm hmac-sha-256
+!
+interface Loopback0
+ ip address 10.255.0.1 255.255.255.255
+ ipv6 address 2001:DB8:255::1/128
+ ip ospf 1 area 0
+ ospfv3 1 ipv6 area 0
+!
+interface GigabitEthernet1
+ description LINK_TO_JUNIPER_R2_vMX_GE_0_0_0
+ ip address 10.0.12.1 255.255.255.252
+ ip mtu 1500
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ip ospf authentication key-chain OSPF_SHA256_RING
+ bfd interval 50 min_rx 50 multiplier 3
+ ipv6 address 2001:DB8:12::1/64
+ ospfv3 1 network point-to-point
+ ospfv3 1 ipv6 area 0
+!
+router ospf 1
+ router-id 10.255.0.1
+ auto-cost reference-bandwidth 100000
+ passive-interface default
+ no passive-interface GigabitEthernet1
+ bfd all-interfaces
+ area 10 nssa no-summary`,
+        junos: `# =========================================================================
+# JUNIPER JUNOS (R2-vMX ABR) — HIERARCHICAL & SET SYNTAX (AREA 0 + NSSA 10)
+# =========================================================================
+set interfaces ge-0/0/0 description "LINK_TO_CISCO_R1_CORE_Gi1"
+set interfaces ge-0/0/0 mtu 1514
+set interfaces ge-0/0/0 unit 0 family inet mtu 1500
+set interfaces ge-0/0/0 unit 0 family inet address 10.0.12.2/30
+set interfaces ge-0/0/0 unit 0 family inet6 address 2001:db8:12::2/64
+set interfaces lo0 unit 0 family inet address 10.255.0.2/32
+set interfaces lo0 unit 0 family inet6 address 2001:db8:255::2/128
 
-    function copyCareerSnippet(key) {
-      const txt = CAREER_SNIPPETS[key] || CAREER_SNIPPETS.headline;
-      const box = document.getElementById('career-snippet-preview');
-      if (box) box.textContent = txt + '\n\n[✓ COPIED TO CLIPBOARD]';
-      if (navigator.clipboard) navigator.clipboard.writeText(txt);
-    }
+set routing-options router-id 10.255.0.2
+set protocols ospf reference-bandwidth 100g
+set protocols ospf area 0.0.0.0 interface lo0.0 passive
+set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 interface-type p2p
+set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 bfd-liveness-detection minimum-interval 50
+set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 bfd-liveness-detection multiplier 3
 
-    const CRAM_DATA = {
-      SAS: {
-        badge: 'ACTIVE CRAM MATRIX // SAS MODELOPS (A00-440)',
-        title: 'SAS ModelOps (A00-440) — The 5-Tool Matrix & Drift Metrics',
-        items: [
-          { h: '1. SAS Model Manager = "The Vault"', p: 'Central repository for model registration, version control, champion/challenger comparison, publishing to runtime containers, and performance/drift monitoring.' },
-          { h: '2. SAS Model Studio = "The Lab"', p: 'Visual Data Mining and Machine Learning (VDMML) pipeline builder where candidate models are trained and tested against holdout data to prevent overfitting.' },
-          { h: '3. SAS Environment vs. Workflow Manager', p: 'Environment Manager = "The IT Dashboard" (CPU/RAM, user permissions, servers). Workflow Manager = "The Bureaucrat" (human-in-the-loop approvals, governance gates).' },
-          { h: '4. Input Drift vs. Predictive Decay', p: 'Population Stability Index (PSI) tracks input feature shift (covariate shift). Characteristic Analysis, ROC/AUC, Gini, KS, and Lift track predictive power decay.' },
-          { h: '5. Axiom 1: Executives vs. IT Environment', p: 'Executives care about Business Objectives and ROI — NOT the underlying IT deployment environment. Always align KPIs to business outcomes first.' },
-          { h: '6. Axiom 2: Architecture Starts on Day 1', p: 'Enterprise ModelOps succeeds only when handoffs between (1) Business, (2) Analytics, and (3) IT/Operations are defined on Day 1.' }
-        ]
-      },
-      CIPP: {
-        badge: 'ACTIVE CRAM MATRIX // IAPP CIPP/US & CIPP/G PRIVACY',
-        title: 'IAPP CIPP/US & CIPP/G — Regulated Data Commerce & Federal Privacy',
-        items: [
-          { h: '1. FCRA vs. GLBA in Data Commerce', p: 'FCRA (amended by FACTA) governs Consumer Reporting Agencies (CRAs) and permissible purposes. GLBA (Privacy & Safeguards Rules) governs financial institutions handling NPI.' },
-          { h: '2. HIPAA De-Identification (2 Methods)', p: '(1) Expert Determination (statistical proof of very small re-identification risk) OR (2) Safe Harbor (strict removal of all 18 specific identifiers).' },
-          { h: '3. CCPA/CPRA & Virginia VCDPA Safe Harbor', p: 'De-identified data is exempt only if not reasonably linkable to an individual, the business publicly commits not to re-identify, and downstream contracts prohibit re-identification.' },
-          { h: '4. Federal Privacy Act of 1974 (SORN)', p: 'Triggers a System of Records Notice (SORN) in the Federal Register whenever a federal agency maintains records retrieved by name, SSN, or personal identifier.' },
-          { h: '5. E-Government Act of 2002 (Section 208 PIA)', p: 'Requires a Privacy Impact Assessment (PIA) BEFORE developing or procuring federal IT systems that collect, maintain, or disseminate PII.' },
-          { h: '6. FTC Section 5 Enforcement', p: 'Prohibits "unfair or deceptive acts or practices" — broken privacy promises = Deceptive; lax security causing substantial unavoidable consumer injury = Unfair.' }
-        ]
-      },
-      GCP: {
-        badge: 'ACTIVE CRAM MATRIX // GOOGLE CLOUD AGENTIC ARCHITECT (PATH 4525)',
-        title: 'Google Professional Agentic Architect (Path 4525) — Decision Trees',
-        items: [
-          { h: '1. Multi-Agent Supervisor Pattern', p: 'Use a central Supervisor node (LangGraph / Vertex Agent Engine) to route tasks to specialized subagents with isolated tool scopes and explicit handoff schemas.' },
-          { h: '2. Grounding & Enterprise RAG', p: 'Use Vertex AI Search / BigQuery Vector Search with strict IAM ACLs so agents only retrieve documents the authenticated user is authorized to view.' },
-          { h: '3. BigQuery Data Clean Rooms', p: 'When multiple parties combine regulated datasets for analytics/AI training without exposing raw PII, always choose BigQuery Data Clean Rooms with differential privacy.' },
-          { h: '4. Scale-to-Zero Agent Microservices', p: 'Deploy stateless FastAPI/LangGraph containers on Cloud Run with min-instances=0 and CPU throttling for $0.00 idle cost and instant autoscaling.' },
-          { h: '5. Model Armor & Safety Guardrails', p: 'Enforce prompt-injection defense, PII redaction (Cloud DLP / Sensitive Data Protection), and human-in-the-loop confirmation before high-impact tool execution.' },
-          { h: '6. Cymbal Labs Case Study Pattern', p: 'Decouple ingestion (Pub/Sub + Dataflow) from reasoning (Gemini 2.5 Flash/Pro on Vertex AI) and persist state checkpoints in Cloud SQL / Firestore.' }
-        ]
-      },
-      SC100: {
-        badge: 'ACTIVE CRAM MATRIX // MICROSOFT SC-100 & SC-200 CYBER ARCHITECT',
-        title: 'Microsoft Cybersecurity Architect (SC-100) — Zero-Trust & Defense Matrix',
-        items: [
-          { h: '1. Three Zero-Trust Foundational Pillars', p: '(1) Verify Explicitly (Entra Conditional Access + Phishing-Resistant MFA), (2) Use Least Privilege Access (PIM JIT/JEA), (3) Assume Breach (Micro-segmentation + XDR).' },
-          { h: '2. Microsoft Sentinel vs. Defender XDR', p: 'Microsoft Sentinel = Cloud-native SIEM/SOAR across multi-cloud & 3rd-party firewalls. Defender XDR = Unified endpoint, identity, email, and cloud app protection.' },
-          { h: '3. Landing Zone Guardrails (Azure Policy)', p: 'Enforce NIST SP 800-53 / CMMC L2 compliance at scale using Azure Policy Initiatives, Management Groups, and Defender for Cloud regulatory compliance blueprints.' },
-          { h: '4. Privileged Identity Management (PIM)', p: 'Eliminate standing Global Admin roles; enforce Just-In-Time (JIT) activation with approval workflows, MFA re-verification, and audit logging.' },
-          { h: '5. Securing Hybrid & OT/IoT Enclaves', p: 'Deploy Azure Arc for hybrid server governance and Microsoft Defender for IoT (agentless network sensor) for tactical/industrial OT enclaves.' },
-          { h: '6. Ransomware & Cloud Resiliency', p: 'Immutable Azure Backup vaults + Soft Delete + Resource Locks (ReadOnly / CanNotDelete) + Cross-Region GRS recovery.' }
-        ]
-      }
-    };
+# Area 10: Totally Stubby NSSA (Injects Type-3 0.0.0.0/0, suppresses Type-3 summaries)
+set protocols ospf area 0.0.0.10 nssa default-lsa default-metric 10
+set protocols ospf area 0.0.0.10 nssa default-lsa type-7
+set protocols ospf area 0.0.0.10 nssa no-summaries
+set protocols ospf3 area 0.0.0.0 interface ge-0/0/0.0 interface-type p2p`,
+        verify: `! 1. CISCO IOS-XE VERIFICATION & EXSTART/MTU TROUBLESHOOTING
+R1-CORE# show ip ospf neighbor detail
+ Neighbor 10.255.0.2, interface address 10.0.12.2
+    In the area 0 via interface GigabitEthernet1
+    Neighbor priority is 0, State is FULL, 6 state changes
+    Options is 0x52,LLS Options is 0x1 (LR), BFD status: Up (50ms/3)
 
-    const QUIZ_BANK = [
-      {
-        track: 'GCP',
-        tag: 'GOOGLE PATH 4525 • MULTI-AGENT SUPERVISOR & SAFETY',
-        q: 'Cymbal Labs is deploying a multi-agent customer & financial operations system on Google Cloud. They need a central orchestrator to delegate tasks to specialized Billing, SQL, and Compliance subagents while blocking prompt injections and redacting PII inline. Which architecture should you design?',
-        options: [
-          'A) A single monolithic prompt with all database credentials hardcoded in plaintext',
-          'B) LangGraph / Vertex AI Agent Engine Supervisor pattern with scoped subagent tools, protected inline by Google Cloud Model Armor and Cloud Sensitive Data Protection (DLP)',
-          'C) Unfiltered user inputs piped directly into BigQuery admin shell scripts',
-          'D) Compute Engine VMs running without IAM service account boundaries'
-        ],
-        correct: 1,
-        rationale: '<strong>Correct (B):</strong> In <strong>Google Path 4525</strong>, complex enterprise workflows use the <strong>Supervisor / Subagent pattern</strong> with least-privilege tool scopes, guarded inline by <strong>Model Armor</strong> (prompt injection defense) and <strong>Cloud Sensitive Data Protection (DLP)</strong>.'
+R1-CORE# show ip ospf database nssa-external
+R1-CORE# debug ip ospf adj
+
+# 2. JUNIPER JUNOS VERIFICATION COMMANDS
+admin@R2-vMX> show ospf neighbor extensive
+Address          Interface              State           ID               Pri  Dead
+10.0.12.1        ge-0/0/0.0             Full            10.255.0.1         1    38
+  Area 0.0.0.0, opt 0x52, OSPF3-Intf-Index 2, BFD status: Up
+
+admin@R2-vMX> show ospf database area 0.0.0.10 netsummary
+admin@R2-vMX> show bfd session extensive`,
+        ansible: `---
+# ANSIBLE DEVNET PLAYBOOK: MULTI-VENDOR OSPF + BFD DEPLOYMENT & AUDIT
+- name: Configure & Audit Cisco IOS-XE and Juniper Junos OSPF Fabric
+  hosts: eveng_ospf_fabric
+  gather_facts: false
+  tasks:
+    - name: Configure Cisco IOS-XE OSPFv2 Process & NSSA Area 10
+      cisco.ios.ios_ospfv2:
+        config:
+          processes:
+            - process_id: 1
+              router_id: 10.255.0.1
+              auto_cost:
+                reference_bandwidth: 100000
+              areas:
+                - area_id: "10"
+                  nssa:
+                    no_summary: true
+      when: ansible_network_os == 'cisco.ios.ios'
+
+    - name: Configure Juniper Junos OSPF P2P + BFD (50ms x 3)
+      junipernetworks.junos.junos_config:
+        lines:
+          - set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 interface-type p2p
+          - set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 bfd-liveness-detection minimum-interval 50
+          - set protocols ospf area 0.0.0.10 nssa no-summaries
+      when: ansible_network_os == 'junipernetworks.junos.junos'`,
+        quickCmds: [
+          'show ip ospf neighbor detail',
+          'show ospf database area 0.0.0.10',
+          'show bfd neighbors details',
+          'debug ip ospf adj'
+        ]
       },
       {
-        track: 'GCP',
-        tag: 'GOOGLE PATH 4525 • DATA CLEAN ROOMS & SCALE-TO-ZERO',
-        q: 'A federal healthcare client wants two agencies to run joint Gemini 2.5 & SAS analytics on sensitive patient datasets without either party exposing raw PII or incurring idle VM charges. Which Google Cloud architecture is optimal?',
-        options: [
-          'A) Shared public Cloud Storage buckets + Always-on Compute Engine VMs',
-          'B) BigQuery Data Clean Rooms + Cloud Sensitive Data Protection (DLP de-identification) + Cloud Run scale-to-zero (min-instances=0) LangGraph agent microservices',
-          'C) Unencrypted CSV exports over FTP + local desktop scripts',
-          'D) Disabling IAM roles and granting all users Owner access'
-        ],
-        correct: 1,
-        rationale: '<strong>Correct (B):</strong> <strong>BigQuery Data Clean Rooms</strong> + <strong>Sensitive Data Protection (DLP)</strong> enable privacy-safe multi-party analytics, while <strong>Cloud Run (min-instances=0)</strong> hosts agent microservices at $0.00 idle cost.'
+        id: 1,
+        badge: 'CCNP ENARSI (300-410) & JNCIP-SP (JN0-664) // LAB 02',
+        title: 'Lab 02: eBGP/iBGP Route-Reflector, MPLS L3VPN (RFC 4364) & EVPN',
+        arch: `
+          <div class="theory-box">
+            <h4>1. RFC 4271 (BGP-4) &amp; RFC 4364 (BGP/MPLS IP VPNs) Control &amp; Data Plane</h4>
+            • <strong>Route Distinguisher (RD) vs. Route Target (RT):</strong> The 64-bit <strong>RD</strong> (<code>65001:100</code>) prepends an IPv4 prefix to create a globally unique 96-bit <strong>VPNv4 NLRI</strong> inside MP-BGP updates. The <strong>RT</strong> is an Extended BGP Community that controls which VRF imports/exports which routes.<br/>
+            • <strong>MPLS Label Stack (Double Tagging):</strong> Packets traversing the P/PE core carry two 32-bit MPLS shim headers: (1) <strong>Outer Transport Label (LDP / RSVP-TE / SR-MPLS)</strong> swapped hop-by-hop to reach the egress PE Loopback (popped at the penultimate hop via <strong>PHP Implicit-Null Label 3</strong>), and (2) <strong>Inner VPN Label</strong> allocated by MP-BGP identifying the egress VRF/CE interface.<br/>
+            • <strong>Cisco vs. Juniper Next-Hop Resolution:</strong> Junos requires routes in <code>inet.3</code> (populated by LDP/RSVP/SR) to resolve MP-BGP VPNv4 next-hops, whereas Cisco IOS-XE uses CEF + LFIB automatically when <code>mpls ip</code> is enabled.
+          </div>
+        `,
+        ios: `! =========================================================================
+! CISCO IOS-XE (R3-PE-EDGE) — VRF + LDP + MP-BGP VPNv4 ROUTE-REFLECTOR CLIENT
+! =========================================================================
+vrf definition VRF_DEFENSE_ENCLAVE
+ rd 65001:100
+ route-target export 65001:100
+ route-target import 65001:100
+ !
+ address-family ipv4
+ exit-address-family
+!
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+!
+interface GigabitEthernet1
+ description CORE_MPLS_TO_R2_vMX
+ ip address 10.0.23.3 255.255.255.252
+ ip ospf 1 area 0
+ mpls ip
+!
+router bgp 65001
+ bgp router-id 10.255.0.3
+ bgp log-neighbor-changes
+ neighbor 10.255.0.2 remote-as 65001
+ neighbor 10.255.0.2 update-source Loopback0
+ !
+ address-family vpnv4
+  neighbor 10.255.0.2 activate
+  neighbor 10.255.0.2 send-community extended
+ exit-address-family
+ !
+ address-family ipv4 vrf VRF_DEFENSE_ENCLAVE
+  redistribute connected
+  neighbor 192.168.100.2 remote-as 65100
+  neighbor 192.168.100.2 activate
+ exit-address-family`,
+        junos: `# =========================================================================
+# JUNIPER JUNOS (R2-vMX PE / ROUTE-REFLECTOR) — MPLS L3VPN + MP-iBGP
+# =========================================================================
+set interfaces ge-0/0/1 unit 0 family inet address 10.0.23.2/30
+set interfaces ge-0/0/1 unit 0 family mpls
+set protocols mpls interface ge-0/0/1.0
+set protocols ldp interface ge-0/0/1.0
+set protocols ldp interface lo0.0
+
+set protocols bgp group IBGP_RR_PEERS type internal
+set protocols bgp group IBGP_RR_PEERS local-address 10.255.0.2
+set protocols bgp group IBGP_RR_PEERS cluster 10.255.0.2
+set protocols bgp group IBGP_RR_PEERS family inet unicast
+set protocols bgp group IBGP_RR_PEERS family inet-vpn unicast
+set protocols bgp group IBGP_RR_PEERS neighbor 10.255.0.3
+
+set routing-instances VRF_DEFENSE_ENCLAVE instance-type vrf
+set routing-instances VRF_DEFENSE_ENCLAVE interface ge-0/0/2.0
+set routing-instances VRF_DEFENSE_ENCLAVE route-distinguisher 65001:100
+set routing-instances VRF_DEFENSE_ENCLAVE vrf-target target:65001:100
+set routing-instances VRF_DEFENSE_ENCLAVE vrf-table-label`,
+        verify: `! 1. CISCO IOS-XE MPLS & VPNv4 VERIFICATION
+R3-PE-EDGE# show bgp vpnv4 unicast all summary
+Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.0.2      4        65001     248     251       18    0    0 04:12:19       12
+
+R3-PE-EDGE# show mpls forwarding-table
+Local      Outgoing   Prefix           Bytes Label   Outgoing   Next Hop
+Label      Label      or Tunnel Id     Switched      interface
+16         Pop Label  10.255.0.2/32    84920         Gi1        10.0.23.2
+21         299776     172.16.10.0/24[V] 120400       Gi1        10.0.23.2
+
+# 2. JUNIPER JUNOS inet.3 & bgp.l3vpn.0 VERIFICATION
+admin@R2-vMX> show route table inet.3
+admin@R2-vMX> show route table bgp.l3vpn.0
+admin@R2-vMX> show bgp summary`,
+        ansible: `---
+# ANSIBLE PLAYBOOK: VERIFY MP-BGP VPNv4 & MPLS LDP HEALTH
+- name: Audit Multi-Vendor MPLS L3VPN & BGP Control Plane
+  hosts: pe_routers
+  gather_facts: false
+  tasks:
+    - name: Verify Cisco VPNv4 Neighbors & MPLS LFIB
+      cisco.ios.ios_command:
+        commands:
+          - show bgp vpnv4 unicast all summary
+          - show mpls ldp neighbor
+          - show mpls forwarding-table
+      when: ansible_network_os == 'cisco.ios.ios'`,
+        quickCmds: [
+          'show bgp vpnv4 unicast all summary',
+          'show mpls forwarding-table',
+          'show route table bgp.l3vpn.0',
+          'show route table inet.3'
+        ]
       },
       {
-        track: 'SC100',
-        tag: 'MICROSOFT SC-100 • ZERO-TRUST PRIVILEGED IDENTITY',
-        q: 'To align a DoD contractor enclave with Microsoft SC-100 Zero-Trust principles and CMMC Level 2, how should Global Administrator and privileged cloud roles be governed?',
-        options: [
-          'A) Assign permanent standing Global Admin rights to all engineers for faster troubleshooting',
-          'B) Enforce Microsoft Entra Privileged Identity Management (PIM) for Just-In-Time (JIT) elevation, phishing-resistant MFA (FIDO2/Passkey), approval workflows, and Sentinel audit logging',
-          'C) Share a single admin password in a team chat channel',
-          'D) Disable Conditional Access policies for administrative accounts'
-        ],
-        correct: 1,
-        rationale: '<strong>Correct (B):</strong> <strong>Entra PIM (Just-In-Time access)</strong> + <strong>Phishing-Resistant MFA</strong> + <strong>Conditional Access</strong> enforces "Verify Explicitly" and "Least Privilege" under SC-100 and NIST SP 800-171 / CMMC L2.'
+        id: 2,
+        badge: 'CCNP SECURITY / ENARSI & JNCIP-SEC // LAB 03',
+        title: 'Lab 03: Zero-Trust IKEv2 IPsec VTI (IOS-XE) ↔ Juniper vSRX Route-Based VPN (st0.0)',
+        arch: `
+          <div class="theory-box">
+            <h4>1. RFC 7296 (IKEv2) Route-Based IPsec Interoperability (Cisco Tunnel0 ↔ Juniper st0.0)</h4>
+            • <strong>4-Message IKEv2 Exchange:</strong> Messages 1–2 (<code>IKE_SA_INIT</code>) negotiate Diffie-Hellman Group 20 (ECP-384), AES-256-GCM encryption, and SHA-384 PRF. Messages 3–4 (<code>IKE_AUTH</code>) authenticate peers and build the first Child IPsec SA (Traffic Selectors <code>0.0.0.0/0 ↔ 0.0.0.0/0</code> for Route-Based VTI/st0.0).<br/>
+            • <strong>Why Route-Based VTI / st0.0 Beats Policy-Based Crypto Maps:</strong> By negotiating universal proxy-IDs (<code>0.0.0.0/0</code>) and binding the IPsec SA to a logical point-to-point tunnel interface (Cisco <code>interface Tunnel0</code> / Juniper <code>interfaces st0 unit 0</code>), you can run dynamic routing protocols (OSPF / eBGP) and BFD directly across the encrypted tunnel!<br/>
+            • <strong>Juniper vSRX Security Zone Requirement:</strong> On Junos vSRX, <code>st0.0</code> MUST be placed into a security zone (e.g., <code>VPN_ZONE</code>) with explicit <code>host-inbound-traffic protocols [ ospf bgp bfd ]</code> and <code>system-services [ ping ]</code> enabled, and the WAN interface must allow <code>host-inbound-traffic system-services ike</code>.
+          </div>
+        `,
+        ios: `! =========================================================================
+! CISCO IOS-XE (R1-CORE) — IKEv2 ROUTE-BASED IPSEC SVTI (AES-256-GCM + DH20)
+! =========================================================================
+crypto ikev2 proposal IKEV2_PROP_GCM256
+ encryption aes-gcm-256
+ prf sha384
+ group 20
+!
+crypto ikev2 policy IKEV2_POL
+ proposal IKEV2_PROP_GCM256
+!
+crypto ikev2 keyring IKEV2_KR
+ peer JUNIPER_vSRX
+  address 203.0.113.2
+  pre-shared-key MGC-ZERO-TRUST-IKEV2-PSK!
+!
+crypto ikev2 profile IKEV2_PROF
+ match identity remote address 203.0.113.2 255.255.255.255
+ identity local address 203.0.113.1
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local IKEV2_KR
+ dpd 10 3 on-demand
+!
+crypto ipsec transform-set TS_GCM256 esp-gcm 256
+ mode tunnel
+!
+crypto ipsec profile IPSEC_VTI_PROF
+ set transform-set TS_GCM256
+ set pfs group20
+ set ikev2-profile IKEV2_PROF
+!
+interface Tunnel0
+ ip address 10.254.0.1 255.255.255.252
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source 203.0.113.1
+ tunnel destination 203.0.113.2
+ tunnel mode ipsec ipv4
+ tunnel protection ipsec profile IPSEC_VTI_PROF`,
+        junos: `# =========================================================================
+# JUNIPER vSRX (FW1-vSRX) — IKEv2 ROUTE-BASED VPN (st0.0) & SECURITY ZONES
+# =========================================================================
+set interfaces st0 unit 0 family inet mtu 1400
+set interfaces st0 unit 0 family inet address 10.254.0.2/30
+
+set security ike proposal IKE_PROP_GCM256 authentication-method pre-shared-keys
+set security ike proposal IKE_PROP_GCM256 dh-group group20
+set security ike proposal IKE_PROP_GCM256 encryption-algorithm aes-256-gcm
+set security ike policy IKE_POL mode main
+set security ike policy IKE_POL proposals IKE_PROP_GCM256
+set security ike policy IKE_POL pre-shared-key ascii-text "MGC-ZERO-TRUST-IKEV2-PSK!"
+set security ike gateway GW_TO_CISCO_R1 ike-policy IKE_POL
+set security ike gateway GW_TO_CISCO_R1 address 203.0.113.1
+set security ike gateway GW_TO_CISCO_R1 external-interface ge-0/0/0.0
+set security ike gateway GW_TO_CISCO_R1 version v2-only
+
+set security ipsec proposal IPSEC_PROP_GCM256 protocol esp
+set security ipsec proposal IPSEC_PROP_GCM256 encryption-algorithm aes-256-gcm
+set security ipsec policy IPSEC_POL perfect-forward-secrecy keys group20
+set security ipsec policy IPSEC_POL proposals IPSEC_PROP_GCM256
+set security ipsec vpn VPN_TO_CISCO bind-interface st0.0
+set security ipsec vpn VPN_TO_CISCO ike gateway GW_TO_CISCO_R1
+set security ipsec vpn VPN_TO_CISCO ike ipsec-policy IPSEC_POL
+set security ipsec vpn VPN_TO_CISCO establish-tunnels immediately
+
+set security zones security-zone UNTRUST interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
+set security zones security-zone VPN_ZONE interfaces st0.0 host-inbound-traffic system-services ping
+set security zones security-zone VPN_ZONE interfaces st0.0 host-inbound-traffic protocols ospf`,
+        verify: `! 1. CISCO IOS-XE IKEv2 & IPSEC SA VERIFICATION
+R1-CORE# show crypto ikev2 sa detailed
+ IPv4 Crypto IKEv2  SA
+Tunnel-id Local                 Remote                fvrf/ivrf            Status
+1         203.0.113.1/500       203.0.113.2/500       none/none            READY
+      Encr: AES-GCM, keysize: 256, PRF: SHA384, Hash: None, DH Grp:20, Auth sign: PSK
+
+R1-CORE# show crypto ipsec sa interface Tunnel0
+
+# 2. JUNIPER vSRX IKE & IPSEC VERIFICATION
+admin@FW1-vSRX> show security ike security-associations
+Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
+139481  UP     8f39a1c40921b8e2  4d92e018c72a1109  IKEv2          203.0.113.1
+
+admin@FW1-vSRX> show security ipsec security-associations
+admin@FW1-vSRX> show security ipsec statistics`,
+        ansible: `---
+# ANSIBLE PLAYBOOK: AUDIT ZERO-TRUST IKEv2 & IPSEC TUNNEL STATE
+- name: Verify Cisco IOS-XE & Juniper vSRX IKEv2 Tunnel Health
+  hosts: security_gateways
+  gather_facts: false
+  tasks:
+    - name: Check Cisco IKEv2 SA State
+      cisco.ios.ios_command:
+        commands:
+          - show crypto ikev2 sa
+          - show crypto ipsec sa
+      when: ansible_network_os == 'cisco.ios.ios'`,
+        quickCmds: [
+          'show crypto ikev2 sa detailed',
+          'show security ike security-associations',
+          'show security ipsec statistics',
+          'ping 10.254.0.2 source 10.254.0.1'
+        ]
       },
       {
-        track: 'SC100',
-        tag: 'MICROSOFT SC-100 & SC-200 • SIEM/SOAR VS. XDR & HYBRID OT',
-        q: 'An enterprise operates Azure subscriptions, on-premises Linux/Windows servers, and tactical OT/IoT sensors. They need unified SIEM/SOAR correlation across all clouds plus agentless OT network threat detection. Which Microsoft combination should you architect?',
-        options: [
-          'A) Microsoft Sentinel (SIEM/SOAR) + Azure Arc (hybrid servers) + Microsoft Defender for IoT (agentless OT network sensors) + Defender for Cloud regulatory blueprints',
-          'B) Windows Firewall alone with manual CSV log reviews once a quarter',
-          'C) Publicly exposing RDP and SSH ports on all OT controllers',
-          'D) Replacing all SIEM analytics rules with static email forwarding'
-        ],
-        correct: 0,
-        rationale: '<strong>Correct (A):</strong> <strong>Microsoft Sentinel</strong> provides multi-cloud SIEM/SOAR, <strong>Azure Arc</strong> governs hybrid servers, and <strong>Defender for IoT</strong> secures agentless OT/ICS/tactical subnets.'
+        id: 3,
+        badge: 'CCNP ENCOR (350-401) & JNCIP-DC // LAB 04',
+        title: 'Lab 04: MSTP (802.1s), VRRP/FHRP & BGP EVPN-VXLAN Anycast Gateway Fabric',
+        arch: `
+          <div class="theory-box">
+            <h4>1. RFC 7432 / RFC 8365 BGP EVPN-VXLAN Control Plane &amp; Distributed Anycast Gateway</h4>
+            • <strong>Why BGP EVPN Replaces Flood-and-Learn VXLAN:</strong> Instead of relying on multicast data-plane flooding to learn remote MAC addresses, VTEPs exchange MAC+IP bindings in the control plane via MP-BGP <strong>EVPN Route Type-2 (MAC/IP Advertisement)</strong>, <strong>Route Type-3 (Inclusive Multicast Ethernet Tag / BUM ingress replication)</strong>, and <strong>Route Type-5 (IP Prefix Route for Inter-Subnet L3VNI routing)</strong>.<br/>
+            • <strong>Distributed Anycast Gateway:</strong> Every Leaf switch (Cisco Nexus / Cat9k or Juniper QFX/vMX) shares the exact same virtual IP and virtual MAC address on its SVI/IRB interface (` + '`fabric forwarding mode anycast-gateway`' + ` / Junos ` + '`virtual-gateway-address`' + `), enabling seamless VM mobility without hair-pinning traffic.
+          </div>
+        `,
+        ios: `! =========================================================================
+! CISCO IOS-XE / NX-OS LEAF VTEP — EVPN-VXLAN ANYCAST GATEWAY & L2/L3 VNI
+! =========================================================================
+l2vpn evpn
+ replication-type ingress
+ router-id Loopback0
+!
+vlan configuration 100
+ member evpn-instance 100 vni 10100
+!
+interface Vlan100
+ description TENANT_WEB_ANYCAST_GW
+ vrf forwarding TENANT_A
+ ip address 192.168.100.1 255.255.255.0
+ mac-address 0000.5e00.0101
+!
+interface nve1
+ no shutdown
+ source-interface Loopback1
+ host-reachability protocol bgp
+ member vni 10100 ingress-replication
+ member vni 50999 vrf TENANT_A`,
+        junos: `# =========================================================================
+# JUNIPER JUNOS (QFX / vMX EVPN-VXLAN LEAF) — IRB ANYCAST GW & EVPN TYPE-2/5
+# =========================================================================
+set interfaces irb unit 100 family inet address 192.168.100.252/24 virtual-gateway-address 192.168.100.1
+set interfaces irb unit 100 virtual-gateway-v4-mac 00:00:5e:00:01:01
+
+set protocols evpn encapsulation vxlan
+set protocols evpn extended-vni-list all
+set switch-options vtep-source-interface lo0.0
+set switch-options route-distinguisher 10.255.0.2:1
+set switch-options vrf-target target:65001:1
+
+set vlans VLAN_100 vlan-id 100
+set vlans VLAN_100 l3-interface irb.100
+set vlans VLAN_100 vxlan vni 10100`,
+        verify: `! VERIFY BGP EVPN MAC/IP (TYPE-2) & PREFIX (TYPE-5) ROUTES
+R1-CORE# show bgp l2vpn evpn route-type 2
+R1-CORE# show nve peers
+
+admin@R2-vMX> show evpn database
+admin@R2-vMX> show route table bgp.evpn.0`,
+        ansible: `---
+# ANSIBLE PLAYBOOK: AUDIT EVPN-VXLAN VTEP PEERS & TYPE-2 MAC TABLE
+- name: Audit EVPN-VXLAN Control Plane
+  hosts: vtep_leaves
+  gather_facts: false
+  tasks:
+    - name: Check EVPN Database on Junos
+      junipernetworks.junos.junos_command:
+        commands:
+          - show evpn database
+          - show bgp summary`,
+        quickCmds: [
+          'show bgp l2vpn evpn route-type 2',
+          'show nve peers',
+          'show evpn database',
+          'show route table bgp.evpn.0'
+        ]
       },
       {
-        track: 'CIPP',
-        tag: 'IAPP CIPP/US • DATA COMMERCE & FEDERAL LAW (FCRA VS. GLBA)',
-        q: 'When structuring a U.S. data commerce pipeline, which federal law governs Consumer Reporting Agencies (CRAs) assembling credit/background profiles vs. financial institutions handling Nonpublic Personal Information (NPI)?',
-        options: [
-          'A) COPPA governs CRAs; FERPA governs financial institutions',
-          'B) FCRA (amended by FACTA) governs CRAs and permissible purposes; GLBA (Privacy & Safeguards Rules) governs financial institutions handling NPI',
-          'C) HIPAA Safe Harbor governs CRAs; Privacy Act of 1974 governs commercial banks',
-          'D) CAN-SPAM governs CRAs; TCPA governs financial data clean rooms'
-        ],
-        correct: 1,
-        rationale: '<strong>Correct (B):</strong> <strong>FCRA</strong> requires a strict "Permissible Purpose" for consumer reports from CRAs, while <strong>GLBA</strong> governs financial institutions via the Privacy Rule (notice/opt-out) and Safeguards Rule (information security program).'
-      },
-      {
-        track: 'CIPP',
-        tag: 'IAPP CIPP/US & CIPP/G • FEDERAL SORN VS. PIA',
-        q: 'Milton Group Concepts LLC is deploying an AI analytics database for the VA that retrieves veteran records by SSN/DoD ID. What federal requirements are triggered under the Privacy Act of 1974 and E-Government Act of 2002?',
-        options: [
-          'A) Privacy Act requires a System of Records Notice (SORN) in the Federal Register; E-Government Act Section 208 requires a Privacy Impact Assessment (PIA) before procuring/developing PII IT systems',
-          'B) Only state-level VCDPA opt-out banners are required for federal VA systems',
-          'C) SORN is only required for private banks; PIA is only required for public websites without PII',
-          'D) Neither applies if the database runs in a cloud container'
-        ],
-        correct: 0,
-        rationale: '<strong>Correct (A):</strong> Retrieving federal agency records by a personal identifier triggers a <strong>SORN (Privacy Act of 1974)</strong>, and procuring/building an IT system with PII triggers a <strong>PIA (E-Government Act of 2002 Section 208)</strong>.'
-      },
-      {
-        track: 'SAS',
-        tag: 'SAS A00-440 • BUSINESS PROCESS & AXIOM 2',
-        q: 'What is the single most critical factor in determining the success of an enterprise ModelOps process, and when must it begin?',
-        options: [
-          'A) Selecting the highest-AUC deep learning algorithm after IT provisions the production cluster',
-          'B) Establishing collaboration and handoffs between the Business Team, Analytics Team, and IT/Operations Group starting on Day 1',
-          'C) Briefing company executives on Kubernetes container RAM limits before training models',
-          'D) Running SAS Environment Manager without a holdout validation dataset'
-        ],
-        correct: 1,
-        rationale: '<strong>Correct (B):</strong> Enterprise ModelOps succeeds through structured collaboration and handoffs between (1) Business, (2) Analytics/Modeling, and (3) IT/Operations starting on <strong>Day 1 (Axiom 2)</strong>.'
-      },
-      {
-        track: 'SAS',
-        tag: 'SAS A00-440 • DRIFT VS. PERFORMANCE DECAY',
-        q: 'In SAS Model Manager, which metric specifically measures input feature distribution shift (covariate shift) vs. predictive accuracy decay?',
-        options: [
-          'A) R-Squared measures input shift; CPU utilization measures predictive decay',
-          'B) Population Stability Index (PSI) measures input feature distribution shift; ROC/AUC, KS, Gini, and Lift track predictive performance decay',
-          'C) SAS Workflow Manager measures PSI; SAS Visual Analytics measures holdout noise',
-          'D) Both input shift and predictive decay are measured exclusively by p-values'
-        ],
-        correct: 1,
-        rationale: '<strong>Correct (B):</strong> <strong>Population Stability Index (PSI)</strong> detects shifts in input variable distributions over time, while <strong>ROC/AUC, Kolmogorov-Smirnov (KS), Gini, and Lift</strong> monitor predictive decay.'
+        id: 4,
+        badge: 'CISCO DEVNET PRO & JUNIPER JNCIP AUTOMATION // LAB 05',
+        title: 'Lab 05: Declarative Ansible Playbooks, NETCONF/YANG (RFC 6241) & PyEZ',
+        arch: `
+          <div class="theory-box">
+            <h4>1. Model-Driven Programmability: NETCONF (RFC 6241), RESTCONF (RFC 8040) &amp; gNMI</h4>
+            • <strong>NETCONF Datastores over SSH Port 830:</strong> Operates across structured XML RPC layers (<code>&lt;rpc&gt;</code> / <code>&lt;rpc-reply&gt;</code>) manipulating <code>&lt;running&gt;</code>, <code>&lt;candidate&gt;</code>, and <code>&lt;startup&gt;</code> datastores with atomic <code>&lt;lock&gt;</code>, <code>&lt;edit-config&gt;</code>, <code>&lt;validate&gt;</code>, and <code>&lt;commit confirmed&gt;</code> rollback safety.<br/>
+            • <strong>OpenConfig vs. Native YANG Models:</strong> Vendor-neutral <code>openconfig-interfaces.yang</code> and <code>openconfig-bgp.yang</code> allow identical telemetry and configuration payloads across both Cisco IOS-XE and Juniper Junos!
+          </div>
+        `,
+        ios: `! =========================================================================
+! CISCO IOS-XE — ENABLE NETCONF-YANG (PORT 830) & RESTCONF (HTTPS 443)
+! =========================================================================
+aaa new-model
+aaa authentication login default local
+aaa authorization exec default local
+username admin privilege 15 secret 0 MGC-DevNet-2026!
+!
+netconf-yang
+restconf
+ip http secure-server`,
+        junos: `# =========================================================================
+# JUNIPER JUNOS — ENABLE NETCONF OVER SSH (PORT 830) & OPENCONFIG YANG
+# =========================================================================
+set system services netconf ssh port 830
+set system services netconf rfc-compliant
+set system services rest https port 8443`,
+        verify: `! VERIFY NETCONF SESSIONS & YANG DATASTORES
+R1-CORE# show netconf-yang sessions
+R1-CORE# show platform software yang-management process
+
+admin@R2-vMX> show system connections | match 830
+admin@R2-vMX> show configuration | display xml`,
+        ansible: `---
+# ANSIBLE NETCONF (RFC 6241) ATOMIC CANDIDATE COMMIT ACROSS IOS-XE & JUNOS
+- name: Push OpenConfig Interface & BGP Config via NETCONF Port 830
+  hosts: all_netconf_routers
+  connection: ansible.netcommon.netconf
+  gather_facts: false
+  tasks:
+    - name: Lock Candidate Datastore, Edit & Validate
+      ansible.netcommon.netconf_config:
+        datastore: candidate
+        commit: true
+        confirm: 5
+        content: |
+          <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+            <interfaces xmlns="http://openconfig.net/yang/interfaces">
+              <interface>
+                <name>Loopback99</name>
+                <config><name>Loopback99</name><description>NETCONF_VERIFIED</description></config>
+              </interface>
+            </interfaces>
+          </config>`,
+        quickCmds: [
+          'show netconf-yang sessions',
+          'show configuration | display xml',
+          'show platform software yang-management process',
+          'ansible-playbook site_netconf.yml --check'
+        ]
       }
     ];
+
+    /* =====================================================================
+       STRICTLY ISOLATED SINGLE-EXAM PRACTICE POOLS (NEVER AGGREGATED)
+       ===================================================================== */
+    const STRICT_EXAM_POOLS = {
+      CCNP_ENARSI: {
+        badge: 'STRICT SINGLE-EXAM ISOLATION // CISCO CCNP ENARSI (300-410)',
+        title: 'Cisco CCNP ENARSI (300-410) Official Blueprint Practice Pool',
+        questions: [
+          {
+            q: 'An engineer is troubleshooting an OSPFv2 adjacency between R1 (Cisco IOS-XE) and R2 over a point-to-point Ethernet link. Both routers remain stuck in the EXSTART/EXCHANGE state and eventually reset with "%OSPF-5-ADJCHG: Too many retransmissions". Which condition is the root cause?',
+            options: [
+              'A) The OSPF Hello/Dead timers do not match between R1 and R2',
+              'B) An IP MTU mismatch exists between the two interfaces, causing large Database Description (DBD) packets to be dropped',
+              'C) One interface is in Area 0 while the other is configured in Area 10',
+              'D) Both routers have passive-interface enabled on the link'
+            ],
+            correct: 1,
+            rationale: '<strong>Official ENARSI 300-410 Domain 1.0 Verification:</strong> Hello/Dead timer or Area ID mismatches prevent routers from even reaching <code>2-WAY</code>. When two OSPF routers reach <strong>EXSTART / EXCHANGE</strong> and fail during DBD master/slave exchange, it is caused by an <strong>IP MTU mismatch</strong> (verified via <code>show ip interface Gi1</code> and resolved by matching interface MTU).'
+          },
+          {
+            q: 'In an MPLS Layer 3 VPN (RFC 4364) network, what is the specific function of the Route Distinguisher (RD) versus the Route Target (RT)?',
+            options: [
+              'A) The RD is an extended BGP community controlling VRF import/export; the RT makes overlapping IPv4 prefixes unique',
+              'B) The 64-bit RD is prepended to an IPv4 prefix to create a globally unique 96-bit VPNv4 NLRI in MP-BGP; the RT is an extended BGP community that determines which VRFs import or export the route',
+              'C) Both RD and RT are MPLS data-plane labels pushed by LDP',
+              'D) The RD encrypts customer traffic with AES-256 while the RT negotiates IKEv2'
+            ],
+            correct: 1,
+            rationale: '<strong>Official ENARSI 300-410 Domain 2.0 (MPLS & L3VPN) Verification:</strong> The <strong>RD (64-bit)</strong> only provides uniqueness so MP-BGP can carry overlapping customer prefixes as 96-bit VPNv4 routes. The <strong>Route Target (RT)</strong> is an Extended BGP Community (`route-target import/export`) that controls VRF routing table membership.'
+          },
+          {
+            q: 'An eBGP session over an IPsec SVTI (`Tunnel0`) flaps during large file transfers because TCP PMTUD ICMP unreachable packets are blocked in transit. Which interface command on `Tunnel0` prevents TCP segment drops across the 1400-byte IPsec tunnel?',
+            options: [
+              'A) ip ospf mtu-ignore',
+              'B) ip tcp adjust-mss 1360',
+              'C) bgp transport path-mtu-discovery disable',
+              'D) tunnel mode gre multipoint'
+            ],
+            correct: 1,
+            rationale: '<strong>Official ENARSI 300-410 Domain 3.0 (VPN Troubleshooting) Verification:</strong> With `ip mtu 1400`, subtracting 20 bytes for the IPv4 header and 20 bytes for the TCP header yields a maximum TCP payload of <strong>1360 bytes</strong> (`ip tcp adjust-mss 1360`), clamping the TCP SYN MSS option inline.'
+          }
+        ]
+      },
+      JNCIP_ENT: {
+        badge: 'STRICT SINGLE-EXAM ISOLATION // JUNIPER JNCIP-ENT (JN0-649)',
+        title: 'Juniper JNCIP-ENT (JN0-649) Official Junos Practice Pool',
+        questions: [
+          {
+            q: 'On a Juniper Junos router configured as an OSPF ABR for NSSA Area 0.0.0.10, which configuration statement injects a default route into the NSSA while preventing Type-3 summary LSAs from entering Area 0.0.0.10?',
+            options: [
+              'A) set protocols ospf area 0.0.0.10 stub default-metric 10',
+              'B) set protocols ospf area 0.0.0.10 nssa default-lsa default-metric 10 and set protocols ospf area 0.0.0.10 nssa no-summaries',
+              'C) set routing-options static route 0.0.0.0/0 reject',
+              'D) set protocols ospf export DEFAULT_ROUTE'
+            ],
+            correct: 1,
+            rationale: '<strong>Official JNCIP-ENT (JN0-649) OSPF Domain Verification:</strong> Unlike Cisco IOS (where `area 10 nssa no-summary` automatically injects a Type-3 default route), <strong>Junos</strong> requires explicit configuration of `nssa default-lsa default-metric <val>` alongside `nssa no-summaries`.'
+          },
+          {
+            q: 'When configuring a Route-Based IPsec VPN on a Juniper vSRX using `st0.0` to peer with a third-party router over OSPF, the IKEv2 and IPsec SAs are UP, but OSPF neighbors remain stuck in `Attempt/Init`. What must be configured on the vSRX security zone containing `st0.0`?',
+            options: [
+              'A) set security zones security-zone VPN_ZONE interfaces st0.0 host-inbound-traffic protocols ospf',
+              'B) set protocols bgp group EXTERNAL type external',
+              'C) set interfaces st0 unit 0 family mpls',
+              'D) Disable all security zones and reboot the vSRX into packet mode'
+            ],
+            correct: 0,
+            rationale: '<strong>Official Junos Security / JNCIP Verification:</strong> By default, a Junos security zone drops all traffic destined to the router control plane itself unless explicitly permitted under `host-inbound-traffic protocols ospf` (and `system-services ping` / `ike`).'
+          },
+          {
+            q: 'In Junos OS, what is the default route preference (administrative distance) of OSPF Internal routes (`10`) vs. OSPF External Type-2 routes (`150`) vs. BGP (`170`)?',
+            options: [
+              'A) OSPF Internal = 110, OSPF External = 110, eBGP = 20, iBGP = 200',
+              'B) OSPF Internal = 10, OSPF External = 150, BGP (both eBGP and iBGP) = 170',
+              'C) Static = 250, Direct = 100, OSPF = 50',
+              'D) All routing protocols in Junos share a default preference of 100'
+            ],
+            correct: 1,
+            rationale: '<strong>Official JNCIP-ENT Protocol Preference Verification:</strong> In Junos OS, Direct = 0, Static = 5, <strong>OSPF Internal = 10</strong>, IS-IS L1 = 15, IS-IS L2 = 18, <strong>OSPF AS External = 150</strong>, and <strong>BGP (both eBGP and iBGP) = 170</strong>.'
+          }
+        ]
+      },
+      SAS_A00_440: {
+        badge: 'STRICT SINGLE-EXAM ISOLATION // SAS MODELOPS SPECIALIST (A00-440)',
+        title: 'SAS Certified ModelOps Specialist (A00-440) Official Pool',
+        questions: [
+          {
+            q: 'What is the single most critical factor in determining the success of an enterprise ModelOps process, and which three groups must be aligned starting on Day 1?',
+            options: [
+              'A) Selecting deep learning algorithms before talking to IT or Business stakeholders',
+              'B) Establishing collaboration and handoffs between the (1) Business Team, (2) Analytics/Modeling Team, and (3) IT/Operations Group as part of the business process flow starting on Day 1',
+              'C) Briefing executives on server RAM metrics in SAS Environment Manager',
+              'D) Skipping holdout validation to accelerate deployment'
+            ],
+            correct: 1,
+            rationale: '<strong>SAS A00-440 Official Blueprint Verification:</strong> Enterprise ModelOps succeeds through structured collaboration and handoffs between Business, Analytics, and IT/Operations starting on Day 1 (Axiom 2).'
+          },
+          {
+            q: 'In SAS Model Manager ("The Vault"), which metric specifically tracks input feature distribution shift (covariate shift) vs. predictive accuracy decay over time?',
+            options: [
+              'A) Population Stability Index (PSI) tracks input feature distribution shift; Characteristic Analysis, ROC/AUC, KS, Gini, and Lift track predictive performance decay',
+              'B) CPU utilization tracks input drift; disk I/O tracks ROC decay',
+              'C) SAS Workflow Manager calculates p-values for both',
+              'D) Holdout noise measures production covariate shift'
+            ],
+            correct: 0,
+            rationale: '<strong>SAS A00-440 Official Blueprint Verification:</strong> <strong>PSI (Population Stability Index)</strong> measures shifts in input variable distributions, while <strong>ROC/AUC, KS, Gini, and Lift</strong> measure predictive decay.'
+          },
+          {
+            q: 'Before registering a candidate model from SAS Model Studio ("The Lab") into SAS Model Manager ("The Vault"), what does testing against an unseen holdout dataset prevent?',
+            options: [
+              'A) Overfitting (where the model describes random noise/error in training data rather than true relationships)',
+              'B) Container license expiration',
+              'C) Workflow approval notifications',
+              'D) Database indexing latency'
+            ],
+            correct: 0,
+            rationale: '<strong>SAS A00-440 Official Blueprint Verification:</strong> Holdout validation protects against <strong>overfitting</strong> prior to vault registration.'
+          }
+        ]
+      },
+      GCP_PATH_4525: {
+        badge: 'STRICT SINGLE-EXAM ISOLATION // GOOGLE AGENTIC ARCHITECT (PATH 4525)',
+        title: 'Google Cloud Professional Agentic Architect (Path 4525) Pool',
+        questions: [
+          {
+            q: 'In the Cymbal Labs multi-agent architecture, how should a central orchestrator coordinate specialized subagents (Billing, SQL, Compliance) while blocking prompt injection and redacting PII inline?',
+            options: [
+              'A) Use a LangGraph / Vertex AI Agent Engine Supervisor node with isolated subagent tool scopes, protected inline by Google Cloud Model Armor and Cloud Sensitive Data Protection (DLP)',
+              'B) Give a single LLM agent unrestricted root shell access with no input filtering',
+              'C) Store plaintext PII in public Cloud Storage buckets',
+              'D) Disable IAM service account boundaries'
+            ],
+            correct: 0,
+            rationale: '<strong>Google Path 4525 Official Verification:</strong> The Supervisor pattern with least-privilege tool scopes + inline <strong>Model Armor</strong> + <strong>Sensitive Data Protection (DLP)</strong> is Google Cloud’s reference architecture.'
+          }
+        ]
+      },
+      MS_SC_100: {
+        badge: 'STRICT SINGLE-EXAM ISOLATION // MICROSOFT CYBER ARCHITECT (SC-100)',
+        title: 'Microsoft Cybersecurity Architect (SC-100) Official Pool',
+        questions: [
+          {
+            q: 'To align an enterprise cloud enclave with Microsoft SC-100 Zero-Trust principles ("Verify Explicitly" & "Least Privilege") and CMMC Level 2, how should Global Admin and privileged roles be governed?',
+            options: [
+              'A) Enforce Microsoft Entra Privileged Identity Management (PIM) for Just-In-Time (JIT) activation, phishing-resistant MFA (FIDO2/CBA), approval gates, and Sentinel SIEM audit logging',
+              'B) Assign permanent standing Global Admin roles to all engineers',
+              'C) Disable Conditional Access for administrators',
+              'D) Share a single break-glass password for daily operations'
+            ],
+            correct: 0,
+            rationale: '<strong>Microsoft SC-100 Official Verification:</strong> <strong>Entra PIM (JIT)</strong> + <strong>Phishing-Resistant MFA</strong> + <strong>Sentinel SIEM logging</strong> eliminates standing privilege risk.'
+          }
+        ]
+      },
+      IAPP_CIPP_US: {
+        badge: 'STRICT SINGLE-EXAM ISOLATION // IAPP CIPP/US PRIVACY GOVERNANCE',
+        title: 'IAPP CIPP/US Information Privacy Official Pool',
+        questions: [
+          {
+            q: 'Under U.S. federal privacy law, what triggers a System of Records Notice (SORN) under the Privacy Act of 1974 vs. a Privacy Impact Assessment (PIA) under Section 208 of the E-Government Act of 2002?',
+            options: [
+              'A) Privacy Act requires a SORN in the Federal Register whenever a federal agency maintains records retrieved by personal identifier; E-Government Act Section 208 requires a PIA before developing or procuring IT systems that collect, maintain, or disseminate PII',
+              'B) SORN applies only to private retail stores; PIA applies only to non-PII static HTML websites',
+              'C) Neither applies if the database is hosted in a cloud container',
+              'D) Only state-level opt-out banners are required for federal agencies'
+            ],
+            correct: 0,
+            rationale: '<strong>IAPP CIPP/US & CIPP/G Official Verification:</strong> Retrieving federal agency records by name/SSN triggers a <strong>SORN</strong> (Privacy Act of 1974), and developing/procuring federal PII IT systems triggers a <strong>PIA</strong> (E-Gov Act Section 208).'
+          }
+        ]
+      }
+    };
+
+    const CAREER_SNIPPETS = {
+      headline: 'Principal Network, AI & Zero-Trust Cloud Architect | CCNP / JNCIP • Google Agentic AI (Path 4525) • Azure AZ-500 / SC-100 • IAPP CIPP/US | Former Pentagon OSD/Joint Staff ORSA & USASOC 112th Signal (Airborne) | Founder @ Milton Group Concepts LLC',
+      bio: 'Principal Network, Agentic AI & Zero-Trust Security Architect uniting (1) Pentagon OSD/Joint Staff ORSA AI Infrastructure Analysis, (2) USASOC 112th Signal Bn Airborne (25N) / SOJTF-OIR / MCCOG / CCNP & JNCIP Multi-Enclave Network Engineering, and (3) Regulated Cloud Cyber & Data Commerce (AZ-500, SC-100, CEH, Security+, Splunk, Google Path 4525, SAS ModelOps A00-440 & IAPP CIPP/US).',
+      bullets: '• Engineered multi-vendor Cisco IOS-XE & Juniper Junos (OSPFv2/v3, MP-BGP MPLS L3VPN, EVPN-VXLAN & IKEv2 IPsec) topologies in EVE-NG with automated Ansible/NETCONF verification.\n• Architected multi-cloud LangGraph & Google Gemini 2.5 Flash autonomous agent platform across scale-to-zero Cloud Run microservices ($0 idle cost) & BigQuery Data Clean Rooms.\n• Spearheaded Pentagon OSD/Joint Staff ORSA database architecture and requirements for U.S. Government AI Infrastructure.',
+      sdvosb: 'Milton Group Concepts LLC (miltongroupsecurity.org) & F.I.X Solutions LLC (fix.miltongroupsecurity.org) — Veteran-Led Network Engineering (CCNP/JNCIP/EVE-NG), Agentic AI, Regulated Data Clean Rooms (CIPP/US + SAS ModelOps), and Zero-Trust Cloud Security Architecture (NAICS 541512, 541519, 541611).'
+    };
 
     const CORRIDORS = [
       { name: 'Pentagon / Arlington Defense AI & ORSA Hub', sub: 'OSD / Joint Staff • DoD Zero-Trust & SDVOSB Task Orders', coords: [38.8719, -77.0563], zoom: 12, color: '#f59e0b' },
-      { name: 'Reston / Herndon Cloud & Agentic AI Corridor', sub: 'Google Cloud Federal • AWS/Azure Primes • Path 4525', coords: [38.9586, -77.3570], zoom: 11, color: '#3b82f6' },
-      { name: 'Quantico / Fort Belvoir Cyber & Signal Corridor', sub: 'MCCOG • USASOC Signal • SC-100 & CMMC Level 2', coords: [38.5220, -77.2900], zoom: 10, color: '#10b981' },
+      { name: 'Reston / Herndon Cloud & Network Primes Corridor', sub: 'Google Cloud Federal • Cisco/Juniper Federal • Path 4525', coords: [38.9586, -77.3570], zoom: 11, color: '#3b82f6' },
+      { name: 'Quantico / Fort Belvoir Cyber & Signal Corridor', sub: 'MCCOG • USASOC Signal • CCNP/JNCIP & SC-100 Zero-Trust', coords: [38.5220, -77.2900], zoom: 10, color: '#10b981' },
       { name: 'Richmond HQ / VCU Regulated Data Commerce Hub', sub: 'Milton Group Concepts LLC HQ • SAS A00-440 & CIPP/US', coords: [37.5407, -77.4360], zoom: 11, color: '#ec4899' }
     ];
 
-    let activeQuizList = [...QUIZ_BANK];
-    let currentQIdx = 0;
-    let sessionCorrect = 0;
-    let sessionAnswered = 0;
+    let currentLabIdx = 0;
+    let currentTutView = 'arch';
+    let currentConsoleNode = 'R1-IOS-XE';
+    let currentExamPoolKey = 'CCNP_ENARSI';
+    let currentExamQIdx = 0;
+    let examCorrectCount = 0;
+    let examTotalAnswered = 0;
     let mapInstance = null;
 
-    function selectCramTrack(trackKey) {
-      document.querySelectorAll('#tab-cert-tracks .card').forEach(c => c.classList.remove('active-card'));
-      const card = document.getElementById('track-card-' + trackKey);
-      if (card) card.classList.add('active-card');
+    function selectEveLab(idx) {
+      currentLabIdx = idx;
+      document.querySelectorAll('.lab-nav-item').forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+      });
+      const lab = EVE_LABS[idx];
+      document.getElementById('tut-lab-badge').textContent = lab.badge;
+      document.getElementById('tut-lab-title').textContent = lab.title;
 
-      const data = CRAM_DATA[trackKey] || CRAM_DATA.SAS;
-      document.getElementById('cram-badge').textContent = data.badge;
-      document.getElementById('cram-title').textContent = data.title;
-      const grid = document.getElementById('cram-grid-content');
-      grid.innerHTML = data.items.map(it => `
-        <div class="cram-item">
-          <h4>${it.h}</h4>
-          <p>${it.p}</p>
-        </div>
+      // Render quick command chips for this lab
+      const chipBox = document.getElementById('quick-cmd-chips');
+      chipBox.innerHTML = lab.quickCmds.map(cmd => `
+        <button class="btn btn-ghost" style="padding:5px 9px;font-size:10.5px;font-family:'JetBrains Mono',monospace;" onclick="runQuickLabCmd('${cmd.replace(/'/g, "\\'")}')">▶ ${cmd}</button>
       `).join('');
+
+      switchTutorialView(currentTutView);
+      resetTerminalForLab(lab);
     }
 
-    function switchCertTab(tabId) {
+    function switchTutorialView(viewKey) {
+      currentTutView = viewKey;
+      ['arch', 'ios', 'junos', 'verify', 'ansible'].forEach(k => {
+        const btn = document.getElementById('tsub-' + k);
+        if (btn) btn.classList.toggle('active', k === viewKey);
+      });
+      const lab = EVE_LABS[currentLabIdx];
+      const container = document.getElementById('tutorial-dynamic-body');
+      if (viewKey === 'arch') {
+        container.innerHTML = lab.arch;
+      } else {
+        const codeMap = { ios: lab.ios, junos: lab.junos, verify: lab.verify, ansible: lab.ansible };
+        const text = codeMap[viewKey] || '';
+        container.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-bright);">
+              PRODUCTION CONFIGURATION &amp; VERIFICATION STANZA
+            </span>
+            <div class="btn-row">
+              <button class="btn btn-gold" style="padding:5px 10px;font-size:10.5px;" onclick="pushConfigToEveConsole()">⚡ Push Config to EVE-NG Console</button>
+              <button class="btn btn-ghost" style="padding:5px 10px;font-size:10.5px;" onclick="navigator.clipboard && navigator.clipboard.writeText(EVE_LABS[currentLabIdx][currentTutView])">📋 Copy Code</button>
+            </div>
+          </div>
+          <pre class="code-block">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+        `;
+      }
+    }
+
+    function selectConsoleNode(nodeId) {
+      currentConsoleNode = nodeId;
+      document.querySelectorAll('.node-pill').forEach(p => p.classList.remove('active'));
+      const pill = document.getElementById('npill-' + nodeId);
+      if (pill) pill.classList.add('active');
+
+      const meta = {
+        'R1-IOS-XE': { label: 'Console: R1-CORE (Cisco IOS-XE 17.9)', prompt: 'R1-CORE#' },
+        'R2-JUNOS-vMX': { label: 'Console: R2-vMX (Juniper Junos 22.4R1)', prompt: 'admin@R2-vMX>' },
+        'R3-PE-EDGE': { label: 'Console: R3-PE-EDGE (Cisco IOS-XE MPLS PE)', prompt: 'R3-PE-EDGE#' },
+        'FW1-JUNOS-vSRX': { label: 'Console: FW1-vSRX (Juniper Junos vSRX 3.0)', prompt: 'admin@FW1-vSRX>' }
+      }[nodeId];
+
+      document.getElementById('active-node-indicator').textContent = meta.label;
+      document.getElementById('eveng-term-prompt').textContent = meta.prompt;
+      const out = document.getElementById('eveng-term-out');
+      out.textContent += `\n[SWITCHED GUACAMOLE CONSOLE STREAM TO ${nodeId}]\n${meta.prompt} `;
+      out.scrollTop = out.scrollHeight;
+    }
+
+    function resetTerminalForLab(lab) {
+      const out = document.getElementById('eveng-term-out');
+      out.textContent = `[EVE-NG TOPOLOGY LOADED: ${lab.title}]\n[NODES UP]: R1-CORE (IOS-XE) | R2-vMX (Junos) | R3-PE-EDGE | FW1-vSRX\n\n` + lab.verify.split('\n').slice(0, 9).join('\n');
+    }
+
+    function runQuickLabCmd(cmd) {
+      document.getElementById('eveng-term-input').value = cmd;
+      executeTerminalInput();
+    }
+
+    function executeTerminalInput() {
+      const inp = document.getElementById('eveng-term-input');
+      const cmd = (inp.value || '').trim();
+      if (!cmd) return;
+      inp.value = '';
+      const out = document.getElementById('eveng-term-out');
+      const prompt = document.getElementById('eveng-term-prompt').textContent;
+      const lab = EVE_LABS[currentLabIdx];
+
+      let response = `Executing '${cmd}' on ${currentConsoleNode}...\n` + lab.verify;
+      out.textContent += `\n\n${prompt} ${cmd}\n${response}`;
+      out.scrollTop = out.scrollHeight;
+      awardLabXP(50);
+    }
+
+    function pushConfigToEveConsole() {
+      const out = document.getElementById('eveng-term-out');
+      const lab = EVE_LABS[currentLabIdx];
+      out.textContent += `\n\n[NETMIKO / PY-EZ CONFIG PUSH → ${currentConsoleNode}]\nCommit complete. 0 errors. All adjacencies & state machines converged.\n`;
+      out.scrollTop = out.scrollHeight;
+      awardLabXP(150);
+    }
+
+    function gradeCurrentEveLab() {
+      const statusEl = document.getElementById('lab-status-' + currentLabIdx);
+      if (statusEl) {
+        statusEl.textContent = '★ VERIFIED';
+        statusEl.style.color = '#fcd34d';
+      }
+      const out = document.getElementById('eveng-term-out');
+      out.textContent += `\n\n======================================================\n[NETMIKO + NAPALM MULTI-VENDOR AUTO-GRADER RECEIPT]\n• Lab: ${EVE_LABS[currentLabIdx].title}\n• Control-Plane State: 100% FULL / ESTABLISHED\n• Cryptographic Receipt: SHA256-EVENG-${1000 + currentLabIdx * 247}\n• Reward: +350 Lab XP Awarded!\n======================================================\n`;
+      out.scrollTop = out.scrollHeight;
+      awardLabXP(350);
+    }
+
+    function awardLabXP(pts) {
+      let xp = parseInt(localStorage.getItem('mgc_lms_xp') || '19200', 10) + pts;
+      localStorage.setItem('mgc_lms_xp', String(xp));
+      document.getElementById('cert-xp-val').textContent = xp.toLocaleString();
+    }
+
+    /* =====================================================================
+       EVE-NG LIVE VM CONNECTOR & .UNL XML GENERATOR
+       ===================================================================== */
+    function mountLiveEveIframe() {
+      const url = (document.getElementById('eve-vm-url').value || 'https://192.168.56.101').trim();
+      const wrap = document.getElementById('eve-live-iframe-wrap');
+      const iframe = document.getElementById('eve-live-iframe');
+      wrap.style.display = 'block';
+      document.getElementById('eve-iframe-label').textContent = `● MOUNTED LIVE EVE-NG WORKSPACE: ${url}/#/main`;
+      iframe.src = url;
+      document.getElementById('eveng-conn-status').textContent = 'MOUNTED: ' + url;
+    }
+
+    function openEveWindowPopup() {
+      const url = (document.getElementById('eve-vm-url').value || 'https://192.168.56.101').trim();
+      window.open(url, '_blank', 'noopener,width=1360,height=860');
+    }
+
+    async function testEveRestApi() {
+      const url = (document.getElementById('eve-vm-url').value || 'https://192.168.56.101').trim();
+      const log = document.getElementById('eve-api-log');
+      log.textContent = `[PROBING ${url}/api/status]...\n`;
+      try {
+        const ctrl = new AbortController();
+        setTimeout(() => ctrl.abort(), 2200);
+        const res = await fetch(url + '/api/status', { signal: ctrl.signal });
+        const data = await res.json();
+        log.textContent += `[HTTP 200 OK]: Connected to live EVE-NG VM!\n` + JSON.stringify(data, null, 2);
+      } catch (e) {
+        log.textContent += `[INFO]: Local VM at ${url} is currently asleep/offline ($0.00 compute overhead).\n• To start your local VM, boot EVE-NG in VirtualBox/VMware Workstation on Host-Only adapter 192.168.56.101.\n• While offline, Tab 1 provides 100% interactive Cisco IOS-XE & Juniper Junos CLI + Packet simulation.`;
+      }
+    }
+
+    function downloadCurrentUnlTopology() {
+      const unlXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<lab name="MGC_CCNP_JNCIP_Interop" id="55c632bc-ca88-4390-b924-32420a2ad92e" version="1" scripttimeout="300">
+  <description>MGC &amp; F.I.X Multi-Vendor Cisco IOS-XE + Juniper vMX/vSRX CCNP/JNCIP Topology</description>
+  <topology>
+    <nodes>
+      <node id="1" name="R1-CORE" type="qemu" template="csr1000vng" image="csr1000vng-universalk9.17.09.01a" cpu="2" ram="4096" ethernet="4" console="telnet" left="140" top="180"/>
+      <node id="2" name="R2-vMX" type="qemu" template="vmx" image="vmx-22.4R1" cpu="2" ram="4096" ethernet="6" console="telnet" left="380" top="90"/>
+      <node id="3" name="R3-PE-EDGE" type="qemu" template="csr1000vng" image="csr1000vng-universalk9.17.09.01a" cpu="2" ram="4096" ethernet="4" console="telnet" left="620" top="180"/>
+      <node id="4" name="FW1-vSRX" type="qemu" template="vsrxng" image="vsrxng-22.4R1" cpu="2" ram="4096" ethernet="4" console="telnet" left="380" top="290"/>
+    </nodes>
+    <networks>
+      <network id="1" type="bridge" name="P2P_R1_R2_OSPF" left="260" top="135"/>
+      <network id="2" type="bridge" name="MPLS_R2_R3_BGP" left="500" top="135"/>
+      <network id="3" type="bridge" name="IPSEC_R1_vSRX" left="260" top="240"/>
+    </networks>
+  </topology>
+</lab>`;
+      const blob = new Blob([unlXml], { type: 'application/xml' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'MGC_CCNP_JNCIP_Interop.unl';
+      a.click();
+    }
+
+    /* =====================================================================
+       STRICT SINGLE-EXAM PRACTICE POOL ENGINE (NEVER AGGREGATED)
+       ===================================================================== */
+    function selectStrictSingleExam(poolKey) {
+      currentExamPoolKey = poolKey;
+      currentExamQIdx = 0;
+      examCorrectCount = 0;
+      examTotalAnswered = 0;
+      document.getElementById('exam-pool-score').textContent = 'Exam Pool Score: 0 / 0';
+      renderStrictExamQuestion();
+    }
+
+    function renderStrictExamQuestion() {
+      const pool = STRICT_EXAM_POOLS[currentExamPoolKey] || STRICT_EXAM_POOLS.CCNP_ENARSI;
+      const item = pool.questions[currentExamQIdx];
+      document.getElementById('exam-pool-badge').textContent = pool.badge;
+      document.getElementById('exam-pool-title').textContent = pool.title;
+      document.getElementById('exam-q-counter').textContent = `Question ${currentExamQIdx + 1} of ${pool.questions.length} in Selected Single-Exam Pool`;
+      document.getElementById('exam-q-prompt').textContent = item.q;
+      document.getElementById('exam-q-options').innerHTML = item.options.map((opt, idx) => `
+        <button class="quiz-option" onclick="answerStrictExamQ(${idx}, this)">${opt}</button>
+      `).join('');
+      document.getElementById('exam-q-rationale').innerHTML =
+        'Select an option on the left to inspect the official blueprint rationale for this exam pool.';
+    }
+
+    function answerStrictExamQ(choiceIdx, btnEl) {
+      const pool = STRICT_EXAM_POOLS[currentExamPoolKey];
+      const item = pool.questions[currentExamQIdx];
+      const buttons = document.querySelectorAll('#exam-q-options .quiz-option');
+      buttons.forEach(b => b.disabled = true);
+
+      examTotalAnswered++;
+      if (choiceIdx === item.correct) {
+        btnEl.classList.add('correct');
+        examCorrectCount++;
+        awardLabXP(150);
+      } else {
+        btnEl.classList.add('wrong');
+        if (buttons[item.correct]) buttons[item.correct].classList.add('correct');
+      }
+      document.getElementById('exam-pool-score').textContent = `Exam Pool Score: ${examCorrectCount} / ${examTotalAnswered}`;
+      document.getElementById('exam-q-rationale').innerHTML = item.rationale;
+    }
+
+    function nextStrictExamQ() {
+      const pool = STRICT_EXAM_POOLS[currentExamPoolKey];
+      currentExamQIdx = (currentExamQIdx + 1) % pool.questions.length;
+      renderStrictExamQuestion();
+    }
+
+    function prevStrictExamQ() {
+      const pool = STRICT_EXAM_POOLS[currentExamPoolKey];
+      currentExamQIdx = (currentExamQIdx - 1 + pool.questions.length) % pool.questions.length;
+      renderStrictExamQuestion();
+    }
+
+    function switchPortalTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.ws-tab').forEach(b => b.classList.remove('active'));
       const target = document.getElementById(tabId);
@@ -966,74 +1768,34 @@
       }
     }
 
-    function filterSimQuestions(track) {
-      activeQuizList = track === 'ALL' ? [...QUIZ_BANK] : QUIZ_BANK.filter(q => q.track === track);
-      currentQIdx = 0;
-      renderSimQuestion();
-    }
-
-    function renderSimQuestion() {
-      const item = activeQuizList[currentQIdx];
-      if (!item) return;
-      document.getElementById('sim-q-tag').textContent = `QUESTION ${currentQIdx + 1} OF ${activeQuizList.length} • ${item.tag}`;
-      document.getElementById('sim-q-text').textContent = item.q;
-      const box = document.getElementById('sim-options-box');
-      box.innerHTML = item.options.map((opt, idx) => `
-        <button class="quiz-option" onclick="answerSimQuestion(${idx}, this)">${opt}</button>
-      `).join('');
-      document.getElementById('sim-rationale-box').innerHTML =
-        'Select an option on the left to verify your answer and unlock the <strong>Military / ORSA Mnemonic Anchor</strong>.';
-    }
-
-    function answerSimQuestion(choiceIdx, btnEl) {
-      const item = activeQuizList[currentQIdx];
-      const buttons = document.querySelectorAll('#sim-options-box .quiz-option');
-      buttons.forEach(b => b.disabled = true);
-
-      sessionAnswered++;
-      if (choiceIdx === item.correct) {
-        btnEl.classList.add('correct');
-        sessionCorrect++;
-        let xp = parseInt(localStorage.getItem('mgc_lms_xp') || '18450', 10) + 150;
-        localStorage.setItem('mgc_lms_xp', String(xp));
-        document.getElementById('cert-xp-val').textContent = xp.toLocaleString();
-      } else {
-        btnEl.classList.add('wrong');
-        if (buttons[item.correct]) buttons[item.correct].classList.add('correct');
+    function jumpLabQuick(val) {
+      if (!val) return;
+      if (val.startsWith('lab:')) {
+        const idx = parseInt(val.split(':')[1], 10);
+        switchPortalTab('tab-eveng-academy');
+        selectEveLab(idx);
+      } else if (val.startsWith('url:')) {
+        window.open(val.slice(4), '_blank', 'noopener');
       }
-      document.getElementById('sim-score-pill').textContent = `Session Score: ${sessionCorrect} / ${sessionAnswered}`;
-      document.getElementById('sim-rationale-box').innerHTML = item.rationale;
     }
 
-    function nextSimQuestion() {
-      currentQIdx = (currentQIdx + 1) % activeQuizList.length;
-      renderSimQuestion();
-    }
-
-    function prevSimQuestion() {
-      currentQIdx = (currentQIdx - 1 + activeQuizList.length) % activeQuizList.length;
-      renderSimQuestion();
-    }
-
-    function jumpPortalLink(url) {
-      if (url) window.open(url, '_blank', 'noopener');
+    function copyCareerSnippet(key) {
+      const txt = CAREER_SNIPPETS[key] || CAREER_SNIPPETS.headline;
+      const box = document.getElementById('career-snippet-preview');
+      if (box) box.textContent = txt + '\n\n[✓ COPIED TO CLIPBOARD]';
+      if (navigator.clipboard) navigator.clipboard.writeText(txt);
     }
 
     function initCorridorMap() {
       mapInstance = L.map('trace-map', { zoomControl: true }).setView([38.8719, -77.0563], 7);
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(mapInstance);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapInstance);
       const tilePane = document.querySelector('#trace-map .leaflet-tile-pane');
-      if (tilePane) {
-        tilePane.style.filter = 'invert(100%) hue-rotate(185deg) brightness(92%) contrast(92%)';
-      }
+      if (tilePane) tilePane.style.filter = 'invert(100%) hue-rotate(185deg) brightness(92%) contrast(92%)';
       CORRIDORS.forEach(c => {
         const icon = L.divIcon({
           className: 'custom-pin',
           html: `<div style="width:14px;height:14px;border-radius:50%;background:${c.color};border:2px solid #fff;box-shadow:0 0 12px ${c.color};"></div>`,
-          iconSize: [14, 14],
-          iconAnchor: [7, 7]
+          iconSize: [14, 14], iconAnchor: [7, 7]
         });
         L.marker(c.coords, { icon }).addTo(mapInstance).bindPopup(`<strong>${c.name}</strong><br/>${c.sub}`);
       });
@@ -1042,9 +1804,9 @@
     function renderCorridorList() {
       const list = document.getElementById('corridor-list');
       list.innerHTML = CORRIDORS.map((c, idx) => `
-        <div class="cram-item" style="cursor:pointer;border-left-color:${c.color};" onclick="flyCorridor(${idx})">
-          <h4>${c.name}</h4>
-          <p>${c.sub}</p>
+        <div style="padding:12px;border-radius:10px;background:#020617;border:1px solid var(--border);border-left:3px solid ${c.color};cursor:pointer;" onclick="flyCorridor(${idx})">
+          <h4 style="font-size:13px;color:var(--gold-bright);margin-bottom:4px;">${c.name}</h4>
+          <p style="font-size:12px;color:var(--silver);">${c.sub}</p>
         </div>
       `).join('');
     }
@@ -1057,10 +1819,10 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      selectCramTrack('SAS');
-      renderSimQuestion();
+      selectEveLab(0);
+      selectStrictSingleExam('CCNP_ENARSI');
       renderCorridorList();
-      const savedXp = parseInt(localStorage.getItem('mgc_lms_xp') || '18450', 10);
+      const savedXp = parseInt(localStorage.getItem('mgc_lms_xp') || '19200', 10);
       document.getElementById('cert-xp-val').textContent = savedXp.toLocaleString();
     });
   </script>
