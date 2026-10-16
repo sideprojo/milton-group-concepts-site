@@ -423,7 +423,41 @@
   .toast{position:fixed;right:18px;bottom:18px;background:linear-gradient(135deg,#10b981,#059669);color:#022c22;padding:10px 16px;border-radius:12px;font-weight:900;font-size:12px;z-index:99}
   @media(max-width:640px){.wrap{padding:12px 12px 90px}.bar{position:static}}`;
 
-  function injectCss() { if (document.getElementById('w-css')) return; const s = document.createElement('style'); s.id = 'w-css'; s.textContent = CSS; document.head.appendChild(s); }
+  const CLEAN_URL_MAP = {
+    'login.html': '/auth',
+    'request-access.html': '/request-access',
+    'onboarding-portal.html': '/portal',
+    'member-portal.html': '/workspace',
+    'agile-board.html': '/agile',
+    'access-admin.html': '/access-admin',
+    'admin-command-portal.html': '/command',
+    'saas-apps-and-lms-showcase.html': '/apps',
+    'finance-command.html': '/finance',
+    'elearning-upskilling-hub.html': '/academy',
+    'whitefeather-ecommerce-hub.html': '/commerce',
+    'historical-archaeology-ai-hub.html': '/chronos-lab',
+    'chronos-external-insight-webapp.html': '/chronos',
+    'index.html': '/data-hub',
+    'agent-workflow-studio.html': '/agent-studio',
+    'earth-3d.html': '/earth-3d',
+    'vr-command.html': '/vr-deck',
+    'integrations-connections-hub.html': '/integrations',
+    'sdvosb-contract-radar.html': '/sam-radar',
+    'compliance-trust-center.html': '/trust-center'
+  };
+
+  function maskExposedUrl() {
+    if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+    try {
+      const file = (location.pathname.split('/').pop() || '').toLowerCase();
+      const clean = CLEAN_URL_MAP[file];
+      if (clean && (location.pathname !== clean || location.search.includes('next='))) {
+        history.replaceState(null, '', clean + (location.hash || ''));
+      }
+    } catch (_) {}
+  }
+
+  function injectCss() { maskExposedUrl(); if (document.getElementById('w-css')) return; const s = document.createElement('style'); s.id = 'w-css'; s.textContent = CSS; document.head.appendChild(s); }
   function theme(brand) { document.body.classList.remove('w-mgc', 'w-fix'); document.body.classList.add(brand === 'FIX' ? 'w-fix' : 'w-mgc'); }
   function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2400); }
   function unread(uidv) { return S.notifications.filter(n => n.toUid === uidv && !n.read).length; }

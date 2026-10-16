@@ -89,6 +89,80 @@ const BLOCKED_FILES = new Set([
   'zero-trust-edge-policy.json'
 ]);
 
+// Server-Side Clean Route Masking Table (hides raw .html filenames and query params)
+const CLEAN_ROUTE_TO_FILE = {
+  '/':                  'login.html',
+  '/auth':              'login.html',
+  '/login':             'login.html',
+  '/request-access':    'request-access.html',
+  '/portal':            'onboarding-portal.html',
+  '/onboarding':        'onboarding-portal.html',
+  '/onboarding-portal': 'onboarding-portal.html',
+  '/workspace':         'member-portal.html',
+  '/member-portal':     'member-portal.html',
+  '/agile':             'agile-board.html',
+  '/agile-board':       'agile-board.html',
+  '/access-admin':      'access-admin.html',
+  '/command':           'admin-command-portal.html',
+  '/admin-command':     'admin-command-portal.html',
+  '/apps':              'saas-apps-and-lms-showcase.html',
+  '/finance':           'finance-command.html',
+  '/academy':           'elearning-upskilling-hub.html',
+  '/commerce':          'whitefeather-ecommerce-hub.html',
+  '/chronos-lab':       'historical-archaeology-ai-hub.html',
+  '/chronos':           'chronos-external-insight-webapp.html',
+  '/data-hub':          'index.html',
+  '/agent-studio':      'agent-workflow-studio.html',
+  '/earth-3d':          'earth-3d.html',
+  '/vr-deck':           'vr-command.html',
+  '/integrations':      'integrations-connections-hub.html',
+  '/sam-radar':         'sdvosb-contract-radar.html',
+  '/trust-center':      'compliance-trust-center.html'
+};
+
+const FILE_TO_CLEAN_ROUTE = {
+  'login.html':                          '/auth',
+  'request-access.html':                 '/request-access',
+  'onboarding-portal.html':              '/portal',
+  'member-portal.html':                  '/workspace',
+  'agile-board.html':                    '/agile',
+  'access-admin.html':                   '/access-admin',
+  'admin-command-portal.html':           '/command',
+  'saas-apps-and-lms-showcase.html':     '/apps',
+  'finance-command.html':                '/finance',
+  'elearning-upskilling-hub.html':       '/academy',
+  'whitefeather-ecommerce-hub.html':     '/commerce',
+  'historical-archaeology-ai-hub.html':  '/chronos-lab',
+  'chronos-external-insight-webapp.html':'/chronos',
+  'index.html':                          '/data-hub',
+  'agent-workflow-studio.html':          '/agent-studio',
+  'earth-3d.html':                       '/earth-3d',
+  'vr-command.html':                     '/vr-deck',
+  'integrations-connections-hub.html':   '/integrations',
+  'sdvosb-contract-radar.html':          '/sam-radar',
+  'compliance-trust-center.html':        '/trust-center'
+};
+
+function toCleanRoute(rawTarget) {
+  if (!rawTarget || typeof rawTarget !== 'string') return '';
+  const trimmed = rawTarget.trim();
+  if (!trimmed) return '';
+  const [pathPart] = trimmed.split('?');
+  const normalizedPath = '/' + pathPart.replace(/^\/+/, '');
+  if (CLEAN_ROUTE_TO_FILE[normalizedPath]) {
+    const mappedFile = CLEAN_ROUTE_TO_FILE[normalizedPath];
+    return FILE_TO_CLEAN_ROUTE[mappedFile] || normalizedPath;
+  }
+  const bName = path.basename(normalizedPath);
+  if (FILE_TO_CLEAN_ROUTE[bName]) {
+    return FILE_TO_CLEAN_ROUTE[bName];
+  }
+  if (bName.endsWith('.html')) {
+    return '/' + bName.slice(0, -5);
+  }
+  return normalizedPath.startsWith('/') ? normalizedPath : '';
+}
+
 const uid = (p) => p + '_' + crypto.randomBytes(4).toString('hex');
 const now = () => new Date().toISOString();
 
@@ -642,7 +716,12 @@ const server = http.createServer(async (req, res) => {
       });
       logAudit(user.id, `auth.sso.${provider}`, `${user.email} via ${SSO_PROVIDER_LABELS[provider]}`);
       saveState(S);
-      const target = body.next && String(body.next).startsWith('/') ? body.next : (user.role === 'owner' ? '/access-admin.html' : '/member-portal.html');
+      const reqCookies = parseCookies(req);
+      const returnClaims = verifyToken(reqCookies.mgcw_return);
+      const requestedNext = (body.next && String(body.next).trim()) || (returnClaims && returnClaims.next) || '';
+      const cleanNext = toCleanRoute(requestedNext);
+      const defaultClean = user.role === 'owner' ? '/access-admin' : '/workspace';
+      const target = (cleanNext && cleanNext !== '/auth' && cleanNext !== '/login') ? cleanNext : defaultClean;
       return sendJson(res, 200, {
         ok: true,
         uid: user.id,
@@ -654,15 +733,21 @@ const server = http.createServer(async (req, res) => {
         ssoVerified: true,
         redirect: target
       }, {
-        'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
+        'Set-Cookie': [
+          `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`,
+          'mgcw_return=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0'
+        ]
       });
     }
 
     // Sign out
     if (pathname === '/api/auth/logout' && (req.method === 'POST' || req.method === 'GET')) {
       res.writeHead(302, {
-        'Set-Cookie': 'mgcw_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0',
-        'Location': '/login.html'
+        'Set-Cookie': [
+          'mgcw_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0',
+          'mgcw_return=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0'
+        ],
+        'Location': '/auth'
       });
       return res.end();
     }
@@ -915,8 +1000,35 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 400, { ok: false, error: 'Unsupported action.' });
     }
 
-    /* ---------- HTML & Static Route Gate ---------- */
-    const cleanRel = pathname === '/' ? 'login.html' : pathname.replace(/^\/+/, '');
+    /* ---------- HTML & Static Route Gate (Clean Route Masking + Encrypted Return Cookie) ---------- */
+    const redirectToCleanAuth = (targetPathOrFile) => {
+      const cleanDest = toCleanRoute(targetPathOrFile);
+      const headers = { 'Location': '/auth' };
+      if (cleanDest && cleanDest !== '/auth' && cleanDest !== '/login') {
+        const retTok = signToken({ next: cleanDest }, 900);
+        headers['Set-Cookie'] = `mgcw_return=${encodeURIComponent(retTok)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=900`;
+      }
+      res.writeHead(302, headers);
+      return res.end();
+    };
+
+    // Strip exposed /login.html?next=... or ?next=... query strings into an HttpOnly return cookie and redirect to clean /auth
+    if (pathname === '/login.html' || ((pathname === '/auth' || pathname === '/login' || pathname === '/') && parsedUrl.searchParams.has('next'))) {
+      const nextParam = parsedUrl.searchParams.get('next') || '';
+      return redirectToCleanAuth(nextParam);
+    }
+
+    let cleanRel = '';
+    if (CLEAN_ROUTE_TO_FILE[pathname]) {
+      cleanRel = CLEAN_ROUTE_TO_FILE[pathname];
+    } else {
+      const stripped = pathname.replace(/^\/+/, '');
+      if (!path.extname(stripped) && fs.existsSync(path.resolve(ROOT, stripped + '.html'))) {
+        cleanRel = stripped + '.html';
+      } else {
+        cleanRel = stripped;
+      }
+    }
     const baseName = path.basename(cleanRel);
 
     if (BLOCKED_FILES.has(baseName) || cleanRel.startsWith('.')) {
@@ -926,35 +1038,32 @@ const server = http.createServer(async (req, res) => {
 
     const u = getAuthenticatedUser(req);
 
-    // Gate member-portal.html and agile-board.html (require sign-in)
+    // Gate member-portal.html (/workspace) and agile-board.html (/agile)
     if (baseName === 'member-portal.html' || baseName === 'agile-board.html') {
       if (!u) {
-        res.writeHead(302, { 'Location': `/login.html?next=${encodeURIComponent('/' + baseName)}` });
-        return res.end();
+        return redirectToCleanAuth(baseName);
       }
       if (baseName === 'agile-board.html' && u.role !== 'owner' && !can(u, 'page', 'agile', 'view')) {
         res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
-        return res.end(renderLockedHtml(u, 'Agile Board is Pending or Locked', 'Your Agile Board will unlock automatically once your workspace is active and ready.', '/member-portal.html', 'Back to My Workspace →'));
+        return res.end(renderLockedHtml(u, 'Agile Board is Pending or Locked', 'Your Agile Board will unlock automatically once your workspace is active and ready.', '/workspace', 'Back to My Workspace →'));
       }
     }
 
-    // Gate access-admin.html (strictly Owner only)
+    // Gate access-admin.html (/access-admin, strictly Owner only)
     if (baseName === 'access-admin.html') {
       if (!u) {
-        res.writeHead(302, { 'Location': '/login.html?next=%2Faccess-admin.html' });
-        return res.end();
+        return redirectToCleanAuth(baseName);
       }
       if (u.role !== 'owner') {
         res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
-        return res.end(renderLockedHtml(u, 'Owner Authorization Required', 'This administrative control center is restricted to Malik K. (Owner).', '/member-portal.html', 'Back to My Workspace →'));
+        return res.end(renderLockedHtml(u, 'Owner Authorization Required', 'This administrative control center is restricted to Malik K. (Owner).', '/workspace', 'Back to My Workspace →'));
       }
     }
 
-    // Gate the 16 internal portals: Owner has full access; onboarding-portal.html is open to any SSO-authenticated user; Members only if mapped catalog page is Ready & entitled OR explicitly shared as an element
+    // Gate the 16 internal portals: Owner has full access; onboarding-portal.html (/portal) is open to any SSO-authenticated user
     if (INTERNAL_PORTALS.has(baseName) && baseName !== 'access-admin.html') {
       if (!u) {
-        res.writeHead(302, { 'Location': `/login.html?next=${encodeURIComponent('/' + baseName)}` });
-        return res.end();
+        return redirectToCleanAuth(baseName);
       }
       if (u.role !== 'owner' && baseName !== 'onboarding-portal.html') {
         const mappedCatalogId = PORTAL_TO_CATALOG[baseName];
@@ -969,7 +1078,7 @@ const server = http.createServer(async (req, res) => {
             isPending
               ? 'This page has been approved for your workspace and is currently being tailored for you. You will receive a notification the moment it is ready.'
               : 'You only have access to the pages and elements created for or shared with your account. You can request or subscribe to additional pages from your workspace.',
-            '/member-portal.html',
+            '/workspace',
             'Open My Workspace →'
           ));
         }

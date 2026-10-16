@@ -114,8 +114,70 @@
     };
   }
 
+  const CLEAN_SLUG_TO_FILE = {
+    'auth': 'login.html',
+    'login': 'login.html',
+    'request-access': 'request-access.html',
+    'portal': 'onboarding-portal.html',
+    'onboarding': 'onboarding-portal.html',
+    'onboarding-portal': 'onboarding-portal.html',
+    'workspace': 'member-portal.html',
+    'member-portal': 'member-portal.html',
+    'agile': 'agile-board.html',
+    'agile-board': 'agile-board.html',
+    'access-admin': 'access-admin.html',
+    'command': 'admin-command-portal.html',
+    'admin-command': 'admin-command-portal.html',
+    'apps': 'saas-apps-and-lms-showcase.html',
+    'finance': 'finance-command.html',
+    'academy': 'elearning-upskilling-hub.html',
+    'commerce': 'whitefeather-ecommerce-hub.html',
+    'chronos-lab': 'historical-archaeology-ai-hub.html',
+    'chronos': 'chronos-external-insight-webapp.html',
+    'data-hub': 'index.html',
+    'agent-studio': 'agent-workflow-studio.html',
+    'earth-3d': 'earth-3d.html',
+    'vr-deck': 'vr-command.html',
+    'integrations': 'integrations-connections-hub.html',
+    'sam-radar': 'sdvosb-contract-radar.html',
+    'trust-center': 'compliance-trust-center.html'
+  };
+
+  const FILE_TO_CLEAN_PATH = {
+    'login.html': '/auth',
+    'request-access.html': '/request-access',
+    'onboarding-portal.html': '/portal',
+    'member-portal.html': '/workspace',
+    'agile-board.html': '/agile',
+    'access-admin.html': '/access-admin',
+    'admin-command-portal.html': '/command',
+    'saas-apps-and-lms-showcase.html': '/apps',
+    'finance-command.html': '/finance',
+    'elearning-upskilling-hub.html': '/academy',
+    'whitefeather-ecommerce-hub.html': '/commerce',
+    'historical-archaeology-ai-hub.html': '/chronos-lab',
+    'chronos-external-insight-webapp.html': '/chronos',
+    'index.html': '/data-hub',
+    'agent-workflow-studio.html': '/agent-studio',
+    'earth-3d.html': '/earth-3d',
+    'vr-command.html': '/vr-deck',
+    'integrations-connections-hub.html': '/integrations',
+    'sdvosb-contract-radar.html': '/sam-radar',
+    'compliance-trust-center.html': '/trust-center'
+  };
+
   const session = getVerifiedSession();
-  const currentFile = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  const rawLastSeg = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  const currentFile = CLEAN_SLUG_TO_FILE[rawLastSeg] || (rawLastSeg.endsWith('.html') ? rawLastSeg : (rawLastSeg + '.html'));
+
+  if ((window.location.protocol === 'http:' || window.location.protocol === 'https:') && FILE_TO_CLEAN_PATH[currentFile]) {
+    try {
+      const cleanPath = FILE_TO_CLEAN_PATH[currentFile];
+      if (window.location.pathname !== cleanPath || window.location.search.includes('next=')) {
+        window.history.replaceState(null, '', cleanPath + (window.location.hash || ''));
+      }
+    } catch (_) {}
+  }
 
   // 16-Portal Ecosystem Registry — Evenly Split: 8 MGC Thematic Portals & 8 F.I.X Solutions Thematic Portals
   // Note: Sterling Auto Repair is managed as a client project inside agile-board.html (not a standalone module).
