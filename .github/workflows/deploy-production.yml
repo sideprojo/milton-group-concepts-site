@@ -25,21 +25,74 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Assemble PUBLIC build (private/prototype/infra files are excluded)
+      - name: Assemble PUBLIC build (all 16 internal portals & workspace/infra files excluded)
         run: |
-          mkdir _site
-          rsync -a ./ _site/ \
-            --exclude '.git' --exclude '.github' --exclude '_site' \
-            --exclude 'access-admin.html' \
-            --exclude 'member-portal.html' \
-            --exclude 'agile-board.html' \
-            --exclude 'request-access.html' \
-            --exclude 'mgc-workspace-core.js' \
-            --exclude 'firestore.rules' --exclude 'firestore.rules.README.md' \
-            --exclude 'Dockerfile' --exclude 'Deploy-*.ps1' --exclude '.gitguardian.yaml'
-          echo "Public files:"; find _site -maxdepth 1 -type f | sort
-          # Fail the build if any private file slipped through
-          for f in access-admin.html member-portal.html agile-board.html request-access.html mgc-workspace-core.js firestore.rules; do
+          mkdir -p _site
+          touch _site/.nojekyll
+          if [ -d assets ]; then cp -r assets _site/assets; fi
+          if [ -d projects ]; then cp -r projects _site/projects; fi
+          cat > _site/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+            <title>Milton Group Concepts LLC &amp; F.I.X Solutions LLC | Authenticated Portal Gate</title>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+            <style>
+              *{box-sizing:border-box}
+              body{margin:0;min-height:100vh;font-family:Inter,system-ui,sans-serif;background:radial-gradient(circle at 18% 18%,#1b1b20 0%,#09090B 65%);color:#FAFAFA;display:flex;align-items:center;justify-content:center;padding:24px}
+              .card{max-width:720px;width:100%;background:#141519;border:1px solid #27272A;border-radius:16px;padding:32px;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+              .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+              .chip{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid #3F3F46;color:#A1A1AA}
+              h1{font-size:26px;margin:14px 0 8px}
+              p{color:#A1A1AA;font-size:14px;line-height:1.6;margin:6px 0}
+              .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:20px 0}
+              .box{padding:16px;border-radius:12px;border:1px solid #27272A;background:#18181B}
+              .box.fix{border-color:rgba(197,179,88,.45);background:linear-gradient(160deg,#0B1426,#13203B)}
+              .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;font-weight:800;font-size:13px;text-decoration:none;border:1px solid #3F3F46;color:#FAFAFA;background:#18181B}
+              .btn.pri{background:#FFFFFF;color:#09090B;border-color:#FFFFFF}
+              .btn.gold{background:#FDE047;color:#0B1426;border-color:#FDE047}
+            </style>
+          </head>
+          <body>
+            <main class="card">
+              <div class="row">
+                <span class="chip">Zero-Trust Member &amp; Command Gate</span>
+                <span class="chip">Cloud Run + Firebase Auth</span>
+              </div>
+              <h1>Milton Group Concepts LLC &amp; F.I.X Solutions LLC</h1>
+              <p>All 16 internal command portals, custom member workspaces, and Agile boards are hosted exclusively on our authenticated Cloud Run server with per-user access control.</p>
+              <div class="grid">
+                <div class="box">
+                  <div class="chip">MGC · Gray / Black / White</div>
+                  <h2 style="font-size:16px;margin:10px 0 6px">Milton Group Concepts LLC</h2>
+                  <p>AI Workflow Studio, Cyber &amp; CMMC Compliance, Upskilling &amp; LMS, and Custom Member Pages on Request.</p>
+                </div>
+                <div class="box fix">
+                  <div class="chip" style="border-color:#C5B358;color:#FDE047">F.I.X · Mission Navy &amp; Gold</div>
+                  <h2 style="font-size:16px;margin:10px 0 6px;color:#F8FAFC">F.I.X Solutions LLC</h2>
+                  <p style="color:#CBD5E1">SDVOSB Contract Radar, Finance &amp; Cashflow Command, and Federal Contracting Workspaces.</p>
+                </div>
+              </div>
+              <div class="row" style="margin-top:18px;justify-content:flex-start">
+                <a class="btn pri" href="https://miltongroupsecurity.org">Visit Public MGC Site ↗</a>
+                <a class="btn gold" href="projects/sterling-auto-repair/index.html">View Live Client Showcase ↗</a>
+              </div>
+            </main>
+          </body>
+          </html>
+          EOF
+          echo "Public files:"; find _site -maxdepth 2 -type f | sort
+          # Fail the build if any internal portal or private workspace file slipped through
+          for f in \
+            access-admin.html member-portal.html agile-board.html request-access.html login.html \
+            admin-command-portal.html agent-workflow-studio.html chronos-external-insight-webapp.html \
+            compliance-trust-center.html earth-3d.html elearning-upskilling-hub.html \
+            finance-command.html historical-archaeology-ai-hub.html integrations-connections-hub.html \
+            onboarding-portal.html saas-apps-and-lms-showcase.html sdvosb-contract-radar.html \
+            vr-command.html whitefeather-ecommerce-hub.html \
+            mgc-workspace-core.js mgc-guided-security.js firestore.rules server.js package.json Dockerfile; do
             if [ -e "_site/$f" ]; then echo "PRIVATE FILE LEAKED: $f"; exit 1; fi
           done
       - name: Upload Static Site Artifact

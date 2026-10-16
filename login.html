@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign In | MGC &amp; F.I.X Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+<main class="wrap" style="max-width:760px;padding-top:36px">
+  <div class="card">
+    <div class="row">
+      <div class="brand">
+        <span id="bIcon" style="font-size:22px">🛡️</span>
+        <div>
+          <span id="bTitle">MGC &amp; F.I.X AUTHENTICATED GATE</span>
+          <small>Per-User Pages &amp; Apps on Request · Cloud Run + Firebase Auth</small>
+        </div>
+      </div>
+      <select id="themeSel" aria-label="Theme preview">
+        <option value="MGC">MGC Theme (Gray / Black / White)</option>
+        <option value="FIX">F.I.X Theme (Navy / Gold)</option>
+      </select>
+    </div>
+
+    <h1 style="margin-top:14px">Sign in to your workspace</h1>
+    <p>Each member sees only the pages, resources, and Agile project boards created for or shared with their account. Sign in with Google or request a passwordless email sign-in link.</p>
+
+    <div class="grid" style="margin-top:14px">
+      <!-- Option 1: Sign in with Google -->
+      <div class="card" style="background:var(--card2)">
+        <span class="chip ok">Method 1 · Google Account</span>
+        <h2 style="margin-top:8px">Sign in with Google</h2>
+        <p>Use your Google Workspace or personal Gmail account. Owner account (<code>malik.khabir@miltongroupsecurity.org</code>) unlocks all 16 command portals and Access Admin.</p>
+        <label style="display:block;margin-top:8px">
+          <p>Google Email</p>
+          <input id="gEmail" type="email" placeholder="malik.khabir@miltongroupsecurity.org" style="width:100%" autocomplete="email">
+        </label>
+        <div class="row" style="margin-top:10px;justify-content:flex-start">
+          <button class="btn pri" id="btnGoogle">Continue with Google →</button>
+        </div>
+      </div>
+
+      <!-- Option 2: Passwordless Email Link -->
+      <div class="card" style="background:var(--card2)">
+        <span class="chip">Method 2 · Passwordless Email Link</span>
+        <h2 style="margin-top:8px">Email me a sign-in link</h2>
+        <p>No password or Google account required. We generate a single-use, 15-minute sign-in link for your email address.</p>
+        <label style="display:block;margin-top:8px">
+          <p>Work or personal email</p>
+          <input id="eEmail" type="email" placeholder="you@company.com" style="width:100%" autocomplete="email">
+        </label>
+        <div class="row" style="margin-top:10px;justify-content:flex-start">
+          <button class="btn pri" id="btnEmailLink">Send Sign-In Link ✉️</button>
+        </div>
+        <div id="magicBox" style="display:none;margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px">
+          <p style="margin:0 0 6px;color:var(--tx);font-weight:800">✅ Passwordless link ready:</p>
+          <a class="btn pri" id="magicLink" href="#">Click to complete Email Link sign-in →</a>
+        </div>
+      </div>
+    </div>
+
+    <p id="authMsg" style="color:var(--ac);margin-top:10px;font-weight:700"></p>
+
+    <details style="margin-top:14px">
+      <summary>Quick account presets (Owner &amp; Member lifecycle verification)</summary>
+      <div class="row" style="margin-top:8px;justify-content:flex-start">
+        <button class="btn" data-quick="malik.khabir@miltongroupsecurity.org">🛡️ Malik K. (Owner · All 16 Portals + Admin)</button>
+        <button class="btn" data-quick="cara@example.com">⚡ Cara (Active Paid Member · F.I.X)</button>
+        <button class="btn" data-quick="ben@example.com">⏳ Ben (Approved · Pages Pending Build)</button>
+        <button class="btn" data-quick="ana@example.com">📨 Ana (Just Requested)</button>
+      </div>
+    </details>
+
+    <div class="row" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)">
+      <span>Need a tailored workspace? Base membership is <b>$5/month</b> once your pages are built.</span>
+      <a class="btn" href="request-access.html">Request access →</a>
+    </div>
+  </div>
+</main>
+<script src="mgc-workspace-core.js"></script>
+<script>
+(function () {
+  const W = MGCW; W.injectCss(); W.theme('MGC');
+  const params = new URLSearchParams(location.search);
+  const nextUrl = params.get('next') || '';
+  const msg = document.getElementById('authMsg');
+
+  document.getElementById('themeSel').onchange = (e) => {
+    W.theme(e.target.value);
+    document.getElementById('bIcon').textContent = e.target.value === 'FIX' ? '⚡' : '🛡️';
+  };
+
+  async function doGoogleSignIn(emailInput) {
+    const email = (emailInput || document.getElementById('gEmail').value || '').trim().toLowerCase();
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      msg.textContent = 'Please enter a valid email address.';
+      return;
+    }
+    if (location.protocol === 'file:') {
+      const found = Object.values(W.S.users).find(u => u.email.toLowerCase() === email) || (email.includes('malik') || email.includes('owner') ? W.S.users.owner : null);
+      if (found) {
+        W.signInAs(found.id);
+        location.href = found.role === 'owner' ? 'access-admin.html' : 'member-portal.html';
+      } else {
+        msg.textContent = 'Account not found in local demo state. Submit Request Access first.';
+      }
+      return;
+    }
+    const res = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, next: nextUrl })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      msg.textContent = data.error || 'Sign-in failed.';
+      return;
+    }
+    W.signInAs(data.uid);
+    location.href = data.redirect || (data.role === 'owner' ? '/access-admin.html' : '/member-portal.html');
+  }
+
+  document.getElementById('btnGoogle').onclick = () => doGoogleSignIn();
+
+  document.getElementById('btnEmailLink').onclick = async () => {
+    const email = (document.getElementById('eEmail').value || '').trim().toLowerCase();
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      msg.textContent = 'Please enter a valid email address for your sign-in link.';
+      return;
+    }
+    if (location.protocol === 'file:') {
+      return doGoogleSignIn(email);
+    }
+    const res = await fetch('/api/auth/email-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, next: nextUrl })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      msg.textContent = data.error || 'Could not generate sign-in link.';
+      return;
+    }
+    msg.textContent = data.message;
+    const box = document.getElementById('magicBox');
+    const link = document.getElementById('magicLink');
+    box.style.display = 'block';
+    link.href = data.verifyUrl;
+  };
+
+  document.querySelectorAll('[data-quick]').forEach(btn => {
+    btn.onclick = () => {
+      document.getElementById('gEmail').value = btn.dataset.quick;
+      doGoogleSignIn(btn.dataset.quick);
+    };
+  });
+})();
+</script>
+</body>
+</html>

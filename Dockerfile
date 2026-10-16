@@ -1,5 +1,8 @@
-FROM nginx:alpine
-COPY . /usr/share/nginx/html
-RUN sed -i 's/listen       80;/listen       8080;/g' /etc/nginx/conf.d/default.conf
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json ./
+COPY . ./
+ENV NODE_ENV=production
+ENV PORT=8080
 EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]

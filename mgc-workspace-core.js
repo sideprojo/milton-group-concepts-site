@@ -15,14 +15,14 @@
 
   /* ---------- Catalog: every page/app a user can be given (pages & apps on request) ---------- */
   const CATALOG = [
-    { id: 'home',      icon: '🏠', title: 'My Dashboard',          brand: 'ANY', kind: 'page', base: true,  price: 0,  desc: 'Your tailored start page: status, action items, resources.' },
-    { id: 'agile',     icon: '🗂️', title: 'Agile Board',           brand: 'ANY', kind: 'app',  base: true,  price: 0,  desc: 'Backlog, sprint board and feature requests for shared projects.' },
-    { id: 'resources', icon: '📚', title: 'Curated Resources',     brand: 'ANY', kind: 'page', base: true,  price: 0,  desc: 'Links, templates and real-life workflows matched to your quote.' },
-    { id: 'radar',     icon: '🎯', title: 'Contract Radar',        brand: 'FIX', kind: 'app',  base: false, price: 9,  desc: 'Federal opportunity feed filtered to your NAICS codes.' },
-    { id: 'compliance',icon: '🔒', title: 'Compliance Tracker',    brand: 'MGC', kind: 'page', base: false, price: 7,  desc: 'CMMC / Zero-Trust checklist with evidence upload.' },
-    { id: 'ailab',     icon: '🤖', title: 'AI Workflow Lab',       brand: 'MGC', kind: 'app',  base: false, price: 12, desc: 'Prompt, agent and automation templates for your business.' },
-    { id: 'finance',   icon: '💳', title: 'Cashflow & Invoicing',  brand: 'FIX', kind: 'page', base: false, price: 8,  desc: 'Invoice tracker, WAWF/PIEE checklist, runway view.' },
-    { id: 'training',  icon: '🎓', title: 'Skills Academy',        brand: 'MGC', kind: 'page', base: false, price: 10, desc: 'Guided labs and exam practice (step-gated learning).' }
+    { id: 'home',      icon: '🏠', title: 'My Dashboard',          brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html',            desc: 'Your tailored start page: status, action items, resources.' },
+    { id: 'agile',     icon: '🗂️', title: 'Agile Board',           brand: 'ANY', kind: 'app',  base: true,  price: 0,  href: 'agile-board.html',              desc: 'Backlog, sprint board and feature requests for shared projects.' },
+    { id: 'resources', icon: '📚', title: 'Curated Resources',     brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html#resources',  desc: 'Links, templates and real-life workflows matched to your quote.' },
+    { id: 'radar',     icon: '🎯', title: 'Contract Radar',        brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'sdvosb-contract-radar.html',    desc: 'Federal opportunity feed filtered to your NAICS codes.' },
+    { id: 'compliance',icon: '🔒', title: 'Compliance Tracker',    brand: 'MGC', kind: 'page', base: false, price: 7,  href: 'compliance-trust-center.html',  desc: 'CMMC / Zero-Trust checklist with evidence upload.' },
+    { id: 'ailab',     icon: '🤖', title: 'AI Workflow Lab',       brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'agent-workflow-studio.html',    desc: 'Prompt, agent and automation templates for your business.' },
+    { id: 'finance',   icon: '💳', title: 'Cashflow & Invoicing',  brand: 'FIX', kind: 'page', base: false, price: 8,  href: 'finance-command.html',          desc: 'Invoice tracker, WAWF/PIEE checklist, runway view.' },
+    { id: 'training',  icon: '🎓', title: 'Skills Academy',        brand: 'MGC', kind: 'page', base: false, price: 10, href: 'elearning-upskilling-hub.html', desc: 'Guided labs and exam practice (step-gated learning).' }
   ];
   const STEPS = ['requested', 'approved_building', 'active'];
   const STATUS_LABEL = { requested: 'Pending approval', approved_building: 'Pages being built', active: 'Active', denied: 'Not approved', suspended: 'Suspended' };
@@ -54,7 +54,7 @@
     return {
       v: 1,
       users: {
-        owner: mk('owner', 'Malik K. (Owner)', 'owner@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { home: 'ready', agile: 'ready', resources: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready' }),
+        owner: mk('owner', 'Malik K. (Owner)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { home: 'ready', agile: 'ready', resources: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready' }),
         ana: mk('ana', 'Ana (demo: just requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, {}),
         ben: mk('ben', 'Ben (demo: pages being built)', 'ben@example.com', 'member', 'approved_building', 'FIX', 'federal', false, { home: 'pending', agile: 'pending', resources: 'pending', radar: 'pending', compliance: 'pending' }),
         cara: mk('cara', 'Cara (demo: active, paid)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, { home: 'ready', agile: 'ready', resources: 'ready', ailab: 'ready', finance: 'pending' })
@@ -74,16 +74,71 @@
     };
   }
 
-  /* ---------- db adapter (swap for Firestore in production) ---------- */
+  const isHttp = location.protocol === 'http:' || location.protocol === 'https:';
+  let serverSyncOk = false;
+
+  function fetchServerStateSync() {
+    if (!isHttp) return null;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/state', false);
+      xhr.send(null);
+      if (xhr.status === 200) {
+        const parsed = JSON.parse(xhr.responseText);
+        if (parsed && parsed.v === 1) {
+          serverSyncOk = true;
+          if (parsed.currentUser) sessionStorage.setItem('mgcw.uid', parsed.currentUser);
+          return parsed;
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  function postServerAction(payload) {
+    if (!serverSyncOk) return null;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/action', false);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify(payload));
+      if (xhr.status === 200) {
+        const res = JSON.parse(xhr.responseText);
+        if (res && res.state) {
+          S = res.state;
+          if (res.uid) sessionStorage.setItem('mgcw.uid', res.uid);
+          return res;
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /* ---------- db adapter (uses Cloud Run /api/state when over HTTP, localStorage for file://) ---------- */
   const db = {
-    load() { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) return s; } catch (e) {} const s = seed(); localStorage.setItem(KEY, JSON.stringify(s)); return s; },
-    save(s) { localStorage.setItem(KEY, JSON.stringify(s)); },
+    load() {
+      const srv = fetchServerStateSync();
+      if (srv) return srv;
+      try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) return s; } catch (e) {}
+      const s = seed(); localStorage.setItem(KEY, JSON.stringify(s)); return s;
+    },
+    save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (_) {} },
     reset() { localStorage.removeItem(KEY); sessionStorage.removeItem('mgcw.uid'); }
   };
   let S = db.load();
   const commit = () => db.save(S);
-  const me = () => S.users[sessionStorage.getItem('mgcw.uid') || ''] || null;
-  const signInAs = (id) => { sessionStorage.setItem('mgcw.uid', id); };
+  const me = () => S.users[(S.currentUser || sessionStorage.getItem('mgcw.uid') || '')] || null;
+  const signInAs = (id) => {
+    sessionStorage.setItem('mgcw.uid', id);
+    if (serverSyncOk && S.users[id] && S.users[id].email) {
+      try {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/auth/google', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({ email: S.users[id].email }));
+      } catch (_) {}
+    }
+  };
   const log = (actor, action, detail) => { S.audit.unshift({ id: uid('a'), ts: now(), actor, action, detail }); S.audit = S.audit.slice(0, 200); };
   const notify = (toUid, title, body, channel) => { S.notifications.unshift({ id: uid('n'), toUid, title, body, channel: channel || 'in-app + email', ts: now(), read: false }); };
 
@@ -108,10 +163,11 @@
     if (type === 'element') return S.shares.some(s => s.type === 'element' && s.resource === id && s.grantee === u.id);
     return false;
   }
-  function addonOk(u, id) { return (u.plan.addons || []).includes(id); }
 
   /* ---------- Lifecycle workflow ---------- */
   function submitRequest(data) {
+    const srv = postServerAction({ action: 'submitRequest', data });
+    if (srv && srv.uid) { commit(); return srv.uid; }
     const id = uid('u');
     S.users[id] = { id, name: data.name, email: data.email, role: 'member', status: 'requested', brand: data.brand, quote: { interest: data.interest, note: data.note || '' }, plan: { base: false, addons: [] }, pages: {}, created: now() };
     S.requests.unshift({ id: uid('r'), uid: id, status: 'requested', created: now() });
@@ -121,6 +177,7 @@
     commit(); return id;
   }
   function approve(userId) {
+    if (postServerAction({ action: 'approve', userId })) { commit(); return; }
     const u = S.users[userId]; if (!u) return;
     u.status = 'approved_building';
     const wanted = ['home', 'agile', 'resources'].concat((TAILOR[u.quote.interest] || { pages: [] }).pages);
@@ -129,8 +186,12 @@
     log('owner', 'request.approved', u.email);
     commit();
   }
-  function deny(userId) { const u = S.users[userId]; if (!u) return; u.status = 'denied'; const r = S.requests.find(x => x.uid === userId); if (r) r.status = 'denied'; notify(userId, 'Request update', 'We are unable to approve this request right now.'); log('owner', 'request.denied', u.email); commit(); }
+  function deny(userId) {
+    if (postServerAction({ action: 'deny', userId })) { commit(); return; }
+    const u = S.users[userId]; if (!u) return; u.status = 'denied'; const r = S.requests.find(x => x.uid === userId); if (r) r.status = 'denied'; notify(userId, 'Request update', 'We are unable to approve this request right now.'); log('owner', 'request.denied', u.email); commit();
+  }
   function completeTask(taskId, done) {
+    if (postServerAction({ action: 'completeTask', taskId, done })) { commit(); return; }
     const t = S.tasks.find(x => x.id === taskId); if (!t) return;
     t.done = done; const u = S.users[t.uid]; u.pages[t.page] = done ? 'ready' : 'pending';
     const open = S.tasks.filter(x => x.uid === t.uid && !x.done).length;
@@ -141,19 +202,27 @@
     }
     commit();
   }
-  function subscribeBase(userId) { const u = S.users[userId]; u.plan.base = true; log(userId, 'billing.base_active', '$5/mo (prototype: no real charge)'); commit(); }
+  function subscribeBase(userId) {
+    if (postServerAction({ action: 'subscribeBase', userId })) { commit(); return; }
+    const u = S.users[userId]; u.plan.base = true; log(userId, 'billing.base_active', '$5/mo (prototype: no real charge)'); commit();
+  }
   function toggleAddon(userId, pageId) {
+    if (postServerAction({ action: 'toggleAddon', userId, pageId })) { commit(); return; }
     const u = S.users[userId]; const a = u.plan.addons = u.plan.addons || [];
     const i = a.indexOf(pageId); if (i >= 0) a.splice(i, 1); else { a.push(pageId); if (u.pages[pageId] !== 'ready') { u.pages[pageId] = 'pending'; S.tasks.push({ id: uid('t'), uid: userId, page: pageId, title: 'Build add-on "' + CATALOG.find(c => c.id === pageId).title + '" for ' + u.name, done: false }); notify('owner', 'Add-on requested', u.name + ' subscribed to ' + pageId); } }
     log(userId, 'billing.addon', pageId); commit();
   }
   function share(grantee, type, resource, perms) {
+    if (postServerAction({ action: 'share', grantee, type, resource, perms })) { commit(); return; }
     S.shares = S.shares.filter(s => !(s.type === type && s.resource === resource && s.grantee === grantee));
     S.shares.push({ id: type + '_' + resource + '_' + grantee, type, resource, grantee, perms, created: now() });
     notify(grantee, 'Something was shared with you', type + ': ' + resource + ' (' + perms.join(', ') + ')');
     log('owner', 'share.grant', type + ':' + resource + ' -> ' + grantee); commit();
   }
-  function revoke(id) { const s = S.shares.find(x => x.id === id); S.shares = S.shares.filter(x => x.id !== id); if (s) log('owner', 'share.revoke', id); commit(); }
+  function revoke(id) {
+    if (postServerAction({ action: 'revoke', shareId: id })) { commit(); return; }
+    const s = S.shares.find(x => x.id === id); S.shares = S.shares.filter(x => x.id !== id); if (s) log('owner', 'share.revoke', id); commit();
+  }
 
   /* ---------- Themed shell (MGC gray/black/white, F.I.X navy/gold, with external-site backdrops) ---------- */
   const CSS = `
@@ -201,17 +270,21 @@
   /** Renders the top bar. `active` = current page file; sign-in switcher is DEMO ONLY. */
   function header(active) {
     injectCss(); const u = me(); theme(u ? u.brand : 'MGC');
-    const links = [['member-portal.html', 'My Workspace'], ['agile-board.html', 'Agile Board']].concat(u && u.role === 'owner' ? [['access-admin.html', 'Access Admin']] : []);
+    const links = [['member-portal.html', 'My Workspace'], ['agile-board.html', 'Agile Board']]
+      .concat(u && u.role === 'owner' ? [['access-admin.html', 'Access Admin'], ['admin-command-portal.html', '16 Portals Hub']] : []);
     const opts = Object.values(S.users).map(x => '<option value="' + x.id + '"' + (u && u.id === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>').join('');
     const nav = '<div class="nav">' + links.map(l => '<a class="btn' + (l[0] === active ? ' pri' : '') + '" href="' + l[0] + '">' + l[1] + '</a>').join('') + '</div>';
     const isLocal = location.protocol === 'file:' || ['localhost', '127.0.0.1', ''].includes(location.hostname);
-    const right = '<div class="nav">' + (isLocal ? '<span class="demo" title="Real sign-in = Firebase Auth. This switcher exists only so you can review each user\'s view.">DEMO sign-in</span><select id="w-as" aria-label="View as user"><option value="">— signed out —</option>' + opts + '</select>' : '') + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + (isLocal ? '<button class="btn" id="w-reset" title="Reset demo data">↺</button>' : '') + '</div>';
+    const authBtn = serverSyncOk
+      ? (u ? '<a class="btn" href="/api/auth/logout">Sign out</a>' : '<a class="btn pri" href="/login.html">Sign in</a>')
+      : '<a class="btn" href="login.html">Sign in gate</a>';
+    const right = '<div class="nav">' + (isLocal && Object.keys(S.users).length > 1 ? '<span class="demo" title="Real sign-in = Firebase Auth / Cloud Run. This switcher exists on localhost/file:// so you can review each user\'s view.">DEMO sign-in</span><select id="w-as" aria-label="View as user"><option value="">— signed out —</option>' + opts + '</select>' : '') + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + authBtn + (isLocal ? '<button class="btn" id="w-reset" title="Reset demo data">↺</button>' : '') + '</div>';
     const el = document.createElement('div'); el.className = 'bar';
     el.innerHTML = '<div class="brand"><span style="font-size:20px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE') + '<small>' + (u ? esc(STATUS_LABEL[u.status]) + ' · ' + u.role : 'signed out') + '</small></div></div>' + nav + right;
     const host = document.querySelector('.wrap'); host.prepend(el);
-    const asEl = el.querySelector('#w-as'); if (asEl) asEl.onchange = (e) => { if (e.target.value) signInAs(e.target.value); else sessionStorage.removeItem('mgcw.uid'); location.reload(); };
+    const asEl = el.querySelector('#w-as'); if (asEl) asEl.onchange = (e) => { if (e.target.value) signInAs(e.target.value); else { sessionStorage.removeItem('mgcw.uid'); if (serverSyncOk) location.href = '/api/auth/logout'; } location.reload(); };
     const rsEl = el.querySelector('#w-reset'); if (rsEl) rsEl.onclick = () => { if (confirm('Reset all demo data?')) { db.reset(); location.reload(); } };
   }
 
-  global.MGCW = { CATALOG, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, commit, me, signInAs, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive };
+  global.MGCW = { CATALOG, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, commit, me, signInAs, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction };
 })(window);

@@ -55,9 +55,10 @@
 
   function preview(id) {
     const c = W.CATALOG.find(x => x.id === id); const t = W.TAILOR[u.quote.interest] || W.TAILOR.federal;
+    const launchBtn = c && c.href ? '<div style="margin-top:10px"><a class="btn pri" href="' + esc(c.href) + '">Launch ' + esc(c.title) + ' →</a></div>' : '';
     const body = id === 'home' ? '<p>Welcome back. Your next 3 action items:</p><ul>' + t.actions.slice(0, 3).map(a => '<li>' + esc(a) + '</li>').join('') + '</ul>'
       : id === 'agile' ? '<p>Your shared projects live here.</p><a class="btn pri" href="agile-board.html">Open board →</a>'
-      : '<p>' + esc(c.desc) + '</p><p>This page is generated from your quote (<b>' + esc(t.label) + '</b>) and refined by us on request.</p>';
+      : '<p>' + esc(c.desc) + '</p><p>This page is generated from your quote (<b>' + esc(t.label) + '</b>) and refined by us on request.</p>' + launchBtn;
     return '<div class="card" style="margin-top:12px"><div class="row"><h2>' + c.icon + ' ' + esc(c.title) + ' — preview</h2><button class="btn" id="closePrev">Close</button></div>' + body + '</div>';
   }
 
@@ -95,7 +96,7 @@
   const needsActive = ['actions', 'resources', 'workflows'];
 
   function render() {
-    if (!u) { app.innerHTML = '<div class="card lock"><h1>Sign in required</h1><p>Use the DEMO sign-in above, or <a href="request-access.html">request access</a>.</p></div>'; W.header('member-portal.html'); return; }
+    if (!u) { app.innerHTML = '<div class="card lock"><h1>Sign in required</h1><p>Use <a href="login.html">Google or Email Link Sign-In</a>, or <a href="request-access.html">request access</a>.</p></div>'; W.header('member-portal.html'); return; }
     let body;
     if (u.status === 'denied') body = '';
     else if (needsActive.includes(tab) && u.role !== 'owner' && !W.subActive(u)) body = '<div class="card lock"><h2>🔒 Locked until your workspace is active</h2><p>Complete the steps above to unlock this section.</p></div>';
@@ -114,7 +115,7 @@
     const sb = document.getElementById('subBase'); if (sb) sb.onclick = () => { W.subscribeBase(u.id); W.toast('Workspace activated'); render(); };
     app.querySelectorAll('[data-addon]').forEach(b => b.onclick = () => { W.toggleAddon(u.id, b.dataset.addon); W.toast('Page requested — we will build it and notify you'); render(); });
     app.querySelectorAll('[data-chk]').forEach(c => c.onchange = () => { const k = 'mgcw.chk.' + u.id; const st = JSON.parse(localStorage.getItem(k) || '{}'); st[c.dataset.chk] = c.checked; localStorage.setItem(k, JSON.stringify(st)); });
-    const fa = document.getElementById('fadd'); if (fa) fa.onclick = () => { const t = document.getElementById('ftitle').value.trim(); if (!t) return; S().features.unshift({ id: W.uid('f'), by: u.id, title: t, body: document.getElementById('fbody').value, votes: [u.id], status: 'new', created: W.now() }); W.notify('owner', 'Feature request', u.name + ': ' + t); W.log(u.id, 'feature.create', t); W.commit(); W.toast('Request sent'); render(); };
+    const fa = document.getElementById('fadd'); if (fa) fa.onclick = () => { const t = document.getElementById('ftitle').value.trim(); if (!t) return; const b = document.getElementById('fbody').value; if (!W.postServerAction || !W.postServerAction({ action: 'createFeature', title: t, body: b })) { S().features.unshift({ id: W.uid('f'), by: u.id, title: t, body: b, votes: [u.id], status: 'new', created: W.now() }); W.notify('owner', 'Feature request', u.name + ': ' + t); W.log(u.id, 'feature.create', t); W.commit(); } W.toast('Request sent'); render(); };
   }
   render();
 })();

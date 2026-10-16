@@ -1,0 +1,13 @@
+{
+  "name": "mgc-command-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Authenticated Cloud Run + Firebase Auth (Google & Passwordless Email Link) + Per-User Entitlement Server for MGC & F.I.X",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
