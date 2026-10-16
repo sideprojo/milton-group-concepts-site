@@ -3,22 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MGC OS // Master Admin Command Hub</title>
+  <title>MGC Workspace // Master Admin Command Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
   <style>
+    /* ==========================================================================
+       MGC LOGO THEMATIC COLOR PALETTE
+       ========================================================================== */
     :root {
-      --bg: #050811;
-      --card: rgba(15, 22, 38, 0.78);
-      --card-hover: rgba(20, 30, 52, 0.92);
-      --border: rgba(148, 163, 184, 0.14);
-      --border-hover: rgba(96, 165, 250, 0.45);
-      --blue: #3b82f6;
-      --emerald: #10b981;
+      --bg-obsidian: #020617;
+      --bg-navy: #0f172a;
+      --bg-slate: #1e293b;
+      --card: rgba(15, 23, 42, 0.84);
+      --card-hover: rgba(23, 37, 84, 0.72);
+      --border: rgba(203, 213, 225, 0.16);
+      --border-gold: rgba(252, 211, 77, 0.48);
       --gold: #f59e0b;
-      --red: #ef4444;
-      --text: #f8fafc;
+      --gold-light: #fcd34d;
+      --cobalt: #2563eb;
+      --crimson: #dc2626;
+      --emerald: #16a34a;
+      --white: #ffffff;
+      --silver: #cbd5e1;
       --muted: #94a3b8;
     }
 
@@ -26,10 +33,10 @@
     body {
       font-family: 'Inter', -apple-system, sans-serif;
       background:
-        radial-gradient(circle at 18% 12%, rgba(59, 130, 246, 0.12), transparent 40%),
-        radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.09), transparent 40%),
-        var(--bg);
-      color: var(--text);
+        radial-gradient(circle at 18% 12%, rgba(30, 58, 138, 0.28), transparent 42%),
+        radial-gradient(circle at 82% 18%, rgba(127, 29, 29, 0.22), transparent 42%),
+        var(--bg-obsidian);
+      color: var(--white);
       min-height: 100vh;
       overflow-x: hidden;
     }
@@ -40,7 +47,7 @@
       padding: 16px 24px 70px;
     }
 
-    /* Top Control Bar with Dropdown Filters (Microsoft Fluent / LinkedIn Style) */
+    /* Top Control Bar with MGC Logo & Dropdown Filters */
     .hub-toolbar {
       display: flex;
       align-items: center;
@@ -48,22 +55,31 @@
       gap: 16px;
       flex-wrap: wrap;
       margin-bottom: 20px;
-      background: rgba(12, 18, 32, 0.8);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
+      background: linear-gradient(90deg, rgba(9, 14, 28, 0.94), rgba(15, 23, 42, 0.9));
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(252, 211, 77, 0.3);
       border-radius: 18px;
       padding: 14px 20px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
     }
     .hub-title-group {
       display: flex;
       align-items: center;
       gap: 14px;
     }
+    .hub-logo {
+      height: 36px;
+      width: auto;
+      border-radius: 8px;
+      border: 1px solid var(--gold-light);
+    }
     .hub-title {
       font-family: 'Outfit', sans-serif;
       font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      color: var(--white);
+      text-shadow: 0 3px 0 #020617;
     }
     .status-dot-pill {
       display: inline-flex;
@@ -71,11 +87,11 @@
       gap: 6px;
       padding: 4px 11px;
       border-radius: 999px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      color: #34d399;
+      background: rgba(22, 163, 74, 0.16);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: #4ade80;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .toolbar-controls {
@@ -85,9 +101,9 @@
       flex-wrap: wrap;
     }
     .fluent-select {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: #f8fafc;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(252, 211, 77, 0.35);
+      color: var(--white);
       padding: 9px 14px;
       border-radius: 10px;
       font-family: inherit;
@@ -97,8 +113,8 @@
       outline: none;
       transition: border-color 0.2s;
     }
-    .fluent-select:hover, .fluent-select:focus { border-color: var(--blue); }
-    .fluent-select option { background: #0b1120; color: #fff; }
+    .fluent-select:hover, .fluent-select:focus { border-color: var(--gold-light); }
+    .fluent-select option { background: #090e1c; color: #fff; }
 
     /* Minimalist 4-Metric Ribbon */
     .metric-row {
@@ -116,20 +132,21 @@
       align-items: center;
       justify-content: space-between;
     }
-    .m-lbl { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-    .m-val { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; margin-top: 2px; }
+    .m-lbl { font-size: 11px; font-weight: 800; color: var(--silver); text-transform: uppercase; letter-spacing: 0.06em; }
+    .m-val { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; margin-top: 2px; color: var(--gold-light); }
     .m-ico {
       width: 42px;
       height: 42px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.05);
+      background: linear-gradient(135deg, #1e3a8a, #0f172a);
+      border: 1px solid rgba(252, 211, 77, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
     }
 
-    /* Clean Visual App Grid (Google / Canvas Card Style — Zero Paragraph Clutter) */
+    /* Clean Visual App Grid */
     .app-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -149,13 +166,13 @@
     }
     .app-card:hover {
       background: var(--card-hover);
-      border-color: var(--border-hover);
+      border-color: var(--border-gold);
       transform: translateY(-3px);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
     }
     .app-card.featured {
-      border-color: rgba(239, 68, 68, 0.45);
-      background: linear-gradient(145deg, rgba(35, 16, 26, 0.82), rgba(15, 22, 38, 0.9));
+      border-color: rgba(220, 38, 38, 0.55);
+      background: linear-gradient(145deg, rgba(69, 10, 10, 0.65), rgba(15, 23, 42, 0.92));
     }
 
     .ac-top {
@@ -168,8 +185,8 @@
       width: 46px;
       height: 46px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 1px solid rgba(252, 211, 77, 0.28);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -182,20 +199,21 @@
       letter-spacing: 0.08em;
       padding: 4px 9px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.06);
-      color: #cbd5e1;
+      background: rgba(30, 58, 138, 0.45);
+      border: 1px solid rgba(252, 211, 77, 0.3);
+      color: var(--gold-light);
     }
 
     .ac-title {
       font-family: 'Outfit', sans-serif;
       font-size: 17px;
       font-weight: 800;
-      color: #fff;
+      color: var(--white);
       margin-bottom: 3px;
     }
     .ac-sub {
       font-size: 12px;
-      color: var(--muted);
+      color: var(--silver);
       font-weight: 500;
     }
 
@@ -205,39 +223,38 @@
       justify-content: space-between;
       gap: 8px;
       padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
     }
     .btn-open {
       flex: 1;
-      background: rgba(59, 130, 246, 0.16);
-      border: 1px solid rgba(59, 130, 246, 0.35);
-      color: #93c5fd;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      border: 1px solid rgba(252, 211, 77, 0.35);
+      color: var(--white);
       text-decoration: none;
       padding: 8px 12px;
       border-radius: 10px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       text-align: center;
       transition: all 0.18s;
     }
     .btn-open:hover {
-      background: var(--blue);
-      color: #fff;
+      background: linear-gradient(135deg, var(--crimson), #b91c1c);
+      border-color: var(--gold-light);
     }
 
-    /* Card Quick-Action Dropdown */
     .card-action-select {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(2, 6, 23, 0.7);
       border: 1px solid var(--border);
-      color: var(--muted);
+      color: var(--gold-light);
       padding: 7px 8px;
       border-radius: 10px;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       outline: none;
     }
-    .card-action-select option { background: #0b1120; color: #fff; }
+    .card-action-select option { background: #090e1c; color: #fff; }
 
     /* Sub-Page 2: Client Showcase Cards */
     .showcase-grid {
@@ -275,11 +292,11 @@
     <section data-subpage-title="App Launchpad">
       <div class="hub-toolbar">
         <div class="hub-title-group">
-          <h1 class="hub-title">Workspace Launchpad</h1>
+          <img src="assets/mgc-logo.png" alt="MGC Logo" class="hub-logo" onerror="this.style.display='none'" />
+          <h1 class="hub-title">MGC Workspace Launchpad</h1>
           <span class="status-dot-pill">● 16 Portals Online</span>
         </div>
 
-        <!-- Dropdown Controls Instead of Cluttered Button Rows -->
         <div class="toolbar-controls">
           <select id="cat-dropdown" class="fluent-select" onchange="filterApps(this.value)">
             <option value="all">📂 Category: All 16 Portals</option>
@@ -292,12 +309,11 @@
           <select id="role-dropdown" class="fluent-select" onchange="handleRoleAction(this.value)">
             <option value="admin">🫆 View: Root Admin (All Access)</option>
             <option value="client">👤 Switch to Client 2FA View</option>
-            <option value="sterling">🚗 Open Sterling Auto Prototype</option>
+            <option value="sterling">🚗 Open Sterling Auto Repair</option>
           </select>
         </div>
       </div>
 
-      <!-- Minimalist 4-Metric Bar -->
       <div class="metric-row">
         <div class="metric-pill">
           <div>
@@ -309,27 +325,26 @@
         <div class="metric-pill">
           <div>
             <div class="m-lbl">2FA Auth Gate</div>
-            <div class="m-val" style="color:#34d399;">Passkey</div>
+            <div class="m-val" style="color:#4ade80;">Passkey</div>
           </div>
           <div class="m-ico">🫆</div>
         </div>
         <div class="metric-pill">
           <div>
             <div class="m-lbl">Mobile Viewport</div>
-            <div class="m-val" style="color:#60a5fa;">0px Overflow</div>
+            <div class="m-val" style="color:#93c5fd;">0px Overflow</div>
           </div>
           <div class="m-ico">📱</div>
         </div>
         <div class="metric-pill">
           <div>
             <div class="m-lbl">Idle Cloud Cost</div>
-            <div class="m-val" style="color:#fbbf24;">$0.00</div>
+            <div class="m-val">$0.00</div>
           </div>
           <div class="m-ico">☁️</div>
         </div>
       </div>
 
-      <!-- 16 Minimalist Visual App Cards -->
       <div class="app-grid" id="master-app-grid"></div>
     </section>
 
@@ -339,30 +354,30 @@
     <section data-subpage-title="Client Projects & Apps">
       <div class="hub-toolbar">
         <div class="hub-title-group">
-          <h2 class="hub-title">Client Showcases &amp; Monetized Apps</h2>
+          <h2 class="hub-title">Client Websites &amp; Monetized Apps</h2>
           <span class="status-dot-pill">Customer-Ready</span>
         </div>
       </div>
 
       <div class="showcase-grid">
-        <div class="showcase-box" style="border-color:rgba(239,68,68,0.45);">
+        <div class="showcase-box" style="border-color:rgba(220,38,38,0.55);">
           <div class="ac-top">
             <div class="ac-icon">🚗</div>
-            <span class="ac-cat-tag" style="color:#f87171;">Standalone Client Site • No 2FA</span>
+            <span class="ac-cat-tag">Customer Business Website • No 2FA</span>
           </div>
           <div>
-            <div class="ac-title" style="font-size:22px;">Sterling Auto Repair Studio</div>
-            <div class="ac-sub">45911 Transamerica Plaza, Suite 102 • Minimalist Interactive Car Hotspot Quote &amp; Bay Tracker</div>
+            <div class="ac-title" style="font-size:22px;">Sterling Auto Repair</div>
+            <div class="ac-sub">45911 Transamerica Plaza, Suite 102 • Services, Direct Contact, Quote Request &amp; Directions</div>
           </div>
           <div class="ac-bottom">
-            <a href="projects/sterling-auto-repair/index.html" class="btn-open" style="background:#ef4444;color:#fff;border:none;">Launch Sterling Auto Studio ↗</a>
+            <a href="projects/sterling-auto-repair/index.html" class="btn-open" style="background:linear-gradient(135deg,#dc2626,#991b1b);">Open Sterling Auto Repair ↗</a>
           </div>
         </div>
 
         <div class="showcase-box">
           <div class="ac-top">
             <div class="ac-icon">⚡</div>
-            <span class="ac-cat-tag" style="color:#fbbf24;">Monetized SaaS + Canvas LMS</span>
+            <span class="ac-cat-tag">Monetized SaaS + Canvas LMS</span>
           </div>
           <div>
             <div class="ac-title" style="font-size:22px;">Decoupled Apps &amp; Course LMS</div>
@@ -376,7 +391,7 @@
         <div class="showcase-box">
           <div class="ac-top">
             <div class="ac-icon">🎓</div>
-            <span class="ac-cat-tag" style="color:#34d399;">Cross-Industry Atlas</span>
+            <span class="ac-cat-tag">Cross-Industry Atlas</span>
           </div>
           <div>
             <div class="ac-title" style="font-size:22px;">eLearning &amp; Insights Atlas</div>
@@ -390,7 +405,7 @@
         <div class="showcase-box">
           <div class="ac-top">
             <div class="ac-icon">💳</div>
-            <span class="ac-cat-tag" style="color:#60a5fa;">Mercury • Stripe • WAWF</span>
+            <span class="ac-cat-tag">Mercury • Stripe • WAWF</span>
           </div>
           <div>
             <div class="ac-title" style="font-size:22px;">Finance &amp; Treasury Command</div>
@@ -418,7 +433,7 @@
         <div class="showcase-box">
           <div class="ac-top">
             <div class="ac-icon">🫆</div>
-            <span class="ac-cat-tag" style="color:#34d399;">Root Admin Session</span>
+            <span class="ac-cat-tag">Root Admin Session</span>
           </div>
           <div>
             <div class="ac-title">malik.khabir@miltongroupsecurity.org</div>
@@ -432,7 +447,7 @@
         <div class="showcase-box">
           <div class="ac-top">
             <div class="ac-icon">🔒</div>
-            <span class="ac-cat-tag" style="color:#60a5fa;">CMMC 2.0 • SC-100 • CIPP/US</span>
+            <span class="ac-cat-tag">CMMC 2.0 • SC-100 • CIPP/US</span>
           </div>
           <div>
             <div class="ac-title">Compliance &amp; Zero-Trust Center</div>
@@ -450,7 +465,7 @@
   <script>
     const PORTALS = [
       { file: 'admin-command-portal.html', icon: '🛡️', title: 'Admin Command', sub: 'Master 16-Portal Control', cat: 'core', badge: 'Root Hub' },
-      { file: 'projects/sterling-auto-repair/index.html', icon: '🚗', title: 'Sterling Auto Studio', sub: 'Transamerica Plaza Ste 102', cat: 'core', badge: 'Client Site', featured: true },
+      { file: 'projects/sterling-auto-repair/index.html', icon: '🚗', title: 'Sterling Auto Repair', sub: 'Transamerica Plaza Ste 102', cat: 'core', badge: 'Client Site', featured: true },
       { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', title: 'SaaS Apps & LMS', sub: 'Monetized Apps & Courses', cat: 'core', badge: 'Monetized' },
       { file: 'onboarding-portal.html', icon: '🫆', title: 'Client 2FA Gate', sub: 'Fingerprint & TOTP Login', cat: 'core', badge: '2FA Auth' },
 

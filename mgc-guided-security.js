@@ -1,22 +1,22 @@
 /**
  * MGC & F.I.X Enterprise OS Shell ("Google + Microsoft + LinkedIn + Canvas" Paradigm)
+ * - Authentic MGC Logo (assets/mgc-logo.png) & Logo Thematic Palette (Obsidian, Slate-Navy, Silver, Gold, Crimson, Cobalt, Emerald)
  * - Google Workspace 9-Dot Waffle App Launcher + Omnibox Search (Ctrl+K)
  * - Microsoft 365 Fluent Categorized Top Dropdown Menus (▾)
- * - Instructure Canvas Persistent Left Icon Rail (64px)
+ * - Instructure Canvas Persistent Left Icon Rail (68px)
  * - LinkedIn-Style Profile & View Density Dropdown (Me ▾)
- * - Automatic Multi-Page Sub-View Paginator & Card Progressive Disclosure (Zero Text Clutter)
+ * - Automatic Multi-Page Sub-View Paginator (<section> & .tab-pane support)
  */
 (function () {
   const SESSION_KEY = 'mgc_onboarded_session';
   const GATE_LOCK_KEY = 'mgc_edge_gate_locked';
   const CLEAN_UI_KEY = 'mgc_clean_ui_mode';
 
-  // Do not inject internal MGC chrome onto standalone customer incentive sites (e.g. Sterling Auto Repair)
+  // Standalone customer websites (e.g. Sterling Auto Repair) do not get internal MGC OS chrome
   if (window.location.pathname.toLowerCase().includes('sterling-auto-repair')) {
     return;
   }
 
-  // 1. Cross-Domain "Trust But Verify" Handoff Parser
   const params = new URLSearchParams(window.location.search);
   if (params.get('mgc_verify') === '1') {
     const role = params.get('role') || 'VIEWER_ONBOARDED';
@@ -61,25 +61,25 @@
 
   // 16-Portal Ecosystem Registry Categorized for Dropdowns, Waffle Menu & Canvas Rail
   const pages = [
-    { file: 'admin-command-portal.html', icon: '🛡️', label: 'Admin Hub', full: 'Master Admin Command Hub', cat: 'Command & Auth', tag: 'All 16 Portals', color: '#3b82f6', rail: true },
-    { file: 'onboarding-portal.html', icon: '🫆', label: 'Client 2FA', full: 'Client 2FA & Biometric Gate', cat: 'Command & Auth', tag: 'Passkey + TOTP', color: '#10b981', rail: true },
-    { file: 'index.html', icon: '📊', label: 'Ops Hub', full: 'Executive Data & Ops Hub', cat: 'Command & Auth', tag: 'Cloud & Telemetry', color: '#6366f1', rail: true },
+    { file: 'admin-command-portal.html', icon: '🛡️', label: 'Admin Hub', full: 'Master Admin Command Hub', cat: 'Command & Auth', tag: 'All 16 Portals', color: '#2563eb', rail: true },
+    { file: 'onboarding-portal.html', icon: '🫆', label: 'Client 2FA', full: 'Client 2FA & Biometric Gate', cat: 'Command & Auth', tag: 'Passkey + TOTP', color: '#16a34a', rail: true },
+    { file: 'index.html', icon: '📊', label: 'Ops Hub', full: 'Executive Data & Ops Hub', cat: 'Command & Auth', tag: 'Cloud & Telemetry', color: '#fcd34d', rail: true },
     { file: 'integrations-connections-hub.html', icon: '🔌', label: 'Integrations', full: 'Cloud & API Integrations', cat: 'Command & Auth', tag: 'GCP • Azure • OAuth', color: '#38bdf8', rail: false },
 
-    { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', label: 'SaaS Apps', full: 'Monetized Apps & Simulators', cat: 'Apps & Labs', tag: 'Pay-Per-View Apps', color: '#f59e0b', rail: true },
-    { file: 'agent-workflow-studio.html', icon: '🤖', label: 'Agent Studio', full: 'LangGraph AI Agent Studio', cat: 'Apps & Labs', tag: 'Multi-Agent Flows', color: '#a855f7', rail: false },
-    { file: 'earth-3d.html', icon: '🌍', label: '3D Earth', full: '3D Geospatial Command', cat: 'Apps & Labs', tag: 'WebGL 3D Globe', color: '#0ea5e9', rail: false },
-    { file: 'vr-command.html', icon: '🥽', label: '360° VR', full: '360° WebXR Spatial Deck', cat: 'Apps & Labs', tag: 'Spatial Command', color: '#ec4899', rail: false },
+    { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', label: 'SaaS Apps', full: 'Monetized Apps & Simulators', cat: 'Apps & Labs', tag: 'Pay-Per-View Apps', color: '#d97706', rail: true },
+    { file: 'agent-workflow-studio.html', icon: '🤖', label: 'Agent Studio', full: 'LangGraph AI Agent Studio', cat: 'Apps & Labs', tag: 'Multi-Agent Flows', color: '#2563eb', rail: false },
+    { file: 'earth-3d.html', icon: '🌍', label: '3D Earth', full: '3D Geospatial Command', cat: 'Apps & Labs', tag: 'WebGL 3D Globe', color: '#16a34a', rail: false },
+    { file: 'vr-command.html', icon: '🥽', label: '360° VR', full: '360° WebXR Spatial Deck', cat: 'Apps & Labs', tag: 'Spatial Command', color: '#dc2626', rail: false },
 
-    { file: 'elearning-upskilling-hub.html', icon: '🎓', label: 'Canvas LMS', full: 'Canvas Academy & Atlas', cat: 'Canvas Academy', tag: 'Courses & Skill Map', color: '#10b981', rail: true },
-    { file: 'historical-archaeology-ai-hub.html', icon: '🏛️', label: 'History Lab', full: 'Historical & Archaeology AI', cat: 'Canvas Academy', tag: 'LiDAR & Epigraphy', color: '#eab308', rail: false },
-    { file: 'chronos-external-insight-webapp.html', icon: '🌐', label: 'Chronos App', full: 'Chronos Discovery WebApp', cat: 'Canvas Academy', tag: '3-Pane Explorer', color: '#06b6d4', rail: false },
+    { file: 'elearning-upskilling-hub.html', icon: '🎓', label: 'Canvas LMS', full: 'Canvas Academy & Atlas', cat: 'Canvas Academy', tag: 'Courses & Skill Map', color: '#16a34a', rail: true },
+    { file: 'historical-archaeology-ai-hub.html', icon: '🏛️', label: 'History Lab', full: 'Historical & Archaeology AI', cat: 'Canvas Academy', tag: 'LiDAR & Epigraphy', color: '#fcd34d', rail: false },
+    { file: 'chronos-external-insight-webapp.html', icon: '🌐', label: 'Chronos App', full: 'Chronos Discovery WebApp', cat: 'Canvas Academy', tag: '3-Pane Explorer', color: '#2563eb', rail: false },
 
-    { file: 'projects/sterling-auto-repair/index.html', icon: '🚗', label: 'Sterling Auto', full: 'Sterling Auto Repair Studio', cat: 'Commerce & Gov', tag: 'Customer Prototype', color: '#ef4444', rail: true },
-    { file: 'finance-command.html', icon: '💳', label: 'Finance', full: 'Finance & Treasury Hub', cat: 'Commerce & Gov', tag: 'Stripe • ACH • WAWF', color: '#22c55e', rail: true },
-    { file: 'whitefeather-ecommerce-hub.html', icon: '🛍️', label: 'eCommerce', full: 'White Feather Storefront', cat: 'Commerce & Gov', tag: 'Digital Commerce', color: '#f97316', rail: false },
-    { file: 'sdvosb-contract-radar.html', icon: '🎯', label: 'SAM Radar', full: 'SDVOSB Contract Radar', cat: 'Commerce & Gov', tag: 'VA & DoD Pipeline', color: '#eab308', rail: false },
-    { file: 'compliance-trust-center.html', icon: '🔒', label: 'Zero-Trust', full: 'Compliance & Trust Center', cat: 'Commerce & Gov', tag: 'CMMC 2.0 • SC-100', color: '#14b8a6', rail: false }
+    { file: 'projects/sterling-auto-repair/index.html', icon: '🚗', label: 'Sterling Auto', full: 'Sterling Auto Repair', cat: 'Commerce & Gov', tag: 'Customer Website', color: '#dc2626', rail: true },
+    { file: 'finance-command.html', icon: '💳', label: 'Finance', full: 'Finance & Treasury Hub', cat: 'Commerce & Gov', tag: 'Stripe • ACH • WAWF', color: '#16a34a', rail: true },
+    { file: 'whitefeather-ecommerce-hub.html', icon: '🛍️', label: 'eCommerce', full: 'White Feather Storefront', cat: 'Commerce & Gov', tag: 'Digital Commerce', color: '#d97706', rail: false },
+    { file: 'sdvosb-contract-radar.html', icon: '🎯', label: 'SAM Radar', full: 'SDVOSB Contract Radar', cat: 'Commerce & Gov', tag: 'VA & DoD Pipeline', color: '#fcd34d', rail: false },
+    { file: 'compliance-trust-center.html', icon: '🔒', label: 'Zero-Trust', full: 'Compliance & Trust Center', cat: 'Commerce & Gov', tag: 'CMMC 2.0 • SC-100', color: '#2563eb', rail: false }
   ];
 
   function isCleanUiEnabled() {
@@ -97,13 +97,17 @@
     style.id = 'mgc-os-shell-styles';
     style.textContent = `
       /* ======================================================================
-         GOOGLE + MICROSOFT + LINKEDIN + CANVAS ENTERPRISE SHELL
+         MGC LOGO THEMATIC ENTERPRISE SHELL (Obsidian, Slate-Navy, Silver, Gold, Crimson & Cobalt)
          ====================================================================== */
       :root {
         --os-top-h: 58px;
         --os-rail-w: 68px;
-        --os-bg: rgba(7, 11, 22, 0.88);
-        --os-border: rgba(148, 163, 184, 0.14);
+        --os-bg: rgba(2, 6, 23, 0.92);
+        --os-border: rgba(203, 213, 225, 0.16);
+        --mgc-gold: #fcd34d;
+        --mgc-crimson: #dc2626;
+        --mgc-cobalt: #2563eb;
+        --mgc-emerald: #16a34a;
       }
 
       body {
@@ -112,17 +116,17 @@
         transition: opacity 0.22s ease;
       }
 
-      /* 1. TOP BAR (Google Waffle + Microsoft Dropdowns + Omnibox + LinkedIn Me) */
+      /* 1. TOP BAR */
       #mgc-os-topbar {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         height: var(--os-top-h);
-        background: var(--os-bg);
+        background: linear-gradient(90deg, rgba(2, 6, 23, 0.96) 0%, rgba(15, 23, 42, 0.94) 60%, rgba(23, 37, 84, 0.92) 100%);
         backdrop-filter: blur(22px);
         -webkit-backdrop-filter: blur(22px);
-        border-bottom: 1px solid var(--os-border);
+        border-bottom: 1px solid rgba(252, 211, 77, 0.25);
         z-index: 99990;
         display: flex;
         align-items: center;
@@ -130,6 +134,7 @@
         padding: 0 18px 0 12px;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         user-select: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
       }
 
       .os-left {
@@ -143,17 +148,18 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        border: none;
+        border: 1px solid transparent;
         background: transparent;
         color: #cbd5e1;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background 0.18s, color 0.18s;
+        transition: all 0.18s;
       }
       .os-waffle-btn:hover, .os-waffle-btn.active {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(37, 99, 235, 0.2);
+        border-color: rgba(252, 211, 77, 0.4);
         color: #ffffff;
       }
       .os-waffle-svg {
@@ -162,28 +168,25 @@
         fill: currentColor;
       }
 
+      /* Authentic MGC Logo Lockup */
       .os-brand {
         display: flex;
         align-items: center;
         gap: 9px;
         text-decoration: none;
         color: #ffffff;
-        font-weight: 800;
-        font-size: 14px;
-        letter-spacing: -0.01em;
-        padding-right: 10px;
+        font-weight: 900;
+        font-size: 14.5px;
+        letter-spacing: 0.04em;
+        padding-right: 12px;
         border-right: 1px solid var(--os-border);
       }
-      .os-brand-badge {
-        width: 26px;
-        height: 26px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #2563eb, #c5b358);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: 900;
+      .os-brand-logo-img {
+        height: 30px;
+        width: auto;
+        border-radius: 6px;
+        border: 1px solid rgba(252, 211, 77, 0.45);
+        background: #0f172a;
       }
 
       /* Microsoft Fluent Categorized Top Dropdown Menus */
@@ -201,7 +204,7 @@
         color: #cbd5e1;
         font-family: inherit;
         font-size: 12.5px;
-        font-weight: 600;
+        font-weight: 700;
         padding: 7px 12px;
         border-radius: 8px;
         cursor: pointer;
@@ -211,13 +214,13 @@
         transition: all 0.16s ease;
       }
       .os-menu-trigger:hover, .os-menu-wrap.open .os-menu-trigger {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(30, 58, 138, 0.45);
         color: #ffffff;
-        border-color: rgba(255, 255, 255, 0.12);
+        border-color: rgba(252, 211, 77, 0.35);
       }
       .os-caret {
         font-size: 10px;
-        opacity: 0.7;
+        color: var(--mgc-gold);
         transition: transform 0.2s ease;
       }
       .os-menu-wrap.open .os-caret {
@@ -229,13 +232,13 @@
         position: absolute;
         top: calc(100% + 8px);
         left: 0;
-        min-width: 270px;
-        background: rgba(11, 17, 32, 0.97);
+        min-width: 275px;
+        background: rgba(9, 14, 28, 0.98);
         backdrop-filter: blur(24px);
-        border: 1px solid rgba(148, 163, 184, 0.22);
+        border: 1px solid rgba(252, 211, 77, 0.32);
         border-radius: 14px;
         padding: 8px;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
         display: none;
         flex-direction: column;
         gap: 3px;
@@ -260,13 +263,14 @@
         transition: background 0.15s;
       }
       .os-drop-item:hover, .os-drop-item.active {
-        background: rgba(59, 130, 246, 0.16);
+        background: linear-gradient(90deg, rgba(30, 58, 138, 0.55), rgba(127, 29, 29, 0.35));
       }
       .os-drop-icon {
         width: 32px;
         height: 32px;
         border-radius: 9px;
         background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -281,22 +285,22 @@
       }
       .os-drop-sub {
         font-size: 10.5px;
-        color: #94a3b8;
+        color: #cbd5e1;
         display: block;
       }
 
       /* Google-Style Omnibox Search Bar */
       .os-omnibox {
         position: relative;
-        width: 280px;
+        width: 265px;
       }
       .os-search-btn {
         width: 100%;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid var(--os-border);
         border-radius: 999px;
         padding: 7px 14px;
-        color: #94a3b8;
+        color: #cbd5e1;
         font-family: inherit;
         font-size: 12px;
         display: flex;
@@ -306,13 +310,13 @@
         transition: all 0.18s;
       }
       .os-search-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.24);
-        color: #e2e8f0;
+        border-color: var(--mgc-gold);
+        color: #ffffff;
       }
       .os-kbd {
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(2, 6, 23, 0.7);
+        border: 1px solid rgba(252, 211, 77, 0.3);
+        color: var(--mgc-gold);
         padding: 1px 6px;
         border-radius: 5px;
         font-size: 10px;
@@ -327,9 +331,9 @@
       }
 
       .os-page-select {
-        background: rgba(59, 130, 246, 0.12);
-        border: 1px solid rgba(59, 130, 246, 0.35);
-        color: #93c5fd;
+        background: rgba(30, 58, 138, 0.35);
+        border: 1px solid rgba(252, 211, 77, 0.4);
+        color: var(--mgc-gold);
         padding: 6px 11px;
         border-radius: 8px;
         font-family: inherit;
@@ -339,20 +343,20 @@
         cursor: pointer;
       }
       .os-page-select option {
-        background: #0b1120;
+        background: #090e1c;
         color: #f8fafc;
       }
 
       /* LinkedIn-Style "Me ▾" Avatar Dropdown */
       .os-profile-btn {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--os-border);
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(252, 211, 77, 0.35);
         border-radius: 999px;
         padding: 4px 10px 4px 5px;
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        color: #f8fafc;
+        color: #ffffff;
         font-family: inherit;
         font-size: 12px;
         font-weight: 700;
@@ -362,13 +366,14 @@
         width: 26px;
         height: 26px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: #022c22;
+        background: linear-gradient(135deg, #dc2626, #1e3a8a);
+        border: 1px solid var(--mgc-gold);
+        color: #ffffff;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-weight: 900;
-        font-size: 11px;
+        font-size: 10.5px;
       }
 
       /* 2. GOOGLE 9-DOT WAFFLE POPOVER GRID */
@@ -376,15 +381,15 @@
         position: fixed;
         top: 66px;
         left: 14px;
-        width: 340px;
+        width: 345px;
         max-height: calc(100vh - 84px);
         overflow-y: auto;
-        background: rgba(11, 17, 32, 0.98);
+        background: rgba(9, 14, 28, 0.98);
         backdrop-filter: blur(26px);
-        border: 1px solid rgba(148, 163, 184, 0.24);
+        border: 1px solid rgba(252, 211, 77, 0.35);
         border-radius: 22px;
         padding: 18px;
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
         z-index: 99995;
         display: none;
         animation: osDropFade 0.18s ease;
@@ -408,15 +413,16 @@
         text-align: center;
       }
       .waffle-tile:hover, .waffle-tile.active {
-        background: rgba(255, 255, 255, 0.09);
+        background: rgba(30, 58, 138, 0.45);
+        border: 1px solid rgba(252, 211, 77, 0.35);
         transform: translateY(-2px);
       }
       .waffle-icon {
         width: 42px;
         height: 42px;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.14);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -436,8 +442,8 @@
         left: 0;
         bottom: 0;
         width: var(--os-rail-w);
-        background: rgba(6, 10, 20, 0.92);
-        border-right: 1px solid var(--os-border);
+        background: linear-gradient(180deg, rgba(2, 6, 23, 0.96) 0%, rgba(15, 23, 42, 0.95) 100%);
+        border-right: 1px solid rgba(252, 211, 77, 0.2);
         z-index: 99985;
         display: flex;
         flex-direction: column;
@@ -467,12 +473,12 @@
         position: relative;
       }
       .rail-item:hover {
-        background: rgba(255, 255, 255, 0.07);
+        background: rgba(30, 58, 138, 0.35);
         color: #ffffff;
       }
       .rail-item.active {
-        background: rgba(59, 130, 246, 0.16);
-        color: #60a5fa;
+        background: rgba(30, 58, 138, 0.55);
+        color: var(--mgc-gold);
       }
       .rail-item.active::before {
         content: '';
@@ -482,19 +488,19 @@
         bottom: 10px;
         width: 3.5px;
         border-radius: 4px;
-        background: #3b82f6;
+        background: var(--mgc-gold);
       }
       .rail-ico { font-size: 18px; line-height: 1; }
       .rail-txt { font-size: 9.5px; font-weight: 700; letter-spacing: 0.01em; text-align: center; }
 
-      /* 4. AUTOMATIC SUB-PAGE VIEW BAR (MULTI-PAGE PAGINATION INSTEAD OF WALL OF SCROLL) */
+      /* 4. AUTOMATIC SUB-PAGE VIEW BAR */
       #mgc-subpage-bar {
         max-width: 1400px;
-        margin: 14px auto 10px;
+        margin: 14px auto 12px;
         padding: 8px 14px;
-        background: rgba(15, 23, 42, 0.78);
+        background: rgba(9, 14, 28, 0.85);
         backdrop-filter: blur(14px);
-        border: 1px solid var(--os-border);
+        border: 1px solid rgba(252, 211, 77, 0.25);
         border-radius: 14px;
         display: flex;
         align-items: center;
@@ -512,7 +518,7 @@
       .sp-tab {
         background: transparent;
         border: 1px solid transparent;
-        color: #94a3b8;
+        color: #cbd5e1;
         padding: 6px 13px;
         border-radius: 9px;
         font-size: 12px;
@@ -525,12 +531,13 @@
         background: rgba(255, 255, 255, 0.06);
       }
       .sp-tab.active {
-        background: #2563eb;
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        border-color: rgba(252, 211, 77, 0.45);
         color: #ffffff;
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
       }
 
-      /* 5. ANTI-CLUTTER CLEAN UI ENGINE (ZERO PARAGRAPH BLOAT) */
+      /* 5. ANTI-CLUTTER CLEAN UI ENGINE */
       body.mgc-clean-ui p {
         display: -webkit-box;
         -webkit-line-clamp: 1;
@@ -546,7 +553,6 @@
         font-size: 12px !important;
         opacity: 0.82;
       }
-      /* Hide redundant per-page legacy headers & bulky text hero boxes when inside OS Shell */
       body.mgc-clean-ui .admin-bar,
       body.mgc-clean-ui .hero-box,
       body.mgc-clean-ui > header:not(#mgc-os-topbar) {
@@ -557,31 +563,11 @@
         margin-bottom: 14px !important;
       }
 
-      /* Card Details Dropdown Button injected by Anti-Clutter Engine */
-      .mgc-card-details-toggle {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: #94a3b8;
-        padding: 4px 10px;
-        border-radius: 7px;
-        font-size: 11px;
-        font-weight: 700;
-        cursor: pointer;
-        margin-top: 6px;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-      }
-      .mgc-card-details-toggle:hover {
-        color: #fff;
-        border-color: rgba(255, 255, 255, 0.28);
-      }
-
       /* Command Palette Modal (Ctrl+K) */
       #os-cmd-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(3, 6, 14, 0.8);
+        background: rgba(2, 6, 23, 0.82);
         backdrop-filter: blur(12px);
         z-index: 99999;
         display: none;
@@ -594,11 +580,11 @@
       .os-cmd-modal {
         width: 100%;
         max-width: 640px;
-        background: #0b1120;
-        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: #090e1c;
+        border: 1px solid rgba(252, 211, 77, 0.35);
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.85);
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9);
       }
 
       @media (max-width: 960px) {
@@ -619,7 +605,7 @@
           flex-direction: row;
           padding: 0 8px;
           border-right: none;
-          border-top: 1px solid var(--os-border);
+          border-top: 1px solid rgba(252, 211, 77, 0.25);
         }
         .rail-group {
           flex-direction: row;
@@ -638,14 +624,14 @@
       const isCatActive = items.some(p => p.file.toLowerCase() === currentFile);
       return `
         <div class="os-menu-wrap" data-os-menu>
-          <button class="os-menu-trigger" style="${isCatActive ? 'color:#60a5fa;' : ''}">
+          <button type="button" class="os-menu-trigger" style="${isCatActive ? 'color:#fcd34d;' : ''}">
             <span>${cat}</span>
             <span class="os-caret">▾</span>
           </button>
           <div class="os-dropdown-panel">
             ${items.map(item => `
               <a href="${item.file}" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
-                <span class="os-drop-icon">${item.icon}</span>
+                <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
                 <span>
                   <span class="os-drop-title">${item.full}</span>
                   <span class="os-drop-sub">${item.tag}</span>
@@ -657,7 +643,6 @@
       `;
     }).join('');
 
-    // Build Canvas Left Rail Items
     const railItems = pages.filter(p => p.rail);
 
     const shellWrapper = document.createElement('div');
@@ -666,15 +651,15 @@
       <!-- 1. TOP BAR -->
       <header id="mgc-os-topbar">
         <div class="os-left">
-          <button class="os-waffle-btn" id="os-waffle-trigger" title="Google-Style 9-Dot App Launcher">
+          <button type="button" class="os-waffle-btn" id="os-waffle-trigger" title="Google-Style 9-Dot App Launcher">
             <svg class="os-waffle-svg" viewBox="0 0 24 24">
               <path d="M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM16,6c0,1.1 0.9,2 2,2s2,-0.9 2,-2 -0.9,-2 -2,-2 -2,0.9 -2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z"/>
             </svg>
           </button>
 
           <a href="admin-command-portal.html" class="os-brand">
-            <span class="os-brand-badge">M</span>
-            <span>MGC OS</span>
+            <img src="assets/mgc-logo.png" alt="MGC" class="os-brand-logo-img" onerror="this.style.display='none'" />
+            <span>MGC WORKSPACE</span>
           </a>
 
           <!-- Microsoft Fluent Categorized Dropdown Menus -->
@@ -685,8 +670,8 @@
 
         <!-- Google Omnibox Search Trigger -->
         <div class="os-omnibox">
-          <button class="os-search-btn" id="os-omnibox-trigger">
-            <span>🔍 Search apps, pages, actions...</span>
+          <button type="button" class="os-search-btn" id="os-omnibox-trigger">
+            <span>🔍 Search portals, courses, tools...</span>
             <span class="os-kbd">⌘K</span>
           </button>
         </div>
@@ -696,17 +681,17 @@
           <select id="os-subpage-select" class="os-page-select" title="Jump to Page Section" style="display:none;"></select>
 
           <div class="os-menu-wrap" data-os-menu>
-            <button class="os-profile-btn">
+            <button type="button" class="os-profile-btn">
               <span class="os-avatar">MK</span>
               <span>Me</span>
               <span class="os-caret">▾</span>
             </button>
-            <div class="os-dropdown-panel" style="right:0;left:auto;min-width:250px;">
+            <div class="os-dropdown-panel" style="right:0;left:auto;min-width:255px;">
               <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:4px;">
                 <div style="font-size:13px;font-weight:800;color:#fff;">${session.name}</div>
-                <div style="font-size:11px;color:#34d399;font-weight:600;">🫆 2FA Biometric Verified</div>
+                <div style="font-size:11px;color:#fcd34d;font-weight:700;">🫆 2FA Biometric Verified</div>
               </div>
-              <button class="os-drop-item" id="os-toggle-clean" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;">
+              <button type="button" class="os-drop-item" id="os-toggle-clean" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;">
                 <span class="os-drop-icon">✨</span>
                 <span>
                   <span class="os-drop-title" id="os-clean-label">Minimalist UI: ${cleanOn ? 'ON' : 'OFF'}</span>
@@ -723,8 +708,8 @@
               <a href="projects/sterling-auto-repair/index.html" class="os-drop-item">
                 <span class="os-drop-icon">🚗</span>
                 <span>
-                  <span class="os-drop-title">Sterling Auto Prototype</span>
-                  <span class="os-drop-sub">Customer Incentive Studio</span>
+                  <span class="os-drop-title">Sterling Auto Repair</span>
+                  <span class="os-drop-sub">Customer Website Prototype</span>
                 </span>
               </a>
             </div>
@@ -735,13 +720,13 @@
       <!-- 2. GOOGLE 9-DOT WAFFLE APP LAUNCHER POPOVER -->
       <div id="os-waffle-popover">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px;">
-          <span style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;">All 16 Workspace Apps</span>
-          <a href="admin-command-portal.html" style="font-size:11px;color:#60a5fa;text-decoration:none;font-weight:700;">Admin View →</a>
+          <span style="font-size:11px;font-weight:800;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;">All 16 Workspace Apps</span>
+          <a href="admin-command-portal.html" style="font-size:11px;color:#93c5fd;text-decoration:none;font-weight:700;">Admin Hub →</a>
         </div>
         <div class="waffle-grid">
           ${pages.map(p => `
             <a href="${p.file}" class="waffle-tile ${p.file.toLowerCase() === currentFile ? 'active' : ''}">
-              <div class="waffle-icon" style="border-color:${p.color}44;">${p.icon}</div>
+              <div class="waffle-icon" style="border-color:${p.color}66;">${p.icon}</div>
               <span class="waffle-label">${p.label}</span>
             </a>
           `).join('')}
@@ -759,7 +744,7 @@
           `).join('')}
         </div>
         <div class="rail-group rail-bottom">
-          <button class="rail-item" id="rail-cmd-btn" style="background:none;border:none;cursor:pointer;" title="Search All Portals (Ctrl+K)">
+          <button type="button" class="rail-item" id="rail-cmd-btn" style="background:none;border:none;cursor:pointer;" title="Search All Portals (Ctrl+K)">
             <span class="rail-ico">🔍</span>
             <span class="rail-txt">Search</span>
           </button>
@@ -772,7 +757,7 @@
           <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;gap:10px;align-items:center;">
             <span>🔍</span>
             <input id="os-cmd-input" type="text" placeholder="Type a portal, course, or tool name..." style="flex:1;background:transparent;border:none;color:#fff;font-size:14px;outline:none;" />
-            <button id="os-cmd-close" style="background:rgba(255,255,255,0.08);border:none;color:#cbd5e1;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">ESC</button>
+            <button type="button" id="os-cmd-close" style="background:rgba(255,255,255,0.08);border:none;color:#cbd5e1;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;">ESC</button>
           </div>
           <div id="os-cmd-results" style="max-height:360px;overflow-y:auto;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
         </div>
@@ -833,8 +818,8 @@
       const norm = q.trim().toLowerCase();
       const matches = pages.filter(p => !norm || p.full.toLowerCase().includes(norm) || p.cat.toLowerCase().includes(norm) || p.tag.toLowerCase().includes(norm));
       cmdResults.innerHTML = matches.map(p => `
-        <a href="${p.file}" class="os-drop-item" style="border:1px solid rgba(255,255,255,0.07);">
-          <span class="os-drop-icon">${p.icon}</span>
+        <a href="${p.file}" class="os-drop-item" style="border:1px solid rgba(255,255,255,0.08);">
+          <span class="os-drop-icon" style="border-color:${p.color}66;">${p.icon}</span>
           <span>
             <span class="os-drop-title">${p.full}</span>
             <span class="os-drop-sub">${p.cat} • ${p.tag}</span>
@@ -867,19 +852,33 @@
       }
     });
 
-    // 5. AUTOMATIC MULTI-PAGE SECTION PAGINATOR (Turns multi-section pages into clean sub-views)
     setupSubPagePagination();
   }
 
   function setupSubPagePagination() {
-    // Wait briefly for DOM content
+    const selectEl = document.getElementById('os-subpage-select');
+
+    // Case A: Page uses .workspace-tabs / .tab-pane (e.g. saas-apps-and-lms-showcase.html)
+    const wsTabs = Array.from(document.querySelectorAll('.workspace-tabs .ws-tab'));
+    if (wsTabs.length > 1) {
+      selectEl.style.display = 'inline-block';
+      selectEl.innerHTML = wsTabs.map((btn, i) => {
+        const txt = btn.textContent.trim().replace(/\s+/g, ' ');
+        return `<option value="${i}">📄 ${txt}</option>`;
+      }).join('');
+      selectEl.addEventListener('change', (e) => {
+        const idx = Number(e.target.value);
+        if (wsTabs[idx]) wsTabs[idx].click();
+      });
+      return;
+    }
+
+    // Case B: Page uses multiple <section> elements
     const sections = Array.from(document.querySelectorAll('main > section, .shell > section, body > section, [data-subpage]'));
     if (sections.length <= 1) return;
 
-    const selectEl = document.getElementById('os-subpage-select');
     selectEl.style.display = 'inline-block';
 
-    // Build Sub-Page Bar at top of content
     const bar = document.createElement('div');
     bar.id = 'mgc-subpage-bar';
 
@@ -897,7 +896,6 @@
       return `Page ${idx + 1}`;
     });
 
-    // Populate Topbar Dropdown
     selectEl.innerHTML = labels.map((lbl, i) => `<option value="${i}">📄 ${i + 1}. ${lbl}</option>`).join('') +
       `<option value="all">📑 Show All Sections</option>`;
 
@@ -917,6 +915,7 @@
 
     labels.forEach((lbl, idx) => {
       const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = 'sp-tab' + (idx === 0 ? ' active' : '');
       btn.textContent = `${idx + 1}. ${lbl}`;
       btn.addEventListener('click', () => activateSubPage(idx));
@@ -926,6 +925,7 @@
     const rightControls = document.createElement('div');
     rightControls.style.cssText = 'display:flex;align-items:center;gap:6px;';
     const allBtn = document.createElement('button');
+    allBtn.type = 'button';
     allBtn.className = 'sp-tab';
     allBtn.textContent = '📑 All';
     allBtn.addEventListener('click', () => activateSubPage('all'));
@@ -940,8 +940,6 @@
     }
 
     selectEl.addEventListener('change', (e) => activateSubPage(e.target.value));
-
-    // Default to showing Page 1 for a clean, zero-clutter single-screen view
     activateSubPage(0);
   }
 

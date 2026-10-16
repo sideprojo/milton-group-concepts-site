@@ -3,37 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>STERLING AUTO — Precision Mechanical & Collision Studio | Sterling, VA</title>
+  <title>Sterling Auto Repair | Mechanical &amp; Collision Repair — Sterling, VA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
   <style>
+    /* ==========================================================================
+       LOGO THEMATIC COLOR PALETTE (Obsidian Ink, Slate-Navy, Silver, Gold, Crimson & Cobalt)
+       ========================================================================== */
     :root {
-      --bg: #05070c;
-      --glass: rgba(15, 20, 32, 0.68);
-      --glass-strong: rgba(12, 16, 26, 0.88);
-      --border: rgba(255, 255, 255, 0.1);
-      --border-hover: rgba(255, 255, 255, 0.26);
-      --red: #ef4444;
-      --red-glow: rgba(239, 68, 68, 0.42);
-      --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.38);
-      --blue: #38bdf8;
-      --text: #f8fafc;
-      --muted: #94a3b8;
+      --bg-obsidian: #020617;
+      --bg-navy: #0f172a;
+      --bg-slate: #1e293b;
+      --glass: rgba(15, 23, 42, 0.78);
+      --glass-strong: rgba(9, 14, 28, 0.94);
+      --silver: #cbd5e1;
+      --silver-muted: #94a3b8;
+      --border: rgba(203, 213, 225, 0.14);
+      --border-hover: rgba(252, 211, 77, 0.48);
+      --gold: #f59e0b;
+      --gold-light: #fcd34d;
+      --crimson: #dc2626;
+      --crimson-glow: rgba(220, 38, 38, 0.42);
+      --cobalt: #2563eb;
+      --cobalt-glow: rgba(37, 99, 235, 0.38);
+      --emerald: #16a34a;
+      --white: #ffffff;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { overflow-x: hidden; background: var(--bg); }
-    section { scroll-margin-top: 96px; }
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg-obsidian);
+      color: var(--white);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+    body {
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(30, 58, 138, 0.28), transparent 42%),
+        radial-gradient(circle at 82% 16%, rgba(127, 29, 29, 0.22), transparent 42%),
+        var(--bg-obsidian);
+    }
+    section { scroll-margin-top: 92px; }
 
     /* ==========================================================================
-       FLOATING MINIMALIST GLASS NAVIGATION
+       FLOATING GLASS NAVIGATION WITH WORKING DROPDOWN MENU
        ========================================================================== */
     .nav-wrap {
       position: fixed;
-      top: 18px;
+      top: 16px;
       left: 0;
       right: 0;
       z-index: 100;
@@ -46,71 +65,123 @@
       pointer-events: auto;
       width: 100%;
       max-width: 1240px;
-      background: rgba(10, 14, 24, 0.74);
+      background: rgba(9, 14, 28, 0.85);
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 10px 14px 10px 22px;
+      padding: 10px 14px 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
-      transition: border-color 0.3s ease;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
     }
-    .nav-pill:hover { border-color: rgba(255, 255, 255, 0.2); }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       text-decoration: none;
-      color: #fff;
+      color: var(--white);
     }
-    .brand-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      background: var(--red);
-      box-shadow: 0 0 14px var(--red);
-      flex-shrink: 0;
+    .brand-shield {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 60%, #7f1d1d 100%);
+      border: 1.5px solid var(--gold-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      color: var(--white);
+      text-shadow: 1px 1px 0 #000;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     }
     .brand-name {
       font-family: 'Outfit', sans-serif;
       font-weight: 900;
-      font-size: 17px;
-      letter-spacing: 0.06em;
+      font-size: 16.5px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      white-space: nowrap;
+      color: var(--white);
+      text-shadow: 0 2px 0 #0f172a;
     }
     .brand-rating {
       font-size: 11px;
       font-weight: 800;
-      color: #fbbf24;
-      background: rgba(251, 191, 36, 0.12);
-      border: 1px solid rgba(251, 191, 36, 0.28);
+      color: var(--gold-light);
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(252, 211, 77, 0.35);
       padding: 3px 9px;
       border-radius: 999px;
-      white-space: nowrap;
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
-    .nav-links a {
-      color: var(--muted);
+    .nav-link, .nav-drop-btn {
+      color: var(--silver);
+      background: transparent;
+      border: none;
       text-decoration: none;
+      font-family: inherit;
       font-size: 13px;
-      font-weight: 600;
-      padding: 8px 16px;
+      font-weight: 700;
+      padding: 8px 15px;
       border-radius: 999px;
-      transition: all 0.22s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
     }
-    .nav-links a:hover {
-      color: #fff;
+    .nav-link:hover, .nav-drop-btn:hover, .nav-link.active {
+      color: var(--white);
       background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Services Dropdown Menu */
+    .nav-dropdown {
+      position: relative;
+    }
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      width: 260px;
+      background: var(--glass-strong);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 8px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+      display: none;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .nav-dropdown.open .dropdown-menu {
+      display: flex;
+    }
+    .drop-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--white);
+      font-size: 12.5px;
+      font-weight: 700;
+      transition: background 0.16s;
+    }
+    .drop-item:hover {
+      background: rgba(37, 99, 235, 0.22);
+      color: var(--gold-light);
     }
 
     .nav-actions {
@@ -118,64 +189,53 @@
       align-items: center;
       gap: 10px;
     }
-    .btn-call {
-      color: #e2e8f0;
+    .btn-phone {
+      color: var(--white);
       text-decoration: none;
       font-size: 13px;
       font-weight: 700;
       padding: 9px 16px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(30, 41, 59, 0.65);
       transition: all 0.2s;
     }
-    .btn-call:hover { border-color: var(--border-hover); background: rgba(255, 255, 255, 0.09); }
-
-    .btn-quote-trigger {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      color: #fff;
-      border: none;
-      font-family: inherit;
+    .btn-phone:hover {
+      border-color: var(--gold-light);
+      background: rgba(30, 58, 138, 0.5);
+    }
+    .btn-contact-nav {
+      background: linear-gradient(135deg, var(--crimson), #991b1b);
+      color: var(--white);
+      text-decoration: none;
+      border: 1px solid rgba(252, 211, 77, 0.35);
       font-size: 13px;
       font-weight: 800;
-      padding: 10px 18px;
+      padding: 10px 20px;
       border-radius: 999px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 8px 25px var(--red-glow);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      white-space: nowrap;
+      box-shadow: 0 8px 24px var(--crimson-glow);
+      transition: all 0.22s ease;
     }
-    .btn-quote-trigger:hover {
-      transform: translateY(-1px) scale(1.02);
-      box-shadow: 0 12px 32px rgba(239, 68, 68, 0.6);
-    }
-    .cart-badge {
-      background: rgba(0, 0, 0, 0.35);
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+    .btn-contact-nav:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(220, 38, 38, 0.6);
     }
 
     /* ==========================================================================
-       SECTION 1: FULL-SCREEN MINIMALIST COVER PAGE (HERO STAGE)
+       SECTION 1: MINIMALIST EYE-CATCHING COVER PAGE (#home)
        ========================================================================== */
     .cover-stage {
       position: relative;
-      min-height: 94vh;
+      min-height: 92vh;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 118px 32px 42px;
       background:
-        radial-gradient(circle at 72% 42%, rgba(239, 68, 68, 0.18), transparent 48%),
-        radial-gradient(circle at 25% 75%, rgba(56, 189, 248, 0.12), transparent 50%),
-        linear-gradient(180deg, rgba(5, 7, 12, 0.42) 0%, rgba(5, 7, 12, 0.76) 65%, #05070c 100%),
+        radial-gradient(circle at 72% 40%, rgba(37, 99, 235, 0.22), transparent 48%),
+        radial-gradient(circle at 22% 72%, rgba(220, 38, 38, 0.18), transparent 50%),
+        linear-gradient(180deg, rgba(2, 6, 23, 0.45) 0%, rgba(2, 6, 23, 0.78) 68%, var(--bg-obsidian) 100%),
         url('assets/hero_shop_bay.jpg') center/cover no-repeat;
-      overflow: hidden;
     }
 
     .cover-center {
@@ -183,7 +243,7 @@
       width: 100%;
       margin: auto;
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.12fr 0.88fr;
       gap: 44px;
       align-items: center;
     }
@@ -194,47 +254,49 @@
       gap: 8px;
       padding: 6px 14px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(252, 211, 77, 0.35);
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #e2e8f0;
+      color: var(--gold-light);
       margin-bottom: 18px;
-      backdrop-filter: blur(10px);
     }
     .pulse-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--emerald);
-      box-shadow: 0 0 12px var(--emerald);
-      flex-shrink: 0;
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
     }
 
+    /* MGC Logo-Inspired 3D Extruded Block Headline */
     .cover-title {
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(42px, 6.2vw, 84px);
+      font-size: clamp(42px, 6vw, 80px);
       font-weight: 900;
       line-height: 0.96;
       letter-spacing: -0.03em;
+      color: var(--white);
+      text-shadow: 0 6px 0 #0f172a, 0 12px 30px rgba(0, 0, 0, 0.8);
       margin-bottom: 18px;
     }
     .cover-title span {
       display: block;
-      background: linear-gradient(90deg, #ffffff 0%, #f87171 55%, #fbbf24 100%);
+      background: linear-gradient(90deg, #ffffff 0%, #fcd34d 52%, #ef4444 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      text-shadow: none;
     }
 
     .cover-sub {
       font-size: 17px;
-      color: #cbd5e1;
+      color: var(--silver);
       font-weight: 500;
-      max-width: 440px;
+      max-width: 460px;
       margin-bottom: 30px;
-      line-height: 1.45;
+      line-height: 1.48;
     }
 
     .cover-cta-row {
@@ -244,8 +306,9 @@
       flex-wrap: wrap;
     }
     .btn-primary-xl {
-      background: #ffffff;
-      color: #05070c;
+      background: linear-gradient(135deg, var(--crimson), #b91c1c);
+      color: var(--white);
+      border: 1px solid rgba(252, 211, 77, 0.4);
       text-decoration: none;
       font-weight: 800;
       font-size: 15px;
@@ -254,104 +317,84 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 15px 40px rgba(255, 255, 255, 0.18);
-      border: none;
-      cursor: pointer;
+      box-shadow: 0 14px 36px var(--crimson-glow);
+      transition: all 0.25s ease;
     }
     .btn-primary-xl:hover {
-      background: var(--red);
-      color: #ffffff;
       transform: translateY(-2px);
-      box-shadow: 0 18px 45px var(--red-glow);
+      box-shadow: 0 18px 44px rgba(220, 38, 38, 0.65);
     }
 
     .btn-glass-xl {
-      background: rgba(255, 255, 255, 0.06);
-      color: #ffffff;
+      background: rgba(30, 58, 138, 0.35);
+      color: var(--white);
       text-decoration: none;
       font-weight: 700;
       font-size: 15px;
       padding: 16px 24px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(147, 197, 253, 0.3);
       backdrop-filter: blur(14px);
       transition: all 0.25s ease;
-      cursor: pointer;
     }
     .btn-glass-xl:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(37, 99, 235, 0.5);
+      border-color: var(--gold-light);
       transform: translateY(-2px);
     }
 
-    /* Right Cover Card: Sleek Floating Glass Storefront Showcase */
+    /* Right Cover Card: Real Transamerica Plaza Storefront */
     .cover-showcase-card {
-      background: rgba(12, 17, 28, 0.65);
+      background: rgba(15, 23, 42, 0.72);
       backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 28px;
+      border: 1px solid var(--border);
+      border-radius: 26px;
       padding: 14px;
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75);
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
+      transition: all 0.3s ease;
     }
     .cover-showcase-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.28);
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
     }
     .showcase-img-wrap {
       position: relative;
-      height: 265px;
-      border-radius: 20px;
+      height: 260px;
+      border-radius: 18px;
       overflow: hidden;
     }
     .showcase-img-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.6s ease;
-    }
-    .cover-showcase-card:hover .showcase-img-wrap img {
-      transform: scale(1.05);
     }
     .showcase-badge {
       position: absolute;
       top: 14px;
       left: 14px;
-      background: rgba(5, 7, 12, 0.8);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(2, 6, 23, 0.85);
+      border: 1px solid rgba(252, 211, 77, 0.4);
       padding: 6px 12px;
       border-radius: 999px;
       font-size: 11px;
-      font-weight: 700;
-      color: #fff;
+      font-weight: 800;
+      color: var(--gold-light);
     }
     .showcase-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 16px 10px 6px;
-    }
-    .showcase-loc {
-      font-size: 15px;
-      font-weight: 800;
-      color: #fff;
-    }
-    .showcase-sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
+      gap: 12px;
     }
 
-    /* Minimalist Bottom Cover Bar */
+    /* Minimalist Bottom Trust Strip */
     .cover-bottom-bar {
       max-width: 1240px;
       width: 100%;
       margin: 0 auto;
-      padding-top: 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -371,287 +414,47 @@
     }
     .stat-val {
       font-family: 'Outfit', sans-serif;
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 800;
-      color: #fff;
+      color: var(--gold-light);
     }
     .stat-lbl {
       font-size: 12.5px;
-      color: var(--muted);
+      color: var(--silver-muted);
       font-weight: 600;
     }
 
     /* ==========================================================================
-       SECTION 2: INTERACTIVE CAR STUDIO (TAP ZONES -> INSTANT QUOTE)
+       SECTION 2: VISUAL SERVICES MENU (#services)
        ========================================================================== */
-    .studio-section {
+    .section-wrap {
       max-width: 1240px;
       margin: 0 auto;
       padding: 64px 24px;
     }
-
-    .studio-header {
+    .sec-head {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-bottom: 24px;
+      margin-bottom: 26px;
       flex-wrap: wrap;
       gap: 16px;
     }
-    .studio-title {
+    .sec-eyebrow {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .sec-title {
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(28px, 3.8vw, 44px);
+      font-size: clamp(28px, 3.6vw, 42px);
       font-weight: 800;
       letter-spacing: -0.02em;
     }
 
-    /* Body Style Selector Pills */
-    .body-switcher {
-      display: inline-flex;
-      background: rgba(15, 20, 32, 0.85);
-      border: 1px solid var(--border);
-      padding: 5px;
-      border-radius: 999px;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-    .body-btn {
-      background: transparent;
-      color: var(--muted);
-      border: none;
-      padding: 8px 18px;
-      border-radius: 999px;
-      font-family: inherit;
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .body-btn.active {
-      background: #ffffff;
-      color: #05070c;
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.25);
-    }
-
-    /* Interactive Car Stage Card */
-    .car-stage-card {
-      position: relative;
-      background:
-        radial-gradient(circle at 50% 62%, rgba(239, 68, 68, 0.15), transparent 58%),
-        radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.08), transparent 50%),
-        linear-gradient(180deg, #0b101d 0%, #060911 100%);
-      border: 1px solid rgba(255, 255, 255, 0.11);
-      border-radius: 32px;
-      padding: 32px 32px 28px;
-      box-shadow: 0 35px 90px rgba(0, 0, 0, 0.75);
-      overflow: hidden;
-    }
-
-    .stage-top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .vehicle-quick-select {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .v-pill-select {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: #fff;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-family: inherit;
-      font-size: 12.5px;
-      font-weight: 700;
-      outline: none;
-      cursor: pointer;
-    }
-    .v-pill-select option { background: #0b101d; color: #fff; }
-
-    .interactive-hint {
-      font-size: 12px;
-      font-weight: 700;
-      color: #cbd5e1;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 6px 14px;
-      border-radius: 999px;
-    }
-
-    /* Interactive Car SVG Canvas */
-    .car-canvas-wrap {
-      width: 100%;
-      max-width: 920px;
-      margin: 6px auto 20px;
-      position: relative;
-    }
-    .car-svg {
-      width: 100%;
-      height: auto;
-      display: block;
-      filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.85));
-    }
-
-    @keyframes hotspotPulse {
-      0% { r: 12px; opacity: 0.9; }
-      100% { r: 28px; opacity: 0; }
-    }
-    .hs-node { cursor: pointer; }
-    .hs-pulse {
-      fill: none;
-      stroke: var(--red);
-      stroke-width: 2.5;
-      animation: hotspotPulse 2s infinite;
-    }
-    .hs-core {
-      fill: #0b101d;
-      stroke: var(--red);
-      stroke-width: 3;
-      transition: all 0.25s ease;
-    }
-    .hs-node:hover .hs-core {
-      fill: var(--red);
-    }
-    .hs-node.active .hs-core {
-      fill: var(--emerald);
-      stroke: #ffffff;
-    }
-    .hs-node.active .hs-pulse {
-      stroke: var(--emerald);
-    }
-
-    /* 6 Minimalist Interactive Zone Pills */
-    .zone-dock {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-    .zone-pill {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      border-radius: 18px;
-      padding: 14px 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-      user-select: none;
-    }
-    .zone-pill:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.22);
-      transform: translateY(-2px);
-    }
-    .zone-pill.active {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: var(--emerald);
-      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.22);
-    }
-    .zp-icon { font-size: 20px; }
-    .zp-title { font-size: 12.5px; font-weight: 800; color: #fff; text-align: center; }
-    .zp-price {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      font-weight: 700;
-      color: #34d399;
-    }
-
-    /* Sleek Integrated Quote Bar Inside Studio */
-    .studio-quote-bar {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      border-radius: 22px;
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-    .sq-left {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .sq-total-label {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #34d399;
-    }
-    .sq-total-price {
-      font-family: 'Outfit', sans-serif;
-      font-size: 32px;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.05;
-    }
-    .sq-chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .sq-chip {
-      background: rgba(5, 7, 12, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #e2e8f0;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .sq-chip button {
-      background: none;
-      border: none;
-      color: #f87171;
-      cursor: pointer;
-      font-weight: 900;
-      font-size: 12px;
-    }
-
-    .btn-submit-quote-main {
-      background: var(--emerald);
-      color: #04130d;
-      border: none;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 800;
-      padding: 15px 28px;
-      border-radius: 999px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 12px 30px var(--emerald-glow);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .btn-submit-quote-main:hover {
-      transform: translateY(-2px) scale(1.02);
-      background: #34d399;
-    }
-
-    /* ==========================================================================
-       SECTION 3: VISUAL PHOTO SHOWROOM (PURE IMAGERY + 1-TAP SELECT)
-       ========================================================================== */
-    .gallery-section {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 16px 24px 68px;
-    }
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -659,75 +462,60 @@
     }
     .visual-card {
       position: relative;
-      height: 265px;
-      border-radius: 26px;
+      height: 260px;
+      border-radius: 24px;
       overflow: hidden;
       border: 1px solid var(--border);
       cursor: pointer;
-      background: #090d16;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      background: var(--bg-navy);
+      transition: all 0.28s ease;
     }
     .visual-card:hover {
       transform: translateY(-5px);
-      border-color: rgba(255, 255, 255, 0.32);
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7);
-    }
-    .visual-card.selected {
-      border: 2px solid var(--emerald);
-      box-shadow: 0 20px 45px rgba(16, 185, 129, 0.25);
+      border-color: var(--gold-light);
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.75);
     }
     .visual-card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.6s ease;
     }
-    .visual-card:hover img {
-      transform: scale(1.07);
-    }
+    .visual-card:hover img { transform: scale(1.06); }
     .vc-shade {
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(5, 7, 12, 0.1) 0%, rgba(5, 7, 12, 0.35) 45%, rgba(5, 7, 12, 0.92) 100%);
+      background: linear-gradient(180deg, rgba(2, 6, 23, 0.1) 0%, rgba(2, 6, 23, 0.4) 45%, rgba(2, 6, 23, 0.94) 100%);
     }
     .vc-top {
       position: absolute;
-      top: 16px;
-      left: 16px;
-      right: 16px;
+      top: 14px;
+      left: 14px;
+      right: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .vc-price {
-      background: rgba(5, 7, 12, 0.78);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
-      font-weight: 700;
-      padding: 6px 12px;
+    .vc-badge {
+      background: rgba(2, 6, 23, 0.82);
+      border: 1px solid rgba(252, 211, 77, 0.35);
+      color: var(--gold-light);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 11px;
       border-radius: 999px;
     }
-    .vc-check {
+    .vc-arrow {
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      background: rgba(5, 7, 12, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      color: #fff;
+      background: rgba(37, 99, 235, 0.85);
+      color: var(--white);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
-      transition: all 0.2s;
-    }
-    .visual-card.selected .vc-check {
-      background: var(--emerald);
-      color: #04130d;
-      border-color: var(--emerald);
     }
     .vc-bottom {
       position: absolute;
@@ -737,666 +525,541 @@
     }
     .vc-name {
       font-family: 'Outfit', sans-serif;
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 800;
-      color: #fff;
+      color: var(--white);
     }
     .vc-tag {
       font-size: 12px;
-      color: #cbd5e1;
+      color: var(--silver);
       margin-top: 2px;
     }
 
     /* ==========================================================================
-       SECTION 4: MINIMALIST LIVE TRACKER & SUITE 102 MAP LOUNGE
+       SECTION 3: CUSTOMER CONTACT, PHONE & QUOTE REQUEST (#contact)
        ========================================================================== */
-    .lounge-section {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 0 24px 90px;
+    .contact-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 24px;
     }
-    .lounge-card {
-      background: rgba(12, 17, 28, 0.75);
+    .info-card, .form-card {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 20px;
+      border-radius: 26px;
+      padding: 30px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    }
+    .form-card {
+      border-color: rgba(252, 211, 77, 0.35);
     }
 
-    .ro-pill-bar {
-      display: flex;
-      gap: 8px;
-      background: #05070c;
-      border: 1px solid var(--border);
-      padding: 6px;
-      border-radius: 999px;
-    }
-    .ro-pill-bar input {
-      flex: 1;
-      min-width: 0;
-      background: transparent;
-      border: none;
-      color: #fff;
-      padding: 8px 16px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      outline: none;
-    }
-    .ro-pill-bar button {
-      background: var(--red);
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 12.5px;
-      cursor: pointer;
-    }
-
-    /* Visual 4-Node Progress Track */
-    .progress-nodes {
+    .contact-list {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: 16px;
+      margin-top: 20px;
     }
-    .p-node {
-      background: rgba(255, 255, 255, 0.03);
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(2, 6, 23, 0.6);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 10px;
-      text-align: center;
+      text-decoration: none;
+      color: var(--white);
+      transition: border-color 0.2s;
     }
-    .p-node.done {
-      border-color: rgba(16, 185, 129, 0.45);
-      background: rgba(16, 185, 129, 0.1);
+    .contact-item:hover {
+      border-color: var(--gold-light);
     }
-    .p-node.live {
-      border-color: var(--blue);
-      background: rgba(56, 189, 248, 0.12);
-    }
-    .p-node .dot {
-      font-size: 14px;
-      display: block;
-      margin-bottom: 4px;
-    }
-    .p-node .lbl {
-      font-size: 11px;
-      font-weight: 700;
-      color: #e2e8f0;
-    }
-
-    .map-frame {
-      width: 100%;
-      height: 205px;
-      border: 0;
-      border-radius: 18px;
-      filter: grayscale(18%) contrast(108%);
-    }
-
-    /* ==========================================================================
-       SLIDE-OVER CONCIERGE SUBMIT QUOTE MODAL
-       ========================================================================== */
-    .drawer-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      background: rgba(3, 5, 10, 0.82);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      display: none;
+    .ci-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1e3a8a, #0f172a);
+      border: 1px solid rgba(147, 197, 253, 0.3);
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      font-size: 18px;
+      flex-shrink: 0;
     }
-    .drawer-backdrop.open { display: flex; }
+    .ci-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold-light);
+    }
+    .ci-val {
+      font-size: 15.5px;
+      font-weight: 800;
+      color: var(--white);
+      margin-top: 2px;
+    }
 
-    .quote-drawer {
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .full-col { grid-column: 1 / -1; }
+    .field-input {
       width: 100%;
-      max-width: 520px;
-      background: #0b101d;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 30px;
-      padding: 30px;
-      box-shadow: 0 35px 90px rgba(0, 0, 0, 0.9);
-      position: relative;
-      animation: modalPop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes modalPop {
-      from { opacity: 0; transform: translateY(16px) scale(0.97); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .drawer-close {
-      position: absolute;
-      top: 22px;
-      right: 22px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(2, 6, 23, 0.75);
       border: 1px solid var(--border);
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .minimal-input {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.13);
-      color: #fff;
-      padding: 14px 16px;
-      border-radius: 14px;
+      color: var(--white);
+      padding: 13px 15px;
+      border-radius: 13px;
       font-family: inherit;
-      font-size: 14px;
+      font-size: 13.5px;
       outline: none;
       transition: border-color 0.2s;
     }
-    .minimal-input:focus { border-color: var(--emerald); }
+    .field-input:focus {
+      border-color: var(--gold-light);
+    }
+    .field-input option {
+      background: var(--bg-navy);
+      color: var(--white);
+    }
 
-    .slot-pills {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .slot-pill {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
-      color: #cbd5e1;
-      padding: 11px 8px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 700;
-      text-align: center;
+    .btn-submit-main {
+      width: 100%;
+      background: linear-gradient(135deg, var(--crimson), #b91c1c);
+      color: var(--white);
+      border: 1px solid rgba(252, 211, 77, 0.45);
+      padding: 15px 24px;
+      border-radius: 14px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.18s;
+      box-shadow: 0 12px 30px var(--crimson-glow);
+      transition: all 0.22s ease;
     }
-    .slot-pill.active {
-      background: rgba(16, 185, 129, 0.16);
-      border-color: var(--emerald);
-      color: #fff;
+    .btn-submit-main:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 38px rgba(220, 38, 38, 0.65);
+    }
+
+    /* ==========================================================================
+       SECTION 4: MAP & DIRECTIONS (#location)
+       ========================================================================== */
+    .map-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+      gap: 24px;
+      align-items: center;
+    }
+    .map-frame {
+      width: 100%;
+      height: 250px;
+      border: 0;
+      border-radius: 18px;
     }
 
     /* Sticky Mobile Bar */
     .mobile-dock {
       display: none;
       position: fixed;
-      bottom: 14px;
-      left: 14px;
-      right: 14px;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
       z-index: 120;
-      background: rgba(10, 14, 24, 0.92);
+      background: rgba(9, 14, 28, 0.95);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--border);
       border-radius: 999px;
       padding: 8px;
-      grid-template-columns: 1fr 1.3fr;
+      grid-template-columns: 1fr 1.2fr;
       gap: 8px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
     }
 
     @media (max-width: 1024px) {
-      .cover-center, .lounge-section { grid-template-columns: 1fr; }
+      .cover-center, .contact-grid, .map-card { grid-template-columns: 1fr; }
       .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-      .zone-dock { grid-template-columns: repeat(3, 1fr); }
     }
-
     @media (max-width: 768px) {
-      .nav-links, .btn-call, .brand-rating { display: none; }
+      .nav-links, .btn-phone, .brand-rating { display: none; }
       .nav-wrap { top: 10px; padding: 0 12px; }
-      .nav-pill { padding: 8px 10px 8px 16px; }
-      .brand-name { font-size: 14px; }
-      .btn-quote-trigger { padding: 8px 14px; font-size: 12px; }
       .cover-stage { padding: 88px 16px 32px; min-height: auto; }
       .cover-center > * { min-width: 0; max-width: 100%; }
-      .cover-title { font-size: 42px; }
-      .studio-section, .gallery-section, .lounge-section { padding-left: 16px; padding-right: 16px; }
-      .car-stage-card { padding: 20px 16px; }
-      .gallery-grid { grid-template-columns: 1fr; }
-      .zone-dock { grid-template-columns: repeat(2, 1fr); }
-      .progress-nodes { grid-template-columns: repeat(2, 1fr); }
+      .cover-title { font-size: 40px; }
+      .section-wrap { padding: 44px 16px; }
+      .gallery-grid, .form-grid { grid-template-columns: 1fr; }
       .mobile-dock { display: grid; }
-      body { padding-bottom: 84px; }
+      body { padding-bottom: 82px; }
     }
   </style>
 </head>
 <body>
 
   <!-- ============================================================================
-       FLOATING MINIMALIST GLASS NAVIGATION
+       FLOATING GLASS NAVIGATION BAR WITH WORKING DROPDOWN MENU
        ============================================================================ -->
   <header class="nav-wrap">
     <nav class="nav-pill">
-      <a href="#top" class="brand">
-        <span class="brand-dot"></span>
-        <span class="brand-name">STERLING AUTO</span>
+      <a href="#home" class="brand">
+        <span class="brand-shield">SAR</span>
+        <span class="brand-name">STERLING AUTO REPAIR</span>
         <span class="brand-rating">5.0 ★</span>
       </a>
 
       <div class="nav-links">
-        <a href="#top">Cover</a>
-        <a href="#studio">Interactive Car</a>
-        <a href="#showroom">Services</a>
-        <a href="#lounge">Track &amp; Map</a>
+        <a href="#home" class="nav-link active">Home</a>
+
+        <!-- Services Dropdown Menu -->
+        <div class="nav-dropdown" id="services-dropdown">
+          <button type="button" class="nav-drop-btn" onclick="toggleServicesMenu(event)">
+            <span>Services</span>
+            <span style="font-size:10px;">▾</span>
+          </button>
+          <div class="dropdown-menu">
+            <a href="#contact" class="drop-item" onclick="selectServiceAndContact('Check Engine & Diagnostics')">
+              <span>⚡ Engine &amp; Diagnostics</span><span>→</span>
+            </a>
+            <a href="#contact" class="drop-item" onclick="selectServiceAndContact('Brakes & Rotors')">
+              <span>🛑 Brakes &amp; Rotors</span><span>→</span>
+            </a>
+            <a href="#contact" class="drop-item" onclick="selectServiceAndContact('Synthetic Oil & Maintenance')">
+              <span>🛢️ Oil &amp; Maintenance</span><span>→</span>
+            </a>
+            <a href="#contact" class="drop-item" onclick="selectServiceAndContact('A/C & Heating Repair')">
+              <span>❄️ A/C &amp; Heating</span><span>→</span>
+            </a>
+            <a href="#contact" class="drop-item" onclick="selectServiceAndContact('Tires & 4-Wheel Alignment')">
+              <span>🛞 Tires &amp; Alignment</span><span>→</span>
+            </a>
+            <a href="#contact" class="drop-item" onclick="selectServiceAndContact('Collision & Body Estimate')">
+              <span>💥 Collision &amp; Paint</span><span>→</span>
+            </a>
+          </div>
+        </div>
+
+        <a href="#services" class="nav-link">All Services</a>
+        <a href="#contact" class="nav-link">Contact &amp; Quote</a>
+        <a href="#location" class="nav-link">Directions</a>
       </div>
 
       <div class="nav-actions">
-        <a href="tel:5715310342" class="btn-call">(571) 531-0342</a>
-        <button class="btn-quote-trigger" onclick="openQuoteDrawer()" id="nav-quote-btn">
-          <span>Submit Quote</span>
-          <span class="cart-badge" id="nav-cart-count">1 • $95+</span>
-        </button>
+        <a href="tel:5715310342" class="btn-phone">📞 (571) 531-0342</a>
+        <a href="#contact" class="btn-contact-nav">Contact Us →</a>
       </div>
     </nav>
   </header>
 
   <!-- ============================================================================
-       SECTION 1: MINIMALIST EYE-CATCHING COVER STAGE
+       SECTION 1: MINIMALIST EYE-CATCHING COVER PAGE (#home)
        ============================================================================ -->
-  <section class="cover-stage" id="top">
+  <section class="cover-stage" id="home">
     <div class="cover-center">
-      <!-- Left: Crisp Minimalist Typography & Instant Interaction -->
       <div>
         <div class="eyebrow-pill">
           <span class="pulse-dot"></span>
-          <span>45911 TRANSAMERICA PLAZA • SUITE 102</span>
+          <span>45911 TRANSAMERICA PLAZA • SUITE 102 • STERLING, VA</span>
         </div>
 
         <h1 class="cover-title">
-          PRECISION
-          <span>AUTO CARE.</span>
+          STERLING
+          <span>AUTO REPAIR.</span>
         </h1>
 
         <p class="cover-sub">
-          Tap your car below for an instant, upfront quote—or drop in today at Suite 102.
+          Trusted mechanical repair, brakes, maintenance, and collision care in Sterling, VA. Call or message us below for a fast, honest quote.
         </p>
 
         <div class="cover-cta-row">
-          <a href="#studio" class="btn-primary-xl">
-            🚗 Launch Car Visualizer ↓
+          <a href="#contact" class="btn-primary-xl">
+            ✉️ Contact Us / Request Quote →
           </a>
-          <button class="btn-glass-xl" onclick="openQuoteDrawer()">
-            🧾 Instant Quote (<span id="hero-price-preview">$95+</span>)
-          </button>
+          <a href="tel:5715310342" class="btn-glass-xl">
+            📞 Call (571) 531-0342
+          </a>
         </div>
       </div>
 
-      <!-- Right: Sleek Visual Card of Real Transamerica Plaza Suite 102 Shop -->
-      <div class="cover-showcase-card" onclick="document.getElementById('lounge').scrollIntoView({behavior:'smooth'})" style="cursor:pointer;">
+      <!-- Right: Real Transamerica Plaza Suite 102 Storefront Card -->
+      <div class="cover-showcase-card">
         <div class="showcase-img-wrap">
-          <img src="assets/sterling_plaza_real_3.jpg" alt="Sterling Auto Repair Suite 102 Storefront" />
-          <div class="showcase-badge">📍 REAL SUITE 102 BAYS • STERLING, VA</div>
+          <img src="assets/sterling_plaza_real_3.jpg" alt="Sterling Auto Repair 45911 Transamerica Plaza Suite 102" />
+          <div class="showcase-badge">📍 SUITE 102 • OPEN MON–SAT</div>
         </div>
         <div class="showcase-footer">
           <div>
-            <div class="showcase-loc">45911 Transamerica Plaza, Ste 102</div>
-            <div class="showcase-sub">Mechanical • Collision • Same-Day Service</div>
+            <div style="font-size:15px;font-weight:800;color:#fff;">45911 Transamerica Plaza, Ste 102</div>
+            <div style="font-size:12px;color:var(--silver-muted);margin-top:2px;">Sterling, VA 20166 • (571) 531-0342</div>
           </div>
-          <span style="background:rgba(255,255,255,0.08);padding:10px 16px;border-radius:999px;font-size:12px;font-weight:800;">
-            Map ↗
-          </span>
+          <a href="#location" style="background:rgba(37,99,235,0.28);border:1px solid rgba(147,197,253,0.35);color:#fff;text-decoration:none;padding:9px 15px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap;">
+            Directions ↓
+          </a>
         </div>
       </div>
     </div>
 
-    <!-- Minimalist Stat Bar -->
     <div class="cover-bottom-bar">
       <div class="stat-pills">
         <div class="stat-pill">
           <span class="stat-val">5.0 ★</span>
-          <span class="stat-lbl">Google &amp; CARFAX</span>
+          <span class="stat-lbl">Google &amp; CARFAX Rated</span>
         </div>
         <div class="stat-pill">
           <span class="stat-val">12K Mi</span>
-          <span class="stat-lbl">Nationwide Warranty</span>
+          <span class="stat-lbl">Parts &amp; Labor Warranty</span>
         </div>
         <div class="stat-pill">
           <span class="stat-val">ASE</span>
           <span class="stat-lbl">Master Technicians</span>
         </div>
         <div class="stat-pill">
-          <span class="stat-val">$0 Est</span>
-          <span class="stat-lbl">Insurance &amp; Snap Finance</span>
+          <span class="stat-val">All Makes</span>
+          <span class="stat-lbl">Domestic, Asian &amp; European</span>
         </div>
       </div>
-      <div style="font-size:12px;color:var(--muted);font-weight:600;">
-        Mon–Fri 8AM–6PM • Sat 8:30AM–3PM
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================================
-       SECTION 2: INTERACTIVE CAR HOTSPOT STUDIO (PURE VISUAL INTERACTION)
-       ============================================================================ -->
-  <section class="studio-section" id="studio">
-    <div class="studio-header">
-      <div>
-        <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#f87171;text-transform:uppercase;margin-bottom:4px;">
-          INTERACTIVE QUOTE STUDIO
-        </div>
-        <h2 class="studio-title">Tap Any Zone on Your Car</h2>
-      </div>
-
-      <!-- Body Style Switcher -->
-      <div class="body-switcher">
-        <button class="body-btn active" onclick="switchCarBody('Sedan', this)">Sedan / Coupe</button>
-        <button class="body-btn" onclick="switchCarBody('SUV', this)">SUV / 4x4</button>
-        <button class="body-btn" onclick="switchCarBody('Truck', this)">Truck / Van</button>
-        <button class="body-btn" onclick="switchCarBody('Euro', this)">Euro / Luxury</button>
-      </div>
-    </div>
-
-    <div class="car-stage-card">
-      <div class="stage-top-bar">
-        <div class="vehicle-quick-select">
-          <select id="car-year" class="v-pill-select" onchange="refreshCarTag()">
-            <option value="2025">2025</option>
-            <option value="2024">2024</option>
-            <option value="2023" selected>2023</option>
-            <option value="2022">2022</option>
-            <option value="2021">2021</option>
-            <option value="2020">2020</option>
-            <option value="2019">2019</option>
-          </select>
-          <select id="car-make" class="v-pill-select" onchange="refreshCarTag()">
-            <option value="Toyota" selected>Toyota</option>
-            <option value="Honda">Honda</option>
-            <option value="Ford">Ford</option>
-            <option value="BMW">BMW</option>
-            <option value="Mercedes-Benz">Mercedes</option>
-            <option value="Tesla">Tesla</option>
-            <option value="Jeep">Jeep</option>
-            <option value="Subaru">Subaru</option>
-          </select>
-        </div>
-
-        <div class="interactive-hint" id="active-car-badge">
-          2023 Toyota • Sedan
-        </div>
-      </div>
-
-      <!-- Interactive SVG Vehicle Silhouette -->
-      <div class="car-canvas-wrap">
-        <svg class="car-svg" viewBox="0 0 860 280" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="metalBody" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#1e293b" />
-              <stop offset="50%" stop-color="#334155" />
-              <stop offset="100%" stop-color="#090d16" />
-            </linearGradient>
-            <linearGradient id="cabinGlass" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.42" />
-              <stop offset="100%" stop-color="#0284c7" stop-opacity="0.08" />
-            </linearGradient>
-            <linearGradient id="neonFloor" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#ef4444" stop-opacity="0" />
-              <stop offset="50%" stop-color="#ef4444" stop-opacity="0.7" />
-              <stop offset="100%" stop-color="#38bdf8" stop-opacity="0" />
-            </linearGradient>
-          </defs>
-
-          <!-- Ambient Neon Floor Reflection -->
-          <ellipse cx="430" cy="246" rx="360" ry="14" fill="rgba(0,0,0,0.75)" />
-          <rect x="90" y="243" width="680" height="3" rx="1.5" fill="url(#neonFloor)" />
-
-          <!-- Dynamic Car Silhouette Path -->
-          <path id="car-silhouette-path"
-                d="M 85 198 L 105 152 Q 135 134 215 126 L 305 74 Q 340 60 470 60 Q 575 60 638 112 L 738 132 Q 768 142 775 178 L 778 214 Q 772 228 735 228 L 682 228 A 56 56 0 0 0 568 228 L 292 228 A 56 56 0 0 0 178 228 L 105 228 Q 82 225 85 198 Z"
-                fill="url(#metalBody)" stroke="#64748b" stroke-width="2.5" style="transition: d 0.35s ease;" />
-
-          <!-- Cabin Glass Windows -->
-          <path d="M 232 124 L 312 78 Q 340 68 450 68 L 450 124 Z" fill="url(#cabinGlass)" stroke="#94a3b8" stroke-width="1.2" />
-          <path d="M 460 68 Q 555 68 618 116 L 618 124 L 460 124 Z" fill="url(#cabinGlass)" stroke="#94a3b8" stroke-width="1.2" />
-
-          <!-- Headlight & Taillight -->
-          <path d="M 98 158 L 138 150 L 130 166 L 94 170 Z" fill="#38bdf8" />
-          <path d="M 744 142 L 772 150 L 770 166 L 740 160 Z" fill="#ef4444" />
-
-          <!-- Front Wheel -->
-          <g transform="translate(235, 206)">
-            <circle r="45" fill="#05070c" stroke="#475569" stroke-width="6" />
-            <circle r="31" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
-            <circle r="20" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-dasharray="15 6" />
-          </g>
-          <!-- Rear Wheel -->
-          <g transform="translate(625, 206)">
-            <circle r="45" fill="#05070c" stroke="#475569" stroke-width="6" />
-            <circle r="31" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
-            <circle r="20" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-dasharray="15 6" />
-          </g>
-
-          <!-- 6 Interactive Hotspots -->
-          <g class="hs-node active" id="hs-engine" onclick="toggleZone('engine')" transform="translate(175, 158)">
-            <circle class="hs-pulse" r="16" /><circle class="hs-core" r="12" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">1</text>
-          </g>
-          <g class="hs-node" id="hs-brakes" onclick="toggleZone('brakes')" transform="translate(235, 206)">
-            <circle class="hs-pulse" r="16" /><circle class="hs-core" r="12" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">2</text>
-          </g>
-          <g class="hs-node" id="hs-oil" onclick="toggleZone('oil')" transform="translate(340, 176)">
-            <circle class="hs-pulse" r="16" /><circle class="hs-core" r="12" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">3</text>
-          </g>
-          <g class="hs-node" id="hs-ac" onclick="toggleZone('ac')" transform="translate(425, 108)">
-            <circle class="hs-pulse" r="16" /><circle class="hs-core" r="12" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">4</text>
-          </g>
-          <g class="hs-node" id="hs-tires" onclick="toggleZone('tires')" transform="translate(625, 206)">
-            <circle class="hs-pulse" r="16" /><circle class="hs-core" r="12" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">5</text>
-          </g>
-          <g class="hs-node" id="hs-body" onclick="toggleZone('body')" transform="translate(745, 158)">
-            <circle class="hs-pulse" r="16" /><circle class="hs-core" r="12" />
-            <text y="4" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">6</text>
-          </g>
-        </svg>
-      </div>
-
-      <!-- 6 Minimalist Zone Pills -->
-      <div class="zone-dock">
-        <div class="zone-pill active" id="zp-engine" onclick="toggleZone('engine')">
-          <span class="zp-icon">⚡</span>
-          <span class="zp-title">1. Engine Scan</span>
-          <span class="zp-price">$95</span>
-        </div>
-        <div class="zone-pill" id="zp-brakes" onclick="toggleZone('brakes')">
-          <span class="zp-icon">🛑</span>
-          <span class="zp-title">2. Brakes</span>
-          <span class="zp-price">$229</span>
-        </div>
-        <div class="zone-pill" id="zp-oil" onclick="toggleZone('oil')">
-          <span class="zp-icon">🛢️</span>
-          <span class="zp-title">3. Synthetic Oil</span>
-          <span class="zp-price">$79</span>
-        </div>
-        <div class="zone-pill" id="zp-ac" onclick="toggleZone('ac')">
-          <span class="zp-icon">❄️</span>
-          <span class="zp-title">4. A/C &amp; Cooling</span>
-          <span class="zp-price">$149</span>
-        </div>
-        <div class="zone-pill" id="zp-tires" onclick="toggleZone('tires')">
-          <span class="zp-icon">🛞</span>
-          <span class="zp-title">5. Alignment</span>
-          <span class="zp-price">$119</span>
-        </div>
-        <div class="zone-pill" id="zp-body" onclick="toggleZone('body')">
-          <span class="zp-icon">💥</span>
-          <span class="zp-title">6. Collision</span>
-          <span class="zp-price">$0 Est</span>
-        </div>
-      </div>
-
-      <!-- Sleek Live Quote Dock -->
-      <div class="studio-quote-bar">
-        <div class="sq-left">
-          <div>
-            <div class="sq-total-label">INSTANT ESTIMATE</div>
-            <div class="sq-total-price" id="studio-total-display">$95 – $135</div>
-          </div>
-          <div class="sq-chips" id="studio-selected-chips"></div>
-        </div>
-
-        <button class="btn-submit-quote-main" id="open-quote-drawer-btn" onclick="openQuoteDrawer()">
-          <span>Submit Quote Request</span>
-          <span>→</span>
-        </button>
+      <div style="font-size:12px;color:var(--silver-muted);font-weight:600;">
+        Mon–Fri 8:00 AM – 6:00 PM • Sat 8:30 AM – 3:00 PM
       </div>
     </div>
   </section>
 
   <!-- ============================================================================
-       SECTION 3: VISUAL PHOTO SHOWROOM (PURE IMAGERY, 1-CLICK ADD TO QUOTE)
+       SECTION 2: VISUAL SERVICES MENU (#services)
        ============================================================================ -->
-  <section class="gallery-section" id="showroom">
-    <div class="studio-header">
+  <section class="section-wrap" id="services">
+    <div class="sec-head">
       <div>
-        <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#38bdf8;text-transform:uppercase;margin-bottom:4px;">
-          VISUAL SERVICE MENU
-        </div>
-        <h2 class="studio-title">Tap Any Card to Add to Quote</h2>
+        <div class="sec-eyebrow">OUR SERVICES</div>
+        <h2 class="sec-title">Select Any Service to Inquire</h2>
       </div>
+      <a href="#contact" style="color:var(--gold-light);text-decoration:none;font-size:13px;font-weight:800;">
+        Need something else? Contact us →
+      </a>
     </div>
 
     <div class="gallery-grid">
-      <div class="visual-card selected" id="vc-engine" onclick="toggleZone('engine')">
+      <div class="visual-card" onclick="selectServiceAndContact('Check Engine & Diagnostics')">
         <img src="assets/sterling_plaza_real_2.jpg" alt="Engine Diagnostics" />
         <div class="vc-shade"></div>
         <div class="vc-top">
-          <span class="vc-price">$95 Scan</span>
-          <span class="vc-check" id="vcc-engine">✓</span>
+          <span class="vc-badge">Diagnostics &amp; Electrical</span>
+          <span class="vc-arrow">→</span>
         </div>
         <div class="vc-bottom">
-          <div class="vc-name">Engine Diagnostics</div>
-          <div class="vc-tag">Real Suite 102 Bay • OBD-II &amp; Electrical</div>
+          <div class="vc-name">Engine &amp; Check-Engine</div>
+          <div class="vc-tag">Computer Scans, Alternators, Starters &amp; Timing</div>
         </div>
       </div>
 
-      <div class="visual-card" id="vc-brakes" onclick="toggleZone('brakes')">
-        <img src="assets/service_brakes_susp.jpg" alt="Ceramic Brakes" />
+      <div class="visual-card" onclick="selectServiceAndContact('Brakes & Rotors')">
+        <img src="assets/service_brakes_susp.jpg" alt="Brakes & Suspension" />
         <div class="vc-shade"></div>
         <div class="vc-top">
-          <span class="vc-price">$229 – $349</span>
-          <span class="vc-check" id="vcc-brakes">+</span>
+          <span class="vc-badge">Same-Day Service</span>
+          <span class="vc-arrow">→</span>
         </div>
         <div class="vc-bottom">
-          <div class="vc-name">Brakes &amp; Rotors</div>
-          <div class="vc-tag">OEM Ceramic Pads • Same-Day Turnaround</div>
+          <div class="vc-name">Brakes &amp; Suspension</div>
+          <div class="vc-tag">OEM Ceramic Pads, Rotors, Shocks &amp; Struts</div>
         </div>
       </div>
 
-      <div class="visual-card" id="vc-oil" onclick="toggleZone('oil')">
-        <img src="assets/service_oil_maint.jpg" alt="Full Synthetic Oil" />
+      <div class="visual-card" onclick="selectServiceAndContact('Synthetic Oil & Maintenance')">
+        <img src="assets/service_oil_maint.jpg" alt="Oil & Maintenance" />
         <div class="vc-shade"></div>
         <div class="vc-top">
-          <span class="vc-price">$79 – $109</span>
-          <span class="vc-check" id="vcc-oil">+</span>
+          <span class="vc-badge">CARFAX Logged</span>
+          <span class="vc-arrow">→</span>
         </div>
         <div class="vc-bottom">
-          <div class="vc-name">Synthetic Oil &amp; 50-Pt</div>
-          <div class="vc-tag">Full Synthetic • CARFAX Logged</div>
+          <div class="vc-name">Oil &amp; Factory Maintenance</div>
+          <div class="vc-tag">Full Synthetic Oil, Fluids, Filters &amp; 50-Pt Check</div>
         </div>
       </div>
 
-      <div class="visual-card" id="vc-ac" onclick="toggleZone('ac')">
-        <img src="assets/service_transmission.jpg" alt="A/C & Drivetrain Service" />
+      <div class="visual-card" onclick="selectServiceAndContact('A/C & Heating Repair')">
+        <img src="assets/service_transmission.jpg" alt="A/C & Cooling" />
         <div class="vc-shade"></div>
         <div class="vc-top">
-          <span class="vc-price">$149 – $249</span>
-          <span class="vc-check" id="vcc-ac">+</span>
+          <span class="vc-badge">Climate &amp; Cooling</span>
+          <span class="vc-arrow">→</span>
         </div>
         <div class="vc-bottom">
-          <div class="vc-name">A/C &amp; Cooling</div>
-          <div class="vc-tag">R-134a / R-1234yf Evacuation &amp; Recharge</div>
+          <div class="vc-name">A/C, Heating &amp; Radiators</div>
+          <div class="vc-tag">Freon Recharge, Compressors &amp; Coolant Leaks</div>
         </div>
       </div>
 
-      <div class="visual-card" id="vc-tires" onclick="toggleZone('tires')">
-        <img src="assets/service_tires_align.jpg" alt="Laser Wheel Alignment" />
+      <div class="visual-card" onclick="selectServiceAndContact('Tires & 4-Wheel Alignment')">
+        <img src="assets/service_tires_align.jpg" alt="Tires & Alignment" />
         <div class="vc-shade"></div>
         <div class="vc-top">
-          <span class="vc-price">$119</span>
-          <span class="vc-check" id="vcc-tires">+</span>
+          <span class="vc-badge">Precision Laser</span>
+          <span class="vc-arrow">→</span>
         </div>
         <div class="vc-bottom">
-          <div class="vc-name">4-Wheel Alignment</div>
-          <div class="vc-tag">Laser Calibration • Steering &amp; Struts</div>
+          <div class="vc-name">Tires &amp; 4-Wheel Alignment</div>
+          <div class="vc-tag">Mounting, Balancing, Rotation &amp; Steering</div>
         </div>
       </div>
 
-      <div class="visual-card" id="vc-body" onclick="toggleZone('body')">
-        <img src="assets/service_collision_paint.jpg" alt="Collision & Paint" />
+      <div class="visual-card" onclick="selectServiceAndContact('Collision & Body Estimate')">
+        <img src="assets/service_collision_paint.jpg" alt="Collision & Body" />
         <div class="vc-shade"></div>
         <div class="vc-top">
-          <span class="vc-price">$0 Free Est</span>
-          <span class="vc-check" id="vcc-body">+</span>
+          <span class="vc-badge">All Insurance Accepted</span>
+          <span class="vc-arrow">→</span>
         </div>
         <div class="vc-bottom">
-          <div class="vc-name">Collision &amp; Paint</div>
-          <div class="vc-tag">All Insurance Accepted • OEM Paint Match</div>
+          <div class="vc-name">Collision &amp; Body Repair</div>
+          <div class="vc-tag">Bumpers, Dent Removal, Frame &amp; Paint Match</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ============================================================================
-       SECTION 4: MINIMALIST LIVE TRACKER & SUITE 102 MAP LOUNGE
+       SECTION 3: CUSTOMER CONTACT & FREE ESTIMATE REQUEST (#contact)
        ============================================================================ -->
-  <section class="lounge-section" id="lounge">
-    <!-- Left: Live Repair Order Tracker -->
-    <div class="lounge-card">
-      <div>
-        <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#34d399;text-transform:uppercase;margin-bottom:6px;">
-          LIVE REPAIR TRACKER
-        </div>
-        <h3 style="font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;margin-bottom:14px;">
-          Check Your Vehicle Status
-        </h3>
+  <section class="section-wrap" id="contact">
+    <div class="contact-grid">
+      <!-- Left: Direct Shop Phone, Address & Hours -->
+      <div class="info-card">
+        <div class="sec-eyebrow">DIRECT SHOP CONTACT</div>
+        <h2 class="sec-title" style="font-size:32px;margin-bottom:8px;">Talk to Our Team Today</h2>
+        <p style="font-size:14px;color:var(--silver);line-height:1.5;">
+          Call us directly, stop by Suite 102 in Sterling, or send a quick message and we will text or call you right back.
+        </p>
 
-        <div class="ro-pill-bar">
-          <input type="text" id="ro-input" value="RO-45911" placeholder="Enter RO-45911 or Plate" />
-          <button onclick="lookupRO()">Track →</button>
+        <div class="contact-list">
+          <a href="tel:5715310342" class="contact-item">
+            <div class="ci-icon">📞</div>
+            <div>
+              <div class="ci-lbl">Main Shop Line (Click to Call)</div>
+              <div class="ci-val">(571) 531-0342</div>
+            </div>
+          </a>
+
+          <a href="tel:7035317966" class="contact-item">
+            <div class="ci-icon">📱</div>
+            <div>
+              <div class="ci-lbl">Secondary / Service Desk</div>
+              <div class="ci-val">(703) 531-7966</div>
+            </div>
+          </a>
+
+          <a href="#location" class="contact-item">
+            <div class="ci-icon">📍</div>
+            <div>
+              <div class="ci-lbl">Shop Location</div>
+              <div class="ci-val">45911 Transamerica Plaza, Suite 102, Sterling, VA 20166</div>
+            </div>
+          </a>
+
+          <div class="contact-item">
+            <div class="ci-icon">🕒</div>
+            <div>
+              <div class="ci-lbl">Business Hours</div>
+              <div class="ci-val">Mon–Fri: 8:00 AM – 6:00 PM • Sat: 8:30 AM – 3:00 PM</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:10px;">
-          <span id="ro-title" style="color:#fff;">2022 Honda Accord • Bay #2</span>
-          <span id="ro-eta" style="color:#34d399;">Est. Ready: Today 3:30 PM</span>
+      <!-- Right: Customer-Friendly Contact & Quote Form -->
+      <div class="form-card">
+        <div id="contact-form-view">
+          <div class="sec-eyebrow">FAST RESPONSE • NO OBLIGATION</div>
+          <h3 class="sec-title" style="font-size:28px;margin-bottom:6px;">Request a Quote or Appointment</h3>
+          <p style="font-size:13.5px;color:var(--silver);">
+            Tell us about your car and how we can help.
+          </p>
+
+          <form onsubmit="handleContactSubmit(event)" class="form-grid">
+            <div>
+              <input type="text" id="c-name" class="field-input" placeholder="Your Name *" required />
+            </div>
+            <div>
+              <input type="tel" id="c-phone" class="field-input" placeholder="Phone Number *" required />
+            </div>
+            <div>
+              <input type="text" id="c-vehicle" class="field-input" placeholder="Vehicle (e.g. 2021 Toyota Camry)" />
+            </div>
+            <div>
+              <select id="c-service" class="field-input">
+                <option value="General Inquiry / Callback">Service: General Inquiry / Callback</option>
+                <option value="Check Engine & Diagnostics">⚡ Check Engine &amp; Diagnostics</option>
+                <option value="Brakes & Rotors">🛑 Brakes &amp; Rotors</option>
+                <option value="Synthetic Oil & Maintenance">🛢️ Synthetic Oil &amp; Maintenance</option>
+                <option value="A/C & Heating Repair">❄️ A/C &amp; Heating Repair</option>
+                <option value="Tires & 4-Wheel Alignment">🛞 Tires &amp; 4-Wheel Alignment</option>
+                <option value="Collision & Body Estimate">💥 Collision &amp; Body Estimate</option>
+              </select>
+            </div>
+            <div class="full-col">
+              <select id="c-time" class="field-input">
+                <option value="Text or Call Me with a Quote First">Preferred: Text or Call Me with a Quote First</option>
+                <option value="Drop Off Morning (8:30 AM)">Preferred: Drop Off Morning (8:30 AM)</option>
+                <option value="Drop Off Afternoon (1:30 PM)">Preferred: Drop Off Afternoon (1:30 PM)</option>
+              </select>
+            </div>
+            <div class="full-col">
+              <textarea id="c-notes" rows="3" class="field-input" placeholder="How can we help? (Describe any symptoms, sounds, or questions)"></textarea>
+            </div>
+            <div class="full-col">
+              <button type="submit" id="contact-submit-btn" class="btn-submit-main">
+                ✉️ Send Message &amp; Request Quote →
+              </button>
+            </div>
+          </form>
         </div>
 
-        <div class="progress-nodes">
-          <div class="p-node done"><span class="dot">✔</span><span class="lbl">Checked In</span></div>
-          <div class="p-node done"><span class="dot">✔</span><span class="lbl">Inspected</span></div>
-          <div class="p-node live"><span class="dot">🔧</span><span class="lbl">In Bay #2</span></div>
-          <div class="p-node"><span class="dot">🏁</span><span class="lbl">Ready</span></div>
+        <!-- Instant Confirmation View -->
+        <div id="contact-confirm-view" style="display:none;text-align:center;padding:24px 10px;">
+          <div style="width:58px;height:58px;border-radius:50%;background:rgba(22,163,74,0.2);border:2px solid #22c55e;color:#4ade80;font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+            ✓
+          </div>
+          <div class="sec-eyebrow" style="color:#4ade80;">MESSAGE RECEIVED • STERLING AUTO REPAIR</div>
+          <h3 class="sec-title" style="font-size:28px;margin:6px 0 10px;" id="confirm-heading">Thank You!</h3>
+          <p style="font-size:14px;color:var(--silver);margin-bottom:18px;" id="confirm-text"></p>
+          <div id="confirm-summary" style="background:rgba(2,6,23,0.7);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:left;font-size:13px;line-height:1.7;margin-bottom:18px;"></div>
+          <button type="button" onclick="resetContactForm()" class="btn-glass-xl" style="padding:12px 24px;font-size:13px;">
+            Send Another Message
+          </button>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Right: Suite 102 Location & Directions -->
-    <div class="lounge-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
-        <div>
-          <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;color:#f87171;text-transform:uppercase;margin-bottom:6px;">
-            STERLING, VA • SUITE 102
-          </div>
-          <h3 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;">
-            45911 Transamerica Plaza
-          </h3>
+  <!-- ============================================================================
+       SECTION 4: DIRECTIONS & MAP (#location)
+       ============================================================================ -->
+  <section class="section-wrap" id="location" style="padding-top:10px;padding-bottom:90px;">
+    <div class="map-card">
+      <div>
+        <div class="sec-eyebrow">FIND OUR SHOP</div>
+        <h2 class="sec-title" style="font-size:28px;margin-bottom:10px;">45911 Transamerica Plaza, Suite 102</h2>
+        <p style="font-size:14px;color:var(--silver);line-height:1.55;margin-bottom:18px;">
+          Conveniently located off Route 606 (Old Ox Rd) near Dulles in Sterling, VA 20166. Free customer parking right outside Bay Suite 102.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="https://maps.google.com/?q=45911+Transamerica+Plaza+Suite+102+Sterling+VA+20166"
+             target="_blank" rel="noopener"
+             class="btn-primary-xl" style="padding:12px 22px;font-size:13.5px;">
+            📍 Open Google Maps ↗
+          </a>
+          <a href="tel:5715310342" class="btn-glass-xl" style="padding:12px 20px;font-size:13.5px;">
+            📞 (571) 531-0342
+          </a>
         </div>
-        <a href="https://maps.google.com/?q=45911+Transamerica+Plaza+Suite+102+Sterling+VA+20166"
-           target="_blank" rel="noopener"
-           style="background:#fff;color:#05070c;text-decoration:none;padding:10px 18px;border-radius:999px;font-size:12.5px;font-weight:800;white-space:nowrap;">
-          Directions ↗
-        </a>
       </div>
 
       <iframe
@@ -1408,236 +1071,61 @@
     </div>
   </section>
 
-  <!-- ============================================================================
-       SLIDE-OVER CONCIERGE SUBMIT QUOTE MODAL (ZERO-CLUTTER 3-STEP SUBMIT)
-       ============================================================================ -->
-  <div class="drawer-backdrop" id="quote-drawer-backdrop">
-    <div class="quote-drawer">
-      <button class="drawer-close" onclick="closeQuoteDrawer()">✕</button>
-
-      <!-- Form View -->
-      <div id="drawer-form-step">
-        <div style="font-size:11px;font-weight:800;color:#34d399;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">
-          INSTANT ONLINE QUOTE
-        </div>
-        <h3 style="font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;margin-bottom:14px;">
-          Submit Your Quote
-        </h3>
-
-        <!-- Summary Pill Box -->
-        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.35);border-radius:18px;padding:14px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
-          <div>
-            <div style="font-size:12.5px;font-weight:700;color:#cbd5e1;" id="drawer-car-summary">2023 Toyota • Sedan</div>
-            <div style="font-size:11.5px;color:#34d399;margin-top:2px;" id="drawer-services-summary">1. Engine Scan</div>
-          </div>
-          <div style="font-family:'Outfit',sans-serif;font-size:26px;font-weight:800;color:#fff;white-space:nowrap;" id="drawer-price-summary">
-            $95 – $135
-          </div>
-        </div>
-
-        <form onsubmit="submitMinimalQuote(event)" style="display:grid;gap:12px;">
-          <input type="text" id="cust-name" class="minimal-input" placeholder="Your Name *" required />
-          <input type="tel" id="cust-phone" class="minimal-input" placeholder="Mobile Phone (for SMS Quote) *" required />
-
-          <div>
-            <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">
-              Preferred Option
-            </div>
-            <div class="slot-pills">
-              <div class="slot-pill active" onclick="pickSlot('SMS Quote + Hold Bay', this)">📱 Text Quote</div>
-              <div class="slot-pill" onclick="pickSlot('Morning Drop-Off (8:30 AM)', this)">☀️ 8:30 AM Bay</div>
-              <div class="slot-pill" onclick="pickSlot('Afternoon Drop-Off (1:30 PM)', this)">🌤️ 1:30 PM Bay</div>
-            </div>
-          </div>
-
-          <input type="text" id="cust-notes" class="minimal-input" placeholder="Optional note (e.g. brake squeak, check engine)" />
-
-          <button type="submit" id="final-submit-btn" class="btn-submit-quote-main" style="width:100%;justify-content:center;margin-top:4px;">
-            ✅ Send My Quote Now →
-          </button>
-        </form>
-      </div>
-
-      <!-- Confirmation View -->
-      <div id="drawer-confirm-step" style="display:none;text-align:center;padding:10px 0;">
-        <div style="width:56px;height:56px;border-radius:50%;background:rgba(16,185,129,0.2);border:2px solid var(--emerald);color:#34d399;font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
-          ✓
-        </div>
-        <div style="font-size:11px;font-weight:800;color:#34d399;letter-spacing:0.1em;text-transform:uppercase;">
-          QUOTE RECEIVED • SUITE 102
-        </div>
-        <h3 style="font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;margin:6px 0 10px;" id="confirm-ref-id">
-          Quote #SAR-20491
-        </h3>
-        <p style="font-size:13.5px;color:#cbd5e1;margin-bottom:18px;" id="confirm-subtext">
-          Sent to your phone. See you at 45911 Transamerica Plaza, Suite 102!
-        </p>
-        <div id="confirm-receipt-box" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:left;font-size:12.5px;line-height:1.65;color:#e2e8f0;margin-bottom:18px;"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <button onclick="window.print()" class="btn-glass-xl" style="padding:12px;font-size:13px;">🖨️ Save PDF</button>
-          <button onclick="closeQuoteDrawer()" class="btn-submit-quote-main" style="justify-content:center;padding:12px;font-size:13px;">Done ✓</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Minimalist Sticky Mobile Bottom Bar -->
+  <!-- Sticky Mobile Bottom Bar -->
   <div class="mobile-dock">
     <a href="tel:5715310342" class="btn-glass-xl" style="text-align:center;padding:12px;font-size:13px;">📞 Call Shop</a>
-    <button class="btn-submit-quote-main" onclick="openQuoteDrawer()" style="justify-content:center;padding:12px;font-size:13px;">
-      🧾 Quote (<span id="mob-price">$95+</span>)
-    </button>
+    <a href="#contact" class="btn-primary-xl" style="justify-content:center;padding:12px;font-size:13px;">✉️ Contact / Quote</a>
   </div>
 
-  <!-- ============================================================================
-       INTERACTIVE STUDIO ENGINE
-       ============================================================================ -->
   <script>
-    const ZONES = {
-      engine: { name: '1. Engine Scan', min: 95, max: 135, short: '$95' },
-      brakes: { name: '2. Brakes & Rotors', min: 229, max: 349, short: '$229+' },
-      oil:    { name: '3. Synthetic Oil', min: 79, max: 109, short: '$79+' },
-      ac:     { name: '4. A/C & Cooling', min: 149, max: 249, short: '$149+' },
-      tires:  { name: '5. Alignment', min: 119, max: 149, short: '$119' },
-      body:   { name: '6. Collision Est', min: 0, max: 0, short: '$0 Est' }
-    };
-
-    const SILHOUETTES = {
-      Sedan: "M 85 198 L 105 152 Q 135 134 215 126 L 305 74 Q 340 60 470 60 Q 575 60 638 112 L 738 132 Q 768 142 775 178 L 778 214 Q 772 228 735 228 L 682 228 A 56 56 0 0 0 568 228 L 292 228 A 56 56 0 0 0 178 228 L 105 228 Q 82 225 85 198 Z",
-      SUV:   "M 85 195 L 102 142 Q 130 126 210 120 L 285 60 Q 320 48 595 48 Q 675 48 725 118 L 765 138 Q 778 155 778 212 Q 772 228 735 228 L 682 228 A 56 56 0 0 0 568 228 L 292 228 A 56 56 0 0 0 178 228 L 105 228 Q 82 225 85 195 Z",
-      Truck: "M 85 195 L 102 138 Q 132 124 215 118 L 280 56 L 510 56 L 510 132 L 760 132 Q 778 140 778 212 Q 772 228 735 228 L 682 228 A 56 56 0 0 0 568 228 L 292 228 A 56 56 0 0 0 178 228 L 105 228 Q 82 225 85 195 Z",
-      Euro:  "M 80 202 L 110 158 Q 145 140 235 130 L 330 78 Q 375 64 495 66 Q 595 72 665 122 L 750 138 Q 775 152 778 212 Q 772 228 735 228 L 682 228 A 56 56 0 0 0 568 228 L 292 228 A 56 56 0 0 0 178 228 L 105 228 Q 80 225 80 202 Z"
-    };
-
-    let activeBody = 'Sedan';
-    let selectedZones = new Set(['engine']);
-    let selectedSlot = 'SMS Quote + Hold Bay';
-
-    function switchCarBody(body, btn) {
-      activeBody = body;
-      document.querySelectorAll('.body-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const path = document.getElementById('car-silhouette-path');
-      if (path && SILHOUETTES[body]) {
-        path.setAttribute('d', SILHOUETTES[body]);
-      }
-      refreshCarTag();
+    function toggleServicesMenu(e) {
+      e.stopPropagation();
+      document.getElementById('services-dropdown').classList.toggle('open');
     }
 
-    function refreshCarTag() {
-      const yr = document.getElementById('car-year').value;
-      const mk = document.getElementById('car-make').value;
-      const label = `${yr} ${mk} • ${activeBody}`;
-      document.getElementById('active-car-badge').textContent = label;
-      document.getElementById('drawer-car-summary').textContent = label;
+    document.addEventListener('click', () => {
+      const dd = document.getElementById('services-dropdown');
+      if (dd) dd.classList.remove('open');
+    });
+
+    function selectServiceAndContact(serviceName) {
+      const sel = document.getElementById('c-service');
+      if (sel) sel.value = serviceName;
+      const contactEl = document.getElementById('contact');
+      if (contactEl) contactEl.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        const nameInput = document.getElementById('c-name');
+        if (nameInput) nameInput.focus();
+      }, 450);
     }
 
-    function toggleZone(key) {
-      if (selectedZones.has(key)) {
-        if (selectedZones.size > 1) selectedZones.delete(key);
-      } else {
-        selectedZones.add(key);
-      }
-      syncUI();
-    }
-
-    function syncUI() {
-      let minSum = 0;
-      let maxSum = 0;
-      const chipsHtml = [];
-      const names = [];
-
-      Object.keys(ZONES).forEach(k => {
-        const on = selectedZones.has(k);
-        const hs = document.getElementById('hs-' + k);
-        const zp = document.getElementById('zp-' + k);
-        const vc = document.getElementById('vc-' + k);
-        const vcc = document.getElementById('vcc-' + k);
-
-        if (hs) hs.classList.toggle('active', on);
-        if (zp) zp.classList.toggle('active', on);
-        if (vc) vc.classList.toggle('selected', on);
-        if (vcc) vcc.textContent = on ? '✓' : '+';
-
-        if (on) {
-          const item = ZONES[k];
-          minSum += item.min;
-          maxSum += item.max;
-          names.push(item.name);
-          chipsHtml.push(
-            `<span class="sq-chip">${item.name} <button onclick="toggleZone('${k}')" title="Remove">✕</button></span>`
-          );
-        }
-      });
-
-      const rangeText = (minSum === 0 && maxSum === 0)
-        ? '$0 Free Collision Estimate'
-        : `$${minSum} – $${maxSum}`;
-      const shortText = (minSum === 0 && maxSum === 0) ? '$0 Est' : `$${minSum}+`;
-
-      document.getElementById('studio-total-display').textContent = rangeText;
-      document.getElementById('studio-selected-chips').innerHTML = chipsHtml.join('');
-      document.getElementById('nav-cart-count').textContent = `${selectedZones.size} • ${shortText}`;
-      document.getElementById('hero-price-preview').textContent = shortText;
-      document.getElementById('mob-price').textContent = shortText;
-      document.getElementById('drawer-price-summary').textContent = rangeText;
-      document.getElementById('drawer-services-summary').textContent = names.join(' + ');
-    }
-
-    function openQuoteDrawer() {
-      refreshCarTag();
-      document.getElementById('drawer-form-step').style.display = 'block';
-      document.getElementById('drawer-confirm-step').style.display = 'none';
-      document.getElementById('quote-drawer-backdrop').classList.add('open');
-    }
-
-    function closeQuoteDrawer() {
-      document.getElementById('quote-drawer-backdrop').classList.remove('open');
-    }
-
-    function pickSlot(slotName, el) {
-      selectedSlot = slotName;
-      document.querySelectorAll('.slot-pill').forEach(p => p.classList.remove('active'));
-      el.classList.add('active');
-    }
-
-    function submitMinimalQuote(e) {
+    function handleContactSubmit(e) {
       e.preventDefault();
-      const name = document.getElementById('cust-name').value.trim();
-      const phone = document.getElementById('cust-phone').value.trim();
-      const notes = document.getElementById('cust-notes').value.trim();
-      const car = document.getElementById('active-car-badge').textContent;
-      const price = document.getElementById('drawer-price-summary').textContent;
-      const svcs = document.getElementById('drawer-services-summary').textContent;
-      const ref = 'SAR-' + Math.floor(10000 + Math.random() * 90000);
+      const name = document.getElementById('c-name').value.trim();
+      const phone = document.getElementById('c-phone').value.trim();
+      const vehicle = document.getElementById('c-vehicle').value.trim() || 'Not specified';
+      const service = document.getElementById('c-service').value;
+      const time = document.getElementById('c-time').value;
+      const notes = document.getElementById('c-notes').value.trim();
 
-      document.getElementById('confirm-ref-id').textContent = `Quote #${ref}`;
-      document.getElementById('confirm-subtext').textContent = `Texted to ${phone} for ${name}.`;
-      document.getElementById('confirm-receipt-box').innerHTML = `
-        <div><strong>Vehicle:</strong> ${car}</div>
-        <div><strong>Selected:</strong> ${svcs}</div>
-        <div><strong>Estimate:</strong> <span style="color:#34d399;font-weight:800;">${price}</span></div>
-        <div><strong>Preference:</strong> ${selectedSlot}</div>
-        ${notes ? `<div><strong>Note:</strong> ${notes}</div>` : ''}
+      document.getElementById('confirm-heading').textContent = `Thanks, ${name}!`;
+      document.getElementById('confirm-text').textContent = `We received your request and will contact you shortly at ${phone}.`;
+      document.getElementById('confirm-summary').innerHTML = `
+        <div><strong>Service:</strong> <span style="color:#fcd34d;">${service}</span></div>
+        <div><strong>Vehicle:</strong> ${vehicle}</div>
+        <div><strong>Preference:</strong> ${time}</div>
+        ${notes ? `<div><strong>Message:</strong> ${notes}</div>` : ''}
+        <div style="margin-top:6px;color:#94a3b8;font-size:12px;">📍 45911 Transamerica Plaza, Suite 102, Sterling, VA 20166 • (571) 531-0342</div>
       `;
-      document.getElementById('drawer-form-step').style.display = 'none';
-      document.getElementById('drawer-confirm-step').style.display = 'block';
+
+      document.getElementById('contact-form-view').style.display = 'none';
+      document.getElementById('contact-confirm-view').style.display = 'block';
     }
 
-    function lookupRO() {
-      const v = document.getElementById('ro-input').value.trim().toUpperCase();
-      const t = document.getElementById('ro-title');
-      const eta = document.getElementById('ro-eta');
-      if (v === 'RO-45912') {
-        t.textContent = '2021 Ford F-150 XLT • Bay #4';
-        eta.textContent = 'Ready for Pickup Now';
-      } else {
-        t.textContent = `2022 Honda Accord (${v || 'RO-45911'}) • Bay #2`;
-        eta.textContent = 'Est. Ready: Today 3:30 PM';
-      }
+    function resetContactForm() {
+      document.getElementById('contact-confirm-view').style.display = 'none';
+      document.getElementById('contact-form-view').style.display = 'block';
     }
-
-    syncUI();
   </script>
 </body>
 </html>
