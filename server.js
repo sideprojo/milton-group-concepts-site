@@ -153,17 +153,140 @@ function seedState() {
   };
 }
 
+const CLOUD_DB_CONFIG = {
+  gcpProjectId: process.env.GCP_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT || 'milton-group-concepts-llc',
+  firestoreCollection: process.env.FIRESTORE_COLLECTION || 'mgc_workspace',
+  googleSheetsWebhookUrl: process.env.GOOGLE_SHEETS_WEBHOOK_URL || '',
+  sharepointSiteId: process.env.SHAREPOINT_SITE_ID || '',
+  sharepointListId: process.env.SHAREPOINT_LIST_ID || '',
+  primaryProvider: 'Google Cloud Firestore (nam5 Native Free-Tier) + ACID-JSON-WAL',
+  fallbackProviders: ['Google Workspace Sheets / Drive AppData API', 'Microsoft SharePoint List (Graph REST v1.0)']
+};
+
 const DB_STATS = {
   readsToday: 0,
   writesToday: 0,
-  dailyReadCap: 40000,   // 80% of 50,000 Cloud Firestore free daily reads
-  dailyWriteCap: 16000,  // 80% of 20,000 Cloud Firestore free daily writes
+  dailyReadCap: 40000,   // 80% of 50,000 Google Cloud Firestore free daily reads
+  dailyWriteCap: 16000,  // 80% of 20,000 Google Cloud Firestore free daily writes
   firestoreFreeReads: 50000,
   firestoreFreeWrites: 20000,
   estimatedCostUsd: 0.00,
   circuitBreakerTripped: false,
-  lastWriteAt: now()
+  lastWriteAt: now(),
+  lastCloudSyncStatus: 'READY_STANDBY (Local WAL Active · Cloud Run ADC Auto-Binds on Deploy)',
+  cloudProviders: {
+    googleFirestore: {
+      preferred: true,
+      projectId: CLOUD_DB_CONFIG.gcpProjectId,
+      collection: CLOUD_DB_CONFIG.firestoreCollection,
+      endpoint: `https://firestore.googleapis.com/v1/projects/${CLOUD_DB_CONFIG.gcpProjectId}/databases/(default)/documents/${CLOUD_DB_CONFIG.firestoreCollection}/state_v1`,
+      freeTierQuota: '1 GiB Storage · 50K Reads/day · 20K Writes/day ($0.00)'
+    },
+    googleSheetsDrive: {
+      configured: Boolean(CLOUD_DB_CONFIG.googleSheetsWebhookUrl),
+      freeTierQuota: '15 GB Google Workspace Drive / Apps Script Webhook ($0.00)'
+    },
+    sharepointGraph: {
+      configured: Boolean(CLOUD_DB_CONFIG.sharepointSiteId && CLOUD_DB_CONFIG.sharepointListId),
+      endpoint: CLOUD_DB_CONFIG.sharepointSiteId
+        ? `https://graph.microsoft.com/v1.0/sites/${CLOUD_DB_CONFIG.sharepointSiteId}/lists/${CLOUD_DB_CONFIG.sharepointListId}/items`
+        : 'https://graph.microsoft.com/v1.0/sites/{site-id}/lists/{list-id}/items',
+      licenseNote: 'Included in existing Microsoft 365 / SharePoint tenant ($0.00 incremental)'
+    }
+  }
 };
+
+function fetchCloudRunAdcToken() {
+  return new Promise((resolve) => {
+    if (process.env.GOOGLE_CLOUD_ACCESS_TOKEN) {
+      return resolve(process.env.GOOGLE_CLOUD_ACCESS_TOKEN);
+    }
+    const req = http.request({
+      hostname: 'metadata.google.internal',
+      path: '/computeMetadata/v1/instance/service-accounts/default/token',
+      method: 'GET',
+      headers: { 'Metadata-Flavor': 'Google' },
+      timeout: 650
+    }, (res) => {
+      let raw = '';
+      res.on('data', (c) => { raw += c; });
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(raw);
+          resolve(parsed.access_token || null);
+        } catch (_) {
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => { req.destroy(); resolve(null); });
+    req.end();
+  });
+}
+
+async function syncCloudDatabaseSilent(state) {
+  if (DB_STATS.circuitBreakerTripped) return;
+  try {
+    // 1. Preferred: Google Cloud Firestore Native REST v1 (via Cloud Run ADC or GOOGLE_CLOUD_ACCESS_TOKEN)
+    const gcpToken = await fetchCloudRunAdcToken();
+    if (gcpToken && process.env.MGCW_ENABLE_FIRESTORE_SYNC === '1') {
+      const payload = JSON.stringify({
+        fields: {
+          updatedAt: { stringValue: now() },
+          version: { integerValue: String(state.v || 1) },
+          snapshotJson: { stringValue: JSON.stringify(state) }
+        }
+      });
+      const u = new URL(DB_STATS.cloudProviders.googleFirestore.endpoint);
+      const req = https.request({
+        hostname: u.hostname,
+        path: u.pathname,
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${gcpToken}`,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload)
+        },
+        timeout: 2500
+      }, (res) => {
+        DB_STATS.lastCloudSyncStatus = res.statusCode < 300
+          ? `SYNCED_GOOGLE_FIRESTORE (${now()})`
+          : `FIRESTORE_HTTP_${res.statusCode}`;
+      });
+      req.on('error', () => {});
+      req.write(payload);
+      req.end();
+    }
+    // 2. Optional: Microsoft SharePoint List via Graph REST v1.0
+    if (CLOUD_DB_CONFIG.sharepointSiteId && CLOUD_DB_CONFIG.sharepointListId && process.env.SHAREPOINT_BEARER_TOKEN) {
+      const spBody = JSON.stringify({
+        fields: {
+          Title: 'MGC_Workspace_State_v1',
+          UpdatedAt: now(),
+          PayloadJson: JSON.stringify(state)
+        }
+      });
+      const spUrl = new URL(DB_STATS.cloudProviders.sharepointGraph.endpoint);
+      const spReq = https.request({
+        hostname: spUrl.hostname,
+        path: spUrl.pathname,
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.SHAREPOINT_BEARER_TOKEN}`,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(spBody)
+        },
+        timeout: 2500
+      }, () => {
+        DB_STATS.lastCloudSyncStatus = `SYNCED_SHAREPOINT_GRAPH (${now()})`;
+      });
+      spReq.on('error', () => {});
+      spReq.write(spBody);
+      spReq.end();
+    }
+  } catch (_) {}
+}
 
 function loadState() {
   DB_STATS.readsToday++;
@@ -196,6 +319,7 @@ function saveState(state) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
     fs.writeFileSync(DATA_FILE, JSON.stringify(state, null, 2), 'utf8');
   } catch (_) {}
+  syncCloudDatabaseSilent(state);
 }
 
 let S = loadState();

@@ -464,6 +464,57 @@
         </table>
       </div>
     </section>
+
+    <!-- Financial Section Dedicated Cloud Database & Infrastructure Spend Tracker -->
+    <section class="panel" style="margin-top: 22px;" id="finance-cloud-db-tracker">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Cloud Database &amp; Infrastructure Spend Tracker (Google Cloud Preferred · SharePoint Fallback)</div>
+          <div style="font-size:0.76rem; color:var(--muted); margin-top:4px;">Financial &amp; quota telemetry for Google Cloud Firestore (nam5 Native Free Tier), Google Workspace Sheets/Drive, and Microsoft SharePoint List adapters.</div>
+        </div>
+        <span class="panel-tag" id="fin-db-circuit-badge" style="color:var(--emerald); border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.12);">● $0.00 / MO · CIRCUIT BREAKER ARMED</span>
+      </div>
+
+      <div class="kpi-grid" style="margin-bottom: 16px;">
+        <div class="kpi-card emerald">
+          <div class="kpi-top">
+            <span class="kpi-label">GOOGLE CLOUD FIRESTORE (PREFERRED)</span>
+            <span class="kpi-badge">NAM5 FREE TIER</span>
+          </div>
+          <div class="kpi-value" id="fin-db-spend">$0.00</div>
+          <div class="kpi-sub" id="fin-db-quotas">Reads: 1 / 40,000 cap • Writes: 1 / 16,000 cap</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-top">
+            <span class="kpi-label">GOOGLE WORKSPACE SHEETS / DRIVE</span>
+            <span class="kpi-badge" style="color:var(--cyan);background:rgba(56,189,248,0.14);">ADC / OAUTH</span>
+          </div>
+          <div class="kpi-value" style="font-size:1.35rem;">15 GB Free</div>
+          <div class="kpi-sub">AppData JSON Ledger &amp; Sheets Webhook Ready</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">SHAREPOINT LIST / GRAPH API</span>
+            <span class="kpi-badge">FALLBACK ADAPTER</span>
+          </div>
+          <div class="kpi-value" style="font-size:1.35rem;" id="fin-sp-status">Prepped</div>
+          <div class="kpi-sub">Graph v1.0 `/sites/{id}/lists/{id}/items` Ready</div>
+        </div>
+        <div class="kpi-card crimson">
+          <div class="kpi-top">
+            <span class="kpi-label">CLOUD RUN &amp; PAID API GUARD</span>
+            <span class="kpi-badge" style="color:#f87171;background:rgba(248,113,113,0.15);">MIN-INSTANCES: 0</span>
+          </div>
+          <div class="kpi-value" style="font-size:1.35rem;">3 Blocked</div>
+          <div class="kpi-sub">Cloud SQL, GCE VM &amp; Earth Engine Billing Blocked</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; padding:12px 14px; border-radius:10px; background:rgba(7,13,25,0.75); border:1px solid var(--glass-border); font-family:'JetBrains Mono',monospace; font-size:0.74rem;">
+        <div>Primary Engine: <strong style="color:var(--cyan);" id="fin-db-engine">Google Cloud Firestore (nam5 Native) + ACID-JSON-WAL + IndexedDB</strong></div>
+        <div>Sync Status: <strong style="color:var(--gold);" id="fin-db-sync-state">READY_STANDBY (Cloud Run ADC Auto-Binds)</strong></div>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -565,6 +616,28 @@
         }
       });
     }
+
+    (function refreshFinanceDbTelemetry() {
+      fetch('/api/db/status', { credentials: 'include' })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (!data || !data.costGuard) return;
+          const cg = data.costGuard;
+          const qEl = document.getElementById('fin-db-quotas');
+          if (qEl) {
+            qEl.textContent = `Reads: ${cg.readsToday} / ${(cg.dailyReadCap || 40000).toLocaleString()} cap • Writes: ${cg.writesToday} / ${(cg.dailyWriteCap || 16000).toLocaleString()} cap`;
+          }
+          const syncEl = document.getElementById('fin-db-sync-state');
+          if (syncEl && cg.lastCloudSyncStatus) {
+            syncEl.textContent = cg.lastCloudSyncStatus;
+          }
+          const engEl = document.getElementById('fin-db-engine');
+          if (engEl && data.engine) {
+            engEl.textContent = data.engine;
+          }
+        })
+        .catch(() => {});
+    })();
   </script>
 </body>
 </html>

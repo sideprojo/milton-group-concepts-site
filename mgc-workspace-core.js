@@ -419,7 +419,7 @@
   function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2400); }
   function unread(uidv) { return S.notifications.filter(n => n.toUid === uidv && !n.read).length; }
 
-  /** Renders the top bar with SaaS Apps styling + DB & $0.00 Cost Guard status. */
+  /** Renders the top bar with SaaS Apps styling and zero unrequested tracker clutter. */
   function header(active) {
     injectCss(); const u = me(); theme(u ? u.brand : 'MGC');
     const links = [['member-portal.html', 'My Workspace'], ['agile-board.html', 'Agile Projects'], ['saas-apps-and-lms-showcase.html', '⚡ SaaS Apps']]
@@ -427,12 +427,10 @@
     const nav = '<div class="nav">' + links.map(l => '<a class="btn' + (l[0] === active ? ' pri' : '') + '" href="' + l[0] + '">' + l[1] + '</a>').join('') + '</div>';
     const isLocal = location.protocol === 'file:' || ['localhost', '127.0.0.1', ''].includes(location.hostname);
     const opts = Object.values(S.users).map(x => '<option value="' + x.id + '"' + (u && u.id === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>').join('');
-    const cg = costGuard.stats;
-    const dbBadge = '<span class="demo" title="Connected to IndexedDB (MGC_Enterprise_DB) + Cloud Run ACID JSON-WAL + Firestore Free-Tier Guard">🗄️ DB Connected · $0.00 (' + cg.readsToday + 'R/' + cg.writesToday + 'W)</span>';
     const authBtn = u
       ? '<button class="btn" id="w-signout">🔒 Sign out</button>'
       : '<a class="btn pri" href="login.html">Sign in →</a>';
-    const right = '<div class="nav">' + dbBadge + (isLocal && u && u.role === 'owner' ? '<select id="w-as" aria-label="Preview user role" title="Owner role previewer"><option value="">Switch preview…</option>' + opts + '</select>' : '') + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + authBtn + '</div>';
+    const right = '<div class="nav">' + (isLocal && u && u.role === 'owner' ? '<select id="w-as" aria-label="Preview user role" title="Owner role previewer"><option value="">Switch preview…</option>' + opts + '</select>' : '') + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + authBtn + '</div>';
     const el = document.createElement('div'); el.className = 'bar';
     el.innerHTML = '<div class="brand"><span style="font-size:22px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE') + '<small>' + (u ? esc(u.name) + ' · ' + esc(STATUS_LABEL[u.status]) : 'Authentication Enforced · Signed Out') + '</small></div></div>' + nav + right;
     const host = document.querySelector('.wrap'); if (host) host.prepend(el);

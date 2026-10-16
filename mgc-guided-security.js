@@ -1248,29 +1248,6 @@
         border-color: rgba(197, 179, 88, 0.45) !important;
       }
 
-      /* Topbar Database & $0.00 Price Guard Pill */
-      .os-db-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0.28rem 0.62rem;
-        border-radius: 999px;
-        font-size: 0.68rem;
-        font-weight: 800;
-        letter-spacing: 0.03em;
-        cursor: pointer;
-        background: rgba(16, 185, 129, 0.14);
-        border: 1px solid rgba(16, 185, 129, 0.45);
-        color: #6ee7b7;
-        white-space: nowrap;
-        transition: all 0.15s ease;
-      }
-      .os-db-pill:hover {
-        background: rgba(16, 185, 129, 0.24);
-        border-color: #fde047;
-        color: #ffffff;
-      }
-
       /* Built-Out Module Action Items & Links Dock (Collapsed by default for Zero-Clutter UX) */
       #mgc-portal-action-suite {
         width: min(1380px, 100%);
@@ -1511,12 +1488,8 @@
           </button>
         </div>
 
-        <!-- Right: Database & Price Guard + Brand Theme + Section Jump + Profile Menu -->
+        <!-- Right: Brand Theme + Section Jump + Profile Menu (Zero Clutter) -->
         <div class="os-right">
-          <button type="button" id="os-db-cost-btn" class="os-db-pill" title="Connected Databases (IndexedDB + Cloud Run JSON-WAL + Firestore Free Tier) & $0.00 Price Circuit Breaker">
-            🗄️ DB · $0.00
-          </button>
-
           <button type="button" id="os-brand-theme-toggle" class="os-brand-badge ${defaultPageBrand === 'FIX' ? 'fix' : 'mgc'}" title="Portal Brand Theme (8 MGC Portals vs 8 F.I.X Portals — Click to preview either theme)">
             ${defaultPageBrand === 'FIX' ? '⚡ F.I.X Theme (8/16) • Switch' : '🛡️ MGC Theme (8/16) • Switch'}
           </button>
@@ -1691,46 +1664,6 @@
           </div>
         </div>
       </div>
-
-      <!-- 7. DATABASE & $0.00 PRICE CIRCUIT BREAKER INSPECTOR MODAL -->
-      <div id="os-db-modal-backdrop" role="dialog" aria-modal="true" aria-label="Database Connection & Price Guardrail Inspector" style="position:fixed;inset:0;background:rgba(4,8,20,0.88);backdrop-filter:blur(12px);z-index:100002;display:none;align-items:center;justify-content:center;padding:1.25rem;font-family:'Inter',sans-serif;">
-        <div style="width:100%;max-width:36rem;background:rgba(15,23,42,0.98);border:1px solid rgba(197,179,88,0.48);border-radius:18px;padding:1.5rem;box-shadow:0 28px 80px rgba(0,0,0,0.9);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.85rem;">
-            <span style="padding:0.25rem 0.65rem;border-radius:999px;background:rgba(16,185,129,0.16);border:1px solid rgba(16,185,129,0.45);color:#6ee7b7;font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;">🗄️ Multi-Engine Database Connected • $0.00 Spend</span>
-            <button type="button" id="os-db-modal-close" style="background:rgba(255,255,255,0.08);border:none;color:#cbd5e1;padding:0.35rem 0.65rem;border-radius:0.45rem;cursor:pointer;font-size:0.75rem;font-weight:800;">✕ Close</button>
-          </div>
-          <h3 style="font-size:1.1rem;font-weight:900;color:#fff;margin:0 0 0.35rem;">Connected Databases & Zero-Cost Price Circuit Breaker</h3>
-          <p style="font-size:0.76rem;color:#cbd5e1;margin:0 0 1rem;line-height:1.5;">
-            All portal records, user entitlements, and Agile projects (including <strong>Sterling Auto Repair</strong>) persist across three synchronized engines with an 80% free-tier circuit breaker so monthly database spend stays at <strong>$0.00</strong>.
-          </p>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.65rem;margin-bottom:0.9rem;">
-            <div style="padding:0.75rem;border-radius:12px;background:#040814;border:1px solid rgba(148,163,184,0.18);">
-              <div style="font-size:0.66rem;color:#94a3b8;font-weight:800;text-transform:uppercase;">Engine 1 · Browser IndexedDB</div>
-              <div id="os-db-idb-state" style="font-size:0.86rem;font-weight:800;color:#6ee7b7;margin-top:0.2rem;">MGC_Enterprise_DB v1 (Active)</div>
-              <div style="font-size:0.68rem;color:#cbd5e1;margin-top:0.15rem;">6 Object Stores + BroadcastChannel</div>
-            </div>
-            <div style="padding:0.75rem;border-radius:12px;background:#040814;border:1px solid rgba(148,163,184,0.18);">
-              <div style="font-size:0.66rem;color:#94a3b8;font-weight:800;text-transform:uppercase;">Engine 2 · Server WAL & Firestore</div>
-              <div id="os-db-srv-state" style="font-size:0.86rem;font-weight:800;color:#fde047;margin-top:0.2rem;">ACID JSON-WAL + Free-Tier Cap</div>
-              <div style="font-size:0.68rem;color:#cbd5e1;margin-top:0.15rem;">Cloud Run min-instances=0 ($0 idle)</div>
-            </div>
-            <div style="padding:0.75rem;border-radius:12px;background:#040814;border:1px solid rgba(148,163,184,0.18);">
-              <div style="font-size:0.66rem;color:#94a3b8;font-weight:800;text-transform:uppercase;">Daily Reads / Writes (80% Cap)</div>
-              <div id="os-db-ops-count" style="font-size:0.86rem;font-weight:800;color:#fff;margin-top:0.2rem;">12 / 40,000 reads • 4 / 16,000 writes</div>
-              <div style="font-size:0.68rem;color:#6ee7b7;margin-top:0.15rem;">Circuit Breaker: ARMED (0.03% used)</div>
-            </div>
-            <div style="padding:0.75rem;border-radius:12px;background:#040814;border:1px solid rgba(16,185,129,0.35);">
-              <div style="font-size:0.66rem;color:#94a3b8;font-weight:800;text-transform:uppercase;">Estimated Monthly DB Bill</div>
-              <div style="font-size:1.05rem;font-weight:900;color:#6ee7b7;margin-top:0.15rem;">$0.00 / mo</div>
-              <div style="font-size:0.68rem;color:#cbd5e1;margin-top:0.1rem;">Hard $0.00 Budget Guardrail Active</div>
-            </div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:0.6rem;flex-wrap:wrap;">
-            <a href="agile-board.html" style="padding:0.55rem 0.9rem;border-radius:0.55rem;background:rgba(30,58,138,0.5);border:1px solid rgba(197,179,88,0.45);color:#fde047;font-size:0.75rem;font-weight:800;text-decoration:none;">🗂️ Open Agile Projects DB (Sterling Auto) →</a>
-            <button type="button" id="os-db-sync-now" style="padding:0.55rem 0.9rem;border-radius:0.55rem;background:linear-gradient(135deg,#c5b358,#a18a38);border:none;color:#040814;font-size:0.75rem;font-weight:900;cursor:pointer;">🔄 Sync IndexedDB ↔ Server WAL</button>
-          </div>
-        </div>
-      </div>
     `;
 
     document.body.prepend(shellWrapper);
@@ -1807,15 +1740,8 @@
     wafflePop.addEventListener('click', e => e.stopPropagation());
     offcanvasDrawer.addEventListener('click', e => e.stopPropagation());
 
-    // Wire Database & $0.00 Price Guard Modal + Live IndexedDB Connection
-    const dbModalBackdrop = document.getElementById('os-db-modal-backdrop');
-    const dbCostBtn = document.getElementById('os-db-cost-btn');
-    const dbModalClose = document.getElementById('os-db-modal-close');
-    const dbSyncNowBtn = document.getElementById('os-db-sync-now');
-    const dbOpsCountEl = document.getElementById('os-db-ops-count');
-    const dbSrvStateEl = document.getElementById('os-db-srv-state');
-
-    function ensureEnterpriseIndexedDB() {
+    // Silent background initialization of local IndexedDB mirror (zero UI clutter)
+    (function ensureEnterpriseIndexedDB() {
       try {
         if (!window.indexedDB) return;
         const req = window.indexedDB.open('MGC_Enterprise_DB', 1);
@@ -1826,55 +1752,7 @@
           });
         };
       } catch (_) {}
-    }
-    ensureEnterpriseIndexedDB();
-
-    async function refreshDbTelemetry() {
-      try {
-        const raw = localStorage.getItem('mgcw.cost_guard.v1');
-        let reads = 14, writes = 5;
-        if (raw) {
-          const cg = JSON.parse(raw);
-          reads = cg.reads || reads;
-          writes = cg.writes || writes;
-        }
-        try {
-          const res = await fetch('/api/db/status');
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.costGuard) {
-              reads = Math.max(reads, data.costGuard.readsToday || 0);
-              writes = Math.max(writes, data.costGuard.writesToday || 0);
-              if (dbSrvStateEl) dbSrvStateEl.textContent = `${data.engine} (${data.totals?.projects || 3} Projects)`;
-            }
-          }
-        } catch (_) {}
-        if (dbOpsCountEl) {
-          dbOpsCountEl.textContent = `${reads} / 40,000 reads • ${writes} / 16,000 writes`;
-        }
-      } catch (_) {}
-    }
-
-    if (dbCostBtn && dbModalBackdrop) {
-      dbCostBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeAllPopovers();
-        refreshDbTelemetry();
-        dbModalBackdrop.style.display = 'flex';
-      });
-      dbModalClose.addEventListener('click', () => { dbModalBackdrop.style.display = 'none'; });
-      dbModalBackdrop.addEventListener('click', (e) => {
-        if (e.target === dbModalBackdrop) dbModalBackdrop.style.display = 'none';
-      });
-      if (dbSyncNowBtn) {
-        dbSyncNowBtn.addEventListener('click', async () => {
-          dbSyncNowBtn.textContent = '⏳ Syncing...';
-          await refreshDbTelemetry();
-          dbSyncNowBtn.textContent = '✅ Synced ($0.00 Spend)';
-          setTimeout(() => { dbSyncNowBtn.textContent = '🔄 Sync IndexedDB ↔ Server WAL'; }, 1800);
-        });
-      }
-    }
+    })();
 
     // Wire Minimalist UI Toggle
     document.getElementById('os-toggle-clean').addEventListener('click', (e) => {
@@ -2045,7 +1923,6 @@
         closeAllPopovers();
         closeOffcanvasDrawer();
         cmdBackdrop.classList.remove('open');
-        if (dbModalBackdrop) dbModalBackdrop.style.display = 'none';
       }
     });
 
