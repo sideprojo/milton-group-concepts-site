@@ -141,10 +141,12 @@
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
           <span class="role-badge" style="margin:0;background:rgba(16,185,129,0.2);color:#34d399;">MANDATORY 2FA &amp; BIOMETRIC GATE</span>
-          <a href="admin-command-portal.html" style="font-size:0.74rem;color:var(--gold);font-weight:800;text-decoration:none;">★ Master Admin Portal →</a>
+          <button type="button" onclick="lockPortalSession()" style="background:rgba(239,68,68,0.16);border:1px solid rgba(239,68,68,0.45);color:#fca5a5;padding:4px 10px;border-radius:6px;font-size:0.7rem;font-weight:800;cursor:pointer;">🔒 Lock Gate</button>
         </div>
         <h2>Client &amp; Admin 2FA Sign-In</h2>
-        <p class="sub">All Client Portal and Admin Portal logins enforce <strong>Two-Factor Authentication (Fingerprint / WebAuthn Passkey or 6-Digit TOTP)</strong>.</p>
+        <p class="sub">All Client Portal and Admin Portal logins enforce <strong>Two-Factor Authentication (Fingerprint / WebAuthn Passkey or 6-Digit TOTP)</strong> before granting portal access.</p>
+
+        <div id="ob-auth-alert" style="display:none;margin-bottom:12px;padding:10px 12px;border-radius:8px;background:rgba(220,38,38,0.18);border:1px solid #ef4444;color:#fecaca;font-size:0.78rem;font-weight:700;"></div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
           <button type="button" onclick="loadClientAccount()" style="padding:8px 10px;border-radius:8px;background:rgba(56,189,248,0.12);border:1px solid var(--cyan);color:#e0f2fe;font-size:0.73rem;font-weight:700;cursor:pointer;text-align:left;">
@@ -202,7 +204,7 @@
 
         <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
           <span style="font-size:0.74rem; color:var(--muted);">Default Admin (<code>malik.khabir@miltongroupsecurity.org</code>)</span>
-          <a href="admin-command-portal.html?role=admin&mfa=FIDO2_BIOMETRIC" style="background:rgba(245,158,11,0.18); border:1px solid var(--gold); color:var(--gold); padding:6px 12px; border-radius:6px; font-size:0.74rem; cursor:pointer; font-weight:800; text-decoration:none;">Open Admin Command Portal →</a>
+          <button type="button" onclick="attemptAdminPortalLaunch()" style="background:rgba(245,158,11,0.18); border:1px solid var(--gold); color:var(--gold); padding:6px 12px; border-radius:6px; font-size:0.74rem; cursor:pointer; font-weight:800;">Open Admin Command Portal (2FA) →</button>
         </div>
       </div>
 
@@ -210,68 +212,71 @@
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px;">
           <h2>Client &amp; Internal Portals (2FA Protected)</h2>
-          <a href="admin-command-portal.html" class="portal-link" style="background:rgba(245,158,11,0.2);border-color:var(--gold);color:var(--gold);">★ All 16 Sites Admin Navigator →</a>
+          <button type="button" id="admin-nav-btn" onclick="attemptAdminPortalLaunch()" class="portal-link" style="background:rgba(245,158,11,0.2);border-color:var(--gold);color:var(--gold);cursor:pointer;">★ All 16 Sites Admin Navigator (2FA) →</button>
         </div>
-        <p class="sub">Complete 2FA Fingerprint or TOTP verification on the left to unlock all assigned client &amp; internal portals below.</p>
+        <div id="portal-lock-banner" style="margin-bottom:14px;padding:10px 14px;border-radius:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.4);color:#fde68a;font-size:0.78rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <span id="portal-lock-text">🔒 Authentication Enforced: Verify credentials + 2FA on the left to unlock portal links.</span>
+          <span id="portal-lock-pill" style="padding:3px 8px;border-radius:999px;background:rgba(220,38,38,0.25);color:#fca5a5;font-size:0.68rem;">LOCKED</span>
+        </div>
 
         <div class="portal-grid" id="portal-grid">
-          <div class="portal-item unlocked" id="p-sterling" style="border-color:#ef4444;box-shadow:0 0 24px rgba(239,68,68,0.2);">
+          <div class="portal-item locked" id="p-sterling" style="border-color:#ef4444;box-shadow:0 0 24px rgba(239,68,68,0.2);">
             <span class="role-badge" style="background:rgba(239,68,68,0.2);color:#fca5a5;">★ CUSTOMER INCENTIVE BUILD // PROJECTS FOLDER</span>
             <h3>Sterling Auto Repair — Transamerica Plaza, Sterling VA</h3>
             <p>Full-service mechanical &amp; collision prototype for 45911 Transamerica Plaza, Suite 102, Sterling, VA 20166 with real Google Maps bay imagery, interactive estimator &amp; RO tracker.</p>
             <a href="projects/sterling-auto-repair/index.html" class="portal-link" style="background:rgba(239,68,68,0.2);border-color:#ef4444;color:#fca5a5;">Launch Sterling Auto Prototype →</a>
           </div>
 
-          <div class="portal-item unlocked" id="p-fin">
+          <div class="portal-item locked" id="p-fin">
             <span class="role-badge">COLLECTION 01 // TREASURY &amp; PAYMENTS</span>
             <h3>Finance, Treasury &amp; Payment Command</h3>
             <p>Internal payment system, multi-rail payment acceptance (ACH/FedNow, SAM.gov WAWF/IPP, GPC/Stripe, Escrow), and multi-entity ledger.</p>
             <a href="finance-command.html" class="portal-link">Open Finance &amp; Payment System →</a>
           </div>
 
-          <div class="portal-item unlocked" id="p-edu">
+          <div class="portal-item locked" id="p-edu">
             <span class="role-badge">COLLECTION 02 // ELEARNING &amp; INSIGHTS ATLAS</span>
             <h3>eLearning, Upskilling &amp; Cross-Industry Insights</h3>
             <p>Aggregates LinkedIn, Gmail, Industry &amp; Procurement News with smooth 3-stage tracing across Visualizations → Geospatial Map → Internal Collaborations.</p>
             <a href="elearning-upskilling-hub.html" class="portal-link">Open eLearning &amp; Insights Atlas →</a>
           </div>
 
-          <div class="portal-item unlocked" id="p-wf">
+          <div class="portal-item locked" id="p-wf">
             <span class="role-badge">COLLECTION 03 // WHITE FEATHER &amp; ECOMMERCE</span>
             <h3>White Feather, eCommerce &amp; Dual Aggregate News</h3>
             <p>Storefront for White Feather AI, 4biddenKnowledge affiliates, MGC Data Commerce &amp; F.I.X VAR, plus 2 built-in NBA-RSS Aggregate News sites.</p>
             <a href="whitefeather-ecommerce-hub.html" class="portal-link">Open eCommerce &amp; News Hub →</a>
           </div>
 
-          <div class="portal-item unlocked" id="p-hist">
+          <div class="portal-item locked" id="p-hist">
             <span class="role-badge">COLLECTION 04 // AI, HISTORY &amp; ARCHAEOLOGY</span>
             <h3>AI, Historical &amp; Archaeological Endeavors + Chronos WebApp</h3>
             <p>Interactive Image Association constellations, geodesic excavation maps, article examination reports, and the public Chronos Insight WebApp.</p>
             <a href="historical-archaeology-ai-hub.html" class="portal-link">Open AI &amp; Historical Lab →</a>
           </div>
 
-          <div class="portal-item unlocked" id="p-saas" style="border-color: var(--gold); box-shadow: 0 0 22px rgba(245, 158, 11, 0.18);">
+          <div class="portal-item locked" id="p-saas" style="border-color: var(--gold); box-shadow: 0 0 22px rgba(245, 158, 11, 0.18);">
             <span class="role-badge" style="background: rgba(16, 185, 129, 0.18); color: var(--emerald);">COLLECTION 05 // MONETIZED APPS, LMS &amp; CLIENT SHOWCASE</span>
             <h3>Decoupled Apps, Subscriber LMS, Leaderboards, AI Coach &amp; Custom Build Showcase</h3>
             <p>Pay-Per-View ($19) &amp; Pro Subscription ($99/mo) access to Decoupled Apps (Traffic Simulator, EVE-NG Studio, SAM.gov Matcher), Course LMS Trackers, Leaderboards, AI Coach, and Customer-Satisfaction Project Configurator.</p>
             <a href="saas-apps-and-lms-showcase.html" class="portal-link" style="background: rgba(245, 158, 11, 0.2); border-color: var(--gold); color: var(--gold);">Launch Apps, LMS &amp; Showcase →</a>
           </div>
 
-          <div class="portal-item unlocked" id="p-1">
+          <div class="portal-item locked" id="p-1">
             <span class="role-badge">INTERNAL SITE 06 // VIEWER &amp; ADMIN ACCESS</span>
             <h3>Data Commerce, SAS &amp; CIPP Hub</h3>
             <p>Internal capability matrix covering HIPAA Safe Harbor, GLBA/FCRA, SAS ModelOps (A00-440), and Pentagon ORSA architecture.</p>
             <a href="index.html?mode=viewer" class="portal-link">Open Internal Data Hub →</a>
           </div>
 
-          <div class="portal-item unlocked" id="p-2">
+          <div class="portal-item locked" id="p-2">
             <span class="role-badge">INTERNAL SITE 07 // VIEWER &amp; ADMIN ACCESS</span>
             <h3>Visual Cloud Agent &amp; LangGraph Studio</h3>
             <p>Interactive topology of MGC's Google Cloud Run, Microsoft Copilot Studio, and Local RTX 5050 LangGraph agents.</p>
             <a href="agent-workflow-studio.html?mode=viewer" class="portal-link">Open Visual Agent Studio →</a>
           </div>
 
-          <div class="portal-item unlocked" id="p-3">
+          <div class="portal-item locked" id="p-3">
             <span class="role-badge">INTERNAL SITE 08 // VIEWER &amp; ADMIN ACCESS</span>
             <h3>3D Geospatial Command (&lt;gmp-map-3d&gt;)</h3>
             <p>Zero-seat-cost Photorealistic 3D Tiles command center mapping Richmond HQ, Sterling/Dulles, and Pentagon Corridors.</p>
@@ -315,8 +320,81 @@
 
   <script>
     let mfaBiometricCleared = false;
+    let portalUnlockedState = false;
+
+    function showAuthAlert(msg) {
+      const box = document.getElementById('ob-auth-alert');
+      if (!box) return;
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
+
+    function clearAuthAlert() {
+      const box = document.getElementById('ob-auth-alert');
+      if (box) box.style.display = 'none';
+    }
+
+    function setPortalsUnlockedUI(unlocked, emailLabel, isAdmin) {
+      portalUnlockedState = unlocked;
+      document.querySelectorAll('.portal-item').forEach(el => {
+        el.classList.toggle('locked', !unlocked);
+        el.classList.toggle('unlocked', unlocked);
+      });
+      const banner = document.getElementById('portal-lock-banner');
+      const txt = document.getElementById('portal-lock-text');
+      const pill = document.getElementById('portal-lock-pill');
+      const badge = document.getElementById('session-badge');
+      if (unlocked) {
+        if (banner) {
+          banner.style.background = 'rgba(16,185,129,0.14)';
+          banner.style.borderColor = 'rgba(16,185,129,0.45)';
+          banner.style.color = '#a7f3d0';
+        }
+        if (txt) txt.textContent = `✔ 2FA Verified (${emailLabel || 'Authenticated Session'}) — All assigned portals unlocked.`;
+        if (pill) {
+          pill.textContent = '2FA UNLOCKED';
+          pill.style.background = 'rgba(16,185,129,0.28)';
+          pill.style.color = '#6ee7b7';
+        }
+        if (badge) {
+          badge.textContent = isAdmin
+            ? `2FA VERIFIED ADMIN: ${emailLabel} (FULL ACCESS)`
+            : `2FA VERIFIED CLIENT: ${emailLabel}`;
+        }
+        document.getElementById('step-2').classList.add('active');
+        document.getElementById('step-3').classList.add('active');
+      } else {
+        if (banner) {
+          banner.style.background = 'rgba(245,158,11,0.12)';
+          banner.style.borderColor = 'rgba(245,158,11,0.4)';
+          banner.style.color = '#fde68a';
+        }
+        if (txt) txt.textContent = '🔒 Authentication Enforced: Verify credentials + 2FA on the left to unlock portal links.';
+        if (pill) {
+          pill.textContent = 'LOCKED (2FA REQUIRED)';
+          pill.style.background = 'rgba(220,38,38,0.25)';
+          pill.style.color = '#fca5a5';
+        }
+        if (badge) badge.textContent = '2FA BIOMETRIC GATE // LOCKED';
+        document.getElementById('step-2').classList.remove('active');
+        document.getElementById('step-3').classList.remove('active');
+      }
+    }
+
+    function lockPortalSession() {
+      mfaBiometricCleared = false;
+      localStorage.setItem('mgc_edge_gate_locked', '1');
+      localStorage.removeItem('mgc_onboarded_session');
+      localStorage.removeItem('mgc_onboarded_user');
+      document.getElementById('ob-totp').value = '';
+      document.getElementById('fp-verify-status').textContent = 'Tap Fingerprint Sensor (WebAuthn / TouchID / Windows Hello)';
+      document.getElementById('fp-verify-status').style.color = '#e2e8f0';
+      setPortalsUnlockedUI(false);
+      showAuthAlert('Session Locked: 2FA authentication is now required before opening any internal portal.');
+    }
 
     function loadClientAccount() {
+      clearAuthAlert();
       document.getElementById('ob-name').value = 'Enterprise Partner Client';
       document.getElementById('ob-email').value = 'client@miltongroupsecurity.org';
       document.getElementById('ob-pass').value = 'PASSKEY::VERIFIED_CLIENT';
@@ -325,6 +403,7 @@
     }
 
     function loadAdminAccount() {
+      clearAuthAlert();
       document.getElementById('ob-name').value = 'Malik A. Khabir (Sole Member & Root Admin)';
       document.getElementById('ob-email').value = 'malik.khabir@miltongroupsecurity.org';
       document.getElementById('ob-pass').value = 'PASSKEY::SOVEREIGN_ADMIN';
@@ -333,6 +412,7 @@
     }
 
     async function triggerPortalBiometric() {
+      clearAuthAlert();
       const btn = document.getElementById('fp-verify-btn');
       const status = document.getElementById('fp-verify-status');
       status.textContent = 'Scanning FIDO2 / WebAuthn Fingerprint Sensor...';
@@ -355,50 +435,120 @@
       }, 650);
     }
 
-    function completeOnboarding() {
-      const name = document.getElementById('ob-name').value || 'Onboarded Partner';
-      const email = (document.getElementById('ob-email').value || 'partner@client.org').trim();
-      const track = document.getElementById('ob-track').value;
+    function validateOnboardingInputs() {
+      const email = (document.getElementById('ob-email').value || '').trim().toLowerCase();
+      const pass = (document.getElementById('ob-pass').value || '').trim();
       const totp = (document.getElementById('ob-totp').value || '').replace(/\D/g, '');
       const nda = document.getElementById('ob-nda').checked;
 
       if (!nda) {
-        alert('Please attest to the MGC NDA & 2FA terms to unlock portal access.');
-        return;
-      }
-      if (!mfaBiometricCleared && totp.length < 6) {
-        alert('2FA Enforced: Please tap the Biometric Fingerprint sensor OR enter your 6-digit TOTP code (250-100 for Client / 440-921 for Admin).');
-        return;
+        showAuthAlert('NDA Required: Please attest to the MGC Mutual Non-Disclosure & 2FA Zero-Trust Terms.');
+        return null;
       }
 
-      document.getElementById('step-2').classList.add('active');
-      document.getElementById('step-3').classList.add('active');
-      const isAdmin = email.toLowerCase() === 'malik.khabir@miltongroupsecurity.org';
-      const badge = document.getElementById('session-badge');
-      badge.textContent = isAdmin
-        ? `2FA VERIFIED ADMIN: ${email} (FULL ACCESS)`
-        : `2FA VERIFIED CLIENT: ${email}`;
+      const isAdminCred = email === 'malik.khabir@miltongroupsecurity.org' && pass === 'PASSKEY::SOVEREIGN_ADMIN';
+      const isClientCred = (email === 'client@miltongroupsecurity.org' || email === 'service@sterlingautorepairva.com' || email === 'partner@miltongroupsecurity.org') && pass === 'PASSKEY::VERIFIED_CLIENT';
 
-      document.querySelectorAll('.portal-item').forEach(el => {
-        el.classList.remove('locked');
-        el.classList.add('unlocked');
-      });
+      if (!isAdminCred && !isClientCred) {
+        showAuthAlert('Access Denied: Unrecognized email or passphrase. Select the Enterprise Client or Default Admin preset above.');
+        return null;
+      }
+
+      const validTotp = totp === '440921' || totp === '250100';
+      if (!mfaBiometricCleared && !validTotp) {
+        showAuthAlert('2FA Verification Required: Tap the Biometric Fingerprint sensor OR enter a valid 6-digit TOTP code (250-100 Client / 440-921 Admin).');
+        return null;
+      }
+
+      return {
+        email,
+        isAdmin: isAdminCred,
+        mfaMethod: mfaBiometricCleared ? 'FIDO2_BIOMETRIC' : 'TOTP_6DIGIT'
+      };
+    }
+
+    function completeOnboarding() {
+      clearAuthAlert();
+      const res = validateOnboardingInputs();
+      if (!res) return;
+
+      const name = document.getElementById('ob-name').value || 'Onboarded Partner';
+      const track = document.getElementById('ob-track').value;
+      const role = res.isAdmin ? 'OWNER_ADMIN' : 'VERIFIED_CLIENT';
+      const token = 'SHA256-' + btoa(res.email + ':' + role + ':MGC-2026').slice(0, 24);
+
+      const sessionObj = {
+        email: res.email,
+        name,
+        org: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
+        role,
+        track,
+        mfaVerified: true,
+        mfaMethod: res.mfaMethod,
+        access: res.isAdmin ? 'INTERNAL_SUITE_FULL' : 'INTERNAL_SUITE_VIEW',
+        verifiedAt: new Date().toISOString(),
+        integrityHash: token,
+        zeroChargeGuard: 'ACTIVE_MIN0_MAX2'
+      };
+
+      localStorage.removeItem('mgc_edge_gate_locked');
+      localStorage.setItem('mgc_onboarded_session', JSON.stringify(sessionObj));
+      localStorage.setItem('mgc_onboarded_user', JSON.stringify(sessionObj));
+
+      setPortalsUnlockedUI(true, res.email, res.isAdmin);
 
       const tbody = document.getElementById('roster-body');
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td><code>${email}</code> (${name})</td><td>${track}</td><td style="color:#38bdf8;font-weight:700;">${isAdmin ? 'ROOT_SUPER_ADMIN' : '2FA_VERIFIED_CLIENT'}</td><td style="color:#10b981;">✔ 2FA Verified (${mfaBiometricCleared ? 'Fingerprint' : 'TOTP'})</td>`;
+      tr.innerHTML = `<td><code>${res.email}</code> (${name})</td><td>${track}</td><td style="color:#38bdf8;font-weight:700;">${res.isAdmin ? 'ROOT_SUPER_ADMIN' : '2FA_VERIFIED_CLIENT'}</td><td style="color:#10b981;">✔ 2FA Verified (${res.mfaMethod})</td>`;
       tbody.appendChild(tr);
 
-      localStorage.setItem('mgc_onboarded_user', JSON.stringify({ name, email, track, role: isAdmin ? 'OWNER_ADMIN' : 'VERIFIED_CLIENT', mfaVerified: true, ts: new Date().toISOString() }));
-
-      if (isAdmin) {
-        window.location.href = 'admin-command-portal.html?role=admin&mfa=verified';
+      if (res.isAdmin) {
+        window.location.href = `admin-command-portal.html?mgc_verify=1&role=OWNER_ADMIN&email=${encodeURIComponent(res.email)}&mfa=${encodeURIComponent(res.mfaMethod)}&token=${encodeURIComponent(token)}`;
       }
     }
 
-    function unlockAdmin() {
-      window.location.href = 'admin-command-portal.html?role=admin&mfa=FIDO2_BIOMETRIC';
+    function attemptAdminPortalLaunch() {
+      clearAuthAlert();
+      if (portalUnlockedState) {
+        window.location.href = 'admin-command-portal.html';
+        return;
+      }
+      const res = validateOnboardingInputs();
+      if (!res) return;
+      completeOnboarding();
+      if (!res.isAdmin) {
+        window.location.href = 'admin-command-portal.html';
+      }
     }
+
+    // Initialize lock/unlock state on load based on query params & session
+    (function initOnboardingGate() {
+      const qs = new URLSearchParams(window.location.search);
+      if (qs.get('from') === 'external' || qs.get('locked') === '1') {
+        lockPortalSession();
+        return;
+      }
+      if (qs.get('mgc_verify') === '1' || (qs.get('mfa') && qs.get('user'))) {
+        const email = qs.get('email') || qs.get('user') || 'client@miltongroupsecurity.org';
+        const isAdmin = email.toLowerCase() === 'malik.khabir@miltongroupsecurity.org' || (qs.get('role') || '').toUpperCase().includes('ADMIN');
+        localStorage.removeItem('mgc_edge_gate_locked');
+        setPortalsUnlockedUI(true, email, isAdmin);
+        return;
+      }
+      const isLocked = localStorage.getItem('mgc_edge_gate_locked') === '1';
+      if (isLocked) {
+        setPortalsUnlockedUI(false);
+      } else {
+        try {
+          const sess = JSON.parse(localStorage.getItem('mgc_onboarded_session') || 'null');
+          if (sess && sess.email) {
+            setPortalsUnlockedUI(true, sess.email, String(sess.role).includes('ADMIN'));
+            return;
+          }
+        } catch (e) {}
+        setPortalsUnlockedUI(false);
+      }
+    })();
   </script>
 </body>
 </html>

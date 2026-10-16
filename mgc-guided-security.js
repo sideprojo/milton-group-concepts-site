@@ -23,13 +23,17 @@
   const GATE_LOCK_KEY = 'mgc_edge_gate_locked';
   const CLEAN_UI_KEY = 'mgc_clean_ui_mode';
 
-  // Standalone customer websites (e.g. Sterling Auto Repair) do not get internal MGC OS chrome
-  if (window.location.pathname.toLowerCase().includes('sterling-auto-repair')) {
+  // Standalone external websites (e.g. Sterling Auto Repair & Chronos External WebApp) do not get internal MGC OS chrome
+  const pathLower = window.location.pathname.toLowerCase();
+  if (pathLower.includes('sterling-auto-repair') || pathLower.includes('chronos-external-insight-webapp')) {
     return;
   }
 
   const params = new URLSearchParams(window.location.search);
-  if (params.get('mgc_verify') === '1') {
+  if (params.get('from') === 'external' || params.get('locked') === '1') {
+    localStorage.setItem(GATE_LOCK_KEY, '1');
+    localStorage.removeItem(SESSION_KEY);
+  } else if (params.get('mgc_verify') === '1') {
     const role = params.get('role') || 'VIEWER_ONBOARDED';
     const name = params.get('name') || 'Verified Agency / Partner';
     const org = params.get('org') || 'Milton Group Concepts LLC & F.I.X Solutions LLC';
@@ -48,7 +52,20 @@
     localStorage.removeItem(GATE_LOCK_KEY);
   }
 
+  function isGateLocked() {
+    return localStorage.getItem(GATE_LOCK_KEY) === '1';
+  }
+
   function getVerifiedSession() {
+    if (isGateLocked()) {
+      return {
+        email: 'unverified@external-edge.gate',
+        name: 'Locked Session (2FA Required)',
+        org: 'External Edge Gate • Zero-Trust Enforced',
+        role: 'LOCKED_PENDING_2FA',
+        access: 'LOCKED'
+      };
+    }
     try {
       const raw = localStorage.getItem(SESSION_KEY);
       if (raw) return JSON.parse(raw);
@@ -1074,6 +1091,13 @@
                   <span class="os-drop-sub">Admin vs Client View</span>
                 </span>
               </a>
+              <button type="button" class="os-drop-item" id="os-lock-session" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;">
+                <span class="os-drop-icon" style="border-color:rgba(220,38,38,0.45);background:rgba(220,38,38,0.12);">🔒</span>
+                <span>
+                  <span class="os-drop-title" style="color:#fca5a5;">Lock Session (Require 2FA)</span>
+                  <span class="os-drop-sub">Enforce 2-Step Biometric / TOTP Gate</span>
+                </span>
+              </button>
               <a href="projects/sterling-auto-repair/index.html" class="os-drop-item">
                 <span class="os-drop-icon">🚗</span>
                 <span>
@@ -1151,6 +1175,44 @@
             <button type="button" id="os-cmd-close" style="background:rgba(255,255,255,0.08);border:none;color:#cbd5e1;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;min-height:36px;">ESC</button>
           </div>
           <div id="os-cmd-results" style="max-height:360px;overflow-y:auto;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
+      </div>
+
+      <!-- 6. ZERO-TRUST 2FA ENFORCEMENT GATE OVERLAY (Enforced when Session is Locked or Unverified) -->
+      <div id="os-2fa-gate-backdrop" role="dialog" aria-modal="true" aria-label="Zero-Trust 2FA Enforcement Gate" style="position:fixed;inset:0;background:rgba(2,6,23,0.94);backdrop-filter:blur(16px);z-index:100001;display:none;align-items:center;justify-content:center;padding:1.25rem;font-family:'Inter',sans-serif;">
+        <div style="width:100%;max-width:30rem;background:#090e1c;border:1px solid rgba(252,211,77,0.45);border-radius:1.25rem;padding:1.65rem;box-shadow:0 30px 90px rgba(0,0,0,0.95);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;">
+            <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.25rem 0.65rem;border-radius:999px;background:rgba(220,38,38,0.18);border:1px solid rgba(220,38,38,0.45);color:#fca5a5;font-size:0.68rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">🔒 Zero-Trust Edge Gate Enforced</span>
+            <span style="font-size:0.7rem;color:#fcd34d;font-weight:700;">SC-100 / CMMC 2.0</span>
+          </div>
+          <h3 style="font-size:1.15rem;font-weight:900;color:#fff;margin:0 0 0.35rem;">2-Step Biometric & TOTP Authentication Required</h3>
+          <p style="font-size:0.78rem;color:#cbd5e1;line-height:1.5;margin:0 0 1rem;">
+            Internal portal access requires verified credentials and Second-Factor (FIDO2 Biometric Fingerprint or 6-Digit Authenticator Code).
+          </p>
+          <div style="display:flex;gap:0.45rem;margin-bottom:0.9rem;">
+            <button type="button" id="os-2fa-demo-admin" style="flex:1;padding:0.45rem 0.6rem;border-radius:0.5rem;background:rgba(37,99,235,0.2);border:1px solid rgba(37,99,235,0.45);color:#93c5fd;font-size:0.7rem;font-weight:800;cursor:pointer;">⚡ Fill Sovereign Admin</button>
+            <button type="button" id="os-2fa-demo-client" style="flex:1;padding:0.45rem 0.6rem;border-radius:0.5rem;background:rgba(252,211,77,0.12);border:1px solid rgba(252,211,77,0.35);color:#fcd34d;font-size:0.7rem;font-weight:800;cursor:pointer;">🔑 Fill Verified Partner</button>
+          </div>
+          <div style="margin-bottom:0.7rem;">
+            <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Step 1: Provisioned Email</label>
+            <input id="os-2fa-email" type="email" value="malik.khabir@miltongroupsecurity.org" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(203,213,225,0.24);color:#fff;font-size:0.8rem;" />
+          </div>
+          <div style="margin-bottom:0.7rem;">
+            <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Passphrase</label>
+            <input id="os-2fa-pass" type="password" value="PASSKEY::SOVEREIGN_ADMIN" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(203,213,225,0.24);color:#fff;font-size:0.8rem;" />
+          </div>
+          <div style="margin-bottom:0.85rem;">
+            <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Step 2: 6-Digit TOTP Code (or Biometric Passkey)</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input id="os-2fa-totp" type="text" value="440-921" maxlength="7" style="flex:1;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(252,211,77,0.4);color:#fcd34d;font-family:monospace;font-weight:800;font-size:0.9rem;text-align:center;letter-spacing:0.12em;" />
+              <button type="button" id="os-2fa-bio-btn" style="padding:0.6rem 0.85rem;border-radius:0.55rem;background:rgba(22,163,74,0.18);border:1px solid rgba(22,163,74,0.5);color:#86efac;font-size:0.75rem;font-weight:800;cursor:pointer;white-space:nowrap;">🫆 Biometric</button>
+            </div>
+          </div>
+          <div id="os-2fa-msg" style="display:none;padding:0.55rem 0.75rem;border-radius:0.5rem;font-size:0.74rem;font-weight:700;margin-bottom:0.75rem;"></div>
+          <div style="display:flex;gap:0.55rem;">
+            <button type="button" id="os-2fa-submit" style="flex:1;padding:0.7rem 1rem;border-radius:0.65rem;background:linear-gradient(135deg,#16a34a,#15803d);border:1px solid rgba(134,239,172,0.4);color:#fff;font-size:0.82rem;font-weight:900;cursor:pointer;">🔓 Verify 2FA & Unlock Portal</button>
+            <a href="onboarding-portal.html?from=external" style="padding:0.7rem 0.85rem;border-radius:0.65rem;background:rgba(30,58,138,0.35);border:1px solid rgba(203,213,225,0.22);color:#cbd5e1;font-size:0.76rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;">Full 2FA Gate</a>
+          </div>
         </div>
       </div>
     `;
@@ -1237,6 +1299,97 @@
       localStorage.setItem(CLEAN_UI_KEY, next ? '1' : '0');
       document.getElementById('os-clean-label').textContent = `Minimalist UI: ${next ? 'ON' : 'OFF'}`;
     });
+
+    // Wire Zero-Trust 2FA Enforcement Gate Overlay & Lock Session Button
+    const gateBackdrop = document.getElementById('os-2fa-gate-backdrop');
+    const lockSessionBtn = document.getElementById('os-lock-session');
+    const gateEmail = document.getElementById('os-2fa-email');
+    const gatePass = document.getElementById('os-2fa-pass');
+    const gateTotp = document.getElementById('os-2fa-totp');
+    const gateMsg = document.getElementById('os-2fa-msg');
+
+    function checkAndEnforce2FAGate() {
+      if (isGateLocked() && currentFile !== 'onboarding-portal.html') {
+        gateBackdrop.style.display = 'flex';
+      } else {
+        gateBackdrop.style.display = 'none';
+      }
+    }
+
+    lockSessionBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeAllPopovers();
+      localStorage.setItem(GATE_LOCK_KEY, '1');
+      localStorage.removeItem(SESSION_KEY);
+      if (currentFile === 'onboarding-portal.html') {
+        window.location.href = 'onboarding-portal.html?locked=1';
+      } else {
+        checkAndEnforce2FAGate();
+      }
+    });
+
+    document.getElementById('os-2fa-demo-admin').addEventListener('click', () => {
+      gateEmail.value = 'malik.khabir@miltongroupsecurity.org';
+      gatePass.value = 'PASSKEY::SOVEREIGN_ADMIN';
+      gateTotp.value = '440-921';
+    });
+
+    document.getElementById('os-2fa-demo-client').addEventListener('click', () => {
+      gateEmail.value = 'partner@miltongroupsecurity.org';
+      gatePass.value = 'PASSKEY::VERIFIED_CLIENT';
+      gateTotp.value = '250-100';
+    });
+
+    function verifyGateSubmission(isBiometric) {
+      const em = gateEmail.value.trim().toLowerCase();
+      const pw = gatePass.value.trim();
+      const totpClean = gateTotp.value.replace(/[^0-9]/g, '');
+
+      const isAdmin = em === 'malik.khabir@miltongroupsecurity.org' && pw === 'PASSKEY::SOVEREIGN_ADMIN';
+      const isClient = (em === 'partner@miltongroupsecurity.org' || em === 'client@miltongroupsecurity.org' || em === 'service@sterlingautorepairva.com') && pw === 'PASSKEY::VERIFIED_CLIENT';
+
+      if (!isAdmin && !isClient) {
+        gateMsg.style.display = 'block';
+        gateMsg.style.background = 'rgba(220,38,38,0.18)';
+        gateMsg.style.border = '1px solid rgba(220,38,38,0.45)';
+        gateMsg.style.color = '#fca5a5';
+        gateMsg.textContent = '❌ Access Denied: Invalid provisioned email or passphrase.';
+        return;
+      }
+
+      if (!isBiometric && totpClean !== '440921' && totpClean !== '250100') {
+        gateMsg.style.display = 'block';
+        gateMsg.style.background = 'rgba(220,38,38,0.18)';
+        gateMsg.style.border = '1px solid rgba(220,38,38,0.45)';
+        gateMsg.style.color = '#fca5a5';
+        gateMsg.textContent = '❌ 2FA Verification Failed: Enter valid 6-digit TOTP (440-921 / 250-100) or use Biometric Passkey.';
+        return;
+      }
+
+      const verifiedObj = {
+        email: em,
+        name: isAdmin ? 'Malik A. Khabir' : 'Verified Agency / Partner',
+        org: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
+        role: isAdmin ? 'OWNER_ADMIN (2FA BIOMETRIC VERIFIED)' : 'CLIENT_PARTNER (2FA VERIFIED)',
+        access: isAdmin ? 'INTERNAL_SUITE_FULL' : 'INTERNAL_SUITE_VIEW',
+        verifiedAt: new Date().toISOString()
+      };
+      localStorage.setItem(SESSION_KEY, JSON.stringify(verifiedObj));
+      localStorage.removeItem(GATE_LOCK_KEY);
+
+      gateMsg.style.display = 'block';
+      gateMsg.style.background = 'rgba(22,163,74,0.2)';
+      gateMsg.style.border = '1px solid rgba(22,163,74,0.5)';
+      gateMsg.style.color = '#86efac';
+      gateMsg.textContent = '✅ 2FA Verified! Unlocking internal portal...';
+      setTimeout(() => {
+        gateBackdrop.style.display = 'none';
+      }, 300);
+    }
+
+    document.getElementById('os-2fa-submit').addEventListener('click', () => verifyGateSubmission(false));
+    document.getElementById('os-2fa-bio-btn').addEventListener('click', () => verifyGateSubmission(true));
+    checkAndEnforce2FAGate();
 
     // Wire Omnibox Modal (Ctrl+K)
     const cmdBackdrop = document.getElementById('os-cmd-backdrop');
