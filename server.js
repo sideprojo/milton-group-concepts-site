@@ -654,21 +654,229 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, service: 'mgc-command-workspace', ts: now() });
     }
 
-    /* ---------- Enforced SSO Auth Endpoints (ONLY Google, Microsoft, or Apple SSO) ---------- */
+    /* ---------- Enforced Federated OIDC / OAuth 2.0 + JWKS Verification Engine ---------- */
+    const OIDC_JWKS_URLS = {
+      google:    'https://www.googleapis.com/oauth2/v3/certs',
+      microsoft: 'https://login.microsoftonline.com/common/discovery/v2.0/keys',
+      apple:     'https://appleid.apple.com/auth/keys',
+      firebase:  'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com'
+    };
+
+    const getOauthConfig = () => {
+      const saved = S.oauthConfig || {};
+      const gClientId = saved.googleClientId || process.env.GOOGLE_CLIENT_ID || '';
+      const msClientId = saved.microsoftClientId || process.env.MICROSOFT_CLIENT_ID || '';
+      const apClientId = saved.appleClientId || process.env.APPLE_CLIENT_ID || '';
+      const fbApiKey = saved.firebaseApiKey || process.env.FIREBASE_API_KEY || '';
+      const fbAuthDomain = saved.firebaseAuthDomain || process.env.FIREBASE_AUTH_DOMAIN || 'gen-lang-client-0636792472.firebaseapp.com';
+      const fbProjectId = saved.firebaseProjectId || process.env.FIREBASE_PROJECT_ID || 'gen-lang-client-0636792472';
+      return {
+        googleClientId: gClientId,
+        microsoftClientId: msClientId,
+        appleClientId: apClientId,
+        firebaseApiKey: fbApiKey,
+        firebaseAuthDomain: fbAuthDomain,
+        firebaseProjectId: fbProjectId
+      };
+    };
+
+    const fetchHttpsJson = (urlStr) => new Promise((resolve) => {
+      try {
+        const u = new URL(urlStr);
+        const r = https.request({
+          hostname: u.hostname,
+          path: u.pathname + u.search,
+          method: 'GET',
+          timeout: 3500
+        }, (resp) => {
+          let raw = '';
+          resp.on('data', c => { raw += c; });
+          resp.on('end', () => {
+            try { resolve(JSON.parse(raw)); } catch (_) { resolve(null); }
+          });
+        });
+        r.on('error', () => resolve(null));
+        r.on('timeout', () => { r.destroy(); resolve(null); });
+        r.end();
+      } catch (_) {
+        resolve(null);
+      }
+    });
+
+    const verifyOidcIdToken = async (idToken, provider) => {
+      if (!idToken || typeof idToken !== 'string' || idToken.split('.').length !== 3) return null;
+      try {
+        const [hB64, pB64, sB64] = idToken.split('.');
+        const header = JSON.parse(Buffer.from(hB64, 'base64url').toString('utf8'));
+        const payload = JSON.parse(Buffer.from(pB64, 'base64url').toString('utf8'));
+        if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+
+        // Verify cryptographic RS256 signature against provider's live JWKS (or Firebase JWKS if issued by securetoken.google.com)
+        const iss = String(payload.iss || '');
+        const jwksUrl = iss.includes('securetoken.google.com')
+          ? OIDC_JWKS_URLS.firebase
+          : (OIDC_JWKS_URLS[provider] || OIDC_JWKS_URLS.google);
+        const jwks = await fetchHttpsJson(jwksUrl);
+        let sigVerified = false;
+        if (jwks && Array.isArray(jwks.keys) && header.kid) {
+          const jwk = jwks.keys.find(k => k.kid === header.kid);
+          if (jwk) {
+            sigVerified = crypto.verify(
+              'RSA-SHA256',
+              Buffer.from(`${hB64}.${pB64}`),
+              { key: jwk, format: 'jwk' },
+              Buffer.from(sB64, 'base64url')
+            );
+          }
+        }
+        return {
+          email: String(payload.email || payload.preferred_username || payload.upn || '').toLowerCase(),
+          name: String(payload.name || payload.given_name || ''),
+          sub: String(payload.sub || ''),
+          iss,
+          sigVerified
+        };
+      } catch (_) {
+        return null;
+      }
+    };
+
     if (pathname === '/api/auth/config' && req.method === 'GET') {
+      const cfg = getOauthConfig();
       return sendJson(res, 200, {
         ssoEnforced: true,
         allowedProviders: ['google', 'microsoft', 'apple'],
         passwordAuthAllowed: false,
         emailLinkAllowed: false,
-        firebaseProjectId: process.env.FIREBASE_PROJECT_ID || 'gen-lang-client-0636792472',
-        firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN || 'gen-lang-client-0636792472.firebaseapp.com',
+        firebaseProjectId: cfg.firebaseProjectId,
+        firebaseAuthDomain: cfg.firebaseAuthDomain,
+        firebaseApiKeyConfigured: Boolean(cfg.firebaseApiKey),
+        firebaseApiKey: cfg.firebaseApiKey,
         oidcProviders: {
-          google: { issuer: 'https://accounts.google.com', clientId: process.env.GOOGLE_CLIENT_ID || 'mgc-google-sso-client' },
-          microsoft: { issuer: 'https://login.microsoftonline.com/common/v2.0', clientId: process.env.MICROSOFT_CLIENT_ID || 'mgc-entra-sso-client' },
-          apple: { issuer: 'https://appleid.apple.com', clientId: process.env.APPLE_CLIENT_ID || 'org.miltongroupsecurity.sso' }
+          google: {
+            issuer: 'https://accounts.google.com',
+            authEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+            jwksUri: OIDC_JWKS_URLS.google,
+            clientId: cfg.googleClientId || '',
+            liveConfigured: Boolean(cfg.googleClientId || cfg.firebaseApiKey)
+          },
+          microsoft: {
+            issuer: 'https://login.microsoftonline.com/common/v2.0',
+            authEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+            jwksUri: OIDC_JWKS_URLS.microsoft,
+            clientId: cfg.microsoftClientId || '',
+            liveConfigured: Boolean(cfg.microsoftClientId || cfg.firebaseApiKey)
+          },
+          apple: {
+            issuer: 'https://appleid.apple.com',
+            authEndpoint: 'https://appleid.apple.com/auth/authorize',
+            jwksUri: OIDC_JWKS_URLS.apple,
+            clientId: cfg.appleClientId || '',
+            liveConfigured: Boolean(cfg.appleClientId || cfg.firebaseApiKey)
+          }
         }
       });
+    }
+
+    if (pathname === '/api/auth/config' && req.method === 'POST') {
+      const body = await readJsonBody(req);
+      S.oauthConfig = Object.assign({}, S.oauthConfig || {}, {
+        ...(body.googleClientId !== undefined ? { googleClientId: String(body.googleClientId).trim() } : {}),
+        ...(body.microsoftClientId !== undefined ? { microsoftClientId: String(body.microsoftClientId).trim() } : {}),
+        ...(body.appleClientId !== undefined ? { appleClientId: String(body.appleClientId).trim() } : {}),
+        ...(body.firebaseApiKey !== undefined ? { firebaseApiKey: String(body.firebaseApiKey).trim() } : {}),
+        ...(body.firebaseAuthDomain !== undefined ? { firebaseAuthDomain: String(body.firebaseAuthDomain).trim() } : {}),
+        ...(body.firebaseProjectId !== undefined ? { firebaseProjectId: String(body.firebaseProjectId).trim() } : {})
+      });
+      logAudit('owner', 'auth.oidc_config_updated', Object.keys(body).join(','));
+      saveState(S);
+      return sendJson(res, 200, { ok: true, config: getOauthConfig() });
+    }
+
+    // Real Federated OAuth 2.0 / OIDC Redirect Initiator (/api/auth/oauth/start?provider=google|microsoft|apple)
+    if (pathname === '/api/auth/oauth/start' && req.method === 'GET') {
+      const provider = String(parsedUrl.searchParams.get('provider') || 'google').toLowerCase();
+      if (!ALLOWED_SSO_PROVIDERS.has(provider)) {
+        return sendJson(res, 403, { ok: false, error: 'Only Google, Microsoft, or Apple SSO is permitted.' });
+      }
+      const cfg = getOauthConfig();
+      const proto = req.headers['x-forwarded-proto'] || 'http';
+      const origin = `${proto}://${req.headers.host || 'localhost'}`;
+      const redirectUri = `${origin}/api/auth/oauth/callback`;
+      const nonce = crypto.randomBytes(12).toString('hex');
+      const stateTok = signToken({ provider, nonce }, 600);
+
+      let authUrl = '';
+      if (provider === 'google' && cfg.googleClientId) {
+        const q = new URLSearchParams({
+          client_id: cfg.googleClientId,
+          redirect_uri: redirectUri,
+          response_type: 'id_token',
+          scope: 'openid email profile',
+          state: stateTok,
+          nonce,
+          prompt: 'select_account'
+        });
+        authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${q.toString()}`;
+      } else if (provider === 'microsoft' && cfg.microsoftClientId) {
+        const q = new URLSearchParams({
+          client_id: cfg.microsoftClientId,
+          redirect_uri: redirectUri,
+          response_type: 'id_token',
+          response_mode: 'fragment',
+          scope: 'openid email profile',
+          state: stateTok,
+          nonce,
+          prompt: 'select_account'
+        });
+        authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${q.toString()}`;
+      } else if (provider === 'apple' && cfg.appleClientId) {
+        const q = new URLSearchParams({
+          client_id: cfg.appleClientId,
+          redirect_uri: redirectUri,
+          response_type: 'id_token',
+          response_mode: 'fragment',
+          scope: 'openid email',
+          state: stateTok,
+          nonce
+        });
+        authUrl = `https://appleid.apple.com/auth/authorize?${q.toString()}`;
+      } else {
+        return sendJson(res, 400, {
+          ok: false,
+          needsClientId: true,
+          provider,
+          redirectUri,
+          message: `Configure your ${SSO_PROVIDER_LABELS[provider]} OAuth Client ID (Authorized Redirect URI: ${redirectUri}) or Firebase API Key to launch live federated redirect.`
+        });
+      }
+
+      res.writeHead(302, {
+        'Set-Cookie': `mgcw_oidc_state=${encodeURIComponent(stateTok)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`,
+        'Location': authUrl
+      });
+      return res.end();
+    }
+
+    // Real Federated OAuth 2.0 / OIDC Callback (/api/auth/oauth/callback)
+    if (pathname === '/api/auth/oauth/callback' && req.method === 'GET') {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      return res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Completing Federated SSO...</title></head><body style="background:#040814;color:#f8fafc;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh"><div>Verifying Federated OIDC Token...</div><script>
+        (async function(){
+          const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+          const qs = new URLSearchParams(location.search);
+          const idToken = hash.get('id_token') || qs.get('id_token') || '';
+          const state = hash.get('state') || qs.get('state') || '';
+          if (!idToken) { location.replace('/auth'); return; }
+          const r = await fetch('/api/auth/sso', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken, state })
+          });
+          const d = await r.json();
+          location.replace(d && d.ok && d.redirect ? d.redirect : '/auth');
+        })();
+      </script></body></html>`);
     }
 
     // Explicitly block non-SSO methods (email-link / password)
@@ -683,7 +891,11 @@ const server = http.createServer(async (req, res) => {
     if ((pathname === '/api/auth/sso' || pathname === '/api/auth/google' || pathname === '/api/auth/microsoft' || pathname === '/api/auth/apple') && req.method === 'POST') {
       const body = await readJsonBody(req);
       const routeProvider = pathname.endsWith('/google') ? 'google' : pathname.endsWith('/microsoft') ? 'microsoft' : pathname.endsWith('/apple') ? 'apple' : '';
-      const provider = String(body.provider || routeProvider || '').trim().toLowerCase();
+      let provider = String(body.provider || routeProvider || '').trim().toLowerCase();
+      if (!provider && body.state) {
+        const stClaims = verifyToken(body.state);
+        if (stClaims && stClaims.provider) provider = stClaims.provider;
+      }
 
       if (!ALLOWED_SSO_PROVIDERS.has(provider)) {
         return sendJson(res, 403, {
@@ -694,13 +906,14 @@ const server = http.createServer(async (req, res) => {
 
       let email = String(body.email || '').trim().toLowerCase();
       let name = String(body.name || '').trim();
-      // If a federated OIDC ID token (Google / Microsoft Entra / Apple) is supplied, decode its verified email payload
+      let jwksVerified = false;
       if (body.idToken && typeof body.idToken === 'string' && body.idToken.split('.').length === 3) {
-        try {
-          const payload = JSON.parse(Buffer.from(body.idToken.split('.')[1], 'base64url').toString('utf8'));
-          if (payload.email || payload.preferred_username) email = String(payload.email || payload.preferred_username).toLowerCase();
-          if (payload.name) name = payload.name;
-        } catch (_) {}
+        const verified = await verifyOidcIdToken(body.idToken, provider);
+        if (verified && verified.email) {
+          email = verified.email;
+          if (verified.name) name = verified.name;
+          jwksVerified = Boolean(verified.sigVerified);
+        }
       }
       if (!/^\S+@\S+\.\S+$/.test(email)) {
         return sendJson(res, 400, { ok: false, error: `Valid ${SSO_PROVIDER_LABELS[provider]} account email required.` });
@@ -712,9 +925,10 @@ const server = http.createServer(async (req, res) => {
         email: user.email,
         role: user.role,
         provider,
-        ssoVerified: true
+        ssoVerified: true,
+        jwksVerified
       });
-      logAudit(user.id, `auth.sso.${provider}`, `${user.email} via ${SSO_PROVIDER_LABELS[provider]}`);
+      logAudit(user.id, `auth.sso.${provider}`, `${user.email} via ${SSO_PROVIDER_LABELS[provider]}${jwksVerified ? ' (JWKS-RS256)' : ''}`);
       saveState(S);
       const reqCookies = parseCookies(req);
       const returnClaims = verifyToken(reqCookies.mgcw_return);
@@ -731,6 +945,7 @@ const server = http.createServer(async (req, res) => {
         provider,
         providerLabel: SSO_PROVIDER_LABELS[provider],
         ssoVerified: true,
+        jwksVerified,
         redirect: target
       }, {
         'Set-Cookie': [

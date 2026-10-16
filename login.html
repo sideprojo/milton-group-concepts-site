@@ -256,10 +256,20 @@
     <h2 id="ssoModalTitle" style="margin-bottom:6px">Continue with Google</h2>
     <p id="ssoModalSub" style="margin-bottom:14px">Sign in with your Google Workspace or Google Cloud account.</p>
     <div style="display:flex;flex-direction:column;gap:10px">
+      <button type="button" class="btn pri" id="btnLaunchOidcRedirect" style="width:100%;justify-content:center;padding:12px 18px;font-size:13px;display:none">🌐 Redirect to Provider OIDC Sign-In →</button>
       <input id="ssoEmail" type="email" value="" placeholder="name@organization.com" autocomplete="off" spellcheck="false" style="width:100%;padding:12px 14px;font-size:13px">
       <button type="button" class="btn pri" id="btnCompleteSso" style="width:100%;justify-content:center;padding:12px 18px;font-size:13px">Continue →</button>
     </div>
     <p id="modalAuthMsg" style="color:#f87171;margin-top:10px;font-weight:700;font-size:12px;min-height:16px"></p>
+
+    <details style="margin-top:12px;background:rgba(4,8,20,0.75);border-color:rgba(148,163,184,0.2)">
+      <summary style="font-size:11px;color:#94a3b8">⚙️ Bind OAuth 2.0 / OIDC Client ID (API Federation)</summary>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+        <p style="font-size:11px;margin:0">Authorized Redirect URI:<br><code id="oidcRedirectUriDisplay" style="color:#fde047;word-break:break-all">/api/auth/oauth/callback</code></p>
+        <input id="oidcClientIdInput" type="text" value="" placeholder="Paste OAuth 2.0 Client ID for this provider" autocomplete="off" spellcheck="false" style="width:100%;padding:9px 11px;font-size:11.5px">
+        <button type="button" class="btn" id="btnSaveOidcClient" style="justify-content:center;font-size:11.5px">Save OAuth Client ID &amp; Launch OIDC Redirect →</button>
+      </div>
+    </details>
   </div>
 </div>
 
@@ -273,13 +283,29 @@
   const modalMsg = document.getElementById('modalAuthMsg');
   const modalBackdrop = document.getElementById('ssoModalBackdrop');
   const emailInput = document.getElementById('ssoEmail');
+  const clientIdInput = document.getElementById('oidcClientIdInput');
+  const btnLaunchOidc = document.getElementById('btnLaunchOidcRedirect');
   let activeProvider = 'google';
+  let serverOidcConfig = null;
 
   const PROVIDER_META = {
-    google:    { name: 'Google',    chip: 'Google OIDC',    sub: 'Sign in with your Google Workspace or Google Cloud account.' },
-    microsoft: { name: 'Microsoft', chip: 'Microsoft Entra', sub: 'Sign in with your Microsoft Entra ID or Microsoft 365 account.' },
-    apple:     { name: 'Apple',     chip: 'Apple OIDC',     sub: 'Sign in with your Apple ID & Passkey federation.' }
+    google:    { name: 'Google',    chip: 'Google OIDC · JWKS',    sub: 'Sign in with your Google Workspace or Google Cloud account.', cfgKey: 'googleClientId' },
+    microsoft: { name: 'Microsoft', chip: 'Microsoft Entra · JWKS', sub: 'Sign in with your Microsoft Entra ID or Microsoft 365 account.', cfgKey: 'microsoftClientId' },
+    apple:     { name: 'Apple',     chip: 'Apple OIDC · JWKS',     sub: 'Sign in with your Apple ID & Passkey federation.', cfgKey: 'appleClientId' }
   };
+
+  if (location.protocol === 'http:' || location.protocol === 'https:') {
+    document.getElementById('oidcRedirectUriDisplay').textContent = location.origin + '/api/auth/oauth/callback';
+    fetch('/api/auth/config')
+      .then(r => r.json())
+      .then(cfg => { serverOidcConfig = cfg; })
+      .catch(() => {});
+  }
+
+  function hasLiveClientId(prov) {
+    if (!serverOidcConfig || !serverOidcConfig.oidcProviders || !serverOidcConfig.oidcProviders[prov]) return false;
+    return Boolean(serverOidcConfig.oidcProviders[prov].clientId);
+  }
 
   function openProviderModal(prov) {
     if (!PROVIDER_META[prov]) return;
@@ -292,6 +318,17 @@
     document.getElementById('ssoModalTitle').textContent = 'Continue with ' + meta.name;
     document.getElementById('ssoModalSub').textContent = meta.sub;
     document.getElementById('btnCompleteSso').textContent = 'Continue with ' + meta.name + ' →';
+    if (serverOidcConfig && serverOidcConfig.oidcProviders && serverOidcConfig.oidcProviders[prov]) {
+      clientIdInput.value = serverOidcConfig.oidcProviders[prov].clientId || '';
+    } else {
+      clientIdInput.value = '';
+    }
+    if (hasLiveClientId(prov)) {
+      btnLaunchOidc.style.display = 'inline-flex';
+      btnLaunchOidc.textContent = '🌐 Redirect to ' + meta.name + ' OIDC Sign-In →';
+    } else {
+      btnLaunchOidc.style.display = 'none';
+    }
     modalMsg.textContent = '';
     msg.textContent = '';
     modalBackdrop.classList.add('open');
@@ -307,14 +344,53 @@
     if (e.target === modalBackdrop) closeProviderModal();
   });
 
+  btnLaunchOidc.onclick = () => {
+    location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(activeProvider);
+  };
+
+  document.getElementById('btnSaveOidcClient').onclick = async () => {
+    const cid = (clientIdInput.value || '').trim();
+    if (!cid) {
+      modalMsg.style.color = '#f87171';
+      modalMsg.textContent = 'Please paste a valid OAuth 2.0 Client ID first.';
+      return;
+    }
+    const meta = PROVIDER_META[activeProvider];
+    try {
+      const r = await fetch('/api/auth/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [meta.cfgKey]: cid })
+      });
+      const d = await r.json();
+      if (d && d.ok) {
+        location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(activeProvider);
+      }
+    } catch (_) {
+      modalMsg.style.color = '#f87171';
+      modalMsg.textContent = 'Failed to save OAuth Client ID.';
+    }
+  };
+
   document.querySelectorAll('.sso-provider-card').forEach(card => {
-    card.addEventListener('click', () => openProviderModal(card.dataset.provider));
+    card.addEventListener('click', () => {
+      const prov = card.dataset.provider;
+      if (hasLiveClientId(prov)) {
+        location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
+      } else {
+        openProviderModal(prov);
+      }
+    });
   });
 
   document.querySelectorAll('[data-sso-trigger]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const prov = btn.getAttribute('data-sso-trigger');
+      if (hasLiveClientId(prov)) {
+        location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
+        return;
+      }
       const val = (emailInput.value || '').trim();
       if (val && modalBackdrop.classList.contains('open')) {
         completeFederatedSso(prov, val);
@@ -388,7 +464,7 @@
       }
       W.signInAs(data.uid, provider);
       persistOnboardingBridge(data.email || email, data.name, data.role, provider);
-      location.href = data.redirect || (data.role === 'owner' ? '/access-admin.html' : '/member-portal.html');
+      location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
     } catch (err) {
       modalMsg.style.color = '#f87171';
       modalMsg.textContent = 'Could not reach SSO authentication server.';
