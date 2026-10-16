@@ -741,8 +741,105 @@ const server = http.createServer(async (req, res) => {
       }
     };
 
+    const fetchHttpsWithAuth = (urlStr, method = 'GET', token = '', bodyObj = null) => new Promise((resolve) => {
+      try {
+        const u = new URL(urlStr);
+        const payload = bodyObj ? JSON.stringify(bodyObj) : null;
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+          headers['x-goog-user-project'] = 'gen-lang-client-0636792472';
+        }
+        if (payload) {
+          headers['Content-Type'] = 'application/json';
+          headers['Content-Length'] = Buffer.byteLength(payload);
+        }
+        const r = https.request({
+          hostname: u.hostname,
+          path: u.pathname + u.search,
+          method,
+          headers,
+          timeout: 4000
+        }, (resp) => {
+          let raw = '';
+          resp.on('data', c => { raw += c; });
+          resp.on('end', () => {
+            try { resolve(JSON.parse(raw)); } catch (_) { resolve(null); }
+          });
+        });
+        r.on('error', () => resolve(null));
+        r.on('timeout', () => { r.destroy(); resolve(null); });
+        if (payload) r.write(payload);
+        r.end();
+      } catch (_) {
+        resolve(null);
+      }
+    });
+
+    const autoDiscoverIdentityPlatformViaAdc = async () => {
+      const current = getOauthConfig();
+      if (current.firebaseApiKey || current.googleClientId) return current;
+      const adcTok = await fetchCloudRunAdcToken();
+      if (!adcTok) return current;
+      const proj = current.firebaseProjectId || 'gen-lang-client-0636792472';
+      try {
+        let idpCfg = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config`, 'GET', adcTok);
+        if (!idpCfg || idpCfg.error) {
+          await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/v2/projects/${proj}/identityPlatform:initializeAuth`, 'POST', adcTok, {});
+          idpCfg = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config`, 'GET', adcTok);
+        }
+        // Ensure our Cloud Run and custom domains are in authorizedDomains
+        if (idpCfg && Array.isArray(idpCfg.authorizedDomains)) {
+          const needed = [
+            'mgc-external-site-254657731107.us-west1.run.app',
+            'milton-group-concepts-llc-254657731107.us-west1.run.app',
+            'miltongroupsecurity.org',
+            'portal.miltongroupsecurity.org',
+            'workspace.miltongroupsecurity.org'
+          ];
+          const missing = needed.filter(d => !idpCfg.authorizedDomains.includes(d));
+          if (missing.length > 0) {
+            const merged = Array.from(new Set([...idpCfg.authorizedDomains, ...needed]));
+            await fetchHttpsWithAuth(
+              `https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config?updateMask=authorizedDomains`,
+              'PATCH',
+              adcTok,
+              { authorizedDomains: merged }
+            );
+          }
+        }
+        let discoveredApiKey = (idpCfg && idpCfg.client && idpCfg.client.apiKey) ? idpCfg.client.apiKey : '';
+        if (!discoveredApiKey) {
+          const keysList = await fetchHttpsWithAuth(`https://apikeys.googleapis.com/v2/projects/${proj}/locations/global/keys`, 'GET', adcTok);
+          if (keysList && Array.isArray(keysList.keys) && keysList.keys.length > 0) {
+            const firstKeyName = keysList.keys[0].name;
+            const keyStrRes = await fetchHttpsWithAuth(`https://apikeys.googleapis.com/v2/${firstKeyName}/keyString`, 'GET', adcTok);
+            if (keyStrRes && keyStrRes.keyString) discoveredApiKey = keyStrRes.keyString;
+          }
+        }
+        // Check defaultSupportedIdpConfigs for google.com, microsoft.com, apple.com
+        const idps = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/defaultSupportedIdpConfigs`, 'GET', adcTok);
+        const foundClients = {};
+        if (idps && Array.isArray(idps.defaultSupportedIdpConfigs)) {
+          idps.defaultSupportedIdpConfigs.forEach(c => {
+            if (String(c.name || '').endsWith('/google.com') && c.clientId) foundClients.googleClientId = c.clientId;
+            if (String(c.name || '').endsWith('/microsoft.com') && c.clientId) foundClients.microsoftClientId = c.clientId;
+            if (String(c.name || '').endsWith('/apple.com') && c.clientId) foundClients.appleClientId = c.clientId;
+          });
+        }
+        if (discoveredApiKey || Object.keys(foundClients).length > 0) {
+          S.oauthConfig = Object.assign({}, S.oauthConfig || {}, {
+            ...(discoveredApiKey ? { firebaseApiKey: discoveredApiKey } : {}),
+            ...foundClients
+          });
+          saveState(S);
+        }
+      } catch (_) {}
+      return getOauthConfig();
+    };
+
     if (pathname === '/api/auth/config' && req.method === 'GET') {
-      const cfg = getOauthConfig();
+      const cfg = await autoDiscoverIdentityPlatformViaAdc();
       return sendJson(res, 200, {
         ssoEnforced: true,
         allowedProviders: ['google', 'microsoft', 'apple'],

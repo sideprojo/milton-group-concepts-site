@@ -273,6 +273,8 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="mgc-workspace-core.js"></script>
 <script>
 (function () {
@@ -287,6 +289,7 @@
   const btnLaunchOidc = document.getElementById('btnLaunchOidcRedirect');
   let activeProvider = 'google';
   let serverOidcConfig = null;
+  let firebaseAuthReady = false;
 
   const PROVIDER_META = {
     google:    { name: 'Google',    chip: 'Google OIDC · JWKS',    sub: 'Sign in with your Google Workspace or Google Cloud account.', cfgKey: 'googleClientId' },
@@ -294,17 +297,78 @@
     apple:     { name: 'Apple',     chip: 'Apple OIDC · JWKS',     sub: 'Sign in with your Apple ID & Passkey federation.', cfgKey: 'appleClientId' }
   };
 
+  function initFirebaseIfConfigured(cfg) {
+    if (!cfg || !cfg.firebaseApiKey || firebaseAuthReady || typeof firebase === 'undefined') return;
+    try {
+      if (!firebase.apps || !firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: cfg.firebaseApiKey,
+          authDomain: cfg.firebaseAuthDomain || (cfg.firebaseProjectId + '.firebaseapp.com'),
+          projectId: cfg.firebaseProjectId || 'gen-lang-client-0636792472'
+        });
+      }
+      firebaseAuthReady = true;
+    } catch (_) {}
+  }
+
   if (location.protocol === 'http:' || location.protocol === 'https:') {
     document.getElementById('oidcRedirectUriDisplay').textContent = location.origin + '/api/auth/oauth/callback';
     fetch('/api/auth/config')
       .then(r => r.json())
-      .then(cfg => { serverOidcConfig = cfg; })
+      .then(cfg => {
+        serverOidcConfig = cfg;
+        initFirebaseIfConfigured(cfg);
+      })
       .catch(() => {});
   }
 
   function hasLiveClientId(prov) {
     if (!serverOidcConfig || !serverOidcConfig.oidcProviders || !serverOidcConfig.oidcProviders[prov]) return false;
     return Boolean(serverOidcConfig.oidcProviders[prov].clientId);
+  }
+
+  async function launchFirebaseFederatedPopup(prov) {
+    if (!firebaseAuthReady || typeof firebase === 'undefined') return false;
+    try {
+      let providerObj = null;
+      if (prov === 'google') {
+        providerObj = new firebase.auth.GoogleAuthProvider();
+        providerObj.setCustomParameters({ prompt: 'select_account' });
+      } else if (prov === 'microsoft') {
+        providerObj = new firebase.auth.OAuthProvider('microsoft.com');
+        providerObj.setCustomParameters({ prompt: 'select_account' });
+      } else if (prov === 'apple') {
+        providerObj = new firebase.auth.OAuthProvider('apple.com');
+      }
+      if (!providerObj) return false;
+      msg.style.color = '#34d399';
+      msg.textContent = 'Opening ' + PROVIDER_META[prov].name + ' Federated SSO...';
+      const result = await firebase.auth().signInWithPopup(providerObj);
+      if (result && result.user) {
+        const idToken = await result.user.getIdToken();
+        const email = (result.user.email || '').toLowerCase();
+        const res = await fetch('/api/auth/sso', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider: prov, email, idToken, next: nextUrl })
+        });
+        const data = await res.json();
+        if (data && data.ok) {
+          W.signInAs(data.uid, prov);
+          persistOnboardingBridge(data.email || email, data.name || result.user.displayName, data.role, prov);
+          location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
+          return true;
+        } else {
+          msg.style.color = '#f87171';
+          msg.textContent = (data && data.error) ? data.error : 'Federated account is not yet provisioned.';
+          return true;
+        }
+      }
+    } catch (err) {
+      // If provider isn't enabled in Identity Platform or popup closed, fall back to direct OIDC redirect or modal
+      msg.textContent = '';
+    }
+    return false;
   }
 
   function openProviderModal(prov) {
@@ -323,9 +387,9 @@
     } else {
       clientIdInput.value = '';
     }
-    if (hasLiveClientId(prov)) {
+    if (hasLiveClientId(prov) || firebaseAuthReady) {
       btnLaunchOidc.style.display = 'inline-flex';
-      btnLaunchOidc.textContent = '🌐 Redirect to ' + meta.name + ' OIDC Sign-In →';
+      btnLaunchOidc.textContent = '🌐 Launch ' + meta.name + ' Federated OIDC Sign-In →';
     } else {
       btnLaunchOidc.style.display = 'none';
     }
@@ -344,7 +408,15 @@
     if (e.target === modalBackdrop) closeProviderModal();
   });
 
-  btnLaunchOidc.onclick = () => {
+  btnLaunchOidc.onclick = async () => {
+    if (hasLiveClientId(activeProvider)) {
+      location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(activeProvider);
+      return;
+    }
+    if (firebaseAuthReady) {
+      const handled = await launchFirebaseFederatedPopup(activeProvider);
+      if (handled) return;
+    }
     location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(activeProvider);
   };
 
@@ -372,14 +444,21 @@
     }
   };
 
+  async function handleProviderTrigger(prov) {
+    if (hasLiveClientId(prov)) {
+      location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
+      return;
+    }
+    if (firebaseAuthReady) {
+      const ok = await launchFirebaseFederatedPopup(prov);
+      if (ok) return;
+    }
+    openProviderModal(prov);
+  }
+
   document.querySelectorAll('.sso-provider-card').forEach(card => {
     card.addEventListener('click', () => {
-      const prov = card.dataset.provider;
-      if (hasLiveClientId(prov)) {
-        location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
-      } else {
-        openProviderModal(prov);
-      }
+      handleProviderTrigger(card.dataset.provider);
     });
   });
 
@@ -387,15 +466,11 @@
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const prov = btn.getAttribute('data-sso-trigger');
-      if (hasLiveClientId(prov)) {
-        location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
-        return;
-      }
       const val = (emailInput.value || '').trim();
       if (val && modalBackdrop.classList.contains('open')) {
         completeFederatedSso(prov, val);
       } else {
-        openProviderModal(prov);
+        handleProviderTrigger(prov);
       }
     });
   });
