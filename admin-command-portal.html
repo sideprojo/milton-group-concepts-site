@@ -12,19 +12,19 @@
        MGC LOGO THEMATIC COLOR PALETTE
        ========================================================================== */
     :root {
-      --bg-obsidian: #020617;
-      --bg-navy: #0f172a;
+      --bg-obsidian: #040814;
+      --bg-navy: #0b1325;
       --bg-slate: #1e293b;
-      --card: rgba(15, 23, 42, 0.84);
-      --card-hover: rgba(23, 37, 84, 0.72);
-      --border: rgba(203, 213, 225, 0.16);
-      --border-gold: rgba(252, 211, 77, 0.48);
-      --gold: #f59e0b;
-      --gold-light: #fcd34d;
-      --cobalt: #2563eb;
-      --crimson: #dc2626;
-      --emerald: #16a34a;
-      --white: #ffffff;
+      --card: rgba(15, 23, 42, 0.92);
+      --card-hover: rgba(30, 41, 59, 0.95);
+      --border: rgba(148, 163, 184, 0.18);
+      --border-gold: rgba(197, 179, 88, 0.45);
+      --gold: #c5b358;
+      --gold-light: #fde047;
+      --cobalt: #3b82f6;
+      --crimson: #ef4444;
+      --emerald: #10b981;
+      --white: #f8fafc;
       --silver: #cbd5e1;
       --muted: #94a3b8;
     }
@@ -33,8 +33,8 @@
     body {
       font-family: 'Inter', -apple-system, sans-serif;
       background:
-        radial-gradient(circle at 18% 12%, rgba(30, 58, 138, 0.28), transparent 42%),
-        radial-gradient(circle at 82% 18%, rgba(127, 29, 29, 0.22), transparent 42%),
+        radial-gradient(circle at 15% 15%, rgba(30, 58, 138, 0.28), transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(197, 179, 88, 0.12), transparent 40%),
         var(--bg-obsidian);
       color: var(--white);
       min-height: 100vh;
@@ -55,12 +55,12 @@
       gap: 16px;
       flex-wrap: wrap;
       margin-bottom: 20px;
-      background: linear-gradient(90deg, rgba(9, 14, 28, 0.94), rgba(15, 23, 42, 0.9));
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(30, 58, 138, 0.25));
       backdrop-filter: blur(18px);
-      border: 1px solid rgba(252, 211, 77, 0.3);
+      border: 1px solid rgba(197, 179, 88, 0.42);
       border-radius: 18px;
       padding: 14px 20px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
     }
     .hub-title-group {
       display: flex;
@@ -87,9 +87,9 @@
       gap: 6px;
       padding: 4px 11px;
       border-radius: 999px;
-      background: rgba(22, 163, 74, 0.16);
-      border: 1px solid rgba(74, 222, 128, 0.4);
-      color: #4ade80;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
       font-size: 11px;
       font-weight: 800;
     }
@@ -101,8 +101,8 @@
       flex-wrap: wrap;
     }
     .fluent-select {
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(252, 211, 77, 0.35);
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(197, 179, 88, 0.38);
       color: var(--white);
       padding: 9px 14px;
       border-radius: 10px;
@@ -114,7 +114,7 @@
       transition: border-color 0.2s;
     }
     .fluent-select:hover, .fluent-select:focus { border-color: var(--gold-light); }
-    .fluent-select option { background: #090e1c; color: #fff; }
+    .fluent-select option { background: #040814; color: #fff; }
 
     /* Minimalist 4-Metric Ribbon */
     .metric-row {
@@ -139,7 +139,7 @@
       height: 42px;
       border-radius: 12px;
       background: linear-gradient(135deg, #1e3a8a, #0f172a);
-      border: 1px solid rgba(252, 211, 77, 0.3);
+      border: 1px solid rgba(197, 179, 88, 0.35);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -155,24 +155,23 @@
     .app-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: 18px;
       padding: 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       gap: 16px;
-      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.2s ease;
       position: relative;
     }
     .app-card:hover {
       background: var(--card-hover);
       border-color: var(--border-gold);
-      transform: translateY(-3px);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+      transform: translateY(-2px);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.5);
     }
     .app-card.featured {
-      border-color: rgba(220, 38, 38, 0.55);
-      background: linear-gradient(145deg, rgba(69, 10, 10, 0.65), rgba(15, 23, 42, 0.92));
+      border-color: rgba(197, 179, 88, 0.55);
     }
 
     .ac-top {
@@ -182,15 +181,15 @@
       gap: 10px;
     }
     .ac-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: linear-gradient(135deg, #1e293b, #0f172a);
-      border: 1px solid rgba(252, 211, 77, 0.28);
+      border: 1px solid rgba(197, 179, 88, 0.35);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 21px;
     }
     .ac-cat-tag {
       font-size: 10px;
@@ -200,7 +199,7 @@
       padding: 4px 9px;
       border-radius: 999px;
       background: rgba(30, 58, 138, 0.45);
-      border: 1px solid rgba(252, 211, 77, 0.3);
+      border: 1px solid rgba(197, 179, 88, 0.35);
       color: var(--gold-light);
     }
 
@@ -228,7 +227,7 @@
     .btn-open {
       flex: 1;
       background: linear-gradient(135deg, #1e3a8a, #2563eb);
-      border: 1px solid rgba(252, 211, 77, 0.35);
+      border: 1px solid rgba(197, 179, 88, 0.4);
       color: var(--white);
       text-decoration: none;
       padding: 8px 12px;
@@ -239,12 +238,12 @@
       transition: all 0.18s;
     }
     .btn-open:hover {
-      background: linear-gradient(135deg, var(--crimson), #b91c1c);
       border-color: var(--gold-light);
+      filter: brightness(1.08);
     }
 
     .card-action-select {
-      background: rgba(2, 6, 23, 0.7);
+      background: rgba(4, 8, 20, 0.85);
       border: 1px solid var(--border);
       color: var(--gold-light);
       padding: 7px 8px;
@@ -254,7 +253,7 @@
       cursor: pointer;
       outline: none;
     }
-    .card-action-select option { background: #090e1c; color: #fff; }
+    .card-action-select option { background: #040814; color: #fff; }
 
     /* Sub-Page 2: Client Showcase Cards */
     .showcase-grid {
@@ -265,12 +264,12 @@
     .showcase-box {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 24px;
+      border-radius: 18px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 18px;
+      gap: 16px;
     }
 
     @media (max-width: 1100px) {
@@ -294,7 +293,7 @@
         <div class="hub-title-group">
           <img src="assets/mgc-logo.png" alt="MGC Logo" class="hub-logo" onerror="this.style.display='none'" />
           <h1 class="hub-title">MGC Workspace Launchpad</h1>
-          <span class="status-dot-pill">● 16 Portals Online</span>
+          <span class="status-dot-pill">● 16 Portals Online • DB $0.00</span>
         </div>
 
         <div class="toolbar-controls">
@@ -302,7 +301,7 @@
             <option value="all">📂 Filter: All 16 Portals (8 MGC • 8 F.I.X)</option>
             <option value="brand_mgc">🛡️ Brand: MGC Logo &amp; Theme (8 Portals)</option>
             <option value="brand_fix">⚡ Brand: F.I.X Logo &amp; Theme (8 Portals)</option>
-            <option value="core">🫆 Category: Core &amp; Client Portals (4)</option>
+            <option value="core">🫆 Category: Core &amp; Agile Portals (4)</option>
             <option value="academy">🎓 Category: Canvas LMS &amp; Labs (4)</option>
             <option value="commerce">💳 Category: Commerce &amp; Finance (4)</option>
             <option value="security">🔒 Category: Ops, SAM &amp; Zero-Trust (4)</option>
@@ -310,9 +309,10 @@
 
           <select id="role-dropdown" class="fluent-select" onchange="handleRoleAction(this.value)">
             <option value="admin">🫆 View: Root Admin (All Access)</option>
-            <option value="nc_career">🚀 Open NC Career, VA &amp; AI Monetization Hub</option>
+            <option value="saas">⚡ Open SaaS Apps &amp; Simulators Standard</option>
+            <option value="agile">🗂️ Open Agile Projects &amp; Client Deliverables</option>
+            <option value="nc_career">🚀 Open NC Career, VA &amp; EVE-NG Hub</option>
             <option value="client">👤 Switch to Client 2FA View</option>
-            <option value="sterling">🚗 Open Sterling Auto Repair</option>
           </select>
         </div>
       </div>
@@ -328,21 +328,21 @@
         <div class="metric-pill">
           <div>
             <div class="m-lbl">2FA Auth Gate</div>
-            <div class="m-val" style="color:#4ade80;">Passkey + TOTP</div>
+            <div class="m-val" style="color:#6ee7b7;">Enforced</div>
           </div>
           <div class="m-ico">🫆</div>
         </div>
         <div class="metric-pill">
           <div>
-            <div class="m-lbl">NC BAH / VA Target</div>
-            <div class="m-val" style="color:#93c5fd;">$2,172/mo</div>
+            <div class="m-lbl">Connected Databases</div>
+            <div class="m-val" style="color:#93c5fd;">IDB + WAL</div>
           </div>
-          <div class="m-ico">📍</div>
+          <div class="m-ico">🗄️</div>
         </div>
         <div class="metric-pill">
           <div>
-            <div class="m-lbl">Idle Cloud Cost</div>
-            <div class="m-val">$0.00</div>
+            <div class="m-lbl">Monthly DB &amp; Cloud Cost</div>
+            <div class="m-val" style="color:#6ee7b7;">$0.00</div>
           </div>
           <div class="m-ico">☁️</div>
         </div>
@@ -352,70 +352,70 @@
     </section>
 
     <!-- ======================================================================
-         SUB-PAGE 2: CLIENT PROJECTS & MONETIZED APPS
+         SUB-PAGE 2: AGILE PROJECTS & MONETIZED APPS
          ====================================================================== -->
-    <section data-subpage-title="Client Projects & Apps">
+    <section data-subpage-title="Agile Projects & Apps">
       <div class="hub-toolbar">
         <div class="hub-title-group">
-          <h2 class="hub-title">Client Websites, Career Relocation &amp; Monetized Apps</h2>
+          <h2 class="hub-title">Agile Client Deliverables, SaaS Simulators &amp; Monetized Apps</h2>
           <span class="status-dot-pill">Revenue &amp; Career Ready</span>
         </div>
       </div>
 
       <div class="showcase-grid">
-        <div class="showcase-box" style="border-color:rgba(197,179,88,0.65);">
+        <div class="showcase-box" style="border-color:rgba(197,179,88,0.5);">
           <div class="ac-top">
-            <div class="ac-icon">🚗</div>
-            <span class="ac-cat-tag" style="border-color:#C5B358;color:#FDE047;">F.I.X Theme • B2B Client Demo ($1,500 Setup)</span>
+            <div class="ac-icon">🗂️</div>
+            <span class="ac-cat-tag" style="border-color:#C5B358;color:#FDE047;">F.I.X Theme • Agile Projects &amp; Client Deliverables</span>
           </div>
           <div>
-            <div class="ac-title" style="font-size:22px;">Sterling Auto Repair (B2B AI Web Template)</div>
-            <div class="ac-sub">Use this live customer site to pitch NC &amp; VA auto shops, HVAC, and service businesses at $1,500 setup + $497/mo AI lead retainer.</div>
+            <div class="ac-title" style="font-size:20px;">Agile Project Board (Includes Sterling Auto Repair Project)</div>
+            <div class="ac-sub">Manage sprints, backlogs, and client deliverables (such as the Sterling Auto Repair web &amp; AI receptionist project) inside a unified Agile workspace.</div>
           </div>
           <div class="ac-bottom">
-            <a href="projects/sterling-auto-repair/index.html" class="btn-open" style="background:linear-gradient(135deg,#C5B358,#A18A38);color:#0B1426;">Open Sterling Auto Repair ↗</a>
+            <a href="agile-board.html" class="btn-open" style="background:linear-gradient(135deg,#C5B358,#A18A38);color:#040814;">Open Agile Project Board ↗</a>
           </div>
         </div>
 
-        <div class="showcase-box" style="border-color:rgba(212,212,216,0.45);">
+        <div class="showcase-box" style="border-color:rgba(148,163,184,0.35);">
           <div class="ac-top">
             <div class="ac-icon">🎓</div>
-            <span class="ac-cat-tag" style="border-color:#A1A1AA;color:#FFFFFF;">MGC Theme • NC Relocation + Fort Bragg/RTP Jobs + VA</span>
+            <span class="ac-cat-tag">MGC Theme • EVE-NG SCORM 2004 + AI Studio Apps</span>
           </div>
           <div>
-            <div class="ac-title" style="font-size:22px;">Canvas Academy, 15 EVE-NG Labs &amp; NC Career Hub</div>
-            <div class="ac-sub">Immediate Fort Bragg (USASOC 25N) &amp; Raleigh/RTP Jobs • Sanford/Lillington/Raleigh Relocation • VA Ch. 31 VR&amp;E ($2,172/mo BAH)</div>
+            <div class="ac-title" style="font-size:20px;">Canvas Academy, 15 EVE-NG Labs &amp; AI Studio Suite</div>
+            <div class="ac-sub">SCORM 2004 4th Ed. Telemetry • Ghost-Text CLI Grader • 6 Google AI Studio Networking &amp; Language Apps • NC Relocation &amp; VA Hub</div>
           </div>
           <div class="ac-bottom">
-            <a href="elearning-upskilling-hub.html" class="btn-open" style="background:linear-gradient(135deg,#FFFFFF,#D4D4D8);color:#09090B;">Open NC Career, VA &amp; EVE-NG Hub ↗</a>
+            <a href="elearning-upskilling-hub.html" class="btn-open">Open Canvas LMS &amp; EVE-NG Hub ↗</a>
           </div>
         </div>
 
-        <div class="showcase-box" style="border-color:rgba(212,212,216,0.45);">
+        <div class="showcase-box" style="border-color:rgba(197,179,88,0.5);">
           <div class="ac-top">
-            <div class="ac-icon">🛍️</div>
-            <span class="ac-cat-tag" style="border-color:#A1A1AA;color:#FFFFFF;">MGC Theme • Immediate AI &amp; Social Ad Monetization</span>
+            <div class="ac-icon">⚡</div>
+            <span class="ac-cat-tag" style="border-color:#C5B358;color:#FDE047;">F.I.X Theme • Flagship Design Standard</span>
           </div>
           <div>
-            <div class="ac-title" style="font-size:22px;">White Feather AI, Social Ads &amp; Digital Storefront</div>
-            <div class="ac-sub">$79 EVE-NG Lab Bundle • $97/mo White Feather AI Skool • Copy-Ready LinkedIn/Meta/TikTok Ad Scripts &amp; B2B Outreach</div>
+            <div class="ac-title" style="font-size:20px;">SaaS Apps, Simulators &amp; Subscriber LMS</div>
+            <div class="ac-sub">Pay-Per-View ($9) &amp; Pro Lab ($29/mo) Simulators • Mastery Leaderboard &amp; AI Coach • Custom Quote Builder</div>
           </div>
           <div class="ac-bottom">
-            <a href="whitefeather-ecommerce-hub.html" class="btn-open" style="background:linear-gradient(135deg,#FFFFFF,#D4D4D8);color:#09090B;">Open AI Monetization &amp; Ads Hub ↗</a>
+            <a href="saas-apps-and-lms-showcase.html" class="btn-open" style="background:linear-gradient(135deg,#C5B358,#A18A38);color:#040814;">Open SaaS Apps Showcase ↗</a>
           </div>
         </div>
 
-        <div class="showcase-box" style="border-color:rgba(197,179,88,0.65);">
+        <div class="showcase-box" style="border-color:rgba(197,179,88,0.5);">
           <div class="ac-top">
             <div class="ac-icon">💳</div>
             <span class="ac-cat-tag" style="border-color:#C5B358;color:#FDE047;">F.I.X Theme • Mercury • Stripe • VA Benefits</span>
           </div>
           <div>
-            <div class="ac-title" style="font-size:22px;">Finance, WAWF &amp; VA Benefits Treasury</div>
+            <div class="ac-title" style="font-size:20px;">Finance, WAWF &amp; VA Benefits Treasury</div>
             <div class="ac-sub">Stripe Checkout Links • Oct 22 VA Video Connect Prep • VA Home Loan ($0 Down) • Zero-Charge Cloud Guard</div>
           </div>
           <div class="ac-bottom">
-            <a href="finance-command.html" class="btn-open" style="background:linear-gradient(135deg,#C5B358,#A18A38);color:#0B1426;">Open Finance &amp; VA Treasury Hub ↗</a>
+            <a href="finance-command.html" class="btn-open" style="background:linear-gradient(135deg,#C5B358,#A18A38);color:#040814;">Open Finance &amp; VA Treasury Hub ↗</a>
           </div>
         </div>
       </div>
@@ -439,8 +439,8 @@
             <span class="ac-cat-tag">MGC Theme • Root Admin Session</span>
           </div>
           <div>
-            <div class="ac-title">malik.khabir@miltongroupsecurity.org</div>
-            <div class="ac-sub">Role: OWNER_ADMIN • Biometric Passkey + 6-Digit TOTP + Salted Cryptographic Digest Verified</div>
+            <div class="ac-title">Authenticated Root Admin Session</div>
+            <div class="ac-sub">Role: OWNER_ADMIN • Biometric Passkey + 6-Digit TOTP + Salted Cryptographic Digest Verified (Zero Prefilled Credentials)</div>
           </div>
           <div class="ac-bottom">
             <a href="onboarding-portal.html" class="btn-open">Open 2FA Biometric Gate ↗</a>
@@ -467,18 +467,18 @@
 
   <script>
     const PORTALS = [
-      { file: 'admin-command-portal.html', icon: '🛡️', title: 'Admin Command', sub: 'Master 16-Portal Control + Action Items', cat: 'core', brand: 'MGC', badge: 'MGC • Root Hub' },
-      { file: 'projects/sterling-auto-repair/index.html', icon: '🚗', title: 'Sterling Auto Repair', sub: 'B2B AI Web Pitch Demo ($1,500 Setup)', cat: 'core', brand: 'FIX', badge: 'F.I.X • Client Demo', featured: true },
-      { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', title: 'SaaS Apps & LMS', sub: 'Pay-Per-View ($9) & Pro Lab ($29/mo)', cat: 'core', brand: 'FIX', badge: 'F.I.X • Monetized' },
+      { file: 'admin-command-portal.html', icon: '🛡️', title: 'Admin Command', sub: 'Master 16-Portal Control + DB Guard', cat: 'core', brand: 'MGC', badge: 'MGC • Root Hub' },
+      { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', title: 'SaaS Apps & LMS', sub: 'Pay-Per-View ($9) & Pro Lab ($29/mo)', cat: 'core', brand: 'FIX', badge: 'F.I.X • Standard', featured: true },
+      { file: 'agile-board.html', icon: '🗂️', title: 'Agile Project Board', sub: 'Sprints & Client Deliverables (Sterling Auto)', cat: 'core', brand: 'FIX', badge: 'F.I.X • Agile DB', featured: true },
       { file: 'onboarding-portal.html', icon: '🫆', title: 'Client 2FA Gate', sub: 'Fingerprint, TOTP & Digest Auth', cat: 'core', brand: 'MGC', badge: 'MGC • 2FA Auth' },
 
-      { file: 'elearning-upskilling-hub.html', icon: '🎓', title: 'Canvas LMS & NC Career', sub: '15 EVE-NG Labs • NC Jobs/Move • VA Benefits', cat: 'academy', brand: 'MGC', badge: 'MGC • Academy & Career', featured: true },
+      { file: 'elearning-upskilling-hub.html', icon: '🎓', title: 'Canvas LMS & EVE-NG', sub: 'SCORM 2004 • Ghost-Text • AI Studio Apps', cat: 'academy', brand: 'MGC', badge: 'MGC • Academy', featured: true },
       { file: 'historical-archaeology-ai-hub.html', icon: '🏛️', title: 'History & AI Lab', sub: 'LiDAR, Epigraphy & Spatial Models', cat: 'academy', brand: 'MGC', badge: 'MGC • Research' },
       { file: 'chronos-external-insight-webapp.html', icon: '🌐', title: 'Chronos WebApp', sub: '3-Pane Historical Discovery Engine', cat: 'academy', brand: 'MGC', badge: 'MGC • Public App' },
       { file: 'agent-workflow-studio.html', icon: '🤖', title: 'Agent Studio', sub: 'LangGraph B2B Receptionist & RFP Agents', cat: 'academy', brand: 'FIX', badge: 'F.I.X • AI Agents' },
 
       { file: 'finance-command.html', icon: '💳', title: 'Finance & VA Treasury', sub: 'Stripe • WAWF • VA Ch.31 & Oct 22 Prep', cat: 'commerce', brand: 'FIX', badge: 'F.I.X • Treasury' },
-      { file: 'whitefeather-ecommerce-hub.html', icon: '🛍️', title: 'White Feather AI & Ads', sub: 'Digital Products, Social Ads & B2B Funnel', cat: 'commerce', brand: 'MGC', badge: 'MGC • Monetization', featured: true },
+      { file: 'whitefeather-ecommerce-hub.html', icon: '🛍️', title: 'White Feather AI & Ads', sub: 'Digital Products, Social Ads & B2B Funnel', cat: 'commerce', brand: 'MGC', badge: 'MGC • Monetization' },
       { file: 'earth-3d.html', icon: '🌍', title: '3D Earth & NC Corridor', sub: 'Raleigh ECPI ↔ Sanford ↔ Fort Bragg Map', cat: 'commerce', brand: 'FIX', badge: 'F.I.X • 3D Spatial' },
       { file: 'vr-command.html', icon: '🥽', title: '360° VR Deck', sub: 'WebXR Spatial Command & NOC Tour', cat: 'commerce', brand: 'FIX', badge: 'F.I.X • WebXR' },
 
@@ -499,18 +499,18 @@
       grid.innerHTML = items.map(p => {
         const isFix = p.brand === 'FIX';
         const cardStyle = isFix
-          ? 'border-color:rgba(197,179,88,0.45);background:linear-gradient(145deg,rgba(11,20,38,0.92),rgba(45,55,72,0.78));'
-          : 'border-color:rgba(212,212,216,0.38);background:linear-gradient(145deg,#09090B,#18181B);';
+          ? 'border-color:rgba(197,179,88,0.38);background:rgba(15,23,42,0.92);'
+          : 'border-color:rgba(148,163,184,0.24);background:rgba(15,23,42,0.92);';
         const tagStyle = isFix
-          ? 'background:rgba(197,179,88,0.2);border-color:#C5B358;color:#FDE047;'
-          : 'background:rgba(255,255,255,0.1);border-color:#A1A1AA;color:#FFFFFF;';
+          ? 'background:rgba(197,179,88,0.16);border-color:rgba(197,179,88,0.5);color:#fde047;'
+          : 'background:rgba(59,130,246,0.14);border-color:rgba(148,163,184,0.35);color:#f8fafc;';
         const btnStyle = isFix
-          ? 'background:linear-gradient(135deg,#C5B358,#A18A38);color:#0B1426;border-color:#FDE047;'
-          : 'background:linear-gradient(135deg,#FFFFFF,#D4D4D8);color:#09090B;border-color:#FFFFFF;font-weight:900;';
+          ? 'background:linear-gradient(135deg,#c5b358,#a18a38);color:#040814;border-color:#fde047;font-weight:900;'
+          : 'background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#ffffff;border-color:rgba(148,163,184,0.4);font-weight:800;';
         return `
           <div class="app-card ${p.featured ? 'featured' : ''}" style="${cardStyle}">
             <div class="ac-top">
-              <div class="ac-icon" style="${isFix ? 'border-color:#C5B358;' : 'border-color:#A1A1AA;background:rgba(255,255,255,0.06);'}">${p.icon}</div>
+              <div class="ac-icon" style="${isFix ? 'border-color:rgba(197,179,88,0.5);' : 'border-color:rgba(148,163,184,0.35);'}">${p.icon}</div>
               <span class="ac-cat-tag" style="${tagStyle}">${p.badge}</span>
             </div>
             <div>
@@ -521,10 +521,10 @@
               <a href="${p.file}" class="btn-open" style="${btnStyle}">Open ${p.brand} Portal ↗</a>
               <select class="card-action-select" onchange="cardQuickAction(this, '${p.file}')">
                 <option value="">⚡ Actions</option>
-                <option value="open">Open Portal &amp; Action Items</option>
+                <option value="open">Open Portal</option>
                 <option value="newtab">Open in New Tab ↗</option>
-                <option value="career">Jump to NC Jobs &amp; VA Hub</option>
-                <option value="monetize">Jump to AI &amp; Ads Monetization</option>
+                <option value="agile">Open Agile Project Board</option>
+                <option value="career">Jump to Canvas &amp; EVE-NG Hub</option>
                 <option value="2fa">Verify 2FA Access Gate</option>
               </select>
             </div>
@@ -542,15 +542,16 @@
       sel.value = '';
       if (v === 'open') window.location.href = url;
       if (v === 'newtab') window.open(url, '_blank');
+      if (v === 'agile') window.location.href = 'agile-board.html';
       if (v === 'career') window.location.href = 'elearning-upskilling-hub.html';
-      if (v === 'monetize') window.location.href = 'whitefeather-ecommerce-hub.html';
       if (v === '2fa') window.location.href = 'onboarding-portal.html';
     }
 
     function handleRoleAction(v) {
+      if (v === 'saas') window.location.href = 'saas-apps-and-lms-showcase.html';
+      if (v === 'agile') window.location.href = 'agile-board.html';
       if (v === 'nc_career') window.location.href = 'elearning-upskilling-hub.html';
       if (v === 'client') window.location.href = 'onboarding-portal.html';
-      if (v === 'sterling') window.location.href = 'projects/sterling-auto-repair/index.html';
     }
 
     renderGrid('all');

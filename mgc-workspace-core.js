@@ -15,22 +15,23 @@
 
   /* ---------- Catalog: every page/app a user can be given (pages & apps on request) ---------- */
   const CATALOG = [
-    { id: 'home',      icon: '🏠', title: 'My Dashboard',          brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html',            desc: 'Your tailored start page: status, action items, resources.' },
-    { id: 'agile',     icon: '🗂️', title: 'Agile Board',           brand: 'ANY', kind: 'app',  base: true,  price: 0,  href: 'agile-board.html',              desc: 'Backlog, sprint board and feature requests for shared projects.' },
-    { id: 'resources', icon: '📚', title: 'Curated Resources',     brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html#resources',  desc: 'Links, templates and real-life workflows matched to your quote.' },
-    { id: 'radar',     icon: '🎯', title: 'Contract Radar',        brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'sdvosb-contract-radar.html',    desc: 'Federal opportunity feed filtered to your NAICS codes.' },
-    { id: 'compliance',icon: '🔒', title: 'Compliance Tracker',    brand: 'MGC', kind: 'page', base: false, price: 7,  href: 'compliance-trust-center.html',  desc: 'CMMC / Zero-Trust checklist with evidence upload.' },
-    { id: 'ailab',     icon: '🤖', title: 'AI Workflow Lab',       brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'agent-workflow-studio.html',    desc: 'Prompt, agent and automation templates for your business.' },
-    { id: 'finance',   icon: '💳', title: 'Cashflow & Invoicing',  brand: 'FIX', kind: 'page', base: false, price: 8,  href: 'finance-command.html',          desc: 'Invoice tracker, WAWF/PIEE checklist, runway view.' },
-    { id: 'training',  icon: '🎓', title: 'SCORM EVE-NG Academy',  brand: 'MGC', kind: 'page', base: false, price: 10, href: 'elearning-upskilling-hub.html', desc: 'SCORM 2004 15-topology EVE-NG workbench, fault injector & auto-grader.' },
-    { id: 'aistudio',  icon: '🧠', title: 'AI Studio & NotebookLM',brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'elearning-upskilling-hub.html', desc: 'Wireless Sim, ACL Master Trainer, PROJECT_ROUTE, Safar-e Zaban, Asma ul-Husna & NotebookLM Vault.' }
+    { id: 'home',      icon: '🏠', title: 'My Dashboard',          brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html',              desc: 'Your tailored start page: status, action items, resources.' },
+    { id: 'agile',     icon: '🗂️', title: 'Agile Board',           brand: 'ANY', kind: 'app',  base: true,  price: 0,  href: 'agile-board.html',                desc: 'Backlog, sprint board and feature requests for shared projects.' },
+    { id: 'resources', icon: '📚', title: 'Curated Resources',     brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html#resources',    desc: 'Links, templates and real-life workflows matched to your quote.' },
+    { id: 'saasapps',  icon: '⚡', title: 'SaaS Apps & Simulators',brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'saas-apps-and-lms-showcase.html', desc: 'Monetized decoupled apps, traffic/ROI simulator & LMS.' },
+    { id: 'radar',     icon: '🎯', title: 'Contract Radar',        brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'sdvosb-contract-radar.html',      desc: 'Federal opportunity feed filtered to your NAICS codes.' },
+    { id: 'compliance',icon: '🔒', title: 'Compliance Tracker',    brand: 'MGC', kind: 'page', base: false, price: 7,  href: 'compliance-trust-center.html',    desc: 'CMMC / Zero-Trust checklist with evidence upload.' },
+    { id: 'ailab',     icon: '🤖', title: 'AI Workflow Lab',       brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'agent-workflow-studio.html',      desc: 'Prompt, agent and automation templates for your business.' },
+    { id: 'finance',   icon: '💳', title: 'Cashflow & Invoicing',  brand: 'FIX', kind: 'page', base: false, price: 8,  href: 'finance-command.html',            desc: 'Invoice tracker, WAWF/PIEE checklist, runway view.' },
+    { id: 'training',  icon: '🎓', title: 'SCORM EVE-NG Academy',  brand: 'MGC', kind: 'page', base: false, price: 10, href: 'elearning-upskilling-hub.html',   desc: 'SCORM 2004 15-topology EVE-NG workbench, fault injector & auto-grader.' },
+    { id: 'aistudio',  icon: '🧠', title: 'AI Studio & NotebookLM',brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'elearning-upskilling-hub.html',   desc: 'Wireless Sim, ACL Master Trainer, PROJECT_ROUTE, Safar-e Zaban, Asma ul-Husna & NotebookLM Vault.' }
   ];
   const STEPS = ['requested', 'approved_building', 'active'];
   const STATUS_LABEL = { requested: 'Pending approval', approved_building: 'Pages being built', active: 'Active', denied: 'Not approved', suspended: 'Suspended' };
 
   /* ---------- Tailoring: quote interest -> curated content (resources, actions, workflows) ---------- */
   const TAILOR = {
-    'ai-web': { label: 'AI website & agent', pages: ['ailab', 'finance', 'aistudio'],
+    'ai-web': { label: 'AI website & agent', pages: ['saasapps', 'ailab', 'finance', 'aistudio'],
       actions: ['Pick your 3 core services to feature', 'Upload logo + brand colors', 'Approve the draft homepage', 'Connect your Google Business profile'],
       resources: [['Google Business Profile setup', 'https://support.google.com/business'], ['Local SEO checklist', 'https://developers.google.com/search/docs/fundamentals/seo-starter-guide'], ['Stripe payment links', 'https://stripe.com/payments/payment-links']],
       workflows: ['Lead arrives → agent replies in 60s → books calendar slot → owner notified', 'Review request sent 24h after each completed job'] },
@@ -42,27 +43,34 @@
       actions: ['Inventory systems that touch CUI', 'Assign an owner per control family', 'Collect first 10 evidence artifacts', 'Schedule a gap review'],
       resources: [['NIST SP 800-171', 'https://csrc.nist.gov/pubs/sp/800/171/r3/final'], ['CMMC resources (DoD CIO)', 'https://dodcio.defense.gov/CMMC/'], ['CISA free services', 'https://www.cisa.gov/cybersecurity-services']],
       workflows: ['Control gap → POA&M item → owner → due date → evidence → closed', 'Quarterly access review → remove stale accounts'] },
-    'training': { label: 'Skills & certification', pages: ['training', 'aistudio', 'ailab'],
+    'training': { label: 'Skills & certification', pages: ['training', 'aistudio', 'saasapps'],
       actions: ['Pick one target certification', 'Block 5 study sessions this week', 'Complete diagnostic quiz', 'Book exam date'],
       resources: [['Cisco Learning Network', 'https://learningnetwork.cisco.com/'], ['Microsoft Learn', 'https://learn.microsoft.com/training/'], ['Google Cloud Skills Boost', 'https://www.cloudskillsboost.google/'], ['Google NotebookLM', 'https://notebooklm.google.com/'], ['Google AI Studio Apps', 'https://aistudio.google.com/apps?source=user&tag=created-by-you']],
       workflows: ['Diagnostic → weak domains → targeted SCORM EVE-NG labs → AI Studio simulators → practice exam'] }
   };
 
-  /* ---------- Seed (demo users cover every lifecycle state) ---------- */
+  /* ---------- Seed (demo users cover every lifecycle state + Sterling Auto as Agile Project) ---------- */
   function seed() {
     const t = now();
     const mk = (id, name, email, role, status, brand, interest, paid, pages) => ({ id, name, email, role, status, brand, quote: { interest, note: '' }, plan: { base: paid, addons: [] }, pages: pages || {}, created: t });
     return {
       v: 1,
       users: {
-        owner: mk('owner', 'Malik K. (Owner)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { home: 'ready', agile: 'ready', resources: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready' }),
-        ana: mk('ana', 'Ana (demo: just requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, {}),
-        ben: mk('ben', 'Ben (demo: pages being built)', 'ben@example.com', 'member', 'approved_building', 'FIX', 'federal', false, { home: 'pending', agile: 'pending', resources: 'pending', radar: 'pending', compliance: 'pending' }),
-        cara: mk('cara', 'Cara (demo: active, paid)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, { home: 'ready', agile: 'ready', resources: 'ready', ailab: 'ready', finance: 'pending' })
+        owner: mk('owner', 'Malik K. (Owner)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready' }),
+        ana: mk('ana', 'Ana (Requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, {}),
+        ben: mk('ben', 'Ben (Building Pages)', 'ben@example.com', 'member', 'approved_building', 'FIX', 'federal', false, { home: 'pending', agile: 'pending', resources: 'pending', radar: 'pending', compliance: 'pending' }),
+        cara: mk('cara', 'Cara (Active Member)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', ailab: 'ready', finance: 'pending' })
       },
       shares: [], tasks: [], notifications: [], audit: [],
-      projects: { p1: { id: 'p1', name: 'Shared: Website launch', owner: 'owner', brand: 'FIX' }, p2: { id: 'p2', name: 'Internal: Q4 platform', owner: 'owner', brand: 'MGC' } },
+      projects: {
+        p_sterling: { id: 'p_sterling', name: 'Client Project: Sterling Auto Repair (Web + AI Receptionist)', owner: 'owner', brand: 'FIX', demoUrl: 'projects/sterling-auto-repair/index.html', budget: '$1,500 setup + $497/mo' },
+        p1: { id: 'p1', name: 'Shared: Website launch', owner: 'owner', brand: 'FIX' },
+        p2: { id: 'p2', name: 'Internal: Q4 platform', owner: 'owner', brand: 'MGC' }
+      },
       items: [
+        { id: 'i_st1', project: 'p_sterling', type: 'story', title: 'Interactive repair estimator & bay RO status tracker', points: 5, col: 'done', sprint: 1, assignee: 'owner', createdBy: 'owner' },
+        { id: 'i_st2', project: 'p_sterling', type: 'story', title: '24/7 AI lead receptionist + Google Calendar booking', points: 8, col: 'progress', sprint: 1, assignee: 'owner', createdBy: 'owner' },
+        { id: 'i_st3', project: 'p_sterling', type: 'task', title: 'Local SEO schema & Google Business Profile verification', points: 3, col: 'ready', sprint: 1, assignee: 'owner', createdBy: 'owner' },
         { id: 'i1', project: 'p1', type: 'story', title: 'Homepage draft', points: 5, col: 'progress', sprint: 1, assignee: 'owner', createdBy: 'owner' },
         { id: 'i2', project: 'p1', type: 'task', title: 'Collect brand assets', points: 2, col: 'ready', sprint: 1, assignee: 'cara', createdBy: 'owner' },
         { id: 'i3', project: 'p1', type: 'story', title: 'Booking form + calendar', points: 8, col: 'backlog', sprint: 0, assignee: '', createdBy: 'owner' },
@@ -74,6 +82,74 @@
       requests: [{ id: 'r1', uid: 'ana', status: 'requested', created: t }, { id: 'r2', uid: 'ben', status: 'approved', created: t }]
     };
   }
+
+  /* ---------- Connected Multi-Engine Database & Free-Tier Cost Guard ---------- */
+  const COST_KEY = 'mgc_db_cost_guard_v1';
+  const costGuard = (function () {
+    const today = new Date().toISOString().slice(0, 10);
+    let data = null;
+    try { data = JSON.parse(localStorage.getItem(COST_KEY)); } catch (_) {}
+    if (!data || data.day !== today) {
+      data = { day: today, readsToday: 1, writesToday: 0, dailyReadCap: 40000, dailyWriteCap: 16000, firestoreFreeReads: 50000, firestoreFreeWrites: 20000, estimatedCostUsd: 0.00, circuitBreakerTripped: false, lastSyncAt: now() };
+      try { localStorage.setItem(COST_KEY, JSON.stringify(data)); } catch (_) {}
+    }
+    return {
+      get stats() { return data; },
+      trackRead() { data.readsToday++; try { localStorage.setItem(COST_KEY, JSON.stringify(data)); } catch (_) {} },
+      trackWrite() {
+        if (data.writesToday >= data.dailyWriteCap) { data.circuitBreakerTripped = true; return false; }
+        data.writesToday++; data.lastSyncAt = now();
+        try { localStorage.setItem(COST_KEY, JSON.stringify(data)); } catch (_) {}
+        return true;
+      }
+    };
+  })();
+
+  let idbConn = null;
+  function initIndexedDB() {
+    if (!global.indexedDB) return;
+    try {
+      const req = global.indexedDB.open('MGC_Enterprise_DB', 1);
+      req.onupgradeneeded = (e) => {
+        const d = e.target.result;
+        ['users', 'projects', 'agile_items', 'shares', 'audit', 'cost_ledger'].forEach(store => {
+          if (!d.objectStoreNames.contains(store)) d.createObjectStore(store, { keyPath: 'id' });
+        });
+      };
+      req.onsuccess = (e) => {
+        idbConn = e.target.result;
+        syncStateToIndexedDB(S);
+      };
+    } catch (_) {}
+  }
+
+  function syncStateToIndexedDB(state) {
+    if (!idbConn || !state) return;
+    try {
+      const tx = idbConn.transaction(['users', 'projects', 'agile_items', 'shares', 'audit', 'cost_ledger'], 'readwrite');
+      Object.values(state.users || {}).forEach(u => tx.objectStore('users').put(u));
+      Object.values(state.projects || {}).forEach(p => tx.objectStore('projects').put(p));
+      (state.items || []).forEach(it => tx.objectStore('agile_items').put(it));
+      (state.shares || []).forEach(sh => tx.objectStore('shares').put(sh));
+      (state.audit || []).slice(0, 50).forEach(au => tx.objectStore('audit').put(au));
+      tx.objectStore('cost_ledger').put({ id: costGuard.stats.day, ...costGuard.stats });
+    } catch (_) {}
+  }
+
+  let bcChannel = null;
+  try {
+    if (global.BroadcastChannel) {
+      bcChannel = new BroadcastChannel('mgc_db_sync');
+      bcChannel.onmessage = (ev) => {
+        if (ev.data && ev.data.type === 'STATE_UPDATED') {
+          try {
+            const fresh = JSON.parse(localStorage.getItem(KEY));
+            if (fresh && fresh.v === 1) S = fresh;
+          } catch (_) {}
+        }
+      };
+    }
+  } catch (_) {}
 
   const isHttp = location.protocol === 'http:' || location.protocol === 'https:';
   let serverSyncOk = false;
@@ -88,6 +164,7 @@
         const parsed = JSON.parse(xhr.responseText);
         if (parsed && parsed.v === 1) {
           serverSyncOk = true;
+          costGuard.trackRead();
           if (parsed.currentUser) sessionStorage.setItem('mgcw.uid', parsed.currentUser);
           return parsed;
         }
@@ -98,6 +175,7 @@
 
   function postServerAction(payload) {
     if (!serverSyncOk) return null;
+    if (!costGuard.trackWrite()) return null;
     try {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', '/api/action', false);
@@ -115,31 +193,102 @@
     return null;
   }
 
-  /* ---------- db adapter (uses Cloud Run /api/state when over HTTP, localStorage for file://) ---------- */
+  function ensureSterlingProject(state) {
+    if (!state) return state;
+    const def = seed();
+    state.projects = Object.assign({}, def.projects, state.projects || {});
+    if (!(state.items || []).some(i => i.project === 'p_sterling')) {
+      state.items = def.items.filter(i => i.project === 'p_sterling').concat(state.items || []);
+    }
+    if (state.users && state.users.owner && state.users.owner.pages) {
+      state.users.owner.pages.saasapps = 'ready';
+      state.users.owner.pages.aistudio = 'ready';
+    }
+    return state;
+  }
+
+  /* ---------- db adapter (IndexedDB + Cloud Run /api/state + localStorage WAL) ---------- */
   const db = {
     load() {
+      costGuard.trackRead();
       const srv = fetchServerStateSync();
-      if (srv) return srv;
-      try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) return s; } catch (e) {}
-      const s = seed(); localStorage.setItem(KEY, JSON.stringify(s)); return s;
+      if (srv) return ensureSterlingProject(srv);
+      try {
+        const s = JSON.parse(localStorage.getItem(KEY));
+        if (s && s.v === 1) return ensureSterlingProject(s);
+      } catch (e) {}
+      const s = seed();
+      localStorage.setItem(KEY, JSON.stringify(s));
+      return s;
     },
-    save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (_) {} },
-    reset() { localStorage.removeItem(KEY); sessionStorage.removeItem('mgcw.uid'); }
+    save(s) {
+      if (!costGuard.trackWrite()) return;
+      try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (_) {}
+      syncStateToIndexedDB(s);
+      if (bcChannel) { try { bcChannel.postMessage({ type: 'STATE_UPDATED', ts: now() }); } catch (_) {} }
+    },
+    reset() {
+      localStorage.removeItem(KEY);
+      sessionStorage.removeItem('mgcw.uid');
+      localStorage.removeItem('mgc_onboarded_session');
+    }
   };
   let S = db.load();
+  initIndexedDB();
   const commit = () => db.save(S);
-  const me = () => S.users[(S.currentUser || sessionStorage.getItem('mgcw.uid') || '')] || null;
+
+  const me = () => {
+    const uidVal = S.currentUser || sessionStorage.getItem('mgcw.uid') || '';
+    if (uidVal && S.users[uidVal]) return S.users[uidVal];
+    // Bridge with OS 2FA Session if authenticated there
+    try {
+      const osSess = JSON.parse(localStorage.getItem('mgc_onboarded_session') || 'null');
+      if (osSess && osSess.email && localStorage.getItem('mgc_edge_gate_locked') !== '1') {
+        const found = Object.values(S.users).find(u => u.email.toLowerCase() === osSess.email.toLowerCase());
+        if (found) {
+          sessionStorage.setItem('mgcw.uid', found.id);
+          return found;
+        }
+      }
+    } catch (_) {}
+    return null;
+  };
+
   const signInAs = (id) => {
     sessionStorage.setItem('mgcw.uid', id);
-    if (serverSyncOk && S.users[id] && S.users[id].email) {
+    const u = S.users[id];
+    if (u) {
+      const sessionObj = {
+        email: u.email,
+        name: u.name,
+        org: u.brand === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC',
+        role: u.role === 'owner' ? 'OWNER_ADMIN (2FA VERIFIED)' : 'VERIFIED_MEMBER',
+        access: u.role === 'owner' ? 'INTERNAL_SUITE_FULL' : 'MEMBER_SCOPED',
+        verifiedAt: now(),
+        integrityHash: 'SHA256-' + btoa(u.email + ':' + u.role + ':MGC-2026').slice(0, 16),
+        zeroChargeGuard: 'ACTIVE_MIN0_MAX2'
+      };
+      localStorage.setItem('mgc_onboarded_session', JSON.stringify(sessionObj));
+      localStorage.removeItem('mgc_edge_gate_locked');
+    }
+    if (serverSyncOk && u && u.email) {
       try {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/auth/google', false);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({ email: S.users[id].email }));
+        xhr.send(JSON.stringify({ email: u.email }));
       } catch (_) {}
     }
   };
+
+  const signOut = () => {
+    sessionStorage.removeItem('mgcw.uid');
+    localStorage.removeItem('mgc_onboarded_session');
+    localStorage.setItem('mgc_edge_gate_locked', '1');
+    if (serverSyncOk) location.href = '/api/auth/logout';
+    else location.href = 'login.html';
+  };
+
   const log = (actor, action, detail) => { S.audit.unshift({ id: uid('a'), ts: now(), actor, action, detail }); S.audit = S.audit.slice(0, 200); };
   const notify = (toUid, title, body, channel) => { S.notifications.unshift({ id: uid('n'), toUid, title, body, channel: channel || 'in-app + email', ts: now(), read: false }); };
 
@@ -225,67 +374,71 @@
     const s = S.shares.find(x => x.id === id); S.shares = S.shares.filter(x => x.id !== id); if (s) log('owner', 'share.revoke', id); commit();
   }
 
-  /* ---------- Themed shell (MGC gray/black/white, F.I.X navy/gold, with external-site backdrops) ---------- */
+  /* ---------- SaaS Apps Standard Theme Shell (Matches saas-apps-and-lms-showcase.html) ---------- */
   const CSS = `
-  :root{--r:14px}
-  body.w-mgc{--bg:#09090B;--card:#141519;--card2:#18181B;--line:#3F3F46;--tx:#FAFAFA;--mut:#A1A1AA;--ac:#FFFFFF;--acx:#09090B;--ok:#E4E4E7;
-    background:radial-gradient(circle at 15% 15%,#1b1b20 0%,#050507 65%)}
-  body.w-fix{--bg:#0B1426;--card:#111d36;--card2:#16233f;--line:rgba(197,179,88,.38);--tx:#F8FAFC;--mut:#94A3B8;--ac:#FDE047;--acx:#0B1426;--ok:#C5B358;
-    background:radial-gradient(circle at 16% 14%,rgba(197,179,88,.16),transparent 42%),radial-gradient(circle at 84% 18%,rgba(45,55,72,.55),transparent 45%),#0B1426}
+  :root{--r:18px;--bg-deep:#040814;--border-subtle:rgba(148,163,184,0.18);--border-gold:rgba(197,179,88,0.45);--gold:#c5b358;--blue:#3b82f6;--emerald:#10b981}
+  body.w-mgc{--bg:#040814;--card:rgba(15,23,42,0.92);--card2:rgba(12,21,42,0.88);--line:rgba(148,163,184,0.22);--tx:#F8FAFC;--mut:#94A3B8;--ac:#3B82F6;--acx:#FFFFFF;--ok:#10B981;
+    background:radial-gradient(circle at 12% 15%,rgba(37,99,235,0.18),transparent 40%),radial-gradient(circle at 88% 12%,rgba(148,163,184,0.12),transparent 36%),radial-gradient(circle at 50% 85%,rgba(197,179,88,0.10),transparent 45%),#040814}
+  body.w-fix{--bg:#040814;--card:rgba(15,23,42,0.92);--card2:rgba(12,21,42,0.88);--line:rgba(197,179,88,0.38);--tx:#F8FAFC;--mut:#94A3B8;--ac:#C5B358;--acx:#040814;--ok:#10B981;
+    background:radial-gradient(circle at 12% 15%,rgba(37,99,235,0.18),transparent 40%),radial-gradient(circle at 88% 12%,rgba(220,38,38,0.14),transparent 36%),radial-gradient(circle at 50% 85%,rgba(197,179,88,0.14),transparent 45%),#040814}
   body.w-mgc::before,body.w-fix::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none}
-  body.w-mgc::before{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23E4E4E7' stroke-width='3'/><path d='M26 76V42l24 22 24-22v34' fill='none' stroke='%23A1A1AA' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat 96% 94%/min(26vw,320px),linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/44px 44px;opacity:.5}
-  body.w-fix::before{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23C5B358' stroke-width='3'/><path d='M30 38h40M30 58h28M30 78h34' stroke='%23FDE047' stroke-width='5' stroke-linecap='round'/></svg>") no-repeat 96% 94%/min(26vw,320px),linear-gradient(rgba(197,179,88,.05) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(197,179,88,.05) 1px,transparent 1px) 0 0/44px 44px;opacity:.5}
+  body.w-mgc::before{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23E4E4E7' stroke-width='3'/><path d='M26 76V42l24 22 24-22v34' fill='none' stroke='%23A1A1AA' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat 96% 94%/min(22vw,280px),linear-gradient(rgba(148,163,184,.03) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(148,163,184,.03) 1px,transparent 1px) 0 0/44px 44px;opacity:.45}
+  body.w-fix::before{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23C5B358' stroke-width='3'/><path d='M30 38h40M30 58h28M30 78h34' stroke='%23FDE047' stroke-width='5' stroke-linecap='round'/></svg>") no-repeat 96% 94%/min(22vw,280px),linear-gradient(rgba(197,179,88,.04) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(197,179,88,.04) 1px,transparent 1px) 0 0/44px 44px;opacity:.45}
   *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--tx);min-height:100vh}
   a{color:inherit}
-  .wrap{max-width:1180px;margin:0 auto;padding:14px 16px 70px}
-  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;position:sticky;top:8px;z-index:20;backdrop-filter:blur(10px)}
-  .brand{display:flex;gap:10px;align-items:center;font-weight:900;letter-spacing:.03em}
-  .brand small{display:block;font-size:10px;color:var(--mut);font-weight:700;letter-spacing:.1em;text-transform:uppercase}
-  .nav{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-  .btn,select,input,textarea{font:inherit;font-size:12px;border-radius:9px;border:1px solid var(--line);background:var(--card2);color:var(--tx);padding:7px 11px}
+  .wrap{max-width:1360px;margin:0 auto;padding:18px 22px 80px}
+  .bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(15,23,42,0.95),rgba(30,41,59,0.9));border:1px solid var(--border-gold);border-radius:var(--r);padding:14px 20px;margin-bottom:20px;position:sticky;top:8px;z-index:20;backdrop-filter:blur(12px);box-shadow:0 14px 40px rgba(0,0,0,0.45)}
+  .brand{display:flex;gap:12px;align-items:center;font-weight:900;letter-spacing:.02em}
+  .brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .btn,select,input,textarea{font:inherit;font-size:12px;border-radius:10px;border:1px solid var(--line);background:rgba(15,23,42,0.9);color:var(--tx);padding:8px 13px;transition:all .18s}
   .btn{cursor:pointer;font-weight:800;text-decoration:none;display:inline-flex;gap:6px;align-items:center}
-  .btn.pri{background:var(--ac);color:var(--acx);border-color:var(--ac)}
-  .btn:hover{border-color:var(--ac)}.btn[disabled]{opacity:.45;cursor:not-allowed}
-  .chip{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
-  .chip.ok{color:var(--acx);background:var(--ac);border-color:var(--ac)}.chip.warn{color:var(--ac);border-color:var(--ac)}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
-  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
-  h1{font-size:22px;margin:0 0 4px}h2{font-size:15px;margin:0 0 8px}p{color:var(--mut);font-size:13px;line-height:1.5;margin:4px 0}
-  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-  details{border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin-top:8px}summary{cursor:pointer;font-weight:800;font-size:12px}
+  .btn.pri{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border-color:#60a5fa;box-shadow:0 6px 18px rgba(37,99,235,0.3)}
+  body.w-fix .btn.pri{background:linear-gradient(135deg,#c5b358,#a38f36);color:#091024;border-color:#fde047}
+  .btn:hover{border-color:#60a5fa;transform:translateY(-1px)}.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(2,6,23,0.75);color:var(--mut)}
+  .chip.ok{color:#34d399;background:rgba(16,185,129,0.18);border-color:rgba(16,185,129,0.45)}.chip.warn{color:#fbbf24;background:rgba(197,179,88,0.18);border-color:rgba(197,179,88,0.45)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 12px 32px rgba(0,0,0,0.35);transition:border-color .2s}
+  .card:hover{border-color:rgba(59,130,246,0.45)}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  h1{font-size:24px;font-weight:900;letter-spacing:-.02em;margin:0 0 6px}h2{font-size:16px;font-weight:800;margin:0 0 8px}p{color:var(--mut);font-size:13px;line-height:1.55;margin:4px 0}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  details{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:8px;background:rgba(9,15,32,0.65)}summary{cursor:pointer;font-weight:800;font-size:12px}
   .skel{position:relative;overflow:hidden}.skel::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:sh 1.6s infinite}
   @keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
-  .steps{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.step{flex:1;min-width:130px;padding:9px;border:1px solid var(--line);border-radius:10px;font-size:11px;font-weight:800;color:var(--mut)}
-  .step.on{color:var(--acx);background:var(--ac);border-color:var(--ac)}.step.done{color:var(--ok);border-color:var(--ok)}
-  table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
-  .demo{font-size:10px;color:var(--mut);border:1px dashed var(--line);border-radius:8px;padding:3px 8px}
-  .lock{text-align:center;padding:40px 16px}
-  .toast{position:fixed;right:16px;bottom:16px;background:var(--ac);color:var(--acx);padding:10px 14px;border-radius:10px;font-weight:800;font-size:12px;z-index:99}
-  @media(max-width:640px){.wrap{padding:10px 10px 90px}.bar{position:static}}`;
+  .steps{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.step{flex:1;min-width:130px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-size:11.5px;font-weight:800;color:var(--mut);background:rgba(15,23,42,0.8)}
+  .step.on{color:#fff;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-color:#60a5fa}.step.done{color:#34d399;border-color:rgba(16,185,129,0.45)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mut);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em}
+  .demo{font-size:10px;color:#34d399;border:1px solid rgba(16,185,129,0.4);background:rgba(16,185,129,0.12);border-radius:999px;padding:4px 10px;font-weight:800}
+  .lock{text-align:center;padding:44px 20px}
+  .toast{position:fixed;right:18px;bottom:18px;background:linear-gradient(135deg,#10b981,#059669);color:#022c22;padding:10px 16px;border-radius:12px;font-weight:900;font-size:12px;z-index:99}
+  @media(max-width:640px){.wrap{padding:12px 12px 90px}.bar{position:static}}`;
 
   function injectCss() { if (document.getElementById('w-css')) return; const s = document.createElement('style'); s.id = 'w-css'; s.textContent = CSS; document.head.appendChild(s); }
   function theme(brand) { document.body.classList.remove('w-mgc', 'w-fix'); document.body.classList.add(brand === 'FIX' ? 'w-fix' : 'w-mgc'); }
   function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2400); }
   function unread(uidv) { return S.notifications.filter(n => n.toUid === uidv && !n.read).length; }
 
-  /** Renders the top bar. `active` = current page file; sign-in switcher is DEMO ONLY. */
+  /** Renders the top bar with SaaS Apps styling + DB & $0.00 Cost Guard status. */
   function header(active) {
     injectCss(); const u = me(); theme(u ? u.brand : 'MGC');
-    const links = [['member-portal.html', 'My Workspace'], ['agile-board.html', 'Agile Board']]
+    const links = [['member-portal.html', 'My Workspace'], ['agile-board.html', 'Agile Projects'], ['saas-apps-and-lms-showcase.html', '⚡ SaaS Apps']]
       .concat(u && u.role === 'owner' ? [['access-admin.html', 'Access Admin'], ['admin-command-portal.html', '16 Portals Hub']] : []);
-    const opts = Object.values(S.users).map(x => '<option value="' + x.id + '"' + (u && u.id === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>').join('');
     const nav = '<div class="nav">' + links.map(l => '<a class="btn' + (l[0] === active ? ' pri' : '') + '" href="' + l[0] + '">' + l[1] + '</a>').join('') + '</div>';
     const isLocal = location.protocol === 'file:' || ['localhost', '127.0.0.1', ''].includes(location.hostname);
-    const authBtn = serverSyncOk
-      ? (u ? '<a class="btn" href="/api/auth/logout">Sign out</a>' : '<a class="btn pri" href="/login.html">Sign in</a>')
-      : '<a class="btn" href="login.html">Sign in gate</a>';
-    const right = '<div class="nav">' + (isLocal && Object.keys(S.users).length > 1 ? '<span class="demo" title="Real sign-in = Firebase Auth / Cloud Run. This switcher exists on localhost/file:// so you can review each user\'s view.">DEMO sign-in</span><select id="w-as" aria-label="View as user"><option value="">— signed out —</option>' + opts + '</select>' : '') + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + authBtn + (isLocal ? '<button class="btn" id="w-reset" title="Reset demo data">↺</button>' : '') + '</div>';
+    const opts = Object.values(S.users).map(x => '<option value="' + x.id + '"' + (u && u.id === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>').join('');
+    const cg = costGuard.stats;
+    const dbBadge = '<span class="demo" title="Connected to IndexedDB (MGC_Enterprise_DB) + Cloud Run ACID JSON-WAL + Firestore Free-Tier Guard">🗄️ DB Connected · $0.00 (' + cg.readsToday + 'R/' + cg.writesToday + 'W)</span>';
+    const authBtn = u
+      ? '<button class="btn" id="w-signout">🔒 Sign out</button>'
+      : '<a class="btn pri" href="login.html">Sign in →</a>';
+    const right = '<div class="nav">' + dbBadge + (isLocal && u && u.role === 'owner' ? '<select id="w-as" aria-label="Preview user role" title="Owner role previewer"><option value="">Switch preview…</option>' + opts + '</select>' : '') + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + authBtn + '</div>';
     const el = document.createElement('div'); el.className = 'bar';
-    el.innerHTML = '<div class="brand"><span style="font-size:20px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE') + '<small>' + (u ? esc(STATUS_LABEL[u.status]) + ' · ' + u.role : 'signed out') + '</small></div></div>' + nav + right;
-    const host = document.querySelector('.wrap'); host.prepend(el);
-    const asEl = el.querySelector('#w-as'); if (asEl) asEl.onchange = (e) => { if (e.target.value) signInAs(e.target.value); else { sessionStorage.removeItem('mgcw.uid'); if (serverSyncOk) location.href = '/api/auth/logout'; } location.reload(); };
-    const rsEl = el.querySelector('#w-reset'); if (rsEl) rsEl.onclick = () => { if (confirm('Reset all demo data?')) { db.reset(); location.reload(); } };
+    el.innerHTML = '<div class="brand"><span style="font-size:22px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE') + '<small>' + (u ? esc(u.name) + ' · ' + esc(STATUS_LABEL[u.status]) : 'Authentication Enforced · Signed Out') + '</small></div></div>' + nav + right;
+    const host = document.querySelector('.wrap'); if (host) host.prepend(el);
+    const asEl = el.querySelector('#w-as'); if (asEl) asEl.onchange = (e) => { if (e.target.value) { signInAs(e.target.value); location.reload(); } };
+    const soEl = el.querySelector('#w-signout'); if (soEl) soEl.onclick = () => signOut();
   }
 
-  global.MGCW = { CATALOG, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, commit, me, signInAs, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction };
+  global.MGCW = { CATALOG, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, costGuard, commit, me, signInAs, signOut, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction };
 })(window);

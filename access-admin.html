@@ -15,7 +15,7 @@
   let tab = 'requests';
 
   if (!me || me.role !== 'owner') {
-    app.innerHTML = '<div class="card lock"><h1>🔒 Owner only</h1><p>This area is restricted. Use DEMO sign-in → "Malik K. (Owner)" to review it.</p></div>';
+    app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Zero-Trust Owner Authorization Enforced</span><h1 style="margin-top:10px">Owner authentication required</h1><p>This administrative control center is restricted to the authenticated platform owner.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In as Owner →</a></div></div>';
     W.header('access-admin.html'); return;
   }
   const members = () => Object.values(S().users).filter(x => x.role !== 'owner');

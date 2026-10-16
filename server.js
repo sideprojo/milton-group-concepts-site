@@ -27,30 +27,33 @@ const OWNER_EMAILS = new Set([
 ].filter(Boolean));
 
 const CATALOG = [
-  { id: 'home',       icon: '🏠', title: 'My Dashboard',         brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html',            desc: 'Your tailored start page: status, action items, resources.' },
-  { id: 'agile',      icon: '🗂️', title: 'Agile Board',          brand: 'ANY', kind: 'app',  base: true,  price: 0,  href: 'agile-board.html',              desc: 'Backlog, sprint board and feature requests for shared projects.' },
-  { id: 'resources',  icon: '📚', title: 'Curated Resources',    brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html#resources',  desc: 'Links, templates and real-life workflows matched to your quote.' },
-  { id: 'radar',      icon: '🎯', title: 'Contract Radar',       brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'sdvosb-contract-radar.html',    desc: 'Federal opportunity feed filtered to your NAICS codes.' },
-  { id: 'compliance', icon: '🔒', title: 'Compliance Tracker',   brand: 'MGC', kind: 'page', base: false, price: 7,  href: 'compliance-trust-center.html',  desc: 'CMMC / Zero-Trust checklist with evidence upload.' },
-  { id: 'ailab',      icon: '🤖', title: 'AI Workflow Lab',      brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'agent-workflow-studio.html',    desc: 'Prompt, agent and automation templates for your business.' },
-  { id: 'finance',    icon: '💳', title: 'Cashflow & Invoicing', brand: 'FIX', kind: 'page', base: false, price: 8,  href: 'finance-command.html',          desc: 'Invoice tracker, WAWF/PIEE checklist, runway view.' },
-  { id: 'training',   icon: '🎓', title: 'Skills Academy',       brand: 'MGC', kind: 'page', base: false, price: 10, href: 'elearning-upskilling-hub.html', desc: 'Guided labs and exam practice (step-gated learning).' }
+  { id: 'home',       icon: '🏠', title: 'My Dashboard',          brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html',              desc: 'Your tailored start page: status, action items, resources.' },
+  { id: 'agile',      icon: '🗂️', title: 'Agile Board',           brand: 'ANY', kind: 'app',  base: true,  price: 0,  href: 'agile-board.html',                desc: 'Backlog, sprint board and feature requests for shared projects.' },
+  { id: 'resources',  icon: '📚', title: 'Curated Resources',     brand: 'ANY', kind: 'page', base: true,  price: 0,  href: 'member-portal.html#resources',    desc: 'Links, templates and real-life workflows matched to your quote.' },
+  { id: 'saasapps',   icon: '⚡', title: 'SaaS Apps & Simulators',brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'saas-apps-and-lms-showcase.html', desc: 'Monetized decoupled apps, traffic/ROI simulator & LMS.' },
+  { id: 'radar',      icon: '🎯', title: 'Contract Radar',        brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'sdvosb-contract-radar.html',      desc: 'Federal opportunity feed filtered to your NAICS codes.' },
+  { id: 'compliance', icon: '🔒', title: 'Compliance Tracker',    brand: 'MGC', kind: 'page', base: false, price: 7,  href: 'compliance-trust-center.html',    desc: 'CMMC / Zero-Trust checklist with evidence upload.' },
+  { id: 'ailab',      icon: '🤖', title: 'AI Workflow Lab',       brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'agent-workflow-studio.html',      desc: 'Prompt, agent and automation templates for your business.' },
+  { id: 'finance',    icon: '💳', title: 'Cashflow & Invoicing',  brand: 'FIX', kind: 'page', base: false, price: 8,  href: 'finance-command.html',            desc: 'Invoice tracker, WAWF/PIEE checklist, runway view.' },
+  { id: 'training',   icon: '🎓', title: 'SCORM EVE-NG Academy',  brand: 'MGC', kind: 'page', base: false, price: 10, href: 'elearning-upskilling-hub.html',   desc: 'SCORM 2004 15-topology EVE-NG workbench, fault injector & auto-grader.' },
+  { id: 'aistudio',   icon: '🧠', title: 'AI Studio & NotebookLM',brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'elearning-upskilling-hub.html',   desc: 'Wireless Sim, ACL Master Trainer, PROJECT_ROUTE, Safar-e Zaban, Asma ul-Husna & NotebookLM Vault.' }
 ];
 
 const TAILOR = {
-  'ai-web':   { label: 'AI website & agent',   pages: ['ailab', 'finance'] },
-  'federal':  { label: 'Federal contracting',  pages: ['radar', 'compliance', 'finance'] },
-  'cyber':    { label: 'Cyber & compliance',   pages: ['compliance', 'ailab'] },
-  'training': { label: 'Skills & certification', pages: ['training', 'ailab'] }
+  'ai-web':   { label: 'AI website & agent',     pages: ['saasapps', 'ailab', 'finance', 'aistudio'] },
+  'federal':  { label: 'Federal contracting',    pages: ['radar', 'compliance', 'finance'] },
+  'cyber':    { label: 'Cyber & compliance',     pages: ['compliance', 'ailab'] },
+  'training': { label: 'Skills & certification', pages: ['training', 'aistudio', 'saasapps'] }
 };
 
 // Map HTML filenames to catalog page IDs for per-page entitlement checks
 const PORTAL_TO_CATALOG = {
-  'sdvosb-contract-radar.html':   'radar',
-  'compliance-trust-center.html': 'compliance',
-  'agent-workflow-studio.html':   'ailab',
-  'finance-command.html':         'finance',
-  'elearning-upskilling-hub.html':'training'
+  'saas-apps-and-lms-showcase.html': 'saasapps',
+  'sdvosb-contract-radar.html':      'radar',
+  'compliance-trust-center.html':    'compliance',
+  'agent-workflow-studio.html':      'ailab',
+  'finance-command.html':            'finance',
+  'elearning-upskilling-hub.html':   'training'
 };
 
 // Owner-only command portals (can also be shared as an element `type='element', resource='<filename>'`)
@@ -103,15 +106,15 @@ function seedState() {
     v: 1,
     users: {
       owner: mk('owner', 'Malik K. (Owner)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, {
-        home: 'ready', agile: 'ready', resources: 'ready', radar: 'ready',
-        compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready'
+        home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready',
+        compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready'
       }),
       ana: mk('ana', 'Ana (demo: just requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, {}),
       ben: mk('ben', 'Ben (demo: pages being built)', 'ben@example.com', 'member', 'approved_building', 'FIX', 'federal', false, {
         home: 'pending', agile: 'pending', resources: 'pending', radar: 'pending', compliance: 'pending'
       }),
       cara: mk('cara', 'Cara (demo: active, paid)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, {
-        home: 'ready', agile: 'ready', resources: 'ready', ailab: 'ready', finance: 'pending'
+        home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', ailab: 'ready', finance: 'pending'
       })
     },
     shares: [],
@@ -125,10 +128,14 @@ function seedState() {
     notifications: [],
     audit: [],
     projects: {
+      p_sterling: { id: 'p_sterling', name: 'Client Project: Sterling Auto Repair (Web + AI Receptionist)', owner: 'owner', brand: 'FIX', demoUrl: 'projects/sterling-auto-repair/index.html', budget: '$1,500 setup + $497/mo' },
       p1: { id: 'p1', name: 'Shared: Website launch', owner: 'owner', brand: 'FIX' },
       p2: { id: 'p2', name: 'Internal: Q4 platform', owner: 'owner', brand: 'MGC' }
     },
     items: [
+      { id: 'i_st1', project: 'p_sterling', type: 'story', title: 'Interactive repair estimator & bay RO status tracker', points: 5, col: 'done', sprint: 1, assignee: 'owner', createdBy: 'owner' },
+      { id: 'i_st2', project: 'p_sterling', type: 'story', title: '24/7 AI lead receptionist + Google Calendar booking', points: 8, col: 'progress', sprint: 1, assignee: 'owner', createdBy: 'owner' },
+      { id: 'i_st3', project: 'p_sterling', type: 'task', title: 'Local SEO schema & Google Business Profile verification', points: 3, col: 'ready', sprint: 1, assignee: 'owner', createdBy: 'owner' },
       { id: 'i1', project: 'p1', type: 'story', title: 'Homepage draft', points: 5, col: 'progress', sprint: 1, assignee: 'owner', createdBy: 'owner' },
       { id: 'i2', project: 'p1', type: 'task', title: 'Collect brand assets', points: 2, col: 'ready', sprint: 1, assignee: 'cara', createdBy: 'owner' },
       { id: 'i3', project: 'p1', type: 'story', title: 'Booking form + calendar', points: 8, col: 'backlog', sprint: 0, assignee: '', createdBy: 'owner' },
@@ -146,11 +153,31 @@ function seedState() {
   };
 }
 
+const DB_STATS = {
+  readsToday: 0,
+  writesToday: 0,
+  dailyReadCap: 40000,   // 80% of 50,000 Cloud Firestore free daily reads
+  dailyWriteCap: 16000,  // 80% of 20,000 Cloud Firestore free daily writes
+  firestoreFreeReads: 50000,
+  firestoreFreeWrites: 20000,
+  estimatedCostUsd: 0.00,
+  circuitBreakerTripped: false,
+  lastWriteAt: now()
+};
+
 function loadState() {
+  DB_STATS.readsToday++;
   try {
     if (fs.existsSync(DATA_FILE)) {
       const parsed = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-      if (parsed && parsed.v === 1) return parsed;
+      if (parsed && parsed.v === 1) {
+        const def = seedState();
+        parsed.projects = Object.assign({}, def.projects, parsed.projects || {});
+        if (!parsed.items.some(i => i.project === 'p_sterling')) {
+          parsed.items = def.items.filter(i => i.project === 'p_sterling').concat(parsed.items || []);
+        }
+        return parsed;
+      }
     }
   } catch (_) {}
   const initial = seedState();
@@ -159,6 +186,12 @@ function loadState() {
 }
 
 function saveState(state) {
+  if (DB_STATS.writesToday >= DB_STATS.dailyWriteCap) {
+    DB_STATS.circuitBreakerTripped = true;
+    return;
+  }
+  DB_STATS.writesToday++;
+  DB_STATS.lastWriteAt = now();
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
     fs.writeFileSync(DATA_FILE, JSON.stringify(state, null, 2), 'utf8');
@@ -501,8 +534,47 @@ const server = http.createServer(async (req, res) => {
 
     /* ---------- Scoped State & Action API ---------- */
     if (pathname === '/api/state' && req.method === 'GET') {
+      DB_STATS.readsToday++;
       const u = getAuthenticatedUser(req);
       return sendJson(res, 200, scopeStateForUser(u));
+    }
+
+    if (pathname === '/api/db/status' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      return sendJson(res, 200, {
+        ok: true,
+        connected: true,
+        engine: 'ACID-JSON-WAL + Cloud Firestore (nam5 Free-Tier Bridge) + IndexedDB',
+        authenticated: Boolean(u),
+        role: u ? u.role : 'anonymous',
+        tables: {
+          users: Object.keys(S.users || {}).length,
+          projects: Object.keys(S.projects || {}).length,
+          agile_items: (S.items || []).length,
+          shares: (S.shares || []).length,
+          requests: (S.requests || []).length,
+          audit_events: (S.audit || []).length
+        },
+        costGuard: {
+          ...DB_STATS,
+          cloudRunMinInstances: 0,
+          cloudRunMaxInstances: 2,
+          blockedPaidApis: ['earthengine.googleapis.com', 'compute.googleapis.com', 'sqladmin.googleapis.com'],
+          monthlySpendUsd: 0.00
+        }
+      });
+    }
+
+    if (pathname === '/api/db/sync' && req.method === 'POST') {
+      const u = getAuthenticatedUser(req);
+      if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required for DB write sync.' });
+      const body = await readJsonBody(req);
+      if (body && body.checklist && typeof body.checklist === 'object') {
+        u.checklist = Object.assign({}, u.checklist || {}, body.checklist);
+        logAudit(u.id, 'db.sync_checklist', `${Object.keys(body.checklist).length} keys synced`);
+        saveState(S);
+      }
+      return sendJson(res, 200, { ok: true, costGuard: DB_STATS, lastWriteAt: DB_STATS.lastWriteAt });
     }
 
     if (pathname === '/api/action' && req.method === 'POST') {

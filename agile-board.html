@@ -23,7 +23,7 @@
   const u = W.me();
   const COLS = [['backlog', 'Backlog'], ['ready', 'Ready'], ['progress', 'In progress'], ['review', 'Review'], ['done', 'Done']];
   let pid = null, view = 'board';
-  if (!u) { app.innerHTML = '<div class="card lock"><h1>Sign in required</h1><p>Use DEMO sign-in above.</p></div>'; W.header('agile-board.html'); return; }
+  if (!u) { app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Zero-Trust Authentication Enforced</span><h1 style="margin-top:10px">Sign in required</h1><p>Please authenticate with your authorized Google Workspace account or Passwordless Email Link to access Agile Projects.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=agile-board.html">Sign In to Workspace →</a></div></div>'; W.header('agile-board.html'); return; }
   if (u.role !== 'owner' && !W.can(u, 'page', 'agile', 'view')) {
     app.innerHTML = '<div class="card lock"><h1>🔒 Agile Board locked</h1><p>Your Agile Board is not built yet, or your workspace is not active. Check <a href="member-portal.html">My Workspace</a>.</p></div>'; W.header('agile-board.html'); return;
   }
@@ -45,7 +45,7 @@
   function burndown(p) {
     const items = S().items.filter(i => i.project === p && i.sprint === 1);
     const total = items.reduce((a, i) => a + i.points, 0) || 1; const left = items.filter(i => i.col !== 'done').reduce((a, i) => a + i.points, 0);
-    const yNow = 10 + (1 - left / total) * 70; // remaining pts shown as drop from top; "today" = midpoint of the sprint
+    const yNow = 10 + (1 - left / total) * 70;
     return '<div class="card"><h2>Sprint 1 burndown</h2><svg viewBox="0 0 220 90" width="100%" height="110"><line x1="10" y1="10" x2="210" y2="80" stroke="#888" stroke-dasharray="4"/><polyline fill="none" stroke="var(--ac)" stroke-width="3" points="10,10 110,' + yNow.toFixed(1) + '"/><circle cx="110" cy="' + yNow.toFixed(1) + '" r="4" fill="var(--ac)"/></svg><p>' + left + ' of ' + total + ' pts remaining · dashed = ideal pace</p></div>';
   }
   function ceremonies(p) {
@@ -60,13 +60,20 @@
   function render() {
     const vis = visible();
     if (!pid || !vis.find(p => p.id === pid)) pid = vis[0] && vis[0].id;
+    const curProj = pid ? S().projects[pid] : null;
     const tabs = [['board', 'Board'], ['plan', 'Sprint & ceremonies'], ['features', 'Feature requests']];
     let body;
     if (view === 'features') body = features();
     else if (!pid) body = '<div class="card lock"><h2>No shared projects yet</h2><p>Projects appear here only when the owner shares them with you.</p></div>';
     else if (view === 'plan') body = '<div class="grid">' + burndown(pid) + ceremonies(pid) + '</div>';
     else body = board(pid) + (canEdit(pid) ? '<div class="card" style="margin-top:10px"><div class="row" style="justify-content:flex-start"><input id="nt" placeholder="New story / task / bug" style="flex:1;min-width:200px"><select id="ntype"><option>story</option><option>task</option><option>bug</option></select><select id="npts"><option>1</option><option>2</option><option>3</option><option selected>5</option><option>8</option></select><button class="btn pri" id="nadd">Add to backlog</button></div></div>' : '<p>You have view-only access to this project.</p>');
-    app.innerHTML = '<div class="row"><div><h1>Agile Board</h1><p>Backlog → sprint → done, shared per project.</p></div><div class="nav"><select id="proj" aria-label="Project">' + vis.map(p => '<option value="' + p.id + '"' + (p.id === pid ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select><select id="viewSel">' + tabs.map(t => '<option value="' + t[0] + '"' + (t[0] === view ? ' selected' : '') + '>' + t[1] + '</option>').join('') + '</select></div></div><div style="margin-top:12px">' + body + '</div>';
+    const projMeta = curProj && (curProj.demoUrl || curProj.budget)
+      ? '<div class="row" style="margin-top:8px;justify-content:flex-start">' +
+        (curProj.budget ? '<span class="chip ok">💰 Scope: ' + esc(curProj.budget) + '</span>' : '') +
+        (curProj.demoUrl ? '<a class="btn pri" href="' + esc(curProj.demoUrl) + '">🚀 Open Live Project Deliverable ↗</a>' : '') +
+        '</div>'
+      : '';
+    app.innerHTML = '<div class="card" style="margin-bottom:14px"><div class="row"><div><span class="chip">Agile Project Delivery</span><h1 style="margin-top:6px">Agile Projects &amp; Client Deliverables</h1><p>Manage client project sprints (including Sterling Auto Repair) and internal deliverables in one place.</p>' + projMeta + '</div><div class="nav"><select id="proj" aria-label="Project">' + vis.map(p => '<option value="' + p.id + '"' + (p.id === pid ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select><select id="viewSel">' + tabs.map(t => '<option value="' + t[0] + '"' + (t[0] === view ? ' selected' : '') + '>' + t[1] + '</option>').join('') + '</select></div></div></div><div style="margin-top:12px">' + body + '</div>';
     W.header('agile-board.html'); bind();
   }
   function bind() {

@@ -209,11 +209,11 @@
         </div>
 
         <div class="portal-grid" id="portal-grid">
-          <div class="portal-item locked" id="p-sterling" style="border-color:#ef4444;box-shadow:0 0 24px rgba(239,68,68,0.2);">
-            <span class="role-badge" style="background:rgba(239,68,68,0.2);color:#fca5a5;">★ CUSTOMER INCENTIVE BUILD // PROJECTS FOLDER</span>
-            <h3>Sterling Auto Repair — Transamerica Plaza, Sterling VA</h3>
-            <p>Full-service mechanical &amp; collision prototype for 45911 Transamerica Plaza, Suite 102, Sterling, VA 20166 with real Google Maps bay imagery, interactive estimator &amp; RO tracker.</p>
-            <a href="projects/sterling-auto-repair/index.html" class="portal-link" style="background:rgba(239,68,68,0.2);border-color:#ef4444;color:#fca5a5;">Launch Sterling Auto Prototype →</a>
+          <div class="portal-item locked" id="p-agile" style="border-color:rgba(197,179,88,0.55);box-shadow:0 0 22px rgba(197,179,88,0.16);">
+            <span class="role-badge" style="background:rgba(197,179,88,0.18);color:#fde047;">★ AGILE WORKSPACE // CLIENT PROJECTS &amp; DELIVERABLES</span>
+            <h3>Agile Project Board (Sprints, Backlog &amp; Client Deliverables)</h3>
+            <p>Coordinate sprints, feature requests, and client deliverables (including the Sterling Auto Repair web &amp; AI receptionist project) with IndexedDB + Server WAL persistence.</p>
+            <a href="agile-board.html" class="portal-link" style="background:rgba(197,179,88,0.2);border-color:#c5b358;color:#fde047;">Open Agile Project Board →</a>
           </div>
 
           <div class="portal-item locked" id="p-fin">
@@ -375,6 +375,7 @@
       localStorage.setItem('mgc_edge_gate_locked', '1');
       localStorage.removeItem('mgc_onboarded_session');
       localStorage.removeItem('mgc_onboarded_user');
+      try { sessionStorage.removeItem('mgcw.uid'); } catch (_) {}
       document.getElementById('ob-totp').value = '';
       document.getElementById('fp-verify-status').textContent = 'Tap Fingerprint Sensor (WebAuthn / TouchID / Windows Hello)';
       document.getElementById('fp-verify-status').style.color = '#e2e8f0';
@@ -478,6 +479,7 @@
       localStorage.removeItem('mgc_edge_gate_locked');
       localStorage.setItem('mgc_onboarded_session', JSON.stringify(sessionObj));
       localStorage.setItem('mgc_onboarded_user', JSON.stringify(sessionObj));
+      try { sessionStorage.setItem('mgcw.uid', res.isAdmin ? 'owner' : 'cara'); } catch (_) {}
 
       setPortalsUnlockedUI(true, res.email, res.isAdmin);
 
