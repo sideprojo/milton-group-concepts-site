@@ -92,6 +92,10 @@ const BLOCKED_FILES = new Set([
 // Server-Side Clean Route Masking Table (hides raw .html filenames and query params)
 const CLEAN_ROUTE_TO_FILE = {
   '/':                  'login.html',
+  '/home':              'marketing-home.html',
+  '/about':             'marketing-home.html',
+  '/services':          'marketing-home.html',
+  '/contact':           'marketing-home.html',
   '/auth':              'login.html',
   '/login':             'login.html',
   '/request-access':    'request-access.html',
@@ -854,6 +858,22 @@ const server = http.createServer(async (req, res) => {
           saveState(S);
           diag = 'AUTO_DISCOVERED';
         }
+        // Also ensure milton-group-concepts-llc (mapped to miltongroupsecurity.org) runs the unified image
+        const selfSvc = await fetchHttpsWithAuth(`https://run.googleapis.com/v2/projects/${proj}/locations/us-west1/services/mgc-external-site`, 'GET', adcTok);
+        const mainSvc = await fetchHttpsWithAuth(`https://run.googleapis.com/v2/projects/${proj}/locations/us-west1/services/milton-group-concepts-llc`, 'GET', adcTok);
+        const selfImg = selfSvc && selfSvc.template && selfSvc.template.containers && selfSvc.template.containers[0] ? selfSvc.template.containers[0].image : '';
+        const mainImg = mainSvc && mainSvc.template && mainSvc.template.containers && mainSvc.template.containers[0] ? mainSvc.template.containers[0].image : '';
+        if (selfImg && mainImg && selfImg !== mainImg) {
+          const patchRes = await fetchHttpsWithAuth(
+            `https://run.googleapis.com/v2/projects/${proj}/locations/us-west1/services/milton-group-concepts-llc?updateMask=template.containers`,
+            'PATCH',
+            adcTok,
+            { template: { containers: selfSvc.template.containers } }
+          );
+          diag += patchRes && !patchRes.error ? '|MAIN_DOMAIN_SYNCED' : `|MAIN_SYNC_ERR:${patchRes && patchRes.error ? patchRes.error.status : 'UNK'}`;
+        } else if (selfImg && selfImg === mainImg) {
+          diag += '|MAIN_DOMAIN_IN_SYNC';
+        }
       } catch (_) {}
       return { ...getOauthConfig(), status: diag };
     };
@@ -1353,7 +1373,10 @@ const server = http.createServer(async (req, res) => {
     }
 
     let cleanRel = '';
-    if (CLEAN_ROUTE_TO_FILE[pathname]) {
+    const effectiveHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase();
+    if (pathname === '/' && (effectiveHost.includes('miltongroupsecurity.org') || effectiveHost.includes('milton-group-concepts-llc'))) {
+      cleanRel = 'marketing-home.html';
+    } else if (CLEAN_ROUTE_TO_FILE[pathname]) {
       cleanRel = CLEAN_ROUTE_TO_FILE[pathname];
     } else {
       const stripped = pathname.replace(/^\/+/, '');
