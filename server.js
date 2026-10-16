@@ -658,6 +658,24 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, service: 'mgc-command-workspace', ts: now() });
     }
 
+    // Canonical Domain Enforcement: redirect raw *.run.app browser URLs (e.g. mgc-external-site-254657731107.us-west1.run.app) to https://miltongroupsecurity.org
+    const rawHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase();
+    if (req.method === 'GET' && rawHost.endsWith('.run.app') && !pathname.startsWith('/api/') && !req.headers['x-mgc-proxy']) {
+      let cleanPath = toCleanRoute(pathname) || pathname;
+      if (cleanPath === '/' && rawHost.startsWith('mgc-external-site')) {
+        cleanPath = '/auth';
+      }
+      const nextParam = parsedUrl.searchParams.get('next') || '';
+      const cleanDest = toCleanRoute(nextParam);
+      const headers = { 'Location': `https://miltongroupsecurity.org${cleanPath}` };
+      if (cleanDest && cleanDest !== '/auth' && cleanDest !== '/login') {
+        const retTok = signToken({ next: cleanDest }, 900);
+        headers['Set-Cookie'] = `mgcw_return=${encodeURIComponent(retTok)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=900`;
+      }
+      res.writeHead(302, headers);
+      return res.end();
+    }
+
     /* ---------- Enforced Federated OIDC / OAuth 2.0 + JWKS Verification Engine ---------- */
     const OIDC_JWKS_URLS = {
       google:    'https://www.googleapis.com/oauth2/v3/certs',
