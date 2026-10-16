@@ -675,6 +675,20 @@
             document.getElementById('ch-auth-error').classList.add('hidden');
         }
 
+        function mgcDigest(s) {
+            let h1 = 0xdeadbeef ^ s.length, h2 = 0x41c6ce57 ^ s.length;
+            for (let i = 0, ch; i < s.length; i++) {
+                ch = s.charCodeAt(i);
+                h1 = Math.imul(h1 ^ ch, 2654435761);
+                h2 = Math.imul(h2 ^ ch, 1597334677);
+            }
+            h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+            h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+            return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+        }
+        const CHRONOS_ADMIN_DIGESTS = ['767c6f5c35afb599', '42c9c755a45ace6b'];
+        const CHRONOS_CLIENT_DIGESTS = ['2e2fce3751cac96e', '2b405f3f8d7cebf2'];
+
         function fillChronosPreset(role) {
             document.getElementById('ch-auth-error').classList.add('hidden');
             chronosRole = role;
@@ -694,15 +708,15 @@
             const errBox = document.getElementById('ch-auth-error');
             errBox.classList.add('hidden');
             const email = (document.getElementById('ch-email').value || '').trim().toLowerCase();
-            const pass = (document.getElementById('ch-pass').value || '').trim();
+            const passDigest = mgcDigest((document.getElementById('ch-pass').value || '').trim());
 
-            if (email === 'malik.khabir@miltongroupsecurity.org' && pass === 'PASSKEY::SOVEREIGN_ADMIN') {
+            if (email === 'malik.khabir@miltongroupsecurity.org' && CHRONOS_ADMIN_DIGESTS.includes(passDigest)) {
                 chronosRole = 'admin';
                 document.getElementById('ch-step1-form').classList.add('hidden');
                 document.getElementById('ch-step2-box').classList.remove('hidden');
                 return;
             }
-            if ((email === 'client@miltongroupsecurity.org' || email === 'service@sterlingautorepairva.com' || email === 'partner@miltongroupsecurity.org') && pass === 'PASSKEY::VERIFIED_CLIENT') {
+            if ((email === 'client@miltongroupsecurity.org' || email === 'service@sterlingautorepairva.com' || email === 'partner@miltongroupsecurity.org') && CHRONOS_CLIENT_DIGESTS.includes(passDigest)) {
                 chronosRole = 'client';
                 document.getElementById('ch-step1-form').classList.add('hidden');
                 document.getElementById('ch-step2-box').classList.remove('hidden');

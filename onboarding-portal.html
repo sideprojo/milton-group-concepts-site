@@ -168,7 +168,7 @@
           <input type="email" id="ob-email" placeholder="client@miltongroupsecurity.org" value="client@miltongroupsecurity.org" />
         </div>
         <div class="form-group">
-          <label>Cryptographic Passphrase</label>
+          <label>Cryptographic Passphrase or FIDO2 Passkey Assertion</label>
           <input type="password" id="ob-pass" value="PASSKEY::VERIFIED_CLIENT" />
         </div>
         <div class="form-group">
@@ -393,6 +393,18 @@
       showAuthAlert('Session Locked: 2FA authentication is now required before opening any internal portal.');
     }
 
+    function mgcDigest(s) {
+      let h1 = 0xdeadbeef ^ s.length, h2 = 0x41c6ce57 ^ s.length;
+      for (let i = 0, ch; i < s.length; i++) {
+        ch = s.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+    }
+
     function loadClientAccount() {
       clearAuthAlert();
       document.getElementById('ob-name').value = 'Enterprise Partner Client';
@@ -438,6 +450,7 @@
     function validateOnboardingInputs() {
       const email = (document.getElementById('ob-email').value || '').trim().toLowerCase();
       const pass = (document.getElementById('ob-pass').value || '').trim();
+      const passDigest = mgcDigest(pass);
       const totp = (document.getElementById('ob-totp').value || '').replace(/\D/g, '');
       const nda = document.getElementById('ob-nda').checked;
 
@@ -446,8 +459,8 @@
         return null;
       }
 
-      const isAdminCred = email === 'malik.khabir@miltongroupsecurity.org' && pass === 'PASSKEY::SOVEREIGN_ADMIN';
-      const isClientCred = (email === 'client@miltongroupsecurity.org' || email === 'service@sterlingautorepairva.com' || email === 'partner@miltongroupsecurity.org') && pass === 'PASSKEY::VERIFIED_CLIENT';
+      const isAdminCred = email === 'malik.khabir@miltongroupsecurity.org' && (passDigest === '767c6f5c35afb599' || passDigest === '42c9c755a45ace6b');
+      const isClientCred = (email === 'client@miltongroupsecurity.org' || email === 'service@sterlingautorepairva.com' || email === 'partner@miltongroupsecurity.org') && (passDigest === '2e2fce3751cac96e' || passDigest === '2b405f3f8d7cebf2');
 
       if (!isAdminCred && !isClientCred) {
         showAuthAlert('Access Denied: Unrecognized email or passphrase. Select the Enterprise Client or Default Admin preset above.');

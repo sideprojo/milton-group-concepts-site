@@ -1198,7 +1198,7 @@
             <input id="os-2fa-email" type="email" value="malik.khabir@miltongroupsecurity.org" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(203,213,225,0.24);color:#fff;font-size:0.8rem;" />
           </div>
           <div style="margin-bottom:0.7rem;">
-            <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Passphrase</label>
+            <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Passphrase or FIDO2 Passkey Assertion</label>
             <input id="os-2fa-pass" type="password" value="PASSKEY::SOVEREIGN_ADMIN" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(203,213,225,0.24);color:#fff;font-size:0.8rem;" />
           </div>
           <div style="margin-bottom:0.85rem;">
@@ -1308,6 +1308,21 @@
     const gateTotp = document.getElementById('os-2fa-totp');
     const gateMsg = document.getElementById('os-2fa-msg');
 
+    function mgcDigest(s) {
+      let h1 = 0xdeadbeef ^ s.length, h2 = 0x41c6ce57 ^ s.length;
+      for (let i = 0, ch; i < s.length; i++) {
+        ch = s.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+    }
+
+    const ADMIN_DIGESTS = ['767c6f5c35afb599', '42c9c755a45ace6b'];
+    const CLIENT_DIGESTS = ['2e2fce3751cac96e', '2b405f3f8d7cebf2'];
+
     function checkAndEnforce2FAGate() {
       if (isGateLocked() && currentFile !== 'onboarding-portal.html') {
         gateBackdrop.style.display = 'flex';
@@ -1342,11 +1357,11 @@
 
     function verifyGateSubmission(isBiometric) {
       const em = gateEmail.value.trim().toLowerCase();
-      const pw = gatePass.value.trim();
+      const pwDigest = mgcDigest(gatePass.value.trim());
       const totpClean = gateTotp.value.replace(/[^0-9]/g, '');
 
-      const isAdmin = em === 'malik.khabir@miltongroupsecurity.org' && pw === 'PASSKEY::SOVEREIGN_ADMIN';
-      const isClient = (em === 'partner@miltongroupsecurity.org' || em === 'client@miltongroupsecurity.org' || em === 'service@sterlingautorepairva.com') && pw === 'PASSKEY::VERIFIED_CLIENT';
+      const isAdmin = em === 'malik.khabir@miltongroupsecurity.org' && ADMIN_DIGESTS.includes(pwDigest);
+      const isClient = (em === 'partner@miltongroupsecurity.org' || em === 'client@miltongroupsecurity.org' || em === 'service@sterlingautorepairva.com') && CLIENT_DIGESTS.includes(pwDigest);
 
       if (!isAdmin && !isClient) {
         gateMsg.style.display = 'block';

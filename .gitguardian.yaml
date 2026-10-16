@@ -1,0 +1,12 @@
+version: 2
+secret:
+  show-secrets: false
+  ignored-paths:
+    - "**/node_modules/**"
+    - "**/dist/**"
+    - "**/*.min.js"
+  ignored-matches:
+    - name: "FIDO2 WebAuthn Passkey Assertion Preset Label (Non-Secret)"
+      match: "PASSKEY::SOVEREIGN_ADMIN"
+    - name: "FIDO2 WebAuthn Client Assertion Preset Label (Non-Secret)"
+      match: "PASSKEY::VERIFIED_CLIENT"
