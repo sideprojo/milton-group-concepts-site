@@ -875,6 +875,107 @@
     }
     .scorm-sort-bucket:hover { border-color: #12b84b; background: #f0fdf4; }
 
+    /* ===================================================================
+       5 RESPONSIVE DESIGN PRINCIPLES + RADIAL LABELED GRAPHIC HOTSPOTS
+       (1. Fluid Layouts | 2. Media Queries | 3. Progressive Enhancement
+        4. Mobile-First Design | 5. Flexible Media)
+       =================================================================== */
+    /* Principle 5: Flexible Media */
+    img, svg, video, canvas, iframe {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Principle 1: Fluid Layouts & Fluid Typography via clamp() */
+    .scorm-lesson-banner h2 {
+      font-size: clamp(1.35rem, 2.4vw, 1.95rem);
+    }
+    .scorm-hook-heading {
+      font-size: clamp(1.25rem, 2.1vw, 1.7rem);
+    }
+    .scorm-block {
+      padding: clamp(22px, 3.5vw, 42px) clamp(18px, 4vw, 52px);
+    }
+
+    /* Live Responsive Viewport Breakpoint Simulator (Desktop / Tablet / Mobile) */
+    .scorm-player-shell.viewport-tablet {
+      max-width: 768px;
+      margin: 0 auto;
+      grid-template-columns: 1fr !important;
+      border: 4px solid #334155;
+      border-radius: 22px;
+      transition: max-width 0.25s ease;
+    }
+    .scorm-player-shell.viewport-tablet .scorm-sidebar {
+      height: auto;
+      max-height: 220px;
+    }
+    .scorm-player-shell.viewport-mobile {
+      max-width: 410px;
+      margin: 0 auto;
+      grid-template-columns: 1fr !important;
+      border: 6px solid #0f172a;
+      border-radius: 28px;
+      transition: max-width 0.25s ease;
+    }
+    .scorm-player-shell.viewport-mobile .scorm-sidebar {
+      height: auto;
+      max-height: 190px;
+    }
+    .scorm-player-shell.viewport-mobile .scorm-split-50,
+    .scorm-player-shell.viewport-mobile .scorm-step-grid,
+    .scorm-player-shell.viewport-mobile .scorm-sort-buckets,
+    .scorm-player-shell.viewport-tablet .scorm-split-50 {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* 5-Spoke Radial Labeled Graphic Container (Exact Match to Uploaded Image) */
+    .radial-graphic-stage {
+      background: radial-gradient(circle at 50% 50%, #ffffff 0%, #eef5fc 65%, #e2ecf7 100%);
+      border-radius: 18px;
+      border: 1px solid #cbd5e1;
+      padding: 20px 24px;
+      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
+      position: relative;
+    }
+    .radial-svg-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .radial-spoke-group {
+      cursor: pointer;
+    }
+    .radial-hotspot-card {
+      margin-top: 14px;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 16px 20px;
+      border: 2px solid #1d70db;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .radial-hotspot-card p,
+    .scorm-block p {
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: unset !important;
+      display: block !important;
+      -webkit-line-clamp: unset !important;
+      max-width: 100% !important;
+    }
+    @keyframes pulseMarker {
+      0% { r: 16; opacity: 0.55; }
+      70% { r: 24; opacity: 0; }
+      100% { r: 24; opacity: 0; }
+    }
+    .hotspot-pulse-ring {
+      animation: pulseMarker 2s infinite;
+    }
+
     @media (max-width: 1180px) {
       .scorm-player-shell { grid-template-columns: 1fr; }
       .scorm-sidebar { height: auto; max-height: 340px; }
@@ -988,25 +1089,31 @@
 
         <!-- RIGHT SCORM MAIN LESSON CANVAS (PROGRESSIVE STEP-GATED FLOW) -->
         <div class="scorm-main-stage" id="scorm-main-stage">
-          <!-- Sticky Top SCORM Controls Bar -->
+          <!-- Sticky Top SCORM Controls Bar + Responsive Breakpoint Simulator -->
           <div class="scorm-topbar">
-            <div style="display:flex;align-items:center;gap:12px;">
+            <div style="display:flex;align-items:center;gap:10px;">
               <button class="scorm-hamburger-btn" onclick="toggleScormSidebar()" title="Toggle Course Outline Sidebar">
                 ☰
               </button>
-              <span style="font-size:12px;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:0.08em;" id="tut-lab-badge">
+              <span style="font-size:11.5px;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:0.08em;" id="tut-lab-badge">
                 LESSON 1 OF 15
               </span>
             </div>
-            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+              <!-- Live Responsive Breakpoint Switcher (Tests the 5 Responsive Principles!) -->
+              <div style="display:inline-flex;background:#f1f5f9;padding:3px;border-radius:8px;border:1px solid #cbd5e1;" title="Test Responsive Breakpoints & Fluid Layout">
+                <button class="btn" id="vp-btn-desktop" style="padding:4px 8px;font-size:10.5px;background:#0f172a;color:#fff;" onclick="setScormViewportSim('desktop')">🖥️ Desktop</button>
+                <button class="btn" id="vp-btn-tablet" style="padding:4px 8px;font-size:10.5px;background:transparent;color:#334155;" onclick="setScormViewportSim('tablet')">📟 Tablet</button>
+                <button class="btn" id="vp-btn-mobile" style="padding:4px 8px;font-size:10.5px;background:transparent;color:#334155;" onclick="setScormViewportSim('mobile')">📱 Mobile</button>
+              </div>
               <button class="btn" style="background:#f1f5f9;color:#0f172a;border:1px solid #cbd5e1;" onclick="toggleCourseCoverOverview()">
-                📖 Course Cover Overview
+                📖 Cover
               </button>
               <button class="btn" style="background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7;" onclick="unlockAllScormStages()">
                 🔓 Unlock All 4 Stages
               </button>
               <button class="btn" style="background:#fef3c7;color:#92400e;border:1px solid #fcd34d;" onclick="downloadCurrentUnlTopology()">
-                ⬇ Export .unl XML
+                ⬇ .unl XML
               </button>
             </div>
           </div>
@@ -1037,11 +1144,11 @@
 
           <!-- ACTIVE LESSON VIEW (4 PROGRESSIVE STEP-GATED BLOCKS) -->
           <div id="scorm-lesson-view">
-            <!-- STAGE 1: LESSON BANNER + NUMBERED OBJECTIVES + 50/50 VISUAL HOOK -->
+            <!-- STAGE 1: LESSON BANNER + NUMBERED OBJECTIVES + 50/50 VISUAL HOOK + 5-SPOKE RADIAL GRAPHIC -->
             <div id="scorm-stage-1">
               <div class="scorm-lesson-banner">
                 <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#4ade80;letter-spacing:0.12em;text-transform:uppercase;" id="scorm-stage-indicator">
-                  STAGE 1 OF 4 • OBJECTIVES &amp; VISUAL ARCHITECTURE
+                  STAGE 1 OF 4 • OBJECTIVES, 50/50 VISUAL SPLIT &amp; 5-SPOKE INTERACTIVE HUB
                 </div>
                 <h2 id="tut-lab-title">Topology 01: Multi-Area OSPFv2/OSPFv3 &amp; BFD Sub-50ms Ring</h2>
               </div>
@@ -1072,6 +1179,35 @@
                     <div>
                       <div class="scorm-narrative-copy" id="scorm-stage1-narrative"></div>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- NEW: 5-SPOKE RADIAL LABELED GRAPHIC HOTSPOT DIAGRAM (EXACT MATCH TO UPLOADED DIAGRAM!) -->
+              <div class="scorm-block">
+                <div class="scorm-block-inner">
+                  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;">
+                    <div>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#1d70db;text-transform:uppercase;letter-spacing:0.1em;">
+                        INTERACTIVE LABELED GRAPHIC • CLICK ANY NUMBERED SPOKE (1–5)
+                      </span>
+                      <h3 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#0f172a;margin-top:2px;" id="radial-hub-heading">
+                        The 5 Core Responsive Design &amp; Architecture Principles
+                      </h3>
+                    </div>
+                    <div class="btn-row">
+                      <button class="btn" id="btn-radial-resp" style="background:#1d70db;color:#ffffff;font-weight:800;" onclick="switchRadialGraphicMode('responsive')">
+                        📱 5 Responsive Design Principles
+                      </button>
+                      <button class="btn" id="btn-radial-net" style="background:#f1f5f9;color:#0f172a;border:1px solid #cbd5e1;font-weight:800;" onclick="switchRadialGraphicMode('network')">
+                        🖧 5 Topology Architecture Pillars
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="radial-graphic-stage">
+                    <div class="radial-svg-wrap" id="radial-labeled-graphic-svg"></div>
+                    <div class="radial-hotspot-card" id="radial-hotspot-detail-card"></div>
                   </div>
                 </div>
               </div>
@@ -2392,9 +2528,416 @@
       // Populate Stage 4: Gated Scenario Knowledge Check
       renderScormKnowledgeCheck(lab);
 
+      // Populate 5-Spoke Radial Labeled Graphic Hotspot Diagram
+      renderRadialLabeledGraphic();
+
       // Scroll stage top
       const stageEl = document.getElementById('scorm-main-stage');
       if (stageEl) stageEl.scrollTop = 0;
+    }
+
+    /* =====================================================================
+       5-SPOKE RADIAL LABELED GRAPHIC HOTSPOT DIAGRAM + VIEWPORT SIMULATOR
+       ===================================================================== */
+    let currentRadialMode = 'responsive'; // 'responsive' | 'network'
+    let currentRadialSpokeIdx = 0;
+
+    const RESPONSIVE_DESIGN_SPOKES = [
+      {
+        num: 1,
+        title: 'Fluid Layouts',
+        color: '#1d70db',
+        border: '#60a5fa',
+        cx: 430, cy: 84,
+        bx: 430, by: 25,
+        lx: 565, ly: 84,
+        iconType: 'grid',
+        riseDef: 'Flexible layouts resize and reorganize content to fit different screen sizes without breaking the design.',
+        portalEval: 'Implemented across the portal using CSS Grid auto-fit (grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))), percentage widths, and fluid clamp() typography so cards, 50/50 split panels, and CLI workbenches scale smoothly without horizontal overflow.',
+        codeSnippet: '.scorm-block-inner { padding: clamp(22px, 3.5vw, 38px) clamp(18px, 4vw, 48px); }',
+        actionLabel: '🖥️ Test Full Fluid Desktop Width',
+        actionFn: "setScormViewportSim('desktop')"
+      },
+      {
+        num: 2,
+        title: 'Media Queries',
+        color: '#8b5cf6',
+        border: '#c084fc',
+        cx: 675, cy: 168,
+        bx: 734, by: 168,
+        lx: 675, ly: 242,
+        iconType: 'code',
+        riseDef: 'Media queries apply different CSS rules based on characteristics such as screen width, allowing layouts to adapt to different devices.',
+        portalEval: 'Implemented via @media (max-width: 1180px) and @media (max-width: 768px) breakpoints (+ container classes .viewport-tablet and .viewport-mobile) that automatically collapse the 2-column 50/50 split and 3-bucket sorting grid into clean single-column stacks.',
+        codeSnippet: '@media (max-width: 768px) { .scorm-split-50, .scorm-sort-buckets { grid-template-columns: 1fr; } }',
+        actionLabel: '📟 Preview 768px Tablet Media Query',
+        actionFn: "setScormViewportSim('tablet')"
+      },
+      {
+        num: 3,
+        title: 'Progressive Enhancement',
+        color: '#0891b2',
+        border: '#22d3ee',
+        cx: 590, cy: 382,
+        bx: 648, by: 398,
+        lx: 590, ly: 454,
+        iconType: 'chart',
+        riseDef: 'A solid, accessible foundation ensures content works for everyone, while additional features enhance the experience when supported.',
+        portalEval: 'Every EVE-NG lesson starts with zero-dependency semantic HTML5 objectives, CLI configs, and step-gated CONTINUE blocks that work offline on any browser, then progressively enhances with animated BFD packet flows, MTU fragmentation sliders, and live EVE-NG REST / Guacamole WebSocket hooks.',
+        codeSnippet: 'Stage 1 (Semantic Core) → Stage 2 (SVG Packet Engine) → Stage 3 (Live EVE-NG API Bridge)',
+        actionLabel: '🔓 Unlock & Inspect All 4 Progressive Stages',
+        actionFn: 'unlockAllScormStages()'
+      },
+      {
+        num: 4,
+        title: 'Mobile-First Design',
+        color: '#f59e0b',
+        border: '#fbbf24',
+        cx: 270, cy: 382,
+        bx: 212, by: 398,
+        lx: 270, ly: 454,
+        iconType: 'mobile',
+        riseDef: 'Mobile-first design begins with the smallest screen and progressively adds enhancements for larger devices.',
+        portalEval: 'Designed for high-contrast readability on 390px smartphones first: collapsible SCORM drawer (☰), touch-friendly 44px+ interactive hotspot markers and sorting buttons, concise bite-sized text blocks, and a fixed bottom mobile navigation dock.',
+        codeSnippet: 'Touch Targets >= 44px • Collapsible Drawer • 1-Click Sorting & Hotspot Pills',
+        actionLabel: '📱 Preview 390px Mobile-First Layout',
+        actionFn: "setScormViewportSim('mobile')"
+      },
+      {
+        num: 5,
+        title: 'Flexible Media',
+        color: '#65a30d',
+        border: '#a3e635',
+        cx: 185, cy: 168,
+        bx: 126, by: 168,
+        lx: 185, ly: 242,
+        iconType: 'media',
+        riseDef: 'Images, videos, and other media scale appropriately so they remain clear and fit within the available space.',
+        portalEval: 'All 15 network topologies and this 5-Spoke Radial Diagram use resolution-independent SVG viewBox scaling (width: 100%; height: auto) so routers, BFD links, and Wireshark packet headers stay razor-sharp from 390px phones to 4K monitors.',
+        codeSnippet: 'svg { width: 100%; height: auto; viewBox: "0 0 860 500"; }',
+        actionLabel: '🖧 Switch to 5 Topology Architecture Pillars',
+        actionFn: "switchRadialGraphicMode('network')"
+      }
+    ];
+
+    function buildNetworkSpokesForLab(lab) {
+      return [
+        {
+          num: 1,
+          title: 'Control Plane',
+          color: '#1d70db',
+          border: '#60a5fa',
+          cx: 430, cy: 84,
+          bx: 430, by: 25,
+          lx: 565, ly: 84,
+          iconType: 'grid',
+          riseDef: `${lab.code} Control Plane Architecture across ${lab.nodes.map(n => n.id).join(', ')}.`,
+          portalEval: `Establishes deterministic routing/signaling adjacencies (${lab.pdu[0] ? lab.pdu[0].name : 'Control Plane PDU'}) with full multi-vendor parity between Cisco IOS-XE/NX-OS and Juniper Junos OS.`,
+          codeSnippet: lab.quickCmds[0] || 'show ip route',
+          actionLabel: '💻 Open Dual-Vendor CLI Stage',
+          actionFn: 'unlockScormStage(3)'
+        },
+        {
+          num: 2,
+          title: 'Data Encapsulation',
+          color: '#8b5cf6',
+          border: '#c084fc',
+          cx: 675, cy: 168,
+          bx: 734, by: 168,
+          lx: 675, ly: 242,
+          iconType: 'code',
+          riseDef: `Wire-level packet framing and MTU encapsulation (${lab.wsFilter}).`,
+          portalEval: `Inspects outer/inner headers (${lab.pdu.map(p => p.name).join(' → ')}) and validates 1500B vs. 9216B Jumbo Frame transport across the fabric without IP fragmentation drops.`,
+          codeSnippet: `Wireshark Display Filter: ${lab.wsFilter}`,
+          actionLabel: '🔬 Inspect 4-Layer Wireshark Dissector',
+          actionFn: 'unlockScormStage(2)'
+        },
+        {
+          num: 3,
+          title: 'Sub-50ms BFD & LFA',
+          color: '#0891b2',
+          border: '#22d3ee',
+          cx: 590, cy: 382,
+          bx: 648, by: 398,
+          lx: 590, ly: 454,
+          iconType: 'chart',
+          riseDef: 'Hardware-assisted Bidirectional Forwarding Detection (BFD) and Loop-Free Alternate (TI-LFA) fast reroute.',
+          portalEval: 'Replaces legacy 30–40 second protocol hold/dead timers with 3x15ms BFD echo/async heartbeats, shifting active traffic to backup paths in under 50 milliseconds during a fiber cut.',
+          codeSnippet: 'bfd interval 15 min_rx 15 multiplier 3',
+          actionLabel: '⚡ Launch BFD Fiber-Cut Chaos Simulator',
+          actionFn: 'unlockScormStage(2)'
+        },
+        {
+          num: 4,
+          title: 'Multi-Vendor Interop',
+          color: '#f59e0b',
+          border: '#fbbf24',
+          cx: 270, cy: 382,
+          bx: 212, by: 398,
+          lx: 270, ly: 454,
+          iconType: 'mobile',
+          riseDef: 'Side-by-side Cisco CCNP, Juniper JNCIP, and Ansible/NETCONF automation translation.',
+          portalEval: `Translates every ${lab.shortTitle} stanza across Cisco IOS-XE, Juniper Junos hierarchical configuration, and idempotent Ansible YAML / RFC 6241 NETCONF XML payloads.`,
+          codeSnippet: lab.quickCmds[1] || 'show configuration | display set',
+          actionLabel: '🔀 Open Concept Sorting & CLI Lab',
+          actionFn: 'unlockScormStage(3)'
+        },
+        {
+          num: 5,
+          title: 'Cost-Optimized RAM',
+          color: '#65a30d',
+          border: '#a3e635',
+          cx: 185, cy: 168,
+          bx: 126, by: 168,
+          lx: 185, ly: 242,
+          iconType: 'media',
+          riseDef: `Runs full ${lab.code} topology in ${lab.optRam} RAM instead of ${lab.heavyRam} Heavy QEMU.`,
+          portalEval: 'Uses lightweight IOL / vJunos / FRR container images so the entire 15-topology CCNP/JNCIP workbench runs locally on a 32GB–64GB workstation ($0/mo) or spot cloud instance.',
+          codeSnippet: `Optimized Footprint: ${lab.optRam} RAM vs. Heavy QEMU: ${lab.heavyRam} RAM`,
+          actionLabel: '📱 Switch Back to 5 Responsive Design Principles',
+          actionFn: "switchRadialGraphicMode('responsive')"
+        }
+      ];
+    }
+
+    function getSpokeIconSVG(type, cx, cy) {
+      if (type === 'grid') {
+        // Fluid Layouts icon: browser header + 3 layout blocks
+        return `
+          <g transform="translate(${cx - 22}, ${cy - 20})" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="40" height="36" rx="4" fill="rgba(255,255,255,0.14)"/>
+            <line x1="2" y1="10" x2="42" y2="10"/>
+            <rect x="7" y="15" width="13" height="18" rx="2" fill="rgba(255,255,255,0.25)"/>
+            <rect x="24" y="15" width="13" height="7" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+            <rect x="24" y="26" width="13" height="7" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+          </g>`;
+      }
+      if (type === 'code') {
+        // Media Queries icon: browser window with </> brackets
+        return `
+          <g transform="translate(${cx - 22}, ${cy - 20})" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="40" height="34" rx="4" fill="rgba(255,255,255,0.14)"/>
+            <line x1="2" y1="11" x2="42" y2="11"/>
+            <polyline points="16,19 10,24 16,29"/>
+            <polyline points="28,19 34,24 28,29"/>
+            <line x1="24" y1="17" x2="20" y2="31"/>
+          </g>`;
+      }
+      if (type === 'chart') {
+        // Progressive Enhancement icon: rising arrow + ascending bars
+        return `
+          <g transform="translate(${cx - 22}, ${cy - 20})" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,20 18,12 34,4"/>
+            <polyline points="27,4 34,4 34,11"/>
+            <rect x="6" y="26" width="6" height="10" rx="1" fill="rgba(255,255,255,0.28)"/>
+            <rect x="16" y="21" width="6" height="15" rx="1" fill="rgba(255,255,255,0.28)"/>
+            <rect x="26" y="15" width="6" height="21" rx="1" fill="rgba(255,255,255,0.28)"/>
+            <rect x="36" y="9" width="6" height="27" rx="1" fill="rgba(255,255,255,0.28)"/>
+          </g>`;
+      }
+      if (type === 'mobile') {
+        // Mobile-First Design icon: smartphone with UI blocks
+        return `
+          <g transform="translate(${cx - 16}, ${cy - 22})" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="2" width="26" height="40" rx="4" fill="rgba(255,255,255,0.14)"/>
+            <line x1="12" y1="6" x2="20" y2="6"/>
+            <rect x="7" y="10" width="18" height="9" rx="1.5" fill="rgba(255,255,255,0.28)"/>
+            <rect x="7" y="22" width="8" height="9" rx="1.5" fill="rgba(255,255,255,0.28)"/>
+            <rect x="17" y="22" width="8" height="9" rx="1.5" fill="rgba(255,255,255,0.28)"/>
+            <circle cx="16" cy="37" r="1.5" fill="#ffffff"/>
+          </g>`;
+      }
+      // Flexible Media icon: landscape image frame with sun & mountains
+      return `
+        <g transform="translate(${cx - 22}, ${cy - 18})" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="40" height="32" rx="4" fill="rgba(255,255,255,0.14)"/>
+          <circle cx="13" cy="12" r="3.5" fill="rgba(255,255,255,0.35)"/>
+          <polygon points="6,30 17,18 26,27 32,21 39,30" fill="rgba(255,255,255,0.28)"/>
+        </g>`;
+    }
+
+    function switchRadialGraphicMode(mode) {
+      currentRadialMode = mode;
+      currentRadialSpokeIdx = 0;
+      const btnResp = document.getElementById('btn-radial-resp');
+      const btnNet = document.getElementById('btn-radial-net');
+      const heading = document.getElementById('radial-hub-heading');
+      if (btnResp && btnNet) {
+        if (mode === 'responsive') {
+          btnResp.style.background = '#1d70db';
+          btnResp.style.color = '#ffffff';
+          btnNet.style.background = '#f1f5f9';
+          btnNet.style.color = '#0f172a';
+          if (heading) heading.textContent = 'The 5 Core Responsive Design Principles (Interactive Hub)';
+        } else {
+          btnNet.style.background = '#0f6f5e';
+          btnNet.style.color = '#ffffff';
+          btnResp.style.background = '#f1f5f9';
+          btnResp.style.color = '#0f172a';
+          const lab = EVE_LABS[currentLabIdx];
+          if (heading) heading.textContent = `${lab.code}: 5 Core Topology Architecture Pillars`;
+        }
+      }
+      renderRadialLabeledGraphic();
+    }
+
+    function selectRadialHotspot(idx) {
+      currentRadialSpokeIdx = idx;
+      renderRadialLabeledGraphic();
+    }
+
+    function renderRadialLabeledGraphic() {
+      const svgWrap = document.getElementById('radial-labeled-graphic-svg');
+      const detailWrap = document.getElementById('radial-hotspot-detail-card');
+      if (!svgWrap || !detailWrap) return;
+
+      const lab = EVE_LABS[currentLabIdx] || EVE_LABS[0];
+      const spokes = currentRadialMode === 'responsive'
+        ? RESPONSIVE_DESIGN_SPOKES
+        : buildNetworkSpokesForLab(lab);
+
+      const activeSpoke = spokes[currentRadialSpokeIdx] || spokes[0];
+      const centerTitle1 = currentRadialMode === 'responsive' ? 'RESPONSIVE' : lab.code;
+      const centerTitle2 = currentRadialMode === 'responsive' ? 'DESIGN' : 'ARCHITECTURE';
+
+      // Build dotted lines from center (430, 245) to each spoke
+      const linesSvg = spokes.map((s, idx) => {
+        const isSel = idx === currentRadialSpokeIdx;
+        return `
+          <line x1="430" y1="245" x2="${s.cx}" y2="${s.cy}"
+                stroke="${s.color}" stroke-width="${isSel ? '4' : '2.8'}"
+                stroke-dasharray="5,5" opacity="${isSel ? '1' : '0.75'}" />
+        `;
+      }).join('');
+
+      // Build each spoke circle + icon + numbered hotspot marker + pill label
+      const spokesSvg = spokes.map((s, idx) => {
+        const isSel = idx === currentRadialSpokeIdx;
+        const pillWidth = Math.max(128, s.title.length * 7.8 + 26);
+        const pillX = s.lx - pillWidth / 2;
+        const pillY = s.ly - 15;
+        return `
+          <g class="radial-spoke-group" onclick="selectRadialHotspot(${idx})">
+            <!-- Outer glow when selected -->
+            ${isSel ? `<circle cx="${s.cx}" cy="${s.cy}" r="54" fill="none" stroke="${s.color}" stroke-width="3" stroke-dasharray="6,4" opacity="0.7"/>` : ''}
+            <!-- Colored spoke circle -->
+            <circle cx="${s.cx}" cy="${s.cy}" r="45" fill="${s.color}" stroke="#ffffff" stroke-width="3.5" />
+            <!-- Vector icon inside spoke -->
+            ${getSpokeIconSVG(s.iconType, s.cx, s.cy)}
+            <!-- Pill Label -->
+            <rect x="${pillX}" y="${pillY}" width="${pillWidth}" height="30" rx="15"
+                  fill="${isSel ? s.color : '#ffffff'}" stroke="${s.color}" stroke-width="2" />
+            <text x="${s.lx}" y="${s.ly + 4}" text-anchor="middle"
+                  fill="${isSel ? '#ffffff' : '#1e293b'}" font-family="'Plus Jakarta Sans', sans-serif"
+                  font-size="12" font-weight="800">${s.title}</text>
+            <!-- Numbered White Hotspot Badge (1-5) -->
+            <circle cx="${s.bx}" cy="${s.by}" r="16" fill="rgba(255,255,255,0.35)" class="hotspot-pulse-ring" />
+            <circle cx="${s.bx}" cy="${s.by}" r="13" fill="${isSel ? '#0f172a' : '#ffffff'}"
+                    stroke="${s.color}" stroke-width="2.5" />
+            <text x="${s.bx}" y="${s.by + 4.5}" text-anchor="middle"
+                  fill="${isSel ? '#ffffff' : '#0f172a'}" font-family="'Outfit', sans-serif"
+                  font-size="13" font-weight="900">${s.num}</text>
+          </g>
+        `;
+      }).join('');
+
+      svgWrap.innerHTML = `
+        <svg viewBox="0 0 860 490" role="img" aria-label="Interactive 5-Spoke Labeled Graphic Diagram">
+          <defs>
+            <radialGradient id="hubBgGrad" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="100%" stop-color="#f1f5f9" />
+            </radialGradient>
+            <filter id="hubShadow" x="-15%" y="-15%" width="130%" height="130%">
+              <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.12" />
+            </filter>
+          </defs>
+          <rect width="860" height="490" fill="url(#hubBgGrad)" rx="12" />
+          ${linesSvg}
+          <!-- Central Hub Circle -->
+          <g filter="url(#hubShadow)">
+            <circle cx="430" cy="245" r="72" fill="#ffffff" stroke="#cbd5e1" stroke-width="3" />
+            <circle cx="430" cy="245" r="65" fill="none" stroke="#1d70db" stroke-width="2" stroke-dasharray="18,8" opacity="0.45" />
+          </g>
+          <!-- Multi-Device Responsive Monitors Icon in Center Hub -->
+          <g transform="translate(396, 194)" stroke="#1e293b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Desktop Monitor -->
+            <rect x="8" y="2" width="44" height="30" rx="3" fill="#eff6ff" stroke="#1d70db" stroke-width="2.2"/>
+            <line x1="24" y1="32" x2="24" y2="39"/>
+            <line x1="36" y1="32" x2="36" y2="39"/>
+            <line x1="18" y1="39" x2="42" y2="39"/>
+            <!-- Tablet Overlay Left -->
+            <rect x="0" y="12" width="18" height="26" rx="2.5" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+            <!-- Phone Overlay Right -->
+            <rect x="48" y="16" width="14" height="22" rx="2" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+          </g>
+          <text x="430" y="256" text-anchor="middle" fill="#0f172a" font-family="'Outfit', sans-serif" font-size="13.5" font-weight="900" letter-spacing="0.06em">${centerTitle1}</text>
+          <text x="430" y="273" text-anchor="middle" fill="#1d70db" font-family="'Outfit', sans-serif" font-size="13.5" font-weight="900" letter-spacing="0.06em">${centerTitle2}</text>
+          ${spokesSvg}
+        </svg>
+      `;
+
+      const prevIdx = (currentRadialSpokeIdx - 1 + spokes.length) % spokes.length;
+      const nextIdx = (currentRadialSpokeIdx + 1) % spokes.length;
+
+      detailWrap.style.borderTop = `4px solid ${activeSpoke.color}`;
+      detailWrap.innerHTML = `
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="width:32px;height:32px;border-radius:50%;background:${activeSpoke.color};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;">
+              ${activeSpoke.num}
+            </span>
+            <div>
+              <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:${activeSpoke.color};">
+                HOTSPOT ${activeSpoke.num} OF 5 • ${currentRadialMode === 'responsive' ? 'RESPONSIVE DESIGN PRINCIPLE' : lab.code + ' ARCHITECTURE PILLAR'}
+              </div>
+              <h4 style="font-family:'Outfit',sans-serif;font-size:21px;font-weight:800;color:#0f172a;margin:0;">
+                ${activeSpoke.title}
+              </h4>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn" style="background:#f1f5f9;color:#0f172a;border:1px solid #cbd5e1;padding:6px 12px;" onclick="selectRadialHotspot(${prevIdx})">
+              ← Spoke ${spokes[prevIdx].num}
+            </button>
+            <button class="btn" style="background:${activeSpoke.color};color:#ffffff;padding:6px 12px;" onclick="selectRadialHotspot(${nextIdx})">
+              Spoke ${spokes[nextIdx].num} →
+            </button>
+          </div>
+        </div>
+
+        <div style="font-size:15.5px;line-height:1.62;color:#0f172a;margin-top:10px;font-weight:700;">
+          "${activeSpoke.riseDef}"
+        </div>
+        <div style="font-size:14px;line-height:1.62;color:#334155;margin-top:6px;">
+          <strong style="color:#0f172a;">Live Portal Evaluation &amp; Implementation:</strong> ${activeSpoke.portalEval}
+        </div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;background:#f8fafc;padding:10px 14px;border-radius:10px;border:1px solid #e2e8f0;">
+          <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#0f172a;font-weight:700;">${activeSpoke.codeSnippet}</code>
+          <button class="btn" style="background:#0f172a;color:#38bdf8;font-size:11.5px;padding:7px 14px;" onclick="${activeSpoke.actionFn}">
+            ${activeSpoke.actionLabel}
+          </button>
+        </div>
+      `;
+    }
+
+    function setScormViewportSim(vp) {
+      const shell = document.getElementById('scorm-player-shell');
+      if (!shell) return;
+      shell.classList.remove('viewport-tablet', 'viewport-mobile', 'sidebar-collapsed');
+      if (vp === 'tablet') {
+        shell.classList.add('viewport-tablet', 'sidebar-collapsed');
+      } else if (vp === 'mobile') {
+        shell.classList.add('viewport-mobile', 'sidebar-collapsed');
+      }
+
+      ['desktop', 'tablet', 'mobile'].forEach(mode => {
+        const btn = document.getElementById('vp-btn-' + mode);
+        if (btn) {
+          btn.style.background = (mode === vp) ? '#0f172a' : 'transparent';
+          btn.style.color = (mode === vp) ? '#ffffff' : '#334155';
+        }
+      });
     }
 
     function renderStage1Content(lab) {
