@@ -918,8 +918,9 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 403, { ok: false, error: 'Only Google, Microsoft, or Apple SSO is permitted.' });
       }
       const cfg = getOauthConfig();
-      const proto = req.headers['x-forwarded-proto'] || 'http';
-      const origin = `${proto}://${req.headers.host || 'localhost'}`;
+      const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim();
+      const fwdHost = (req.headers['x-forwarded-host'] || req.headers.host || 'localhost').split(',')[0].trim();
+      const origin = `${proto}://${fwdHost}`;
       const redirectUri = `${origin}/api/auth/oauth/callback`;
       const nonce = crypto.randomBytes(12).toString('hex');
       const stateTok = signToken({ provider, nonce }, 600);
