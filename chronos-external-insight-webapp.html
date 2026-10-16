@@ -342,29 +342,13 @@
             <div id="ch-view-login">
                 <!-- STEP 1: CREDENTIALS -->
                 <form id="ch-step1-form" onsubmit="submitChronosStep1(event)" class="space-y-3">
-                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                        <div class="text-[10px] font-mono-code uppercase tracking-wider text-amber-300 font-bold mb-2">
-                            Step 1 of 2 • Verified Account Presets
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button type="button" onclick="fillChronosPreset('client')" class="p-2 rounded-lg bg-slate-950 hover:border-amber-400 border border-slate-700 text-left transition">
-                                <div class="text-[10px] font-bold text-amber-300 uppercase">Researcher / Client</div>
-                                <div class="text-[10px] text-slate-400 truncate">client@miltongroupsecurity.org</div>
-                            </button>
-                            <button type="button" onclick="fillChronosPreset('admin')" class="p-2 rounded-lg bg-slate-950 hover:border-purple-400 border border-slate-700 text-left transition">
-                                <div class="text-[10px] font-bold text-purple-300 uppercase">Root Admin</div>
-                                <div class="text-[10px] text-slate-400 truncate">malik.khabir@miltongroup...</div>
-                            </button>
-                        </div>
-                    </div>
-
                     <div>
                         <label class="block text-[11px] font-mono-code uppercase text-slate-300 mb-1">Verified Portal Email</label>
-                        <input id="ch-email" type="email" required placeholder="client@miltongroupsecurity.org" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:border-amber-400 outline-none" />
+                        <input id="ch-email" type="email" required value="" placeholder="Enter your authorized email" autocomplete="off" spellcheck="false" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:border-amber-400 outline-none" />
                     </div>
                     <div>
                         <label class="block text-[11px] font-mono-code uppercase text-slate-300 mb-1">Cryptographic Passphrase</label>
-                        <input id="ch-pass" type="password" required placeholder="••••••••••••••••••••" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:border-amber-400 outline-none" />
+                        <input id="ch-pass" type="password" required value="" placeholder="Enter passphrase or passkey" autocomplete="new-password" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:border-amber-400 outline-none" />
                     </div>
 
                     <button type="submit" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-slate-950 font-bold text-xs uppercase tracking-wider transition cursor-pointer">
@@ -388,10 +372,10 @@
 
                     <form onsubmit="submitChronosTotp(event)" class="space-y-2.5">
                         <label class="block text-[10px] font-mono-code uppercase text-slate-400 text-center">
-                            Or Enter 6-Digit Authenticator TOTP (250-100 Client / 440-921 Admin)
+                            Or Enter 6-Digit Authenticator TOTP Code
                         </label>
                         <div class="flex gap-2">
-                            <input id="ch-totp" type="text" placeholder="250-100" class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-center font-mono-code text-xs tracking-widest focus:border-emerald-400 outline-none" />
+                            <input id="ch-totp" type="text" value="" placeholder="000-000" autocomplete="one-time-code" class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-center font-mono-code text-xs tracking-widest focus:border-emerald-400 outline-none" />
                             <button type="submit" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider cursor-pointer">
                                 Verify 2FA &rarr;
                             </button>
@@ -412,7 +396,7 @@
                 </div>
                 <div>
                     <label class="block text-[11px] font-mono-code uppercase text-slate-300 mb-1">Institutional / Partner Email</label>
-                    <input id="ch-req-email" type="email" required placeholder="researcher@institution.edu" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs outline-none" />
+                    <input id="ch-req-email" type="email" required value="" placeholder="Enter your email address" autocomplete="off" spellcheck="false" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs outline-none" />
                 </div>
                 <div>
                     <label class="block text-[11px] font-mono-code uppercase text-slate-300 mb-1">Organization / Syndicate Track</label>
@@ -689,20 +673,6 @@
         const CHRONOS_ADMIN_DIGESTS = ['767c6f5c35afb599', '42c9c755a45ace6b'];
         const CHRONOS_CLIENT_DIGESTS = ['2e2fce3751cac96e', '2b405f3f8d7cebf2'];
 
-        function fillChronosPreset(role) {
-            document.getElementById('ch-auth-error').classList.add('hidden');
-            chronosRole = role;
-            if (role === 'admin') {
-                document.getElementById('ch-email').value = 'malik.khabir@miltongroupsecurity.org';
-                document.getElementById('ch-pass').value = 'PASSKEY::SOVEREIGN_ADMIN';
-                document.getElementById('ch-totp').value = '440-921';
-            } else {
-                document.getElementById('ch-email').value = 'client@miltongroupsecurity.org';
-                document.getElementById('ch-pass').value = 'PASSKEY::VERIFIED_CLIENT';
-                document.getElementById('ch-totp').value = '250-100';
-            }
-        }
-
         function submitChronosStep1(e) {
             e.preventDefault();
             const errBox = document.getElementById('ch-auth-error');
@@ -723,7 +693,7 @@
                 return;
             }
 
-            errBox.textContent = 'Access Denied: Unrecognized email or passphrase. Select a verified preset above or submit a Request Access form.';
+            errBox.textContent = 'Access Denied: Unrecognized email or passphrase. Submit a Request Access form if you need an account.';
             errBox.classList.remove('hidden');
         }
 

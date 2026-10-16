@@ -1592,22 +1592,18 @@
           <p style="font-size:0.78rem;color:#cbd5e1;line-height:1.5;margin:0 0 1rem;">
             Internal portal access requires verified credentials and Second-Factor (FIDO2 Biometric Fingerprint or 6-Digit Authenticator Code).
           </p>
-          <div style="display:flex;gap:0.45rem;margin-bottom:0.9rem;">
-            <button type="button" id="os-2fa-demo-admin" style="flex:1;padding:0.45rem 0.6rem;border-radius:0.5rem;background:rgba(37,99,235,0.2);border:1px solid rgba(37,99,235,0.45);color:#93c5fd;font-size:0.7rem;font-weight:800;cursor:pointer;">⚡ Fill Sovereign Admin</button>
-            <button type="button" id="os-2fa-demo-client" style="flex:1;padding:0.45rem 0.6rem;border-radius:0.5rem;background:rgba(252,211,77,0.12);border:1px solid rgba(252,211,77,0.35);color:#fcd34d;font-size:0.7rem;font-weight:800;cursor:pointer;">🔑 Fill Verified Partner</button>
-          </div>
           <div style="margin-bottom:0.7rem;">
             <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Step 1: Provisioned Email</label>
-            <input id="os-2fa-email" type="email" value="malik.khabir@miltongroupsecurity.org" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(203,213,225,0.24);color:#fff;font-size:0.8rem;" />
+            <input id="os-2fa-email" type="email" value="" placeholder="Enter your authorized email" autocomplete="off" spellcheck="false" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(203,213,225,0.24);color:#fff;font-size:0.8rem;" />
           </div>
           <div style="margin-bottom:0.7rem;">
             <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Passphrase or FIDO2 Passkey Assertion</label>
-            <input id="os-2fa-pass" type="password" value="PASSKEY::SOVEREIGN_ADMIN" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(203,213,225,0.24);color:#fff;font-size:0.8rem;" />
+            <input id="os-2fa-pass" type="password" value="" placeholder="Enter passphrase or passkey" autocomplete="new-password" style="width:100%;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(203,213,225,0.24);color:#fff;font-size:0.8rem;" />
           </div>
           <div style="margin-bottom:0.85rem;">
             <label style="display:block;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;margin-bottom:0.25rem;">Step 2: 6-Digit TOTP Code (or Biometric Passkey)</label>
             <div style="display:flex;gap:0.5rem;">
-              <input id="os-2fa-totp" type="text" value="440-921" maxlength="7" style="flex:1;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(252,211,77,0.4);color:#fcd34d;font-family:monospace;font-weight:800;font-size:0.9rem;text-align:center;letter-spacing:0.12em;" />
+              <input id="os-2fa-totp" type="text" value="" placeholder="000-000" autocomplete="one-time-code" maxlength="7" style="flex:1;padding:0.6rem 0.75rem;border-radius:0.55rem;background:#030712;border:1px solid rgba(252,211,77,0.4);color:#fcd34d;font-family:monospace;font-weight:800;font-size:0.9rem;text-align:center;letter-spacing:0.12em;" />
               <button type="button" id="os-2fa-bio-btn" style="padding:0.6rem 0.85rem;border-radius:0.55rem;background:rgba(22,163,74,0.18);border:1px solid rgba(22,163,74,0.5);color:#86efac;font-size:0.75rem;font-weight:800;cursor:pointer;white-space:nowrap;">🫆 Biometric</button>
             </div>
           </div>
@@ -1749,18 +1745,6 @@
       } else {
         checkAndEnforce2FAGate();
       }
-    });
-
-    document.getElementById('os-2fa-demo-admin').addEventListener('click', () => {
-      gateEmail.value = 'malik.khabir@miltongroupsecurity.org';
-      gatePass.value = 'PASSKEY::SOVEREIGN_ADMIN';
-      gateTotp.value = '440-921';
-    });
-
-    document.getElementById('os-2fa-demo-client').addEventListener('click', () => {
-      gateEmail.value = 'partner@miltongroupsecurity.org';
-      gatePass.value = 'PASSKEY::VERIFIED_CLIENT';
-      gateTotp.value = '250-100';
     });
 
     function verifyGateSubmission(isBiometric) {

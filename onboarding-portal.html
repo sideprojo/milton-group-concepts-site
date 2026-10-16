@@ -148,28 +148,17 @@
 
         <div id="ob-auth-alert" style="display:none;margin-bottom:12px;padding:10px 12px;border-radius:8px;background:rgba(220,38,38,0.18);border:1px solid #ef4444;color:#fecaca;font-size:0.78rem;font-weight:700;"></div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
-          <button type="button" onclick="loadClientAccount()" style="padding:8px 10px;border-radius:8px;background:rgba(56,189,248,0.12);border:1px solid var(--cyan);color:#e0f2fe;font-size:0.73rem;font-weight:700;cursor:pointer;text-align:left;">
-            <div style="color:var(--cyan);font-size:0.65rem;text-transform:uppercase;">Enterprise Client</div>
-            client@miltongroup...
-          </button>
-          <button type="button" onclick="loadAdminAccount()" style="padding:8px 10px;border-radius:8px;background:rgba(245,158,11,0.14);border:1px solid var(--gold);color:#fef3c7;font-size:0.73rem;font-weight:700;cursor:pointer;text-align:left;">
-            <div style="color:var(--gold);font-size:0.65rem;text-transform:uppercase;">Default Admin</div>
-            malik.khabir@mgc...
-          </button>
-        </div>
-
         <div class="form-group">
           <label>Full Name / Client Organization</label>
-          <input type="text" id="ob-name" placeholder="Enterprise Partner Client" value="Enterprise Partner Client" />
+          <input type="text" id="ob-name" placeholder="Enter your full name or organization" value="" autocomplete="off" />
         </div>
         <div class="form-group">
           <label>Verified Portal Email</label>
-          <input type="email" id="ob-email" placeholder="client@miltongroupsecurity.org" value="client@miltongroupsecurity.org" />
+          <input type="email" id="ob-email" placeholder="Enter your authorized email" value="" autocomplete="off" spellcheck="false" />
         </div>
         <div class="form-group">
           <label>Cryptographic Passphrase or FIDO2 Passkey Assertion</label>
-          <input type="password" id="ob-pass" value="PASSKEY::VERIFIED_CLIENT" />
+          <input type="password" id="ob-pass" placeholder="Enter passphrase or passkey" value="" autocomplete="new-password" />
         </div>
         <div class="form-group">
           <label>Onboarding Track &amp; Portal Scope</label>
@@ -192,7 +181,7 @@
             Tap Fingerprint Sensor (WebAuthn / TouchID / Windows Hello)
           </div>
           <div style="display:flex;gap:6px;justify-content:center;align-items:center;">
-            <input type="text" id="ob-totp" placeholder="Or 6-Digit TOTP (250-100 / 440-921)" style="width:210px;padding:7px 10px;font-size:0.75rem;text-align:center;border-radius:8px;background:#0f172a;border:1px solid var(--border);color:#fff;font-weight:700;" />
+            <input type="text" id="ob-totp" value="" placeholder="Or 6-Digit Authenticator Code" autocomplete="one-time-code" style="width:210px;padding:7px 10px;font-size:0.75rem;text-align:center;border-radius:8px;background:#0f172a;border:1px solid var(--border);color:#fff;font-weight:700;" />
           </div>
         </div>
 
@@ -203,7 +192,7 @@
         <button class="btn" onclick="completeOnboarding()">Verify 2FA &amp; Unlock Portal Access →</button>
 
         <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
-          <span style="font-size:0.74rem; color:var(--muted);">Default Admin (<code>malik.khabir@miltongroupsecurity.org</code>)</span>
+          <span style="font-size:0.74rem; color:var(--muted);">Authorized Administrator Access</span>
           <button type="button" onclick="attemptAdminPortalLaunch()" style="background:rgba(245,158,11,0.18); border:1px solid var(--gold); color:var(--gold); padding:6px 12px; border-radius:6px; font-size:0.74rem; cursor:pointer; font-weight:800;">Open Admin Command Portal (2FA) →</button>
         </div>
       </div>
@@ -300,16 +289,16 @@
             </thead>
             <tbody id="roster-body">
               <tr>
-                <td><code>malik.khabir@miltongroupsecurity.org</code></td>
+                <td><code>[AUTHENTICATED_OWNER]</code></td>
                 <td>ALL_16_SUITES</td>
                 <td style="color:var(--gold);font-weight:700;">ROOT_SUPER_ADMIN</td>
-                <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (440-921)</td>
+                <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP</td>
               </tr>
               <tr>
-                <td><code>client@miltongroupsecurity.org</code></td>
+                <td><code>[VERIFIED_PARTNER]</code></td>
                 <td>ALL_INTERNAL_VIEW</td>
                 <td style="color:var(--cyan);font-weight:700;">VERIFIED_CLIENT</td>
-                <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP (250-100)</td>
+                <td style="color:var(--emerald);">✔ FIDO2 Biometric + TOTP</td>
               </tr>
             </tbody>
           </table>
@@ -405,24 +394,6 @@
       return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
     }
 
-    function loadClientAccount() {
-      clearAuthAlert();
-      document.getElementById('ob-name').value = 'Enterprise Partner Client';
-      document.getElementById('ob-email').value = 'client@miltongroupsecurity.org';
-      document.getElementById('ob-pass').value = 'PASSKEY::VERIFIED_CLIENT';
-      document.getElementById('ob-totp').value = '250-100';
-      document.getElementById('ob-track').value = 'ALL_INTERNAL_VIEW';
-    }
-
-    function loadAdminAccount() {
-      clearAuthAlert();
-      document.getElementById('ob-name').value = 'Malik A. Khabir (Sole Member & Root Admin)';
-      document.getElementById('ob-email').value = 'malik.khabir@miltongroupsecurity.org';
-      document.getElementById('ob-pass').value = 'PASSKEY::SOVEREIGN_ADMIN';
-      document.getElementById('ob-totp').value = '440-921';
-      document.getElementById('ob-track').value = 'ALL_INTERNAL_VIEW';
-    }
-
     async function triggerPortalBiometric() {
       clearAuthAlert();
       const btn = document.getElementById('fp-verify-btn');
@@ -463,13 +434,13 @@
       const isClientCred = (email === 'client@miltongroupsecurity.org' || email === 'service@sterlingautorepairva.com' || email === 'partner@miltongroupsecurity.org') && (passDigest === '2e2fce3751cac96e' || passDigest === '2b405f3f8d7cebf2');
 
       if (!isAdminCred && !isClientCred) {
-        showAuthAlert('Access Denied: Unrecognized email or passphrase. Select the Enterprise Client or Default Admin preset above.');
+        showAuthAlert('Access Denied: Unrecognized email or passphrase.');
         return null;
       }
 
       const validTotp = totp === '440921' || totp === '250100';
       if (!mfaBiometricCleared && !validTotp) {
-        showAuthAlert('2FA Verification Required: Tap the Biometric Fingerprint sensor OR enter a valid 6-digit TOTP code (250-100 Client / 440-921 Admin).');
+        showAuthAlert('2FA Verification Required: Tap the Biometric Fingerprint sensor OR enter your 6-digit TOTP authenticator code.');
         return null;
       }
 

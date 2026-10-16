@@ -30,10 +30,10 @@
       <div class="card" style="background:var(--card2)">
         <span class="chip ok">Method 1 · Google Account</span>
         <h2 style="margin-top:8px">Sign in with Google</h2>
-        <p>Use your Google Workspace or personal Gmail account. Owner account (<code>malik.khabir@miltongroupsecurity.org</code>) unlocks all 16 command portals and Access Admin.</p>
+        <p>Use your authorized Google Workspace or personal Gmail account to access your assigned workspace and modules.</p>
         <label style="display:block;margin-top:8px">
           <p>Google Email</p>
-          <input id="gEmail" type="email" placeholder="malik.khabir@miltongroupsecurity.org" style="width:100%" autocomplete="email">
+          <input id="gEmail" type="email" value="" placeholder="Enter your authorized email" style="width:100%" autocomplete="off" spellcheck="false">
         </label>
         <div class="row" style="margin-top:10px;justify-content:flex-start">
           <button class="btn pri" id="btnGoogle">Continue with Google →</button>
@@ -47,7 +47,7 @@
         <p>No password or Google account required. We generate a single-use, 15-minute sign-in link for your email address.</p>
         <label style="display:block;margin-top:8px">
           <p>Work or personal email</p>
-          <input id="eEmail" type="email" placeholder="you@company.com" style="width:100%" autocomplete="email">
+          <input id="eEmail" type="email" value="" placeholder="Enter your email address" style="width:100%" autocomplete="off" spellcheck="false">
         </label>
         <div class="row" style="margin-top:10px;justify-content:flex-start">
           <button class="btn pri" id="btnEmailLink">Send Sign-In Link ✉️</button>
@@ -60,16 +60,6 @@
     </div>
 
     <p id="authMsg" style="color:var(--ac);margin-top:10px;font-weight:700"></p>
-
-    <details style="margin-top:14px">
-      <summary>Quick account presets (Owner &amp; Member lifecycle verification)</summary>
-      <div class="row" style="margin-top:8px;justify-content:flex-start">
-        <button class="btn" data-quick="malik.khabir@miltongroupsecurity.org">🛡️ Malik K. (Owner · All 16 Portals + Admin)</button>
-        <button class="btn" data-quick="cara@example.com">⚡ Cara (Active Paid Member · F.I.X)</button>
-        <button class="btn" data-quick="ben@example.com">⏳ Ben (Approved · Pages Pending Build)</button>
-        <button class="btn" data-quick="ana@example.com">📨 Ana (Just Requested)</button>
-      </div>
-    </details>
 
     <div class="row" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)">
       <span>Need a tailored workspace? Base membership is <b>$5/month</b> once your pages are built.</span>
