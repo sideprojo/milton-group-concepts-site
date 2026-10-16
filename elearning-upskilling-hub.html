@@ -688,6 +688,37 @@
             </div>
           </div>
         </div>
+
+        <!-- 1-CLICK EXECUTIVE POSITIONING & JOB BOARD LAUNCHPAD (#4) -->
+        <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1.1fr 0.9fr;gap:16px;">
+          <div style="background:rgba(15,23,42,0.9);border:1px solid var(--border);border-radius:14px;padding:16px;">
+            <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">1-CLICK COPY EXECUTIVE POSITIONING DOSSIER</span>
+            <h4 style="font-size:15px;margin:8px 0 6px;color:#fff;">Copy Tailored LinkedIn Headline, Bio &amp; Resume Bullets</h4>
+            <div class="btn-row" style="margin-bottom:10px;">
+              <button class="btn btn-gold" onclick="copyCareerSnippet('headline')">📋 Copy LinkedIn Headline</button>
+              <button class="btn btn-ghost" onclick="copyCareerSnippet('bio')">📋 Copy Executive Bio</button>
+              <button class="btn btn-ghost" onclick="copyCareerSnippet('bullets')">📋 Copy Resume Bullets</button>
+              <button class="btn btn-ghost" onclick="copyCareerSnippet('sdvosb')">📋 Copy SDVOSB Pitch</button>
+            </div>
+            <pre id="career-snippet-preview" style="margin:0;padding:10px 12px;border-radius:10px;background:#020617;border:1px solid var(--border);color:#93c5fd;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:pre-wrap;line-height:1.45;">Principal AI & Zero-Trust Cloud Security Architect | Google Agentic AI (Path 4525) • Azure AZ-500 / SC-100 • IAPP CIPP/US | Former Pentagon OSD/Joint Staff ORSA & USASOC 112th Signal (Airborne) | Founder @ Milton Group Concepts LLC</pre>
+          </div>
+
+          <div style="background:rgba(15,23,42,0.9);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+              <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;">DIRECT $200K+ PRINCIPAL ROLE &amp; CONTRACT BOARDS</span>
+              <h4 style="font-size:15px;margin:8px 0 6px;color:#fff;">Launch Pre-Filtered Executive Job &amp; Contract Searches</h4>
+              <p style="font-size:12px;color:var(--silver);margin-bottom:10px;">
+                Opens live Principal Architect &amp; Defense AI/Cyber searches across Northern VA, DC, and Remote corridors:
+              </p>
+            </div>
+            <div class="btn-row">
+              <a href="https://www.linkedin.com/jobs/search/?keywords=Principal%20Cloud%20Security%20AI%20Architect" target="_blank" class="btn btn-blue">LinkedIn Principal Roles ↗</a>
+              <a href="https://www.clearancejobs.com/jobs?keywords=Principal+Architect+Cyber+AI" target="_blank" class="btn btn-ghost">ClearanceJobs ↗</a>
+              <a href="https://www.usajobs.gov/Search/Results?k=2210%201515%20Cyber%20AI" target="_blank" class="btn btn-ghost">USAJOBS (2210 / 1515 ORSA) ↗</a>
+              <a href="sdvosb-contract-radar.html" class="btn btn-gold">SAM.gov SDVOSB Radar →</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -717,6 +748,20 @@
   </main>
 
   <script>
+    const CAREER_SNIPPETS = {
+      headline: 'Principal AI & Zero-Trust Cloud Security Architect | Google Agentic AI (Path 4525) • Azure AZ-500 / SC-100 • IAPP CIPP/US | Former Pentagon OSD/Joint Staff ORSA & USASOC 112th Signal (Airborne) | Founder @ Milton Group Concepts LLC',
+      bio: 'Principal Cloud, Agentic AI & Zero-Trust Security Architect uniting (1) Pentagon OSD/Joint Staff ORSA AI Infrastructure Analysis, (2) USASOC 112th Signal Bn Airborne (25N) / SOJTF-OIR / MCCOG / CCNP Multi-Enclave Network Engineering, and (3) Regulated Cloud Cyber & Data Commerce (AZ-500, SC-100, CEH, Security+, Splunk, Google Path 4525, SAS ModelOps A00-440 & IAPP CIPP/US).',
+      bullets: '• Architected multi-cloud LangGraph & Google Gemini 2.5 Flash autonomous agent platform across scale-to-zero Cloud Run microservices ($0 idle cost) & BigQuery Data Clean Rooms.\n• Spearheaded Pentagon OSD/Joint Staff ORSA database architecture and requirements for U.S. Government AI Infrastructure.\n• Engineered Zero-Trust cloud enclaves (AZ-500, SC-100, NIST 800-53/800-171 CMMC L2, Sentinel SIEM/SOAR & FIDO2 WebAuthn 2FA).',
+      sdvosb: 'Milton Group Concepts LLC (miltongroupsecurity.org) & F.I.X Solutions LLC (fix.miltongroupsecurity.org) — Veteran-Led Agentic AI, Regulated Data Clean Rooms (CIPP/US + SAS ModelOps), and Zero-Trust Cloud Security Architecture (NAICS 541512, 541519, 541611).'
+    };
+
+    function copyCareerSnippet(key) {
+      const txt = CAREER_SNIPPETS[key] || CAREER_SNIPPETS.headline;
+      const box = document.getElementById('career-snippet-preview');
+      if (box) box.textContent = txt + '\n\n[✓ COPIED TO CLIPBOARD]';
+      if (navigator.clipboard) navigator.clipboard.writeText(txt);
+    }
+
     const CRAM_DATA = {
       SAS: {
         badge: 'ACTIVE CRAM MATRIX // SAS MODELOPS (A00-440)',
@@ -770,73 +815,21 @@
 
     const QUIZ_BANK = [
       {
-        track: 'SAS',
-        tag: 'SAS A00-440 • BUSINESS PROCESS & AXIOM 2',
-        q: 'What is the single most critical factor in determining the success of an enterprise ModelOps process, and when must it begin?',
+        track: 'GCP',
+        tag: 'GOOGLE PATH 4525 • MULTI-AGENT SUPERVISOR & SAFETY',
+        q: 'Cymbal Labs is deploying a multi-agent customer & financial operations system on Google Cloud. They need a central orchestrator to delegate tasks to specialized Billing, SQL, and Compliance subagents while blocking prompt injections and redacting PII inline. Which architecture should you design?',
         options: [
-          'A) Selecting the highest-AUC deep learning algorithm after IT provisions the production cluster',
-          'B) Establishing collaboration and handoffs between the Business Team, Analytics Team, and IT/Operations Group starting on Day 1',
-          'C) Briefing company executives on Kubernetes container RAM limits before training models',
-          'D) Running SAS Environment Manager without a holdout validation dataset'
+          'A) A single monolithic prompt with all database credentials hardcoded in plaintext',
+          'B) LangGraph / Vertex AI Agent Engine Supervisor pattern with scoped subagent tools, protected inline by Google Cloud Model Armor and Cloud Sensitive Data Protection (DLP)',
+          'C) Unfiltered user inputs piped directly into BigQuery admin shell scripts',
+          'D) Compute Engine VMs running without IAM service account boundaries'
         ],
         correct: 1,
-        rationale: '<strong>Correct (B):</strong> Enterprise ModelOps succeeds through structured collaboration and handoffs between (1) Business, (2) Analytics/Modeling, and (3) IT/Operations starting on <strong>Day 1 (Axiom 2)</strong>.<br/><br/><strong>🎖️ Military / ORSA Anchor:</strong> Just like SOJTF-OIR J6 (IT/Comms), ORSA Analysts (Analytics), and Joint Task Force Commanders (Business) — mission architecture and handoffs start on Day 1.'
-      },
-      {
-        track: 'SAS',
-        tag: 'SAS A00-440 • MODEL VALIDATION & THE VAULT',
-        q: 'Before registering a candidate model into SAS Model Manager ("The Vault"), what does testing it against an unseen holdout dataset protect against?',
-        options: [
-          'A) Overfitting (where the model memorizes random noise in training data rather than true relationships)',
-          'B) Server CPU throttling inside SAS Environment Manager',
-          'C) Human-in-the-loop approval delays in SAS Workflow Manager',
-          'D) Network packet loss between SAS Visual Analytics and BigQuery'
-        ],
-        correct: 0,
-        rationale: '<strong>Correct (A):</strong> Holdout validation prevents <strong>overfitting</strong> before a model enters SAS Model Manager ("The Vault").<br/><br/><strong>🎖️ Military / ORSA Anchor:</strong> Equivalent to validating a Splunk/Sentinel threat-hunting rule against live unseen network traffic rather than tuning only on old historical PCAPs.'
-      },
-      {
-        track: 'SAS',
-        tag: 'SAS A00-440 • DRIFT VS. PERFORMANCE DECAY',
-        q: 'In SAS Model Manager, which metric specifically measures input feature distribution shift (covariate shift) vs. predictive accuracy decay?',
-        options: [
-          'A) R-Squared measures input shift; CPU utilization measures predictive decay',
-          'B) Population Stability Index (PSI) measures input feature distribution shift; ROC/AUC, KS, Gini, and Lift track predictive performance decay',
-          'C) SAS Workflow Manager measures PSI; SAS Visual Analytics measures holdout noise',
-          'D) Both input shift and predictive decay are measured exclusively by p-values'
-        ],
-        correct: 1,
-        rationale: '<strong>Correct (B):</strong> <strong>Population Stability Index (PSI)</strong> detects shifts in input variable distributions over time, while <strong>ROC/AUC, Kolmogorov-Smirnov (KS), Gini, and Lift</strong> monitor predictive decay.<br/><br/><strong>🎖️ Military / ORSA Anchor:</strong> PSI is like RF baseline spectrum shift in EW/SATCOM; ROC/KS decay is signal-to-noise degradation requiring re-tuning.'
-      },
-      {
-        track: 'CIPP',
-        tag: 'IAPP CIPP/US • DATA COMMERCE & FEDERAL LAW',
-        q: 'When structuring a U.S. data commerce pipeline, which federal law governs Consumer Reporting Agencies (CRAs) assembling credit/background profiles vs. financial institutions handling Nonpublic Personal Information (NPI)?',
-        options: [
-          'A) COPPA governs CRAs; FERPA governs financial institutions',
-          'B) FCRA (amended by FACTA) governs CRAs and permissible purposes; GLBA (Privacy & Safeguards Rules) governs financial institutions handling NPI',
-          'C) HIPAA Safe Harbor governs CRAs; Privacy Act of 1974 governs commercial banks',
-          'D) CAN-SPAM governs CRAs; TCPA governs financial data clean rooms'
-        ],
-        correct: 1,
-        rationale: '<strong>Correct (B):</strong> <strong>FCRA</strong> requires a strict "Permissible Purpose" for consumer reports from CRAs, while <strong>GLBA</strong> governs financial institutions via the Privacy Rule (notice/opt-out) and Safeguards Rule (information security program).<br/><br/><strong>🎖️ Military / ORSA Anchor:</strong> FCRA = Need-to-Know clearance verification; GLBA Safeguards Rule = NIST 800-53 / DISA STIG hardening of financial enclaves.'
-      },
-      {
-        track: 'CIPP',
-        tag: 'IAPP CIPP/US & CIPP/G • FEDERAL SORN VS. PIA',
-        q: 'Milton Group Concepts LLC is deploying an AI analytics database for the VA that retrieves veteran records by SSN/DoD ID. What federal requirements are triggered under the Privacy Act of 1974 and E-Government Act of 2002?',
-        options: [
-          'A) Privacy Act requires a System of Records Notice (SORN) in the Federal Register; E-Government Act Section 208 requires a Privacy Impact Assessment (PIA) before procuring/developing PII IT systems',
-          'B) Only state-level VCDPA opt-out banners are required for federal VA systems',
-          'C) SORN is only required for private banks; PIA is only required for public websites without PII',
-          'D) Neither applies if the database runs in a cloud container'
-        ],
-        correct: 0,
-        rationale: '<strong>Correct (A):</strong> Retrieving federal agency records by a personal identifier triggers a <strong>SORN (Privacy Act of 1974)</strong>, and procuring/building an IT system with PII triggers a <strong>PIA (E-Government Act of 2002 Section 208)</strong>.<br/><br/><strong>🎖️ Military / ORSA Anchor:</strong> Pairs directly with your Pentagon ORSA AI Infrastructure requirements and RMF Authority to Operate (ATO) workflow.'
+        rationale: '<strong>Correct (B):</strong> In <strong>Google Path 4525</strong>, complex enterprise workflows use the <strong>Supervisor / Subagent pattern</strong> with least-privilege tool scopes, guarded inline by <strong>Model Armor</strong> (prompt injection defense) and <strong>Cloud Sensitive Data Protection (DLP)</strong>.'
       },
       {
         track: 'GCP',
-        tag: 'GOOGLE PATH 4525 • AGENTIC ARCHITECT',
+        tag: 'GOOGLE PATH 4525 • DATA CLEAN ROOMS & SCALE-TO-ZERO',
         q: 'A federal healthcare client wants two agencies to run joint Gemini 2.5 & SAS analytics on sensitive patient datasets without either party exposing raw PII or incurring idle VM charges. Which Google Cloud architecture is optimal?',
         options: [
           'A) Shared public Cloud Storage buckets + Always-on Compute Engine VMs',
@@ -849,7 +842,7 @@
       },
       {
         track: 'SC100',
-        tag: 'MICROSOFT SC-100 • ZERO-TRUST ARCHITECTURE',
+        tag: 'MICROSOFT SC-100 • ZERO-TRUST PRIVILEGED IDENTITY',
         q: 'To align a DoD contractor enclave with Microsoft SC-100 Zero-Trust principles and CMMC Level 2, how should Global Administrator and privileged cloud roles be governed?',
         options: [
           'A) Assign permanent standing Global Admin rights to all engineers for faster troubleshooting',
@@ -859,6 +852,71 @@
         ],
         correct: 1,
         rationale: '<strong>Correct (B):</strong> <strong>Entra PIM (Just-In-Time access)</strong> + <strong>Phishing-Resistant MFA</strong> + <strong>Conditional Access</strong> enforces "Verify Explicitly" and "Least Privilege" under SC-100 and NIST SP 800-171 / CMMC L2.'
+      },
+      {
+        track: 'SC100',
+        tag: 'MICROSOFT SC-100 & SC-200 • SIEM/SOAR VS. XDR & HYBRID OT',
+        q: 'An enterprise operates Azure subscriptions, on-premises Linux/Windows servers, and tactical OT/IoT sensors. They need unified SIEM/SOAR correlation across all clouds plus agentless OT network threat detection. Which Microsoft combination should you architect?',
+        options: [
+          'A) Microsoft Sentinel (SIEM/SOAR) + Azure Arc (hybrid servers) + Microsoft Defender for IoT (agentless OT network sensors) + Defender for Cloud regulatory blueprints',
+          'B) Windows Firewall alone with manual CSV log reviews once a quarter',
+          'C) Publicly exposing RDP and SSH ports on all OT controllers',
+          'D) Replacing all SIEM analytics rules with static email forwarding'
+        ],
+        correct: 0,
+        rationale: '<strong>Correct (A):</strong> <strong>Microsoft Sentinel</strong> provides multi-cloud SIEM/SOAR, <strong>Azure Arc</strong> governs hybrid servers, and <strong>Defender for IoT</strong> secures agentless OT/ICS/tactical subnets.'
+      },
+      {
+        track: 'CIPP',
+        tag: 'IAPP CIPP/US • DATA COMMERCE & FEDERAL LAW (FCRA VS. GLBA)',
+        q: 'When structuring a U.S. data commerce pipeline, which federal law governs Consumer Reporting Agencies (CRAs) assembling credit/background profiles vs. financial institutions handling Nonpublic Personal Information (NPI)?',
+        options: [
+          'A) COPPA governs CRAs; FERPA governs financial institutions',
+          'B) FCRA (amended by FACTA) governs CRAs and permissible purposes; GLBA (Privacy & Safeguards Rules) governs financial institutions handling NPI',
+          'C) HIPAA Safe Harbor governs CRAs; Privacy Act of 1974 governs commercial banks',
+          'D) CAN-SPAM governs CRAs; TCPA governs financial data clean rooms'
+        ],
+        correct: 1,
+        rationale: '<strong>Correct (B):</strong> <strong>FCRA</strong> requires a strict "Permissible Purpose" for consumer reports from CRAs, while <strong>GLBA</strong> governs financial institutions via the Privacy Rule (notice/opt-out) and Safeguards Rule (information security program).'
+      },
+      {
+        track: 'CIPP',
+        tag: 'IAPP CIPP/US & CIPP/G • FEDERAL SORN VS. PIA',
+        q: 'Milton Group Concepts LLC is deploying an AI analytics database for the VA that retrieves veteran records by SSN/DoD ID. What federal requirements are triggered under the Privacy Act of 1974 and E-Government Act of 2002?',
+        options: [
+          'A) Privacy Act requires a System of Records Notice (SORN) in the Federal Register; E-Government Act Section 208 requires a Privacy Impact Assessment (PIA) before procuring/developing PII IT systems',
+          'B) Only state-level VCDPA opt-out banners are required for federal VA systems',
+          'C) SORN is only required for private banks; PIA is only required for public websites without PII',
+          'D) Neither applies if the database runs in a cloud container'
+        ],
+        correct: 0,
+        rationale: '<strong>Correct (A):</strong> Retrieving federal agency records by a personal identifier triggers a <strong>SORN (Privacy Act of 1974)</strong>, and procuring/building an IT system with PII triggers a <strong>PIA (E-Government Act of 2002 Section 208)</strong>.'
+      },
+      {
+        track: 'SAS',
+        tag: 'SAS A00-440 • BUSINESS PROCESS & AXIOM 2',
+        q: 'What is the single most critical factor in determining the success of an enterprise ModelOps process, and when must it begin?',
+        options: [
+          'A) Selecting the highest-AUC deep learning algorithm after IT provisions the production cluster',
+          'B) Establishing collaboration and handoffs between the Business Team, Analytics Team, and IT/Operations Group starting on Day 1',
+          'C) Briefing company executives on Kubernetes container RAM limits before training models',
+          'D) Running SAS Environment Manager without a holdout validation dataset'
+        ],
+        correct: 1,
+        rationale: '<strong>Correct (B):</strong> Enterprise ModelOps succeeds through structured collaboration and handoffs between (1) Business, (2) Analytics/Modeling, and (3) IT/Operations starting on <strong>Day 1 (Axiom 2)</strong>.'
+      },
+      {
+        track: 'SAS',
+        tag: 'SAS A00-440 • DRIFT VS. PERFORMANCE DECAY',
+        q: 'In SAS Model Manager, which metric specifically measures input feature distribution shift (covariate shift) vs. predictive accuracy decay?',
+        options: [
+          'A) R-Squared measures input shift; CPU utilization measures predictive decay',
+          'B) Population Stability Index (PSI) measures input feature distribution shift; ROC/AUC, KS, Gini, and Lift track predictive performance decay',
+          'C) SAS Workflow Manager measures PSI; SAS Visual Analytics measures holdout noise',
+          'D) Both input shift and predictive decay are measured exclusively by p-values'
+        ],
+        correct: 1,
+        rationale: '<strong>Correct (B):</strong> <strong>Population Stability Index (PSI)</strong> detects shifts in input variable distributions over time, while <strong>ROC/AUC, Kolmogorov-Smirnov (KS), Gini, and Lift</strong> monitor predictive decay.'
       }
     ];
 
