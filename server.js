@@ -778,14 +778,20 @@ const server = http.createServer(async (req, res) => {
 
     const autoDiscoverIdentityPlatformViaAdc = async () => {
       const current = getOauthConfig();
-      if (current.firebaseApiKey || current.googleClientId) return current;
+      if (current.firebaseApiKey || current.googleClientId) return { ...current, status: 'CONFIGURED' };
       const adcTok = await fetchCloudRunAdcToken();
-      if (!adcTok) return current;
+      if (!adcTok) return { ...current, status: 'LOCAL_NO_ADC' };
       const proj = current.firebaseProjectId || 'gen-lang-client-0636792472';
+      let diag = 'ADC_OK';
       try {
         let idpCfg = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config`, 'GET', adcTok);
+        if (idpCfg && idpCfg.error && idpCfg.error.status === 'PERMISSION_DENIED') {
+          await fetchHttpsWithAuth(`https://serviceusage.googleapis.com/v1/projects/${proj}/services/identitytoolkit.googleapis.com:enable`, 'POST', adcTok, {});
+          await fetchHttpsWithAuth(`https://serviceusage.googleapis.com/v1/projects/${proj}/services/apikeys.googleapis.com:enable`, 'POST', adcTok, {});
+        }
         if (!idpCfg || idpCfg.error) {
-          await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/v2/projects/${proj}/identityPlatform:initializeAuth`, 'POST', adcTok, {});
+          const initRes = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/v2/projects/${proj}/identityPlatform:initializeAuth`, 'POST', adcTok, {});
+          diag = initRes && initRes.error ? `INIT_ERR:${initRes.error.status || initRes.error.code}` : 'INIT_CALLED';
           idpCfg = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config`, 'GET', adcTok);
         }
         // Ensure our Cloud Run and custom domains are in authorizedDomains
@@ -815,6 +821,19 @@ const server = http.createServer(async (req, res) => {
             const firstKeyName = keysList.keys[0].name;
             const keyStrRes = await fetchHttpsWithAuth(`https://apikeys.googleapis.com/v2/${firstKeyName}/keyString`, 'GET', adcTok);
             if (keyStrRes && keyStrRes.keyString) discoveredApiKey = keyStrRes.keyString;
+          } else if (keysList && !keysList.error) {
+            // Create a browser API key automatically
+            const createOp = await fetchHttpsWithAuth(
+              `https://apikeys.googleapis.com/v2/projects/${proj}/locations/global/keys?keyId=mgc-sso-web-key`,
+              'POST',
+              adcTok,
+              { displayName: 'MGC Federated SSO Web Key' }
+            );
+            if (createOp && createOp.response && createOp.response.keyString) {
+              discoveredApiKey = createOp.response.keyString;
+            }
+          } else if (keysList && keysList.error) {
+            diag += `|KEYS_${keysList.error.status || keysList.error.code}`;
           }
         }
         // Check defaultSupportedIdpConfigs for google.com, microsoft.com, apple.com
@@ -833,9 +852,10 @@ const server = http.createServer(async (req, res) => {
             ...foundClients
           });
           saveState(S);
+          diag = 'AUTO_DISCOVERED';
         }
       } catch (_) {}
-      return getOauthConfig();
+      return { ...getOauthConfig(), status: diag };
     };
 
     if (pathname === '/api/auth/config' && req.method === 'GET') {
@@ -845,6 +865,7 @@ const server = http.createServer(async (req, res) => {
         allowedProviders: ['google', 'microsoft', 'apple'],
         passwordAuthAllowed: false,
         emailLinkAllowed: false,
+        discoveryStatus: cfg.status || 'READY',
         firebaseProjectId: cfg.firebaseProjectId,
         firebaseAuthDomain: cfg.firebaseAuthDomain,
         firebaseApiKeyConfigured: Boolean(cfg.firebaseApiKey),
