@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agile Board | MGC Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+.cols{display:grid;grid-template-columns:repeat(5,minmax(190px,1fr));gap:10px;overflow-x:auto}
+.col{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;min-height:180px}
+.col h3{margin:0 0 8px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between}
+.it{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px;margin-bottom:8px;font-size:12px}
+.it b{display:block;margin-bottom:5px}
+.it .mv{display:flex;gap:4px;margin-top:6px}.it .mv .btn{padding:3px 8px;font-size:11px}
+@media(max-width:760px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"></main>
+<script src="mgc-workspace-core.js"></script>
+<script>
+(function () {
+  const W = MGCW, S = () => W.S, esc = W.esc, app = document.getElementById('app');
+  const u = W.me();
+  const COLS = [['backlog', 'Backlog'], ['ready', 'Ready'], ['progress', 'In progress'], ['review', 'Review'], ['done', 'Done']];
+  let pid = null, view = 'board';
+  if (!u) { app.innerHTML = '<div class="card lock"><h1>Sign in required</h1><p>Use DEMO sign-in above.</p></div>'; W.header('agile-board.html'); return; }
+  if (u.role !== 'owner' && !W.can(u, 'page', 'agile', 'view')) {
+    app.innerHTML = '<div class="card lock"><h1>🔒 Agile Board locked</h1><p>Your Agile Board is not built yet, or your workspace is not active. Check <a href="member-portal.html">My Workspace</a>.</p></div>'; W.header('agile-board.html'); return;
+  }
+  const visible = () => Object.values(S().projects).filter(p => W.can(u, 'project', p.id, 'view'));
+  const canEdit = (p) => W.can(u, 'project', p, 'edit');
+  const note = (k) => JSON.parse(localStorage.getItem('mgcw.notes.' + k) || '""');
+
+  function board(p) {
+    const items = S().items.filter(i => i.project === p);
+    const ed = canEdit(p);
+    return '<div class="cols">' + COLS.map(c => { const l = items.filter(i => i.col === c[0]);
+      return '<div class="col"><h3><span>' + c[1] + '</span><span>' + l.reduce((a, i) => a + i.points, 0) + ' pts</span></h3>' + l.map(i => card(i, ed)).join('') + '</div>'; }).join('') + '</div>';
+  }
+  function card(i, ed) {
+    const idx = COLS.findIndex(c => c[0] === i.col);
+    return '<div class="it"><b>' + esc(i.title) + '</b><span class="chip">' + i.type + '</span> <span class="chip">' + i.points + ' pt</span>' + (i.assignee ? ' <span class="chip">' + esc((S().users[i.assignee] || {}).name ? S().users[i.assignee].name.split(' ')[0] : i.assignee) + '</span>' : '') +
+      (ed ? '<div class="mv"><button class="btn" data-mv="' + i.id + ':-1"' + (idx === 0 ? ' disabled' : '') + '>←</button><button class="btn" data-mv="' + i.id + ':1"' + (idx === COLS.length - 1 ? ' disabled' : '') + '>→</button></div>' : '') + '</div>';
+  }
+  function burndown(p) {
+    const items = S().items.filter(i => i.project === p && i.sprint === 1);
+    const total = items.reduce((a, i) => a + i.points, 0) || 1; const left = items.filter(i => i.col !== 'done').reduce((a, i) => a + i.points, 0);
+    const yNow = 10 + (1 - left / total) * 70; // remaining pts shown as drop from top; "today" = midpoint of the sprint
+    return '<div class="card"><h2>Sprint 1 burndown</h2><svg viewBox="0 0 220 90" width="100%" height="110"><line x1="10" y1="10" x2="210" y2="80" stroke="#888" stroke-dasharray="4"/><polyline fill="none" stroke="var(--ac)" stroke-width="3" points="10,10 110,' + yNow.toFixed(1) + '"/><circle cx="110" cy="' + yNow.toFixed(1) + '" r="4" fill="var(--ac)"/></svg><p>' + left + ' of ' + total + ' pts remaining · dashed = ideal pace</p></div>';
+  }
+  function ceremonies(p) {
+    const C = [['planning', 'Sprint planning', 'Goal, capacity, committed stories'], ['standup', 'Daily stand-up', 'Yesterday / today / blockers'], ['review', 'Sprint review', 'Demo notes + stakeholder feedback'], ['retro', 'Retrospective', 'Keep / stop / try']];
+    return '<div class="card"><h2>Ceremonies</h2>' + C.map(c => '<details><summary>' + c[1] + '</summary><textarea data-note="' + p + ':' + c[0] + '" rows="3" style="width:100%;margin-top:6px"' + (canEdit(p) ? '' : ' readonly') + ' placeholder="' + c[2] + '">' + esc(note(p + ':' + c[0])) + '</textarea></details>').join('') + '</div>';
+  }
+  function features() {
+    const list = S().features.slice().sort((a, b) => b.votes.length - a.votes.length);
+    return '<div class="card"><h2>Feature requests (' + list.length + ')</h2>' + list.map(f => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(f.title) + '</b><br><span style="font-size:12px;color:var(--mut)">' + esc((S().users[f.by] || {}).name || f.by) + ' · ' + esc(f.status) + '</span></span><span class="nav"><button class="btn" data-vote="' + f.id + '">▲ ' + f.votes.length + '</button>' + (u.role === 'owner' && f.status === 'new' ? '<button class="btn pri" data-promote="' + f.id + '">→ Backlog</button>' : '') + '</span></div>').join('') + '</div>';
+  }
+
+  function render() {
+    const vis = visible();
+    if (!pid || !vis.find(p => p.id === pid)) pid = vis[0] && vis[0].id;
+    const tabs = [['board', 'Board'], ['plan', 'Sprint & ceremonies'], ['features', 'Feature requests']];
+    let body;
+    if (view === 'features') body = features();
+    else if (!pid) body = '<div class="card lock"><h2>No shared projects yet</h2><p>Projects appear here only when the owner shares them with you.</p></div>';
+    else if (view === 'plan') body = '<div class="grid">' + burndown(pid) + ceremonies(pid) + '</div>';
+    else body = board(pid) + (canEdit(pid) ? '<div class="card" style="margin-top:10px"><div class="row" style="justify-content:flex-start"><input id="nt" placeholder="New story / task / bug" style="flex:1;min-width:200px"><select id="ntype"><option>story</option><option>task</option><option>bug</option></select><select id="npts"><option>1</option><option>2</option><option>3</option><option selected>5</option><option>8</option></select><button class="btn pri" id="nadd">Add to backlog</button></div></div>' : '<p>You have view-only access to this project.</p>');
+    app.innerHTML = '<div class="row"><div><h1>Agile Board</h1><p>Backlog → sprint → done, shared per project.</p></div><div class="nav"><select id="proj" aria-label="Project">' + vis.map(p => '<option value="' + p.id + '"' + (p.id === pid ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select><select id="viewSel">' + tabs.map(t => '<option value="' + t[0] + '"' + (t[0] === view ? ' selected' : '') + '>' + t[1] + '</option>').join('') + '</select></div></div><div style="margin-top:12px">' + body + '</div>';
+    W.header('agile-board.html'); bind();
+  }
+  function bind() {
+    const pr = document.getElementById('proj'); if (pr) pr.onchange = (e) => { pid = e.target.value; render(); };
+    document.getElementById('viewSel').onchange = (e) => { view = e.target.value; render(); };
+    app.querySelectorAll('[data-mv]').forEach(b => b.onclick = () => { const [id, d] = b.dataset.mv.split(':'); const it = S().items.find(i => i.id === id); if (!canEdit(it.project)) return; const i = COLS.findIndex(c => c[0] === it.col) + Number(d); if (COLS[i]) { it.col = COLS[i][0]; W.log(u.id, 'item.move', it.title + ' → ' + it.col); W.commit(); render(); } });
+    const na = document.getElementById('nadd'); if (na) na.onclick = () => { const t = document.getElementById('nt').value.trim(); if (!t || !canEdit(pid)) return; S().items.push({ id: W.uid('i'), project: pid, type: document.getElementById('ntype').value, title: t, points: Number(document.getElementById('npts').value), col: 'backlog', sprint: 0, assignee: '', createdBy: u.id }); W.log(u.id, 'item.create', t); W.commit(); render(); };
+    app.querySelectorAll('[data-note]').forEach(t => t.onchange = () => localStorage.setItem('mgcw.notes.' + t.dataset.note, JSON.stringify(t.value)));
+    app.querySelectorAll('[data-vote]').forEach(b => b.onclick = () => { const f = S().features.find(x => x.id === b.dataset.vote); if (!f.votes.includes(u.id)) { f.votes.push(u.id); W.commit(); render(); } });
+    app.querySelectorAll('[data-promote]').forEach(b => b.onclick = () => { const f = S().features.find(x => x.id === b.dataset.promote); f.status = 'planned'; const target = pid || 'p1'; S().items.push({ id: W.uid('i'), project: target, type: 'story', title: f.title, points: 3, col: 'backlog', sprint: 0, assignee: '', createdBy: u.id }); W.notify(f.by, 'Your feature request was planned', f.title); W.log(u.id, 'feature.promote', f.title); W.commit(); W.toast('Added to backlog'); render(); });
+  }
+  render();
+})();
+</script>
+</body>
+</html>

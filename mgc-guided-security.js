@@ -1054,11 +1054,23 @@
         --crimson: #52525b;
         --border: rgba(161, 161, 170, 0.24);
         --border-gold: rgba(255, 255, 255, 0.38);
-        background:
-          radial-gradient(circle at 18% 12%, rgba(161, 161, 170, 0.12), transparent 42%),
-          radial-gradient(circle at 82% 16%, rgba(82, 82, 91, 0.16), transparent 44%),
-          #09090B !important;
+        background: radial-gradient(circle at 15% 15%, #1b1b20 0%, #050507 65%) !important;
         color: #FAFAFA !important;
+      }
+      /* MGC external-site backdrop (index.html radial) carried onto internal MGC portals: gray grid + logo watermark */
+      body.theme-mgc::before {
+        background:
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23E4E4E7' stroke-width='3'/><path d='M26 76V42l24 22 24-22v34' fill='none' stroke='%23A1A1AA' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat 96% 94% / min(26vw, 320px),
+          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 44px 44px,
+          linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 44px 44px;
+        opacity: 0.5;
+      }
+      /* Keep the top bar from colliding at laptop widths: search collapses to an icon + shortcut */
+      @media (max-width: 1500px) {
+        .os-omnibox { width: auto; }
+        .os-search-btn > span:first-child { font-size: 0; }
+        .os-search-btn > span:first-child::before { content: '🔍'; font-size: 0.85rem; }
+        .os-page-select { max-width: 9rem; }
       }
       body.theme-mgc #mgc-os-topbar {
         background: linear-gradient(90deg, #050507 0%, #121316 52%, #1F2127 100%);
@@ -1107,6 +1119,22 @@
           radial-gradient(circle at 16% 14%, rgba(197, 179, 88, 0.16), transparent 42%),
           radial-gradient(circle at 84% 18%, rgba(45, 55, 72, 0.45), transparent 45%),
           #0B1426 !important;
+      }
+      /* F.I.X external-site backdrop carried onto internal F.I.X portals: gold grid + shield watermark */
+      body.theme-mgc::before,
+      body.theme-fix::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+      }
+      body.theme-fix::before {
+        background:
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23C5B358' stroke-width='3'/><path d='M30 38h40M30 58h28M30 78h34' stroke='%23FDE047' stroke-width='5' stroke-linecap='round'/></svg>") no-repeat 96% 94% / min(26vw, 320px),
+          linear-gradient(rgba(197, 179, 88, 0.05) 1px, transparent 1px) 0 0 / 44px 44px,
+          linear-gradient(90deg, rgba(197, 179, 88, 0.05) 1px, transparent 1px) 0 0 / 44px 44px;
+        opacity: 0.5;
       }
       body.theme-fix #mgc-os-topbar {
         background: linear-gradient(90deg, #0B1426 0%, #1E293B 55%, #2D3748 100%);
@@ -1451,6 +1479,27 @@
                   <span class="os-drop-sub">Enforce 2-Step Biometric / TOTP Gate</span>
                 </span>
               </button>
+              <a href="access-admin.html" class="os-drop-item">
+                <span class="os-drop-icon">🗝️</span>
+                <span>
+                  <span class="os-drop-title">Access Admin</span>
+                  <span class="os-drop-sub">Approve, build pages, share</span>
+                </span>
+              </a>
+              <a href="member-portal.html" class="os-drop-item">
+                <span class="os-drop-icon">👤</span>
+                <span>
+                  <span class="os-drop-title">Member Workspace</span>
+                  <span class="os-drop-sub">What a member sees</span>
+                </span>
+              </a>
+              <a href="agile-board.html" class="os-drop-item">
+                <span class="os-drop-icon">🗂️</span>
+                <span>
+                  <span class="os-drop-title">Agile Board</span>
+                  <span class="os-drop-sub">Backlog • sprint • requests</span>
+                </span>
+              </a>
               <a href="projects/sterling-auto-repair/index.html" class="os-drop-item">
                 <span class="os-drop-icon">🚗</span>
                 <span>

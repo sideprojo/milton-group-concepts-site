@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Workspace | MGC / F.I.X</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+<main class="wrap" id="app"></main>
+<script src="mgc-workspace-core.js"></script>
+<script>
+(function () {
+  const W = MGCW, S = () => W.S, esc = W.esc;
+  const app = document.getElementById('app');
+  const u = W.me();
+  let tab = (location.hash || '#pages').slice(1);
+  let open = null; // page being previewed
+
+  function stepper(status) {
+    const labels = ['1 · Request received', '2 · Approved · pages being built', '3 · Active · sign in'];
+    const idx = Math.max(0, W.STEPS.indexOf(status));
+    return '<div class="steps">' + labels.map((l, i) => '<div class="step ' + (i < idx ? 'done' : i === idx ? 'on' : '') + '">' + l + '</div>').join('') + '</div>';
+  }
+
+  function banner() {
+    if (u.status === 'denied') return '<div class="card"><h2>Request not approved</h2><p>Contact us if you think this is a mistake.</p></div>';
+    if (u.role === 'owner') return '';
+    if (u.status !== 'active') {
+      const msg = u.status === 'requested' ? 'We are reviewing your request. You will be notified the moment it is approved.' : 'Approved! We are building your pages now. You will be notified when they are ready — nothing else is needed from you.';
+      return '<div class="card"><div class="row"><h2>' + esc(W.STATUS_LABEL[u.status]) + '</h2><span class="chip warn">Hello, ' + esc(u.name.split(' ')[0]) + '</span></div>' + stepper(u.status) + '<p>' + msg + '</p></div>';
+    }
+    if (!u.plan.base) return '<div class="card"><div class="row"><div><h2>Your pages are ready 🎉</h2><p>Activate your workspace for <b>$5 / month</b>. Add individual pages later (pay per page).</p></div><button class="btn pri" id="subBase">Activate · $5/mo</button></div></div>';
+    return '';
+  }
+
+  const gated = () => u.role !== 'owner' && !W.subActive(u);
+
+  function pagesPanel() {
+    const cards = W.CATALOG.map(c => {
+      const st = u.pages[c.id];
+      const includedByQuote = ((W.TAILOR[u.quote.interest] || { pages: [] }).pages).includes(c.id);
+      const mine = u.role === 'owner' || c.base || includedByQuote || (u.plan.addons || []).includes(c.id);
+      const ok = W.can(u, 'page', c.id, 'view');
+      let body, action;
+      if (st === 'pending') { body = '<div class="skel" style="height:44px;border-radius:9px;background:var(--card2);margin:8px 0"></div><span class="chip warn">Pending · being created for you</span>'; action = ''; }
+      else if (ok) { body = '<p>' + esc(c.desc) + '</p><span class="chip ok">Ready</span>'; action = '<button class="btn pri" data-open="' + c.id + '">Open →</button>'; }
+      else if (st === 'ready' && !gated()) { body = '<p>' + esc(c.desc) + '</p>'; action = ''; }
+      else if (!mine && u.role !== 'owner') { body = '<p>' + esc(c.desc) + '</p><span class="chip">Add-on · $' + c.price + '/mo</span>'; action = '<button class="btn" data-addon="' + c.id + '"' + (u.plan.base ? '' : ' disabled title="Activate base plan first"') + '>Add page</button>'; }
+      else { body = '<p>' + esc(c.desc) + '</p><span class="chip">' + (gated() ? 'Locked · activate plan' : 'Not built yet') + '</span>'; action = ''; }
+      if ((u.plan.addons || []).includes(c.id) && st !== 'ready' && st !== 'pending') body += '<span class="chip warn">Queued</span>';
+      return '<div class="card"><div class="row"><h2>' + c.icon + ' ' + esc(c.title) + '</h2><span class="chip">' + c.kind + '</span></div>' + body + '<div style="margin-top:8px">' + action + '</div></div>';
+    }).join('');
+    return '<div class="grid">' + cards + '</div>' + (open ? preview(open) : '');
+  }
+
+  function preview(id) {
+    const c = W.CATALOG.find(x => x.id === id); const t = W.TAILOR[u.quote.interest] || W.TAILOR.federal;
+    const body = id === 'home' ? '<p>Welcome back. Your next 3 action items:</p><ul>' + t.actions.slice(0, 3).map(a => '<li>' + esc(a) + '</li>').join('') + '</ul>'
+      : id === 'agile' ? '<p>Your shared projects live here.</p><a class="btn pri" href="agile-board.html">Open board →</a>'
+      : '<p>' + esc(c.desc) + '</p><p>This page is generated from your quote (<b>' + esc(t.label) + '</b>) and refined by us on request.</p>';
+    return '<div class="card" style="margin-top:12px"><div class="row"><h2>' + c.icon + ' ' + esc(c.title) + ' — preview</h2><button class="btn" id="closePrev">Close</button></div>' + body + '</div>';
+  }
+
+  function actionsPanel() {
+    const t = W.TAILOR[u.quote.interest] || W.TAILOR.federal; const k = 'mgcw.chk.' + u.id;
+    const st = JSON.parse(localStorage.getItem(k) || '{}');
+    return '<div class="card"><h2>Action items — ' + esc(t.label) + '</h2>' + t.actions.map((a, i) => '<label class="row" style="justify-content:flex-start;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" data-chk="' + i + '"' + (st[i] ? ' checked' : '') + '> <span>' + esc(a) + '</span></label>').join('') + '</div>';
+  }
+  function resourcesPanel() {
+    const t = W.TAILOR[u.quote.interest] || W.TAILOR.federal;
+    return '<div class="card"><h2>Curated resources</h2>' + t.resources.map(r => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(r[0]) + '</span><a class="btn" target="_blank" rel="noopener" href="' + esc(r[1]) + '">Open ↗</a></div>').join('') + '</div>';
+  }
+  function workflowsPanel() {
+    const t = W.TAILOR[u.quote.interest] || W.TAILOR.federal;
+    return '<div class="card"><h2>Real-life workflows</h2>' + t.workflows.map(w => '<details open><summary>' + esc(w.split('→')[0].trim()) + '</summary><p>' + esc(w) + '</p></details>').join('') + '</div>';
+  }
+  function featuresPanel() {
+    const list = S().features.filter(f => u.role === 'owner' || f.by === u.id);
+    return '<div class="card"><h2>Request a feature or page</h2><div class="row" style="justify-content:flex-start"><input id="ftitle" maxlength="120" placeholder="Title" style="flex:1;min-width:200px"><button class="btn pri" id="fadd"' + (gated() ? ' disabled' : '') + '>Submit</button></div><textarea id="fbody" maxlength="2000" rows="2" placeholder="What would you like? (optional)" style="width:100%;margin-top:8px"></textarea></div>' +
+      '<div class="card" style="margin-top:10px"><h2>Your requests</h2>' + (list.length ? list.map(f => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(f.title) + '</span><span class="chip">' + esc(f.status) + '</span></div>').join('') : '<p>None yet.</p>') + '</div>';
+  }
+  function billingPanel() {
+    const addons = W.CATALOG.filter(c => !c.base);
+    return '<div class="card"><h2>Billing</h2><div class="row"><span>Base workspace · $5/mo</span><span class="chip ' + (u.plan.base ? 'ok' : 'warn') + '">' + (u.role === 'owner' ? 'Owner · free' : u.plan.base ? 'Active' : 'Not active') + '</span></div>' +
+      '<details><summary>Per-page add-ons</summary>' + addons.map(c => '<div class="row" style="padding:6px 0"><span>' + c.icon + ' ' + esc(c.title) + ' · $' + c.price + '/mo</span><span class="chip ' + ((u.plan.addons || []).includes(c.id) ? 'ok' : '') + '">' + ((u.plan.addons || []).includes(c.id) ? 'Subscribed' : 'Available') + '</span></div>').join('') + '</details>' +
+      '<p>Prototype: no real charge. Production uses Stripe Checkout; a webhook sets your <code>sub</code> claim.</p></div>';
+  }
+  function inboxPanel() {
+    const list = S().notifications.filter(n => n.toUid === u.id);
+    list.forEach(n => n.read = true); W.commit();
+    return '<div class="card" id="inbox"><h2>Notifications</h2>' + (list.length ? list.map(n => '<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="row"><b style="font-size:13px">' + esc(n.title) + '</b><span class="chip">' + esc(n.channel) + '</span></div><p>' + esc(n.body) + '</p></div>').join('') : '<p>Nothing yet.</p>') + '</div>';
+  }
+
+  const TABS = [['pages', 'My pages', pagesPanel], ['actions', 'Action items', actionsPanel], ['resources', 'Resources', resourcesPanel], ['workflows', 'Workflows', workflowsPanel], ['features', 'Feature requests', featuresPanel], ['billing', 'Billing', billingPanel], ['inbox', 'Inbox', inboxPanel]];
+  const needsActive = ['actions', 'resources', 'workflows'];
+
+  function render() {
+    if (!u) { app.innerHTML = '<div class="card lock"><h1>Sign in required</h1><p>Use the DEMO sign-in above, or <a href="request-access.html">request access</a>.</p></div>'; W.header('member-portal.html'); return; }
+    let body;
+    if (u.status === 'denied') body = '';
+    else if (needsActive.includes(tab) && u.role !== 'owner' && !W.subActive(u)) body = '<div class="card lock"><h2>🔒 Locked until your workspace is active</h2><p>Complete the steps above to unlock this section.</p></div>';
+    else body = (TABS.find(t => t[0] === tab) || TABS[0])[2]();
+    const nav = '<div class="row" style="margin:12px 0"><div class="nav">' + TABS.map(t => '<button class="btn' + (t[0] === tab ? ' pri' : '') + '" data-tab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><select id="tabSel" aria-label="Section">' + TABS.map(t => '<option value="' + t[0] + '"' + (t[0] === tab ? ' selected' : '') + '>' + t[1] + '</option>').join('') + '</select></div>';
+    app.innerHTML = '<h1>Welcome, ' + esc(u.name.split(' (')[0]) + '</h1><p>' + (W.TAILOR[u.quote.interest] || {}).label + ' · ' + (u.brand === 'FIX' ? 'F.I.X Solutions' : 'Milton Group Concepts') + '</p>' + banner() + nav + body;
+    W.header('member-portal.html');
+    bind();
+  }
+
+  function bind() {
+    app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; open = null; render(); });
+    const sel = document.getElementById('tabSel'); if (sel) sel.onchange = () => { tab = sel.value; open = null; render(); };
+    app.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { if (W.can(u, 'page', b.dataset.open, 'view')) { open = b.dataset.open; render(); } });
+    const cp = document.getElementById('closePrev'); if (cp) cp.onclick = () => { open = null; render(); };
+    const sb = document.getElementById('subBase'); if (sb) sb.onclick = () => { W.subscribeBase(u.id); W.toast('Workspace activated'); render(); };
+    app.querySelectorAll('[data-addon]').forEach(b => b.onclick = () => { W.toggleAddon(u.id, b.dataset.addon); W.toast('Page requested — we will build it and notify you'); render(); });
+    app.querySelectorAll('[data-chk]').forEach(c => c.onchange = () => { const k = 'mgcw.chk.' + u.id; const st = JSON.parse(localStorage.getItem(k) || '{}'); st[c.dataset.chk] = c.checked; localStorage.setItem(k, JSON.stringify(st)); });
+    const fa = document.getElementById('fadd'); if (fa) fa.onclick = () => { const t = document.getElementById('ftitle').value.trim(); if (!t) return; S().features.unshift({ id: W.uid('f'), by: u.id, title: t, body: document.getElementById('fbody').value, votes: [u.id], status: 'new', created: W.now() }); W.notify('owner', 'Feature request', u.name + ': ' + t); W.log(u.id, 'feature.create', t); W.commit(); W.toast('Request sent'); render(); };
+  }
+  render();
+})();
+</script>
+</body>
+</html>

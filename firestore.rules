@@ -1,0 +1,184 @@
+rules_version = '2';
+
+// PROTOTYPE: review and test with the Firebase Emulator before production deploy.
+// Authority comes ONLY from custom claims (set server-side via Admin SDK):
+//   owner == true        -> single portal owner
+//   sub   == 'active'    -> paid subscriber (Stripe webhook function)
+// Admin SDK bypasses rules, so "server-only" = no client rule grants access.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Helpers ----------
+    function isSignedIn() { return request.auth != null; }
+    function isOwner() {
+      return isSignedIn() && request.auth.token.get('owner', false) == true;
+    }
+    function isActiveSub() {
+      return isSignedIn() && request.auth.token.get('sub', '') == 'active';
+    }
+    function isSelf(uid) { return isSignedIn() && request.auth.uid == uid; }
+
+    // Keys changed by this write are a subset of `keys`.
+    function onlyChanges(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+    // Bounded string.
+    function str(v, minLen, maxLen) {
+      return v is string && v.size() >= minLen && v.size() <= maxLen;
+    }
+    // Optional bounded string field.
+    function optStr(d, k, maxLen) {
+      return !(k in d) || (d[k] is string && d[k].size() <= maxLen);
+    }
+
+    // Share lookups (shareId = 'project_{pid}_{uid}').
+    function shareId(pid) { return 'project_' + pid + '_' + request.auth.uid; }
+    function sharePath(pid) {
+      return /databases/$(database)/documents/shares/$(shareId(pid));
+    }
+    function hasShare(pid) { return isSignedIn() && exists(sharePath(pid)); }
+    function shareCanEdit(pid) {
+      return hasShare(pid)
+        && get(sharePath(pid)).data.get('perms', []) is list
+        && 'edit' in get(sharePath(pid)).data.get('perms', []);
+    }
+
+    // ---------- Validators ----------
+    function validUserCreate(d) {
+      return d.keys().hasOnly(['displayName', 'email', 'brand', 'quote'])
+        && d.keys().hasAll(['displayName', 'email', 'brand', 'quote'])
+        && str(d.displayName, 1, 80)
+        && str(d.email, 3, 254)
+        && d.brand in ['MGC', 'FIX']
+        && str(d.quote, 0, 280);
+    }
+    function validUserUpdate(d) {
+      return str(d.displayName, 1, 80) && str(d.quote, 0, 280);
+    }
+
+    function validAccessRequestCreate(d) {
+      return d.keys().hasOnly(['uid', 'status', 'title', 'message', 'brand', 'createdAt'])
+        && d.keys().hasAll(['uid', 'status'])
+        && d.uid == request.auth.uid
+        && d.status == 'requested'
+        && optStr(d, 'title', 120)
+        && optStr(d, 'message', 2000)
+        && (!('brand' in d) || d.brand in ['MGC', 'FIX'])
+        && (!('createdAt' in d) || d.createdAt == request.time);
+    }
+
+    function validShare(id, d) {
+      return d.keys().hasAll(['resourceType', 'resourceId', 'granteeUid', 'perms'])
+        && d.resourceType is string && d.resourceType.size() <= 40
+        && d.resourceId is string && d.resourceId.size() <= 128
+        && d.granteeUid is string && d.granteeUid.size() <= 128
+        && d.perms is list && d.perms.size() <= 10
+        && id == d.resourceType + '_' + d.resourceId + '_' + d.granteeUid;
+    }
+
+    function validItem(d, pid) {
+      return d.keys().size() <= 20
+        && d.projectId == pid
+        && d.createdBy is string
+        && optStr(d, 'title', 200)
+        && optStr(d, 'body', 5000);
+    }
+
+    function validFeatureRequest(d) {
+      return d.keys().hasOnly(['title', 'body', 'createdBy', 'createdAt'])
+        && d.keys().hasAll(['title', 'body', 'createdBy'])
+        && d.createdBy == request.auth.uid
+        && str(d.title, 1, 120)
+        && str(d.body, 1, 2000)
+        && (!('createdAt' in d) || d.createdAt == request.time);
+    }
+
+    // ---------- Collections ----------
+
+    // 1. users: self creates once, edits displayName/quote only.
+    match /users/{uid} {
+      allow read: if isSelf(uid) || isOwner();
+      allow create: if isSelf(uid) && validUserCreate(request.resource.data);
+      allow update: if isSelf(uid)
+        && onlyChanges(['displayName', 'quote'])
+        && validUserUpdate(request.resource.data);
+      allow write: if isOwner();   // owner: full control (role/status/plan/pages)
+    }
+
+    // 2. accessRequests
+    match /accessRequests/{id} {
+      allow read: if isOwner() || (isSignedIn() && resource.data.uid == request.auth.uid);
+      allow create: if isSignedIn() && validAccessRequestCreate(request.resource.data);
+      // Owner-only transitions; uid immutable.
+      allow update: if isOwner()
+        && request.resource.data.status in ['approved', 'denied']
+        && onlyChanges(['status', 'reviewedAt', 'reviewNote'])
+        && optStr(request.resource.data, 'reviewNote', 500);
+      allow delete: if isOwner();
+    }
+
+    // 3. workspaces/{uid}/pages
+    match /workspaces/{uid}/pages/{pageId} {
+      allow read: if isOwner()
+        || (isSelf(uid) && isActiveSub() && resource.data.get('status', '') in ['ready']);
+      allow write: if isOwner();
+    }
+
+    // 4. shares: owner manages, grantee reads own.
+    match /shares/{shareId} {
+      allow read: if isOwner() || (isSignedIn() && resource.data.granteeUid == request.auth.uid);
+      allow create, update: if isOwner() && validShare(shareId, request.resource.data);
+      allow delete: if isOwner();
+    }
+
+    // 5. projects and items
+    match /projects/{pid} {
+      allow read: if isOwner() || (isActiveSub() && hasShare(pid));
+      allow write: if isOwner();
+
+      match /items/{iid} {
+        allow read: if isOwner() || (isActiveSub() && hasShare(pid));
+        allow create: if isOwner()
+          || (isActiveSub() && shareCanEdit(pid)
+              && validItem(request.resource.data, pid)
+              && request.resource.data.createdBy == request.auth.uid);
+        allow update: if isOwner()
+          || (isActiveSub() && shareCanEdit(pid)
+              && onlyChangesExcluding()
+              && validItem(request.resource.data, pid));
+        allow delete: if isOwner();
+      }
+    }
+
+    // projectId/createdBy are immutable for members.
+    function onlyChangesExcluding() {
+      return !request.resource.data.diff(resource.data).affectedKeys()
+              .hasAny(['projectId', 'createdBy']);
+    }
+
+    // 6. featureRequests: active subscribers create; no member edits after.
+    match /featureRequests/{id} {
+      allow read: if isOwner() || (isSignedIn() && resource.data.createdBy == request.auth.uid);
+      allow create: if isActiveSub() && validFeatureRequest(request.resource.data);
+      allow update, delete: if isOwner();
+    }
+
+    // 7. notifications: create/delete server-only.
+    match /notifications/{id} {
+      allow read: if isOwner() || (isSignedIn() && resource.data.toUid == request.auth.uid);
+      allow update: if isSignedIn() && resource.data.toUid == request.auth.uid
+        && onlyChanges(['read'])
+        && request.resource.data.read is bool;
+    }
+
+    // 8. auditLog: owner read; writes server-only.
+    match /auditLog/{id} {
+      allow read: if isOwner();
+    }
+
+    // Default deny.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

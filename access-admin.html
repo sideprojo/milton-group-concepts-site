@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Access Admin | MGC Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+<main class="wrap" id="app"></main>
+<script src="mgc-workspace-core.js"></script>
+<script>
+(function () {
+  const W = MGCW, S = () => W.S, esc = W.esc, app = document.getElementById('app');
+  const me = W.me();
+  let tab = 'requests';
+
+  if (!me || me.role !== 'owner') {
+    app.innerHTML = '<div class="card lock"><h1>🔒 Owner only</h1><p>This area is restricted. Use DEMO sign-in → "Malik K. (Owner)" to review it.</p></div>';
+    W.header('access-admin.html'); return;
+  }
+  const members = () => Object.values(S().users).filter(x => x.role !== 'owner');
+  const name = (id) => (S().users[id] || {}).name || id;
+
+  function kpis() {
+    const m = members(); const c = (s) => m.filter(x => x.status === s).length;
+    const open = S().tasks.filter(t => !t.done).length;
+    return '<div class="grid" style="margin-bottom:12px">' + [['Pending approval', c('requested')], ['Building pages', c('approved_building')], ['Open build tasks', open], ['Active members', c('active')], ['MRR (base)', '$' + (m.filter(x => x.plan.base).length * 5)]].map(k => '<div class="card"><p>' + k[0] + '</p><h1>' + k[1] + '</h1></div>').join('') + '</div>';
+  }
+
+  function requests() {
+    const list = members().filter(x => x.status === 'requested');
+    if (!list.length) return '<div class="card"><p>No pending requests. 🎉</p></div>';
+    return list.map(x => '<div class="card" style="margin-bottom:10px"><div class="row"><div><h2>' + esc(x.name) + ' · ' + esc(x.email) + '</h2><p>' + (x.brand === 'FIX' ? 'F.I.X Solutions' : 'MGC') + ' quote · interest: <b>' + esc((W.TAILOR[x.quote.interest] || {}).label) + '</b></p></div><div class="nav"><button class="btn pri" data-ap="' + x.id + '">Approve → create pages</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div>' +
+      '<details><summary>Pages that will be created</summary><p>' + ['home', 'agile', 'resources'].concat((W.TAILOR[x.quote.interest] || { pages: [] }).pages).map(p => W.CATALOG.find(c => c.id === p).title).join(' · ') + '</p></details></div>').join('');
+  }
+
+  function tasks() {
+    const t = S().tasks;
+    if (!t.length) return '<div class="card"><p>No build tasks. Approve a request to generate the page-creation workflow.</p></div>';
+    const by = {}; t.forEach(x => (by[x.uid] = by[x.uid] || []).push(x));
+    return Object.keys(by).map(id => { const done = by[id].filter(x => x.done).length;
+      return '<div class="card" style="margin-bottom:10px"><div class="row"><h2>' + esc(name(id)) + '</h2><span class="chip ' + (done === by[id].length ? 'ok' : 'warn') + '">' + done + '/' + by[id].length + ' built</span></div>' +
+        by[id].map(x => '<label class="row" style="justify-content:flex-start;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" data-task="' + x.id + '"' + (x.done ? ' checked' : '') + '><span>' + esc(x.title) + '</span></label>').join('') +
+        '<p>When the last box is checked the member is notified: <i>"Access approved — your pages are ready."</i></p></div>'; }).join('');
+  }
+
+  function users() {
+    const cols = W.CATALOG;
+    return '<div class="card" style="overflow:auto"><table><thead><tr><th>User</th><th>Status</th><th>Plan</th>' + cols.map(c => '<th title="' + esc(c.title) + '">' + c.icon + '</th>').join('') + '</tr></thead><tbody>' +
+      members().map(x => '<tr><td>' + esc(x.name) + '</td><td><span class="chip">' + esc(W.STATUS_LABEL[x.status]) + '</span></td><td>' + (x.plan.base ? '$5' : '—') + (x.plan.addons.length ? ' +' + x.plan.addons.length : '') + '</td>' +
+        cols.map(c => { const s = x.pages[c.id]; return '<td>' + (s === 'ready' ? '✅' : s === 'pending' ? '⏳' : '·') + '</td>'; }).join('') + '</tr>').join('') + '</tbody></table><p>✅ ready · ⏳ being built · · not granted. Every cell is deny-by-default.</p></div>';
+  }
+
+  function sharing() {
+    const elements = [['kpi-strip', 'Element: KPI strip (read-only)'], ['radar-feed', 'Element: Contract feed (read-only)'], ['roadmap', 'Element: Roadmap view']];
+    const projects = Object.values(S().projects);
+    const sh = S().shares;
+    return '<div class="card"><h2>Share a page, project or single element</h2><p>Sharing grants <b>view</b> (or <b>edit</b> on projects) of exactly that resource. It never grants access to anything else.</p>' +
+      '<div class="row" style="justify-content:flex-start"><select id="shUser">' + members().map(x => '<option value="' + x.id + '">' + esc(x.name) + '</option>').join('') + '</select>' +
+      '<select id="shRes">' + projects.map(p => '<option value="project|' + p.id + '">Project: ' + esc(p.name) + '</option>').join('') + elements.map(e => '<option value="element|' + e[0] + '">' + e[1] + '</option>').join('') + '</select>' +
+      '<select id="shPerm"><option value="view">view</option><option value="view,edit">view + edit (projects)</option></select><button class="btn pri" id="shGo">Share</button></div></div>' +
+      '<div class="card" style="margin-top:10px"><h2>Active shares (' + sh.length + ')</h2>' + (sh.length ? sh.map(s => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(s.type) + ' · ' + esc(s.resource) + ' → <b>' + esc(name(s.grantee)) + '</b> <span class="chip">' + esc(s.perms.join('+')) + '</span></span><button class="btn" data-rv="' + esc(s.id) + '">Revoke</button></div>').join('') : '<p>No shares yet.</p>') + '</div>';
+  }
+
+  function notifs() {
+    const l = S().notifications.slice(0, 40);
+    return '<div class="card"><h2>Notification outbox</h2><p>Prototype: shown here. Production: Cloud Function sends email/push on each event.</p>' + l.map(n => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(name(n.toUid)) + '</b> · ' + esc(n.title) + '<br><span style="color:var(--mut);font-size:12px">' + esc(n.body) + '</span></span><span class="chip">' + esc(n.channel) + '</span></div>').join('') + '</div>';
+  }
+  function audit() {
+    return '<div class="card"><h2>Audit log</h2><table><tbody>' + S().audit.slice(0, 60).map(a => '<tr><td>' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') + '</tbody></table>' + (S().audit.length ? '' : '<p>Empty.</p>') + '</div>';
+  }
+
+  const TABS = [['requests', 'Requests', requests], ['tasks', 'Build workflow', tasks], ['users', 'Users & entitlements', users], ['sharing', 'Sharing', sharing], ['notifs', 'Notifications', notifs], ['audit', 'Audit log', audit]];
+  function render() {
+    const nav = '<div class="row" style="margin:12px 0"><div class="nav">' + TABS.map(t => '<button class="btn' + (t[0] === tab ? ' pri' : '') + '" data-tab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><select id="tabSel">' + TABS.map(t => '<option value="' + t[0] + '"' + (t[0] === tab ? ' selected' : '') + '>' + t[1] + '</option>').join('') + '</select></div>';
+    app.innerHTML = '<h1>Access Admin</h1><p>Approve people, build their pages, share only what you choose.</p>' + kpis() + nav + TABS.find(t => t[0] === tab)[2]();
+    W.header('access-admin.html'); bind();
+  }
+  function bind() {
+    app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
+    document.getElementById('tabSel').onchange = (e) => { tab = e.target.value; render(); };
+    app.querySelectorAll('[data-ap]').forEach(b => b.onclick = () => { W.approve(b.dataset.ap); W.toast('Approved — build tasks created'); tab = 'tasks'; render(); });
+    app.querySelectorAll('[data-dn]').forEach(b => b.onclick = () => { W.deny(b.dataset.dn); render(); });
+    app.querySelectorAll('[data-task]').forEach(c => c.onchange = () => { W.completeTask(c.dataset.task, c.checked); render(); });
+    app.querySelectorAll('[data-rv]').forEach(b => b.onclick = () => { W.revoke(b.dataset.rv); render(); });
+    const go = document.getElementById('shGo'); if (go) go.onclick = () => { const r = document.getElementById('shRes').value.split('|'); let p = document.getElementById('shPerm').value.split(','); if (r[0] === 'element') p = ['view']; W.share(document.getElementById('shUser').value, r[0], r[1], p); W.toast('Shared'); render(); };
+  }
+  render();
+})();
+</script>
+</body>
+</html>
