@@ -1179,13 +1179,15 @@
           #040814 !important;
         color: #f8fafc !important;
       }
-      /* MGC external-site backdrop carried onto internal MGC portals: subtle grid + shield watermark */
+      /* MGC external-site cityscape backdrop carried onto internal MGC portals: aerial skyline + subtle grid + shield watermark */
       body.theme-mgc::before {
         background:
+          linear-gradient(180deg, rgba(4, 8, 20, 0.62) 0%, rgba(11, 19, 37, 0.78) 55%, rgba(4, 8, 20, 0.92) 100%),
           url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23E4E4E7' stroke-width='3'/><path d='M26 76V42l24 22 24-22v34' fill='none' stroke='%23A1A1AA' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat 96% 94% / min(24vw, 290px),
-          linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px) 0 0 / 44px 44px,
-          linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px) 0 0 / 44px 44px;
-        opacity: 0.45;
+          linear-gradient(rgba(148, 163, 184, 0.035) 1px, transparent 1px) 0 0 / 44px 44px,
+          linear-gradient(90deg, rgba(148, 163, 184, 0.035) 1px, transparent 1px) 0 0 / 44px 44px,
+          url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500") center 38% / cover no-repeat;
+        opacity: 0.85;
       }
       /* Keep the top bar from colliding at laptop widths: search collapses to an icon + shortcut */
       @media (max-width: 1500px) {
@@ -1236,10 +1238,12 @@
       }
       body.theme-fix::before {
         background:
+          linear-gradient(180deg, rgba(4, 8, 20, 0.60) 0%, rgba(11, 20, 38, 0.78) 55%, rgba(4, 8, 20, 0.92) 100%),
           url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23C5B358' stroke-width='3'/><path d='M30 38h40M30 58h28M30 78h34' stroke='%23FDE047' stroke-width='5' stroke-linecap='round'/></svg>") no-repeat 96% 94% / min(24vw, 290px),
           linear-gradient(rgba(197, 179, 88, 0.04) 1px, transparent 1px) 0 0 / 44px 44px,
-          linear-gradient(90deg, rgba(197, 179, 88, 0.04) 1px, transparent 1px) 0 0 / 44px 44px;
-        opacity: 0.45;
+          linear-gradient(90deg, rgba(197, 179, 88, 0.04) 1px, transparent 1px) 0 0 / 44px 44px,
+          url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500") center 38% / cover no-repeat;
+        opacity: 0.85;
       }
       body.theme-fix #mgc-os-topbar {
         background: linear-gradient(90deg, #040814 0%, #0b1325 55%, #162238 100%);

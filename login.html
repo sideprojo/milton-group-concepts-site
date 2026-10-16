@@ -2,43 +2,111 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Federated SSO Sign In | MGC &amp; F.I.X Workspace</title>
+<title>Workspace Access | MGC &amp; F.I.X</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
+  /* Thematic Cityscape Background (MGC & F.I.X Horizon Skyline) */
+  .thematic-city-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+    pointer-events: none;
+    background: #040814;
+  }
+  .thematic-city-backdrop .city-photo {
+    position: absolute;
+    inset: -4%;
+    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500');
+    background-size: cover;
+    background-position: center 38%;
+    opacity: 0.52;
+    mix-blend-mode: luminosity;
+    filter: contrast(1.15) brightness(0.88);
+    animation: cityHorizonPan 38s ease-in-out infinite alternate;
+  }
+  .thematic-city-backdrop .city-atmosphere {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 18% 18%, rgba(37, 99, 235, 0.28), transparent 44%),
+      radial-gradient(circle at 82% 22%, rgba(245, 158, 11, 0.22), transparent 42%),
+      linear-gradient(180deg, rgba(4, 8, 20, 0.42) 0%, rgba(11, 19, 37, 0.68) 52%, rgba(4, 8, 20, 0.92) 100%);
+  }
+  .thematic-city-backdrop .city-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 45%, transparent 90%);
+  }
+  .thematic-city-backdrop .skyscraper-silhouette {
+    position: absolute;
+    right: 2%;
+    bottom: -20px;
+    width: min(26vw, 320px);
+    height: 82vh;
+    opacity: 0.42;
+    filter: drop-shadow(-14px 10px 28px rgba(0, 0, 0, 0.85));
+  }
+  @keyframes cityHorizonPan {
+    0%   { transform: scale(1.03) translate(0, 0); }
+    100% { transform: scale(1.09) translate(-1.2%, -0.8%); }
+  }
+
+  .login-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 20px;
+  }
+  .login-card {
+    width: min(880px, 100%);
+    background: rgba(11, 19, 37, 0.78) !important;
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(197, 179, 88, 0.42) !important;
+    border-radius: 22px !important;
+    padding: 28px !important;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.72), 0 0 40px rgba(37, 99, 235, 0.14) !important;
+  }
+
   .sso-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin-top: 18px;
+    gap: 16px;
   }
   @media (max-width: 720px) {
     .sso-grid { grid-template-columns: 1fr; }
   }
   .sso-provider-card {
-    background: rgba(12, 21, 42, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(12, 21, 42, 0.84);
+    border: 1px solid rgba(148, 163, 184, 0.28);
     border-radius: 16px;
-    padding: 18px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 12px;
-    transition: all 0.2s ease;
+    gap: 14px;
+    transition: all 0.22s ease;
     cursor: pointer;
     text-align: left;
   }
   .sso-provider-card:hover,
   .sso-provider-card.active {
     border-color: #c5b358;
-    background: rgba(30, 58, 138, 0.28);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
-    transform: translateY(-2px);
+    background: rgba(30, 58, 138, 0.34);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.52);
+    transform: translateY(-3px);
   }
   .sso-btn {
     width: 100%;
     padding: 12px 16px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     background: rgba(15, 23, 42, 0.95);
     color: #f8fafc;
     font-weight: 800;
@@ -52,41 +120,65 @@
   }
   .sso-btn:hover {
     border-color: #60a5fa;
-    background: rgba(37, 99, 235, 0.25);
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
   }
-  .sso-handshake-box {
-    margin-top: 18px;
-    padding: 18px 20px;
-    border-radius: 16px;
-    background: rgba(9, 15, 32, 0.92);
-    border: 1px solid rgba(197, 179, 88, 0.45);
+
+  /* Clean OAuth / OIDC Popup Modal when a provider card/button is clicked */
+  .sso-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(2, 6, 23, 0.78);
+    backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .sso-modal-backdrop.open {
+    display: flex;
+  }
+  .sso-modal {
+    width: min(440px, 100%);
+    background: rgba(15, 23, 42, 0.96);
+    border: 1px solid rgba(197, 179, 88, 0.5);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.85);
   }
 </style>
 </head>
 <body>
-<main class="wrap" style="max-width:860px;padding-top:36px">
-  <div class="card">
-    <div class="row">
-      <div class="brand">
-        <span id="bIcon" style="font-size:22px">🛡️</span>
-        <div>
-          <span id="bTitle">MGC &amp; F.I.X FEDERATED SSO GATE</span>
-          <small>Zero-Trust Identity Enforcement · Google · Microsoft · Apple SSO Only</small>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span class="chip ok">🔒 SSO ENFORCED</span>
-        <select id="themeSel" aria-label="Theme preview">
-          <option value="MGC">MGC Theme</option>
-          <option value="FIX">F.I.X Theme</option>
-        </select>
-      </div>
-    </div>
+<!-- Thematic Cityscape Background with Skyscraper & Flag Silhouette -->
+<div class="thematic-city-backdrop" aria-hidden="true">
+  <div class="city-photo"></div>
+  <div class="city-atmosphere"></div>
+  <div class="city-grid"></div>
+  <svg class="skyscraper-silhouette" viewBox="0 0 200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="100" y1="10" x2="100" y2="170" stroke="#cbd5e1" stroke-width="3"/>
+    <circle cx="100" cy="10" r="4" fill="#ef4444"/>
+    <g transform="translate(102, 22)">
+      <rect width="74" height="42" rx="2" fill="#1e3a8a" opacity="0.85"/>
+      <rect y="0" width="74" height="6" fill="#dc2626" opacity="0.85"/>
+      <rect y="12" width="74" height="6" fill="#dc2626" opacity="0.85"/>
+      <rect y="24" width="74" height="6" fill="#dc2626" opacity="0.85"/>
+      <rect y="36" width="74" height="6" fill="#dc2626" opacity="0.85"/>
+      <rect width="30" height="22" fill="#1e3a8a"/>
+    </g>
+    <rect x="65" y="170" width="70" height="45" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+    <rect x="45" y="215" width="110" height="65" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+    <rect x="25" y="280" width="150" height="480" fill="#091022" stroke="#94a3b8" stroke-width="1.5"/>
+    <line x1="55" y1="280" x2="55" y2="760" stroke="#334155" stroke-width="1"/>
+    <line x1="85" y1="280" x2="85" y2="760" stroke="#334155" stroke-width="1"/>
+    <line x1="115" y1="280" x2="115" y2="760" stroke="#334155" stroke-width="1"/>
+    <line x1="145" y1="280" x2="145" y2="760" stroke="#334155" stroke-width="1"/>
+  </svg>
+</div>
 
-    <h1 style="margin-top:16px">Sign in with Single Sign-On (SSO)</h1>
-    <p>Local passwords and unverified email links are disabled. Authenticate exclusively through <b>Google</b>, <b>Microsoft</b>, or <b>Apple</b> federated Single Sign-On to access your workspace.</p>
-
-    <div class="sso-grid" role="group" aria-label="Allowed Single Sign-On Providers">
+<main class="login-shell">
+  <div class="card login-card">
+    <div class="sso-grid" role="group" aria-label="Single Sign-On Providers">
       <!-- 1. Google SSO -->
       <div class="sso-provider-card active" data-provider="google" id="card-google">
         <div>
@@ -145,29 +237,32 @@
       </div>
     </div>
 
-    <!-- Federated SSO Identity Assertion Box -->
-    <div class="sso-handshake-box" id="ssoHandshakeBox">
-      <div class="row" style="margin-bottom:8px">
-        <div>
-          <span class="chip ok" id="selectedProviderBadge">Selected Provider: Google SSO</span>
-          <h2 style="margin-top:6px" id="selectedProviderHeading">Authenticate with Google SSO</h2>
-        </div>
-        <span style="font-size:11px;color:var(--mut);font-weight:700;">OIDC 2.0 / PKCE</span>
-      </div>
-      <p style="margin-bottom:10px">Enter your authorized <b id="selectedProviderLabel">Google</b> account email to complete the federated SSO token exchange.</p>
-      <div class="row" style="justify-content:flex-start;gap:10px">
-        <input id="ssoEmail" type="email" value="" placeholder="Enter your authorized SSO email" autocomplete="off" spellcheck="false" style="flex:1;min-width:240px;padding:11px 14px;font-size:13px">
-        <button type="button" class="btn pri" id="btnCompleteSso" style="padding:11px 18px;font-size:13px">Authenticate with Google SSO →</button>
-      </div>
-      <p id="authMsg" style="color:#f87171;margin-top:10px;font-weight:700"></p>
-    </div>
+    <p id="authMsg" style="color:#f87171;margin-top:14px;font-weight:700;text-align:center;min-height:18px"></p>
 
-    <div class="row" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)">
+    <div class="row" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
       <span>Need a tailored workspace? Base membership is <b>$5/month</b> once your pages are built (SSO required).</span>
       <a class="btn" href="request-access.html">Request access →</a>
     </div>
   </div>
 </main>
+
+<!-- Provider OAuth / OIDC Account Dialog (Opens on clicking Continue with Google / Microsoft / Apple) -->
+<div class="sso-modal-backdrop" id="ssoModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="ssoModalTitle">
+  <div class="sso-modal">
+    <div class="row" style="margin-bottom:12px">
+      <span class="chip ok" id="ssoModalChip">Google OIDC</span>
+      <button type="button" class="btn" id="ssoModalClose" style="padding:4px 10px;font-size:11px">✕ Close</button>
+    </div>
+    <h2 id="ssoModalTitle" style="margin-bottom:6px">Continue with Google</h2>
+    <p id="ssoModalSub" style="margin-bottom:14px">Sign in with your Google Workspace or Google Cloud account.</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <input id="ssoEmail" type="email" value="" placeholder="name@organization.com" autocomplete="off" spellcheck="false" style="width:100%;padding:12px 14px;font-size:13px">
+      <button type="button" class="btn pri" id="btnCompleteSso" style="width:100%;justify-content:center;padding:12px 18px;font-size:13px">Continue →</button>
+    </div>
+    <p id="modalAuthMsg" style="color:#f87171;margin-top:10px;font-weight:700;font-size:12px;min-height:16px"></p>
+  </div>
+</div>
+
 <script src="mgc-workspace-core.js"></script>
 <script>
 (function () {
@@ -175,74 +270,106 @@
   const params = new URLSearchParams(location.search);
   const nextUrl = params.get('next') || '';
   const msg = document.getElementById('authMsg');
+  const modalMsg = document.getElementById('modalAuthMsg');
+  const modalBackdrop = document.getElementById('ssoModalBackdrop');
   const emailInput = document.getElementById('ssoEmail');
   let activeProvider = 'google';
 
   const PROVIDER_META = {
-    google:    { name: 'Google SSO',    short: 'Google' },
-    microsoft: { name: 'Microsoft SSO', short: 'Microsoft' },
-    apple:     { name: 'Apple SSO',     short: 'Apple' }
+    google:    { name: 'Google',    chip: 'Google OIDC',    sub: 'Sign in with your Google Workspace or Google Cloud account.' },
+    microsoft: { name: 'Microsoft', chip: 'Microsoft Entra', sub: 'Sign in with your Microsoft Entra ID or Microsoft 365 account.' },
+    apple:     { name: 'Apple',     chip: 'Apple OIDC',     sub: 'Sign in with your Apple ID & Passkey federation.' }
   };
 
-  document.getElementById('themeSel').onchange = (e) => {
-    W.theme(e.target.value);
-    document.getElementById('bIcon').textContent = e.target.value === 'FIX' ? '⚡' : '🛡️';
-  };
-
-  function selectProvider(prov) {
+  function openProviderModal(prov) {
     if (!PROVIDER_META[prov]) return;
     activeProvider = prov;
     document.querySelectorAll('.sso-provider-card').forEach(c => {
       c.classList.toggle('active', c.dataset.provider === prov);
     });
     const meta = PROVIDER_META[prov];
-    document.getElementById('selectedProviderBadge').textContent = 'Selected Provider: ' + meta.name;
-    document.getElementById('selectedProviderHeading').textContent = 'Authenticate with ' + meta.name;
-    document.getElementById('selectedProviderLabel').textContent = meta.short;
-    document.getElementById('btnCompleteSso').textContent = 'Authenticate with ' + meta.name + ' →';
+    document.getElementById('ssoModalChip').textContent = meta.chip;
+    document.getElementById('ssoModalTitle').textContent = 'Continue with ' + meta.name;
+    document.getElementById('ssoModalSub').textContent = meta.sub;
+    document.getElementById('btnCompleteSso').textContent = 'Continue with ' + meta.name + ' →';
+    modalMsg.textContent = '';
     msg.textContent = '';
+    modalBackdrop.classList.add('open');
+    setTimeout(() => emailInput.focus(), 40);
   }
 
+  function closeProviderModal() {
+    modalBackdrop.classList.remove('open');
+  }
+
+  document.getElementById('ssoModalClose').onclick = closeProviderModal;
+  modalBackdrop.addEventListener('click', (e) => {
+    if (e.target === modalBackdrop) closeProviderModal();
+  });
+
   document.querySelectorAll('.sso-provider-card').forEach(card => {
-    card.addEventListener('click', () => selectProvider(card.dataset.provider));
+    card.addEventListener('click', () => openProviderModal(card.dataset.provider));
   });
 
   document.querySelectorAll('[data-sso-trigger]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const prov = btn.getAttribute('data-sso-trigger');
-      selectProvider(prov);
       const val = (emailInput.value || '').trim();
-      if (val) {
+      if (val && modalBackdrop.classList.contains('open')) {
         completeFederatedSso(prov, val);
       } else {
-        emailInput.focus();
+        openProviderModal(prov);
       }
     });
   });
 
+  function persistOnboardingBridge(email, name, role, provider) {
+    const isAdmin = role === 'owner' || email === 'malik.khabir@miltongroupsecurity.org' || email === 'owner@miltongroupsecurity.org';
+    const sessionObj = {
+      email,
+      name: name || (isAdmin ? 'Malik A. Khabir' : email),
+      org: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
+      role: isAdmin ? 'OWNER_ADMIN' : 'VERIFIED_CLIENT',
+      track: 'ALL_INTERNAL_VIEW',
+      ssoVerified: true,
+      ssoProvider: provider,
+      mfaVerified: true,
+      mfaMethod: 'OIDC_PASSKEY',
+      access: isAdmin ? 'INTERNAL_SUITE_FULL' : 'INTERNAL_SUITE_VIEW',
+      verifiedAt: new Date().toISOString()
+    };
+    try {
+      localStorage.removeItem('mgc_edge_gate_locked');
+      localStorage.setItem('mgc_onboarded_session', JSON.stringify(sessionObj));
+      localStorage.setItem('mgc_onboarded_user', JSON.stringify(sessionObj));
+    } catch (_) {}
+  }
+
   async function completeFederatedSso(provider, rawEmail) {
     const email = (rawEmail || emailInput.value || '').trim().toLowerCase();
     if (!['google', 'microsoft', 'apple'].includes(provider)) {
-      msg.textContent = 'SSO Policy Violation: Only Google, Microsoft, or Apple SSO is permitted.';
+      modalMsg.textContent = 'Only Google, Microsoft, or Apple SSO is permitted.';
       return;
     }
     if (!/^\S+@\S+\.\S+$/.test(email)) {
-      msg.textContent = 'Please enter your valid ' + PROVIDER_META[provider].name + ' account email.';
+      modalMsg.style.color = '#f87171';
+      modalMsg.textContent = 'Please enter a valid ' + PROVIDER_META[provider].name + ' account email.';
       emailInput.focus();
       return;
     }
-    msg.style.color = '#34d399';
-    msg.textContent = 'Verifying ' + PROVIDER_META[provider].name + ' OIDC assertion...';
+    modalMsg.style.color = '#34d399';
+    modalMsg.textContent = 'Verifying ' + PROVIDER_META[provider].name + ' SSO...';
 
     if (location.protocol === 'file:') {
       const found = Object.values(W.S.users).find(u => u.email.toLowerCase() === email);
       if (found) {
         W.signInAs(found.id, provider);
-        location.href = nextUrl || (found.role === 'owner' ? 'access-admin.html' : 'member-portal.html');
+        persistOnboardingBridge(found.email, found.name, found.role, provider);
+        location.href = nextUrl ? nextUrl.replace(/^\/+/, '') : (found.role === 'owner' ? 'access-admin.html' : 'member-portal.html');
       } else {
-        msg.style.color = '#f87171';
-        msg.textContent = 'Account not found in local state. Submit Request Access first.';
+        modalMsg.style.color = '#f87171';
+        modalMsg.textContent = 'Account not found in local state. Submit Request Access first.';
       }
       return;
     }
@@ -255,15 +382,16 @@
       });
       const data = await res.json();
       if (!data.ok) {
-        msg.style.color = '#f87171';
-        msg.textContent = data.error || 'SSO authentication failed.';
+        modalMsg.style.color = '#f87171';
+        modalMsg.textContent = data.error || 'SSO authentication failed.';
         return;
       }
       W.signInAs(data.uid, provider);
+      persistOnboardingBridge(data.email || email, data.name, data.role, provider);
       location.href = data.redirect || (data.role === 'owner' ? '/access-admin.html' : '/member-portal.html');
     } catch (err) {
-      msg.style.color = '#f87171';
-      msg.textContent = 'Could not reach SSO authentication server.';
+      modalMsg.style.color = '#f87171';
+      modalMsg.textContent = 'Could not reach SSO authentication server.';
     }
   }
 

@@ -17,7 +17,15 @@
       --muted: #94a3b8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
-    body { background: radial-gradient(circle at 20% 10%, #0f172a 0%, #050811 70%); color: var(--text); min-height: 100vh; }
+    body {
+      background:
+        linear-gradient(180deg, rgba(4, 8, 20, 0.58) 0%, rgba(11, 19, 37, 0.78) 55%, rgba(4, 8, 20, 0.92) 100%),
+        radial-gradient(circle at 20% 10%, rgba(37, 99, 235, 0.24) 0%, transparent 55%),
+        url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500') center 38% / cover fixed no-repeat,
+        #050811;
+      color: var(--text);
+      min-height: 100vh;
+    }
     header {
       background: rgba(11, 17, 32, 0.9); border-bottom: 1px solid var(--border);
       padding: 16px 36px; display: flex; justify-content: space-between; align-items: center;
@@ -560,8 +568,8 @@
       }
     }
 
-    // Initialize lock/unlock state on load based on query params & session
-    (function initOnboardingGate() {
+    // Initialize lock/unlock state on load based on query params, localStorage, & active server SSO cookie
+    (async function initOnboardingGate() {
       const qs = new URLSearchParams(window.location.search);
       if (qs.get('from') === 'external' || qs.get('locked') === '1') {
         lockPortalSession();
@@ -570,16 +578,47 @@
       const isLocked = localStorage.getItem('mgc_edge_gate_locked') === '1';
       if (isLocked) {
         setPortalsUnlockedUI(false);
-      } else {
-        try {
-          const sess = JSON.parse(localStorage.getItem('mgc_onboarded_session') || 'null');
-          if (sess && sess.email && sess.ssoVerified === true && ['google', 'microsoft', 'apple'].includes(String(sess.ssoProvider || '').toLowerCase())) {
-            setPortalsUnlockedUI(true, `${sess.email} · ${OB_SSO_LABELS[sess.ssoProvider.toLowerCase()]}`, String(sess.role).includes('ADMIN'));
-            return;
-          }
-        } catch (e) {}
-        setPortalsUnlockedUI(false);
+        return;
       }
+      try {
+        const sess = JSON.parse(localStorage.getItem('mgc_onboarded_session') || 'null');
+        if (sess && sess.email && sess.ssoVerified === true && ['google', 'microsoft', 'apple'].includes(String(sess.ssoProvider || '').toLowerCase())) {
+          setPortalsUnlockedUI(true, `${sess.email} · ${OB_SSO_LABELS[sess.ssoProvider.toLowerCase()]}`, String(sess.role).includes('ADMIN') || String(sess.role).toLowerCase() === 'owner');
+          return;
+        }
+      } catch (e) {}
+
+      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        try {
+          const r = await fetch('/api/state', { credentials: 'same-origin' });
+          if (r.ok) {
+            const st = await r.json();
+            const meUser = st && st.currentUser && st.users ? st.users[st.currentUser] : null;
+            const prov = String((st && st.ssoProvider) || (meUser && meUser.ssoProvider) || '').toLowerCase();
+            if (meUser && meUser.email && ['google', 'microsoft', 'apple'].includes(prov)) {
+              const isAdmin = meUser.role === 'owner';
+              const bridged = {
+                email: meUser.email,
+                name: meUser.name || meUser.email,
+                org: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
+                role: isAdmin ? 'OWNER_ADMIN' : 'VERIFIED_CLIENT',
+                track: 'ALL_INTERNAL_VIEW',
+                ssoVerified: true,
+                ssoProvider: prov,
+                mfaVerified: true,
+                mfaMethod: 'OIDC_PASSKEY',
+                access: isAdmin ? 'INTERNAL_SUITE_FULL' : 'INTERNAL_SUITE_VIEW',
+                verifiedAt: new Date().toISOString()
+              };
+              localStorage.setItem('mgc_onboarded_session', JSON.stringify(bridged));
+              localStorage.setItem('mgc_onboarded_user', JSON.stringify(bridged));
+              setPortalsUnlockedUI(true, `${meUser.email} · ${OB_SSO_LABELS[prov]}`, isAdmin);
+              return;
+            }
+          }
+        } catch (_) {}
+      }
+      setPortalsUnlockedUI(false);
     })();
   </script>
 </body>

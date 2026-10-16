@@ -950,13 +950,13 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Gate the 16 internal portals: Owner has full access; Members only if mapped catalog page is Ready & entitled OR explicitly shared as an element
+    // Gate the 16 internal portals: Owner has full access; onboarding-portal.html is open to any SSO-authenticated user; Members only if mapped catalog page is Ready & entitled OR explicitly shared as an element
     if (INTERNAL_PORTALS.has(baseName) && baseName !== 'access-admin.html') {
       if (!u) {
         res.writeHead(302, { 'Location': `/login.html?next=${encodeURIComponent('/' + baseName)}` });
         return res.end();
       }
-      if (u.role !== 'owner') {
+      if (u.role !== 'owner' && baseName !== 'onboarding-portal.html') {
         const mappedCatalogId = PORTAL_TO_CATALOG[baseName];
         const allowedViaCatalog = mappedCatalogId && can(u, 'page', mappedCatalogId, 'view');
         const allowedViaShare = can(u, 'element', baseName, 'view');
