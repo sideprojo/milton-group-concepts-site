@@ -1016,6 +1016,9 @@
         <button class="ws-tab" data-target="tab-geo-atlas" onclick="switchPortalTab('tab-geo-atlas')">
           <span>5. NC Map</span>
         </button>
+        <button class="ws-tab" data-target="tab-aistudio-notebooklm" onclick="switchPortalTab('tab-aistudio-notebooklm')">
+          <span>6. AI Studio &amp; NotebookLM</span>
+        </button>
       </div>
 
       <div class="exec-right">
@@ -1026,6 +1029,7 @@
           <option value="tab-single-exam">📂 View 3: Single-Exam Practice Pools</option>
           <option value="tab-eveng-cost">📂 View 4: EVE-NG Cost &amp; RAM Optimizer</option>
           <option value="tab-geo-atlas">📂 View 5: NC &amp; VA Geospatial Atlas</option>
+          <option value="tab-aistudio-notebooklm">📂 View 6: AI Studio Apps &amp; NotebookLM Vault</option>
         </select>
         <select class="quick-select" id="quick-topo-dropdown" onchange="jumpLabQuick(this.value)" aria-label="Quick Jump Across All 15 EVE-NG Topologies">
           <option value="">🖧 Jump to Topology (1–15) ▾</option>
@@ -1043,7 +1047,7 @@
           <div class="scorm-sidebar-brand">
             <div class="scorm-brand-top">
               <span style="font-size:9.5px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;background:#27272A;color:#E4E4E7;padding:3px 7px;border-radius:4px;border:1px solid #52525B;">
-                MGC SCORM 2004
+                MGC SCORM 2004 4TH ED
               </span>
               <button onclick="document.getElementById('syl-search-input').focus()" style="background:transparent;border:none;font-size:14px;cursor:pointer;color:#FFFFFF;" title="Search Topologies">
                 🔍
@@ -1081,12 +1085,15 @@
         <div class="scorm-main-stage" id="scorm-main-stage">
           <!-- Clean 1-Line Sticky Top SCORM Bar -->
           <div class="scorm-topbar">
-            <div style="display:flex;align-items:center;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
               <button class="scorm-hamburger-btn" onclick="toggleScormSidebar()" title="Toggle Course Outline Sidebar">
                 ☰
               </button>
               <span style="font-size:11px;font-weight:800;color:#27272A;text-transform:uppercase;letter-spacing:0.08em;" id="tut-lab-badge">
                 LESSON 1 OF 15
+              </span>
+              <span id="scorm-cmi-live-pill" onclick="toggleScormCmiInspector()" title="Click to inspect live Rustici SCORM 2004 API_1484_11 CMI Telemetry" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;background:#18181B;color:#E4E4E7;padding:3px 8px;border-radius:999px;border:1px solid #3F3F46;">
+                ● CMI: incomplete • score: 0.25
               </span>
             </div>
             <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
@@ -1102,7 +1109,22 @@
               <button class="btn" style="background:#F4F4F5;color:#09090B;border:1px solid #A1A1AA;padding:5px 10px;font-size:11px;" onclick="downloadCurrentUnlTopology()">
                 ⬇ .unl XML
               </button>
+              <button class="btn" style="background:#27272A;color:#FAFAFA;border:1px solid #52525B;padding:5px 10px;font-size:11px;" onclick="exportScorm2004Manifest()" title="Export Rustici / Canvas LMS SCORM 2004 4th Edition imsmanifest.xml">
+                📦 SCORM 2004
+              </button>
             </div>
+          </div>
+
+          <!-- COLLAPSIBLE RUSTICI SCORM 2004 CMI RUNTIME INSPECTOR DRAWER -->
+          <div id="scorm-cmi-inspector-drawer" style="display:none;background:#09090B;color:#E4E4E7;padding:12px 18px;border-bottom:1px solid #3F3F46;font-family:'JetBrains Mono',monospace;font-size:11px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+              <strong style="color:#FAFAFA;">📡 LIVE RUSTICI ENGINE / SCORM 2004 4TH EDITION CMI RUNTIME (`window.API_1484_11` &amp; `window.API`)</strong>
+              <div style="display:flex;gap:6px;">
+                <button class="btn" style="background:#27272A;color:#FAFAFA;border:1px solid #52525B;padding:3px 8px;font-size:10px;" onclick="commitScormCmiState()">💾 Commit('') Now</button>
+                <button class="btn" style="background:#18181B;color:#A1A1AA;border:1px solid #3F3F46;padding:3px 8px;font-size:10px;" onclick="toggleScormCmiInspector()">✕ Close</button>
+              </div>
+            </div>
+            <div id="scorm-cmi-json-readout" style="background:#18181B;border:1px solid #27272A;border-radius:6px;padding:8px 10px;white-space:pre-wrap;color:#D4D4D8;max-height:130px;overflow-y:auto;"></div>
           </div>
 
           <!-- OPTIONAL COURSE COVER OVERVIEW (Monochrome Hero Banner) -->
@@ -1123,7 +1145,7 @@
               <div class="scorm-block-inner">
                 <h3 style="font-size:18px;font-weight:800;color:#09090B;margin-bottom:8px;">Welcome to the Interactive SCORM Topology Workbench</h3>
                 <p class="scorm-narrative-copy">
-                  Each of the <strong>15 Multi-Vendor EVE-NG Topologies</strong> is structured into <strong>4 clean, step-gated stages</strong>: Learning Objectives &amp; Visual Architecture, Interactive Packet/Chaos Playground, Dual-Vendor CLI &amp; Concept Sorting Lab, and Scenario Knowledge Check.
+                  Each of the <strong>15 Multi-Vendor EVE-NG Topologies</strong> is structured into <strong>4 clean, step-gated stages</strong>: Learning Objectives &amp; Visual Architecture (with Rise 360 3D Flip Flashcards &amp; NotebookLM Interview Defense Q&amp;A), Interactive Packet/Chaos Playground (with 5-Step Protocol Process Carousel), Dual-Vendor CLI, Mavis Beacon Kinetic Ghost-Text Drill, Fault Injection &amp; Netmiko Auto-Grader, and Scenario Knowledge Check.
                 </p>
               </div>
             </div>
@@ -1135,7 +1157,7 @@
             <div id="scorm-stage-1">
               <div class="scorm-lesson-banner">
                 <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:800;color:#D4D4D8;letter-spacing:0.12em;text-transform:uppercase;" id="scorm-stage-indicator">
-                  STAGE 1 OF 4 • OBJECTIVES &amp; 50/50 ARCHITECTURE SPLIT
+                  STAGE 1 OF 4 • OBJECTIVES, 50/50 ARCHITECTURE &amp; NOTEBOOKLM FLASHCARDS
                 </div>
                 <h2 id="tut-lab-title">Topology 01: Multi-Area OSPFv2/OSPFv3 &amp; BFD Sub-50ms Ring</h2>
               </div>
@@ -1194,6 +1216,24 @@
                       </div>
                     </div>
                   </details>
+
+                  <!-- NEW: Collapsible Rise 360 Interactive Flip Flashcards (NotebookLM Mnemonics & Master Guide) -->
+                  <details style="margin-top:10px;background:#ffffff;border:1px solid #D4D4D8;border-radius:10px;padding:10px 14px;">
+                    <summary style="cursor:pointer;font-size:12.5px;font-weight:800;color:#09090B;display:flex;justify-content:space-between;align-items:center;">
+                      <span>▾ Rise 360 Interactive Flip Flashcards — NotebookLM Instructor's Corner &amp; RFC Mnemonics</span>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#52525B;">3 Flip Cards</span>
+                    </summary>
+                    <div style="margin-top:12px;" id="scorm-flashcard-deck-wrap"></div>
+                  </details>
+
+                  <!-- NEW: Collapsible NotebookLM Architect Interview Defense Q&A Accordion -->
+                  <details style="margin-top:10px;background:#ffffff;border:1px solid #D4D4D8;border-radius:10px;padding:10px 14px;">
+                    <summary style="cursor:pointer;font-size:12.5px;font-weight:800;color:#09090B;display:flex;justify-content:space-between;align-items:center;">
+                      <span>▾ Google NotebookLM Architect Interview Defense Q&amp;A &amp; CCIE Master Guide Extract</span>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#52525B;">CCIE / JNCIE Defense</span>
+                    </summary>
+                    <div style="margin-top:12px;" id="scorm-notebooklm-qa-wrap"></div>
+                  </details>
                 </div>
               </div>
 
@@ -1205,20 +1245,20 @@
               </div>
             </div>
 
-            <!-- STAGE 2: INTERACTIVE TOPOLOGY, MTU SLIDER & WIRESHARK PLAYGROUND -->
+            <!-- STAGE 2: INTERACTIVE TOPOLOGY, MTU SLIDER, PROCESS STEPPER & WIRESHARK PLAYGROUND -->
             <div id="scorm-stage-2" style="display:none;">
               <div class="scorm-block slate-tint">
                 <div class="scorm-block-inner">
                   <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;">
                     <div>
-                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#0f6f5e;text-transform:uppercase;letter-spacing:0.1em;">
-                        STAGE 2 OF 4 • INTERACTIVE HTML5 PACKET &amp; TOPOLOGY PLAYGROUND
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#27272A;text-transform:uppercase;letter-spacing:0.1em;">
+                        STAGE 2 OF 4 • INTERACTIVE HTML5 PACKET, PROCESS STEPPER &amp; TOPOLOGY PLAYGROUND
                       </span>
-                      <h3 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#0f172a;margin-top:2px;">
-                        Test Link Failover, Frame MTU &amp; 4-Layer Wireshark Dissection
+                      <h3 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#09090B;margin-top:2px;">
+                        Test Link Failover, Frame MTU, 5-Step Protocol FSM &amp; 4-Layer Wireshark Dissection
                       </h3>
                     </div>
-                    <span class="badge" style="background:#0f172a;color:#fcd34d;" id="topo-layout-badge">
+                    <span class="badge" style="background:#09090B;color:#FAFAFA;" id="topo-layout-badge">
                       ACTIVE TOPOLOGY // CLICK ANY ROUTER
                     </span>
                   </div>
@@ -1232,39 +1272,55 @@
                           <button class="btn btn-crimson" id="btn-chaos-cut" onclick="toggleFiberCutChaos()">
                             ⚡ Simulate Fiber Cut (BFD/LFA)
                           </button>
-                          <button class="btn" style="background:#0f172a;color:#fff;" id="btn-pause-anim" onclick="toggleSvgPacketAnimation()">
+                          <button class="btn" style="background:#09090B;color:#fff;" id="btn-pause-anim" onclick="toggleSvgPacketAnimation()">
                             ⏸ Pause Packets
                           </button>
                         </div>
-                        <p style="font-size:12px;color:#334155;margin-top:8px;" id="scorm-chaos-status-text">
+                        <p style="font-size:12px;color:#27272A;margin-top:8px;" id="scorm-chaos-status-text">
                           Steady state active: primary link forwarding packets normally.
                         </p>
                       </div>
 
                       <div class="scorm-step-box">
                         <label class="scorm-step-title" for="scorm-mtu-slider">2. Test interface MTU &amp; encapsulation overhead</label>
-                        <input type="range" id="scorm-mtu-slider" min="1400" max="9216" step="64" value="1500" oninput="updateScormMtuPlayground(this.value)" style="width:100%;accent-color:#0f6f5e;cursor:pointer;" />
-                        <div style="display:flex;justify-content:space-between;font-size:11px;color:#475569;margin-top:2px;">
+                        <input type="range" id="scorm-mtu-slider" min="1400" max="9216" step="64" value="1500" oninput="updateScormMtuPlayground(this.value)" style="width:100%;accent-color:#09090B;cursor:pointer;" />
+                        <div style="display:flex;justify-content:space-between;font-size:11px;color:#52525B;margin-top:2px;">
                           <span>1400B (Tunnel Drop)</span>
                           <span>1500B (Standard)</span>
                           <span>9216B (Jumbo MPLS/VXLAN)</span>
                         </div>
-                        <p style="font-size:12px;font-weight:700;color:#0f6f5e;margin-top:6px;" id="scorm-mtu-readout">
+                        <p style="font-size:12px;font-weight:700;color:#18181B;margin-top:6px;" id="scorm-mtu-readout">
                           Current MTU: 1500 bytes — Standard IPv4/IPv6 OSPF &amp; BGP Hellos pass cleanly.
                         </p>
                       </div>
                     </div>
 
                     <!-- Dynamic Multi-Vendor SVG Canvas -->
-                    <div id="dynamic-svg-container" style="background:#020617;border-radius:12px;border:1px solid #334155;overflow:hidden;margin-bottom:14px;"></div>
+                    <div id="dynamic-svg-container" style="background:#09090B;border-radius:12px;border:1px solid #3F3F46;overflow:hidden;margin-bottom:14px;"></div>
+
+                    <!-- NEW: Rise 360 Interactive 5-Step Protocol & Packet Walk Process Carousel -->
+                    <div style="background:#F4F4F5;border:1px solid #D4D4D8;border-radius:12px;padding:12px 14px;margin-bottom:14px;">
+                      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:800;color:#09090B;">
+                          🔄 RISE 360 PROCESS STEPPER: 5-STEP CONTROL &amp; DATA-PLANE STATE WALK
+                        </span>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                          <button class="btn" style="background:#FFFFFF;color:#09090B;border:1px solid #A1A1AA;padding:3px 9px;font-size:11px;" onclick="stepScormProcessCarousel(-1)">◀ Prev Step</button>
+                          <span id="scorm-proc-step-badge" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#09090B;">Step 1 of 5</span>
+                          <button class="btn" style="background:#09090B;color:#FFFFFF;padding:3px 9px;font-size:11px;" onclick="stepScormProcessCarousel(1)">Next Step ▶</button>
+                        </div>
+                      </div>
+                      <div id="scorm-proc-step-pills" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;"></div>
+                      <div id="scorm-proc-step-body" style="background:#FFFFFF;border:1px solid #E4E4E7;border-radius:8px;padding:10px 12px;font-size:13px;color:#18181B;line-height:1.55;"></div>
+                    </div>
 
                     <!-- Interactive 4-Layer Wireshark PDU Dissector -->
-                    <div style="background:#0f172a;border-radius:12px;padding:14px;color:#ffffff;">
+                    <div style="background:#09090B;border-radius:12px;padding:14px;color:#ffffff;">
                       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                        <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#fcd34d;font-weight:800;">
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#E4E4E7;font-weight:800;">
                           🔬 WIRESHARK 4-LAYER PDU HEADER DISSECTOR (SELECT OSI LAYER):
                         </span>
-                        <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#38bdf8;" id="wireshark-filter-label">
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#A1A1AA;" id="wireshark-filter-label">
                           Filter: ospf || bfd
                         </span>
                       </div>
@@ -1283,18 +1339,18 @@
               </div>
             </div>
 
-            <!-- STAGE 3: MULTI-VENDOR CLI TABS, LIVE CONSOLE & SORTING ACTIVITY -->
+            <!-- STAGE 3: MULTI-VENDOR CLI TABS, LIVE CONSOLE, FAULT INJECTOR, KINETIC DRILL & SORTING -->
             <div id="scorm-stage-3" style="display:none;">
               <div class="scorm-block">
                 <div class="scorm-block-inner">
-                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#0f6f5e;text-transform:uppercase;letter-spacing:0.1em;">
-                    STAGE 3 OF 4 • MULTI-VENDOR CLI, GUACAMOLE CONSOLE &amp; CONCEPT SORTING
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#27272A;text-transform:uppercase;letter-spacing:0.1em;">
+                    STAGE 3 OF 4 • MULTI-VENDOR CLI, FAULT INJECTION, KINETIC DRILL &amp; AUTO-GRADER
                   </span>
-                  <h3 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#0f172a;margin:4px 0 14px;">
-                    Compare Cisco IOS-XE vs. Juniper Junos Stanzas &amp; Execute Live Commands
+                  <h3 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#09090B;margin:4px 0 14px;">
+                    Compare Cisco IOS-XE vs. Juniper Junos, Inject Live Faults &amp; Run Netmiko Auto-Grader
                   </h3>
 
-                  <div style="background:#0f172a;border-radius:14px;padding:16px;color:#ffffff;margin-bottom:20px;">
+                  <div style="background:#09090B;border-radius:14px;padding:16px;color:#ffffff;margin-bottom:20px;">
                     <div class="tut-subtabs">
                       <button class="tut-subbtn active" id="tsub-arch" onclick="switchTutorialView('arch')">1. RFC Deep-Dive</button>
                       <button class="tut-subbtn" id="tsub-ios" onclick="switchTutorialView('ios')">2. Cisco IOS-XE / NX-OS</button>
@@ -1305,14 +1361,40 @@
                     <div id="tutorial-dynamic-body" style="margin-top:10px;"></div>
                   </div>
 
-                  <!-- Live Guacamole Console Simulator -->
-                  <div style="background:#020617;border-radius:14px;padding:16px;border:1px solid #334155;margin-bottom:22px;">
+                  <!-- Live Guacamole Console Simulator + EVE-NG Fault Injector + Netmiko Auto-Grader -->
+                  <div style="background:#09090B;border-radius:14px;padding:16px;border:1px solid #3F3F46;margin-bottom:16px;">
                     <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;">
-                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4ade80;font-weight:800;">
-                        💻 INTERACTIVE EVE-NG TERMINAL (SELECT ROUTER NODE OR CLICK COMMAND CHIP):
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#E4E4E7;font-weight:800;">
+                        💻 INTERACTIVE EVE-NG TERMINAL, FAULT INJECTOR (`/inject-fault`) &amp; RUBRIC GRADER (`/grade`):
                       </span>
                       <div class="node-pill-bar" id="dynamic-node-pills"></div>
                     </div>
+
+                    <!-- EVE-NG Grader API & Chaos Fault Injection Bar (from Eve-Learn/grader-api/main.py) -->
+                    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#18181B;border:1px solid #27272A;border-radius:8px;margin-bottom:10px;">
+                      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#A1A1AA;font-weight:700;">Chaos Fault:</span>
+                        <select id="eve-fault-type-select" style="background:#09090B;color:#FAFAFA;border:1px solid #3F3F46;border-radius:6px;padding:4px 8px;font-size:11px;font-family:'JetBrains Mono',monospace;">
+                          <option value="bgp_clear">bgp_clear (clear ip bgp *)</option>
+                          <option value="interface_down">interface_down (shut Gi1 / ge-0/0/0)</option>
+                          <option value="mtu_mismatch">mtu_mismatch (ip mtu 1400 ExStart trap)</option>
+                        </select>
+                        <button class="btn" style="background:#27272A;color:#FAFAFA;border:1px solid #52525B;padding:4px 10px;font-size:10.5px;" onclick="injectEveFault()">
+                          🔥 Inject Fault
+                        </button>
+                        <button class="btn" style="background:#18181B;color:#D4D4D8;border:1px solid #3F3F46;padding:4px 10px;font-size:10.5px;" onclick="remediateEveFault()">
+                          🛠️ Remediate Fault
+                        </button>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:6px;">
+                        <button class="btn" style="background:#FAFAFA;color:#09090B;font-weight:800;padding:4px 12px;font-size:10.5px;" onclick="gradeCurrentEveLab()">
+                          ✅ Auto-Grade Lab Rubric
+                        </button>
+                      </div>
+                    </div>
+
+                    <div id="eve-rubric-status-strip" style="display:none;margin-bottom:10px;padding:8px 10px;border-radius:8px;background:#18181B;border:1px solid #52525B;font-family:'JetBrains Mono',monospace;font-size:11px;color:#E4E4E7;"></div>
+
                     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;" id="quick-cmd-chips"></div>
                     <div class="terminal-window">
                       <div class="term-output" id="eveng-term-out"></div>
@@ -1324,28 +1406,47 @@
                     </div>
                   </div>
 
-                  <!-- Interactive Multi-Vendor Sorting Activity (Modeled on Rise 360 Lesson 6 Sorting Activity) -->
-                  <div class="scorm-playground-card" style="background:#f6faf8;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                      <strong style="font-size:15px;color:#0f172a;">Interactive Activity: Sort Multi-Vendor Syntax &amp; RFC Primitives</strong>
-                      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;color:#0f6f5e;" id="scorm-sort-progress">0 of 3 sorted</span>
+                  <!-- NEW: Collapsible Mavis Beacon Kinetic Ghost-Text CLI Muscle-Memory Drill (from ghost_terminal.dart) -->
+                  <details style="margin-bottom:18px;background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:12px 16px;color:#FAFAFA;">
+                    <summary style="cursor:pointer;font-size:12.5px;font-weight:800;color:#FAFAFA;display:flex;justify-content:space-between;align-items:center;">
+                      <span>⌨️ Mavis Beacon Kinetic Ghost-Text CLI Muscle-Memory Drill (Type Over Ghost Stanza)</span>
+                      <span id="ghost-cli-wpm-badge" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#D4D4D8;">0 WPM • 100% ACC</span>
+                    </summary>
+                    <div style="margin-top:12px;">
+                      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span style="font-size:11.5px;color:#A1A1AA;">Type the exact IOS-XE / Junos command below to build CLI muscle memory (audio &amp; visual feedback):</span>
+                        <div style="display:flex;gap:6px;">
+                          <select id="ghost-cli-preset-select" onchange="loadGhostCliTarget(this.value)" style="background:#18181B;color:#FAFAFA;border:1px solid #3F3F46;border-radius:6px;padding:4px 8px;font-size:11px;font-family:'JetBrains Mono',monospace;"></select>
+                          <button class="btn" style="background:#27272A;color:#FAFAFA;padding:4px 8px;font-size:10.5px;" onclick="resetGhostCliDrill()">↻ Reset</button>
+                        </div>
+                      </div>
+                      <div id="ghost-cli-display" style="font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:0.03em;padding:12px 14px;background:#000000;border:1px solid #27272A;border-radius:8px;margin-bottom:8px;min-height:46px;line-height:1.6;word-break:break-all;"></div>
+                      <input type="text" id="ghost-cli-input" oninput="handleGhostCliInput(this.value)" placeholder="Click here and type the target command character-by-character..." autocomplete="off" spellcheck="false" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:13px;padding:9px 12px;background:#18181B;color:#FAFAFA;border:1px solid #52525B;border-radius:8px;" />
                     </div>
-                    <p style="font-size:13px;color:#475569;margin-bottom:12px;">
+                  </details>
+
+                  <!-- Interactive Multi-Vendor Sorting Activity (Modeled on Rise 360 Lesson 6 Sorting Activity) -->
+                  <div class="scorm-playground-card" style="background:#F4F4F5;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                      <strong style="font-size:15px;color:#09090B;">Interactive Activity: Sort Multi-Vendor Syntax &amp; RFC Primitives</strong>
+                      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;color:#27272A;" id="scorm-sort-progress">0 of 3 sorted</span>
+                    </div>
+                    <p style="font-size:13px;color:#3F3F46;margin-bottom:12px;">
                       Select a concept chip below, then click its matching vendor/protocol category bucket (`Cisco IOS-XE`, `Juniper Junos`, or `RFC Control Plane`):
                     </p>
                     <div id="scorm-sort-bank" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
                     <div class="grid-3" style="gap:12px;">
                       <div class="scorm-sort-bucket" onclick="dropIntoSortBucket('IOS')">
-                        <div style="font-size:12px;font-weight:800;color:#1d4ed8;margin-bottom:6px;">BUCKET 1: Cisco IOS-XE / NX-OS</div>
-                        <div id="sort-bucket-IOS" style="display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:#0f172a;"></div>
+                        <div style="font-size:12px;font-weight:800;color:#09090B;margin-bottom:6px;">BUCKET 1: Cisco IOS-XE / NX-OS</div>
+                        <div id="sort-bucket-IOS" style="display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:#09090B;"></div>
                       </div>
                       <div class="scorm-sort-bucket" onclick="dropIntoSortBucket('JUNOS')">
-                        <div style="font-size:12px;font-weight:800;color:#047857;margin-bottom:6px;">BUCKET 2: Juniper Junos OS</div>
-                        <div id="sort-bucket-JUNOS" style="display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:#0f172a;"></div>
+                        <div style="font-size:12px;font-weight:800;color:#09090B;margin-bottom:6px;">BUCKET 2: Juniper Junos OS</div>
+                        <div id="sort-bucket-JUNOS" style="display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:#09090B;"></div>
                       </div>
                       <div class="scorm-sort-bucket" onclick="dropIntoSortBucket('RFC')">
-                        <div style="font-size:12px;font-weight:800;color:#b45309;margin-bottom:6px;">BUCKET 3: RFC Wire Header / Metric</div>
-                        <div id="sort-bucket-RFC" style="display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:#0f172a;"></div>
+                        <div style="font-size:12px;font-weight:800;color:#09090B;margin-bottom:6px;">BUCKET 3: RFC Wire Header / Metric</div>
+                        <div id="sort-bucket-RFC" style="display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:#09090B;"></div>
                       </div>
                     </div>
                   </div>
@@ -1380,7 +1481,7 @@
               </div>
 
               <!-- FINAL LESSON COMPLETION & NEXT TOPOLOGY GATE -->
-              <div class="scorm-continue-wrap" id="scorm-gate-next-lesson" style="display:none;background:#ecfdf5;">
+              <div class="scorm-continue-wrap" id="scorm-gate-next-lesson" style="display:none;background:#E4E4E7;">
                 <button class="scorm-continue-btn" onclick="advanceToNextTopologyLesson()">
                   ✓ LESSON 100% COMPLETE — CONTINUE TO NEXT TOPOLOGY →
                 </button>
@@ -1898,6 +1999,289 @@
           <span class="badge" style="background:rgba(245,158,11,0.2);color:var(--gold-bright);">CLICK ANY NC OR VA CORRIDOR TO FLY MAP &amp; VIEW BAH / EMPLOYERS</span>
           <h3>North Carolina Relocation Triangle &amp; Defense Corridors</h3>
           <div style="display:grid;gap:10px;margin-top:6px;" id="corridor-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 6: GOOGLE AI STUDIO APPS (5) & NOTEBOOKLM / CCIE MASTER VAULT    -->
+    <!-- =================================================================== -->
+    <div id="tab-aistudio-notebooklm" class="tab-pane">
+      <!-- Zero-Clutter Sub-App Switcher Bar -->
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;background:#09090B;border:1px solid #3F3F46;border-radius:12px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span class="badge" style="background:#27272A;color:#FAFAFA;border:1px solid #52525B;">GOOGLE AI STUDIO &amp; NOTEBOOKLM SUITE</span>
+          <select class="quick-select" id="aistudio-subapp-select" onchange="switchAiStudioSubApp(this.value)" aria-label="Select AI Studio App or NotebookLM Vault">
+            <option value="6a">📡 6A: Wireless Deployment Simulator (Cisco 9800 WLC &amp; Aruba RF)</option>
+            <option value="6b">🛡️ 6B: ACL Master Trainer (Kinetic Typing &amp; Packet Filter Sim)</option>
+            <option value="6c">🧭 6C: PROJECT_ROUTE (BGP 13-Step &amp; EIGRP DUAL Simulator)</option>
+            <option value="6d">🗣️ 6D: Safar-e Zaban: Velocity (Dari SOV Grammar &amp; Particle Engine)</option>
+            <option value="6e">🌙 6E: Asma ul-Husna (99 Names Trilateral Root &amp; Al-Ghazali Explorer)</option>
+            <option value="6f">📚 6F: Google NotebookLM &amp; 100-Page CCIE Master Guide Vault</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-gold" id="aisub-btn-6a" onclick="switchAiStudioSubApp('6a')" style="padding:5px 9px;font-size:10.5px;">6A. Wireless Sim</button>
+          <button class="btn btn-ghost" id="aisub-btn-6b" onclick="switchAiStudioSubApp('6b')" style="padding:5px 9px;font-size:10.5px;">6B. ACL Trainer</button>
+          <button class="btn btn-ghost" id="aisub-btn-6c" onclick="switchAiStudioSubApp('6c')" style="padding:5px 9px;font-size:10.5px;">6C. PROJECT_ROUTE</button>
+          <button class="btn btn-ghost" id="aisub-btn-6d" onclick="switchAiStudioSubApp('6d')" style="padding:5px 9px;font-size:10.5px;">6D. Safar-e Zaban</button>
+          <button class="btn btn-ghost" id="aisub-btn-6e" onclick="switchAiStudioSubApp('6e')" style="padding:5px 9px;font-size:10.5px;">6E. Asma ul-Husna</button>
+          <button class="btn btn-ghost" id="aisub-btn-6f" onclick="switchAiStudioSubApp('6f')" style="padding:5px 9px;font-size:10.5px;">6F. NotebookLM Vault</button>
+          <a href="https://aistudio.google.com/apps?source=user&tag=created-by-you" target="_blank" rel="noopener" class="btn btn-ghost" style="padding:5px 9px;font-size:10.5px;text-decoration:none;">AI Studio ↗</a>
+          <a href="https://notebooklm.google.com/" target="_blank" rel="noopener" class="btn btn-ghost" style="padding:5px 9px;font-size:10.5px;text-decoration:none;">NotebookLM ↗</a>
+        </div>
+      </div>
+
+      <!-- SUB-APP 6A: WIRELESS DEPLOYMENT SIMULATOR (CISCO 9800 WLC & ARUBA CLEARPASS) -->
+      <div id="aisub-pane-6a" class="aisub-pane" style="display:block;">
+        <div class="grid-2">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <span class="badge">AI STUDIO APP 1 OF 5 • RF &amp; 802.11AX/BE PLANNER</span>
+              <a href="https://aistudio.google.com/apps?source=user&tag=created-by-you" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 10px;font-size:10.5px;text-decoration:none;">Open in Google AI Studio ↗</a>
+            </div>
+            <h3>Wireless Deployment Simulator (Cisco Catalyst 9800 WLC &amp; Aruba ClearPass)</h3>
+            <p>Interactive RF channel reuse, <code>-67 dBm</code> seamless VoIP/roaming cell overlap calculator, and WPA3-Enterprise <code>802.1X</code> / RADSEC configuration generator.</p>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:6px;">
+              <div style="background:#09090B;border:1px solid #3F3F46;border-radius:10px;padding:10px;">
+                <label style="font-size:11px;font-weight:800;color:#D4D4D8;display:block;margin-bottom:4px;">1. Select RF Frequency Band</label>
+                <select id="wsim-band-select" onchange="updateWirelessSim()" class="quick-select" style="width:100%;">
+                  <option value="5ghz">5 GHz (UNII-1/2/3 • 20/40 MHz Enterprise Voice/Data)</option>
+                  <option value="6ghz">6 GHz (Wi-Fi 6E / 7 • 80/160 MHz Green-Field High Density)</option>
+                  <option value="24ghz">2.4 GHz (Channels 1, 6, 11 Only • IoT / Legacy)</option>
+                </select>
+              </div>
+              <div style="background:#09090B;border:1px solid #3F3F46;border-radius:10px;padding:10px;">
+                <label style="font-size:11px;font-weight:800;color:#D4D4D8;display:block;margin-bottom:4px;">2. Select Security &amp; Roaming Profile</label>
+                <select id="wsim-sec-select" onchange="updateWirelessSim()" class="quick-select" style="width:100%;">
+                  <option value="wpa3_8021x">WPA3-Enterprise 192-Bit + 802.1X EAP-TLS + 802.11r FT</option>
+                  <option value="clearpass_dacl">Aruba ClearPass CoA + Dynamic VLAN / dACL Enforcement</option>
+                  <option value="flexconnect">Cisco 9800 FlexConnect Local Switching (WAN Branch)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="background:#09090B;border:1px solid #3F3F46;border-radius:10px;padding:10px;margin-top:6px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <label style="font-size:11px;font-weight:800;color:#D4D4D8;" for="wsim-rssi-slider">3. Target Cell Edge RSSI &amp; AP Transmit Power (<code>-80 dBm</code> to <code>-55 dBm</code>)</label>
+                <span id="wsim-rssi-badge" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:#FAFAFA;">-67 dBm (Optimal 18% Overlap)</span>
+              </div>
+              <input type="range" id="wsim-rssi-slider" min="-80" max="-55" step="1" value="-67" oninput="updateWirelessSim()" style="width:100%;margin-top:6px;accent-color:#FAFAFA;cursor:pointer;" />
+              <div id="wsim-rf-verdict" style="font-size:12px;color:#D4D4D8;margin-top:6px;"></div>
+            </div>
+
+            <div id="wsim-svg-heatmap" style="background:#09090B;border:1px solid #3F3F46;border-radius:10px;padding:10px;margin-top:6px;"></div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span class="badge">GENERATED CISCO 9800 IOS-XE &amp; ARUBA AOS-CX / CLEARPASS STANZA</span>
+              <button class="btn btn-ghost" style="padding:4px 9px;font-size:10.5px;" onclick="navigator.clipboard && navigator.clipboard.writeText(document.getElementById('wsim-cli-out').textContent)">📋 Copy Stanza</button>
+            </div>
+            <h3>Production WLC &amp; RADIUS Policy Output</h3>
+            <pre class="code-block" id="wsim-cli-out" style="max-height:360px;"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-APP 6B: ACL MASTER TRAINER (AI STUDIO) -->
+      <div id="aisub-pane-6b" class="aisub-pane" style="display:none;">
+        <div class="grid-2">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <span class="badge">AI STUDIO APP 2 OF 5 • NETWORK SECURITY ACL DRILL INSTRUCTOR</span>
+              <a href="https://aistudio.google.com/apps?source=user&tag=created-by-you" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 10px;font-size:10.5px;text-decoration:none;">Open in Google AI Studio ↗</a>
+            </div>
+            <h3>ACL Master Trainer — Packet Filter Simulator &amp; Wildcard Calculator</h3>
+            <p>Test any IPv4 packet against our Enterprise Zero-Trust Extended ACL (<code>ACL_USASOC_ENCLAVE_IN</code>) to see exact first-match rule evaluation and wildcard mask bitmath.</p>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;padding:10px;">
+              <div>
+                <label style="font-size:10px;font-weight:800;color:#A1A1AA;">SRC IP</label>
+                <input type="text" id="acl-pkt-src" value="10.10.20.45" class="quick-select" style="width:100%;margin-top:3px;font-family:'JetBrains Mono',monospace;" oninput="evaluateAclPacket()" />
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:800;color:#A1A1AA;">DST IP</label>
+                <input type="text" id="acl-pkt-dst" value="172.16.100.10" class="quick-select" style="width:100%;margin-top:3px;font-family:'JetBrains Mono',monospace;" oninput="evaluateAclPacket()" />
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:800;color:#A1A1AA;">PROTOCOL</label>
+                <select id="acl-pkt-proto" class="quick-select" style="width:100%;margin-top:3px;font-family:'JetBrains Mono',monospace;" onchange="evaluateAclPacket()">
+                  <option value="tcp">tcp</option>
+                  <option value="udp">udp</option>
+                  <option value="icmp">icmp</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:800;color:#A1A1AA;">DST PORT</label>
+                <input type="number" id="acl-pkt-port" value="443" class="quick-select" style="width:100%;margin-top:3px;font-family:'JetBrains Mono',monospace;" oninput="evaluateAclPacket()" />
+              </div>
+            </div>
+
+            <div id="acl-eval-banner" style="padding:10px 12px;border-radius:8px;background:#18181B;border:1px solid #52525B;font-family:'JetBrains Mono',monospace;font-size:12px;color:#FAFAFA;"></div>
+
+            <div id="acl-rules-table" style="display:grid;gap:6px;"></div>
+          </div>
+
+          <div class="card">
+            <span class="badge">WILDCARD MASK CALCULATOR &amp; KINETIC ACL CHALLENGE</span>
+            <h3>Prefix-to-Wildcard Bitwise Converter &amp; Drill</h3>
+            <div style="background:#09090B;border:1px solid #3F3F46;border-radius:10px;padding:12px;">
+              <label style="font-size:11px;font-weight:800;color:#D4D4D8;" for="acl-cidr-slider">Select Subnet Prefix Length (<code>/8</code> to <code>/32</code>):</label>
+              <input type="range" id="acl-cidr-slider" min="8" max="32" value="28" oninput="updateAclWildcardCalc(this.value)" style="width:100%;margin-top:6px;accent-color:#FAFAFA;cursor:pointer;" />
+              <div id="acl-wildcard-readout" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#E4E4E7;margin-top:8px;line-height:1.6;"></div>
+            </div>
+
+            <div style="background:#09090B;border:1px solid #3F3F46;border-radius:10px;padding:12px;margin-top:6px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <strong style="font-size:12px;color:#FAFAFA;">⚡ Quick Scenario Drill: Select the ACE that blocks RFC 1918 spoofing on WAN ingress</strong>
+              </div>
+              <pre class="code-block" style="max-height:180px;">ip access-list extended ACL_WAN_ANTI_SPOOF_IN
+ 10 deny   ip 10.0.0.0 0.255.255.255 any log
+ 20 deny   ip 172.16.0.0 0.15.255.255 any log
+ 30 deny   ip 192.168.0.0 0.0.255.255 any log
+ 40 permit tcp any host 203.0.113.10 eq 443
+ 50 deny   ip any any log</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-APP 6C: PROJECT_ROUTE (BGP 13-STEP & EIGRP DUAL SIMULATOR) -->
+      <div id="aisub-pane-6c" class="aisub-pane" style="display:none;">
+        <div class="grid-2">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <span class="badge">AI STUDIO APP 3 OF 5 • CCNA / CCNP / CCIE ROUTING ENGINE</span>
+              <a href="https://aistudio.google.com/apps?source=user&tag=created-by-you" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 10px;font-size:10.5px;text-decoration:none;">Open in Google AI Studio ↗</a>
+            </div>
+            <h3>PROJECT_ROUTE — Interactive BGP 13-Step Best-Path &amp; EIGRP DUAL Simulator</h3>
+            <p>Mnemonic from NotebookLM: <em>"We Love Oranges As Oranges Mean Pure Refreshment..."</em> Adjust path attributes across 3 candidate BGP paths to see which path wins the RIB/FIB election and why.</p>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px;" id="proute-bgp-candidates"></div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+              <button class="btn btn-gold" style="font-size:11px;padding:5px 10px;" onclick="applyProjectRoutePreset('default')">Preset 1: Local_Pref Tie-Break</button>
+              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;" onclick="applyProjectRoutePreset('aspath')">Preset 2: AS_PATH Length Wins</button>
+              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;" onclick="applyProjectRoutePreset('med_ebgp')">Preset 3: eBGP Over iBGP</button>
+              <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px;" onclick="applyProjectRoutePreset('weight')">Preset 4: Cisco Weight Override</button>
+            </div>
+
+            <div id="proute-bgp-winner-box" style="background:#09090B;border:1px solid #52525B;border-radius:10px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#FAFAFA;line-height:1.55;"></div>
+          </div>
+
+          <div class="card">
+            <span class="badge">EIGRP DUAL FEASIBILITY CONDITION (RD &lt; FD) &amp; IGP STATE CHECKER</span>
+            <h3>EIGRP Feasible Successor &amp; Loop-Free Sub-Millisecond Backup</h3>
+            <p>Test the EIGRP Diffusing Update Algorithm (DUAL) Feasibility Condition: a backup neighbor's <strong>Reported Distance (RD)</strong> must be strictly less than the current Successor's <strong>Feasible Distance (FD)</strong> (<code>RD &lt; FD</code>).</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#09090B;border:1px solid #3F3F46;border-radius:10px;padding:12px;">
+              <div>
+                <label style="font-size:11px;font-weight:800;color:#D4D4D8;">Successor Feasible Distance (FD)</label>
+                <input type="number" id="dual-fd-input" value="3072" step="256" class="quick-select" style="width:100%;margin-top:4px;font-family:'JetBrains Mono',monospace;" oninput="evaluateEigrpDual()" />
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:800;color:#D4D4D8;">Candidate Neighbor Reported Distance (RD)</label>
+                <input type="number" id="dual-rd-input" value="2816" step="256" class="quick-select" style="width:100%;margin-top:4px;font-family:'JetBrains Mono',monospace;" oninput="evaluateEigrpDual()" />
+              </div>
+            </div>
+            <div id="dual-verdict-box" style="background:#09090B;border:1px solid #3F3F46;border-radius:10px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#E4E4E7;line-height:1.55;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-APP 6D: SAFAR-E ZABAN: VELOCITY (DARI LANGUAGE MASTERY ENGINE) -->
+      <div id="aisub-pane-6d" class="aisub-pane" style="display:none;">
+        <div class="grid-2">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <span class="badge">AI STUDIO APP 4 OF 5 • DARI (دری) SOV GRAMMAR &amp; PARTICLE ENGINE</span>
+              <a href="https://aistudio.google.com/apps?source=user&tag=created-by-you" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 10px;font-size:10.5px;text-decoration:none;">Open in Google AI Studio ↗</a>
+            </div>
+            <h3>Safar-e Zaban: Velocity — Dari Language Mastery &amp; SOV Particle Visualizer</h3>
+            <p>High-fidelity Dari (<code>دری</code>) syntactic engine visualizing Subject–Object–Verb (<code>SOV</code>) word order, direct-object marker <code>را (rā)</code>, prepositional particles (<code>از</code>, <code>به</code>, <code>در</code>), and continuous aspect prefix <code>می‌ (mī-)</code>.</p>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px;">
+              <select id="dari-sentence-select" class="quick-select" onchange="renderDariVelocityCard(this.value)" style="flex:1;">
+                <option value="0">Lesson 1: من شبکه را طراحی می‌کنم (I design the network — SOV + را)</option>
+                <option value="1">Lesson 2: ما به مرکز داده می‌رویم (We go to the data center — Preposition به)</option>
+                <option value="2">Lesson 3: امنیت از دانش آغاز می‌شود (Security begins with knowledge — Particle از)</option>
+                <option value="3">Lesson 4: شما در کابل و راولپندی کار می‌کنید (Formal Colloquial &amp; Diplomatic Dari)</option>
+              </select>
+              <span id="dari-streak-pill" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;background:#18181B;color:#FAFAFA;padding:5px 10px;border-radius:8px;border:1px solid #3F3F46;">🔥 Streak: 1</span>
+            </div>
+
+            <div id="dari-sov-stage" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:16px;margin-top:8px;"></div>
+          </div>
+
+          <div class="card">
+            <span class="badge">INTERACTIVE DARI PARTICLE &amp; VOCABULARY VELOCITY DRILL</span>
+            <h3>Test Your Dari Particle &amp; SOV Recognition</h3>
+            <div id="dari-quiz-box" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:16px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-APP 6E: ASMA UL-HUSNA (99 NAMES OF ALLAH & AL-GHAZALI EXPLORER) -->
+      <div id="aisub-pane-6e" class="aisub-pane" style="display:none;">
+        <div class="grid-2">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <span class="badge">AI STUDIO APP 5 OF 5 • HIGH-ARABIC MORPHOLOGY &amp; AL-GHAZALI THEOLOGY</span>
+              <a href="https://aistudio.google.com/apps?source=user&tag=created-by-you" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 10px;font-size:10.5px;text-decoration:none;">Open in Google AI Studio ↗</a>
+            </div>
+            <h3>Asma ul-Husna (أسماء الله الحسنى) — Trilateral Root &amp; Al-Ghazali Explorer</h3>
+            <p>Explore the 99 Names through Classical Arabic trilateral root (<code>ج-ذ-ر</code>) morphology and 11th-century Imam Abu Hamid al-Ghazali's <em>Al-Maqsad al-Asna</em> (<em>The Ninety-Nine Beautiful Names of God</em>) counsel on character cultivation (<em>takhalluq</em>).</p>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+              <select id="asma-name-select" class="quick-select" onchange="renderAsmaUlHusnaCard(this.value)" style="flex:1;"></select>
+              <input type="text" id="asma-search-input" placeholder="🔍 Search Name, Root, or Attribute..." class="quick-select" oninput="filterAsmaNames(this.value)" style="min-width:210px;" />
+            </div>
+
+            <div id="asma-detail-card" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:18px;margin-top:8px;"></div>
+          </div>
+
+          <div class="card">
+            <span class="badge">QUICK MATRIX • SELECT ANY NAME PILL</span>
+            <h3>Classical Root &amp; Attribute Grid</h3>
+            <div id="asma-pill-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px;max-height:380px;overflow-y:auto;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-APP 6F: GOOGLE NOTEBOOKLM & 100-PAGE CCIE MASTER GUIDE VAULT -->
+      <div id="aisub-pane-6f" class="aisub-pane" style="display:none;">
+        <div class="grid-2">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <span class="badge">GOOGLE NOTEBOOKLM CORPUS • 11 ARCHITECT MODULES</span>
+              <a href="https://notebooklm.google.com/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 10px;font-size:10.5px;text-decoration:none;">Launch Google NotebookLM ↗</a>
+            </div>
+            <h3>Extracted NotebookLM (<code>Eve-Learn</code>) &amp; CCIE Architect Study Vault</h3>
+            <p>Select any of your 11 extracted Google NotebookLM / <code>Eve-Learn</code> chapters below to inspect the <strong>Instructor's Corner Analogy</strong>, <strong>RFC Design Perspective</strong>, <strong>CLI/Terraform/Python Stanza</strong>, and <strong>Architect Interview Defense Q&amp;A</strong>.</p>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select id="nblm-doc-select" class="quick-select" onchange="renderNotebookLmVaultDoc(this.value)" style="flex:1;"></select>
+              <input type="text" id="nblm-search-input" placeholder="🔍 Filter NotebookLM vault..." class="quick-select" oninput="filterNotebookLmVault(this.value)" />
+            </div>
+
+            <div id="nblm-doc-viewer" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:16px;margin-top:8px;"></div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+              <span class="badge">100-PAGE S-CRY-ED MASTER GUIDE APPENDICES (A–G)</span>
+              <select id="ccie-appendix-select" class="quick-select" onchange="renderCcieAppendixTable(this.value)">
+                <option value="app_c">Appendix C: EVPN Route Types (1–5) Reference</option>
+                <option value="app_d">Appendix D: EVPN-VXLAN Troubleshooting Matrix</option>
+                <option value="app_f">Appendix F: Enterprise QoS DSCP &amp; Queueing Table</option>
+                <option value="app_g">Appendix G: Cisco SD-WAN Control &amp; Data Ports</option>
+                <option value="app_a">Appendix A: IPv4 Subnetting Cheat Sheet (/16–/32)</option>
+              </select>
+            </div>
+            <h3>S-CRY-ED Networking Certification Master Guide Quick-Reference</h3>
+            <div id="ccie-appendix-viewer" style="background:#09090B;border:1px solid #3F3F46;border-radius:12px;padding:14px;overflow-x:auto;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -2778,14 +3162,17 @@
         ? `${lab.optRam} (Opt)`
         : `${lab.heavyRam} (Heavy)`;
 
-      // Populate Stage 1: Numbered Objectives + Hook Question + 50/50 Visual & Narrative
+      // Populate Stage 1: Numbered Objectives + Hook Question + 50/50 Visual & Narrative + Flashcards + NotebookLM Q&A
       renderStage1Content(lab);
+      if (typeof renderScormFlashcards === 'function') renderScormFlashcards(lab);
+      if (typeof renderScormNotebookLmQA === 'function') renderScormNotebookLmQA(lab);
 
-      // Populate Stage 2: Dynamic SVG Topology + Wireshark 4-Layer Dissector
+      // Populate Stage 2: Dynamic SVG Topology + 5-Step Process Stepper + Wireshark 4-Layer Dissector
       renderDynamicTopologySVG(lab);
+      if (typeof renderScormProcessCarousel === 'function') renderScormProcessCarousel(lab, 0);
       renderWiresharkDissector(lab, 0);
 
-      // Populate Stage 3: Dual-Vendor CLI Tabs + Console + Sorting Activity
+      // Populate Stage 3: Dual-Vendor CLI Tabs + Console + Kinetic Ghost-Text Drill + Sorting Activity
       renderNodePills(lab);
       const chipBox = document.getElementById('quick-cmd-chips');
       chipBox.innerHTML = lab.quickCmds.map(cmd => `
@@ -2793,7 +3180,10 @@
       `).join('');
       switchTutorialView(currentTutView);
       resetTerminalForLab(lab);
+      if (typeof initGhostCliForLab === 'function') initGhostCliForLab(lab);
       renderScormSortingActivity(lab);
+      const rubEl = document.getElementById('eve-rubric-status-strip');
+      if (rubEl) rubEl.style.display = 'none';
 
       // Populate Stage 4: Gated Scenario Knowledge Check
       renderScormKnowledgeCheck(lab);
@@ -2805,26 +3195,26 @@
         const cmd1 = (lab.quickCmds && lab.quickCmds[1]) ? lab.quickCmds[1] : 'show bgp summary';
         topoActionEl.innerHTML = `
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-            <div style="font-size:12px;font-weight:800;color:#fca5a5;text-transform:uppercase;letter-spacing:0.06em;">
+            <div style="font-size:12px;font-weight:800;color:#FAFAFA;text-transform:uppercase;letter-spacing:0.06em;">
               📋 ${lab.code} Action Items &amp; Direct Vendor Links
             </div>
-            <span style="font-size:10px;padding:3px 8px;border-radius:999px;background:rgba(16,185,129,0.16);color:#6ee7b7;font-weight:700;">4 Checkable Lab Actions + Inline Links</span>
+            <span style="font-size:10px;padding:3px 8px;border-radius:999px;background:#27272A;color:#E4E4E7;font-weight:700;border:1px solid #52525B;">4 Checkable Lab Actions + Inline Links</span>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.08);border-radius:8px;">
-              <label style="display:flex;gap:7px;font-size:11.5px;color:#e2e8f0;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#10b981;" /><span>Deploy <strong>${lab.code}</strong> (${lab.optRam} RAM)</span></label>
-              <button class="btn btn-emerald" style="font-size:10px;padding:3px 8px;" onclick="exportCurrentTopologyArtifact('unl')">⬇ .UNL XML</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#09090B;border:1px solid #3F3F46;border-radius:8px;">
+              <label style="display:flex;gap:7px;font-size:11.5px;color:#E4E4E7;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#FAFAFA;" /><span>Deploy <strong>${lab.code}</strong> (${lab.optRam} RAM)</span></label>
+              <button class="btn btn-gold" style="font-size:10px;padding:3px 8px;" onclick="downloadCurrentUnlTopology()">⬇ .UNL XML</button>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.08);border-radius:8px;">
-              <label style="display:flex;gap:7px;font-size:11.5px;color:#e2e8f0;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#10b981;" /><span>Apply IOS-XE &amp; Junos (${lab.nodes.length} nodes)</span></label>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#09090B;border:1px solid #3F3F46;border-radius:8px;">
+              <label style="display:flex;gap:7px;font-size:11.5px;color:#E4E4E7;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#FAFAFA;" /><span>Apply IOS-XE &amp; Junos (${lab.nodes.length} nodes)</span></label>
               <a href="https://www.cisco.com/c/en/us/support/ios-nx-os-software/index.html" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:10px;padding:3px 8px;text-decoration:none;">Cisco Docs ↗</a>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.08);border-radius:8px;">
-              <label style="display:flex;gap:7px;font-size:11.5px;color:#e2e8f0;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#10b981;" /><span>Run CLI: <code>${cmd0}</code></span></label>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#09090B;border:1px solid #3F3F46;border-radius:8px;">
+              <label style="display:flex;gap:7px;font-size:11.5px;color:#E4E4E7;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#FAFAFA;" /><span>Run CLI: <code>${cmd0}</code></span></label>
               <a href="https://www.juniper.net/documentation/product/us/en/junos-os/" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:10px;padding:3px 8px;text-decoration:none;">Junos Docs ↗</a>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.08);border-radius:8px;">
-              <label style="display:flex;gap:7px;font-size:11.5px;color:#e2e8f0;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#10b981;" /><span>Verify <code>${lab.wsFilter}</code></span></label>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:#09090B;border:1px solid #3F3F46;border-radius:8px;">
+              <label style="display:flex;gap:7px;font-size:11.5px;color:#E4E4E7;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#FAFAFA;" /><span>Verify <code>${lab.wsFilter}</code></span></label>
               <a href="https://www.eve-ng.net/index.php/documentation/" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:10px;padding:3px 8px;text-decoration:none;">EVE-NG Docs ↗</a>
             </div>
           </div>
@@ -2833,6 +3223,7 @@
 
       // Populate 5-Spoke Radial Labeled Graphic Hotspot Diagram
       renderRadialLabeledGraphic();
+      if (typeof syncScormCmiState === 'function') syncScormCmiState();
 
       // Scroll stage top
       const stageEl = document.getElementById('scorm-main-stage');
@@ -3289,6 +3680,7 @@
       }
       filterSyllabusList();
       updateScormOverallProgress();
+      if (typeof syncScormCmiState === 'function') syncScormCmiState();
       awardLabXP(50);
 
       if (stageEl) {
@@ -3299,6 +3691,7 @@
     }
 
     function unlockAllScormStages() {
+      currentUnlockedStage = 4;
       [2, 3, 4].forEach(s => {
         const el = document.getElementById('scorm-stage-' + s);
         if (el) el.style.display = 'block';
@@ -3312,6 +3705,7 @@
       }
       filterSyllabusList();
       updateScormOverallProgress();
+      if (typeof syncScormCmiState === 'function') syncScormCmiState();
     }
 
     function updateScormMtuPlayground(val) {
@@ -3684,10 +4078,1059 @@
       lessonProgressMap[currentLabIdx] = 100;
       filterSyllabusList();
       updateScormOverallProgress();
+      const lab = EVE_LABS[currentLabIdx];
       const out = document.getElementById('eveng-term-out');
-      out.textContent += `\n\n======================================================\n[NETMIKO + NAPALM MULTI-VENDOR AUTO-GRADER]\n• Topology: ${EVE_LABS[currentLabIdx].shortTitle}\n• All Nodes & Adjacencies: 100% VERIFIED\n• Receipt: SHA256-EVENG-${2000 + currentLabIdx * 137} (+350 XP)\n======================================================\n`;
+      const rubEl = document.getElementById('eve-rubric-status-strip');
+      const receipt = `SHA256-EVENG-${2000 + currentLabIdx * 137}`;
+      if (rubEl) {
+        rubEl.style.display = 'block';
+        rubEl.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+            <strong style="color:#FAFAFA;">✅ NETMIKO + NAPALM 3-POINT RUBRIC VERIFIED (${lab.code}) — 100/100 PTS</strong>
+            <span style="background:#27272A;color:#FAFAFA;padding:2px 8px;border-radius:4px;border:1px solid #52525B;">Receipt: ${receipt}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:6px;margin-top:6px;color:#D4D4D8;">
+            <div>✓ [35 pts] Control-Plane Adjacency: <strong>ESTABLISHED / FULL</strong></div>
+            <div>✓ [35 pts] Data-Plane Encapsulation (${lab.wsFilter.split('||')[0].trim()}): <strong>VERIFIED</strong></div>
+            <div>✓ [30 pts] Multi-Vendor IOS-XE + Junos Parity: <strong>0 ERRORS</strong></div>
+          </div>
+        `;
+      }
+      out.textContent += `\n\n======================================================\n[NETMIKO + NAPALM MULTI-VENDOR AUTO-GRADER (/grade)]\n• Topology: ${lab.shortTitle}\n• Check 1 (35 pts): Control-Plane Adjacency across ${lab.nodes.length} nodes -> PASS\n• Check 2 (35 pts): Wire Encapsulation (${lab.pdu[0].name}) -> PASS\n• Check 3 (30 pts): Sub-50ms BFD / Multi-Vendor Parity -> PASS\n• SCORM 2004 CMI Score: cmi.score.scaled = 1.00 (completed / passed)\n• Receipt: ${receipt} (+350 XP)\n======================================================\n`;
       out.scrollTop = out.scrollHeight;
       awardLabXP(350);
+      syncScormCmiState();
+    }
+
+    function injectEveFault() {
+      const faultSel = document.getElementById('eve-fault-type-select');
+      const faultType = faultSel ? faultSel.value : 'bgp_clear';
+      const lab = EVE_LABS[currentLabIdx];
+      const nd = lab.nodes[currentConsoleNodeIdx] || lab.nodes[0];
+      const out = document.getElementById('eveng-term-out');
+      const rubEl = document.getElementById('eve-rubric-status-strip');
+
+      let msg = '';
+      if (faultType === 'bgp_clear') {
+        msg = `[POST /inject-fault {"fault_type":"bgp_clear","target":"${nd.id}"}]\n%BGP-5-ADJCHANGE: neighbor ${nd.ip} Reset (User reset via Chaos Engine)\n[DIAGNOSTIC CHALLENGE]: Run "${lab.quickCmds[0] || 'show ip bgp summary'}" or click 🛠️ Remediate Fault to restore session.`;
+      } else if (faultType === 'interface_down') {
+        fiberCutSimulated = true;
+        renderDynamicTopologySVG(lab);
+        msg = `[POST /inject-fault {"fault_type":"interface_down","target":"${nd.id}"}]\n%LINK-5-CHANGED: Interface GigabitEthernet1 / ge-0/0/0, changed state to administratively down\n%BFD-6-SESSION_STATE_DOWN: BFD session torn down in 42ms -> LFA backup path active.`;
+      } else {
+        msg = `[POST /inject-fault {"fault_type":"mtu_mismatch","target":"${nd.id}"}]\n%OSPF-4-EXTUMISMATCH: Neighbor ${nd.ip} DBD MTU 1400 != Local 1500 (Stuck in EXSTART/EXCHANGE!)\n[FIX]: Set "ip mtu 1500" or "ip ospf mtu-ignore" on the transit link.`;
+      }
+
+      if (rubEl) {
+        rubEl.style.display = 'block';
+        rubEl.innerHTML = `<strong style="color:#FAFAFA;">🔥 CHAOS FAULT ACTIVE (<code>${faultType}</code> on <code>${nd.id}</code>):</strong> Inspect terminal output below and click <strong>🛠️ Remediate Fault</strong> or run diagnostic commands.`;
+      }
+      out.textContent += `\n\n${msg}\n`;
+      out.scrollTop = out.scrollHeight;
+    }
+
+    function remediateEveFault() {
+      const lab = EVE_LABS[currentLabIdx];
+      const nd = lab.nodes[currentConsoleNodeIdx] || lab.nodes[0];
+      fiberCutSimulated = false;
+      renderDynamicTopologySVG(lab);
+      const out = document.getElementById('eveng-term-out');
+      const rubEl = document.getElementById('eve-rubric-status-strip');
+      out.textContent += `\n\n[NETMIKO REMEDIATION → ${nd.id}]\n• Applied "no shutdown", "ip mtu 1500", and soft-reconfiguration inbound.\n• %BGP-5-ADJCHANGE / %OSPF-5-ADJCHG: Neighbor ${nd.ip} Up (FULL / ESTABLISHED).\n`;
+      out.scrollTop = out.scrollHeight;
+      if (rubEl) {
+        rubEl.style.display = 'block';
+        rubEl.innerHTML = `<strong style="color:#FAFAFA;">🛠️ FAULT REMEDIATED ON <code>${nd.id}</code>:</strong> Control &amp; data plane restored. Click <strong>✅ Auto-Grade Lab Rubric</strong> to lock in 100% score.`;
+      }
+      awardLabXP(100);
+    }
+
+    /* =====================================================================
+       RUSTICI ENGINE / SCORM 2004 4TH EDITION CMI RUNTIME API & MANIFEST
+       Implements window.API_1484_11 (SCORM 2004) & window.API (SCORM 1.2)
+       ===================================================================== */
+    const scormCmiStore = {
+      'cmi.version': '2004 4th Edition (Rustici Engine Compatible)',
+      'cmi.learner_id': 'malik.khabir@miltongroupsecurity.org',
+      'cmi.learner_name': 'Khabir, Malik A.',
+      'cmi.completion_status': 'incomplete',
+      'cmi.success_status': 'unknown',
+      'cmi.score.min': '0',
+      'cmi.score.max': '100',
+      'cmi.score.raw': '25',
+      'cmi.score.scaled': '0.25',
+      'cmi.location': 'TOPO-01::STAGE-1',
+      'cmi.exit': 'suspend',
+      'cmi.suspend_data': JSON.stringify({ labIdx: 0, progress: { 0: 25 } })
+    };
+
+    window.API_1484_11 = {
+      Initialize: () => 'true',
+      Terminate: () => 'true',
+      GetValue: (k) => scormCmiStore[k] ?? '',
+      SetValue: (k, v) => { scormCmiStore[k] = String(v); return 'true'; },
+      Commit: () => {
+        localStorage.setItem('mgc_scorm2004_cmi', JSON.stringify(scormCmiStore));
+        return 'true';
+      },
+      GetLastError: () => '0',
+      GetErrorString: () => 'No Error',
+      GetDiagnostic: () => 'OK'
+    };
+
+    window.API = {
+      LMSInitialize: () => 'true',
+      LMSFinish: () => 'true',
+      LMSGetValue: (k) => scormCmiStore[k] ?? '',
+      LMSSetValue: (k, v) => { scormCmiStore[k] = String(v); return 'true'; },
+      LMSCommit: () => window.API_1484_11.Commit(),
+      LMSGetLastError: () => '0',
+      LMSGetErrorString: () => 'No Error',
+      LMSGetDiagnostic: () => 'OK'
+    };
+
+    function syncScormCmiState() {
+      let totalPct = 0;
+      for (let i = 0; i < EVE_LABS.length; i++) {
+        totalPct += (lessonProgressMap[i] || 0);
+      }
+      const curLabPct = lessonProgressMap[currentLabIdx] || 25;
+      const overallScaled = (totalPct / (EVE_LABS.length * 100)).toFixed(2);
+      const lab = EVE_LABS[currentLabIdx] || EVE_LABS[0];
+
+      window.API_1484_11.SetValue('cmi.location', `${lab.code.split('•')[0].trim()}::STAGE-${currentUnlockedStage}`);
+      window.API_1484_11.SetValue('cmi.score.raw', String(curLabPct));
+      window.API_1484_11.SetValue('cmi.score.scaled', (curLabPct / 100).toFixed(2));
+      window.API_1484_11.SetValue('cmi.completion_status', curLabPct >= 100 ? 'completed' : 'incomplete');
+      window.API_1484_11.SetValue('cmi.success_status', curLabPct >= 100 ? 'passed' : 'in-progress');
+      window.API_1484_11.SetValue('cmi.suspend_data', JSON.stringify({
+        activeTopology: lab.code,
+        stage: currentUnlockedStage,
+        overallCourseScaled: overallScaled,
+        completedTopologies: Object.values(lessonProgressMap).filter(v => v >= 100).length
+      }));
+      window.API_1484_11.Commit('');
+
+      const pill = document.getElementById('scorm-cmi-live-pill');
+      if (pill) {
+        pill.textContent = `● CMI: ${scormCmiStore['cmi.completion_status']} • score: ${scormCmiStore['cmi.score.scaled']} • ${scormCmiStore['cmi.location']}`;
+      }
+      const readout = document.getElementById('scorm-cmi-json-readout');
+      if (readout) {
+        readout.textContent = JSON.stringify(scormCmiStore, null, 2);
+      }
+    }
+
+    function toggleScormCmiInspector() {
+      const dr = document.getElementById('scorm-cmi-inspector-drawer');
+      if (!dr) return;
+      syncScormCmiState();
+      dr.style.display = (dr.style.display === 'none' || !dr.style.display) ? 'block' : 'none';
+    }
+
+    function commitScormCmiState() {
+      syncScormCmiState();
+      const pill = document.getElementById('scorm-cmi-live-pill');
+      if (pill) pill.textContent = `✓ COMMITTED CMI → ${scormCmiStore['cmi.location']} (${scormCmiStore['cmi.score.scaled']})`;
+    }
+
+    function exportScorm2004Manifest() {
+      const itemsXml = EVE_LABS.map((l, i) => `
+      <item identifier="ITEM_TOPO_${i + 1}" identifierref="RES_SCO_MAIN">
+        <title>${l.title.replace(/&/g, '&amp;')}</title>
+        <imsss:sequencing>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_TOPO_${i + 1}" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.80</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>`).join('');
+
+      const manifestXml = `<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="MGC_EVENG_CCNP_JNCIP_SCORM2004" version="1.3"
+  xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+  xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
+  xmlns:adlseq="http://www.adlnet.org/xsd/adlseq_v1p3"
+  xmlns:adlnav="http://www.adlnet.org/xsd/adlnav_v1p3"
+  xmlns:imsss="http://www.imsglobal.org/xsd/imsss">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>2004 4th Edition</schemaversion>
+  </metadata>
+  <organizations default="ORG_MGC_ACADEMY">
+    <organization identifier="ORG_MGC_ACADEMY" adlseq:objectivesGlobalToSystem="false">
+      <title>Milton Group Concepts LLC — 15 Multi-Vendor EVE-NG Topologies (SCORM 2004)</title>${itemsXml}
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES_SCO_MAIN" type="webcontent" adlcp:scormType="sco" href="elearning-upskilling-hub.html">
+      <file href="elearning-upskilling-hub.html"/>
+    </resource>
+  </resources>
+</manifest>`;
+      const blob = new Blob([manifestXml], { type: 'application/xml' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'imsmanifest_MGC_EVENG_SCORM2004.xml';
+      a.click();
+    }
+
+    /* =====================================================================
+       STAGE 1 UPGRADE: RISE 360 3D FLIP FLASHCARDS & NOTEBOOKLM DEFENSE Q&A
+       ===================================================================== */
+    function renderScormFlashcards(lab) {
+      const wrap = document.getElementById('scorm-flashcard-deck-wrap');
+      if (!wrap) return;
+      const cards = [
+        {
+          tag: 'CARD 1 OF 3 • PROTOCOL MNEMONIC & FSM',
+          front: `${lab.code}: What is the core control-plane state machine & primary header filter?`,
+          back: `Wireshark Filter: ${lab.wsFilter} • Primary Header: ${lab.pdu[0].name} (${lab.pdu[0].detail}). Sub-50ms BFD replaces legacy 30-40s dead timers.`
+        },
+        {
+          tag: 'CARD 2 OF 3 • CISCO IOS-XE / NX-OS VS. JUNOS',
+          front: `How do Cisco IOS-XE and Juniper Junos configure ${lab.shortTitle}?`,
+          back: `Cisco: "${(lab.ios.split('\n')[0] || '').trim()} / ${(lab.ios.split('\n')[1] || '').trim()}" vs. Junos: "${(lab.junos.split('\n')[0] || '').trim()}"`
+        },
+        {
+          tag: 'CARD 3 OF 3 • NOTEBOOKLM INSTRUCTOR ANALOGY',
+          front: `NotebookLM Architect Analogy & EVE-NG RAM Optimization for ${lab.code}`,
+          back: `Runs full ${lab.nodes.length}-node multi-vendor topology in ${lab.optRam} RAM (vs. ${lab.heavyRam} Heavy QEMU) with deterministic ECMP/LFA failover.`
+        }
+      ];
+
+      wrap.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;">
+          ${cards.map((c, idx) => `
+            <div onclick="flipScormCard(${idx})" id="scorm-fcard-${idx}" data-flipped="0"
+                 style="cursor:pointer;background:#09090B;color:#FAFAFA;border:1px solid #3F3F46;border-radius:10px;padding:14px;min-height:135px;display:flex;flex-direction:column;justify-content:space-between;transition:transform 0.2s ease;">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#A1A1AA;">
+                <span>${c.tag}</span>
+                <span id="scorm-fcard-side-${idx}" style="background:#27272A;color:#FAFAFA;padding:2px 6px;border-radius:4px;">FRONT ↻</span>
+              </div>
+              <div id="scorm-fcard-front-${idx}" style="font-size:13px;font-weight:800;color:#FAFAFA;margin:8px 0;line-height:1.45;">
+                ${c.front}
+              </div>
+              <div id="scorm-fcard-back-${idx}" style="display:none;font-size:12px;color:#E4E4E7;margin:8px 0;line-height:1.5;font-family:'JetBrains Mono',monospace;">
+                ${c.back}
+              </div>
+              <div style="font-size:10px;color:#A1A1AA;">Click card to flip Front ↔ Back</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function flipScormCard(idx) {
+      const card = document.getElementById('scorm-fcard-' + idx);
+      const front = document.getElementById('scorm-fcard-front-' + idx);
+      const back = document.getElementById('scorm-fcard-back-' + idx);
+      const badge = document.getElementById('scorm-fcard-side-' + idx);
+      if (!card || !front || !back) return;
+      const isFlipped = card.getAttribute('data-flipped') === '1';
+      card.setAttribute('data-flipped', isFlipped ? '0' : '1');
+      front.style.display = isFlipped ? 'block' : 'none';
+      back.style.display = isFlipped ? 'none' : 'block';
+      if (badge) badge.textContent = isFlipped ? 'FRONT ↻' : 'BACK ✓';
+      awardLabXP(15);
+    }
+
+    function renderScormNotebookLmQA(lab) {
+      const wrap = document.getElementById('scorm-notebooklm-qa-wrap');
+      if (!wrap) return;
+      wrap.innerHTML = `
+        <div style="background:#09090B;color:#FAFAFA;border:1px solid #3F3F46;border-radius:10px;padding:14px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#A1A1AA;margin-bottom:6px;">
+            🎙️ GOOGLE NOTEBOOKLM ARCHITECT DEFENSE • ${lab.code}
+          </div>
+          <div style="font-size:13.5px;font-weight:800;color:#FAFAFA;margin-bottom:6px;">
+            Q: "In a Principal Network Architect interview, how do you defend the failure-domain and MTU design of ${lab.shortTitle}?"
+          </div>
+          <div style="font-size:12.5px;color:#E4E4E7;line-height:1.6;">
+            <strong>Model Defense Answer:</strong> Across ${lab.nodes.map(n => n.id).join(', ')}, we isolate control-plane signaling (<code>${lab.pdu[0].name}</code>) from data-plane transport (<code>${lab.pdu[1].name}</code>), bind hardware-assisted <strong>BFD (3×50ms)</strong> so link loss triggers LFA/ECMP switchover in under 50ms, and validate encapsulation overhead using <code>${lab.wsFilter}</code> so zero DF-bit packets blackhole in transit.
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn" style="background:#27272A;color:#FAFAFA;padding:4px 10px;font-size:10.5px;" onclick="switchPortalTab('tab-aistudio-notebooklm');switchAiStudioSubApp('6f');">
+              📚 Open Full NotebookLM &amp; 100-Page CCIE Vault (Tab 6F) →
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    /* =====================================================================
+       STAGE 2 UPGRADE: RISE 360 5-STEP PROTOCOL PROCESS STEPPER CAROUSEL
+       ===================================================================== */
+    let currentProcessStepIdx = 0;
+
+    function getProcessStepsForLab(lab) {
+      return [
+        {
+          step: 1,
+          title: 'Physical / L2 Link & MTU Framing',
+          desc: `Nodes (${lab.nodes.map(n => n.id).join(' ↔ ')}) bring up L2 framing (${lab.pdu[0].name}: ${lab.pdu[0].detail}) and verify interface MTU consistency.`
+        },
+        {
+          step: 2,
+          title: 'Outer L3 / Tunnel / Underlay Transport',
+          desc: `Control and transit packets establish outer reachability (${lab.pdu[1].name}: ${lab.pdu[1].detail}).`
+        },
+        {
+          step: 3,
+          title: 'Protocol Control-Plane Handshake',
+          desc: `Neighbors exchange protocol headers (${lab.pdu[2].name}: ${lab.pdu[2].detail}) and authenticate peers.`
+        },
+        {
+          step: 4,
+          title: 'RIB/FIB Route Installation & Payload Forwarding',
+          desc: `Routes and labels install into RIB/FIB (${lab.pdu[3].name}: ${lab.pdu[3].detail}). Verify with "${lab.quickCmds[0] || 'show ip route'}".`
+        },
+        {
+          step: 5,
+          title: 'Sub-50ms BFD Detection & LFA Fast Reroute',
+          desc: `Hardware BFD heartbeats monitor the active path; if severed, traffic shifts to the backup path in <50ms without waiting for legacy hold timers.`
+        }
+      ];
+    }
+
+    function renderScormProcessCarousel(lab, stepIdx) {
+      const steps = getProcessStepsForLab(lab || EVE_LABS[currentLabIdx]);
+      currentProcessStepIdx = ((stepIdx % steps.length) + steps.length) % steps.length;
+      const active = steps[currentProcessStepIdx];
+
+      const badge = document.getElementById('scorm-proc-step-badge');
+      if (badge) badge.textContent = `Step ${active.step} of ${steps.length}`;
+
+      const pills = document.getElementById('scorm-proc-step-pills');
+      if (pills) {
+        pills.innerHTML = steps.map((s, idx) => `
+          <button class="btn" onclick="renderScormProcessCarousel(EVE_LABS[currentLabIdx], ${idx})"
+                  style="padding:3px 9px;font-size:10.5px;background:${idx === currentProcessStepIdx ? '#09090B' : '#FFFFFF'};color:${idx === currentProcessStepIdx ? '#FFFFFF' : '#27272A'};border:1px solid #A1A1AA;">
+            ${s.step}. ${s.title.split('&')[0].trim()}
+          </button>
+        `).join('');
+      }
+
+      const body = document.getElementById('scorm-proc-step-body');
+      if (body) {
+        body.innerHTML = `<strong style="color:#09090B;">Step ${active.step} — ${active.title}:</strong> ${active.desc}`;
+      }
+    }
+
+    function stepScormProcessCarousel(delta) {
+      renderScormProcessCarousel(EVE_LABS[currentLabIdx], currentProcessStepIdx + delta);
+    }
+
+    /* =====================================================================
+       STAGE 3 UPGRADE: MAVIS BEACON KINETIC GHOST-TEXT CLI DRILL
+       Modeled on S-CRY-ED ghost_terminal.dart & ACL Master Trainer
+       ===================================================================== */
+    let ghostCliTarget = '';
+    let ghostCliStartTime = null;
+    let ghostCliErrors = 0;
+
+    function initGhostCliForLab(lab) {
+      const sel = document.getElementById('ghost-cli-preset-select');
+      if (!sel) return;
+      const iosFirst = (lab.ios.split('\n').find(l => l.trim() && !l.trim().startsWith('!')) || 'router ospf 1').trim();
+      const junosFirst = (lab.junos.split('\n').find(l => l.trim() && !l.trim().startsWith('#')) || 'set protocols ospf area 0.0.0.0').trim();
+      const verifyFirst = (lab.quickCmds && lab.quickCmds[0]) ? lab.quickCmds[0] : 'show ip ospf neighbor detail';
+      const options = [
+        { label: `Verify: ${verifyFirst}`, val: verifyFirst },
+        { label: `Cisco IOS-XE: ${iosFirst}`, val: iosFirst },
+        { label: `Juniper Junos: ${junosFirst}`, val: junosFirst }
+      ];
+      sel.innerHTML = options.map(o => `<option value="${o.val.replace(/"/g, '&quot;')}">${o.label}</option>`).join('');
+      loadGhostCliTarget(options[0].val);
+    }
+
+    function loadGhostCliTarget(targetStr) {
+      ghostCliTarget = targetStr || 'show ip ospf neighbor detail';
+      ghostCliStartTime = null;
+      ghostCliErrors = 0;
+      const inp = document.getElementById('ghost-cli-input');
+      if (inp) inp.value = '';
+      renderGhostCliDisplay('');
+      const badge = document.getElementById('ghost-cli-wpm-badge');
+      if (badge) badge.textContent = '0 WPM • 100% ACC';
+    }
+
+    function resetGhostCliDrill() {
+      loadGhostCliTarget(ghostCliTarget);
+    }
+
+    function renderGhostCliDisplay(typed) {
+      const disp = document.getElementById('ghost-cli-display');
+      if (!disp) return;
+      let html = '';
+      for (let i = 0; i < ghostCliTarget.length; i++) {
+        const targetChar = ghostCliTarget[i];
+        if (i < typed.length) {
+          if (typed[i] === targetChar) {
+            html += `<span style="color:#FAFAFA;background:#27272A;font-weight:800;border-bottom:2px solid #FAFAFA;">${targetChar}</span>`;
+          } else {
+            html += `<span style="color:#FFFFFF;background:#991B1B;font-weight:800;text-decoration:underline;">${targetChar}</span>`;
+          }
+        } else if (i === typed.length) {
+          html += `<span style="color:#09090B;background:#E4E4E7;font-weight:800;">${targetChar}</span>`;
+        } else {
+          html += `<span style="color:#52525B;">${targetChar}</span>`;
+        }
+      }
+      disp.innerHTML = html;
+    }
+
+    function handleGhostCliInput(typed) {
+      if (!ghostCliStartTime && typed.length > 0) {
+        ghostCliStartTime = Date.now();
+      }
+      const idx = typed.length - 1;
+      if (idx >= 0 && idx < ghostCliTarget.length && typed[idx] !== ghostCliTarget[idx]) {
+        ghostCliErrors++;
+      }
+      renderGhostCliDisplay(typed);
+
+      const elapsedMin = ghostCliStartTime ? Math.max(0.05, (Date.now() - ghostCliStartTime) / 60000) : 0.05;
+      const wpm = typed.length > 0 ? Math.round((typed.length / 5) / elapsedMin) : 0;
+      const acc = typed.length > 0 ? Math.max(0, Math.round(((typed.length - ghostCliErrors) / typed.length) * 100)) : 100;
+      const badge = document.getElementById('ghost-cli-wpm-badge');
+
+      if (typed === ghostCliTarget) {
+        if (badge) badge.textContent = `✓ COMPLETED • ${wpm} WPM • ${acc}% ACC (+100 XP)`;
+        awardLabXP(100);
+        runQuickLabCmd(ghostCliTarget);
+      } else if (badge) {
+        badge.textContent = `${wpm} WPM • ${acc}% ACC`;
+      }
+    }
+
+    /* =====================================================================
+       TAB 6 ENGINE: 5 GOOGLE AI STUDIO APPS + NOTEBOOKLM / CCIE VAULT
+       ===================================================================== */
+    const AISTUDIO_SUBAPPS = ['6a', '6b', '6c', '6d', '6e', '6f'];
+
+    function switchAiStudioSubApp(subKey) {
+      AISTUDIO_SUBAPPS.forEach(k => {
+        const pane = document.getElementById('aisub-pane-' + k);
+        const btn = document.getElementById('aisub-btn-' + k);
+        if (pane) pane.style.display = (k === subKey) ? 'block' : 'none';
+        if (btn) btn.className = (k === subKey) ? 'btn btn-gold' : 'btn btn-ghost';
+      });
+      const sel = document.getElementById('aistudio-subapp-select');
+      if (sel) sel.value = subKey;
+    }
+
+    // --- 6A: WIRELESS DEPLOYMENT SIMULATOR (CISCO 9800 WLC & ARUBA CLEARPASS) ---
+    function updateWirelessSim() {
+      const bandEl = document.getElementById('wsim-band-select');
+      const secEl = document.getElementById('wsim-sec-select');
+      const rssiEl = document.getElementById('wsim-rssi-slider');
+      if (!bandEl || !secEl || !rssiEl) return;
+
+      const band = bandEl.value;
+      const sec = secEl.value;
+      const rssi = parseInt(rssiEl.value, 10);
+
+      const badge = document.getElementById('wsim-rssi-badge');
+      const verdict = document.getElementById('wsim-rf-verdict');
+      const heatmap = document.getElementById('wsim-svg-heatmap');
+      const cliOut = document.getElementById('wsim-cli-out');
+
+      let overlapPct = 18;
+      let statusMsg = '';
+      if (rssi < -72) {
+        overlapPct = 6;
+        statusMsg = `⚠ Cell Edge ${rssi} dBm (${overlapPct}% overlap): Coverage gap risk! VoIP/Wi-Fi calling packets drop during 802.11r roam. Increase AP density or set min data rate to 12/24 Mbps.`;
+      } else if (rssi <= -65) {
+        overlapPct = 18;
+        statusMsg = `✓ Optimal Enterprise Cell Edge (${rssi} dBm, ~${overlapPct}% cell overlap): Meets Cisco CVD & Aruba AirWave voice/roaming SLA (SNR >= 25 dB, sub-50ms 802.11r FT roam).`;
+      } else {
+        overlapPct = 34;
+        statusMsg = `⚠ High Co-Channel Interference (CCI) Risk (${rssi} dBm, ${overlapPct}% overlap): APs are shouting too loudly; sticky clients won't roam. Reduce Tx power (TPCv1) to 11–14 dBm.`;
+      }
+      if (badge) badge.textContent = `${rssi} dBm (${overlapPct}% Cell Overlap)`;
+      if (verdict) verdict.textContent = statusMsg;
+
+      const chPlan = band === '6ghz'
+        ? ['PSC Ch 5 (80MHz)', 'PSC Ch 21 (80MHz)', 'PSC Ch 37 (80MHz)', 'PSC Ch 53 (80MHz)']
+        : (band === '5ghz'
+          ? ['Ch 36 (UNII-1)', 'Ch 52 (DFS)', 'Ch 100 (UNII-2e)', 'Ch 149 (UNII-3)']
+          : ['Ch 1 (20MHz)', 'Ch 6 (20MHz)', 'Ch 11 (20MHz)', 'Ch 1 (Reuse)']);
+
+      const radius = Math.min(72, Math.max(38, 128 + rssi));
+      if (heatmap) {
+        heatmap.innerHTML = `
+          <svg viewBox="0 0 520 150" style="width:100%;height:auto;display:block;">
+            <rect width="520" height="150" fill="#09090B" rx="8"/>
+            <circle cx="110" cy="75" r="${radius}" fill="rgba(255,255,255,0.08)" stroke="#A1A1AA" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <circle cx="215" cy="75" r="${radius}" fill="rgba(255,255,255,0.11)" stroke="#E4E4E7" stroke-width="1.5"/>
+            <circle cx="320" cy="75" r="${radius}" fill="rgba(255,255,255,0.08)" stroke="#A1A1AA" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <circle cx="425" cy="75" r="${radius}" fill="rgba(255,255,255,0.11)" stroke="#E4E4E7" stroke-width="1.5"/>
+            <text x="110" y="72" fill="#FAFAFA" font-size="9.5" font-weight="800" text-anchor="middle">AP-01</text>
+            <text x="110" y="85" fill="#D4D4D8" font-size="8" font-family="JetBrains Mono" text-anchor="middle">${chPlan[0]}</text>
+            <text x="215" y="72" fill="#FAFAFA" font-size="9.5" font-weight="800" text-anchor="middle">AP-02</text>
+            <text x="215" y="85" fill="#D4D4D8" font-size="8" font-family="JetBrains Mono" text-anchor="middle">${chPlan[1]}</text>
+            <text x="320" y="72" fill="#FAFAFA" font-size="9.5" font-weight="800" text-anchor="middle">AP-03</text>
+            <text x="320" y="85" fill="#D4D4D8" font-size="8" font-family="JetBrains Mono" text-anchor="middle">${chPlan[2]}</text>
+            <text x="425" y="72" fill="#FAFAFA" font-size="9.5" font-weight="800" text-anchor="middle">AP-04</text>
+            <text x="425" y="85" fill="#D4D4D8" font-size="8" font-family="JetBrains Mono" text-anchor="middle">${chPlan[3]}</text>
+          </svg>
+        `;
+      }
+
+      if (cliOut) {
+        cliOut.textContent = `! === CISCO CATALYST 9800 WLC (${band.toUpperCase()} + ${sec.toUpperCase()}) ===
+wlan MGC_CORP_ZERO_TRUST 10 MGC-ZeroTrust-WiFi
+ security wpa psk set-key ascii 0 unused
+ no security wpa akm psk
+ security wpa wpa3
+ security wpa akm dot1x
+ security pmf mandatory
+ ft-over-the-ds
+ assisted-roaming neighbor-list
+ no shutdown
+!
+ap dot11 ${band === '24ghz' ? '24ghz' : (band === '6ghz' ? '6ghz' : '5ghz')} rrm
+ channel-dca-chan-width ${band === '6ghz' ? '80' : (band === '5ghz' ? '40' : '20')}
+ tx-power-control-thres ${rssi}
+!
+# === ARUBA CLEARPASS / AOS-10 ENFORCEMENT PROFILE ===
+wlan ssid-profile "MGC_CORP_ZERO_TRUST"
+ opmode wpa3-aes-ccm-128
+ 802.11k-enable
+ 802.11v-btm-enable
+ radius-coa-port 3799`;
+      }
+    }
+
+    // --- 6B: ACL MASTER TRAINER (PACKET FILTER & WILDCARD CALCULATOR) ---
+    const ACL_MASTER_RULES = [
+      { seq: 10, action: 'permit', proto: 'tcp', src: '10.10.20.0/24', wildcard: '0.0.0.255', dst: '172.16.100.10/32', port: 443, comment: 'Allow Eng Enclave HTTPS to Vault' },
+      { seq: 20, action: 'permit', proto: 'udp', src: '10.10.20.0/24', wildcard: '0.0.0.255', dst: '172.16.100.53/32', port: 53, comment: 'Allow Internal DNS Queries' },
+      { seq: 30, action: 'deny', proto: 'tcp', src: '0.0.0.0/0', wildcard: '255.255.255.255', dst: '172.16.100.0/24', port: 22, comment: 'Block Untrusted SSH to Server Farm' },
+      { seq: 40, action: 'permit', proto: 'icmp', src: '10.10.0.0/16', wildcard: '0.0.255.255', dst: '0.0.0.0/0', port: 0, comment: 'Allow Internal ICMP Diagnostics' },
+      { seq: 50, action: 'deny', proto: 'ip', src: '0.0.0.0/0', wildcard: '255.255.255.255', dst: '0.0.0.0/0', port: 0, comment: 'Implicit Deny All + Syslog Audit' }
+    ];
+
+    function ipInCidrSimple(ip, cidr) {
+      if (cidr === '0.0.0.0/0') return true;
+      const [net, bitsStr] = cidr.split('/');
+      const bits = parseInt(bitsStr, 10);
+      const toInt = s => s.split('.').reduce((acc, oct) => (acc << 8) + (parseInt(oct, 10) || 0), 0) >>> 0;
+      const mask = bits === 0 ? 0 : (~0 << (32 - bits)) >>> 0;
+      return (toInt(ip) & mask) === (toInt(net) & mask);
+    }
+
+    function evaluateAclPacket() {
+      const src = (document.getElementById('acl-pkt-src')?.value || '10.10.20.45').trim();
+      const dst = (document.getElementById('acl-pkt-dst')?.value || '172.16.100.10').trim();
+      const proto = (document.getElementById('acl-pkt-proto')?.value || 'tcp').trim();
+      const port = parseInt(document.getElementById('acl-pkt-port')?.value || '443', 10);
+
+      let matchedSeq = 50;
+      let matchedRule = ACL_MASTER_RULES[ACL_MASTER_RULES.length - 1];
+
+      for (const r of ACL_MASTER_RULES) {
+        const protoOk = (r.proto === 'ip') || (r.proto === proto);
+        const srcOk = ipInCidrSimple(src, r.src);
+        const dstOk = ipInCidrSimple(dst, r.dst);
+        const portOk = (r.port === 0) || (r.port === port);
+        if (protoOk && srcOk && dstOk && portOk) {
+          matchedSeq = r.seq;
+          matchedRule = r;
+          break;
+        }
+      }
+
+      const banner = document.getElementById('acl-eval-banner');
+      if (banner) {
+        banner.innerHTML = `<strong>${matchedRule.action === 'permit' ? '✅ PACKET PERMITTED' : '🛑 PACKET DENIED'}</strong> on Sequence <code>#${matchedSeq}</code> (${matchedRule.comment}) • Flow: <code>${proto.toUpperCase()} ${src} → ${dst}:${port}</code>`;
+      }
+
+      const tbl = document.getElementById('acl-rules-table');
+      if (tbl) {
+        tbl.innerHTML = ACL_MASTER_RULES.map(r => {
+          const isHit = r.seq === matchedSeq;
+          return `
+            <div style="padding:8px 10px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;background:${isHit ? '#27272A' : '#09090B'};border:1px solid ${isHit ? '#FAFAFA' : '#27272A'};color:${isHit ? '#FAFAFA' : '#A1A1AA'};display:flex;justify-content:space-between;align-items:center;gap:8px;">
+              <span>${isHit ? '▶ HIT ' : '      '}${r.seq} ${r.action.toUpperCase()} ${r.proto} ${r.src} (wc ${r.wildcard}) → ${r.dst}${r.port ? ' eq ' + r.port : ''}</span>
+              <span style="font-size:10px;color:#D4D4D8;">${r.comment}</span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function updateAclWildcardCalc(cidrVal) {
+      const bits = parseInt(cidrVal, 10);
+      const maskInt = bits === 0 ? 0 : (~0 << (32 - bits)) >>> 0;
+      const wcInt = (~maskInt) >>> 0;
+      const toDotted = n => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
+      const hosts = bits >= 31 ? (bits === 32 ? 1 : 2) : Math.pow(2, 32 - bits) - 2;
+      const el = document.getElementById('acl-wildcard-readout');
+      if (el) {
+        el.innerHTML = `
+          <div>• Prefix Length: <strong>/${bits}</strong></div>
+          <div>• Subnet Mask: <code>${toDotted(maskInt)}</code></div>
+          <div>• Cisco/Junos ACL Wildcard Mask: <strong style="color:#FAFAFA;"><code>${toDotted(wcInt)}</code></strong></div>
+          <div>• Usable Host Addresses: <strong>${hosts.toLocaleString()}</strong> (Block Size: ${Math.pow(2, (32 - bits) % 8)})</div>
+        `;
+      }
+    }
+
+    // --- 6C: PROJECT_ROUTE (BGP 13-STEP & EIGRP DUAL SIMULATOR) ---
+    let prouteCandidates = [
+      { id: 'PATH-A (ISP1 Primary)', weight: 0, lpref: 200, asLen: 2, origin: 'i', med: 50, ebgp: true, igpCost: 10 },
+      { id: 'PATH-B (ISP2 Secondary)', weight: 0, lpref: 100, asLen: 2, origin: 'i', med: 20, ebgp: true, igpCost: 10 },
+      { id: 'PATH-C (MPLS iBGP Backup)', weight: 0, lpref: 100, asLen: 3, origin: 'i', med: 10, ebgp: false, igpCost: 5 }
+    ];
+
+    function applyProjectRoutePreset(preset) {
+      if (preset === 'default') {
+        prouteCandidates = [
+          { id: 'PATH-A (ISP1 Primary)', weight: 0, lpref: 200, asLen: 2, origin: 'i', med: 50, ebgp: true, igpCost: 10 },
+          { id: 'PATH-B (ISP2 Secondary)', weight: 0, lpref: 100, asLen: 2, origin: 'i', med: 20, ebgp: true, igpCost: 10 },
+          { id: 'PATH-C (MPLS iBGP Backup)', weight: 0, lpref: 100, asLen: 3, origin: 'i', med: 10, ebgp: false, igpCost: 5 }
+        ];
+      } else if (preset === 'aspath') {
+        prouteCandidates = [
+          { id: 'PATH-A (ISP1 4-Hops)', weight: 0, lpref: 100, asLen: 4, origin: 'i', med: 50, ebgp: true, igpCost: 10 },
+          { id: 'PATH-B (ISP2 1-Hop Direct)', weight: 0, lpref: 100, asLen: 1, origin: 'i', med: 50, ebgp: true, igpCost: 10 },
+          { id: 'PATH-C (MPLS 3-Hops)', weight: 0, lpref: 100, asLen: 3, origin: 'i', med: 50, ebgp: false, igpCost: 5 }
+        ];
+      } else if (preset === 'med_ebgp') {
+        prouteCandidates = [
+          { id: 'PATH-A (iBGP Peer)', weight: 0, lpref: 100, asLen: 2, origin: 'i', med: 50, ebgp: false, igpCost: 5 },
+          { id: 'PATH-B (iBGP Peer 2)', weight: 0, lpref: 100, asLen: 2, origin: 'i', med: 50, ebgp: false, igpCost: 20 },
+          { id: 'PATH-C (Direct eBGP Peer)', weight: 0, lpref: 100, asLen: 2, origin: 'i', med: 50, ebgp: true, igpCost: 30 }
+        ];
+      } else if (preset === 'weight') {
+        prouteCandidates = [
+          { id: 'PATH-A (Default Weight 0)', weight: 0, lpref: 200, asLen: 1, origin: 'i', med: 10, ebgp: true, igpCost: 5 },
+          { id: 'PATH-B (Default Weight 0)', weight: 0, lpref: 150, asLen: 2, origin: 'i', med: 20, ebgp: true, igpCost: 10 },
+          { id: 'PATH-C (Local Weight 32768)', weight: 32768, lpref: 100, asLen: 5, origin: '?', med: 900, ebgp: false, igpCost: 50 }
+        ];
+      }
+      renderProjectRouteBgp();
+    }
+
+    function renderProjectRouteBgp() {
+      const box = document.getElementById('proute-bgp-candidates');
+      const winBox = document.getElementById('proute-bgp-winner-box');
+      if (!box || !winBox) return;
+
+      const originRank = { 'i': 1, 'e': 2, '?': 3 };
+      const sorted = [...prouteCandidates].sort((a, b) => {
+        if (b.weight !== a.weight) return b.weight - a.weight;
+        if (b.lpref !== a.lpref) return b.lpref - a.lpref;
+        if (a.asLen !== b.asLen) return a.asLen - b.asLen;
+        if (originRank[a.origin] !== originRank[b.origin]) return originRank[a.origin] - originRank[b.origin];
+        if (a.med !== b.med) return a.med - b.med;
+        if (a.ebgp !== b.ebgp) return a.ebgp ? -1 : 1;
+        return a.igpCost - b.igpCost;
+      });
+      const winner = sorted[0];
+      const runnerUp = sorted[1];
+      let reason = 'Step 2: Highest LOCAL_PREF';
+      if (winner.weight !== runnerUp.weight) reason = `Step 1: Highest Cisco WEIGHT (${winner.weight} > ${runnerUp.weight})`;
+      else if (winner.lpref !== runnerUp.lpref) reason = `Step 2: Highest LOCAL_PREF (${winner.lpref} > ${runnerUp.lpref})`;
+      else if (winner.asLen !== runnerUp.asLen) reason = `Step 4: Shortest AS_PATH (${winner.asLen} hops < ${runnerUp.asLen} hops)`;
+      else if (winner.origin !== runnerUp.origin) reason = `Step 5: Lowest Origin Code (${winner.origin})`;
+      else if (winner.med !== runnerUp.med) reason = `Step 6: Lowest MED (${winner.med} < ${runnerUp.med})`;
+      else if (winner.ebgp !== runnerUp.ebgp) reason = `Step 7: Prefer eBGP over iBGP`;
+      else reason = `Step 8: Lowest IGP Metric to Next-Hop (${winner.igpCost})`;
+
+      box.innerHTML = prouteCandidates.map(c => {
+        const isWin = c.id === winner.id;
+        return `
+          <div style="background:#09090B;border:1px solid ${isWin ? '#FAFAFA' : '#3F3F46'};border-radius:10px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#E4E4E7;">
+            <div style="font-weight:800;color:${isWin ? '#FAFAFA' : '#A1A1AA'};margin-bottom:4px;">${isWin ? '★ BEST (*>) ' : ''}${c.id}</div>
+            <div>Weight: <strong>${c.weight}</strong> | LocalPref: <strong>${c.lpref}</strong></div>
+            <div>AS_PATH Hops: <strong>${c.asLen}</strong> | Origin: <strong>${c.origin}</strong></div>
+            <div>MED: <strong>${c.med}</strong> | Type: <strong>${c.ebgp ? 'eBGP' : 'iBGP'}</strong> | IGP: <strong>${c.igpCost}</strong></div>
+          </div>
+        `;
+      }).join('');
+
+      winBox.innerHTML = `
+        <div><strong>🏆 ELECTED BGP BEST PATH (<code>*&gt;</code>):</strong> ${winner.id}</div>
+        <div style="color:#D4D4D8;margin-top:4px;">• Winning Tie-Breaker: <strong>${reason}</strong></div>
+        <div style="color:#A1A1AA;margin-top:4px;">• NotebookLM Mnemonic: <em>Weight → Local_Pref → Locally Originated → AS_PATH → Origin → MED → eBGP &gt; iBGP → Lowest IGP Next-Hop → Oldest eBGP → Lowest Router-ID</em></div>
+      `;
+    }
+
+    function evaluateEigrpDual() {
+      const fd = parseInt(document.getElementById('dual-fd-input')?.value || '3072', 10);
+      const rd = parseInt(document.getElementById('dual-rd-input')?.value || '2816', 10);
+      const box = document.getElementById('dual-verdict-box');
+      if (!box) return;
+      const isFeasible = rd < fd;
+      box.innerHTML = isFeasible
+        ? `<strong>✅ FEASIBLE SUCCESSOR QUALIFIED (<code>RD ${rd} &lt; FD ${fd}</code>):</strong> Guaranteed loop-free backup path! Installed in EIGRP Topology Table for sub-millisecond failover without diffusing SIA queries.`
+        : `<strong>⚠ FEASIBILITY CONDITION FAILED (<code>RD ${rd} &gt;= FD ${fd}</code>):</strong> Cannot be a Feasible Successor (potential loop). If Successor fails, EIGRP must transition route to <strong>Active</strong> and send Query packets to neighbors.`;
+    }
+
+    // --- 6D: SAFAR-E ZABAN: VELOCITY (DARI SOV GRAMMAR & PARTICLE ENGINE) ---
+    const DARI_LESSONS = [
+      {
+        dari: 'من شبکه را طراحی می‌کنم',
+        translit: 'Man shabaka rā tarāhī mī-kunam',
+        english: 'I design the network.',
+        tokens: [
+          { word: 'من (Man)', role: 'SUBJECT (Pronoun)', note: '1st Person Singular ("I")' },
+          { word: 'شبکه (shabaka)', role: 'DIRECT OBJECT', note: 'Noun ("network")' },
+          { word: 'را (rā)', role: 'ACCUSATIVE PARTICLE', note: 'Marks definite direct object in Dari SOV syntax' },
+          { word: 'طراحی می‌کنم (tarāhī mī-kunam)', role: 'COMPOUND VERB (SOV Final)', note: 'Continuous prefix می‌ + stem کن + -am (1sg)' }
+        ],
+        quizQ: 'In the Dari sentence "من شبکه را طراحی می‌کنم", what grammatical function does the particle "را (rā)" perform?',
+        options: [
+          'A) Definite Direct-Object Postposition Marker following "شبکه (network)"',
+          'B) Past-tense negation prefix attached to the verb',
+          'C) Plural suffix for inanimate nouns'
+        ],
+        correct: 0
+      },
+      {
+        dari: 'ما به مرکز داده می‌رویم',
+        translit: 'Mā ba markaz-e dāda mī-rawīm',
+        english: 'We go to the data center.',
+        tokens: [
+          { word: 'ما (Mā)', role: 'SUBJECT', note: '1st Person Plural ("We")' },
+          { word: 'به (ba)', role: 'DIRECTIONAL PARTICLE', note: 'Preposition ("to / toward")' },
+          { word: 'مرکز داده (markaz-e dāda)', role: 'EZĀFA CONSTRUCT', note: 'Ezāfa (-e) links head noun "center" to modifier "data"' },
+          { word: 'می‌رویم (mī-rawīm)', role: 'VERB (Present Continuous)', note: 'Prefix می‌ + present stem رو (raftan) + -īm' }
+        ],
+        quizQ: 'What links "مرکز (markaz)" and "داده (dāda)" together in "مرکز داده (markaz-e dāda)"?',
+        options: [
+          'A) The unstressed Ezāfa vowel (-e / -yi) linking a head noun to its modifier/possessor',
+          'B) The accusative suffix -rā',
+          'C) An Arabic dual inflection'
+        ],
+        correct: 0
+      },
+      {
+        dari: 'امنیت از دانش آغاز می‌شود',
+        translit: 'Amnīyat az dānish āghāz mī-shawad',
+        english: 'Security begins with (from) knowledge.',
+        tokens: [
+          { word: 'امنیت (Amnīyat)', role: 'SUBJECT', note: 'Abstract Noun ("Security")' },
+          { word: 'از (az)', role: 'ABLATIVE PARTICLE', note: 'Preposition ("from / by / than")' },
+          { word: 'دانش (dānish)', role: 'OBJECT OF PREPOSITION', note: 'Noun ("knowledge / science")' },
+          { word: 'آغاز می‌شود (āghāz mī-shawad)', role: 'INTRANSITIVE COMPOUND VERB', note: 'Begins / is initiated (shudan auxiliary)' }
+        ],
+        quizQ: 'Which Dari preposition expresses source or origin ("from"), as in "از دانش (az dānish)"?',
+        options: [
+          'A) از (az)',
+          'B) را (rā)',
+          'C) با (bā)'
+        ],
+        correct: 0
+      },
+      {
+        dari: 'شما در کابل و راولپندی کار می‌کنید',
+        translit: 'Shumā dar Kābul wa Rāwalpindī kār mī-kunīd',
+        english: 'You (formal/plural) work in Kabul and Rawalpindi.',
+        tokens: [
+          { word: 'شما (Shumā)', role: 'SUBJECT (Honorific / Plural)', note: 'Formal 2nd person pronoun ("You")' },
+          { word: 'در (dar)', role: 'LOCATIVE PARTICLE', note: 'Preposition ("in / at")' },
+          { word: 'کابل و راولپندی', role: 'LOCATIVE NOUN PHRASE', note: 'Coordinated proper nouns with conjunction و (wa)' },
+          { word: 'کار می‌کنید (kār mī-kunīd)', role: 'COMPOUND VERB (2pl)', note: 'Noun کار ("work") + می‌کنید ("you do")' }
+        ],
+        quizQ: 'Why does the verb "کار می‌کنید (kār mī-kunīd)" appear at the very end of the clause?',
+        options: [
+          'A) Persian/Dari strictly follows Subject–Object/Adverbial–Verb (SOV) head-final clause structure',
+          'B) Verbs only appear at the end in questions',
+          'C) Prepositions force VSO word order'
+        ],
+        correct: 0
+      }
+    ];
+    let dariStreak = 1;
+
+    function renderDariVelocityCard(idxStr) {
+      const idx = parseInt(idxStr || '0', 10) || 0;
+      const item = DARI_LESSONS[idx] || DARI_LESSONS[0];
+      const stage = document.getElementById('dari-sov-stage');
+      const qbox = document.getElementById('dari-quiz-box');
+      if (stage) {
+        stage.innerHTML = `
+          <div style="text-align:right;font-size:26px;font-weight:800;color:#FAFAFA;direction:rtl;margin-bottom:6px;">${item.dari}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#D4D4D8;margin-bottom:4px;">Transliteration: <strong>${item.translit}</strong></div>
+          <div style="font-size:14px;color:#A1A1AA;margin-bottom:12px;">Translation: "${item.english}"</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;">
+            ${item.tokens.map(t => `
+              <div style="background:#18181B;border:1px solid #27272A;border-radius:8px;padding:8px 10px;">
+                <div style="font-size:14px;font-weight:800;color:#FAFAFA;">${t.word}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#D4D4D8;margin-top:2px;">${t.role}</div>
+                <div style="font-size:11px;color:#A1A1AA;margin-top:3px;">${t.note}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+      if (qbox) {
+        qbox.innerHTML = `
+          <div style="font-size:13.5px;font-weight:800;color:#FAFAFA;margin-bottom:10px;">${item.quizQ}</div>
+          <div style="display:grid;gap:8px;">
+            ${item.options.map((opt, oIdx) => `
+              <button class="quiz-option" onclick="answerDariQuiz(${idx}, ${oIdx})" style="text-align:left;">${opt}</button>
+            `).join('')}
+          </div>
+          <div id="dari-quiz-feedback" style="margin-top:10px;font-size:12.5px;color:#D4D4D8;"></div>
+        `;
+      }
+    }
+
+    function answerDariQuiz(lessonIdx, choiceIdx) {
+      const item = DARI_LESSONS[lessonIdx] || DARI_LESSONS[0];
+      const fb = document.getElementById('dari-quiz-feedback');
+      const pill = document.getElementById('dari-streak-pill');
+      if (choiceIdx === item.correct) {
+        dariStreak++;
+        awardLabXP(75);
+        if (pill) pill.textContent = `🔥 Streak: ${dariStreak}`;
+        if (fb) fb.innerHTML = `<strong style="color:#FAFAFA;">✓ آفرین (Āfarīn — Bravo!) (+75 XP)</strong> Accurate SOV &amp; particle analysis.`;
+      } else {
+        if (fb) fb.innerHTML = `<strong style="color:#A1A1AA;">✕ Review the SOV token breakdown on the left and select Option A.</strong>`;
+      }
+    }
+
+    // --- 6E: ASMA UL-HUSNA (99 NAMES OF ALLAH & IMAM AL-GHAZALI EXPLORER) ---
+    const ASMA_CATALOG = [
+      { num: 1, arabic: 'ٱلرَّحْمَـٰنُ', translit: 'Ar-Raḥmān', meaning: 'The All-Compassionate / Beneficent', root: 'ر - ح - م (R-Ḥ-M)', morph: 'Faʿlān intensive pattern denoting all-encompassing cosmic mercy that precedes creation.', ghazali: 'Imam al-Ghazali (Al-Maqsad al-Asna): The servant’s share in Ar-Raḥmān is to look upon all creation with compassion, striving to relieve both spiritual ignorance and material hardship without partiality.' },
+      { num: 2, arabic: 'ٱلرَّحِيمُ', translit: 'Ar-Raḥīm', meaning: 'The Bestower of Continual Mercy', root: 'ر - ح - م (R-Ḥ-M)', morph: 'Faʿīl permanent attribute pattern signifying enduring, specific mercy toward the guided.', ghazali: 'Imam al-Ghazali: Cultivate consistent gentleness and clemency toward every seeker of truth, never closing the door of hope.' },
+      { num: 3, arabic: 'ٱلْمَلِكُ', translit: 'Al-Malik', meaning: 'The Absolute Sovereign King', root: 'م - ل - ك (M-L-K)', morph: 'Denotes complete self-sufficiency and dominion over all essence and existence.', ghazali: 'Imam al-Ghazali: True human sovereignty (malakūt) is achieved when intellect and spiritual heart rule over anger, caprice, and worldly attachment.' },
+      { num: 4, arabic: 'ٱلْقُدُّوسُ', translit: 'Al-Quddūs', meaning: 'The All-Holy / Transcendent', root: 'ق - د - س (Q-D-S)', morph: 'Fuʿʿūl intensive pattern signifying absolute purity above every flaw or limitation imagined by perception.', ghazali: 'Imam al-Ghazali: Purify the heart’s intention (niyyah) from ego, ostentation, and resentment so knowledge becomes luminous.' },
+      { num: 5, arabic: 'ٱلسَّلَامُ', translit: 'As-Salām', meaning: 'The Source of Peace & Perfection', root: 'س - ل - م (S-L-M)', morph: 'Verbal noun used substantively: free from defect and the ultimategranter of safety and wholeness.', ghazali: 'Imam al-Ghazali: He whose heart is free of malice and from whose tongue and hands people are safe becomes a living reflection of As-Salām.' },
+      { num: 19, arabic: 'ٱلْعَلِيمُ', translit: 'Al-ʿAlīm', meaning: 'The All-Knowing / Omniscient', root: 'ع - ل - م (ʿ-L-M)', morph: 'Faʿīl intensive pattern encompassing both manifest architecture and hidden subtleties.', ghazali: 'Imam al-Ghazali: Pursue deep, verifiable knowledge of both foundational principles and ethical action with humility.' },
+      { num: 46, arabic: 'ٱلْحَكِيمُ', translit: 'Al-Ḥakīm', meaning: 'The All-Wise / Master of Precision', root: 'ح - ك - م (Ḥ-K-M)', morph: 'Signifies placing every component in its exact, optimal architectural order (iḥkām).', ghazali: 'Imam al-Ghazali: Wisdom (ḥikmah) is aligning knowledge with disciplined execution so every system serves justice and order.' },
+      { num: 93, arabic: 'ٱلنُّورُ', translit: 'An-Nūr', meaning: 'The Divine Light / Illuminator', root: 'ن - و - ر (N-W-R)', morph: 'That which is manifest in itself and makes all other realities visible and intelligible.', ghazali: 'Imam al-Ghazali (Mishkāt al-Anwār): Illuminate obscurity through clarity of thought, truthfulness, and service.' }
+    ];
+
+    function initAsmaUlHusnaExplorer() {
+      const sel = document.getElementById('asma-name-select');
+      if (sel) {
+        sel.innerHTML = ASMA_CATALOG.map((a, idx) => `<option value="${idx}">#${a.num} ${a.translit} (${a.arabic}) — ${a.meaning}</option>`).join('');
+      }
+      filterAsmaNames('');
+      renderAsmaUlHusnaCard(0);
+    }
+
+    function renderAsmaUlHusnaCard(idxVal) {
+      const idx = parseInt(idxVal, 10) || 0;
+      const item = ASMA_CATALOG[idx] || ASMA_CATALOG[0];
+      const sel = document.getElementById('asma-name-select');
+      if (sel) sel.value = String(idx);
+      const card = document.getElementById('asma-detail-card');
+      if (!card) return;
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid #27272A;padding-bottom:12px;margin-bottom:12px;">
+          <div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#A1A1AA;">NAME #${item.num} OF 99 • TRILATERAL ROOT: ${item.root}</span>
+            <h4 style="font-size:22px;font-weight:900;color:#FAFAFA;margin-top:2px;">${item.translit} — ${item.meaning}</h4>
+          </div>
+          <div style="font-size:34px;font-weight:900;color:#FAFAFA;direction:rtl;">${item.arabic}</div>
+        </div>
+        <div style="font-size:13px;color:#E4E4E7;line-height:1.6;margin-bottom:10px;">
+          <strong style="color:#FAFAFA;">Classical Arabic Morphology (Ṣarf &amp; Ishtiqāq):</strong> ${item.morph}
+        </div>
+        <div style="background:#18181B;border:1px solid #3F3F46;border-radius:8px;padding:12px;font-size:13px;color:#D4D4D8;line-height:1.6;">
+          <strong style="color:#FAFAFA;">📜 Imam al-Ghazali's Theological Reflection (<em>Al-Maqsad al-Asna</em>):</strong><br/>
+          ${item.ghazali}
+        </div>
+      `;
+    }
+
+    function filterAsmaNames(q) {
+      const query = (q || '').toLowerCase().trim();
+      const grid = document.getElementById('asma-pill-grid');
+      if (!grid) return;
+      const filtered = ASMA_CATALOG.map((item, idx) => ({ item, idx })).filter(({ item }) =>
+        !query ||
+        item.translit.toLowerCase().includes(query) ||
+        item.meaning.toLowerCase().includes(query) ||
+        item.root.toLowerCase().includes(query) ||
+        item.arabic.includes(query)
+      );
+      grid.innerHTML = filtered.map(({ item, idx }) => `
+        <button onclick="renderAsmaUlHusnaCard(${idx})" style="cursor:pointer;text-align:left;background:#09090B;border:1px solid #3F3F46;border-radius:8px;padding:10px;color:#FAFAFA;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#A1A1AA;">#${item.num}</span>
+            <span style="font-size:16px;font-weight:800;">${item.arabic}</span>
+          </div>
+          <div style="font-size:12.5px;font-weight:800;margin-top:4px;">${item.translit}</div>
+          <div style="font-size:10.5px;color:#A1A1AA;margin-top:2px;">${item.root}</div>
+        </button>
+      `).join('');
+    }
+
+    // --- 6F: GOOGLE NOTEBOOKLM CORPUS (11 MODULES) & 100-PAGE CCIE MASTER GUIDE VAULT ---
+    const NOTEBOOKLM_VAULT_DOCS = [
+      {
+        id: 'dom1_arch',
+        title: 'Module 01: Spine-Leaf Clos, ECMP 5-Tuple Hashing & Sub-50ms BFD (Domain_1_Network_Architecture.md)',
+        analogy: 'Instructor’s Corner Analogy: Traditional 3-Tier STP is like an old city bridge system that blocks half its lanes to prevent loops; Spine-Leaf Clos with L3 ECMP is a modern multi-lane highway where every Spine is exactly 1 hop away and all links forward simultaneously.',
+        design: 'Every Leaf connects to every Spine (never Leaf-to-Leaf or Spine-to-Spine). Replace 30s OSPF/BGP hold timers with hardware-assisted BFD (50ms × 3 = 150ms) and LACP fast timers (1s).',
+        cli: `interface Ethernet1/1\n  description UPLINK_TO_SPINE_1\n  no switchport\n  mtu 9216\n  ip address 10.1.1.2/30\n  bfd interval 50 min_rx 50 multiplier 3\n  ip ospf network point-to-point`,
+        defense: 'Q: Why does a single 100Gbps TCP backup stream only hit 10Gbps across an 8-link 80Gbps LAG? A: Hardware ECMP/LACP hashes per 5-tuple flow (Src/Dst IP, Src/Dst Port, Proto) to prevent TCP out-of-order reassembly; a single elephant flow is pinned to 1 physical member link.'
+      },
+      {
+        id: 'dom1_bgp',
+        title: 'Module 02: BGP 13-Step Best-Path Selection & Route Reflector Scaling (Domain_1.3_BGP_Mastery.md)',
+        analogy: 'Instructor’s Corner Mnemonic: "We Love Oranges As Oranges Mean Pure Refreshment" — Weight (Cisco Local), Local_Pref (Outbound AS-wide), Locally Originated, AS_PATH (Shortest), Origin (i < e < ?), MED (Inbound same-AS), eBGP > iBGP, Lowest IGP Next-Hop.',
+        design: 'Use BGP Route Reflectors (cluster-id) or Confederations to eliminate N*(N-1)/2 iBGP full-mesh scaling bottlenecks. Pair with BFD and Graceful Restart (NSF) for zero-drop control-plane upgrades.',
+        cli: `router bgp 65001\n  bgp log-neighbor-changes\n  neighbor 192.0.2.1 remote-as 65002\n  neighbor 192.0.2.1 bfd\n  neighbor 192.0.2.1 route-map RM_SET_LP200 in`,
+        defense: 'Q: Why would a valid VPNv4 or iBGP route sit in the BGP table without a ">" best-path marker? A: Next-hop is unreachable in the IGP/LDP table (inet.0 / inet.3). Fix with next-hop-self on the advertising border PE/RR.'
+      },
+      {
+        id: 'dom1_evpn',
+        title: 'Module 03: VXLAN Data Plane (50B Overhead) & MP-BGP EVPN Symmetric IRB (Domain_1.4_VXLAN_EVPN_Mastery.md)',
+        analogy: 'Instructor’s Corner Analogy: VXLAN is a global postal service wrapping L2 Ethernet frames inside UDP-4789 parcels (16M VNIs vs. 4,094 VLANs), while MP-BGP EVPN is the automated directory mapping Host MAC+IPs (Type-2) and Subnets (Type-5) to remote VTEPs.',
+        design: 'VXLAN adds 50 bytes of outer header (14B Outer Eth + 20B Outer IP + 8B UDP-4789 + 8B VXLAN VNI), requiring 9216 Jumbo MTU on all Spine-Leaf underlay links. Distributed Anycast Gateway uses an identical virtual MAC across all leaves for seamless VM vMotion.',
+        cli: `nv overlay evpn\nfabric forwarding anycast-gateway-mac 0000.2222.3333\ninterface nve1\n  host-reachability protocol bgp\n  source-interface loopback1\n  member vni 10100\n    suppress-arp\n  member vni 50999 associate-vrf`,
+        defense: 'Q: Symmetric vs. Asymmetric IRB? A: Asymmetric IRB requires every leaf to hold all destination VLANs (Bridge-Route-Bridge); Symmetric IRB routes ingress into a dedicated Tenant L3VNI (Route-Bridge-Route), scaling cleanly to thousands of tenants.'
+      },
+      {
+        id: 'dom2_ucs',
+        title: 'Module 04: Cisco UCS Stateless Service Profiles, Fabric Interconnects & vPC (Domain_2_Compute_Mastery.md)',
+        analogy: 'Instructor’s Corner Analogy: A UCS Service Profile is a SIM card for bare-metal blades — moving a Service Profile transfers BIOS, UUID, vNIC MACs, and vHBA WWPNs to a replacement blade in minutes.',
+        design: 'Fabric Interconnects run in End-Host Mode (NPV/NPIV) so upstream Nexus switches never run STP toward compute chassis. Disjoint L2 pin-groups guarantee deterministic traffic isolation.',
+        cli: `feature vpc\nvpc domain 10\n  peer-switch\n  peer-gateway\n  auto-recovery\n  ip arp synchronize`,
+        defense: 'Q: Why enable "peer-gateway" and "ip arp synchronize" on a Nexus vPC pair? A: Prevents peer-link traversal and drops when a Nas/Host replies to the physical MAC of the secondary vPC peer instead of the HSRP/VRRP virtual MAC.'
+      },
+      {
+        id: 'dom3_san',
+        title: 'Module 05: Fibre Channel SAN (FLOGI/PLOGI/PRLI), NPIV & RoCEv2 Lossless PFC (Domain_3_Storage_Mastery.md)',
+        analogy: 'Instructor’s Corner Mnemonic: "F.P.R. Login" — FLOGI (Node logs into Fabric Switch to get 24-bit FCID at 0xFFFFFE), PLOGI (Initiator logs into Target WWPN via FCNS 0xFFFFFC), PRLI (Establishes SCSI/NVMe-oF ULP session).',
+        design: 'Never merge SAN Fabric A and Fabric B (Dual-Fabric Air-Gap). Use Single-Initiator Single-Target pWWN zoning inside dedicated VSANs. For RoCEv2/FCoE over Ethernet, enable Priority Flow Control (PFC 802.1Qbb) on CoS 3 + ECN.',
+        cli: `vsan database\n  vsan 100 name "PROD_STORAGE_A"\nzone name ZONE_ESXI01_PURE01 vsan 100\n  member pwwn 20:00:00:25:b5:00:00:01\n  member pwwn 52:4a:93:70:00:00:00:10\nzoneset name ZS_PROD_A vsan 100\n  member ZONE_ESXI01_PURE01\nzoneset activate name ZS_PROD_A vsan 100`,
+        defense: 'Q: Why does a single misconfigured ZoneSet Merge isolate an entire E_Port ISL? A: Fibre Channel requires identical active zone databases across E_Ports; a mismatch triggers VSAN Isolation to protect storage LUNs from unauthorized cross-access.'
+      },
+      {
+        id: 'dom45_autosec',
+        title: 'Module 06: Terraform IaC, Netmiko/NAPALM Python & Zero-Trust Micro-Segmentation (Domain_4_5_Auto_Sec_Mastery.md)',
+        analogy: 'Instructor’s Corner Analogy: Traditional perimeter firewalls are castle moats; Zero-Trust Micro-Segmentation + 802.1AE MACsec is biometric badge verification on every internal room door.',
+        design: 'Combine declarative Terraform/Ansible with RESTCONF/NETCONF (YANG RFC 6020) and Control Plane Policing (CoPP) so management planes survive DDoS floods.',
+        cli: `class-map match-any CM_COPP_CRITICAL\n  match protocol bgp\n  match protocol ospf\n  match protocol bfd\npolicy-map PM_COPP_HARDENED\n  class CM_COPP_CRITICAL\n    police cir 5000000 conform-action transmit`,
+        defense: 'Q: Why use NETCONF/gNMI over screen-scraping CLI? A: RFC 6241 NETCONF provides candidate datastores, atomic commits, rollback-on-error, and strongly-typed YANG JSON/XML schemas.'
+      },
+      {
+        id: 'dom6_aws_core',
+        title: 'Module 07: AWS Transit Gateway (TGW), GWLB GENEVE (UDP 6081) & Direct Connect MACsec (AWS Deep Dives)',
+        analogy: 'Instructor’s Corner Analogy: AWS GWLB uses GENEVE (UDP 6081) like an invisible pneumatic tube that teleports raw VPC packets (preserving original Src/Dst IP) through a fleet of Palo Alto/Fortinet firewalls and returns them seamlessly.',
+        design: 'Pair AWS Direct Connect Dedicated connections across 2 distinct physical facilities with IEEE 802.1AE MACsec (256-bit GCM-AES-XPN + CKN/CAK) + eBGP + BFD (300ms×3) + Site-to-Site IPsec backup.',
+        cli: `aws directconnect associate-mac-sec-key \\\n  --connection-id dxcon-fg123456 \\\n  --ckn 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef \\\n  --cak abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789`,
+        defense: 'Q: How do you prevent Asymmetric Routing across multi-AZ AWS GWLB Inspection VPCs? A: Enable Appliance Mode (`--options ApplianceModeSupport=enable`) on the Inspection VPC Transit Gateway attachment so return flows stay pinned to the same AZ firewall instance.'
+      }
+    ];
+
+    function initNotebookLmVault() {
+      const sel = document.getElementById('nblm-doc-select');
+      if (sel) {
+        sel.innerHTML = NOTEBOOKLM_VAULT_DOCS.map((d, idx) => `<option value="${idx}">${d.title}</option>`).join('');
+      }
+      renderNotebookLmVaultDoc(0);
+      renderCcieAppendixTable('app_c');
+    }
+
+    function renderNotebookLmVaultDoc(idxVal) {
+      const idx = parseInt(idxVal, 10) || 0;
+      const doc = NOTEBOOKLM_VAULT_DOCS[idx] || NOTEBOOKLM_VAULT_DOCS[0];
+      const viewer = document.getElementById('nblm-doc-viewer');
+      if (!viewer) return;
+      viewer.innerHTML = `
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#A1A1AA;margin-bottom:4px;">NOTEBOOKLM EXTRACTED MODULE • S-CRY-ED / EVE-LEARN ARCHIVE</div>
+        <h4 style="font-size:17px;font-weight:800;color:#FAFAFA;margin-bottom:10px;">${doc.title}</h4>
+        <div style="background:#18181B;border-left:3px solid #FAFAFA;padding:10px 12px;border-radius:6px;font-size:12.5px;color:#E4E4E7;line-height:1.55;margin-bottom:10px;">
+          <strong>💡 ${doc.analogy}</strong>
+        </div>
+        <div style="font-size:12.5px;color:#D4D4D8;line-height:1.55;margin-bottom:10px;">
+          <strong style="color:#FAFAFA;">Architecture &amp; RFC Design Perspective:</strong> ${doc.design}
+        </div>
+        <pre class="code-block" style="max-height:150px;margin-bottom:10px;">${doc.cli}</pre>
+        <div style="background:#18181B;border:1px solid #3F3F46;padding:10px 12px;border-radius:8px;font-size:12px;color:#E4E4E7;line-height:1.55;">
+          <strong style="color:#FAFAFA;">🎙️ Architect Interview Defense:</strong> ${doc.defense}
+        </div>
+      `;
+    }
+
+    function filterNotebookLmVault(q) {
+      const query = (q || '').toLowerCase().trim();
+      const idx = NOTEBOOKLM_VAULT_DOCS.findIndex(d =>
+        d.title.toLowerCase().includes(query) ||
+        d.analogy.toLowerCase().includes(query) ||
+        d.design.toLowerCase().includes(query) ||
+        d.defense.toLowerCase().includes(query)
+      );
+      if (idx !== -1) {
+        const sel = document.getElementById('nblm-doc-select');
+        if (sel) sel.value = String(idx);
+        renderNotebookLmVaultDoc(idx);
+      }
+    }
+
+    function renderCcieAppendixTable(key) {
+      const box = document.getElementById('ccie-appendix-viewer');
+      if (!box) return;
+      if (key === 'app_c') {
+        box.innerHTML = `
+          <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#E4E4E7;">
+            <thead><tr style="border-bottom:1px solid #3F3F46;color:#FAFAFA;text-align:left;"><th style="padding:6px;">EVPN Route</th><th style="padding:6px;">Name</th><th style="padding:6px;">Key Contents &amp; Purpose (RFC 7432 / 9136)</th></tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;font-weight:800;">Type-1</td><td style="padding:6px;">Ethernet Auto-Discovery</td><td style="padding:6px;">ESI + Ethernet Tag ID • Fast convergence &amp; active-active aliasing</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;font-weight:800;">Type-2</td><td style="padding:6px;">MAC/IP Advertisement</td><td style="padding:6px;">Host MAC, Host IP (/32 or /128), L2VNI, L3VNI • ARP Suppression &amp; VM Mobility</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;font-weight:800;">Type-3</td><td style="padding:6px;">Inclusive Multicast (IMET)</td><td style="padding:6px;">Originating VTEP IP + VNI • Auto-discovers VTEPs for BUM Ingress Replication</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;font-weight:800;">Type-4</td><td style="padding:6px;">Ethernet Segment</td><td style="padding:6px;">ESI + Originating Router IP • DF (Designated Forwarder) Election for Multi-Homing</td></tr>
+              <tr><td style="padding:6px;font-weight:800;">Type-5</td><td style="padding:6px;">IP Prefix Route</td><td style="padding:6px;">IPv4/IPv6 Subnet Prefix + L3VNI • External WAN &amp; Inter-Subnet Symmetric IRB</td></tr>
+            </tbody>
+          </table>`;
+      } else if (key === 'app_d') {
+        box.innerHTML = `
+          <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#E4E4E7;">
+            <thead><tr style="border-bottom:1px solid #3F3F46;color:#FAFAFA;text-align:left;"><th style="padding:6px;">Symptom</th><th style="padding:6px;">Root Cause</th><th style="padding:6px;">Verification &amp; Fix</th></tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">NVE Peer Down</td><td style="padding:6px;">Underlay Loopback1 unreachable</td><td style="padding:6px;"><code>show nve peers</code> • Advertise VTEP Lo1/32 in OSPF/IS-IS</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">Ping works for 1400B, drops 1500B</td><td style="padding:6px;">Missing 50B VXLAN Jumbo MTU on Spine-Leaf</td><td style="padding:6px;"><code>ping 10.250.1.3 df-bit packet-size 8972</code> • Set <code>mtu 9216</code></td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">Type-2 Route learned but not imported</td><td style="padding:6px;">Route-Target (RT) mismatch or missing VNI</td><td style="padding:6px;"><code>show bgp l2vpn evpn route-type 2</code> • Match <code>route-target both auto</code></td></tr>
+              <tr><td style="padding:6px;">VM vMotion drops gateway</td><td style="padding:6px;">Mismatched Anycast Gateway MAC</td><td style="padding:6px;">Ensure identical <code>fabric forwarding anycast-gateway-mac</code> on all leaves</td></tr>
+            </tbody>
+          </table>`;
+      } else if (key === 'app_f') {
+        box.innerHTML = `
+          <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#E4E4E7;">
+            <thead><tr style="border-bottom:1px solid #3F3F46;color:#FAFAFA;text-align:left;"><th style="padding:6px;">Traffic Class</th><th style="padding:6px;">PHB / DSCP</th><th style="padding:6px;">Decimal / CoS</th><th style="padding:6px;">Queueing Treatment</th></tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">Network Control (OSPF/BGP/BFD)</td><td style="padding:6px;">CS6</td><td style="padding:6px;">DSCP 48 / CoS 6</td><td style="padding:6px;">Protected Control-Plane Queue</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">Real-Time Voice (VoIP RTP)</td><td style="padding:6px;">EF (Expedited)</td><td style="padding:6px;">DSCP 46 / CoS 5</td><td style="padding:6px;">Strict Priority LLQ (Policed)</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">Interactive Video Conferencing</td><td style="padding:6px;">AF41</td><td style="padding:6px;">DSCP 34 / CoS 4</td><td style="padding:6px;">CBWFQ Guaranteed Bandwidth</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">Lossless SAN RoCEv2 / FCoE</td><td style="padding:6px;">CS3 + PFC</td><td style="padding:6px;">DSCP 24 / CoS 3</td><td style="padding:6px;">802.1Qbb Priority Flow Control (No-Drop)</td></tr>
+              <tr><td style="padding:6px;">Transactional Data / Bulk</td><td style="padding:6px;">AF21 / DF</td><td style="padding:6px;">DSCP 18 / 0</td><td style="padding:6px;">WRED + Fair-Queue Default</td></tr>
+            </tbody>
+          </table>`;
+      } else if (key === 'app_g') {
+        box.innerHTML = `
+          <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#E4E4E7;">
+            <thead><tr style="border-bottom:1px solid #3F3F46;color:#FAFAFA;text-align:left;"><th style="padding:6px;">Cisco SD-WAN Plane</th><th style="padding:6px;">Protocol</th><th style="padding:6px;">Ports</th><th style="padding:6px;">Function</th></tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">Orchestration (vBond)</td><td style="padding:6px;">DTLS (UDP)</td><td style="padding:6px;">UDP 12346</td><td style="padding:6px;">Zero-Touch Onboarding &amp; NAT Traversal Discovery</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">Control (vSmart / OMP)</td><td style="padding:6px;">DTLS / TLS</td><td style="padding:6px;">UDP 12346–12426 / TCP 23456</td><td style="padding:6px;">OMP Routes, TLOCs, &amp; IPsec SA Key Exchange</td></tr>
+              <tr><td style="padding:6px;">Data Plane (WAN Edge ↔ Edge)</td><td style="padding:6px;">IPsec ESP + BFD</td><td style="padding:6px;">UDP 12346–12426 (NAT-T 4500)</td><td style="padding:6px;">AES-256-GCM User Payload + App-Aware BFD Probes</td></tr>
+            </tbody>
+          </table>`;
+      } else {
+        box.innerHTML = `
+          <table style="width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#E4E4E7;">
+            <thead><tr style="border-bottom:1px solid #3F3F46;color:#FAFAFA;text-align:left;"><th style="padding:6px;">CIDR</th><th style="padding:6px;">Subnet Mask</th><th style="padding:6px;">Wildcard Mask</th><th style="padding:6px;">Usable Hosts</th></tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">/24</td><td style="padding:6px;">255.255.255.0</td><td style="padding:6px;">0.0.0.255</td><td style="padding:6px;">254 (Standard LAN)</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">/26</td><td style="padding:6px;">255.255.255.192</td><td style="padding:6px;">0.0.0.63</td><td style="padding:6px;">62 (Enclave Segment)</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">/28</td><td style="padding:6px;">255.255.255.240</td><td style="padding:6px;">0.0.0.15</td><td style="padding:6px;">14 (DMZ / Management)</td></tr>
+              <tr style="border-bottom:1px solid #27272A;"><td style="padding:6px;">/30</td><td style="padding:6px;">255.255.255.252</td><td style="padding:6px;">0.0.0.3</td><td style="padding:6px;">2 (P2P Transit Link)</td></tr>
+              <tr><td style="padding:6px;">/32</td><td style="padding:6px;">255.255.255.255</td><td style="padding:6px;">0.0.0.0</td><td style="padding:6px;">1 (Loopback0 / VTEP / Router-ID)</td></tr>
+            </tbody>
+          </table>`;
+      }
     }
 
     function setRamProfile(mode) {
@@ -3936,6 +5379,15 @@ ${nodesXml}
       selectEveLab(0);
       selectStrictSingleExam('CCNP_ENARSI');
       renderCorridorList();
+      updateWirelessSim();
+      evaluateAclPacket();
+      updateAclWildcardCalc(28);
+      renderProjectRouteBgp();
+      evaluateEigrpDual();
+      renderDariVelocityCard(0);
+      initAsmaUlHusnaExplorer();
+      initNotebookLmVault();
+      syncScormCmiState();
       const savedXp = parseInt(localStorage.getItem('mgc_lms_xp') || '19550', 10);
       document.getElementById('cert-xp-val').textContent = savedXp.toLocaleString();
     });
