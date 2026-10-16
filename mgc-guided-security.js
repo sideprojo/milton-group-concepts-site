@@ -1147,38 +1147,106 @@
       }
       .pas-check-item {
         display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.65rem;
         font-size: 0.76rem;
         color: #e2e8f0;
-        cursor: pointer;
-        padding: 0.35rem 0.45rem;
-        border-radius: 0.45rem;
-        transition: background 0.15s;
+        padding: 0.42rem 0.55rem;
+        border-radius: 0.5rem;
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        margin-bottom: 0.4rem;
+        transition: background 0.15s, border-color 0.15s;
       }
       .pas-check-item:hover {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.16);
+      }
+      .pas-check-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        flex: 1;
+        min-width: 0;
       }
       .pas-check-item input[type="checkbox"] {
-        margin-top: 0.15rem;
         accent-color: #16a34a;
         width: 0.95rem;
         height: 0.95rem;
         cursor: pointer;
         flex-shrink: 0;
       }
+      .pas-inline-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.24rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.66rem;
+        font-weight: 800;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+        background: rgba(37, 99, 235, 0.22);
+        border: 1px solid rgba(59, 130, 246, 0.48);
+        color: #93c5fd;
+        transition: all 0.15s;
+      }
+      .pas-inline-link:hover {
+        transform: translateY(-1px);
+        background: rgba(37, 99, 235, 0.38);
+        color: #ffffff;
+      }
+      body.theme-fix .pas-inline-link {
+        background: rgba(197, 179, 88, 0.18);
+        border-color: rgba(197, 179, 88, 0.55);
+        color: #FDE047;
+      }
+      body.theme-fix .pas-inline-link:hover {
+        background: rgba(197, 179, 88, 0.34);
+        color: #ffffff;
+      }
+      .pas-select {
+        background: rgba(2, 6, 23, 0.92);
+        color: #f8fafc;
+        border: 1px solid rgba(148, 163, 184, 0.38);
+        border-radius: 0.55rem;
+        padding: 0.38rem 0.65rem;
+        font-size: 0.72rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      body.theme-fix .pas-select {
+        border-color: rgba(197, 179, 88, 0.55);
+        color: #FDE047;
+      }
+      .pas-details {
+        margin-top: 0.35rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 0.45rem;
+      }
+      .pas-details summary {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: #94a3b8;
+        cursor: pointer;
+        user-select: none;
+        list-style: none;
+      }
+      .pas-details summary::-webkit-details-marker { display: none; }
       .pas-links-row {
         display: flex;
         flex-wrap: wrap;
         gap: 0.45rem;
-        padding-top: 0.55rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 0.5rem;
       }
       .pas-link-btn {
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
-        padding: 0.38rem 0.68rem;
+        padding: 0.36rem 0.66rem;
         border-radius: 0.5rem;
         font-size: 0.7rem;
         font-weight: 800;
@@ -1845,11 +1913,11 @@
     const PORTAL_MODULES = {
       'sdvosb-contract-radar.html': {
         heading: 'F.I.X Solutions LLC • Federal Integration & Exchange SDVOSB Action Modules',
-        mod1Title: '🎯 Module 1: Fort Bragg (USASOC/FORSCOM) & VA OIT Sole-Source Pipeline',
+        mod1Title: '🎯 Module 1: Fort Bragg (USASOC) & VA OIT Sole-Source Pipeline',
         mod1Checks: [
-          'Submit SBA VetCert SDVOSB packet (EIN 92-1370285) on veterans.certify.sba.gov',
-          'Respond to Fort Bragg USASOC / 112th Signal C4ISR Sources Sought (NAICS 541512)',
-          'Register VA Vets First (38 U.S.C. 8127) capability statement for VA OIT Zero-Trust task orders'
+          { text: 'Submit SBA VetCert SDVOSB packet (EIN 92-1370285)', linkLabel: 'SBA VetCert ↗', linkUrl: 'https://veterans.certify.sba.gov/' },
+          { text: 'Respond to Fort Bragg USASOC / 112th Signal C4ISR Sources Sought', linkLabel: 'SAM.gov Radar ↗', linkUrl: 'https://sam.gov/content/opportunities' },
+          { text: 'Register VA Vets First (38 U.S.C. 8127) Zero-Trust capability brief', linkLabel: 'VA Vets First ↗', linkUrl: 'https://www.va.gov/osdbu/verification/' }
         ],
         mod1Links: [
           { label: 'SAM.gov SDVOSB Search ↗', url: 'https://sam.gov/content/opportunities' },
@@ -1859,11 +1927,11 @@
       },
       'finance-command.html': {
         heading: 'F.I.X Solutions LLC • Treasury, VA Benefits & Immediate Cashflow Modules',
-        mod1Title: '💳 Module 1: WAWF/PIEE Federal Invoicing, Stripe Checkout & VA Tax-Free Cashflow',
+        mod1Title: '💳 Module 1: WAWF/PIEE Invoicing, Stripe Checkout & VA Cashflow',
         mod1Checks: [
-          'Activate Stripe Payment Links for $79 EVE-NG Lab Pack & $1,500 Local Business AI Web Setup',
-          'Lock VA Intent to File (VA Form 21-0966) ahead of Oct 22, 2026 12:00 PM EDT VA Video Connect',
-          'Apply for Chapter 31 VR&E ($2,172/mo Raleigh ECPI BAH rate + Self-Employment Track)'
+          { text: 'Activate Stripe links ($79 EVE-NG Pack & $1,500 B2B AI Setup)', linkLabel: 'Open Store →', linkUrl: 'whitefeather-ecommerce-hub.html' },
+          { text: 'Lock VA Intent to File (21-0966) before Oct 22 12:00 PM VA Appt', linkLabel: 'File 21-0966 ↗', linkUrl: 'https://www.va.gov/disability/how-to-file-claim/' },
+          { text: 'Apply for Ch. 31 VR&E ($2,172/mo Raleigh ECPI BAH + Workstation)', linkLabel: 'Apply VR&E ↗', linkUrl: 'https://www.va.gov/careers-employment/vocational-rehabilitation/' }
         ],
         mod1Links: [
           { label: 'VA.gov Claims & VR&E ↗', url: 'https://www.va.gov/careers-employment/vocational-rehabilitation/' },
@@ -1872,12 +1940,12 @@
         ]
       },
       'whitefeather-ecommerce-hub.html': {
-        heading: 'Milton Group Concepts LLC • Immediate AI, Social Media, Ads & Product Monetization Modules',
-        mod1Title: '🛍️ Module 1: Launch 3 Immediate Revenue Products & Paid/Organic Ad Funnels Today',
+        heading: 'Milton Group Concepts LLC • AI, Social Media, Ads & Product Monetization',
+        mod1Title: '🛍️ Module 1: Launch 3 Digital Products & Paid/Organic Ad Funnels',
         mod1Checks: [
-          'Publish $79 15-Topology EVE-NG CCNP/JNCIP + Ansible Automation Bundle on Storefront & Gumroad',
-          'Send 15 Local Business AI Website + 24/7 Lead Agent pitches ($1,500 setup + $497/mo) using Sterling Auto demo',
-          'Post daily USASOC 25N → AI/Cloud Architect authority reel on LinkedIn, YouTube Shorts & Skool'
+          { text: 'Publish $79 15-Topology EVE-NG CCNP/JNCIP + Ansible Pack', linkLabel: 'Lab Academy →', linkUrl: 'elearning-upskilling-hub.html' },
+          { text: 'Pitch 15 NC/VA shops on $1,500 AI Web + 24/7 Lead Agent', linkLabel: 'Sterling Demo →', linkUrl: 'projects/sterling-auto-repair/index.html' },
+          { text: 'Post daily USASOC 25N → AI Architect reel on LinkedIn & Skool', linkLabel: 'Open Skool ↗', linkUrl: 'https://www.skool.com/white-feather-ai/plans' }
         ],
         mod1Links: [
           { label: 'White Feather AI Skool ↗', url: 'https://www.skool.com/white-feather-ai/plans' },
@@ -1886,12 +1954,12 @@
         ]
       },
       'integrations-connections-hub.html': {
-        heading: 'F.I.X Solutions LLC • Cloud, OAuth & Zero-Charge Infrastructure Modules',
-        mod1Title: '🔌 Module 1: Google Cloud Org (412750373714), GitHub Actions & GitGuardian Shift-Left',
+        heading: 'F.I.X Solutions LLC • Cloud, OAuth & Zero-Charge Infrastructure',
+        mod1Title: '🔌 Module 1: GCP Org (412750373714), GitHub & GitGuardian Shift-Left',
         mod1Checks: [
-          'Verify Cloud Run min-instances=0 & max-instances=2 zero-idle-charge guard across all services',
-          'Confirm GitGuardian workspace/938061 4 historical incidents marked Resolved after commit scrub',
-          'Connect Workspace Lead Webhook to Gmail/Calendar for instant B2B client booking alerts'
+          { text: 'Verify Cloud Run min-instances=0 ($0 idle billing guard)', linkLabel: 'GCP Console ↗', linkUrl: 'https://console.cloud.google.com/run' },
+          { text: 'Confirm GitGuardian workspace/938061 4 incidents resolved', linkLabel: 'GitGuardian ↗', linkUrl: 'https://dashboard.gitguardian.com/workspace/938061/incidents/secrets' },
+          { text: 'Connect Lead Webhook to Gmail/Calendar for client booking alerts', linkLabel: 'Agent Studio →', linkUrl: 'agent-workflow-studio.html' }
         ],
         mod1Links: [
           { label: 'GitGuardian Dashboard ↗', url: 'https://dashboard.gitguardian.com/workspace/938061/incidents/secrets' },
@@ -1900,12 +1968,12 @@
         ]
       },
       'saas-apps-and-lms-showcase.html': {
-        heading: 'F.I.X Solutions LLC • Monetized SaaS Simulators & Recurring Subscription Modules',
-        mod1Title: '⚡ Module 1: Pay-Per-View ($9), Pro Lab Pass ($29/mo) & Enterprise Seat Licensing',
+        heading: 'F.I.X Solutions LLC • Monetized SaaS Simulators & Subscriptions',
+        mod1Title: '⚡ Module 1: Pay-Per-View ($9), Pro Lab Pass ($29/mo) & Seat Licensing',
         mod1Checks: [
-          'Embed 15-Topology EVE-NG Packet Replay & MTU Chaos Simulator in Pro Lab tier',
-          'Run Meta/LinkedIn lead magnet ad offering Topology 01 (OSPF/BFD) free for email opt-in',
-          'Upsell opted-in engineers to $97/mo White Feather AI & CCNP/JNCIP Cohort'
+          { text: 'Embed 15-Topology EVE-NG Packet Replay in Pro Lab tier', linkLabel: 'Open 15 Labs →', linkUrl: 'elearning-upskilling-hub.html' },
+          { text: 'Run Meta/LinkedIn lead ad offering Topology 01 free for opt-in', linkLabel: 'Copy Ad Script →', linkUrl: 'elearning-upskilling-hub.html' },
+          { text: 'Upsell opted-in engineers to $97/mo White Feather AI Cohort', linkLabel: 'Skool Plans ↗', linkUrl: 'https://www.skool.com/white-feather-ai/plans' }
         ],
         mod1Links: [
           { label: 'Open 15 EVE-NG Topologies →', url: 'elearning-upskilling-hub.html' },
@@ -1914,12 +1982,12 @@
         ]
       },
       'agent-workflow-studio.html': {
-        heading: 'F.I.X Solutions LLC • Autonomous Multi-Agent & B2B Automation Modules',
-        mod1Title: '🤖 Module 1: Productized LangGraph & Gemini Agentic Workflows for B2B Clients',
+        heading: 'F.I.X Solutions LLC • Autonomous Multi-Agent & B2B Automation',
+        mod1Title: '🤖 Module 1: Productized LangGraph & Gemini Agents for B2B Clients',
         mod1Checks: [
-          'Package 24/7 Receptionist & Quote-Booking Agent for NC/VA auto, HVAC & legal businesses',
-          'Deploy SAM.gov RFP Analyzer & Proposal Drafter agent for SDVOSB set-aside bids',
-          'Complete Google Cloud Agentic Architect (Path 4525) lab verification & publish Credly badge'
+          { text: 'Package 24/7 Receptionist & Quote Agent for NC/VA service shops', linkLabel: 'Live Demo →', linkUrl: 'projects/sterling-auto-repair/index.html' },
+          { text: 'Deploy SAM.gov RFP Analyzer agent for SDVOSB set-aside bids', linkLabel: 'Contract Radar →', linkUrl: 'sdvosb-contract-radar.html' },
+          { text: 'Complete Google Cloud Agentic Architect (Path 4525) badge', linkLabel: 'Path 4525 ↗', linkUrl: 'https://www.cloudskillsboost.google/paths/4525' }
         ],
         mod1Links: [
           { label: 'Google Skills Path 4525 ↗', url: 'https://www.cloudskillsboost.google/paths/4525' },
@@ -1928,12 +1996,12 @@
         ]
       },
       'earth-3d.html': {
-        heading: 'F.I.X Solutions LLC • 3D Geospatial & NC Relocation Corridor Intelligence Modules',
-        mod1Title: '🌍 Module 1: NC Relocation Triangle (ECPI Raleigh 27604 ↔ Sanford/Lillington ↔ Fort Bragg 28310)',
+        heading: 'F.I.X Solutions LLC • 3D Geospatial & NC Relocation Corridor Intelligence',
+        mod1Title: '🌍 Module 1: NC Relocation Triangle (ECPI Raleigh ↔ Sanford ↔ Fort Bragg)',
         mod1Checks: [
-          'Compare Sanford/Lillington US-1/US-401 midpoint (38 min to Fort Bragg & 38 min to Raleigh ECPI/RTP)',
-          'Verify ECPI Raleigh Campus (4101 Capital Blvd, ZIP 27604) in-person class for $2,172/mo MHA/BAH',
-          'Download VA Home Loan Certificate of Eligibility (COE) for $0 down / 0% funding fee in NC'
+          { text: 'Compare Sanford/Lillington US-1 midpoint (35m to Bragg & Raleigh)', linkLabel: 'Sanford Homes ↗', linkUrl: 'https://www.zillow.com/sanford-nc/rentals/' },
+          { text: 'Verify ECPI Raleigh (4101 Capital Blvd) 1 resident class ($2,172 BAH)', linkLabel: 'ECPI Raleigh ↗', linkUrl: 'https://www.ecpi.edu/locations/raleigh-nc' },
+          { text: 'Download VA Home Loan COE ($0 down / 0% funding fee in NC)', linkLabel: 'Get VA COE ↗', linkUrl: 'https://www.va.gov/housing-assistance/home-loans/how-to-request-coe/' }
         ],
         mod1Links: [
           { label: 'Open NC Career & Relocation Hub →', url: 'elearning-upskilling-hub.html' },
@@ -1944,12 +2012,12 @@
     };
 
     const cfg = PORTAL_MODULES[currentFile] || {
-      heading: (defaultPageBrand === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC') + ' • Built-Out Operational, Career, NC Relocation & Monetization Modules',
-      mod1Title: '🛡️ Module 1: Portal Operations, Zero-Trust Verification & Live Deliverables',
+      heading: (defaultPageBrand === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC') + ' • Operational, NC Relocation & Monetization Action Modules',
+      mod1Title: '🛡️ Module 1: Portal Operations, Zero-Trust & Live Deliverables',
       mod1Checks: [
-        'Verify 8 MGC Thematic Portals & 8 F.I.X Solutions Thematic Portals across desktop & mobile',
-        'Audit 2FA Biometric Passkey + 6-Digit TOTP enforcement on external-to-internal handoffs',
-        'Sync latest portfolio deliverables to GitHub (sideprojo) and LinkedIn Featured section'
+        { text: 'Verify 8 MGC & 8 F.I.X Thematic Portals across PC & Mobile', linkLabel: '16-Portal Hub →', linkUrl: 'admin-command-portal.html' },
+        { text: 'Audit 2FA Passkey + 6-Digit TOTP gate on external handoffs', linkLabel: '2FA Gate →', linkUrl: 'onboarding-portal.html' },
+        { text: 'Sync portfolio deliverables to GitHub (sideprojo) & LinkedIn', linkLabel: 'GitHub ↗', linkUrl: 'https://github.com/sideprojo' }
       ],
       mod1Links: [
         { label: 'Canvas LMS & NC Career Hub →', url: 'elearning-upskilling-hub.html' },
@@ -1958,80 +2026,111 @@
       ]
     };
 
+    const mod2Checks = [
+      { text: 'Apply to Fort Bragg 25N/USASOC Primes (GDIT, CACI, Booz Allen)', linkLabel: 'Bragg Jobs ↗', linkUrl: 'https://www.clearancejobs.com/jobs?keywords=Network+Engineer+Fort+Liberty+NC' },
+      { text: 'Apply to Raleigh/RTP Primes (Cisco RTP, SAS Cary HQ, Red Hat)', linkLabel: 'RTP Jobs ↗', linkUrl: 'https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Engineer&location=Raleigh-Durham-Chapel%20Hill%20Area' },
+      { text: 'Target Sanford/Lillington midpoint + ECPI Raleigh ($2,172/mo BAH)', linkLabel: 'NC Move Hub →', linkUrl: 'elearning-upskilling-hub.html' },
+      { text: 'File VA 21-0966 (PACT Act Erbil + Airborne Chain) pre-Oct 22 Appt', linkLabel: 'VA Filing ↗', linkUrl: 'https://www.va.gov/disability/how-to-file-claim/' }
+    ];
+
+    const mod3Checks = [
+      { text: 'Pitch B2B AI Web + 24/7 Lead Agent ($1,500 setup + $497/mo)', linkLabel: 'Client Demo →', linkUrl: 'projects/sterling-auto-repair/index.html' },
+      { text: 'Launch $79 EVE-NG 15-Lab Bundle & $97/mo White Feather Cohort', linkLabel: 'Storefront →', linkUrl: 'whitefeather-ecommerce-hub.html' },
+      { text: 'Run daily 60s Reel + LinkedIn/Meta B2B Ad targeting NC/VA', linkLabel: 'Copy Scripts →', linkUrl: 'elearning-upskilling-hub.html' }
+    ];
+
+    function renderCheckRow(item, key) {
+      const checked = localStorage.getItem(key) === '1' ? 'checked' : '';
+      const isExt = item.linkUrl && item.linkUrl.startsWith('http');
+      return `
+        <div class="pas-check-item">
+          <label class="pas-check-label">
+            <input type="checkbox" data-act-key="${key}" ${checked} />
+            <span>${item.text}</span>
+          </label>
+          <a href="${item.linkUrl}" ${isExt ? 'target="_blank" rel="noopener"' : ''} class="pas-inline-link">${item.linkLabel}</a>
+        </div>
+      `;
+    }
+
     const suite = document.createElement('section');
     suite.id = 'mgc-portal-action-suite';
     suite.setAttribute('aria-label', 'Built-Out Portal Modules, Links & Action Items');
     suite.innerHTML = `
       <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.1);">
         <div>
-          <span style="font-size:0.68rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:${defaultPageBrand === 'FIX' ? '#FDE047' : '#93c5fd'};">
-            ● ${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS THEME (MISSION NAVY & VANGUARD GOLD)' : 'MGC WORKSPACE THEME (SOVEREIGN CRIMSON, COBALT & WHITE)'} • ACTIONABLE MODULES
+          <span style="font-size:0.66rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:${defaultPageBrand === 'FIX' ? '#FDE047' : '#93c5fd'};">
+            ● ${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS THEME (MISSION NAVY & VANGUARD GOLD)' : 'MGC WORKSPACE THEME (SOVEREIGN CRIMSON, COBALT & WHITE)'} • ANTI-CLUTTER SUB-PAGE MODULES
           </span>
-          <h2 style="font-size:1.15rem;font-weight:900;color:#ffffff;margin-top:0.2rem;">${cfg.heading}</h2>
+          <h2 style="font-size:1.1rem;font-weight:900;color:#ffffff;margin-top:0.18rem;">${cfg.heading}</h2>
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
-          <a href="elearning-upskilling-hub.html" class="pas-link-btn">🚀 NC Relocation, Immediate Jobs & VA Hub</a>
-          <a href="whitefeather-ecommerce-hub.html" class="pas-link-btn">💰 AI & Social Ads Monetization</a>
-          <a href="sdvosb-contract-radar.html" class="pas-link-btn">🎯 Fort Bragg & VA SDVOSB Radar</a>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.45rem;">
+          <select id="pas-module-filter" class="pas-select" aria-label="Filter Action Module Sub-Page">
+            <option value="all">📂 View: All 3 Action Modules</option>
+            <option value="mod1">Page 1: Portal Execution Module</option>
+            <option value="mod2">Page 2: NC Jobs, Relocation & VA</option>
+            <option value="mod3">Page 3: AI, Social & Ad Monetization</option>
+          </select>
+          <select id="pas-quick-jump" class="pas-select" aria-label="Quick Jump to Action Resource">
+            <option value="">⚡ Quick Action & Link Jump ▾</option>
+            <option value="elearning-upskilling-hub.html">🚀 NC Relocation, 12 Employers & VA Hub</option>
+            <option value="whitefeather-ecommerce-hub.html">💰 Digital Products & Ad Funnel Hub</option>
+            <option value="sdvosb-contract-radar.html">🎯 Fort Bragg & VA SDVOSB Contract Radar</option>
+            <option value="projects/sterling-auto-repair/index.html">🚗 Sterling Auto ($1,500 B2B Client Demo)</option>
+            <option value="https://www.clearancejobs.com/jobs?keywords=25N+Network+Fort+Liberty">🪖 ClearanceJobs Fort Bragg 25N ↗</option>
+            <option value="https://www.ecpi.edu/locations/raleigh-nc">🏫 ECPI Raleigh Campus ($2,172/mo BAH) ↗</option>
+            <option value="https://www.va.gov/disability/how-to-file-claim/">🎖️ VA Disability & VR&E Ch. 31 Portal ↗</option>
+          </select>
+          <button type="button" id="pas-collapse-btn" class="pas-link-btn" style="cursor:pointer;">▾ Minimize</button>
         </div>
       </div>
 
-      <div class="pas-grid">
+      <div class="pas-grid" id="pas-cards-grid">
         <!-- MODULE 1: PORTAL-SPECIFIC EXECUTION -->
-        <div class="pas-card">
+        <div class="pas-card" data-pas-mod="mod1">
           <div>
-            <div style="font-size:0.85rem;font-weight:800;color:#ffffff;margin-bottom:0.5rem;">${cfg.mod1Title}</div>
-            ${cfg.mod1Checks.map((c, idx) => {
-              const key = `mgc_act_${currentFile}_m1_${idx}`;
-              const checked = localStorage.getItem(key) === '1' ? 'checked' : '';
-              return `<label class="pas-check-item"><input type="checkbox" data-act-key="${key}" ${checked} /><span>${c}</span></label>`;
-            }).join('')}
+            <div style="font-size:0.84rem;font-weight:800;color:#ffffff;margin-bottom:0.55rem;">${cfg.mod1Title}</div>
+            ${cfg.mod1Checks.map((item, idx) => renderCheckRow(item, `mgc_act_${currentFile}_m1_${idx}`)).join('')}
           </div>
-          <div class="pas-links-row">
-            ${cfg.mod1Links.map(l => `<a href="${l.url}" ${l.url.startsWith('http') ? 'target="_blank" rel="noopener"' : ''} class="pas-link-btn">${l.label}</a>`).join('')}
-          </div>
+          <details class="pas-details">
+            <summary>▾ Module 1 Direct Portal Links (${cfg.mod1Links.length})</summary>
+            <div class="pas-links-row">
+              ${cfg.mod1Links.map(l => `<a href="${l.url}" ${l.url.startsWith('http') ? 'target="_blank" rel="noopener"' : ''} class="pas-link-btn">${l.label}</a>`).join('')}
+            </div>
+          </details>
         </div>
 
         <!-- MODULE 2: IMMEDIATE NC WORK, RELOCATION (ECPI RALEIGH <-> FORT BRAGG) & VA BENEFITS -->
-        <div class="pas-card">
+        <div class="pas-card" data-pas-mod="mod2">
           <div>
-            <div style="font-size:0.85rem;font-weight:800;color:#ffffff;margin-bottom:0.5rem;">📍 Module 2: Immediate NC Work (Fort Bragg / RTP), Relocation & VA Benefits</div>
-            ${[
-              'Apply to Fort Bragg USASOC/112th Signal Primes (GDIT, CACI, Booz Allen) & RTP (Cisco, SAS Cary, Red Hat)',
-              'Target Sanford / Lillington / Southern Pines midpoint OR Raleigh ECPI (27604) for $2,172/mo GI Bill/VR&E BAH',
-              'File VA Form 21-0966 (PACT Act Erbil + Airborne Secondary Chain) before Oct 22, 2026 12:00 PM VA appt'
-            ].map((c, idx) => {
-              const key = `mgc_act_global_nc_va_${idx}`;
-              const checked = localStorage.getItem(key) === '1' ? 'checked' : '';
-              return `<label class="pas-check-item"><input type="checkbox" data-act-key="${key}" ${checked} /><span>${c}</span></label>`;
-            }).join('')}
+            <div style="font-size:0.84rem;font-weight:800;color:#ffffff;margin-bottom:0.55rem;">📍 Module 2: NC Work (Bragg/RTP), Relocation & VA Benefits</div>
+            ${mod2Checks.map((item, idx) => renderCheckRow(item, `mgc_act_global_nc_va_${idx}`)).join('')}
           </div>
-          <div class="pas-links-row">
-            <a href="https://www.clearancejobs.com/jobs?keywords=Network+Engineer+Fort+Liberty+NC" target="_blank" rel="noopener" class="pas-link-btn">Fort Bragg Jobs ↗</a>
-            <a href="https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Engineer&location=Raleigh-Durham-Chapel%20Hill%20Area" target="_blank" rel="noopener" class="pas-link-btn">Raleigh/RTP Jobs ↗</a>
-            <a href="https://www.va.gov/disability/how-to-file-claim/" target="_blank" rel="noopener" class="pas-link-btn">VA Claims & VR&E ↗</a>
-          </div>
+          <details class="pas-details">
+            <summary>▾ NC Relocation & VA Quick Links (4)</summary>
+            <div class="pas-links-row">
+              <a href="https://www.clearancejobs.com/jobs?keywords=Network+Engineer+Fort+Liberty+NC" target="_blank" rel="noopener" class="pas-link-btn">Fort Bragg Jobs ↗</a>
+              <a href="https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Engineer&location=Raleigh-Durham-Chapel%20Hill%20Area" target="_blank" rel="noopener" class="pas-link-btn">Raleigh/RTP Jobs ↗</a>
+              <a href="https://www.ecpi.edu/locations/raleigh-nc" target="_blank" rel="noopener" class="pas-link-btn">ECPI Raleigh ↗</a>
+              <a href="https://www.va.gov/careers-employment/vocational-rehabilitation/" target="_blank" rel="noopener" class="pas-link-btn">VA Ch. 31 VR&E ↗</a>
+            </div>
+          </details>
         </div>
 
         <!-- MODULE 3: IMMEDIATE AI, SOCIAL MEDIA, PAID ADS & PRODUCT MONETIZATION -->
-        <div class="pas-card">
+        <div class="pas-card" data-pas-mod="mod3">
           <div>
-            <div style="font-size:0.85rem;font-weight:800;color:#ffffff;margin-bottom:0.5rem;">💸 Module 3: Immediate AI, Social Media, Ads & Product Monetization</div>
-            ${[
-              'Pitch B2B Local Business AI Web + 24/7 Lead Agent ($1,500 setup + $497/mo) using Sterling Auto Repair demo',
-              'Launch $79 EVE-NG 15-Topology CCNP/JNCIP + Ansible Bundle & $97/mo White Feather AI Skool Cohort',
-              'Run daily short-form video + LinkedIn/Meta Lead Ad targeting NC/VA businesses & IT engineers'
-            ].map((c, idx) => {
-              const key = `mgc_act_global_monetize_${idx}`;
-              const checked = localStorage.getItem(key) === '1' ? 'checked' : '';
-              return `<label class="pas-check-item"><input type="checkbox" data-act-key="${key}" ${checked} /><span>${c}</span></label>`;
-            }).join('')}
+            <div style="font-size:0.84rem;font-weight:800;color:#ffffff;margin-bottom:0.55rem;">💸 Module 3: Immediate AI, Social Media, Ads & Products</div>
+            ${mod3Checks.map((item, idx) => renderCheckRow(item, `mgc_act_global_monetize_${idx}`)).join('')}
           </div>
-          <div class="pas-links-row">
-            <a href="whitefeather-ecommerce-hub.html" class="pas-link-btn">Open AI & Ad Funnel Hub →</a>
-            <a href="projects/sterling-auto-repair/index.html" class="pas-link-btn">B2B Client Demo Site →</a>
-            <a href="https://www.skool.com/white-feather-ai/plans" target="_blank" rel="noopener" class="pas-link-btn">White Feather AI ↗</a>
-          </div>
+          <details class="pas-details">
+            <summary>▾ Monetization & Ad Funnel Links (3)</summary>
+            <div class="pas-links-row">
+              <a href="whitefeather-ecommerce-hub.html" class="pas-link-btn">Open AI & Ad Funnel Hub →</a>
+              <a href="projects/sterling-auto-repair/index.html" class="pas-link-btn">B2B Client Demo Site →</a>
+              <a href="https://www.skool.com/white-feather-ai/plans" target="_blank" rel="noopener" class="pas-link-btn">White Feather AI ↗</a>
+            </div>
+          </details>
         </div>
       </div>
     `;
@@ -2044,6 +2143,39 @@
         localStorage.setItem(cb.getAttribute('data-act-key'), cb.checked ? '1' : '0');
       });
     });
+
+    const modFilter = suite.querySelector('#pas-module-filter');
+    const cardsGrid = suite.querySelector('#pas-cards-grid');
+    if (modFilter && cardsGrid) {
+      modFilter.addEventListener('change', () => {
+        const val = modFilter.value;
+        cardsGrid.style.display = 'grid';
+        cardsGrid.style.gridTemplateColumns = val === 'all' ? '' : '1fr';
+        suite.querySelectorAll('[data-pas-mod]').forEach(card => {
+          card.style.display = (val === 'all' || card.getAttribute('data-pas-mod') === val) ? 'flex' : 'none';
+        });
+      });
+    }
+
+    const quickJump = suite.querySelector('#pas-quick-jump');
+    if (quickJump) {
+      quickJump.addEventListener('change', () => {
+        const url = quickJump.value;
+        if (!url) return;
+        if (url.startsWith('http')) window.open(url, '_blank', 'noopener');
+        else window.location.href = url;
+        quickJump.value = '';
+      });
+    }
+
+    const collapseBtn = suite.querySelector('#pas-collapse-btn');
+    if (collapseBtn && cardsGrid) {
+      collapseBtn.addEventListener('click', () => {
+        const hidden = cardsGrid.style.display === 'none';
+        cardsGrid.style.display = hidden ? 'grid' : 'none';
+        collapseBtn.textContent = hidden ? '▾ Minimize' : '▸ Expand Modules';
+      });
+    }
   }
 
   if (document.readyState === 'loading') {

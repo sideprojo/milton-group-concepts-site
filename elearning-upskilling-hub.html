@@ -1559,189 +1559,340 @@
     <!-- TAB 4: IMMEDIATE WORK, NC RELOCATION, VA BENEFITS & AI MONETIZATION -->
     <!-- =================================================================== -->
     <div id="tab-career-radar" class="tab-pane">
-      <!-- MODULE 4A: IMMEDIATE WORK & FAST-CASHFLOW JOB BOARD (FORT BRAGG USASOC 25N + RALEIGH/RTP NEAR ECPI + REMOTE) -->
-      <div class="card" style="margin-bottom:18px;border-color:rgba(220,38,38,0.55);">
-        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
-          <div>
-            <span class="badge" style="background:rgba(220,38,38,0.22);color:#fca5a5;">
-              MODULE 4A • IMMEDIATE HIRING &amp; FAST-CASHFLOW COMMAND (FORT BRAGG 25N • RALEIGH/RTP • REMOTE AI)
-            </span>
-            <h3 style="margin-top:6px;font-size:19px;">12 High-Priority Employers &amp; Immediate Cashflow Tracks (With Direct Apply Links &amp; Action Items)</h3>
+      <!-- SUB-PAGE & DROPDOWN NAVIGATION BAR (ANTI-CLUTTER MULTI-PAGE CONTROLLER) -->
+      <div class="card" style="margin-bottom:14px;padding:12px 16px;background:rgba(9,14,28,0.95);border-color:rgba(59,130,246,0.45);">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="career-subpage-pills">
+            <button class="btn btn-crimson" id="csub-btn-4a" onclick="switchCareerSubPage('4a')" style="font-size:11.5px;padding:7px 12px;">💼 Page 4A: 12 NC &amp; Remote Employers</button>
+            <button class="btn btn-ghost" id="csub-btn-4b" onclick="switchCareerSubPage('4b')" style="font-size:11.5px;padding:7px 12px;">🏡 Page 4B: NC Relocation Matrix</button>
+            <button class="btn btn-ghost" id="csub-btn-4c" onclick="switchCareerSubPage('4c')" style="font-size:11.5px;padding:7px 12px;">🎖️ Page 4C: VA Benefits &amp; Oct 22 Appt</button>
+            <button class="btn btn-ghost" id="csub-btn-4d" onclick="switchCareerSubPage('4d')" style="font-size:11.5px;padding:7px 12px;">💸 Page 4D: AI, Social &amp; Ad Monetization</button>
+            <button class="btn btn-ghost" id="csub-btn-all" onclick="switchCareerSubPage('all')" style="font-size:11.5px;padding:7px 12px;">📑 View All (4)</button>
           </div>
-          <div class="btn-row">
-            <a href="https://www.clearancejobs.com/jobs?keywords=25N+Network+Engineer+Fort+Liberty" target="_blank" rel="noopener" class="btn btn-crimson">🔥 Fort Bragg Cleared 25N Jobs ↗</a>
-            <a href="https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Architect&location=Raleigh-Durham-Chapel%20Hill%20Area" target="_blank" rel="noopener" class="btn btn-blue">🌲 Raleigh / RTP / Cary Jobs ↗</a>
-            <a href="https://www.ncworks.gov/" target="_blank" rel="noopener" class="btn btn-gold">🎖️ NCWorks Vet Priority (DVOP) ↗</a>
-          </div>
-        </div>
-
-        <div class="grid-3" style="margin-top:14px;">
-          <!-- Track 1: Fort Bragg / Fort Liberty SOF & Defense Primes -->
-          <div style="background:#020617;border:1px solid rgba(220,38,38,0.45);border-radius:14px;padding:14px;">
-            <span class="badge" style="background:rgba(220,38,38,0.2);color:#fca5a5;">TRACK 1 • FORT BRAGG / LIBERTY (USASOC / JSOC / 112TH SIGNAL)</span>
-            <h4 style="margin:8px 0 6px;font-size:15px;color:#fff;">Cleared Tactical Network, SATCOM &amp; Zero-Trust ($115K–$168K)</h4>
-            <p style="font-size:12px;color:var(--silver);line-height:1.5;margin-bottom:10px;">
-              Direct fit for your <strong>U.S. Army 25N (`112th Signal Bn SO (Airborne)`) + SOJTF-OIR Erbil</strong> background at Fort Bragg / Fayetteville / Southern Pines:
-            </p>
-            <div style="display:flex;flex-direction:column;gap:7px;font-size:12px;">
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_1',this.checked?'1':'0')" /><span><strong>GDIT (Fort Bragg, NC):</strong> Senior Tactical Network / SATCOM Engineer (25N / CCNP) — <a href="https://www.gdit.com/careers/search/?q=Fort+Liberty+Network" target="_blank" rel="noopener" style="color:#60a5fa;font-weight:800;">Apply ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_2',this.checked?'1':'0')" /><span><strong>CACI (Fort Bragg / USASOC):</strong> SOF C4ISR &amp; Multi-Enclave Network Engineer — <a href="https://careers.caci.com/global/en/search-results?keywords=Fort%20Liberty%20Network" target="_blank" rel="noopener" style="color:#60a5fa;font-weight:800;">Apply ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_3',this.checked?'1':'0')" /><span><strong>Booz Allen (Fort Bragg / Southern Pines):</strong> Zero-Trust Cyber &amp; AI Ops Architect (SC-100 / Sec+) — <a href="https://careers.boozallen.com/jobs/search?q=Fayetteville+North+Carolina" target="_blank" rel="noopener" style="color:#60a5fa;font-weight:800;">Apply ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_4',this.checked?'1':'0')" /><span><strong>Jacobs / Amentum / Peraton:</strong> Enterprise BGP/MPLS/EVPN Network Engineer — <a href="https://www.clearancejobs.com/jobs?keywords=Network+Engineer+Fayetteville+NC" target="_blank" rel="noopener" style="color:#60a5fa;font-weight:800;">Apply ↗</a></span></label>
-            </div>
-          </div>
-
-          <!-- Track 2: Raleigh / Cary / RTP Near ECPI Campus (4101 Capital Blvd) -->
-          <div style="background:#020617;border:1px solid rgba(37,99,235,0.45);border-radius:14px;padding:14px;">
-            <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;">TRACK 2 • RALEIGH / CARY / RTP (NEAR ECPI RALEIGH 27604)</span>
-            <h4 style="margin:8px 0 6px;font-size:15px;color:#fff;">Enterprise Cloud, AI ModelOps &amp; Network Primes ($125K–$190K)</h4>
-            <p style="font-size:12px;color:var(--silver);line-height:1.5;margin-bottom:10px;">
-              10–22 mins from <strong>ECPI Raleigh Campus (`4101 Capital Blvd, Raleigh, NC 27604`)</strong> across RTP, Cary &amp; Downtown Raleigh:
-            </p>
-            <div style="display:flex;flex-direction:column;gap:7px;font-size:12px;">
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_5',this.checked?'1':'0')" /><span><strong>Cisco Systems (RTP Mega-Campus, Morrisville):</strong> Network Consulting Engineer (NCE Veteran Track) — <a href="https://jobs.cisco.com/jobs/SearchJobs/RTP%20North%20Carolina" target="_blank" rel="noopener" style="color:#fcd34d;font-weight:800;">Apply ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_6',this.checked?'1':'0')" /><span><strong>SAS Institute (World HQ, Cary, NC):</strong> ModelOps &amp; Cloud AI Solutions Architect (A00-440) — <a href="https://www.sas.com/en_us/careers.html" target="_blank" rel="noopener" style="color:#fcd34d;font-weight:800;">Apply ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_7',this.checked?'1':'0')" /><span><strong>Red Hat / IBM (Downtown Raleigh HQ):</strong> Ansible Network Automation &amp; Linux Cloud Engineer — <a href="https://www.redhat.com/en/jobs" target="_blank" rel="noopener" style="color:#fcd34d;font-weight:800;">Apply ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_8',this.checked?'1':'0')" /><span><strong>Fidelity / NetApp / Bandwidth (Raleigh/RTP):</strong> Cloud Security &amp; Zero-Trust Engineer (AZ-500) — <a href="https://jobs.fidelity.com/en/jobs/?search=Network+Cloud&location=Durham%2C+NC" target="_blank" rel="noopener" style="color:#fcd34d;font-weight:800;">Apply ↗</a></span></label>
-            </div>
-          </div>
-
-          <!-- Track 3: Immediate 7-Day Cashflow (Remote AI RLHF + Fast Staffing Desks) -->
-          <div style="background:#020617;border:1px solid rgba(22,163,74,0.45);border-radius:14px;padding:14px;">
-            <span class="badge" style="background:rgba(22,163,74,0.2);color:#86efac;">TRACK 3 • IMMEDIATE 7-DAY CASHFLOW (REMOTE AI + FAST STAFFING)</span>
-            <h4 style="margin:8px 0 6px;font-size:15px;color:#fff;">Start Earning in 48 Hours–14 Days ($45–$85/hr + Contract-to-Hire)</h4>
-            <p style="font-size:12px;color:var(--silver);line-height:1.5;margin-bottom:10px;">
-              Bridge immediate weekly income while defense/RTP onboarding completes:
-            </p>
-            <div style="display:flex;flex-direction:column;gap:7px;font-size:12px;">
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_9',this.checked?'1':'0')" /><span><strong>DataAnnotation / Outlier / Mercor AI:</strong> Remote Python, Linux &amp; Cyber AI Trainer ($45–$85/hr weekly payout) — <a href="https://www.dataannotation.tech/" target="_blank" rel="noopener" style="color:#4ade80;font-weight:800;">Start ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_10',this.checked?'1':'0')" /><span><strong>Apex Systems &amp; TEKsystems (Raleigh/Fort Bragg DoD Desk):</strong> Fast 7-Day Contract Placement — <a href="https://www.apexsystems.com/search-results?keywords=Network%20Engineer&location=North%20Carolina" target="_blank" rel="noopener" style="color:#4ade80;font-weight:800;">Apply ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_11',this.checked?'1':'0')" /><span><strong>USAJOBS Federal 2210 (IT/Cyber) &amp; 1515 (ORSA):</strong> Direct-Hire Veteran 10-Point Preference — <a href="https://www.usajobs.gov/Search/Results?l=Fort%20Liberty%2C%20North%20Carolina&l=Raleigh%2C%20North%20Carolina&k=2210" target="_blank" rel="noopener" style="color:#4ade80;font-weight:800;">Apply ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_12',this.checked?'1':'0')" /><span><strong>B2B Local Business AI Web Package ($1,500 Setup):</strong> Pitch 5 local shops today using Sterling Auto Demo — <a href="projects/sterling-auto-repair/index.html" style="color:#4ade80;font-weight:800;">Open Demo →</a></span></label>
-            </div>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+            <select id="career-subpage-select" onchange="switchCareerSubPage(this.value)" style="background:#020617;color:#f8fafc;border:1px solid rgba(59,130,246,0.5);border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+              <option value="4a">📂 Sub-Page 1 of 4: Immediate NC &amp; Remote Jobs</option>
+              <option value="4b">📂 Sub-Page 2 of 4: NC Relocation Corridor Matrix</option>
+              <option value="4c">📂 Sub-Page 3 of 4: VA Benefits &amp; Oct 22 Maximizer</option>
+              <option value="4d">📂 Sub-Page 4 of 4: AI, Social &amp; Ad Monetization</option>
+              <option value="all">📑 Show All 4 Sub-Pages Stacked</option>
+            </select>
+            <select onchange="if(this.value){if(this.value.startsWith('http'))window.open(this.value,'_blank');else window.location.href=this.value;this.value='';}" style="background:#020617;color:#fcd34d;border:1px solid rgba(245,158,11,0.5);border-radius:8px;padding:7px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+              <option value="">⚡ Direct Portal &amp; External Jump ▾</option>
+              <option value="https://www.clearancejobs.com/jobs?keywords=25N+Network+Engineer+Fort+Liberty">🔥 ClearanceJobs: Fort Bragg 25N ↗</option>
+              <option value="https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Architect&location=Raleigh-Durham-Chapel%20Hill%20Area">🌲 LinkedIn: Raleigh / RTP / Cary Jobs ↗</option>
+              <option value="https://www.ecpi.edu/locations/raleigh-nc">🏫 ECPI Raleigh Campus ($2,172/mo BAH) ↗</option>
+              <option value="https://www.va.gov/disability/how-to-file-claim/">🎖️ VA Form 21-526EZ &amp; PACT Act ↗</option>
+              <option value="https://www.va.gov/careers-employment/vocational-rehabilitation/">🎓 VA Chapter 31 VR&amp;E (28-1900) ↗</option>
+              <option value="projects/sterling-auto-repair/index.html">🚗 Sterling Auto ($1,500 B2B Client Demo) →</option>
+              <option value="whitefeather-ecommerce-hub.html">🛍️ White Feather Digital Storefront →</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <!-- MODULE 4B: NORTH CAROLINA RELOCATION CORRIDOR PLANNER (ECPI RALEIGH <-> SANFORD/LILLINGTON <-> FORT BRAGG) -->
-      <div class="card" style="margin-bottom:18px;border-color:rgba(59,130,246,0.55);">
-        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+      <!-- SUB-PAGE 4A: IMMEDIATE WORK & FAST-CASHFLOW JOB BOARD -->
+      <div class="card career-subpage-pane" id="csub-pane-4a" style="margin-bottom:14px;border-color:rgba(220,38,38,0.55);">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
           <div>
-            <span class="badge" style="background:rgba(37,99,235,0.22);color:#93c5fd;">
-              MODULE 4B • NC RELOCATION CORRIDOR MATRIX (NEAR ECPI RALEIGH • NEAR FORT BRAGG • IN-BETWEEN SWEET SPOT)
-            </span>
-            <h3 style="margin-top:6px;font-size:19px;">Compare Commute, Housing Cost, GI Bill / VR&amp;E Monthly BAH &amp; VA $0-Down Home Loan Options</h3>
+            <span class="badge" style="background:rgba(220,38,38,0.22);color:#fca5a5;">SUB-PAGE 4A • 12 IMMEDIATE HIRING EMPLOYERS &amp; 48-HR CASHFLOW</span>
+            <h3 style="margin-top:4px;font-size:18px;">Fort Bragg 25N/USASOC Primes • Raleigh/RTP Near ECPI • 7-Day Remote AI</h3>
           </div>
-          <div class="btn-row">
-            <a href="https://www.ecpi.edu/locations/raleigh-nc" target="_blank" rel="noopener" class="btn btn-blue">🏫 ECPI Raleigh (4101 Capital Blvd) ↗</a>
-            <a href="https://www.va.gov/housing-assistance/home-loans/how-to-request-coe/" target="_blank" rel="noopener" class="btn btn-gold">🏠 Get VA $0-Down Loan COE ↗</a>
-            <button class="btn btn-ghost" onclick="switchPortalTab('tab-geo-atlas')">🗺️ View on Interactive NC Corridor Map →</button>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+            <select id="job-track-filter" onchange="filterCareerJobTracks(this.value)" style="background:#020617;color:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+              <option value="all">🔍 Filter Track: All 3 Hiring Tracks (12 Roles)</option>
+              <option value="t1">Track 1: Fort Bragg / USASOC 25N ($115K–$168K)</option>
+              <option value="t2">Track 2: Raleigh / RTP / Cary Near ECPI ($125K–$190K)</option>
+              <option value="t3">Track 3: 48-Hr Remote AI &amp; Fast Staffing ($45–$85/hr)</option>
+            </select>
+            <a href="https://www.clearancejobs.com/jobs?keywords=25N+Network+Engineer+Fort+Liberty" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:6px 10px;font-size:11px;">🔥 Bragg 25N ↗</a>
+            <a href="https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Architect&location=Raleigh-Durham-Chapel%20Hill%20Area" target="_blank" rel="noopener" class="btn btn-blue" style="padding:6px 10px;font-size:11px;">🌲 RTP Jobs ↗</a>
           </div>
         </div>
 
-        <div class="grid-3" style="margin-top:14px;">
-          <!-- Zone 1: In-Between Corridor (Sanford / Lillington / Fuquay-Varina / Southern Pines) -->
-          <div style="background:#020617;border:1px solid rgba(252,211,77,0.45);border-radius:14px;padding:14px;">
-            <span class="badge" style="background:rgba(245,158,11,0.22);color:#fcd34d;">⭐ OPTION 1: IN-BETWEEN CORRIDOR (US-1 &amp; US-401 MIDPOINT)</span>
-            <h4 style="margin:8px 0 4px;font-size:15px;color:#fff;">Sanford (27330) • Lillington/Buies Creek (27546) • Southern Pines (28387)</h4>
-            <p style="font-size:12px;color:var(--silver);line-height:1.5;margin-bottom:8px;">
-              <strong>Best Dual-Commute Sweet Spot:</strong> ~35–40 mins south to <strong>Fort Bragg (`USASOC / Manchester Gate`)</strong> AND ~35–42 mins north on US-1/US-401 to <strong>Cary (`SAS HQ`), RTP (`Cisco`), and ECPI Raleigh (`27604`)</strong>!
-            </p>
-            <ul style="font-size:11.5px;color:#e2e8f0;padding-left:16px;line-height:1.55;margin-bottom:10px;">
-              <li><strong>Rent / Mortgage:</strong> $1,350–$1,850/mo (20–30% lower than North Raleigh)</li>
-              <li><strong>ECPI Raleigh BAH Strategy:</strong> Take 1 hybrid/in-person class at ECPI Raleigh (`27604`) to collect <strong>$2,172/mo tax-free MHA/BAH</strong> while living in lower-cost Sanford or Lillington!</li>
-              <li><strong>SOF Community:</strong> Southern Pines / Aberdeen is the #1 off-post hub for 112th Signal &amp; 3rd SFG families.</li>
-            </ul>
-            <div class="btn-row">
-              <a href="https://www.zillow.com/sanford-nc/rentals/" target="_blank" rel="noopener" class="btn btn-gold" style="font-size:11px;padding:6px 10px;">Sanford Rentals/Homes ↗</a>
-              <a href="https://www.zillow.com/lillington-nc/rentals/" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:11px;padding:6px 10px;">Lillington / US-401 ↗</a>
+        <div class="grid-3" id="career-job-tracks-grid" style="margin-top:12px;">
+          <!-- Track 1: Fort Bragg -->
+          <div data-job-track="t1" style="background:#020617;border:1px solid rgba(220,38,38,0.45);border-radius:12px;padding:12px;">
+            <span class="badge" style="background:rgba(220,38,38,0.2);color:#fca5a5;">TRACK 1 • FORT BRAGG (USASOC / 112TH SIGNAL)</span>
+            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Cleared Tactical &amp; Enterprise Network ($115K–$168K)</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_1',this.checked?'1':'0')" /><span><strong>GDIT (Fort Bragg):</strong> 25N / CCNP SATCOM</span></label>
+                <a href="https://www.gdit.com/careers/search/?q=Fort+Liberty+Network" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_2',this.checked?'1':'0')" /><span><strong>CACI (USASOC):</strong> SOF C4ISR Transport</span></label>
+                <a href="https://careers.caci.com/global/en/search-results?keywords=Fort%20Liberty%20Network" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_3',this.checked?'1':'0')" /><span><strong>Booz Allen:</strong> Zero-Trust &amp; ORSA AI Lead</span></label>
+                <a href="https://careers.boozallen.com/jobs/search?q=Fayetteville+North+Carolina" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_4',this.checked?'1':'0')" /><span><strong>Jacobs / SITEC III:</strong> BGP/MPLS/EVPN</span></label>
+                <a href="https://www.clearancejobs.com/jobs?keywords=Network+Engineer+Fayetteville+NC" target="_blank" rel="noopener" class="btn btn-crimson" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
             </div>
+            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
+              <summary style="cursor:pointer;font-weight:700;color:#fca5a5;">▾ 112th Signal (SO) (Airborne) Fast-Track Advantage</summary>
+              <p style="margin-top:5px;line-height:1.45;">Your prior assignment at 112th Signal Bn (USASOC) + SOJTF-OIR Erbil gives you direct familiarity with USASOC SIPR/NIPR/JWICS enclaves on Yadkin &amp; Reilly Rd.</p>
+            </details>
           </div>
 
-          <!-- Zone 2: Near ECPI Raleigh Campus & RTP/Cary -->
-          <div style="background:#020617;border:1px solid rgba(37,99,235,0.45);border-radius:14px;padding:14px;">
-            <span class="badge" style="background:rgba(37,99,235,0.22);color:#93c5fd;">🏫 OPTION 2: NEAR ECPI RALEIGH (4101 CAPITAL BLVD, ZIP 27604)</span>
-            <h4 style="margin:8px 0 4px;font-size:15px;color:#fff;">Raleigh (27604/27609) • Cary (27513) • Garner / Knightdale</h4>
-            <p style="font-size:12px;color:var(--silver);line-height:1.5;margin-bottom:8px;">
-              <strong>Maximum Tech Salary + Maximum GI Bill / VR&amp;E Housing Stipend:</strong> 5–15 mins from ECPI Raleigh Campus and 15–20 mins from RTP (`Cisco`, `Red Hat`, `SAS`, `NetApp`).
-            </p>
-            <ul style="font-size:11.5px;color:#e2e8f0;padding-left:16px;line-height:1.55;margin-bottom:10px;">
-              <li><strong>In-Person MHA / BAH (ZIP 27604):</strong> <strong style="color:#4ade80;">~$2,172/mo tax-free</strong> (+$1,054/mo higher than online-only rate of ~$1,118/mo!).</li>
-              <li><strong>Campus Lab Access:</strong> Hands-on Cisco/Linux/Cyber physical racks &amp; Raleigh Career Services employer pipeline.</li>
-              <li><strong>Fort Bragg Access:</strong> ~60 mins south via I-95 / US-1 for reserve/contractor site visits.</li>
-            </ul>
-            <div class="btn-row">
-              <a href="https://www.zillow.com/raleigh-nc-27604/rentals/" target="_blank" rel="noopener" class="btn btn-blue" style="font-size:11px;padding:6px 10px;">Raleigh 27604 Housing ↗</a>
-              <a href="https://www.ecpi.edu/locations/raleigh-nc" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:11px;padding:6px 10px;">ECPI Raleigh Campus ↗</a>
+          <!-- Track 2: Raleigh / RTP -->
+          <div data-job-track="t2" style="background:#020617;border:1px solid rgba(37,99,235,0.45);border-radius:12px;padding:12px;">
+            <span class="badge" style="background:rgba(37,99,235,0.2);color:#93c5fd;">TRACK 2 • RALEIGH / RTP (NEAR ECPI 27604)</span>
+            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Cloud, AI ModelOps &amp; Network Primes ($125K–$190K)</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_5',this.checked?'1':'0')" /><span><strong>Cisco (RTP Campus):</strong> Federal NCE Engineer</span></label>
+                <a href="https://jobs.cisco.com/jobs/SearchJobs/RTP%20North%20Carolina" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_6',this.checked?'1':'0')" /><span><strong>SAS (Cary World HQ):</strong> ModelOps A00-440</span></label>
+                <a href="https://www.sas.com/en_us/careers.html" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_7',this.checked?'1':'0')" /><span><strong>Red Hat (Raleigh HQ):</strong> Ansible Cloud Lead</span></label>
+                <a href="https://www.redhat.com/en/jobs" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_8',this.checked?'1':'0')" /><span><strong>Fidelity / NetApp (RTP):</strong> AZ-500 Cloud Sec</span></label>
+                <a href="https://jobs.fidelity.com/en/jobs/?search=Network+Cloud&location=Durham%2C+NC" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
             </div>
+            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
+              <summary style="cursor:pointer;font-weight:700;color:#93c5fd;">▾ ECPI Raleigh (4101 Capital Blvd) Proximity</summary>
+              <p style="margin-top:5px;line-height:1.45;">All 4 employers are 12–22 mins from ECPI Raleigh Campus (`ZIP 27604`), letting you stack a `$145K+` salary with `$2,172/mo` tax-free GI Bill/VR&amp;E BAH.</p>
+            </details>
           </div>
 
-          <!-- Zone 3: Near Fort Bragg / Fort Liberty -->
-          <div style="background:#020617;border:1px solid rgba(22,163,74,0.45);border-radius:14px;padding:14px;">
-            <span class="badge" style="background:rgba(22,163,74,0.22);color:#86efac;">🪖 OPTION 3: NEAR FORT BRAGG / LIBERTY (ZIP 28310 / 28303)</span>
-            <h4 style="margin:8px 0 4px;font-size:15px;color:#fff;">Fayetteville (Haymount) • Spring Lake • Raeford (Hoke County)</h4>
-            <p style="font-size:12px;color:var(--silver);line-height:1.5;margin-bottom:8px;">
-              <strong>Lowest Housing Cost + Immediate On-Post Cleared Contractor Access:</strong> 5–15 mins from USASOC HQ, 112th Signal Bn, JSOC, and Womack AMC.
-            </p>
-            <ul style="font-size:11.5px;color:#e2e8f0;padding-left:16px;line-height:1.55;margin-bottom:10px;">
-              <li><strong>Rent / VA $0-Down Mortgage:</strong> $1,150–$1,650/mo (high cashflow margin when paired with VA disability + contractor salary).</li>
-              <li><strong>VA Medical &amp; Base Perks:</strong> Fayetteville VA Health Care Center (`7300 Raeford Rd`), Commissary, PX &amp; SOF network.</li>
-              <li><strong>ECPI Commute:</strong> ~55–65 mins north on I-95/US-401 to Raleigh campus (1 day/wk hybrid).</li>
-            </ul>
-            <div class="btn-row">
-              <a href="https://www.zillow.com/fayetteville-nc/rentals/" target="_blank" rel="noopener" class="btn btn-gold" style="font-size:11px;padding:6px 10px;">Fort Bragg / Fayetteville ↗</a>
-              <a href="https://www.va.gov/fayetteville-coastal-health-care/" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:11px;padding:6px 10px;">Fayetteville VA Medical ↗</a>
+          <!-- Track 3: Immediate 48-Hr Remote Cashflow -->
+          <div data-job-track="t3" style="background:#020617;border:1px solid rgba(22,163,74,0.45);border-radius:12px;padding:12px;">
+            <span class="badge" style="background:rgba(22,163,74,0.2);color:#86efac;">TRACK 3 • 48-HR TO 7-DAY CASHFLOW</span>
+            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Immediate Weekly Payouts ($45–$85/hr + Staffing)</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_9',this.checked?'1':'0')" /><span><strong>DataAnnotation / Outlier:</strong> AI RLHF ($45–$85/hr)</span></label>
+                <a href="https://www.dataannotation.tech/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Start ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_10',this.checked?'1':'0')" /><span><strong>Apex / TEKsystems:</strong> 7-Day NC DoD Contract</span></label>
+                <a href="https://www.apexsystems.com/search-results?keywords=Network%20Engineer&location=North%20Carolina" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_11',this.checked?'1':'0')" /><span><strong>USAJOBS 2210 / 1515:</strong> 10-Pt Vet Direct-Hire</span></label>
+                <a href="https://www.usajobs.gov/Search/Results?l=Fort%20Liberty%2C%20North%20Carolina&l=Raleigh%2C%20North%20Carolina&k=2210" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Apply ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_job_12',this.checked?'1':'0')" /><span><strong>B2B Local AI Setup ($1,500):</strong> Pitch 5 Shops</span></label>
+                <a href="projects/sterling-auto-repair/index.html" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Demo →</a>
+              </div>
             </div>
+            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
+              <summary style="cursor:pointer;font-weight:700;color:#86efac;">▾ 48-Hour Immediate Cashflow Playbook</summary>
+              <p style="margin-top:5px;line-height:1.45;">Complete the 60-min Python/Network evaluation on DataAnnotation today for weekly PayPal payouts while pitching local NC shops on the `$1,500` Sterling Auto AI template.</p>
+            </details>
           </div>
         </div>
       </div>
 
-      <!-- MODULE 4C & 4D: VA BENEFITS MAXIMIZER + IMMEDIATE AI / SOCIAL MEDIA / ADS / PRODUCT MONETIZATION -->
-      <div class="grid-2" style="margin-bottom:18px;">
-        <!-- MODULE 4C: VA BENEFITS MAXIMIZER -->
-        <div class="card" style="border-color:rgba(22,163,74,0.55);">
+      <!-- SUB-PAGE 4B: NORTH CAROLINA RELOCATION CORRIDOR PLANNER -->
+      <div class="card career-subpage-pane" id="csub-pane-4b" style="display:none;margin-bottom:14px;border-color:rgba(59,130,246,0.55);">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
           <div>
-            <span class="badge" style="background:rgba(22,163,74,0.22);color:#86efac;">
-              MODULE 4C • VA BENEFITS MAXIMIZER (EDIPI 1516730621 • OCT 22, 2026 VA APPOINTMENT)
-            </span>
-            <h3 style="margin-top:6px;font-size:18px;">Maximize Tax-Free VA Compensation, VR&amp;E Ch. 31 ($2,172/mo) &amp; $0-Down VA Home Loan</h3>
-            <p style="font-size:12px;color:var(--silver);margin:6px 0 10px;">
-              Tailored to your <strong>112th Signal Bn (SO) (Airborne) 25N</strong> &amp; <strong>Erbil, Iraq (`SOJTF-OIR`)</strong> service record ahead of your confirmed <strong>Thursday, Oct 22, 2026 at 12:00 PM EDT VA Video Connect</strong> appointment:
-            </p>
-            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;background:#020617;padding:12px;border-radius:12px;border:1px solid var(--border);">
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_1',this.checked?'1':'0')" /><span><strong>1. PACT Act Erbil, Iraq (`SOJTF-OIR`) Presumptives:</strong> Claim Chronic Rhinitis, Sinusitis, Prostrating Migraines (up to 50%), &amp; IBS/GI (No nexus letter required for qualifying Iraq deployment) — <a href="https://www.va.gov/resources/the-pact-act-and-your-va-benefits/" target="_blank" rel="noopener" style="color:#4ade80;font-weight:800;">PACT Act Filing ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_2',this.checked?'1':'0')" /><span><strong>2. Airborne Parachutist Orthopedic &amp; Secondary Radiculopathy (`38 CFR § 3.310`):</strong> Claim Lumbar/Cervical DDD + Secondary Bilateral Lower/Upper Extremity Radiculopathy &amp; Tinnitus — <a href="https://www.va.gov/disability/how-to-file-claim/" target="_blank" rel="noopener" style="color:#4ade80;font-weight:800;">File VA 21-526EZ ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_3',this.checked?'1':'0')" /><span><strong>3. Chapter 31 VR&amp;E (`VA Form 28-1900`):</strong> Pays 100% ECPI &amp; Cert Vouchers (`CCNP`, `JNCIP`, `SAS A00-440`, `SC-100`, `CIPP/US`), high-spec workstation + full BAH (`$2,172/mo` Raleigh) + <strong>SDVOSB Self-Employment Track</strong> — <a href="https://www.va.gov/careers-employment/vocational-rehabilitation/how-to-apply/" target="_blank" rel="noopener" style="color:#4ade80;font-weight:800;">Apply VR&amp;E ↗</a></span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_4',this.checked?'1':'0')" /><span><strong>4. VA Home Loan ($0 Down + 0% Funding Fee) &amp; NC Tax Exclusion (`NC GS 105-277.1C`):</strong> Buy up to a 4-unit property in NC (live in 1 unit, rent 3 units to cover mortgage!) — <a href="https://www.milvets.nc.gov/benefits-services" target="_blank" rel="noopener" style="color:#4ade80;font-weight:800;">NC4VETS Benefits ↗</a></span></label>
-            </div>
+            <span class="badge" style="background:rgba(37,99,235,0.22);color:#93c5fd;">SUB-PAGE 4B • NC RELOCATION CORRIDOR MATRIX (ECPI RALEIGH ↔ SANFORD/LILLINGTON ↔ FORT BRAGG)</span>
+            <h3 style="margin-top:4px;font-size:18px;">Compare Commute, Rent/VA $0-Down Loan &amp; $2,172/mo ECPI Raleigh BAH</h3>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+            <select onchange="filterRelocationZones(this.value)" style="background:#020617;color:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+              <option value="all">📍 View: Compare All 3 NC Relocation Zones</option>
+              <option value="z1">⭐ Option 1: Sanford / Lillington Midpoint (35m to Both)</option>
+              <option value="z2">🏫 Option 2: Near ECPI Raleigh 27604 ($2,172/mo BAH)</option>
+              <option value="z3">🪖 Option 3: Near Fort Bragg / Southern Pines (28310)</option>
+            </select>
+            <button class="btn btn-blue" style="padding:6px 10px;font-size:11px;" onclick="switchPortalTab('tab-geo-atlas')">🗺️ Interactive NC Map →</button>
           </div>
         </div>
 
-        <!-- MODULE 4D: IMMEDIATE AI, SOCIAL MEDIA, PAID ADS & PRODUCT MONETIZATION ENGINE -->
-        <div class="card" style="border-color:rgba(245,158,11,0.55);">
-          <div>
-            <span class="badge" style="background:rgba(245,158,11,0.22);color:#fcd34d;">
-              MODULE 4D • IMMEDIATE AI, SOCIAL MEDIA, PAID ADS &amp; DIGITAL PRODUCT MONETIZATION
-            </span>
-            <h3 style="margin-top:6px;font-size:18px;">Launch 4 High-Margin AI &amp; Digital Revenue Streams Today</h3>
-            <p style="font-size:12px;color:var(--silver);margin:6px 0 10px;">
-              Turn the exact assets already built in this workspace (`Sterling Auto Repair`, `15 EVE-NG Topologies`, `Agent Studio`, `White Feather Store`) into immediate cashflow:
-            </p>
-            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;background:#020617;padding:12px;border-radius:12px;border:1px solid var(--border);margin-bottom:10px;">
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_1',this.checked?'1':'0')" /><span><strong>1. B2B Local Business AI Web + 24/7 Lead Agent ($1,500 Setup + $497/mo):</strong> Show NC/VA auto repair, HVAC &amp; roofing owners our live <a href="projects/sterling-auto-repair/index.html" style="color:#fcd34d;font-weight:800;">Sterling Auto Repair</a> site. Close 2 clients = <strong>$3,000 immediate cash</strong>.</span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_2',this.checked?'1':'0')" /><span><strong>2. Digital Product #1 ($79 Instant Download):</strong> Sell the <em>15-Topology EVE-NG CCNP/JNCIP `.unl` + Ansible Playbook Pack</em> on <a href="whitefeather-ecommerce-hub.html" style="color:#fcd34d;font-weight:800;">White Feather Store</a> &amp; Gumroad/Stripe.</span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_3',this.checked?'1':'0')" /><span><strong>3. Skool Community / Cohort ($97/mo):</strong> Funnel LinkedIn &amp; YouTube viewers into <a href="https://www.skool.com/white-feather-ai/plans" target="_blank" rel="noopener" style="color:#fcd34d;font-weight:800;">White Feather AI ↗</a> (Cleared Cyber + Agentic AI Accelerator).</span></label>
-              <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_4',this.checked?'1':'0')" /><span><strong>4. Copy &amp; Post Daily Ad / Reel Scripts Below:</strong> Use 1-click copy buttons below for LinkedIn, Meta Lead Ads, YouTube Shorts/TikTok &amp; Cold B2B DM outreach!</span></label>
+        <div class="grid-3" id="nc-reloc-zones-grid" style="margin-top:12px;">
+          <!-- Zone 1 -->
+          <div data-reloc-zone="z1" style="background:#020617;border:1px solid rgba(252,211,77,0.45);border-radius:12px;padding:12px;">
+            <span class="badge" style="background:rgba(245,158,11,0.22);color:#fcd34d;">⭐ OPTION 1: IN-BETWEEN MIDPOINT (US-1 / US-401)</span>
+            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Sanford (27330) • Lillington (27546) • Southern Pines</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_1',this.checked?'1':'0')" /><span>Tour Sanford US-1 Rentals ($1,350–$1,650)</span></label>
+                <a href="https://www.zillow.com/sanford-nc/rentals/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Zillow ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_2',this.checked?'1':'0')" /><span>Tour Lillington / US-401 Midpoint Homes</span></label>
+                <a href="https://www.zillow.com/lillington-nc/rentals/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Zillow ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_3',this.checked?'1':'0')" /><span>Fly Interactive Map to Sanford Midpoint</span></label>
+                <button class="btn btn-ghost" style="padding:3px 8px;font-size:10.5px;" onclick="switchPortalTab('tab-geo-atlas');setTimeout(()=>flyCorridor(0),200)">Map →</button>
+              </div>
             </div>
-            <div class="btn-row">
-              <button class="btn btn-gold" onclick="copyCareerSnippet('b2b_ad')">📣 Copy B2B Local AI Ad</button>
-              <button class="btn btn-blue" onclick="copyCareerSnippet('reel_script')">🎬 Copy 60s Viral Reel Script</button>
-              <button class="btn btn-ghost" onclick="copyCareerSnippet('headline')">📋 Copy LinkedIn Headline</button>
-              <button class="btn btn-ghost" onclick="copyCareerSnippet('nc_cover')">📋 Copy Fort Bragg/RTP Pitch</button>
+            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
+              <summary style="cursor:pointer;font-weight:700;color:#fcd34d;">▾ Commute &amp; BAH Arbitrage Math</summary>
+              <p style="margin-top:5px;line-height:1.45;">35 mins to Fort Bragg AND 35 mins to ECPI Raleigh (`27604`). Take 1 hybrid class in Raleigh to collect `$2,172/mo` BAH while paying `$1,450/mo` midpoint housing.</p>
+            </details>
+          </div>
+
+          <!-- Zone 2 -->
+          <div data-reloc-zone="z2" style="background:#020617;border:1px solid rgba(37,99,235,0.45);border-radius:12px;padding:12px;">
+            <span class="badge" style="background:rgba(37,99,235,0.22);color:#93c5fd;">🏫 OPTION 2: NEAR ECPI RALEIGH (ZIP 27604)</span>
+            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Raleigh (4101 Capital Blvd) • Cary • RTP</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_4',this.checked?'1':'0')" /><span>Register 1 Hybrid Class @ ECPI Raleigh</span></label>
+                <a href="https://www.ecpi.edu/locations/raleigh-nc" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">ECPI ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_5',this.checked?'1':'0')" /><span>Check Raleigh 27604 / Cary Apartments</span></label>
+                <a href="https://www.zillow.com/raleigh-nc-27604/rentals/" target="_blank" rel="noopener" class="btn btn-blue" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Zillow ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_6',this.checked?'1':'0')" /><span>Fly Map to ECPI Raleigh &amp; RTP Corridor</span></label>
+                <button class="btn btn-ghost" style="padding:3px 8px;font-size:10.5px;" onclick="switchPortalTab('tab-geo-atlas');setTimeout(()=>flyCorridor(1),200)">Map →</button>
+              </div>
             </div>
-            <pre id="career-snippet-preview" style="margin-top:10px;padding:12px;border-radius:10px;background:#020617;border:1px solid var(--border);color:#93c5fd;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:pre-wrap;line-height:1.45;">Click any button above to copy ready-to-launch Ad Copy, Viral Video Scripts, Fort Bragg/RTP Recruiter Pitch, or LinkedIn Positioning...</pre>
+            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
+              <summary style="cursor:pointer;font-weight:700;color:#93c5fd;">▾ +$1,054/mo Tax-Free BAH Boost Details</summary>
+              <p style="margin-top:5px;line-height:1.45;">1 resident class at ECPI Raleigh (`4101 Capital Blvd`) upgrades GI Bill/VR&amp;E MHA from `$1,118/mo` (online) to **`~$2,172/mo` tax-free**.</p>
+            </details>
+          </div>
+
+          <!-- Zone 3 -->
+          <div data-reloc-zone="z3" style="background:#020617;border:1px solid rgba(22,163,74,0.45);border-radius:12px;padding:12px;">
+            <span class="badge" style="background:rgba(22,163,74,0.22);color:#86efac;">🪖 OPTION 3: NEAR FORT BRAGG (ZIP 28310)</span>
+            <h4 style="margin:6px 0 8px;font-size:14px;color:#fff;">Fayetteville (Haymount) • Raeford • Spring Lake</h4>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_7',this.checked?'1':'0')" /><span>Check Haymount / Raeford Homes ($1,150+)</span></label>
+                <a href="https://www.zillow.com/fayetteville-nc/rentals/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Zillow ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_8',this.checked?'1':'0')" /><span>Register @ Fayetteville VA Health Center</span></label>
+                <a href="https://www.va.gov/fayetteville-coastal-health-care/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">VA Care ↗</a>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(15,23,42,0.7);border-radius:8px;">
+                <label style="display:flex;gap:7px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('nc_rel_9',this.checked?'1':'0')" /><span>Request VA $0-Down Home Loan COE</span></label>
+                <a href="https://www.va.gov/housing-assistance/home-loans/how-to-request-coe/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">VA COE ↗</a>
+              </div>
+            </div>
+            <details style="margin-top:8px;font-size:11px;color:var(--silver);">
+              <summary style="cursor:pointer;font-weight:700;color:#86efac;">▾ On-Post USASOC &amp; 4-Plex House-Hack Note</summary>
+              <p style="margin-top:5px;line-height:1.45;">10 mins to USASOC HQ &amp; Womack AMC. Use your `$0-Down` VA Loan on a duplex/fourplex near Fort Bragg so tenant rent covers 100% of the mortgage.</p>
+            </details>
           </div>
         </div>
+      </div>
+
+      <!-- SUB-PAGE 4C: VA BENEFITS MAXIMIZER -->
+      <div class="card career-subpage-pane" id="csub-pane-4c" style="display:none;margin-bottom:14px;border-color:rgba(22,163,74,0.55);">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+          <div>
+            <span class="badge" style="background:rgba(22,163,74,0.22);color:#86efac;">SUB-PAGE 4C • VA BENEFITS MAXIMIZER (EDIPI 1516730621 • OCT 22, 2026 12:00 PM VA APPT)</span>
+            <h3 style="margin-top:4px;font-size:18px;">PACT Act Erbil • Airborne Secondary Chain • Ch. 31 VR&amp;E ($2,172/mo) • $0-Down VA Loan</h3>
+          </div>
+          <div class="btn-row">
+            <a href="https://www.va.gov/health-care/send-receive-messages/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:6px 10px;font-size:11px;">💬 My HealtheVet Message ↗</a>
+            <a href="https://www.va.gov/disability/file-disability-claim-form-21-526ez/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:6px 10px;font-size:11px;">📄 File VA 21-526EZ ↗</a>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:12px;">
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+              <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_1',this.checked?'1':'0')" /><span><strong>1. PACT Act Erbil (`SOJTF-OIR`) Presumptives:</strong> Rhinitis, Sinusitis, Migraines, IBS</span></label>
+              <a href="https://www.va.gov/resources/the-pact-act-and-your-va-benefits/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">PACT Act ↗</a>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+              <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_2',this.checked?'1':'0')" /><span><strong>2. Airborne 25N Secondary Chain (`38 CFR § 3.310`):</strong> Bilateral Radiculopathy &amp; DDD</span></label>
+              <a href="https://www.va.gov/disability/file-disability-claim-form-21-526ez/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">File 526EZ ↗</a>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+              <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_3',this.checked?'1':'0')" /><span><strong>3. Chapter 31 VR&amp;E (`28-1900`):</strong> 100% Tuition + `$2,172/mo` BAH + 128GB Workstation</span></label>
+              <a href="https://www.va.gov/careers-employment/vocational-rehabilitation/how-to-apply/" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Apply VR&amp;E ↗</a>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+              <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('va_act_4',this.checked?'1':'0')" /><span><strong>4. NC Veteran Property Tax Exclusion (`NC GS 105-277.1C`) &amp; `$0-Down` COE</strong></span></label>
+              <a href="https://www.milvets.nc.gov/benefits-services" target="_blank" rel="noopener" class="btn btn-emerald" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">NC4VETS ↗</a>
+            </div>
+          </div>
+
+          <div style="background:#020617;border:1px solid var(--border);border-radius:12px;padding:12px;">
+            <div style="font-size:12px;font-weight:800;color:#86efac;margin-bottom:6px;">📅 CONFIRMED: THURSDAY, OCT 22, 2026 @ 12:00 PM EDT (VA VIDEO CONNECT)</div>
+            <details open style="font-size:11.5px;color:var(--silver);margin-bottom:8px;">
+              <summary style="cursor:pointer;font-weight:700;color:#fff;">▾ Pre-Appointment Secure Message Checklist (48 Hours Prior)</summary>
+              <ul style="padding-left:16px;margin-top:6px;line-height:1.5;">
+                <li>Send My HealtheVet message documenting occupational/sleep impact &amp; prostrating frequency.</li>
+                <li>Request DBQ documentation for Lumbar/Cervical Radiculopathy (Bilateral Factor `+10%`).</li>
+                <li>Request VR&amp;E `VA Form 28-1905m` workstation referral for local 15-Topology EVE-NG compute.</li>
+              </ul>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-PAGE 4D: IMMEDIATE AI, SOCIAL MEDIA, PAID ADS & PRODUCT MONETIZATION -->
+      <div class="card career-subpage-pane" id="csub-pane-4d" style="display:none;margin-bottom:14px;border-color:rgba(245,158,11,0.55);">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+          <div>
+            <span class="badge" style="background:rgba(245,158,11,0.22);color:#fcd34d;">SUB-PAGE 4D • IMMEDIATE AI, SOCIAL MEDIA, PAID ADS &amp; DIGITAL PRODUCTS</span>
+            <h3 style="margin-top:4px;font-size:18px;">4 Live Revenue Streams + Ready-to-Copy Ad, Reel &amp; Cover Scripts</h3>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+            <select onchange="copyCareerSnippet(this.value)" style="background:#020617;color:#fcd34d;border:1px solid rgba(245,158,11,0.5);border-radius:8px;padding:6px 10px;font-size:11.5px;font-weight:700;cursor:pointer;">
+              <option value="b2b_ad">📋 Select &amp; Copy Script: LinkedIn/Meta B2B Ad</option>
+              <option value="reel_script">🎬 Select &amp; Copy: 60s TikTok/Shorts/Reels Script</option>
+              <option value="nc_cover">📨 Select &amp; Copy: Fort Bragg / RTP Cover Letter</option>
+              <option value="headline">💼 Select &amp; Copy: Principal Architect Headline</option>
+              <option value="sdvosb">🛡️ Select &amp; Copy: SDVOSB Capability Pitch</option>
+            </select>
+            <a href="whitefeather-ecommerce-hub.html" class="btn btn-gold" style="padding:6px 10px;font-size:11px;">🛍️ Open Storefront →</a>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:12px;">
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+              <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_1',this.checked?'1':'0')" /><span><strong>1. B2B Local AI Web + 24/7 Agent ($1,500 + $497/mo):</strong> Pitch NC/VA shops</span></label>
+              <a href="projects/sterling-auto-repair/index.html" class="btn btn-gold" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Client Demo →</a>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+              <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_2',this.checked?'1':'0')" /><span><strong>2. Digital Product #1 ($79):</strong> 15-Topology EVE-NG `.unl` + Ansible Pack</span></label>
+              <a href="whitefeather-ecommerce-hub.html" class="btn btn-gold" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Storefront →</a>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+              <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_3',this.checked?'1':'0')" /><span><strong>3. White Feather AI Cohort ($97/mo):</strong> Cleared Cyber &amp; Agentic AI Skool</span></label>
+              <a href="https://www.skool.com/white-feather-ai/plans" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Open Skool ↗</a>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#020617;border:1px solid var(--border);border-radius:10px;">
+              <label style="display:flex;gap:8px;align-items:center;cursor:pointer;"><input type="checkbox" onchange="localStorage.setItem('mon_act_4',this.checked?'1':'0')" /><span><strong>4. Geo-Fenced NC/VA B2B Paid Ads ($10/day):</strong> Fort Bragg &amp; RTP Radius</span></label>
+              <a href="https://www.linkedin.com/campaignmanager/" target="_blank" rel="noopener" class="btn btn-gold" style="padding:4px 9px;font-size:10.5px;text-decoration:none;flex-shrink:0;">Ads Mgr ↗</a>
+            </div>
+          </div>
+
+          <div style="background:#020617;border:1px solid var(--border);border-radius:12px;padding:12px;">
+            <div class="btn-row" style="margin-bottom:8px;">
+              <button class="btn btn-gold" style="padding:5px 9px;font-size:11px;" onclick="copyCareerSnippet('b2b_ad')">📣 B2B Ad</button>
+              <button class="btn btn-blue" style="padding:5px 9px;font-size:11px;" onclick="copyCareerSnippet('reel_script')">🎬 60s Reel</button>
+              <button class="btn btn-ghost" style="padding:5px 9px;font-size:11px;" onclick="copyCareerSnippet('nc_cover')">📨 NC Pitch</button>
+              <button class="btn btn-ghost" style="padding:5px 9px;font-size:11px;" onclick="copyCareerSnippet('headline')">💼 Headline</button>
+            </div>
+            <pre id="career-snippet-preview" style="margin:0;padding:10px;border-radius:8px;background:#070b14;border:1px solid var(--border);color:#93c5fd;font-family:'JetBrains Mono',monospace;font-size:11px;white-space:pre-wrap;max-height:150px;overflow-y:auto;line-height:1.45;">Select a script from the dropdown or buttons above to copy ready-to-launch Ad Copy, 60s Reel Script, or NC Cover Pitch...</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-PAGE FOOTER PAGINATION BAR -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(9,14,28,0.9);border:1px solid var(--border);border-radius:10px;">
+        <button class="btn btn-ghost" onclick="stepCareerSubPage(-1)" style="font-size:11.5px;padding:6px 12px;">← Previous Sub-Page</button>
+        <span id="career-subpage-indicator" style="font-size:11.5px;font-weight:800;color:var(--silver);">Sub-Page 1 of 4 • Use Dropdown or Pills Above to Switch Views</span>
+        <button class="btn btn-blue" onclick="stepCareerSubPage(1)" style="font-size:11.5px;padding:6px 12px;">Next Sub-Page →</button>
       </div>
     </div>
 
@@ -2670,28 +2821,28 @@
         const cmd0 = (lab.quickCmds && lab.quickCmds[0]) ? lab.quickCmds[0] : 'show ip route';
         const cmd1 = (lab.quickCmds && lab.quickCmds[1]) ? lab.quickCmds[1] : 'show bgp summary';
         topoActionEl.innerHTML = `
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
             <div style="font-size:12px;font-weight:800;color:#fca5a5;text-transform:uppercase;letter-spacing:0.06em;">
-              📋 ${lab.code} Built-Out Topology Action Items & Direct Vendor Links
+              📋 ${lab.code} Action Items &amp; Direct Vendor Links
             </div>
-            <span style="font-size:10px;padding:3px 8px;border-radius:999px;background:rgba(16,185,129,0.16);color:#6ee7b7;font-weight:700;">EVE-NG Lab Action Checklist</span>
+            <span style="font-size:10px;padding:3px 8px;border-radius:999px;background:rgba(16,185,129,0.16);color:#6ee7b7;font-weight:700;">4 Checkable Lab Actions + Inline Links</span>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
-            <div>
-              <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:6px;">CHECKABLE LAB DEPLOYMENT ACTIONS:</div>
-              <label style="display:flex;gap:8px;font-size:11.5px;color:#e2e8f0;margin-bottom:5px;cursor:pointer;"><input type="checkbox" style="accent-color:#10b981;" /> <span>Deploy <strong>${lab.code} (${lab.shortTitle})</strong> in EVE-NG (${lab.optRam} Opt RAM)</span></label>
-              <label style="display:flex;gap:8px;font-size:11.5px;color:#e2e8f0;margin-bottom:5px;cursor:pointer;"><input type="checkbox" style="accent-color:#10b981;" /> <span>Apply Cisco IOS-XE & Juniper Junos baseline configs across all ${lab.nodes.length} nodes</span></label>
-              <label style="display:flex;gap:8px;font-size:11.5px;color:#e2e8f0;margin-bottom:5px;cursor:pointer;"><input type="checkbox" style="accent-color:#10b981;" /> <span>Run CLI verification: <code>${cmd0}</code> &amp; <code>${cmd1}</code></span></label>
-              <label style="display:flex;gap:8px;font-size:11.5px;color:#e2e8f0;cursor:pointer;"><input type="checkbox" style="accent-color:#10b981;" /> <span>Trigger BFD/LFA Fiber Cut &amp; verify Wireshark filter (<code>${lab.wsFilter}</code>)</span></label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.08);border-radius:8px;">
+              <label style="display:flex;gap:7px;font-size:11.5px;color:#e2e8f0;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#10b981;" /><span>Deploy <strong>${lab.code}</strong> (${lab.optRam} RAM)</span></label>
+              <button class="btn btn-emerald" style="font-size:10px;padding:3px 8px;" onclick="exportCurrentTopologyArtifact('unl')">⬇ .UNL XML</button>
             </div>
-            <div>
-              <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:6px;">DIRECT TOPOLOGY LINKS & ARTIFACTS:</div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px;">
-                <a href="https://www.cisco.com/c/en/us/support/ios-nx-os-software/index.html" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:11px;padding:5px 10px;text-decoration:none;">📘 Cisco IOS-XE / NX-OS Docs ↗</a>
-                <a href="https://www.juniper.net/documentation/product/us/en/junos-os/" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:11px;padding:5px 10px;text-decoration:none;">📙 Juniper Junos OS Docs ↗</a>
-                <a href="https://www.eve-ng.net/index.php/documentation/" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:11px;padding:5px 10px;text-decoration:none;">🖧 EVE-NG Lab Guide ↗</a>
-                <button class="btn btn-emerald" style="font-size:11px;padding:5px 10px;" onclick="exportCurrentTopologyArtifact('unl')">⬇ Export ${lab.code} .UNL XML</button>
-              </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.08);border-radius:8px;">
+              <label style="display:flex;gap:7px;font-size:11.5px;color:#e2e8f0;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#10b981;" /><span>Apply IOS-XE &amp; Junos (${lab.nodes.length} nodes)</span></label>
+              <a href="https://www.cisco.com/c/en/us/support/ios-nx-os-software/index.html" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:10px;padding:3px 8px;text-decoration:none;">Cisco Docs ↗</a>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.08);border-radius:8px;">
+              <label style="display:flex;gap:7px;font-size:11.5px;color:#e2e8f0;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#10b981;" /><span>Run CLI: <code>${cmd0}</code></span></label>
+              <a href="https://www.juniper.net/documentation/product/us/en/junos-os/" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:10px;padding:3px 8px;text-decoration:none;">Junos Docs ↗</a>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;background:rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.08);border-radius:8px;">
+              <label style="display:flex;gap:7px;font-size:11.5px;color:#e2e8f0;cursor:pointer;align-items:center;"><input type="checkbox" style="accent-color:#10b981;" /><span>Verify <code>${lab.wsFilter}</code></span></label>
+              <a href="https://www.eve-ng.net/index.php/documentation/" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:10px;padding:3px 8px;text-decoration:none;">EVE-NG Docs ↗</a>
             </div>
           </div>
         `;
@@ -3705,6 +3856,55 @@ ${nodesXml}
         switchPortalTab('tab-eveng-academy');
         selectEveLab(idx);
       }
+    }
+
+    let currentCareerSubPage = '4a';
+    const CAREER_SUBPAGES = ['4a', '4b', '4c', '4d'];
+
+    function switchCareerSubPage(pageKey) {
+      currentCareerSubPage = pageKey;
+      CAREER_SUBPAGES.forEach(k => {
+        const pane = document.getElementById('csub-pane-' + k);
+        const btn = document.getElementById('csub-btn-' + k);
+        if (pane) pane.style.display = (pageKey === 'all' || pageKey === k) ? 'block' : 'none';
+        if (btn) btn.className = (pageKey === k) ? 'btn btn-crimson' : 'btn btn-ghost';
+      });
+      const allBtn = document.getElementById('csub-btn-all');
+      if (allBtn) allBtn.className = (pageKey === 'all') ? 'btn btn-blue' : 'btn btn-ghost';
+      const sel = document.getElementById('career-subpage-select');
+      if (sel) sel.value = pageKey;
+      const ind = document.getElementById('career-subpage-indicator');
+      if (ind) {
+        const idx = CAREER_SUBPAGES.indexOf(pageKey);
+        ind.textContent = pageKey === 'all'
+          ? 'Showing All 4 Sub-Pages • Select Any Single Sub-Page Above to Reduce Clutter'
+          : `Sub-Page ${idx + 1} of 4 • Use Dropdown or Pills Above to Switch Views`;
+      }
+    }
+
+    function stepCareerSubPage(delta) {
+      let idx = CAREER_SUBPAGES.indexOf(currentCareerSubPage);
+      if (idx === -1) idx = 0;
+      idx = (idx + delta + CAREER_SUBPAGES.length) % CAREER_SUBPAGES.length;
+      switchCareerSubPage(CAREER_SUBPAGES[idx]);
+    }
+
+    function filterCareerJobTracks(val) {
+      const grid = document.getElementById('career-job-tracks-grid');
+      if (!grid) return;
+      grid.style.gridTemplateColumns = (val === 'all') ? '' : '1fr';
+      grid.querySelectorAll('[data-job-track]').forEach(el => {
+        el.style.display = (val === 'all' || el.getAttribute('data-job-track') === val) ? 'block' : 'none';
+      });
+    }
+
+    function filterRelocationZones(val) {
+      const grid = document.getElementById('nc-reloc-zones-grid');
+      if (!grid) return;
+      grid.style.gridTemplateColumns = (val === 'all') ? '' : '1fr';
+      grid.querySelectorAll('[data-reloc-zone]').forEach(el => {
+        el.style.display = (val === 'all' || el.getAttribute('data-reloc-zone') === val) ? 'block' : 'none';
+      });
     }
 
     function copyCareerSnippet(key) {
