@@ -87,28 +87,36 @@
   const session = getVerifiedSession();
   const currentFile = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
-  // 16-Portal Ecosystem Registry Categorized for Desktop Dropdowns, Off-Canvas Drawer, Waffle & Canvas Rail
+  // 16-Portal Ecosystem Registry — Evenly Split: 8 MGC Thematic Portals & 8 F.I.X Solutions Thematic Portals
   const pages = [
-    { file: 'admin-command-portal.html', icon: '🛡️', label: 'Admin Hub', full: 'Master Admin Command Hub', cat: 'Command & Auth', tag: 'All 16 Portals', color: '#2563eb', rail: true },
-    { file: 'onboarding-portal.html', icon: '🫆', label: 'Client 2FA', full: 'Client 2FA & Biometric Gate', cat: 'Command & Auth', tag: 'Passkey + TOTP', color: '#16a34a', rail: true },
-    { file: 'index.html', icon: '📊', label: 'Ops Hub', full: 'Executive Data & Ops Hub', cat: 'Command & Auth', tag: 'Cloud & Telemetry', color: '#fcd34d', rail: true },
-    { file: 'integrations-connections-hub.html', icon: '🔌', label: 'Integrations', full: 'Cloud & API Integrations', cat: 'Command & Auth', tag: 'GCP • Azure • OAuth', color: '#38bdf8', rail: false },
+    { file: 'admin-command-portal.html', icon: '🛡️', label: 'Admin Hub', full: 'Master Admin Command Hub', cat: 'Command & Auth', tag: 'All 16 Portals', color: '#2563eb', rail: true, brand: 'MGC' },
+    { file: 'onboarding-portal.html', icon: '🫆', label: 'Client 2FA', full: 'Client 2FA & Biometric Gate', cat: 'Command & Auth', tag: 'Passkey + TOTP', color: '#dc2626', rail: true, brand: 'MGC' },
+    { file: 'index.html', icon: '📊', label: 'Ops Hub', full: 'Executive Data & Ops Hub', cat: 'Command & Auth', tag: 'Cloud & Telemetry', color: '#2563eb', rail: true, brand: 'MGC' },
+    { file: 'integrations-connections-hub.html', icon: '🔌', label: 'Integrations', full: 'Cloud & API Integrations', cat: 'Command & Auth', tag: 'GCP • Azure • OAuth', color: '#C5B358', rail: false, brand: 'FIX' },
 
-    { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', label: 'SaaS Apps', full: 'Monetized Apps & Simulators', cat: 'Apps & Labs', tag: 'Pay-Per-View Apps', color: '#d97706', rail: true },
-    { file: 'agent-workflow-studio.html', icon: '🤖', label: 'Agent Studio', full: 'LangGraph AI Agent Studio', cat: 'Apps & Labs', tag: 'Multi-Agent Flows', color: '#2563eb', rail: false },
-    { file: 'earth-3d.html', icon: '🌍', label: '3D Earth', full: '3D Geospatial Command', cat: 'Apps & Labs', tag: 'WebGL 3D Globe', color: '#16a34a', rail: false },
-    { file: 'vr-command.html', icon: '🥽', label: '360° VR', full: '360° WebXR Spatial Deck', cat: 'Apps & Labs', tag: 'Spatial Command', color: '#dc2626', rail: false },
+    { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', label: 'SaaS Apps', full: 'Monetized Apps & Simulators', cat: 'Apps & Labs', tag: 'Pay-Per-View Apps', color: '#C5B358', rail: true, brand: 'FIX' },
+    { file: 'agent-workflow-studio.html', icon: '🤖', label: 'Agent Studio', full: 'LangGraph AI Agent Studio', cat: 'Apps & Labs', tag: 'Multi-Agent Flows', color: '#C5B358', rail: false, brand: 'FIX' },
+    { file: 'earth-3d.html', icon: '🌍', label: '3D Earth', full: '3D Geospatial Command', cat: 'Apps & Labs', tag: 'WebGL 3D Globe', color: '#C5B358', rail: false, brand: 'FIX' },
+    { file: 'vr-command.html', icon: '🥽', label: '360° VR', full: '360° WebXR Spatial Deck', cat: 'Apps & Labs', tag: 'Spatial Command', color: '#C5B358', rail: false, brand: 'FIX' },
 
-    { file: 'elearning-upskilling-hub.html', icon: '🎓', label: 'Canvas LMS', full: 'Canvas Academy & Atlas', cat: 'Canvas Academy', tag: 'Courses & Skill Map', color: '#16a34a', rail: true },
-    { file: 'historical-archaeology-ai-hub.html', icon: '🏛️', label: 'History Lab', full: 'Historical & Archaeology AI', cat: 'Canvas Academy', tag: 'LiDAR & Epigraphy', color: '#fcd34d', rail: false },
-    { file: 'chronos-external-insight-webapp.html', icon: '🌐', label: 'Chronos App', full: 'Chronos Discovery WebApp', cat: 'Canvas Academy', tag: '3-Pane Explorer', color: '#2563eb', rail: false },
+    { file: 'elearning-upskilling-hub.html', icon: '🎓', label: 'Canvas LMS', full: 'Canvas Academy & NC Career Hub', cat: 'Canvas Academy', tag: 'EVE-NG & Career/VA', color: '#dc2626', rail: true, brand: 'MGC' },
+    { file: 'historical-archaeology-ai-hub.html', icon: '🏛️', label: 'History Lab', full: 'Historical & Archaeology AI', cat: 'Canvas Academy', tag: 'LiDAR & Epigraphy', color: '#2563eb', rail: false, brand: 'MGC' },
+    { file: 'chronos-external-insight-webapp.html', icon: '🌐', label: 'Chronos App', full: 'Chronos Discovery WebApp', cat: 'Canvas Academy', tag: '3-Pane Explorer', color: '#2563eb', rail: false, brand: 'MGC' },
 
-    { file: 'projects/sterling-auto-repair/index.html', icon: '🚗', label: 'Sterling Auto', full: 'Sterling Auto Repair', cat: 'Commerce & Gov', tag: 'Customer Website', color: '#dc2626', rail: true },
-    { file: 'finance-command.html', icon: '💳', label: 'Finance', full: 'Finance & Treasury Hub', cat: 'Commerce & Gov', tag: 'Stripe • ACH • WAWF', color: '#16a34a', rail: true },
-    { file: 'whitefeather-ecommerce-hub.html', icon: '🛍️', label: 'eCommerce', full: 'White Feather Storefront', cat: 'Commerce & Gov', tag: 'Digital Commerce', color: '#d97706', rail: false },
-    { file: 'sdvosb-contract-radar.html', icon: '🎯', label: 'SAM Radar', full: 'SDVOSB Contract Radar', cat: 'Commerce & Gov', tag: 'VA & DoD Pipeline', color: '#fcd34d', rail: false },
-    { file: 'compliance-trust-center.html', icon: '🔒', label: 'Zero-Trust', full: 'Compliance & Trust Center', cat: 'Commerce & Gov', tag: 'CMMC 2.0 • SC-100', color: '#2563eb', rail: false }
+    { file: 'projects/sterling-auto-repair/index.html', icon: '🚗', label: 'Sterling Auto', full: 'Sterling Auto Repair', cat: 'Commerce & Gov', tag: 'Customer Website', color: '#C5B358', rail: true, brand: 'FIX' },
+    { file: 'finance-command.html', icon: '💳', label: 'Finance', full: 'Finance, WAWF & VA Treasury', cat: 'Commerce & Gov', tag: 'Stripe • ACH • WAWF', color: '#C5B358', rail: true, brand: 'FIX' },
+    { file: 'whitefeather-ecommerce-hub.html', icon: '🛍️', label: 'eCommerce', full: 'White Feather AI & Social Ads Hub', cat: 'Commerce & Gov', tag: 'AI Products & Ads', color: '#dc2626', rail: false, brand: 'MGC' },
+    { file: 'sdvosb-contract-radar.html', icon: '🎯', label: 'SAM Radar', full: 'SDVOSB Contract Radar', cat: 'Commerce & Gov', tag: 'VA & DoD Pipeline', color: '#C5B358', rail: false, brand: 'FIX' },
+    { file: 'compliance-trust-center.html', icon: '🔒', label: 'Zero-Trust', full: 'Compliance & Trust Center', cat: 'Commerce & Gov', tag: 'CMMC 2.0 • SC-100', color: '#2563eb', rail: false, brand: 'MGC' }
   ];
+
+  const currentPageEntry = pages.find(p => p.file.toLowerCase() === currentFile) || pages[0];
+  const defaultPageBrand = currentPageEntry ? currentPageEntry.brand : 'MGC';
+
+  // Authentic Inline SVG Logos for MGC (Crimson/Cobalt/White Shield) and F.I.X (Vanguard Gold/Mission Navy Cyber Shield)
+  const MGC_SHIELD_SVG = `<svg viewBox="0 0 100 100" class="os-brand-logo-svg" xmlns="http://www.w3.org/2000/svg" aria-label="Milton Group Concepts LLC Shield"><defs><linearGradient id="mgcBlue" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#1E3A8A"/></linearGradient><linearGradient id="mgcRed" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EF4444"/><stop offset="100%" stop-color="#991B1B"/></linearGradient></defs><path d="M50 6 L88 20 L88 50 C88 74 50 94 50 94 C50 94 12 74 12 50 L12 20 Z" fill="#070B14" stroke="#F8FAFC" stroke-width="3.5"/><path d="M50 11 L50 89 C50 89 17 71 17 50 L17 23 Z" fill="url(#mgcBlue)"/><path d="M50 11 L83 23 L83 50 C83 71 50 89 50 89 Z" fill="url(#mgcRed)"/><path d="M30 62 L30 36 L41 36 L50 50 L59 36 L70 36 L70 62 L61 62 L61 47 L50 61 L39 47 L39 62 Z" fill="#FFFFFF"/></svg>`;
+
+  const FIX_SHIELD_SVG = `<svg viewBox="0 0 400 400" class="os-brand-logo-svg" xmlns="http://www.w3.org/2000/svg" aria-label="F.I.X Solutions LLC Cyber Shield"><defs><linearGradient id="fixGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FDE047"/><stop offset="100%" stop-color="#C5B358"/></linearGradient><linearGradient id="fixNavyGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1E293B"/><stop offset="100%" stop-color="#0B1426"/></linearGradient></defs><circle cx="200" cy="200" r="182" fill="none" stroke="url(#fixGoldGrad)" stroke-width="8" stroke-dasharray="16 12" opacity="0.75"/><path d="M 200 28 L 342 70 L 342 200 C 342 302 200 364 200 364 C 200 364 58 302 58 200 L 58 70 Z" fill="url(#fixNavyGrad)" stroke="url(#fixGoldGrad)" stroke-width="12"/><g fill="url(#fixGoldGrad)"><path d="M 90 225 L 90 125 L 152 125 L 162 142 L 118 142 L 118 165 L 146 165 L 156 182 L 118 182 L 118 225 Z"/><polygon points="166,210 178,210 183,225 171,225"/><polygon points="190,125 218,125 218,225 190,225"/><polygon points="225,210 237,210 242,225 230,225"/><path d="M 250 125 L 272 125 L 284 158 L 296 125 L 318 125 L 296 175 L 318 225 L 296 225 L 284 192 L 272 225 L 250 225 L 272 175 Z"/></g></svg>`;
 
   function isCleanUiEnabled() {
     const val = localStorage.getItem(CLEAN_UI_KEY);
@@ -976,8 +984,243 @@
           border: 1px solid CanvasText;
         }
       }
+
+      /* ======================================================================
+         EVEN SPLIT THEMATIC BRANDING:
+         - body.theme-mgc (8 Portals): MGC Shield Logo + Crimson Red (#DC2626), Sovereign Blue (#2563EB), Crisp White (#F8FAFC), Deep Navy (#070B14)
+         - body.theme-fix (8 Portals): F.I.X Cyber-Shield SVG Logo + Mission Navy (#0B1426), Tactical Slate (#2D3748), Vanguard Gold (#C5B358 / #FDE047)
+         ====================================================================== */
+      .os-brand-logo-svg {
+        height: 1.95rem;
+        width: 1.95rem;
+        border-radius: 0.375rem;
+        flex-shrink: 0;
+      }
+      .os-brand-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.66rem;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.18s ease;
+        white-space: nowrap;
+      }
+      .os-brand-badge.mgc {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.25), rgba(37, 99, 235, 0.35));
+        border-color: rgba(239, 68, 68, 0.6);
+        color: #f8fafc;
+      }
+      .os-brand-badge.fix {
+        background: linear-gradient(135deg, rgba(197, 179, 88, 0.28), rgba(11, 20, 38, 0.92));
+        border-color: #C5B358;
+        color: #FDE047;
+      }
+      .os-item-brand-pill {
+        font-size: 0.58rem;
+        font-weight: 900;
+        padding: 0.12rem 0.4rem;
+        border-radius: 0.3rem;
+        letter-spacing: 0.05em;
+        margin-left: auto;
+        flex-shrink: 0;
+      }
+      .os-item-brand-pill.mgc {
+        background: rgba(220, 38, 38, 0.22);
+        border: 1px solid rgba(37, 99, 235, 0.55);
+        color: #93c5fd;
+      }
+      .os-item-brand-pill.fix {
+        background: rgba(197, 179, 88, 0.2);
+        border: 1px solid rgba(197, 179, 88, 0.6);
+        color: #FDE047;
+      }
+
+      /* MGC Logo Thematic Palette Overrides (8 Portals) */
+      body.theme-mgc {
+        --os-border: rgba(59, 130, 246, 0.28);
+        --mgc-gold: #f8fafc;
+        background:
+          radial-gradient(circle at 14% 12%, rgba(37, 99, 235, 0.26), transparent 42%),
+          radial-gradient(circle at 86% 14%, rgba(220, 38, 38, 0.22), transparent 40%),
+          #070B14 !important;
+      }
+      body.theme-mgc #mgc-os-topbar {
+        background: linear-gradient(90deg, #070B14 0%, #0F172A 48%, #1E1B4B 100%);
+        border-bottom: 2px solid #DC2626;
+      }
+      body.theme-mgc #mgc-os-rail {
+        background: linear-gradient(180deg, #070B14 0%, #0F172A 100%);
+        border-right: 1px solid rgba(37, 99, 235, 0.38);
+      }
+
+      /* F.I.X Solutions Logo Thematic Palette Overrides (8 Portals) */
+      body.theme-fix {
+        --os-border: rgba(197, 179, 88, 0.34);
+        --mgc-gold: #C5B358;
+        --gold: #C5B358;
+        --gold-light: #FDE047;
+        --gold-bright: #FDE047;
+        --cobalt: #C5B358;
+        --border-gold: rgba(197, 179, 88, 0.55);
+        background:
+          radial-gradient(circle at 16% 14%, rgba(197, 179, 88, 0.16), transparent 42%),
+          radial-gradient(circle at 84% 18%, rgba(45, 55, 72, 0.45), transparent 45%),
+          #0B1426 !important;
+      }
+      body.theme-fix #mgc-os-topbar {
+        background: linear-gradient(90deg, #0B1426 0%, #1E293B 55%, #2D3748 100%);
+        border-bottom: 2px solid #C5B358;
+      }
+      body.theme-fix #mgc-os-rail {
+        background: linear-gradient(180deg, #0B1426 0%, #1E293B 100%);
+        border-right: 1px solid rgba(197, 179, 88, 0.35);
+      }
+      body.theme-fix .hub-toolbar,
+      body.theme-fix .exec-strip,
+      body.theme-fix .hero,
+      body.theme-fix .hero-banner,
+      body.theme-fix #mgc-subpage-bar {
+        background: linear-gradient(135deg, rgba(11, 20, 38, 0.96), rgba(45, 55, 72, 0.88)) !important;
+        border-color: rgba(197, 179, 88, 0.52) !important;
+      }
+      body.theme-fix .card,
+      body.theme-fix .app-card,
+      body.theme-fix .portal-card,
+      body.theme-fix .metric-pill,
+      body.theme-fix .kpi-card {
+        background: rgba(17, 28, 49, 0.88) !important;
+        border-color: rgba(197, 179, 88, 0.28) !important;
+      }
+      body.theme-fix .sp-tab.active,
+      body.theme-fix .ws-tab.active,
+      body.theme-fix .btn-open,
+      body.theme-fix .btn-primary {
+        background: linear-gradient(135deg, #C5B358, #A18A38) !important;
+        color: #0B1426 !important;
+        border-color: #FDE047 !important;
+        font-weight: 900 !important;
+      }
+
+      /* Built-Out Module Action Items & Links Dock */
+      #mgc-portal-action-suite {
+        width: min(1380px, 100%);
+        margin: 1.25rem auto 2rem;
+        padding: 1.25rem;
+        border-radius: 1.15rem;
+        background: rgba(9, 14, 28, 0.94);
+        border: 1px solid var(--os-border);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+        font-family: 'Inter', sans-serif;
+      }
+      body.theme-fix #mgc-portal-action-suite {
+        background: linear-gradient(145deg, rgba(11, 20, 38, 0.96), rgba(30, 41, 59, 0.92));
+        border-color: rgba(197, 179, 88, 0.45);
+      }
+      body.theme-mgc #mgc-portal-action-suite {
+        background: linear-gradient(145deg, rgba(7, 11, 20, 0.96), rgba(15, 23, 42, 0.92));
+        border-color: rgba(37, 99, 235, 0.45);
+      }
+      .pas-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 0.9rem;
+      }
+      @media (max-width: 1024px) {
+        .pas-grid { grid-template-columns: 1fr; }
+      }
+      .pas-card {
+        background: rgba(2, 6, 23, 0.78);
+        border: 1px solid rgba(203, 213, 225, 0.16);
+        border-radius: 0.9rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      .pas-check-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        font-size: 0.76rem;
+        color: #e2e8f0;
+        cursor: pointer;
+        padding: 0.35rem 0.45rem;
+        border-radius: 0.45rem;
+        transition: background 0.15s;
+      }
+      .pas-check-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .pas-check-item input[type="checkbox"] {
+        margin-top: 0.15rem;
+        accent-color: #16a34a;
+        width: 0.95rem;
+        height: 0.95rem;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .pas-links-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        padding-top: 0.55rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .pas-link-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.38rem 0.68rem;
+        border-radius: 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-decoration: none;
+        background: rgba(37, 99, 235, 0.22);
+        border: 1px solid rgba(59, 130, 246, 0.45);
+        color: #93c5fd;
+        transition: all 0.15s;
+      }
+      body.theme-fix .pas-link-btn {
+        background: rgba(197, 179, 88, 0.18);
+        border-color: rgba(197, 179, 88, 0.55);
+        color: #FDE047;
+      }
+      .pas-link-btn:hover {
+        transform: translateY(-1px);
+        color: #ffffff;
+      }
     `;
     document.head.appendChild(style);
+
+    let activeBrand = defaultPageBrand;
+    function applyBrandTheme(brand) {
+      activeBrand = brand;
+      document.body.classList.remove('theme-mgc', 'theme-fix');
+      document.body.classList.add(brand === 'FIX' ? 'theme-fix' : 'theme-mgc');
+      const logoSlot = document.getElementById('os-brand-logo-slot');
+      const titleSlot = document.getElementById('os-brand-title-slot');
+      const drawerLogoSlot = document.getElementById('os-drawer-logo-slot');
+      const drawerTitleSlot = document.getElementById('os-drawer-title-slot');
+      const badgeBtn = document.getElementById('os-brand-theme-toggle');
+      if (logoSlot) logoSlot.innerHTML = brand === 'FIX' ? FIX_SHIELD_SVG : MGC_SHIELD_SVG;
+      if (titleSlot) titleSlot.textContent = brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE';
+      if (drawerLogoSlot) drawerLogoSlot.innerHTML = brand === 'FIX' ? FIX_SHIELD_SVG : MGC_SHIELD_SVG;
+      if (drawerTitleSlot) drawerTitleSlot.textContent = brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE';
+      if (badgeBtn) {
+        badgeBtn.className = 'os-brand-badge ' + (brand === 'FIX' ? 'fix' : 'mgc');
+        badgeBtn.innerHTML = brand === 'FIX'
+          ? '⚡ F.I.X Theme (8/16) • Switch'
+          : '🛡️ MGC Theme (8/16) • Switch';
+      }
+    }
 
     // Group pages by category for Desktop Dropdowns & Mobile/Tablet Off-Canvas Drawer
     const categories = ['Command & Auth', 'Apps & Labs', 'Canvas Academy', 'Commerce & Gov'];
@@ -994,10 +1237,11 @@
             ${items.map(item => `
               <a href="${item.file}" role="menuitem" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
                 <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
-                <span>
+                <span style="flex:1;min-width:0;">
                   <span class="os-drop-title">${item.full}</span>
                   <span class="os-drop-sub">${item.tag}</span>
                 </span>
+                <span class="os-item-brand-pill ${item.brand === 'FIX' ? 'fix' : 'mgc'}">${item.brand === 'FIX' ? 'F.I.X' : 'MGC'}</span>
               </a>
             `).join('')}
           </div>
@@ -1013,10 +1257,11 @@
           ${items.map(item => `
             <a href="${item.file}" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
               <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
-              <span>
+              <span style="flex:1;min-width:0;">
                 <span class="os-drop-title">${item.full}</span>
                 <span class="os-drop-sub">${item.tag}</span>
               </span>
+              <span class="os-item-brand-pill ${item.brand === 'FIX' ? 'fix' : 'mgc'}">${item.brand === 'FIX' ? 'F.I.X' : 'MGC'}</span>
             </a>
           `).join('')}
         </div>
@@ -1044,8 +1289,8 @@
           </button>
 
           <a href="admin-command-portal.html" class="os-brand">
-            <img src="assets/mgc-logo.png" alt="MGC" class="os-brand-logo-img" onerror="this.style.display='none'" />
-            <span>MGC WORKSPACE</span>
+            <span id="os-brand-logo-slot">${defaultPageBrand === 'FIX' ? FIX_SHIELD_SVG : MGC_SHIELD_SVG}</span>
+            <span id="os-brand-title-slot">${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE'}</span>
           </a>
 
           <!-- Lesson 5 Pattern 1: Desktop Categorized Dropdown Navigation (>=1024px) -->
@@ -1062,8 +1307,12 @@
           </button>
         </div>
 
-        <!-- Right: Section Jump Dropdown + LinkedIn Profile Menu -->
+        <!-- Right: Brand Theme Indicator + Section Jump Dropdown + LinkedIn Profile Menu -->
         <div class="os-right">
+          <button type="button" id="os-brand-theme-toggle" class="os-brand-badge ${defaultPageBrand === 'FIX' ? 'fix' : 'mgc'}" title="Portal Brand Theme (8 MGC Portals vs 8 F.I.X Portals — Click to preview either theme)">
+            ${defaultPageBrand === 'FIX' ? '⚡ F.I.X Theme (8/16) • Switch' : '🛡️ MGC Theme (8/16) • Switch'}
+          </button>
+
           <select id="os-subpage-select" class="os-page-select" aria-label="Jump to Page Section" title="Filter or Jump to Page Section" style="display:none;"></select>
 
           <div class="os-menu-wrap" data-os-menu>
@@ -1115,10 +1364,10 @@
       <aside id="os-offcanvas-drawer" aria-label="Mobile & Tablet Workspace Navigation">
         <div class="os-drawer-hdr">
           <div style="display:flex;align-items:center;gap:0.55rem;">
-            <img src="assets/mgc-logo.png" alt="MGC" style="height:28px;width:auto;border-radius:6px;border:1px solid rgba(252,211,77,0.45);" onerror="this.style.display='none'" />
+            <span id="os-drawer-logo-slot">${defaultPageBrand === 'FIX' ? FIX_SHIELD_SVG : MGC_SHIELD_SVG}</span>
             <div>
-              <div style="font-size:0.82rem;font-weight:900;color:#fff;letter-spacing:0.04em;">MGC WORKSPACE</div>
-              <div style="font-size:0.65rem;color:#fcd34d;font-weight:700;">16 Enterprise Portals</div>
+              <div id="os-drawer-title-slot" style="font-size:0.82rem;font-weight:900;color:#fff;letter-spacing:0.04em;">${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE'}</div>
+              <div style="font-size:0.65rem;color:#fcd34d;font-weight:700;">8 MGC • 8 F.I.X Portals</div>
             </div>
           </div>
           <button type="button" class="os-drawer-close" id="os-drawer-close-btn" aria-label="Close Navigation Drawer">✕</button>
@@ -1135,7 +1384,7 @@
       <!-- 3. GOOGLE 9-DOT WAFFLE APP LAUNCHER POPOVER -->
       <div id="os-waffle-popover">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px;">
-          <span style="font-size:11px;font-weight:800;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;">All 16 Workspace Apps</span>
+          <span style="font-size:11px;font-weight:800;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;">8 MGC + 8 F.I.X Portals</span>
           <a href="admin-command-portal.html" style="font-size:11px;color:#93c5fd;text-decoration:none;font-weight:700;">Admin Hub →</a>
         </div>
         <div class="waffle-grid">
@@ -1143,6 +1392,7 @@
             <a href="${p.file}" class="waffle-tile ${p.file.toLowerCase() === currentFile ? 'active' : ''}">
               <div class="waffle-icon" style="border-color:${p.color}66;">${p.icon}</div>
               <span class="waffle-label">${p.label}</span>
+              <span style="font-size:9px;font-weight:900;color:${p.brand === 'FIX' ? '#FDE047' : '#93c5fd'};margin-top:2px;">[${p.brand === 'FIX' ? 'F.I.X' : 'MGC'}]</span>
             </a>
           `).join('')}
         </div>
@@ -1452,8 +1702,18 @@
       }
     });
 
+    applyBrandTheme(defaultPageBrand);
+    const brandToggleBtn = document.getElementById('os-brand-theme-toggle');
+    if (brandToggleBtn) {
+      brandToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        applyBrandTheme(activeBrand === 'FIX' ? 'MGC' : 'FIX');
+      });
+    }
+
     enhanceResponsiveTablesAndMedia();
     setupSectionNavigation();
+    injectPortalModuleActionSuite();
   }
 
   /**
@@ -1573,6 +1833,217 @@
     selectEl.addEventListener('change', (e) => setSectionView(e.target.value));
     // Default to full responsive layout ('all') so non-learning sites are never step-gated
     setSectionView('all');
+  }
+
+  /**
+   * Built-Out Module Links & Action Items Suite across all Internal Portals
+   * Ensures every portal has concrete modules, direct clickable links, and persistent checkable action items.
+   */
+  function injectPortalModuleActionSuite() {
+    if (document.getElementById('mgc-portal-action-suite')) return;
+
+    const PORTAL_MODULES = {
+      'sdvosb-contract-radar.html': {
+        heading: 'F.I.X Solutions LLC • Federal Integration & Exchange SDVOSB Action Modules',
+        mod1Title: '🎯 Module 1: Fort Bragg (USASOC/FORSCOM) & VA OIT Sole-Source Pipeline',
+        mod1Checks: [
+          'Submit SBA VetCert SDVOSB packet (EIN 92-1370285) on veterans.certify.sba.gov',
+          'Respond to Fort Bragg USASOC / 112th Signal C4ISR Sources Sought (NAICS 541512)',
+          'Register VA Vets First (38 U.S.C. 8127) capability statement for VA OIT Zero-Trust task orders'
+        ],
+        mod1Links: [
+          { label: 'SAM.gov SDVOSB Search ↗', url: 'https://sam.gov/content/opportunities' },
+          { label: 'SBA VetCert Portal ↗', url: 'https://veterans.certify.sba.gov/' },
+          { label: 'ClearanceJobs Fort Bragg ↗', url: 'https://www.clearancejobs.com/jobs?keywords=25N+Network+Fort+Liberty' }
+        ]
+      },
+      'finance-command.html': {
+        heading: 'F.I.X Solutions LLC • Treasury, VA Benefits & Immediate Cashflow Modules',
+        mod1Title: '💳 Module 1: WAWF/PIEE Federal Invoicing, Stripe Checkout & VA Tax-Free Cashflow',
+        mod1Checks: [
+          'Activate Stripe Payment Links for $79 EVE-NG Lab Pack & $1,500 Local Business AI Web Setup',
+          'Lock VA Intent to File (VA Form 21-0966) ahead of Oct 22, 2026 12:00 PM EDT VA Video Connect',
+          'Apply for Chapter 31 VR&E ($2,172/mo Raleigh ECPI BAH rate + Self-Employment Track)'
+        ],
+        mod1Links: [
+          { label: 'VA.gov Claims & VR&E ↗', url: 'https://www.va.gov/careers-employment/vocational-rehabilitation/' },
+          { label: 'Mercury Business Treasury ↗', url: 'https://app.mercury.com/' },
+          { label: 'White Feather Storefront →', url: 'whitefeather-ecommerce-hub.html' }
+        ]
+      },
+      'whitefeather-ecommerce-hub.html': {
+        heading: 'Milton Group Concepts LLC • Immediate AI, Social Media, Ads & Product Monetization Modules',
+        mod1Title: '🛍️ Module 1: Launch 3 Immediate Revenue Products & Paid/Organic Ad Funnels Today',
+        mod1Checks: [
+          'Publish $79 15-Topology EVE-NG CCNP/JNCIP + Ansible Automation Bundle on Storefront & Gumroad',
+          'Send 15 Local Business AI Website + 24/7 Lead Agent pitches ($1,500 setup + $497/mo) using Sterling Auto demo',
+          'Post daily USASOC 25N → AI/Cloud Architect authority reel on LinkedIn, YouTube Shorts & Skool'
+        ],
+        mod1Links: [
+          { label: 'White Feather AI Skool ↗', url: 'https://www.skool.com/white-feather-ai/plans' },
+          { label: 'Sterling Auto Demo Site →', url: 'projects/sterling-auto-repair/index.html' },
+          { label: 'LinkedIn Creator Feed ↗', url: 'https://www.linkedin.com/feed/' }
+        ]
+      },
+      'integrations-connections-hub.html': {
+        heading: 'F.I.X Solutions LLC • Cloud, OAuth & Zero-Charge Infrastructure Modules',
+        mod1Title: '🔌 Module 1: Google Cloud Org (412750373714), GitHub Actions & GitGuardian Shift-Left',
+        mod1Checks: [
+          'Verify Cloud Run min-instances=0 & max-instances=2 zero-idle-charge guard across all services',
+          'Confirm GitGuardian workspace/938061 4 historical incidents marked Resolved after commit scrub',
+          'Connect Workspace Lead Webhook to Gmail/Calendar for instant B2B client booking alerts'
+        ],
+        mod1Links: [
+          { label: 'GitGuardian Dashboard ↗', url: 'https://dashboard.gitguardian.com/workspace/938061/incidents/secrets' },
+          { label: 'GitHub (sideprojo) ↗', url: 'https://github.com/sideprojo' },
+          { label: 'Google Cloud Console ↗', url: 'https://console.cloud.google.com/' }
+        ]
+      },
+      'saas-apps-and-lms-showcase.html': {
+        heading: 'F.I.X Solutions LLC • Monetized SaaS Simulators & Recurring Subscription Modules',
+        mod1Title: '⚡ Module 1: Pay-Per-View ($9), Pro Lab Pass ($29/mo) & Enterprise Seat Licensing',
+        mod1Checks: [
+          'Embed 15-Topology EVE-NG Packet Replay & MTU Chaos Simulator in Pro Lab tier',
+          'Run Meta/LinkedIn lead magnet ad offering Topology 01 (OSPF/BFD) free for email opt-in',
+          'Upsell opted-in engineers to $97/mo White Feather AI & CCNP/JNCIP Cohort'
+        ],
+        mod1Links: [
+          { label: 'Open 15 EVE-NG Topologies →', url: 'elearning-upskilling-hub.html' },
+          { label: 'Open eCommerce Storefront →', url: 'whitefeather-ecommerce-hub.html' },
+          { label: 'Open Agent Studio →', url: 'agent-workflow-studio.html' }
+        ]
+      },
+      'agent-workflow-studio.html': {
+        heading: 'F.I.X Solutions LLC • Autonomous Multi-Agent & B2B Automation Modules',
+        mod1Title: '🤖 Module 1: Productized LangGraph & Gemini Agentic Workflows for B2B Clients',
+        mod1Checks: [
+          'Package 24/7 Receptionist & Quote-Booking Agent for NC/VA auto, HVAC & legal businesses',
+          'Deploy SAM.gov RFP Analyzer & Proposal Drafter agent for SDVOSB set-aside bids',
+          'Complete Google Cloud Agentic Architect (Path 4525) lab verification & publish Credly badge'
+        ],
+        mod1Links: [
+          { label: 'Google Skills Path 4525 ↗', url: 'https://www.cloudskillsboost.google/paths/4525' },
+          { label: 'Sterling Auto Live Demo →', url: 'projects/sterling-auto-repair/index.html' },
+          { label: 'SAM.gov Radar →', url: 'sdvosb-contract-radar.html' }
+        ]
+      },
+      'earth-3d.html': {
+        heading: 'F.I.X Solutions LLC • 3D Geospatial & NC Relocation Corridor Intelligence Modules',
+        mod1Title: '🌍 Module 1: NC Relocation Triangle (ECPI Raleigh 27604 ↔ Sanford/Lillington ↔ Fort Bragg 28310)',
+        mod1Checks: [
+          'Compare Sanford/Lillington US-1/US-401 midpoint (38 min to Fort Bragg & 38 min to Raleigh ECPI/RTP)',
+          'Verify ECPI Raleigh Campus (4101 Capital Blvd, ZIP 27604) in-person class for $2,172/mo MHA/BAH',
+          'Download VA Home Loan Certificate of Eligibility (COE) for $0 down / 0% funding fee in NC'
+        ],
+        mod1Links: [
+          { label: 'Open NC Career & Relocation Hub →', url: 'elearning-upskilling-hub.html' },
+          { label: 'ECPI Raleigh Campus ↗', url: 'https://www.ecpi.edu/locations/raleigh-nc' },
+          { label: 'VA Home Loan COE Portal ↗', url: 'https://www.va.gov/housing-assistance/home-loans/how-to-request-coe/' }
+        ]
+      }
+    };
+
+    const cfg = PORTAL_MODULES[currentFile] || {
+      heading: (defaultPageBrand === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC') + ' • Built-Out Operational, Career, NC Relocation & Monetization Modules',
+      mod1Title: '🛡️ Module 1: Portal Operations, Zero-Trust Verification & Live Deliverables',
+      mod1Checks: [
+        'Verify 8 MGC Thematic Portals & 8 F.I.X Solutions Thematic Portals across desktop & mobile',
+        'Audit 2FA Biometric Passkey + 6-Digit TOTP enforcement on external-to-internal handoffs',
+        'Sync latest portfolio deliverables to GitHub (sideprojo) and LinkedIn Featured section'
+      ],
+      mod1Links: [
+        { label: 'Canvas LMS & NC Career Hub →', url: 'elearning-upskilling-hub.html' },
+        { label: 'SAM.gov Contract Radar →', url: 'sdvosb-contract-radar.html' },
+        { label: 'White Feather Monetization →', url: 'whitefeather-ecommerce-hub.html' }
+      ]
+    };
+
+    const suite = document.createElement('section');
+    suite.id = 'mgc-portal-action-suite';
+    suite.setAttribute('aria-label', 'Built-Out Portal Modules, Links & Action Items');
+    suite.innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div>
+          <span style="font-size:0.68rem;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;color:${defaultPageBrand === 'FIX' ? '#FDE047' : '#93c5fd'};">
+            ● ${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS THEME (MISSION NAVY & VANGUARD GOLD)' : 'MGC WORKSPACE THEME (SOVEREIGN CRIMSON, COBALT & WHITE)'} • ACTIONABLE MODULES
+          </span>
+          <h2 style="font-size:1.15rem;font-weight:900;color:#ffffff;margin-top:0.2rem;">${cfg.heading}</h2>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
+          <a href="elearning-upskilling-hub.html" class="pas-link-btn">🚀 NC Relocation, Immediate Jobs & VA Hub</a>
+          <a href="whitefeather-ecommerce-hub.html" class="pas-link-btn">💰 AI & Social Ads Monetization</a>
+          <a href="sdvosb-contract-radar.html" class="pas-link-btn">🎯 Fort Bragg & VA SDVOSB Radar</a>
+        </div>
+      </div>
+
+      <div class="pas-grid">
+        <!-- MODULE 1: PORTAL-SPECIFIC EXECUTION -->
+        <div class="pas-card">
+          <div>
+            <div style="font-size:0.85rem;font-weight:800;color:#ffffff;margin-bottom:0.5rem;">${cfg.mod1Title}</div>
+            ${cfg.mod1Checks.map((c, idx) => {
+              const key = `mgc_act_${currentFile}_m1_${idx}`;
+              const checked = localStorage.getItem(key) === '1' ? 'checked' : '';
+              return `<label class="pas-check-item"><input type="checkbox" data-act-key="${key}" ${checked} /><span>${c}</span></label>`;
+            }).join('')}
+          </div>
+          <div class="pas-links-row">
+            ${cfg.mod1Links.map(l => `<a href="${l.url}" ${l.url.startsWith('http') ? 'target="_blank" rel="noopener"' : ''} class="pas-link-btn">${l.label}</a>`).join('')}
+          </div>
+        </div>
+
+        <!-- MODULE 2: IMMEDIATE NC WORK, RELOCATION (ECPI RALEIGH <-> FORT BRAGG) & VA BENEFITS -->
+        <div class="pas-card">
+          <div>
+            <div style="font-size:0.85rem;font-weight:800;color:#ffffff;margin-bottom:0.5rem;">📍 Module 2: Immediate NC Work (Fort Bragg / RTP), Relocation & VA Benefits</div>
+            ${[
+              'Apply to Fort Bragg USASOC/112th Signal Primes (GDIT, CACI, Booz Allen) & RTP (Cisco, SAS Cary, Red Hat)',
+              'Target Sanford / Lillington / Southern Pines midpoint OR Raleigh ECPI (27604) for $2,172/mo GI Bill/VR&E BAH',
+              'File VA Form 21-0966 (PACT Act Erbil + Airborne Secondary Chain) before Oct 22, 2026 12:00 PM VA appt'
+            ].map((c, idx) => {
+              const key = `mgc_act_global_nc_va_${idx}`;
+              const checked = localStorage.getItem(key) === '1' ? 'checked' : '';
+              return `<label class="pas-check-item"><input type="checkbox" data-act-key="${key}" ${checked} /><span>${c}</span></label>`;
+            }).join('')}
+          </div>
+          <div class="pas-links-row">
+            <a href="https://www.clearancejobs.com/jobs?keywords=Network+Engineer+Fort+Liberty+NC" target="_blank" rel="noopener" class="pas-link-btn">Fort Bragg Jobs ↗</a>
+            <a href="https://www.linkedin.com/jobs/search/?keywords=Network%20Cloud%20AI%20Engineer&location=Raleigh-Durham-Chapel%20Hill%20Area" target="_blank" rel="noopener" class="pas-link-btn">Raleigh/RTP Jobs ↗</a>
+            <a href="https://www.va.gov/disability/how-to-file-claim/" target="_blank" rel="noopener" class="pas-link-btn">VA Claims & VR&E ↗</a>
+          </div>
+        </div>
+
+        <!-- MODULE 3: IMMEDIATE AI, SOCIAL MEDIA, PAID ADS & PRODUCT MONETIZATION -->
+        <div class="pas-card">
+          <div>
+            <div style="font-size:0.85rem;font-weight:800;color:#ffffff;margin-bottom:0.5rem;">💸 Module 3: Immediate AI, Social Media, Ads & Product Monetization</div>
+            ${[
+              'Pitch B2B Local Business AI Web + 24/7 Lead Agent ($1,500 setup + $497/mo) using Sterling Auto Repair demo',
+              'Launch $79 EVE-NG 15-Topology CCNP/JNCIP + Ansible Bundle & $97/mo White Feather AI Skool Cohort',
+              'Run daily short-form video + LinkedIn/Meta Lead Ad targeting NC/VA businesses & IT engineers'
+            ].map((c, idx) => {
+              const key = `mgc_act_global_monetize_${idx}`;
+              const checked = localStorage.getItem(key) === '1' ? 'checked' : '';
+              return `<label class="pas-check-item"><input type="checkbox" data-act-key="${key}" ${checked} /><span>${c}</span></label>`;
+            }).join('')}
+          </div>
+          <div class="pas-links-row">
+            <a href="whitefeather-ecommerce-hub.html" class="pas-link-btn">Open AI & Ad Funnel Hub →</a>
+            <a href="projects/sterling-auto-repair/index.html" class="pas-link-btn">B2B Client Demo Site →</a>
+            <a href="https://www.skool.com/white-feather-ai/plans" target="_blank" rel="noopener" class="pas-link-btn">White Feather AI ↗</a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const host = document.querySelector('.shell, .container, main') || document.body;
+    host.appendChild(suite);
+
+    suite.querySelectorAll('input[type="checkbox"][data-act-key]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        localStorage.setItem(cb.getAttribute('data-act-key'), cb.checked ? '1' : '0');
+      });
+    });
   }
 
   if (document.readyState === 'loading') {
