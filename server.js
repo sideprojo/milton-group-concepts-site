@@ -1075,7 +1075,17 @@ const server = http.createServer(async (req, res) => {
       if (!/^\S+@\S+\.\S+$/.test(email)) {
         return sendJson(res, 400, { ok: false, error: `Valid ${SSO_PROVIDER_LABELS[provider]} account email required.` });
       }
-      const user = findOrCreateUserByEmail(email, name, SSO_PROVIDER_LABELS[provider]);
+      const existingUser = Object.values(S.users).find(u => String(u.email || '').toLowerCase() === email);
+      if (!existingUser || existingUser.status === 'requested') {
+        logAudit('system', `auth.sso.denied.${provider}`, `Rejected unprovisioned SSO attempt for ${email}`);
+        return sendJson(res, 403, {
+          ok: false,
+          error: existingUser && existingUser.status === 'requested'
+            ? 'Your workspace access request is pending Owner review and approval.'
+            : 'SSO Access Denied: This email is not provisioned in the MGC / F.I.X directory. Please submit Request Access first.'
+        });
+      }
+      const user = existingUser;
       user.ssoProvider = provider;
       const sessionToken = signToken({
         uid: user.id,
