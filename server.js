@@ -686,12 +686,12 @@ const server = http.createServer(async (req, res) => {
 
     const getOauthConfig = () => {
       const saved = S.oauthConfig || {};
-      const gClientId = saved.googleClientId || process.env.GOOGLE_CLIENT_ID || '74396910869-hk7vhu0pd2dj9bnucc213qc0e3i88moa.apps.googleusercontent.com';
+      const gClientId = saved.googleClientId || process.env.GOOGLE_CLIENT_ID || '254657731107-sgdbihvbrpar0sr6mg1msf6mv11s1cor.apps.googleusercontent.com';
       const msClientId = saved.microsoftClientId || process.env.MICROSOFT_CLIENT_ID || '';
       const apClientId = saved.appleClientId || process.env.APPLE_CLIENT_ID || '';
-      const fbApiKey = saved.firebaseApiKey || process.env.FIREBASE_API_KEY || '';
-      const fbAuthDomain = saved.firebaseAuthDomain || process.env.FIREBASE_AUTH_DOMAIN || 'smiling-man-ace8f.firebaseapp.com';
-      const fbProjectId = saved.firebaseProjectId || process.env.FIREBASE_PROJECT_ID || 'smiling-man-ace8f';
+      const fbApiKey = saved.firebaseApiKey || process.env.FIREBASE_API_KEY || 'AIzaSyAfzbxbI-CD0bwmgNhJKzXTKVucDoG0D6k';
+      const fbAuthDomain = saved.firebaseAuthDomain || process.env.FIREBASE_AUTH_DOMAIN || 'gen-lang-client-0636792472.firebaseapp.com';
+      const fbProjectId = saved.firebaseProjectId || process.env.FIREBASE_PROJECT_ID || 'gen-lang-client-0636792472';
       return {
         googleClientId: gClientId,
         microsoftClientId: msClientId,
@@ -802,7 +802,7 @@ const server = http.createServer(async (req, res) => {
       const current = getOauthConfig();
       const adcTok = await fetchCloudRunAdcToken();
       if (!adcTok) return { ...current, status: current.firebaseApiKey ? 'CONFIGURED' : 'LOCAL_NO_ADC' };
-      const proj = current.firebaseProjectId || 'smiling-man-ace8f';
+      const proj = current.firebaseProjectId || 'gen-lang-client-0636792472';
       const runProj = 'gen-lang-client-0636792472';
       let diag = current.firebaseApiKey ? 'CONFIGURED' : 'ADC_OK';
       try {
