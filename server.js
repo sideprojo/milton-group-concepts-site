@@ -686,12 +686,12 @@ const server = http.createServer(async (req, res) => {
 
     const getOauthConfig = () => {
       const saved = S.oauthConfig || {};
-      const gClientId = saved.googleClientId || process.env.GOOGLE_CLIENT_ID || '';
+      const gClientId = saved.googleClientId || process.env.GOOGLE_CLIENT_ID || '74396910869-hk7vhu0pd2dj9bnucc213qc0e3i88moa.apps.googleusercontent.com';
       const msClientId = saved.microsoftClientId || process.env.MICROSOFT_CLIENT_ID || '';
       const apClientId = saved.appleClientId || process.env.APPLE_CLIENT_ID || '';
       const fbApiKey = saved.firebaseApiKey || process.env.FIREBASE_API_KEY || '';
-      const fbAuthDomain = saved.firebaseAuthDomain || process.env.FIREBASE_AUTH_DOMAIN || 'gen-lang-client-0636792472.firebaseapp.com';
-      const fbProjectId = saved.firebaseProjectId || process.env.FIREBASE_PROJECT_ID || 'gen-lang-client-0636792472';
+      const fbAuthDomain = saved.firebaseAuthDomain || process.env.FIREBASE_AUTH_DOMAIN || 'smiling-man-ace8f.firebaseapp.com';
+      const fbProjectId = saved.firebaseProjectId || process.env.FIREBASE_PROJECT_ID || 'smiling-man-ace8f';
       return {
         googleClientId: gClientId,
         microsoftClientId: msClientId,
@@ -763,14 +763,14 @@ const server = http.createServer(async (req, res) => {
       }
     };
 
-    const fetchHttpsWithAuth = (urlStr, method = 'GET', token = '', bodyObj = null) => new Promise((resolve) => {
+    const fetchHttpsWithAuth = (urlStr, method = 'GET', token = '', bodyObj = null, quotaProj = 'smiling-man-ace8f') => new Promise((resolve) => {
       try {
         const u = new URL(urlStr);
         const payload = bodyObj ? JSON.stringify(bodyObj) : null;
         const headers = {};
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;
-          headers['x-goog-user-project'] = 'gen-lang-client-0636792472';
+          headers['x-goog-user-project'] = quotaProj;
         }
         if (payload) {
           headers['Content-Type'] = 'application/json';
@@ -800,23 +800,13 @@ const server = http.createServer(async (req, res) => {
 
     const autoDiscoverIdentityPlatformViaAdc = async () => {
       const current = getOauthConfig();
-      if (current.firebaseApiKey || current.googleClientId) return { ...current, status: 'CONFIGURED' };
       const adcTok = await fetchCloudRunAdcToken();
-      if (!adcTok) return { ...current, status: 'LOCAL_NO_ADC' };
-      const proj = current.firebaseProjectId || 'gen-lang-client-0636792472';
-      let diag = 'ADC_OK';
+      if (!adcTok) return { ...current, status: current.firebaseApiKey ? 'CONFIGURED' : 'LOCAL_NO_ADC' };
+      const proj = current.firebaseProjectId || 'smiling-man-ace8f';
+      const runProj = 'gen-lang-client-0636792472';
+      let diag = current.firebaseApiKey ? 'CONFIGURED' : 'ADC_OK';
       try {
-        let idpCfg = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config`, 'GET', adcTok);
-        if (idpCfg && idpCfg.error && idpCfg.error.status === 'PERMISSION_DENIED') {
-          await fetchHttpsWithAuth(`https://serviceusage.googleapis.com/v1/projects/${proj}/services/identitytoolkit.googleapis.com:enable`, 'POST', adcTok, {});
-          await fetchHttpsWithAuth(`https://serviceusage.googleapis.com/v1/projects/${proj}/services/apikeys.googleapis.com:enable`, 'POST', adcTok, {});
-        }
-        if (!idpCfg || idpCfg.error) {
-          const initRes = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/v2/projects/${proj}/identityPlatform:initializeAuth`, 'POST', adcTok, {});
-          diag = initRes && initRes.error ? `INIT_ERR:${initRes.error.status || initRes.error.code}` : 'INIT_CALLED';
-          idpCfg = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config`, 'GET', adcTok);
-        }
-        // Ensure our Cloud Run and custom domains are in authorizedDomains
+        let idpCfg = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config`, 'GET', adcTok, null, proj);
         if (idpCfg && Array.isArray(idpCfg.authorizedDomains)) {
           const needed = [
             'mgc-external-site-254657731107.us-west1.run.app',
@@ -832,34 +822,21 @@ const server = http.createServer(async (req, res) => {
               `https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config?updateMask=authorizedDomains`,
               'PATCH',
               adcTok,
-              { authorizedDomains: merged }
+              { authorizedDomains: merged },
+              proj
             );
           }
         }
         let discoveredApiKey = (idpCfg && idpCfg.client && idpCfg.client.apiKey) ? idpCfg.client.apiKey : '';
         if (!discoveredApiKey) {
-          const keysList = await fetchHttpsWithAuth(`https://apikeys.googleapis.com/v2/projects/${proj}/locations/global/keys`, 'GET', adcTok);
+          const keysList = await fetchHttpsWithAuth(`https://apikeys.googleapis.com/v2/projects/${proj}/locations/global/keys`, 'GET', adcTok, null, proj);
           if (keysList && Array.isArray(keysList.keys) && keysList.keys.length > 0) {
             const firstKeyName = keysList.keys[0].name;
-            const keyStrRes = await fetchHttpsWithAuth(`https://apikeys.googleapis.com/v2/${firstKeyName}/keyString`, 'GET', adcTok);
+            const keyStrRes = await fetchHttpsWithAuth(`https://apikeys.googleapis.com/v2/${firstKeyName}/keyString`, 'GET', adcTok, null, proj);
             if (keyStrRes && keyStrRes.keyString) discoveredApiKey = keyStrRes.keyString;
-          } else if (keysList && !keysList.error) {
-            // Create a browser API key automatically
-            const createOp = await fetchHttpsWithAuth(
-              `https://apikeys.googleapis.com/v2/projects/${proj}/locations/global/keys?keyId=mgc-sso-web-key`,
-              'POST',
-              adcTok,
-              { displayName: 'MGC Federated SSO Web Key' }
-            );
-            if (createOp && createOp.response && createOp.response.keyString) {
-              discoveredApiKey = createOp.response.keyString;
-            }
-          } else if (keysList && keysList.error) {
-            diag += `|KEYS_${keysList.error.status || keysList.error.code}`;
           }
         }
-        // Check defaultSupportedIdpConfigs for google.com, microsoft.com, apple.com
-        const idps = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/defaultSupportedIdpConfigs`, 'GET', adcTok);
+        const idps = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/defaultSupportedIdpConfigs`, 'GET', adcTok, null, proj);
         const foundClients = {};
         if (idps && Array.isArray(idps.defaultSupportedIdpConfigs)) {
           idps.defaultSupportedIdpConfigs.forEach(c => {
@@ -877,16 +854,17 @@ const server = http.createServer(async (req, res) => {
           diag = 'AUTO_DISCOVERED';
         }
         // Also ensure milton-group-concepts-llc (mapped to miltongroupsecurity.org) runs the unified image
-        const selfSvc = await fetchHttpsWithAuth(`https://run.googleapis.com/v2/projects/${proj}/locations/us-west1/services/mgc-external-site`, 'GET', adcTok);
-        const mainSvc = await fetchHttpsWithAuth(`https://run.googleapis.com/v2/projects/${proj}/locations/us-west1/services/milton-group-concepts-llc`, 'GET', adcTok);
+        const selfSvc = await fetchHttpsWithAuth(`https://run.googleapis.com/v2/projects/${runProj}/locations/us-west1/services/mgc-external-site`, 'GET', adcTok, null, runProj);
+        const mainSvc = await fetchHttpsWithAuth(`https://run.googleapis.com/v2/projects/${runProj}/locations/us-west1/services/milton-group-concepts-llc`, 'GET', adcTok, null, runProj);
         const selfImg = selfSvc && selfSvc.template && selfSvc.template.containers && selfSvc.template.containers[0] ? selfSvc.template.containers[0].image : '';
         const mainImg = mainSvc && mainSvc.template && mainSvc.template.containers && mainSvc.template.containers[0] ? mainSvc.template.containers[0].image : '';
         if (selfImg && mainImg && selfImg !== mainImg) {
           const patchRes = await fetchHttpsWithAuth(
-            `https://run.googleapis.com/v2/projects/${proj}/locations/us-west1/services/milton-group-concepts-llc?updateMask=template.containers`,
+            `https://run.googleapis.com/v2/projects/${runProj}/locations/us-west1/services/milton-group-concepts-llc?updateMask=template.containers`,
             'PATCH',
             adcTok,
-            { template: { containers: selfSvc.template.containers } }
+            { template: { containers: selfSvc.template.containers } },
+            runProj
           );
           diag += patchRes && !patchRes.error ? '|MAIN_DOMAIN_SYNCED' : `|MAIN_SYNC_ERR:${patchRes && patchRes.error ? patchRes.error.status : 'UNK'}`;
         } else if (selfImg && selfImg === mainImg) {

@@ -303,17 +303,38 @@
       if (!firebase.apps || !firebase.apps.length) {
         firebase.initializeApp({
           apiKey: cfg.firebaseApiKey,
-          authDomain: cfg.firebaseAuthDomain || (cfg.firebaseProjectId + '.firebaseapp.com'),
-          projectId: cfg.firebaseProjectId || 'gen-lang-client-0636792472'
+          authDomain: cfg.firebaseAuthDomain || 'smiling-man-ace8f.firebaseapp.com',
+          projectId: cfg.firebaseProjectId || 'smiling-man-ace8f'
         });
       }
       firebaseAuthReady = true;
+      // Handle return from signInWithRedirect if popup was blocked
+      firebase.auth().getRedirectResult().then(async (result) => {
+        if (result && result.user) {
+          const idToken = await result.user.getIdToken();
+          const email = (result.user.email || '').toLowerCase();
+          const provId = (result.credential && result.credential.providerId) || '';
+          const prov = provId.includes('microsoft') ? 'microsoft' : provId.includes('apple') ? 'apple' : 'google';
+          const res = await fetch('/api/auth/sso', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider: prov, email, idToken, next: nextUrl })
+          });
+          const data = await res.json();
+          if (data && data.ok) {
+            W.signInAs(data.uid, prov);
+            persistOnboardingBridge(data.email || email, data.name || result.user.displayName, data.role, prov);
+            location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
+          }
+        }
+      }).catch(() => {});
     } catch (_) {}
   }
 
+  let configReadyPromise = Promise.resolve();
   if (location.protocol === 'http:' || location.protocol === 'https:') {
     document.getElementById('oidcRedirectUriDisplay').textContent = location.origin + '/api/auth/oauth/callback';
-    fetch('/api/auth/config')
+    configReadyPromise = fetch('/api/auth/config')
       .then(r => r.json())
       .then(cfg => {
         serverOidcConfig = cfg;
@@ -329,18 +350,18 @@
 
   async function launchFirebaseFederatedPopup(prov) {
     if (!firebaseAuthReady || typeof firebase === 'undefined') return false;
+    let providerObj = null;
+    if (prov === 'google') {
+      providerObj = new firebase.auth.GoogleAuthProvider();
+      providerObj.setCustomParameters({ prompt: 'select_account' });
+    } else if (prov === 'microsoft') {
+      providerObj = new firebase.auth.OAuthProvider('microsoft.com');
+      providerObj.setCustomParameters({ prompt: 'select_account' });
+    } else if (prov === 'apple') {
+      providerObj = new firebase.auth.OAuthProvider('apple.com');
+    }
+    if (!providerObj) return false;
     try {
-      let providerObj = null;
-      if (prov === 'google') {
-        providerObj = new firebase.auth.GoogleAuthProvider();
-        providerObj.setCustomParameters({ prompt: 'select_account' });
-      } else if (prov === 'microsoft') {
-        providerObj = new firebase.auth.OAuthProvider('microsoft.com');
-        providerObj.setCustomParameters({ prompt: 'select_account' });
-      } else if (prov === 'apple') {
-        providerObj = new firebase.auth.OAuthProvider('apple.com');
-      }
-      if (!providerObj) return false;
       msg.style.color = '#34d399';
       msg.textContent = 'Opening ' + PROVIDER_META[prov].name + ' Federated SSO...';
       const result = await firebase.auth().signInWithPopup(providerObj);
@@ -365,7 +386,15 @@
         }
       }
     } catch (err) {
-      // If provider isn't enabled in Identity Platform or popup closed, fall back to direct OIDC redirect or modal
+      const code = (err && err.code) || '';
+      if (code === 'auth/popup-blocked') {
+        await firebase.auth().signInWithRedirect(providerObj);
+        return true;
+      }
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        msg.textContent = '';
+        return true;
+      }
       msg.textContent = '';
     }
     return false;
@@ -387,7 +416,7 @@
     } else {
       clientIdInput.value = '';
     }
-    if (hasLiveClientId(prov) || firebaseAuthReady) {
+    if (firebaseAuthReady || hasLiveClientId(prov)) {
       btnLaunchOidc.style.display = 'inline-flex';
       btnLaunchOidc.textContent = '🌐 Launch ' + meta.name + ' Federated OIDC Sign-In →';
     } else {
@@ -409,10 +438,7 @@
   });
 
   btnLaunchOidc.onclick = async () => {
-    if (hasLiveClientId(activeProvider)) {
-      location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(activeProvider);
-      return;
-    }
+    await configReadyPromise;
     if (firebaseAuthReady) {
       const handled = await launchFirebaseFederatedPopup(activeProvider);
       if (handled) return;
@@ -445,13 +471,14 @@
   };
 
   async function handleProviderTrigger(prov) {
-    if (hasLiveClientId(prov)) {
-      location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
-      return;
-    }
+    await configReadyPromise;
     if (firebaseAuthReady) {
       const ok = await launchFirebaseFederatedPopup(prov);
       if (ok) return;
+    }
+    if (hasLiveClientId(prov)) {
+      location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
+      return;
     }
     openProviderModal(prov);
   }
