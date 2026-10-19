@@ -534,6 +534,7 @@
           <option value="enterprise">View as: Enterprise / Owner ($499/mo)</option>
           <option value="pro">View as: Pro Subscriber ($99/mo)</option>
           <option value="ppv">View as: Pay-Per-View Visitor ($19 Pass)</option>
+          <option value="customer_restricted">View as: Customer Login — Default Restricted (2/8 Apps)</option>
         </select>
         <button class="btn-pay" onclick="openSubscriptionCheckout()">
           💳 Accept Payment
@@ -1274,6 +1275,7 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
   </div>
 
   <script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
+  <script src="mgc-workspace-core.js"></script>
   <script src="mgc-guided-security.js"></script>
   <script>
     let userXP = parseInt(localStorage.getItem('mgc_lms_xp') || '18450', 10);

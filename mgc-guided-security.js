@@ -1883,13 +1883,59 @@
       });
     });
 
+    const CUSTOMER_ALLOWED_PORTALS = [
+      'onboarding-portal.html',
+      'login.html',
+      'request-access.html',
+      'member-portal.html',
+      'agile-board.html',
+      'saas-apps-and-lms-showcase.html'
+    ];
+
+    function isCurrentPathAllowedForCustomer(sess) {
+      const pathLower = (window.location.pathname || '').toLowerCase();
+      const projMatch = pathLower.match(/\/projects\/([^\/]+)\//);
+      const allowedApps = (sess && Array.isArray(sess.allowedApps)) ? sess.allowedApps : ['sterling-auto-repair', 'client-turnkey-forge'];
+      if (projMatch) {
+        const slug = projMatch[1];
+        return allowedApps.includes('*') || allowedApps.includes(slug);
+      }
+      return CUSTOMER_ALLOWED_PORTALS.includes(currentFile);
+    }
+
+    function isSessionOwner(sess) {
+      if (!sess || !sess.email) return false;
+      const em = String(sess.email).toLowerCase();
+      return em === 'malik.khabir@miltongroupsecurity.org' ||
+             em === 'owner@miltongroupsecurity.org' ||
+             String(sess.role || '').toUpperCase().includes('OWNER') ||
+             sess.accessTier === 'OWNER_FULL' ||
+             sess.access === 'INTERNAL_SUITE_FULL';
+    }
+
     function checkAndEnforce2FAGate() {
       const publicAuthPages = ['onboarding-portal.html', 'login.html', 'request-access.html'];
-      if (isGateLocked() && !publicAuthPages.includes(currentFile)) {
-        gateBackdrop.style.display = 'flex';
-      } else {
+      if (publicAuthPages.includes(currentFile)) {
         gateBackdrop.style.display = 'none';
+        return;
       }
+      if (isGateLocked()) {
+        gateBackdrop.style.display = 'flex';
+        return;
+      }
+      const sess = getSession();
+      if (!isSessionOwner(sess) && !isCurrentPathAllowedForCustomer(sess)) {
+        gateBackdrop.style.display = 'flex';
+        if (gateMsg) {
+          gateMsg.style.display = 'block';
+          gateMsg.style.background = 'rgba(245,158,11,0.16)';
+          gateMsg.style.border = '1px solid rgba(245,158,11,0.5)';
+          gateMsg.style.color = '#fde68a';
+          gateMsg.innerHTML = `🛡️ <b>Default Restricted Customer Access Enforced:</b> Signed in as <code>${sess ? sess.email : 'Customer'}</code> (Restricted Tier). Internal command portals &amp; non-default SCORM apps require Owner approval.<br/><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"><a href="member-portal.html" style="padding:5px 10px;border-radius:6px;background:#10b981;color:#04130d;font-weight:800;text-decoration:none;">Open My Customer Workspace →</a><a href="saas-apps-and-lms-showcase.html" style="padding:5px 10px;border-radius:6px;background:rgba(197,179,88,0.25);border:1px solid #c5b358;color:#fde047;font-weight:800;text-decoration:none;">Open Allowed Showcase Apps →</a><a href="agile-board.html" style="padding:5px 10px;border-radius:6px;background:rgba(59,130,246,0.25);border:1px solid #60a5fa;color:#93c5fd;font-weight:800;text-decoration:none;">Shared Agile Board →</a></div>`;
+        }
+        return;
+      }
+      gateBackdrop.style.display = 'none';
     }
 
     lockSessionBtn.addEventListener('click', (e) => {
@@ -1935,9 +1981,19 @@
         gateMsg.textContent = `❌ Enter a valid ${SSO_NAMES[provider]} email address.`;
         return;
       }
+      if (em === 'ana@example.com') {
+        gateMsg.style.display = 'block';
+        gateMsg.style.background = 'rgba(220,38,38,0.18)';
+        gateMsg.style.border = '1px solid rgba(220,38,38,0.45)';
+        gateMsg.style.color = '#fca5a5';
+        gateMsg.textContent = '❌ Account pending Owner approval in Access Admin.';
+        return;
+      }
 
       const isAdmin = em === 'malik.khabir@miltongroupsecurity.org' || em === 'owner@miltongroupsecurity.org';
-      const isAuthorizedClient = isAdmin || em === 'partner@miltongroupsecurity.org' || em === 'client@miltongroupsecurity.org' || em === 'service@sterlingautorepairva.com' || em === 'cara@example.com' || em === 'ben@example.com' || em === 'ana@example.com';
+      let allowedApps = isAdmin ? ['*'] : ['sterling-auto-repair', 'client-turnkey-forge'];
+      let allowedPortals = isAdmin ? ['*'] : CUSTOMER_ALLOWED_PORTALS;
+      let serverUid = isAdmin ? 'owner' : 'cara';
 
       if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
         try {
@@ -1955,34 +2011,38 @@
             gateMsg.textContent = data && data.error ? data.error : '❌ SSO Verification failed.';
             return;
           }
-          try {
-            sessionStorage.setItem('mgcw.uid', data.uid);
-            sessionStorage.setItem('mgcw.sso_provider', provider);
-          } catch (_) {}
+          serverUid = data.uid || serverUid;
+          if (Array.isArray(data.allowedApps)) allowedApps = data.allowedApps;
+          if (Array.isArray(data.allowedPortals)) allowedPortals = data.allowedPortals;
         } catch (_) {}
-      } else if (!isAuthorizedClient) {
-        gateMsg.style.display = 'block';
-        gateMsg.style.background = 'rgba(220,38,38,0.18)';
-        gateMsg.style.border = '1px solid rgba(220,38,38,0.45)';
-        gateMsg.style.color = '#fca5a5';
-        gateMsg.textContent = '❌ Unrecognized SSO account in offline mode. Request access first.';
-        return;
+      }
+
+      if (typeof MGCW !== 'undefined' && MGCW.provisionCustomerSso) {
+        const u = MGCW.provisionCustomerSso(em, undefined, provider);
+        if (u && u.id) {
+          serverUid = u.id;
+          MGCW.signInAs(u.id, provider);
+          if (Array.isArray(u.allowedApps)) allowedApps = u.allowedApps;
+        }
       }
 
       const verifiedObj = {
         email: em,
-        name: isAdmin ? 'Malik A. Khabir' : 'Verified SSO Partner',
+        name: isAdmin ? 'Malik A. Khabir' : em.split('@')[0],
         org: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
         role: isAdmin ? `OWNER_ADMIN (${SSO_NAMES[provider].toUpperCase()})` : `CLIENT_PARTNER (${SSO_NAMES[provider].toUpperCase()})`,
         ssoVerified: true,
         ssoProvider: provider,
-        access: isAdmin ? 'INTERNAL_SUITE_FULL' : 'INTERNAL_SUITE_VIEW',
+        access: isAdmin ? 'INTERNAL_SUITE_FULL' : 'CUSTOMER_RESTRICTED',
+        accessTier: isAdmin ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+        allowedApps,
+        allowedPortals,
         verifiedAt: new Date().toISOString()
       };
       localStorage.setItem(SESSION_KEY, JSON.stringify(verifiedObj));
       localStorage.removeItem(GATE_LOCK_KEY);
       try {
-        sessionStorage.setItem('mgcw.uid', isAdmin ? 'owner' : 'cara');
+        sessionStorage.setItem('mgcw.uid', serverUid);
         sessionStorage.setItem('mgcw.sso_provider', provider);
       } catch (_) {}
 
@@ -1993,13 +2053,23 @@
       if (av) av.textContent = isAdmin ? 'MK' : 'SSO';
       if (ps) ps.textContent = 'Me';
       if (pn) pn.textContent = verifiedObj.name;
-      if (pst) { pst.textContent = `✔ ${SSO_NAMES[provider]} Verified`; pst.style.color = '#86efac'; }
+      if (pst) {
+        pst.textContent = isAdmin ? `✔ ${SSO_NAMES[provider]} Owner Full` : `🛡️ ${SSO_NAMES[provider]} Restricted`;
+        pst.style.color = isAdmin ? '#86efac' : '#7dd3fc';
+      }
+
+      if (!isAdmin && !isCurrentPathAllowedForCustomer(verifiedObj)) {
+        checkAndEnforce2FAGate();
+        return;
+      }
 
       gateMsg.style.display = 'block';
       gateMsg.style.background = 'rgba(22,163,74,0.2)';
       gateMsg.style.border = '1px solid rgba(22,163,74,0.5)';
       gateMsg.style.color = '#86efac';
-      gateMsg.textContent = `✅ ${SSO_NAMES[provider]} Verified! Unlocking portal...`;
+      gateMsg.textContent = isAdmin
+        ? `✅ ${SSO_NAMES[provider]} Owner Verified! Unlocking full command suite...`
+        : `✅ ${SSO_NAMES[provider]} Customer Verified (Default Restricted Access)! Unlocking...`;
       setTimeout(() => {
         gateBackdrop.style.display = 'none';
       }, 250);

@@ -831,5 +831,56 @@
       window.APP_OS.render();
     })();
   </script>
+
+<!-- Default Restricted Customer App Access Guard -->
+<script id="mgc-restricted-app-guard">
+(function() {
+  var appSlug = "eveng-netprism-studio";
+  try {
+    var sess = JSON.parse(localStorage.getItem('mgc_onboarded_session') || 'null');
+    var st = JSON.parse(localStorage.getItem('mgcw.state.v1') || 'null');
+    var uid = null;
+    try { uid = sessionStorage.getItem('mgcw.uid'); } catch(_) {}
+    var curUser = (st && st.users && (uid || st.currentUser)) ? st.users[uid || st.currentUser] : null;
+    var email = ((curUser && curUser.email) || (sess && sess.email) || '').toLowerCase();
+    var isOwner = (curUser && curUser.role === 'owner') ||
+                  email === 'malik.khabir@miltongroupsecurity.org' ||
+                  email === 'owner@miltongroupsecurity.org' ||
+                  (sess && (sess.accessTier === 'OWNER_FULL' || sess.access === 'INTERNAL_SUITE_FULL'));
+    if (isOwner) return;
+
+    var isCustomerLoggedIn = Boolean((curUser && curUser.role !== 'owner') || (sess && sess.email));
+    if (!isCustomerLoggedIn) return;
+
+    var allowed = [];
+    if (curUser && Array.isArray(curUser.allowedApps)) allowed = allowed.concat(curUser.allowedApps);
+    if (sess && Array.isArray(sess.allowedApps)) allowed = allowed.concat(sess.allowedApps);
+    if (st && Array.isArray(st.shares) && curUser) {
+      st.shares.forEach(function(s) {
+        if (s.grantee === curUser.id && s.type === 'app') allowed.push(s.resource);
+      });
+    }
+    if (allowed.indexOf('*') !== -1 || allowed.indexOf(appSlug) !== -1) return;
+
+    window.addEventListener('DOMContentLoaded', function() {
+      var ov = document.createElement('div');
+      ov.id = 'mgc-restricted-app-modal';
+      ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(4,8,20,0.92);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:20px;font-family:Inter,system-ui,sans-serif;color:#f8fafc;';
+      ov.innerHTML = '<div style="max-width:540px;width:100%;background:rgba(11,19,37,0.96);border:1px solid rgba(197,179,88,0.55);border-radius:20px;padding:26px;box-shadow:0 28px 80px rgba(0,0,0,0.85);">' +
+        '<div style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(245,158,11,0.18);border:1px solid rgba(245,158,11,0.45);color:#fde68a;font-size:11px;font-weight:800;margin-bottom:10px;">🔒 DEFAULT RESTRICTED CUSTOMER ACCESS</div>' +
+        '<h2 style="margin:0 0 8px;font-size:21px;font-weight:900;">Owner Entitlement Required for ' + appSlug + '</h2>' +
+        '<p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:0 0 16px;">You are signed in as <b>' + (email || 'Restricted Customer') + '</b>. Customer Login unlocks <b>Client Turnkey Forge</b> and <b>Sterling Auto Repair</b> by default; this enterprise SCORM 2004 application requires Owner approval in Access Admin.</p>' +
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
+          '<a href="../../member-portal.html" style="padding:10px 14px;border-radius:10px;background:#10b981;color:#04130d;font-weight:800;font-size:12px;text-decoration:none;">🛡️ Return to My Customer Workspace →</a>' +
+          '<a href="../../projects/client-turnkey-forge/index.html" style="padding:10px 14px;border-radius:10px;background:rgba(197,179,88,0.22);border:1px solid #c5b358;color:#fde047;font-weight:800;font-size:12px;text-decoration:none;">🚀 Open Unlocked Turnkey Forge →</a>' +
+          '<a href="../../login.html?next=/projects/' + appSlug + '/index.html" style="padding:10px 14px;border-radius:10px;background:rgba(37,99,235,0.25);border:1px solid #60a5fa;color:#93c5fd;font-weight:800;font-size:12px;text-decoration:none;">👑 Sign In as Owner →</a>' +
+        '</div>' +
+      '</div>';
+      document.body.appendChild(ov);
+    });
+  } catch(_) {}
+})();
+</script>
+
 </body>
 </html>

@@ -26,6 +26,21 @@
     { id: 'training',  icon: '🎓', title: 'SCORM EVE-NG Academy',  brand: 'MGC', kind: 'page', base: false, price: 10, href: 'elearning-upskilling-hub.html',   desc: 'SCORM 2004 15-topology EVE-NG workbench, fault injector & auto-grader.' },
     { id: 'aistudio',  icon: '🧠', title: 'AI Studio & NotebookLM',brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'elearning-upskilling-hub.html',   desc: 'Wireless Sim, ACL Master Trainer, PROJECT_ROUTE, Safar-e Zaban, Asma ul-Husna & NotebookLM Vault.' }
   ];
+
+  const APPS_CATALOG = [
+    { id: 'client-turnkey-forge',       icon: '🛠️', title: 'Client Turnkey Forge SCORM OS',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Included by default on customer login: interactive custom build scope & pricing configurator.' },
+    { id: 'sterling-auto-repair',       icon: '🔧', title: 'Sterling Auto Repair Showcase',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Included by default on customer login: live commercial web & AI receptionist showcase.' },
+    { id: 'eveng-netprism-studio',      icon: '🖧', title: 'EVE-NG & NetPrism Topology Studio',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 8-page OSPF/BGP/ZTNA/EVPN network simulator & .cast studio.' },
+    { id: 'samgov-contract-matchmaker', icon: '🏛️', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Restricted by default on customer login: 6-page SDVOSB NAICS 541512/541519 & Principal AI role matchmaker.' },
+    { id: 'traffic-roi-simulator',      icon: '📈', title: 'Site Traffic & Conversion ROI OS',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Restricted by default on customer login: 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
+    { id: 'ghost-cli-trainer',          icon: '⌨️', title: 'Ghost-CLI & Netmiko Auto-Grader',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
+    { id: 'chronos-aetheria-scorm',     icon: '🏺', title: 'Chronos // Aetheria Geo-Historical OS',brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Restricted by default on customer login: 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
+    { id: 'spanish-acquisition-os',     icon: '🇪🇸', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
+  ];
+
+  const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge'];
+  const DEFAULT_CUSTOMER_PAGES = { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready' };
+
   const STEPS = ['requested', 'approved_building', 'active'];
   const STATUS_LABEL = { requested: 'Pending approval', approved_building: 'Pages being built', active: 'Active', denied: 'Not approved', suspended: 'Suspended' };
 
@@ -52,16 +67,30 @@
   /* ---------- Seed (demo users cover every lifecycle state + Sterling Auto as Agile Project) ---------- */
   function seed() {
     const t = now();
-    const mk = (id, name, email, role, status, brand, interest, paid, pages) => ({ id, name, email, role, status, brand, quote: { interest, note: '' }, plan: { base: paid, addons: [] }, pages: pages || {}, created: t });
+    const mk = (id, name, email, role, status, brand, interest, paid, pages, allowedApps) => ({
+      id, name, email, role, status, brand,
+      accessTier: role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+      quote: { interest, note: '' },
+      plan: { base: paid, addons: [] },
+      pages: pages || {},
+      allowedApps: allowedApps || (role === 'owner' ? ['*'] : DEFAULT_CUSTOMER_APPS.slice()),
+      created: t
+    });
     return {
       v: 1,
       users: {
-        owner: mk('owner', 'Malik K. (Owner)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready' }),
-        ana: mk('ana', 'Ana (Requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, {}),
-        ben: mk('ben', 'Ben (Building Pages)', 'ben@example.com', 'member', 'approved_building', 'FIX', 'federal', false, { home: 'pending', agile: 'pending', resources: 'pending', radar: 'pending', compliance: 'pending' }),
-        cara: mk('cara', 'Cara (Active Member)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', ailab: 'ready', finance: 'pending' })
+        owner: mk('owner', 'Malik K. (Owner)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready' }, ['*']),
+        client: mk('client', 'Customer Account (Default Restricted)', 'client@miltongroupsecurity.org', 'member', 'active', 'FIX', 'ai-web', true, { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
+        ana: mk('ana', 'Ana (Requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, {}, []),
+        ben: mk('ben', 'Ben (Building Pages)', 'ben@example.com', 'member', 'approved_building', 'FIX', 'federal', false, { home: 'pending', agile: 'pending', resources: 'pending', radar: 'pending', compliance: 'pending' }, DEFAULT_CUSTOMER_APPS.slice()),
+        cara: mk('cara', 'Cara (Restricted Customer)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', ailab: 'ready', finance: 'pending' }, DEFAULT_CUSTOMER_APPS.slice())
       },
-      shares: [], tasks: [], notifications: [], audit: [],
+      shares: [
+        { id: 'project_p_sterling_client', type: 'project', resource: 'p_sterling', grantee: 'client', perms: ['view'], created: t },
+        { id: 'project_p_sterling_cara', type: 'project', resource: 'p_sterling', grantee: 'cara', perms: ['view'], created: t },
+        { id: 'project_p1_cara', type: 'project', resource: 'p1', grantee: 'cara', perms: ['view', 'edit'], created: t }
+      ],
+      tasks: [], notifications: [], audit: [],
       projects: {
         p_sterling: { id: 'p_sterling', name: 'Client Project: Sterling Auto Repair (Web + AI Receptionist)', owner: 'owner', brand: 'FIX', demoUrl: 'projects/sterling-auto-repair/index.html', budget: '$1,500 setup + $497/mo' },
         p1: { id: 'p1', name: 'Shared: Website launch', owner: 'owner', brand: 'FIX' },
@@ -196,6 +225,18 @@
   function ensureSterlingProject(state) {
     if (!state) return state;
     const def = seed();
+    state.users = Object.assign({}, def.users, state.users || {});
+    Object.values(state.users).forEach(u => {
+      if (u.role === 'owner') {
+        u.accessTier = 'OWNER_FULL';
+        u.allowedApps = ['*'];
+      } else {
+        u.accessTier = u.accessTier || 'CUSTOMER_RESTRICTED';
+        if (!Array.isArray(u.allowedApps)) {
+          u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
+        }
+      }
+    });
     state.projects = Object.assign({}, def.projects, state.projects || {});
     if (!(state.items || []).some(i => i.project === 'p_sterling')) {
       state.items = def.items.filter(i => i.project === 'p_sterling').concat(state.items || []);
@@ -238,6 +279,57 @@
   const commit = () => db.save(S);
 
   const ALLOWED_SSO = ['google', 'microsoft', 'apple'];
+  const OWNER_EMAIL_SET = new Set(['malik.khabir@miltongroupsecurity.org', 'owner@miltongroupsecurity.org']);
+
+  function provisionCustomerSso(email, name, provider = 'google') {
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    const cleanProv = ALLOWED_SSO.includes(String(provider || '').toLowerCase()) ? String(provider).toLowerCase() : 'google';
+    if (!cleanEmail) return null;
+    if (OWNER_EMAIL_SET.has(cleanEmail)) {
+      if (!S.users.owner) S.users = Object.assign({}, seed().users, S.users || {});
+      S.users.owner.accessTier = 'OWNER_FULL';
+      S.users.owner.allowedApps = ['*'];
+      signInAs('owner', cleanProv);
+      return S.users.owner;
+    }
+    let found = Object.values(S.users || {}).find(u => String(u.email || '').toLowerCase() === cleanEmail);
+    if (!found) {
+      const id = 'u_' + cleanEmail.replace(/[^a-z0-9]/g, '').slice(0, 12);
+      found = {
+        id,
+        name: name || cleanEmail.split('@')[0],
+        email: cleanEmail,
+        role: 'member',
+        status: 'active',
+        accessTier: 'CUSTOMER_RESTRICTED',
+        brand: 'FIX',
+        quote: { interest: 'ai-web', note: 'Provisioned with Default Restricted Customer Access' },
+        plan: { base: true, addons: [] },
+        pages: { ...DEFAULT_CUSTOMER_PAGES },
+        allowedApps: DEFAULT_CUSTOMER_APPS.slice(),
+        created: now()
+      };
+      S.users[id] = found;
+      if (!(S.shares || []).some(s => s.type === 'project' && s.resource === 'p_sterling' && s.grantee === id)) {
+        S.shares.push({ id: 'project_p_sterling_' + id, type: 'project', resource: 'p_sterling', grantee: id, perms: ['view'], created: now() });
+      }
+      commit();
+    } else if (found.status !== 'denied' && found.status !== 'suspended' && cleanEmail !== 'ana@example.com') {
+      found.status = 'active';
+      found.accessTier = 'CUSTOMER_RESTRICTED';
+      found.plan = Object.assign({ base: true, addons: [] }, found.plan || {}, { base: true });
+      found.pages = Object.assign({}, DEFAULT_CUSTOMER_PAGES, found.pages || {});
+      if (!Array.isArray(found.allowedApps) || !found.allowedApps.length) {
+        found.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
+      }
+      if (!(S.shares || []).some(s => s.type === 'project' && s.resource === 'p_sterling' && s.grantee === found.id)) {
+        S.shares.push({ id: 'project_p_sterling_' + found.id, type: 'project', resource: 'p_sterling', grantee: found.id, perms: ['view'], created: now() });
+      }
+      commit();
+    }
+    signInAs(found.id, cleanProv);
+    return found;
+  }
 
   const me = () => {
     if (localStorage.getItem('mgc_edge_gate_locked') === '1') return null;
@@ -253,6 +345,7 @@
           sessionStorage.setItem('mgcw.uid', found.id);
           return found;
         }
+        return provisionCustomerSso(osSess.email, osSess.name, osSess.ssoProvider);
       }
     } catch (_) {}
     return null;
@@ -264,20 +357,24 @@
     sessionStorage.setItem('mgcw.sso_provider', cleanProv);
     const u = S.users[id];
     if (u) {
+      const isOwner = u.role === 'owner';
       const sessionObj = {
         email: u.email,
         name: u.name,
         org: u.brand === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC',
-        role: u.role === 'owner' ? 'OWNER_ADMIN (SSO VERIFIED)' : 'VERIFIED_MEMBER (SSO)',
+        role: isOwner ? 'OWNER_ADMIN (SSO VERIFIED)' : 'CUSTOMER_RESTRICTED (SSO)',
         ssoVerified: true,
         ssoProvider: cleanProv,
-        access: u.role === 'owner' ? 'INTERNAL_SUITE_FULL' : 'MEMBER_SCOPED',
+        access: isOwner ? 'INTERNAL_SUITE_FULL' : 'CUSTOMER_RESTRICTED',
+        allowedApps: isOwner ? ['*'] : (u.allowedApps || DEFAULT_CUSTOMER_APPS),
+        allowedPortals: isOwner ? ['*'] : ['member-portal.html', 'agile-board.html', 'saas-apps-and-lms-showcase.html', 'onboarding-portal.html'],
         verifiedAt: now(),
         integrityHash: 'SHA256-' + btoa(u.email + ':' + cleanProv + ':' + u.role + ':MGC-2026').slice(0, 16),
         zeroChargeGuard: 'ACTIVE_MIN0_MAX2'
       };
       localStorage.setItem('mgc_onboarded_session', JSON.stringify(sessionObj));
       localStorage.removeItem('mgc_edge_gate_locked');
+      localStorage.setItem('mgc_sim_tier', isOwner ? 'enterprise' : 'ppv');
     }
     if (serverSyncOk && u && u.email) {
       try {
@@ -306,20 +403,26 @@
   function can(u, type, id, action) {
     if (!u) return false;
     if (u.role === 'owner') return true;                          // owner: everything
-    if (!subActive(u)) return false;                              // members need a paid, active account for anything
+    if (!subActive(u)) return false;                              // members need an active account
     if (type === 'page') {
       const entry = CATALOG.find(c => c.id === id);
       if (!entry || action !== 'view') return false;
-      if (u.pages[id] !== 'ready') return false;                  // pending pages are never openable
-      const included = ((TAILOR[u.quote.interest] || { pages: [] }).pages).includes(id);
-      return entry.base || included || (u.plan.addons || []).includes(id);
+      if ((S.shares || []).some(s => (s.type === 'page' || s.type === 'element') && s.resource === id && s.grantee === u.id)) return true;
+      if ((u.pages || {})[id] !== 'ready') return false;          // pending pages are never openable
+      const included = ((TAILOR[(u.quote || {}).interest] || { pages: [] }).pages).includes(id);
+      return Boolean(entry.base || included || ((u.plan && u.plan.addons) || []).includes(id) || DEFAULT_CUSTOMER_PAGES[id] === 'ready');
+    }
+    if (type === 'app') {
+      const apps = Array.isArray(u.allowedApps) ? u.allowedApps : DEFAULT_CUSTOMER_APPS;
+      if (apps.includes('*') || apps.includes(id)) return true;
+      return (S.shares || []).some(s => (s.type === 'app' || s.type === 'element') && s.resource === id && s.grantee === u.id);
     }
     if (type === 'project') {
       const sh = S.shares.find(s => s.type === 'project' && s.resource === id && s.grantee === u.id);
       if (!sh) return false;
       return action === 'view' ? true : sh.perms.includes(action);
     }
-    if (type === 'element') return S.shares.some(s => s.type === 'element' && s.resource === id && s.grantee === u.id);
+    if (type === 'element') return S.shares.some(s => (s.type === 'element' || s.type === 'app') && s.resource === id && s.grantee === u.id);
     return false;
   }
 
@@ -328,17 +431,32 @@
     const srv = postServerAction({ action: 'submitRequest', data });
     if (srv && srv.uid) { commit(); return srv.uid; }
     const id = uid('u');
-    S.users[id] = { id, name: data.name, email: data.email, role: 'member', status: 'requested', brand: data.brand, quote: { interest: data.interest, note: data.note || '' }, plan: { base: false, addons: [] }, pages: {}, created: now() };
+    S.users[id] = { id, name: data.name, email: data.email, role: 'member', status: 'active', accessTier: 'CUSTOMER_RESTRICTED', brand: data.brand, quote: { interest: data.interest, note: data.note || '' }, plan: { base: true, addons: [] }, pages: { ...DEFAULT_CUSTOMER_PAGES }, allowedApps: DEFAULT_CUSTOMER_APPS.slice(), created: now() };
+    S.shares.push({ id: 'project_p_sterling_' + id, type: 'project', resource: 'p_sterling', grantee: id, perms: ['view'], created: now() });
     S.requests.unshift({ id: uid('r'), uid: id, status: 'requested', created: now() });
-    notify(id, 'Request received', 'Thanks! Your access request is under review. You will be notified when your pages are ready.');
+    notify(id, 'Default Restricted Access Active', 'Welcome! Your default restricted customer workspace is active. Specialized pages and SCORM apps are under Owner review.');
     notify('owner', 'New access request', data.name + ' requested access (' + (TAILOR[data.interest] || {}).label + ').', 'in-app + email + push');
     log(id, 'request.created', data.email);
     commit(); return id;
+  }
+  function requestAppAccess(appId) {
+    const u = me();
+    if (!u) return false;
+    const appEntry = APPS_CATALOG.find(a => a.id === appId);
+    if (!appEntry) return false;
+    if (postServerAction({ action: 'requestAppAccess', appId })) { commit(); return true; }
+    S.features.unshift({ id: uid('f'), by: u.id, title: 'App Access Request: ' + appEntry.title, body: u.name + ' (' + u.email + ') requested access to restricted SCORM app "' + appEntry.title + '".', votes: [u.id], status: 'new', created: now() });
+    notify('owner', 'Restricted App Unlock Requested', u.name + ' requested access to ' + appEntry.title);
+    notify(u.id, 'App Unlock Request Sent', 'Your request to unlock "' + appEntry.title + '" has been sent to the Owner.');
+    log(u.id, 'app.request_unlock', appId);
+    commit();
+    return true;
   }
   function approve(userId) {
     if (postServerAction({ action: 'approve', userId })) { commit(); return; }
     const u = S.users[userId]; if (!u) return;
     u.status = 'approved_building';
+    u.allowedApps = Array.isArray(u.allowedApps) && u.allowedApps.length ? u.allowedApps : DEFAULT_CUSTOMER_APPS.slice();
     const wanted = ['home', 'agile', 'resources'].concat((TAILOR[u.quote.interest] || { pages: [] }).pages);
     wanted.forEach(p => { u.pages[p] = 'pending'; S.tasks.push({ id: uid('t'), uid: userId, page: p, title: 'Build "' + CATALOG.find(c => c.id === p).title + '" for ' + u.name, done: false }); });
     const r = S.requests.find(x => x.uid === userId); if (r) r.status = 'approved';
@@ -375,12 +493,20 @@
     if (postServerAction({ action: 'share', grantee, type, resource, perms })) { commit(); return; }
     S.shares = S.shares.filter(s => !(s.type === type && s.resource === resource && s.grantee === grantee));
     S.shares.push({ id: type + '_' + resource + '_' + grantee, type, resource, grantee, perms, created: now() });
-    notify(grantee, 'Something was shared with you', type + ': ' + resource + ' (' + perms.join(', ') + ')');
+    if (type === 'app' && S.users[grantee]) {
+      S.users[grantee].allowedApps = Array.isArray(S.users[grantee].allowedApps) ? S.users[grantee].allowedApps : DEFAULT_CUSTOMER_APPS.slice();
+      if (!S.users[grantee].allowedApps.includes(resource)) S.users[grantee].allowedApps.push(resource);
+    }
+    notify(grantee, 'New Access Granted by Owner', type + ': ' + resource + ' (' + perms.join(', ') + ')');
     log('owner', 'share.grant', type + ':' + resource + ' -> ' + grantee); commit();
   }
   function revoke(id) {
     if (postServerAction({ action: 'revoke', shareId: id })) { commit(); return; }
-    const s = S.shares.find(x => x.id === id); S.shares = S.shares.filter(x => x.id !== id); if (s) log('owner', 'share.revoke', id); commit();
+    const s = S.shares.find(x => x.id === id);
+    if (s && s.type === 'app' && S.users[s.grantee] && Array.isArray(S.users[s.grantee].allowedApps)) {
+      S.users[s.grantee].allowedApps = S.users[s.grantee].allowedApps.filter(a => a !== s.resource);
+    }
+    S.shares = S.shares.filter(x => x.id !== id); if (s) log('owner', 'share.revoke', id); commit();
   }
 
   /* ---------- SaaS Apps Standard Theme Shell + Thematic Cityscape Background ---------- */
@@ -468,18 +594,22 @@
     const links = [['member-portal.html', 'My Workspace'], ['agile-board.html', 'Agile Projects'], ['saas-apps-and-lms-showcase.html', '⚡ SaaS Apps']]
       .concat(u && u.role === 'owner' ? [['access-admin.html', 'Access Admin'], ['admin-command-portal.html', '16 Portals Hub']] : []);
     const nav = '<div class="nav">' + links.map(l => '<a class="btn' + (l[0] === active ? ' pri' : '') + '" href="' + l[0] + '">' + l[1] + '</a>').join('') + '</div>';
-    const isLocal = location.protocol === 'file:' || ['localhost', '127.0.0.1', ''].includes(location.hostname);
     const opts = Object.values(S.users).map(x => '<option value="' + x.id + '"' + (u && u.id === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>').join('');
     const authBtn = u
       ? '<button class="btn" id="w-signout">🔒 Sign out</button>'
       : '<a class="btn pri" href="login.html">Sign in →</a>';
-    const right = '<div class="nav">' + (isLocal && u && u.role === 'owner' ? '<select id="w-as" aria-label="Preview user role" title="Owner role previewer"><option value="">Switch preview…</option>' + opts + '</select>' : '') + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + authBtn + '</div>';
+    const tierChip = u
+      ? (u.role === 'owner'
+          ? '<span class="chip ok">👑 OWNER FULL ACCESS</span>'
+          : '<span class="chip warn">🛡️ CUSTOMER RESTRICTED (' + APPS_CATALOG.filter(a => can(u, 'app', a.id, 'view')).length + '/' + APPS_CATALOG.length + ' APPS)</span>')
+      : '';
+    const right = '<div class="nav">' + tierChip + (u ? '<select id="w-as" aria-label="Preview user role" title="Switch between Owner and Restricted Customer accounts"><option value="">Switch account view…</option>' + opts + '</select>' : '') + (u ? '<a class="btn" href="member-portal.html#inbox">🔔 ' + unread(u.id) + '</a>' : '') + authBtn + '</div>';
     const el = document.createElement('div'); el.className = 'bar';
-    el.innerHTML = '<div class="brand"><span style="font-size:22px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE') + '<small>' + (u ? esc(u.name) + ' · ' + esc(STATUS_LABEL[u.status]) : 'Authentication Enforced · Signed Out') + '</small></div></div>' + nav + right;
+    el.innerHTML = '<div class="brand"><span style="font-size:22px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE') + '<small>' + (u ? esc(u.name) + ' · ' + esc(u.role === 'owner' ? 'Owner Full Access' : 'Default Restricted Customer Access') : 'Authentication Enforced · Signed Out') + '</small></div></div>' + nav + right;
     const host = document.querySelector('.wrap'); if (host) host.prepend(el);
     const asEl = el.querySelector('#w-as'); if (asEl) asEl.onchange = (e) => { if (e.target.value) { signInAs(e.target.value); location.reload(); } };
     const soEl = el.querySelector('#w-signout'); if (soEl) soEl.onclick = () => signOut();
   }
 
-  global.MGCW = { CATALOG, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, costGuard, commit, me, signInAs, signOut, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction };
+  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, costGuard, commit, me, signInAs, signOut, provisionCustomerSso, requestAppAccess, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction };
 })(window);

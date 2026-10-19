@@ -35,6 +35,30 @@
 
   const gated = () => u.role !== 'owner' && !W.subActive(u);
 
+  function appsPanelHtml() {
+    const apps = W.APPS_CATALOG || [];
+    if (!apps.length) return '';
+    const unlockedCount = apps.filter(a => W.can(u, 'app', a.id, 'view')).length;
+    const rows = apps.map(a => {
+      const allowed = W.can(u, 'app', a.id, 'view');
+      const badge = allowed
+        ? '<span class="chip ok">' + (u.role === 'owner' ? '👑 Owner Full Access' : a.defaultCustomer ? '✅ Default Customer Access' : '✅ Owner Granted') + '</span>'
+        : '<span class="chip warn">🔒 Restricted on Customer Login</span>';
+      const act = allowed
+        ? '<a class="btn pri" href="' + esc(a.href) + '">Launch App →</a>'
+        : '<button class="btn" data-req-app="' + esc(a.id) + '">Request Owner Unlock →</button> <a class="btn" href="saas-apps-and-lms-showcase.html">Preview Tier →</a>';
+      return '<div class="card" style="border-color:' + (allowed ? 'rgba(16,185,129,0.45)' : 'rgba(148,163,184,0.22)') + ';opacity:' + (allowed ? '1' : '0.88') + '">' +
+        '<div class="row"><h2>' + a.icon + ' ' + esc(a.title) + '</h2>' + badge + '</div>' +
+        '<p style="margin:6px 0 10px">' + (allowed ? 'Unlocked in your session. Full interactive SCORM 2004 &amp; workspace access enabled.' : 'Restricted by default on customer login. Requires Owner entitlement grant in Access Admin or Pro Subscription.') + '</p>' +
+        '<div class="row" style="justify-content:flex-start;gap:8px">' + act + '</div></div>';
+    }).join('');
+    return '<div class="card" style="margin-bottom:14px;border-color:rgba(197,179,88,0.45)">' +
+      '<div class="row"><div><h2>🛡️ App Entitlements (' + unlockedCount + '/' + apps.length + ' Apps Unlocked)</h2>' +
+      '<p>Default Customer Login automatically unlocks <b>Client Turnkey Forge</b> and <b>Sterling Auto Repair</b>. Enterprise SCORM 2004 apps remain restricted until granted by the Owner.</p></div>' +
+      '<span class="chip ' + (u.role === 'owner' ? 'ok' : 'warn') + '">' + (u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED') + '</span></div></div>' +
+      '<div class="grid" style="margin-bottom:18px">' + rows + '</div>';
+  }
+
   function pagesPanel() {
     const cards = W.CATALOG.map(c => {
       const st = u.pages[c.id];
@@ -46,11 +70,11 @@
       else if (ok) { body = '<p>' + esc(c.desc) + '</p><span class="chip ok">Ready</span>'; action = '<button class="btn pri" data-open="' + c.id + '">Open →</button>'; }
       else if (st === 'ready' && !gated()) { body = '<p>' + esc(c.desc) + '</p>'; action = ''; }
       else if (!mine && u.role !== 'owner') { body = '<p>' + esc(c.desc) + '</p><span class="chip">Add-on · $' + c.price + '/mo</span>'; action = '<button class="btn" data-addon="' + c.id + '"' + (u.plan.base ? '' : ' disabled title="Activate base plan first"') + '>Add page</button>'; }
-      else { body = '<p>' + esc(c.desc) + '</p><span class="chip">' + (gated() ? 'Locked · activate plan' : 'Not built yet') + '</span>'; action = ''; }
+      else { body = '<p>' + esc(c.desc) + '</p><span class="chip">' + (gated() ? 'Locked · activate plan' : 'Restricted · Owner approval') + '</span>'; action = ''; }
       if ((u.plan.addons || []).includes(c.id) && st !== 'ready' && st !== 'pending') body += '<span class="chip warn">Queued</span>';
       return '<div class="card"><div class="row"><h2>' + c.icon + ' ' + esc(c.title) + '</h2><span class="chip">' + c.kind + '</span></div>' + body + '<div style="margin-top:8px">' + action + '</div></div>';
     }).join('');
-    return '<div class="grid">' + cards + '</div>' + (open ? preview(open) : '');
+    return appsPanelHtml() + '<h2 style="margin:12px 0 10px">Workspace Pages &amp; Internal Hubs</h2><div class="grid">' + cards + '</div>' + (open ? preview(open) : '');
   }
 
   function preview(id) {
@@ -92,7 +116,7 @@
     return '<div class="card" id="inbox"><h2>Notifications</h2>' + (list.length ? list.map(n => '<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="row"><b style="font-size:13px">' + esc(n.title) + '</b><span class="chip">' + esc(n.channel) + '</span></div><p>' + esc(n.body) + '</p></div>').join('') : '<p>Nothing yet.</p>') + '</div>';
   }
 
-  const TABS = [['pages', 'My pages', pagesPanel], ['actions', 'Action items', actionsPanel], ['resources', 'Resources', resourcesPanel], ['workflows', 'Workflows', workflowsPanel], ['features', 'Feature requests', featuresPanel], ['billing', 'Billing', billingPanel], ['inbox', 'Inbox', inboxPanel]];
+  const TABS = [['pages', 'My Apps & Pages', pagesPanel], ['actions', 'Action items', actionsPanel], ['resources', 'Resources', resourcesPanel], ['workflows', 'Workflows', workflowsPanel], ['features', 'Feature requests', featuresPanel], ['billing', 'Billing', billingPanel], ['inbox', 'Inbox', inboxPanel]];
   const needsActive = ['actions', 'resources', 'workflows'];
 
   function render() {
@@ -102,7 +126,7 @@
     else if (needsActive.includes(tab) && u.role !== 'owner' && !W.subActive(u)) body = '<div class="card lock"><h2>🔒 Locked until your workspace is active</h2><p>Complete the steps above to unlock this section.</p></div>';
     else body = (TABS.find(t => t[0] === tab) || TABS[0])[2]();
     const nav = '<div class="row" style="margin:12px 0"><div class="nav">' + TABS.map(t => '<button class="btn' + (t[0] === tab ? ' pri' : '') + '" data-tab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><select id="tabSel" aria-label="Section">' + TABS.map(t => '<option value="' + t[0] + '"' + (t[0] === tab ? ' selected' : '') + '>' + t[1] + '</option>').join('') + '</select></div>';
-    app.innerHTML = '<h1>Welcome, ' + esc(u.name.split(' (')[0]) + '</h1><p>' + (W.TAILOR[u.quote.interest] || {}).label + ' · ' + (u.brand === 'FIX' ? 'F.I.X Solutions' : 'Milton Group Concepts') + '</p>' + banner() + nav + body;
+    app.innerHTML = '<h1>Welcome, ' + esc(u.name.split(' (')[0]) + '</h1><p>' + ((W.TAILOR[u.quote.interest] || {}).label || 'Tailored Customer Workspace') + ' · ' + (u.brand === 'FIX' ? 'F.I.X Solutions' : 'Milton Group Concepts') + ' · <b>' + (u.role === 'owner' ? 'Owner Full Access' : 'Default Restricted Customer Access') + '</b></p>' + banner() + nav + body;
     W.header('member-portal.html');
     bind();
   }
@@ -111,6 +135,7 @@
     app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; open = null; render(); });
     const sel = document.getElementById('tabSel'); if (sel) sel.onchange = () => { tab = sel.value; open = null; render(); };
     app.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { if (W.can(u, 'page', b.dataset.open, 'view')) { open = b.dataset.open; render(); } });
+    app.querySelectorAll('[data-req-app]').forEach(b => b.onclick = () => { if (W.requestAppAccess) W.requestAppAccess(b.dataset.reqApp); W.toast('Unlock request sent to Owner — you will be notified when granted'); b.textContent = '✓ Request Sent to Owner'; b.disabled = true; });
     const cp = document.getElementById('closePrev'); if (cp) cp.onclick = () => { open = null; render(); };
     const sb = document.getElementById('subBase'); if (sb) sb.onclick = () => { W.subscribeBase(u.id); W.toast('Workspace activated'); render(); };
     app.querySelectorAll('[data-addon]').forEach(b => b.onclick = () => { W.toggleAddon(u.id, b.dataset.addon); W.toast('Page requested — we will build it and notify you'); render(); });

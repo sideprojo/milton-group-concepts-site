@@ -56,6 +56,23 @@ const PORTAL_TO_CATALOG = {
   'elearning-upskilling-hub.html':   'training'
 };
 
+// Granular SCORM 2004 & Showcase App Entitlement Catalog (Default Restricted Customer Access vs Owner Full Access)
+const APPS_CATALOG = [
+  { id: 'client-turnkey-forge',       icon: '🛠️', title: 'Client Turnkey Forge SCORM OS',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Included by default on customer login: interactive custom build scope & pricing configurator.' },
+  { id: 'sterling-auto-repair',       icon: '🔧', title: 'Sterling Auto Repair Showcase',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Included by default on customer login: live commercial web & AI receptionist showcase.' },
+  { id: 'eveng-netprism-studio',      icon: '🖧', title: 'EVE-NG & NetPrism Topology Studio',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 8-page OSPF/BGP/ZTNA/EVPN network simulator & .cast studio.' },
+  { id: 'samgov-contract-matchmaker', icon: '🏛️', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Restricted by default on customer login: 6-page SDVOSB NAICS 541512/541519 & Principal AI role matchmaker.' },
+  { id: 'traffic-roi-simulator',      icon: '📈', title: 'Site Traffic & Conversion ROI OS',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Restricted by default on customer login: 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
+  { id: 'ghost-cli-trainer',          icon: '⌨️', title: 'Ghost-CLI & Netmiko Auto-Grader',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
+  { id: 'chronos-aetheria-scorm',     icon: '🏺', title: 'Chronos // Aetheria Geo-Historical OS',brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Restricted by default on customer login: 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
+  { id: 'spanish-acquisition-os',     icon: '🇪🇸', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
+];
+
+const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge'];
+const DEFAULT_CUSTOMER_PAGES = { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready' };
+const DEFAULT_CUSTOMER_PORTALS = ['member-portal.html', 'agile-board.html', 'saas-apps-and-lms-showcase.html', 'onboarding-portal.html'];
+
+
 // Owner-only command portals (can also be shared as an element `type='element', resource='<filename>'`)
 const INTERNAL_PORTALS = new Set([
   'access-admin.html',
@@ -172,11 +189,13 @@ const now = () => new Date().toISOString();
 
 function seedState() {
   const t = now();
-  const mk = (id, name, email, role, status, brand, interest, paid, pages) => ({
+  const mk = (id, name, email, role, status, brand, interest, paid, pages, allowedApps) => ({
     id, name, email, role, status, brand,
+    accessTier: role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
     quote: { interest, note: '' },
     plan: { base: paid, addons: [] },
     pages: pages || {},
+    allowedApps: allowedApps || (role === 'owner' ? ['*'] : DEFAULT_CUSTOMER_APPS.slice()),
     checklist: {},
     created: t
   });
@@ -186,16 +205,23 @@ function seedState() {
       owner: mk('owner', 'Malik K. (Owner)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, {
         home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready',
         compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready'
-      }),
-      ana: mk('ana', 'Ana (demo: just requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, {}),
+      }, ['*']),
+      client: mk('client', 'Customer Account (Default Restricted)', 'client@miltongroupsecurity.org', 'member', 'active', 'FIX', 'ai-web', true, {
+        home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready'
+      }, DEFAULT_CUSTOMER_APPS.slice()),
+      ana: mk('ana', 'Ana (demo: just requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, {}, []),
       ben: mk('ben', 'Ben (demo: pages being built)', 'ben@example.com', 'member', 'approved_building', 'FIX', 'federal', false, {
         home: 'pending', agile: 'pending', resources: 'pending', radar: 'pending', compliance: 'pending'
-      }),
-      cara: mk('cara', 'Cara (demo: active, paid)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, {
+      }, DEFAULT_CUSTOMER_APPS.slice()),
+      cara: mk('cara', 'Cara (demo: active, restricted customer)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, {
         home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', ailab: 'ready', finance: 'pending'
-      })
+      }, DEFAULT_CUSTOMER_APPS.slice())
     },
-    shares: [],
+    shares: [
+      { id: 'project_p_sterling_client', type: 'project', resource: 'p_sterling', grantee: 'client', perms: ['view'], created: t },
+      { id: 'project_p_sterling_cara', type: 'project', resource: 'p_sterling', grantee: 'cara', perms: ['view'], created: t },
+      { id: 'project_p1_cara', type: 'project', resource: 'p1', grantee: 'cara', perms: ['view', 'edit'], created: t }
+    ],
     tasks: [
       { id: 't_ben_home', uid: 'ben', page: 'home', title: 'Build "My Dashboard" for Ben', done: false },
       { id: 't_ben_agile', uid: 'ben', page: 'agile', title: 'Build "Agile Board" for Ben', done: false },
@@ -373,6 +399,18 @@ function loadState() {
       const parsed = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
       if (parsed && parsed.v === 1) {
         const def = seedState();
+        parsed.users = Object.assign({}, def.users, parsed.users || {});
+        Object.values(parsed.users).forEach(u => {
+          if (u.role === 'owner') {
+            u.accessTier = 'OWNER_FULL';
+            u.allowedApps = ['*'];
+          } else {
+            u.accessTier = u.accessTier || 'CUSTOMER_RESTRICTED';
+            if (!Array.isArray(u.allowedApps)) {
+              u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
+            }
+          }
+        });
         parsed.projects = Object.assign({}, def.projects, parsed.projects || {});
         if (!parsed.items.some(i => i.project === 'p_sterling')) {
           parsed.items = def.items.filter(i => i.project === 'p_sterling').concat(parsed.items || []);
@@ -414,9 +452,15 @@ function can(u, type, id, action) {
   if (type === 'page') {
     const entry = CATALOG.find(c => c.id === id);
     if (!entry || action !== 'view') return false;
+    if (S.shares.some(s => (s.type === 'page' || s.type === 'element') && s.resource === id && s.grantee === u.id)) return true;
     if ((u.pages || {})[id] !== 'ready') return false;
     const included = ((TAILOR[(u.quote || {}).interest] || { pages: [] }).pages).includes(id);
-    return Boolean(entry.base || included || ((u.plan && u.plan.addons) || []).includes(id));
+    return Boolean(entry.base || included || ((u.plan && u.plan.addons) || []).includes(id) || DEFAULT_CUSTOMER_PAGES[id] === 'ready');
+  }
+  if (type === 'app') {
+    const apps = Array.isArray(u.allowedApps) ? u.allowedApps : DEFAULT_CUSTOMER_APPS;
+    if (apps.includes('*') || apps.includes(id)) return true;
+    return S.shares.some(s => (s.type === 'app' || s.type === 'element') && s.resource === id && s.grantee === u.id);
   }
   if (type === 'project') {
     const sh = S.shares.find(s => s.type === 'project' && s.resource === id && s.grantee === u.id);
@@ -424,7 +468,7 @@ function can(u, type, id, action) {
     return action === 'view' ? true : (sh.perms || []).includes(action);
   }
   if (type === 'element') {
-    return S.shares.some(s => s.type === 'element' && s.resource === id && s.grantee === u.id);
+    return S.shares.some(s => (s.type === 'element' || s.type === 'app') && s.resource === id && s.grantee === u.id);
   }
   return false;
 }
@@ -504,11 +548,32 @@ function findOrCreateUserByEmail(email, name, method) {
   const cleanEmail = String(email || '').trim().toLowerCase();
   if (!cleanEmail) return null;
   if (OWNER_EMAILS.has(cleanEmail)) {
+    S.users.owner.accessTier = 'OWNER_FULL';
+    S.users.owner.allowedApps = ['*'];
     return S.users.owner;
   }
   const existing = Object.values(S.users).find(u => String(u.email || '').toLowerCase() === cleanEmail);
-  if (existing) return existing;
-  // Create a new member in 'requested' state if they sign in before submitting request-access
+  if (existing) {
+    if (existing.status === 'denied' || existing.status === 'suspended') {
+      return existing;
+    }
+    // Ensure customer account has Default Restricted Customer Access on SSO login
+    existing.accessTier = existing.accessTier || 'CUSTOMER_RESTRICTED';
+    if (!Array.isArray(existing.allowedApps) || existing.allowedApps.length === 0) {
+      existing.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
+    }
+    if (existing.status === 'requested') {
+      existing.status = 'active';
+      existing.plan = Object.assign({ base: true, addons: [] }, existing.plan || {}, { base: true });
+      existing.pages = Object.assign({}, DEFAULT_CUSTOMER_PAGES, existing.pages || {});
+      if (!S.shares.some(s => s.type === 'project' && s.resource === 'p_sterling' && s.grantee === existing.id)) {
+        S.shares.push({ id: `project_p_sterling_${existing.id}`, type: 'project', resource: 'p_sterling', grantee: existing.id, perms: ['view'], created: now() });
+      }
+      saveState(S);
+    }
+    return existing;
+  }
+  // Provision a new customer account with Default Restricted App Access on SSO login
   const id = uid('u');
   const displayName = name || cleanEmail.split('@')[0];
   S.users[id] = {
@@ -516,18 +581,20 @@ function findOrCreateUserByEmail(email, name, method) {
     name: displayName,
     email: cleanEmail,
     role: 'member',
-    status: 'requested',
-    brand: 'MGC',
-    quote: { interest: 'ai-web', note: `Created via ${method || 'SSO'}` },
-    plan: { base: false, addons: [] },
-    pages: {},
+    status: 'active',
+    accessTier: 'CUSTOMER_RESTRICTED',
+    brand: 'FIX',
+    quote: { interest: 'ai-web', note: `Provisioned with Default Restricted Access via ${method || 'SSO'}` },
+    plan: { base: true, addons: [] },
+    pages: { ...DEFAULT_CUSTOMER_PAGES },
+    allowedApps: DEFAULT_CUSTOMER_APPS.slice(),
     checklist: {},
     created: now()
   };
-  S.requests.unshift({ id: uid('r'), uid: id, status: 'requested', created: now() });
-  notifyUser(id, 'Request received', 'Welcome! Your workspace request is under review. You will be notified as soon as your pages are built.');
-  notifyUser('owner', 'New SSO sign-in access request', `${displayName} (${cleanEmail}) authenticated via ${method || 'SSO'}.`, 'in-app + email + push');
-  logAudit(id, 'auth.signup', `${cleanEmail} (${method || 'SSO'})`);
+  S.shares.push({ id: `project_p_sterling_${id}`, type: 'project', resource: 'p_sterling', grantee: id, perms: ['view'], created: now() });
+  notifyUser(id, 'Welcome — Default Restricted Customer Access Active', 'Your account includes default access to My Workspace, Scoped Agile Board, Sterling Auto Showcase, and Client Turnkey Forge. Specialized SCORM apps require Owner approval or Pro upgrade.');
+  notifyUser('owner', 'New Customer Login (Default Restricted Access)', `${displayName} (${cleanEmail}) signed in via ${method || 'SSO'} with Default Restricted App Access.`, 'in-app + email + push');
+  logAudit(id, 'auth.customer_provisioned_restricted', `${cleanEmail} (${method || 'SSO'})`);
   saveState(S);
   return S.users[id];
 }
@@ -1053,27 +1120,33 @@ const server = http.createServer(async (req, res) => {
       if (!/^\S+@\S+\.\S+$/.test(email)) {
         return sendJson(res, 400, { ok: false, error: `Valid ${SSO_PROVIDER_LABELS[provider]} account email required.` });
       }
-      const existingUser = Object.values(S.users).find(u => String(u.email || '').toLowerCase() === email);
-      if (!existingUser || existingUser.status === 'requested') {
-        logAudit('system', `auth.sso.denied.${provider}`, `Rejected unprovisioned SSO attempt for ${email}`);
+      // Demo account ana@example.com specifically demonstrates a pending unapproved request
+      if (email === 'ana@example.com' && S.users.ana && S.users.ana.status === 'requested') {
+        logAudit('system', `auth.sso.pending.${provider}`, `Pending approval check for ${email}`);
         return sendJson(res, 403, {
           ok: false,
-          error: existingUser && existingUser.status === 'requested'
-            ? 'Your workspace access request is pending Owner review and approval.'
-            : 'SSO Access Denied: This email is not provisioned in the MGC / F.I.X directory. Please submit Request Access first.'
+          error: 'Your workspace access request is pending Owner review and approval.'
         });
       }
-      const user = existingUser;
+      const user = findOrCreateUserByEmail(email, name, SSO_PROVIDER_LABELS[provider]);
+      if (!user || user.status === 'denied' || user.status === 'suspended') {
+        logAudit('system', `auth.sso.denied.${provider}`, `Rejected denied/suspended SSO attempt for ${email}`);
+        return sendJson(res, 403, {
+          ok: false,
+          error: 'SSO Access Denied: This account has been restricted by the platform Owner.'
+        });
+      }
       user.ssoProvider = provider;
       const sessionToken = signToken({
         uid: user.id,
         email: user.email,
         role: user.role,
+        accessTier: user.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
         provider,
         ssoVerified: true,
         jwksVerified
       });
-      logAudit(user.id, `auth.sso.${provider}`, `${user.email} via ${SSO_PROVIDER_LABELS[provider]}${jwksVerified ? ' (JWKS-RS256)' : ''}`);
+      logAudit(user.id, `auth.sso.${provider}`, `${user.email} via ${SSO_PROVIDER_LABELS[provider]} [${user.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED'}]${jwksVerified ? ' (JWKS-RS256)' : ''}`);
       saveState(S);
       const reqCookies = parseCookies(req);
       const returnClaims = verifyToken(reqCookies.mgcw_return);
@@ -1081,12 +1154,18 @@ const server = http.createServer(async (req, res) => {
       const cleanNext = toCleanRoute(requestedNext);
       const defaultClean = user.role === 'owner' ? '/access-admin' : '/workspace';
       const target = (cleanNext && cleanNext !== '/auth' && cleanNext !== '/login') ? cleanNext : defaultClean;
+      const effectiveAllowedApps = user.role === 'owner'
+        ? APPS_CATALOG.map(a => a.id)
+        : APPS_CATALOG.filter(a => can(user, 'app', a.id, 'view')).map(a => a.id);
       return sendJson(res, 200, {
         ok: true,
         uid: user.id,
         email: user.email,
         name: user.name,
         role: user.role,
+        accessTier: user.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+        allowedApps: effectiveAllowedApps,
+        allowedPortals: user.role === 'owner' ? ['*'] : DEFAULT_CUSTOMER_PORTALS,
         provider,
         providerLabel: SSO_PROVIDER_LABELS[provider],
         ssoVerified: true,
@@ -1127,6 +1206,7 @@ const server = http.createServer(async (req, res) => {
         engine: 'ACID-JSON-WAL + Cloud Firestore (nam5 Free-Tier Bridge) + IndexedDB',
         authenticated: Boolean(u),
         role: u ? u.role : 'anonymous',
+        accessTier: u ? (u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED') : 'ANONYMOUS',
         tables: {
           users: Object.keys(S.users || {}).length,
           projects: Object.keys(S.projects || {}).length,
@@ -1172,27 +1252,35 @@ const server = http.createServer(async (req, res) => {
           ? String(d.ssoProvider).toLowerCase()
           : 'google';
         const cleanEmail = String(d.email).trim().toLowerCase();
+        const isOwnerEmail = OWNER_EMAILS.has(cleanEmail);
         const id = uid('u');
         S.users[id] = {
           id,
           name: String(d.name).trim().slice(0, 80),
           email: cleanEmail,
-          role: OWNER_EMAILS.has(cleanEmail) ? 'owner' : 'member',
-          status: OWNER_EMAILS.has(cleanEmail) ? 'active' : 'requested',
+          role: isOwnerEmail ? 'owner' : 'member',
+          status: 'active',
+          accessTier: isOwnerEmail ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
           brand: d.brand === 'FIX' ? 'FIX' : 'MGC',
           ssoProvider: provider,
           quote: { interest: TAILOR[d.interest] ? d.interest : 'ai-web', note: String(d.note || '').slice(0, 500) },
-          plan: { base: OWNER_EMAILS.has(cleanEmail), addons: [] },
-          pages: {},
+          plan: { base: true, addons: [] },
+          pages: isOwnerEmail
+            ? { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready' }
+            : { ...DEFAULT_CUSTOMER_PAGES },
+          allowedApps: isOwnerEmail ? ['*'] : DEFAULT_CUSTOMER_APPS.slice(),
           checklist: {},
           created: now()
         };
+        if (!isOwnerEmail) {
+          S.shares.push({ id: `project_p_sterling_${id}`, type: 'project', resource: 'p_sterling', grantee: id, perms: ['view'], created: now() });
+        }
         S.requests.unshift({ id: uid('r'), uid: id, status: 'requested', created: now() });
-        notifyUser(id, 'Request received', 'Thanks! Your access request is under review. You will be notified when your pages are ready.');
-        notifyUser('owner', 'New access request', `${S.users[id].name} requested access via ${SSO_PROVIDER_LABELS[provider]} (${(TAILOR[S.users[id].quote.interest] || {}).label}).`, 'in-app + email + push');
+        notifyUser(id, 'Default Restricted Customer Access Activated', 'Welcome! Your default restricted customer workspace is active now. Specialized portals and SCORM apps requested in your quote are queued for Owner approval.');
+        notifyUser('owner', 'New customer onboarded (Default Restricted)', `${S.users[id].name} onboarded via ${SSO_PROVIDER_LABELS[provider]} (${(TAILOR[S.users[id].quote.interest] || {}).label}).`, 'in-app + email + push');
         logAudit(id, `request.created.${provider}`, cleanEmail);
         saveState(S);
-        const sessionToken = signToken({ uid: id, email: cleanEmail, role: S.users[id].role, provider, ssoVerified: true });
+        const sessionToken = signToken({ uid: id, email: cleanEmail, role: S.users[id].role, accessTier: S.users[id].accessTier, provider, ssoVerified: true });
         return sendJson(res, 200, { ok: true, uid: id, provider, ssoVerified: true, state: scopeStateForUser(S.users[id]) }, {
           'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
         });
@@ -1204,6 +1292,25 @@ const server = http.createServer(async (req, res) => {
       if (act === 'subscribeBase') {
         u.plan.base = true;
         logAudit(u.id, 'billing.base_active', '$5/mo activated');
+        saveState(S);
+        return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
+      }
+      if (act === 'requestAppAccess') {
+        const appId = String(body.appId || '');
+        const appEntry = APPS_CATALOG.find(a => a.id === appId);
+        if (!appEntry) return sendJson(res, 400, { ok: false, error: 'Unknown app.' });
+        S.features.unshift({
+          id: uid('f'),
+          by: u.id,
+          title: `App Access Request: ${appEntry.title}`,
+          body: `${u.name} (${u.email}) requested access to restricted SCORM app "${appEntry.title}" (${appId}).`,
+          votes: [u.id],
+          status: 'new',
+          created: now()
+        });
+        notifyUser('owner', 'Restricted App Unlock Requested', `${u.name} (${u.email}) requested access to ${appEntry.title}. Grant in Access Admin → Sharing.`);
+        notifyUser(u.id, 'App Unlock Request Sent', `Your request to unlock "${appEntry.title}" has been sent to the Owner.`);
+        logAudit(u.id, 'app.request_unlock', appId);
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
@@ -1285,6 +1392,7 @@ const server = http.createServer(async (req, res) => {
         const target = S.users[body.userId];
         if (target) {
           target.status = 'approved_building';
+          target.allowedApps = Array.isArray(target.allowedApps) && target.allowedApps.length ? target.allowedApps : DEFAULT_CUSTOMER_APPS.slice();
           const wanted = ['home', 'agile', 'resources'].concat((TAILOR[target.quote.interest] || { pages: [] }).pages);
           wanted.forEach(p => {
             target.pages[p] = 'pending';
@@ -1334,14 +1442,27 @@ const server = http.createServer(async (req, res) => {
         const { grantee, type, resource, perms } = body;
         S.shares = S.shares.filter(s => !(s.type === type && s.resource === resource && s.grantee === grantee));
         S.shares.push({ id: `${type}_${resource}_${grantee}`, type, resource, grantee, perms: perms || ['view'], created: now() });
-        notifyUser(grantee, 'Something was shared with you', `${type}: ${resource} (${(perms || ['view']).join(', ')})`);
+        const targetUser = S.users[grantee];
+        if (targetUser && type === 'app') {
+          targetUser.allowedApps = Array.isArray(targetUser.allowedApps) ? targetUser.allowedApps : DEFAULT_CUSTOMER_APPS.slice();
+          if (!targetUser.allowedApps.includes(resource)) targetUser.allowedApps.push(resource);
+        }
+        notifyUser(grantee, 'New Access Granted by Owner', `${type}: ${resource} (${(perms || ['view']).join(', ')})`);
         logAudit('owner', 'share.grant', `${type}:${resource} -> ${grantee}`);
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
       if (act === 'revoke') {
-        S.shares = S.shares.filter(x => x.id !== body.shareId);
-        logAudit('owner', 'share.revoke', body.shareId);
+        const sid = body.shareId || body.id;
+        const targetShare = S.shares.find(x => x.id === sid);
+        if (targetShare && targetShare.type === 'app' && S.users[targetShare.grantee]) {
+          const uTarget = S.users[targetShare.grantee];
+          if (Array.isArray(uTarget.allowedApps)) {
+            uTarget.allowedApps = uTarget.allowedApps.filter(a => a !== targetShare.resource);
+          }
+        }
+        S.shares = S.shares.filter(x => x.id !== sid);
+        logAudit('owner', 'share.revoke', sid);
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
@@ -1401,6 +1522,29 @@ const server = http.createServer(async (req, res) => {
 
     const u = getAuthenticatedUser(req);
 
+    // Gate SCORM 2004 & Showcase Apps under /projects/<appSlug>/* (Default Restricted Customer Access Enforcement)
+    if (cleanRel.startsWith('projects/')) {
+      const relParts = cleanRel.split('/');
+      const appSlug = relParts[1] || '';
+      const isSharedAdapter = cleanRel === 'projects/spanish-acquisition-os/src/modules/scorm_adapter.js';
+      const gatedApp = APPS_CATALOG.find(a => a.id === appSlug);
+      if (!isSharedAdapter && gatedApp && (cleanRel.endsWith('.html') || cleanRel.endsWith('.zip'))) {
+        if (!u) {
+          return redirectToCleanAuth('/' + cleanRel);
+        }
+        if (u.role !== 'owner' && !can(u, 'app', appSlug, 'view')) {
+          res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
+          return res.end(renderLockedHtml(
+            u,
+            `Restricted App · ${gatedApp.title}`,
+            `Your account is signed in with Default Restricted Customer Access (which includes Client Turnkey Forge & Sterling Auto Showcase). Access to "${gatedApp.title}" requires Owner Grant in Access Admin or a Pro App Subscription.`,
+            '/workspace',
+            'Request Unlock in My Workspace →'
+          ));
+        }
+      }
+    }
+
     // Gate member-portal.html (/workspace) and agile-board.html (/agile)
     if (baseName === 'member-portal.html' || baseName === 'agile-board.html') {
       if (!u) {
@@ -1423,12 +1567,12 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Gate the 16 internal portals: Owner has full access; onboarding-portal.html (/portal) is open to any SSO-authenticated user
-    if (INTERNAL_PORTALS.has(baseName) && baseName !== 'access-admin.html') {
+    // Gate the 16 root internal portals: Owner has full access; onboarding-portal.html (/portal) is a public 2FA/SSO onboarding gate
+    if (!cleanRel.startsWith('projects/') && INTERNAL_PORTALS.has(baseName) && baseName !== 'access-admin.html' && baseName !== 'onboarding-portal.html') {
       if (!u) {
         return redirectToCleanAuth(baseName);
       }
-      if (u.role !== 'owner' && baseName !== 'onboarding-portal.html') {
+      if (u.role !== 'owner') {
         const mappedCatalogId = PORTAL_TO_CATALOG[baseName];
         const allowedViaCatalog = mappedCatalogId && can(u, 'page', mappedCatalogId, 'view');
         const allowedViaShare = can(u, 'element', baseName, 'view');
@@ -1437,12 +1581,12 @@ const server = http.createServer(async (req, res) => {
           res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
           return res.end(renderLockedHtml(
             u,
-            isPending ? 'Pending · Being Created For You' : 'Page Not in Your Workspace Plan',
+            isPending ? 'Pending · Being Created For You' : 'Restricted Portal · Default Customer Access',
             isPending
               ? 'This page has been approved for your workspace and is currently being tailored for you. You will receive a notification the moment it is ready.'
-              : 'You only have access to the pages and elements created for or shared with your account. You can request or subscribe to additional pages from your workspace.',
+              : 'Your customer login has Default Restricted Access (My Workspace, Scoped Agile Board, and Allowed Showcase Apps). Request Owner authorization or subscribe to unlock this internal portal.',
             '/workspace',
-            'Open My Workspace →'
+            'Open My Customer Workspace →'
           ));
         }
       }

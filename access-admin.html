@@ -46,20 +46,28 @@
 
   function users() {
     const cols = W.CATALOG;
-    return '<div class="card" style="overflow:auto"><table><thead><tr><th>User</th><th>Status</th><th>Plan</th>' + cols.map(c => '<th title="' + esc(c.title) + '">' + c.icon + '</th>').join('') + '</tr></thead><tbody>' +
-      members().map(x => '<tr><td>' + esc(x.name) + '</td><td><span class="chip">' + esc(W.STATUS_LABEL[x.status]) + '</span></td><td>' + (x.plan.base ? '$5' : '—') + (x.plan.addons.length ? ' +' + x.plan.addons.length : '') + '</td>' +
-        cols.map(c => { const s = x.pages[c.id]; return '<td>' + (s === 'ready' ? '✅' : s === 'pending' ? '⏳' : '·') + '</td>'; }).join('') + '</tr>').join('') + '</tbody></table><p>✅ ready · ⏳ being built · · not granted. Every cell is deny-by-default.</p></div>';
+    const apps = W.APPS_CATALOG || [];
+    return '<div class="card" style="overflow:auto"><table><thead><tr><th>User</th><th>Status</th><th>Tier</th><th>Apps</th><th>Plan</th>' + cols.map(c => '<th title="' + esc(c.title) + '">' + c.icon + '</th>').join('') + '</tr></thead><tbody>' +
+      members().map(x => {
+        const appCnt = apps.filter(a => W.can(x, 'app', a.id, 'view')).length;
+        return '<tr><td>' + esc(x.name) + '</td><td><span class="chip">' + esc(W.STATUS_LABEL[x.status]) + '</span></td><td><span class="chip warn">' + esc(x.accessTier || 'CUSTOMER_RESTRICTED') + '</span></td><td><b>' + appCnt + '/' + apps.length + '</b></td><td>' + (x.plan.base ? '$5' : '—') + (x.plan.addons.length ? ' +' + x.plan.addons.length : '') + '</td>' +
+        cols.map(c => { const s = x.pages[c.id]; return '<td>' + (s === 'ready' ? '✅' : s === 'pending' ? '⏳' : '·') + '</td>'; }).join('') + '</tr>';
+      }).join('') + '</tbody></table><p>✅ ready · ⏳ being built · · not granted. Customers default to <b>CUSTOMER_RESTRICTED (2/8 apps unlocked)</b>; grant additional apps in the Sharing tab.</p></div>';
   }
 
   function sharing() {
     const elements = [['kpi-strip', 'Element: KPI strip (read-only)'], ['radar-feed', 'Element: Contract feed (read-only)'], ['roadmap', 'Element: Roadmap view']];
     const projects = Object.values(S().projects);
+    const apps = W.APPS_CATALOG || [];
     const sh = S().shares;
-    return '<div class="card"><h2>Share a page, project or single element</h2><p>Sharing grants <b>view</b> (or <b>edit</b> on projects) of exactly that resource. It never grants access to anything else.</p>' +
-      '<div class="row" style="justify-content:flex-start"><select id="shUser">' + members().map(x => '<option value="' + x.id + '">' + esc(x.name) + '</option>').join('') + '</select>' +
-      '<select id="shRes">' + projects.map(p => '<option value="project|' + p.id + '">Project: ' + esc(p.name) + '</option>').join('') + elements.map(e => '<option value="element|' + e[0] + '">' + e[1] + '</option>').join('') + '</select>' +
-      '<select id="shPerm"><option value="view">view</option><option value="view,edit">view + edit (projects)</option></select><button class="btn pri" id="shGo">Share</button></div></div>' +
-      '<div class="card" style="margin-top:10px"><h2>Active shares (' + sh.length + ')</h2>' + (sh.length ? sh.map(s => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(s.type) + ' · ' + esc(s.resource) + ' → <b>' + esc(name(s.grantee)) + '</b> <span class="chip">' + esc(s.perms.join('+')) + '</span></span><button class="btn" data-rv="' + esc(s.id) + '">Revoke</button></div>').join('') : '<p>No shares yet.</p>') + '</div>';
+    return '<div class="card"><h2>Share an App, Project, Page or Single Element</h2><p>Customer logins default to <b>Restricted App Access</b> (only Client Turnkey Forge &amp; Sterling Auto Repair unlocked). Granting an App or Project here unlocks only that specific resource for that customer.</p>' +
+      '<div class="row" style="justify-content:flex-start"><select id="shUser">' + members().map(x => '<option value="' + x.id + '">' + esc(x.name) + ' (' + esc(x.email) + ')</option>').join('') + '</select>' +
+      '<select id="shRes">' +
+      apps.map(a => '<option value="app|' + a.id + '">App: ' + a.icon + ' ' + esc(a.title) + (a.defaultCustomer ? ' (Default Unlocked)' : ' (Restricted SCORM)') + '</option>').join('') +
+      projects.map(p => '<option value="project|' + p.id + '">Project: ' + esc(p.name) + '</option>').join('') +
+      elements.map(e => '<option value="element|' + e[0] + '">' + e[1] + '</option>').join('') + '</select>' +
+      '<select id="shPerm"><option value="view">view / launch</option><option value="view,edit">view + edit (projects)</option></select><button class="btn pri" id="shGo">Grant Access</button></div></div>' +
+      '<div class="card" style="margin-top:10px"><h2>Active shares &amp; app entitlements (' + sh.length + ')</h2>' + (sh.length ? sh.map(s => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(s.type) + ' · <b>' + esc(s.resource) + '</b> → <b>' + esc(name(s.grantee)) + '</b> <span class="chip">' + esc(s.perms.join('+')) + '</span></span><button class="btn" data-rv="' + esc(s.id) + '">Revoke</button></div>').join('') : '<p>No shares yet.</p>') + '</div>';
   }
 
   function notifs() {
@@ -83,7 +91,7 @@
     app.querySelectorAll('[data-dn]').forEach(b => b.onclick = () => { W.deny(b.dataset.dn); render(); });
     app.querySelectorAll('[data-task]').forEach(c => c.onchange = () => { W.completeTask(c.dataset.task, c.checked); render(); });
     app.querySelectorAll('[data-rv]').forEach(b => b.onclick = () => { W.revoke(b.dataset.rv); render(); });
-    const go = document.getElementById('shGo'); if (go) go.onclick = () => { const r = document.getElementById('shRes').value.split('|'); let p = document.getElementById('shPerm').value.split(','); if (r[0] === 'element') p = ['view']; W.share(document.getElementById('shUser').value, r[0], r[1], p); W.toast('Shared'); render(); };
+    const go = document.getElementById('shGo'); if (go) go.onclick = () => { const r = document.getElementById('shRes').value.split('|'); let p = document.getElementById('shPerm').value.split(','); if (r[0] === 'element' || r[0] === 'app') p = ['view']; W.share(document.getElementById('shUser').value, r[0], r[1], p); W.toast('Entitlement granted'); render(); };
   }
   render();
 })();
