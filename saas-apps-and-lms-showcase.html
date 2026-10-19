@@ -25,20 +25,85 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      background:
-        radial-gradient(circle at 12% 15%, rgba(37, 99, 235, 0.18), transparent 40%),
-        radial-gradient(circle at 88% 12%, rgba(220, 38, 38, 0.14), transparent 36%),
-        radial-gradient(circle at 50% 85%, rgba(197, 179, 88, 0.12), transparent 45%),
-        var(--bg-deep);
+      background-color: #060B16;
       color: var(--text-main);
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
+      position: relative;
+    }
+    /* Dual Cityscape Engine: F.I.X. Aerial Cityscape & miltongroupsecurity.org Skyscraper + Sunset */
+    #showcase-cityscape-bg {
+      position: fixed;
+      inset: -5%;
+      z-index: -3;
+      background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500');
+      background-size: 118% 118%;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      opacity: 0.46;
+      mix-blend-mode: luminosity;
+      transition: filter 0.85s cubic-bezier(0.16, 1, 0.3, 1), background-position 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #showcase-cityscape-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(197, 179, 88, 0.22) 0%, rgba(11, 20, 38, 0.86) 75%),
+        linear-gradient(180deg, rgba(11, 20, 38, 0.48) 0%, rgba(4, 8, 20, 0.94) 100%);
+      transition: background 0.85s ease;
+    }
+    #showcase-mgc-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 1;
+      transition: opacity 0.65s ease;
+    }
+    .mgc-sunset-band {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 70vh;
+      background: linear-gradient(180deg, rgba(249, 115, 22, 0.22) 0%, rgba(244, 63, 94, 0.14) 38%, rgba(197, 179, 88, 0.12) 68%, transparent 100%);
+      mix-blend-mode: screen;
+    }
+    .mgc-cubes-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+      opacity: 0.10;
+      mix-blend-mode: overlay;
+    }
+    .mgc-skyscraper-silhouette {
+      position: absolute;
+      bottom: 0;
+      right: 5%;
+      width: 210px;
+      height: 86vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      opacity: 0.68;
+    }
+    @keyframes waveMgcFlag {
+      0%, 100% { transform: skewY(0deg) scaleX(1); }
+      35% { transform: skewY(3.5deg) scaleX(0.93); }
+      70% { transform: skewY(-2.5deg) scaleX(0.97); }
+    }
+    .mgc-flag-svg-wrap {
+      transform-origin: left center;
+      animation: waveMgcFlag 2.6s infinite ease-in-out;
     }
     .container {
       max-width: 1440px;
       margin: 0 auto;
       padding: 20px 24px 80px;
+      position: relative;
+      z-index: 10;
     }
     /* Subscriber Top Status Strip */
     .sub-strip {
@@ -49,9 +114,10 @@
       gap: 12px;
       padding: 14px 20px;
       border-radius: 18px;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+      background: linear-gradient(135deg, rgba(11, 20, 38, 0.92), rgba(15, 23, 42, 0.88));
+      backdrop-filter: blur(20px);
       border: 1px solid var(--border-gold);
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.65);
       margin-bottom: 20px;
     }
     .user-badge {
@@ -100,7 +166,7 @@
       gap: 6px;
     }
     .tier-select {
-      background: #0f172a;
+      background: #0B1426;
       color: #fbbf24;
       border: 1px solid var(--border-gold);
       border-radius: 10px;
@@ -129,8 +195,9 @@
     .hero-box {
       padding: 26px 28px;
       border-radius: 22px;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(11, 20, 38, 0.96));
-      border: 1px solid rgba(59, 130, 246, 0.35);
+      background: linear-gradient(135deg, rgba(11, 20, 38, 0.88), rgba(15, 23, 42, 0.90));
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-gold);
       margin-bottom: 22px;
       display: grid;
       grid-template-columns: 1.5fr 1fr;
@@ -156,15 +223,16 @@
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 22px;
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-gold);
       padding-bottom: 12px;
+      align-items: center;
     }
     .ws-tab {
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(11, 20, 38, 0.85);
       color: #cbd5e1;
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(197, 179, 88, 0.28);
       border-radius: 12px;
-      padding: 10px 16px;
+      padding: 10px 15px;
       font-size: 12px;
       font-weight: 800;
       cursor: pointer;
@@ -174,14 +242,14 @@
       gap: 8px;
     }
     .ws-tab:hover {
-      border-color: var(--blue);
+      border-color: var(--gold);
       color: #fff;
     }
     .ws-tab.active {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #fff;
-      border-color: #60a5fa;
-      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+      background: linear-gradient(135deg, #c5b358, #a38f36);
+      color: #060B16;
+      border-color: #fde047;
+      box-shadow: 0 8px 24px rgba(197, 179, 88, 0.35);
     }
 
     .tab-pane { display: none; }
@@ -199,8 +267,9 @@
       gap: 20px;
     }
     .app-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
+      background: rgba(11, 20, 38, 0.84);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(197, 179, 88, 0.28);
       border-radius: 18px;
       padding: 20px;
       display: flex;
@@ -208,11 +277,12 @@
       justify-content: space-between;
       position: relative;
       overflow: hidden;
-      transition: transform 0.2s, border-color 0.2s;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0 18px 45px -12px rgba(0, 0, 0, 0.7);
     }
     .app-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(59, 130, 246, 0.55);
+      border-color: var(--gold);
     }
     .app-tag {
       display: inline-flex;
@@ -227,9 +297,9 @@
       margin-bottom: 10px;
     }
     .btn-primary {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      background: linear-gradient(135deg, #059669, #10b981);
       color: #fff;
-      border: 1px solid #60a5fa;
+      border: 1px solid #34d399;
       padding: 9px 14px;
       border-radius: 10px;
       font-size: 11.5px;
@@ -242,9 +312,9 @@
       gap: 6px;
     }
     .btn-secondary {
-      background: rgba(30, 41, 59, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       color: #e2e8f0;
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(197, 179, 88, 0.35);
       padding: 9px 14px;
       border-radius: 10px;
       font-size: 11.5px;
@@ -256,6 +326,10 @@
       justify-content: center;
       gap: 6px;
     }
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      color: #fde047;
+    }
     .btn-gold {
       background: linear-gradient(135deg, #c5b358, #a38f36);
       color: #091024;
@@ -265,16 +339,22 @@
       font-size: 11.5px;
       font-weight: 900;
       cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     /* Interactive App Workbench */
     .workbench {
       margin-top: 22px;
-      background: rgba(9, 15, 32, 0.96);
-      border: 1px solid rgba(59, 130, 246, 0.45);
+      background: rgba(9, 15, 32, 0.90);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-gold);
       border-radius: 20px;
       padding: 22px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
     }
     .slider-row {
       margin-bottom: 14px;
@@ -289,7 +369,7 @@
     }
     .slider-row input[type=range] {
       width: 100%;
-      accent-color: #3b82f6;
+      accent-color: #c5b358;
     }
     .kpi-grid {
       display: grid;
@@ -321,7 +401,7 @@
     }
     .prog-fill {
       height: 100%;
-      background: linear-gradient(90deg, #3b82f6, #10b981);
+      background: linear-gradient(90deg, #c5b358, #10b981);
       border-radius: 999px;
       transition: width 0.4s ease;
     }
@@ -371,50 +451,92 @@
       .ws-tab { white-space: nowrap; flex-shrink: 0; padding: 9px 13px; font-size: 11px; }
       .sub-strip { padding: 12px; }
       table.lb-table { display: block; overflow-x: auto; white-space: nowrap; }
+      .mgc-skyscraper-silhouette { display: none; }
     }
   </style>
 </head>
 <body>
+  <!-- DUAL CITYSCAPE BACKDROP: F.I.X. AERIAL CITYSCAPE & MILTONGROUPSECURITY.ORG SKYSCRAPER + WAVING US FLAG -->
+  <div id="showcase-cityscape-bg" aria-hidden="true"></div>
+  <div id="showcase-cityscape-overlay" aria-hidden="true"></div>
+  <div id="showcase-mgc-layer" aria-hidden="true">
+    <div class="mgc-sunset-band"></div>
+    <div class="mgc-cubes-overlay"></div>
+    <div class="mgc-skyscraper-silhouette">
+      <div style="position:relative;width:4px;height:86px;background:#cbd5e1;z-index:20;margin-bottom:-6px;">
+        <div class="mgc-flag-svg-wrap" style="position:absolute;top:4px;left:4px;width:86px;height:52px;box-shadow:0 6px 18px rgba(0,0,0,0.45);">
+          <svg viewBox="0 0 60 40" style="width:100%;height:100%;border-radius:2px;overflow:hidden;">
+            <rect width="60" height="40" fill="#fff"/>
+            <rect width="60" height="3.07" y="0" fill="#b22234"/>
+            <rect width="60" height="3.07" y="6.15" fill="#b22234"/>
+            <rect width="60" height="3.07" y="12.3" fill="#b22234"/>
+            <rect width="60" height="3.07" y="18.46" fill="#b22234"/>
+            <rect width="60" height="3.07" y="24.61" fill="#b22234"/>
+            <rect width="60" height="3.07" y="30.76" fill="#b22234"/>
+            <rect width="60" height="3.07" y="36.92" fill="#b22234"/>
+            <rect width="24" height="21.5" fill="#3c3b6e"/>
+            <g fill="#fff">
+              <circle cx="3" cy="3" r="0.8"/><circle cx="7" cy="3" r="0.8"/><circle cx="11" cy="3" r="0.8"/><circle cx="15" cy="3" r="0.8"/><circle cx="19" cy="3" r="0.8"/>
+              <circle cx="5" cy="6" r="0.8"/><circle cx="9" cy="6" r="0.8"/><circle cx="13" cy="6" r="0.8"/><circle cx="17" cy="6" r="0.8"/>
+              <circle cx="3" cy="9" r="0.8"/><circle cx="7" cy="9" r="0.8"/><circle cx="11" cy="9" r="0.8"/><circle cx="15" cy="9" r="0.8"/><circle cx="19" cy="9" r="0.8"/>
+              <circle cx="5" cy="12" r="0.8"/><circle cx="9" cy="12" r="0.8"/><circle cx="13" cy="12" r="0.8"/><circle cx="17" cy="12" r="0.8"/>
+              <circle cx="3" cy="15" r="0.8"/><circle cx="7" cy="15" r="0.8"/><circle cx="11" cy="15" r="0.8"/><circle cx="15" cy="15" r="0.8"/><circle cx="19" cy="15" r="0.8"/>
+              <circle cx="5" cy="18" r="0.8"/><circle cx="9" cy="18" r="0.8"/><circle cx="13" cy="18" r="0.8"/><circle cx="17" cy="18" r="0.8"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div style="width:22px;height:55px;background:rgba(11,20,38,0.92);border-top:1px solid rgba(197,179,88,0.4);"></div>
+      <div style="width:58px;height:70px;background:rgba(11,20,38,0.94);border-top:1px solid rgba(197,179,88,0.4);"></div>
+      <div style="width:116px;height:110px;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.4);"></div>
+      <div style="width:170px;height:130px;background:rgba(11,20,38,0.96);border-top:1px solid rgba(197,179,88,0.4);"></div>
+      <div style="width:210px;flex:1;background:linear-gradient(180deg,rgba(11,20,38,0.96),rgba(6,11,22,0.99));border-top:1px solid rgba(197,179,88,0.5);"></div>
+    </div>
+  </div>
+
   <div class="container">
-    <!-- TOP SUBSCRIBER & MONETIZATION BAR -->
+    <!-- TOP SUBSCRIBER, SCORM 2004 & DUAL-CITYSCAPE COMMAND BAR -->
     <div class="sub-strip">
       <div class="user-badge">
         <div class="avatar-circle">
           <div class="avatar-inner" id="ui-avatar-initials">MK</div>
         </div>
         <div>
-          <div style="display:flex;align-items:center;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <strong id="ui-user-name" style="font-size:14px;">Malik A. Khabir</strong>
-            <span id="ui-tier-badge" style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.4);">
-              TIER 3 • ENTERPRISE & OWNER
+            <span id="ui-tier-badge" style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:rgba(197,179,88,0.2);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
+              SCORM 2004 4TH ED. • TIER 3 ENTERPRISE
             </span>
           </div>
           <div style="font-size:11px;color:var(--text-muted);" id="ui-user-focus">
-            Focus: Tailored Federal/Commercial Contracts • High-Traffic Web/Apps • EVE-NG Cyber Prototyping
+            F.I.X. Thematic Colors • Dual Cityscape Engine (fix.miltongroupsecurity.org + miltongroupsecurity.org)
           </div>
         </div>
       </div>
 
       <div class="metrics-row">
-        <div class="metric-pill" title="Interactive Sandbox & AI Credits">
-          <span style="color:#60a5fa;">⚡ Credits:</span>
-          <strong id="ui-credits">2,450</strong>
+        <div class="metric-pill" title="SCORM 2004 Status">
+          <span style="color:#34d399;">● SCORM 2004:</span>
+          <strong id="ui-scorm-status">7 SCO Apps Ready</strong>
         </div>
         <div class="metric-pill" title="Course & Lab XP">
           <span style="color:#fbbf24;">★ XP:</span>
           <strong id="ui-xp">18,450</strong>
         </div>
-        <div class="metric-pill" title="Active Learning & Build Streak">
-          <span style="color:#f87171;">🔥 Streak:</span>
-          <strong>14d</strong>
-        </div>
+        <select id="cityscape-theme-selector" class="tier-select" onchange="switchShowcaseCityscape(this.value)" title="Switch between F.I.X. Cityscape, miltongroupsecurity.org Cityscape, and Color/Greyscale Filters">
+          <option value="mgc-sunset">🇺🇸 Cityscape: miltongroupsecurity.org + F.I.X. Gold</option>
+          <option value="fix-vanguard">🏙️ Cityscape: F.I.X. Solutions Navy &amp; Gold</option>
+          <option value="fix-greyscale">🎬 Cityscape: F.I.X. Tactical Noir Greyscale</option>
+          <option value="mgc-emerald">🌱 Cityscape: MGC Skyscraper + Emerald Matrix</option>
+          <option value="fix-platinum">🪙 Cityscape: F.I.X. Silver Monochrome</option>
+        </select>
         <select id="tier-simulator" class="tier-select" onchange="switchSimulatedTier(this.value)" title="Preview how different paying user tiers experience this platform">
-          <option value="enterprise">View as: Enterprise / Owner ($499/mo — Full Access)</option>
-          <option value="pro">View as: Pro Subscriber ($99/mo — Apps + Course LMS)</option>
-          <option value="ppv">View as: Pay-Per-View Visitor ($19 Pass — Preview Gate)</option>
+          <option value="enterprise">View as: Enterprise / Owner ($499/mo)</option>
+          <option value="pro">View as: Pro Subscriber ($99/mo)</option>
+          <option value="ppv">View as: Pay-Per-View Visitor ($19 Pass)</option>
         </select>
         <button class="btn-pay" onclick="openSubscriptionCheckout()">
-          💳 Upgrade / Accept Payment
+          💳 Accept Payment
         </button>
       </div>
     </div>
@@ -464,131 +586,160 @@
       </div>
     </div>
 
-    <!-- MAIN WORKSPACE TABS -->
+    <!-- MAIN WORKSPACE TABS + LEFT/RIGHT ARROW NAVIGATION -->
     <div class="workspace-tabs">
+      <button class="btn-secondary" onclick="prevShowcaseTab()" title="Previous Workspace Tab [Left Arrow]">← Prev [←]</button>
       <button class="ws-tab active" data-target="tab-apps" onclick="activateMainTab('tab-apps')">
-        <span>1. Decoupled Apps &amp; Live Simulators (6)</span>
+        <span>1. SCORM 2004 Showcase Apps (7)</span>
       </button>
       <button class="ws-tab" data-target="tab-lms" onclick="activateMainTab('tab-lms')">
-        <span>2. Course LMS, Progress Trackers &amp; Quizzes</span>
+        <span>2. Course LMS, Trackers &amp; Quizzes</span>
       </button>
       <button class="ws-tab" data-target="tab-leaderboard" onclick="activateMainTab('tab-leaderboard')">
         <span>3. Leaderboards &amp; Cohort Rankings</span>
       </button>
       <button class="ws-tab" data-target="tab-ai-coach" onclick="activateMainTab('tab-ai-coach')">
-        <span>4. AI Help &amp; Tailored Guidance Coach</span>
+        <span>4. AI Help &amp; Tailored Coach</span>
       </button>
       <button class="ws-tab" data-target="tab-custom-build" onclick="activateMainTab('tab-custom-build')">
-        <span>5. Project Showcase &amp; Custom Build Configurator</span>
+        <span>5. Custom Build Configurator</span>
       </button>
       <button class="ws-tab" data-target="tab-profile" onclick="activateMainTab('tab-profile')">
-        <span>6. User Profile &amp; Subscription Settings</span>
+        <span>6. Profile &amp; Subscription</span>
       </button>
+      <button class="btn-gold" onclick="nextShowcaseTab()" title="Next Workspace Tab [Right Arrow]">Next [→] →</button>
     </div>
 
     <!-- ================================================================= -->
-    <!-- TAB 1: DECOUPLED APPS & INTERACTIVE WORKBENCH                      -->
+    <!-- TAB 1: DECOUPLED SCORM 2004 APPS & INTERACTIVE WORKBENCH           -->
     <!-- ================================================================= -->
     <div id="tab-apps" class="tab-pane active">
       <div class="grid-3">
-        <!-- App 1: EVE-NG Topology & Cast Recorder -->
-        <div class="app-card">
-          <div>
-            <span class="app-tag" style="background:rgba(59,130,246,0.18);color:#60a5fa;border:1px solid rgba(59,130,246,0.4);">
-              App 01 • Standalone &amp; Coupled
-            </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">EVE-NG &amp; NetPrism Topology + Cast Studio</h3>
-            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              Run EVE-NG locally ($0 cloud cost) while sharing live Read-Only Spectator Views, 18 KB <code>.cast</code> CLI recordings, and animated OSPF/BGP/TLS packet flows.
-            </p>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn-primary" onclick="selectAppWorkbench('eve')">Launch Interactive Studio</button>
-            <button class="btn-secondary" onclick="copySpectatorLink()">🔗 Share View Link</button>
-          </div>
-        </div>
-
-        <!-- App 2: Tailored Job, Contract & Procurement Matchmaker -->
+        <!-- App 1: EVE-NG Topology & Cast Recorder (F.I.X. Cityscape + F.I.X. Colors) -->
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
-              App 02 • Career &amp; Revenue Engine
+              App 01 • SCORM 2004 • 🏙️ F.I.X. Cityscape
             </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">Tailored Job, Contract &amp; SAM.gov Matchmaker</h3>
+            <h3 style="margin:0 0 8px;font-size:17px;">EVE-NG &amp; NetPrism Topology + .cast Studio</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              Matches subscriber skills, certifications, and NAICS codes to high-probability federal contracts, SDVOSB set-asides, and principal architect roles.
+              8-Page SCORM 2004 4th Ed. Network Studio ($0 cloud cost) with OSPF/BGP/ZTNA/EVPN topologies, 18 KB <code>.cast</code> CLI recordings, and F.I.X. Cityscape filters.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn-primary" onclick="selectAppWorkbench('contracts')">Open Matchmaker Engine</button>
-            <a href="sdvosb-contract-radar.html" class="btn-secondary">SAM.gov Radar →</a>
+            <a href="projects/eveng-netprism-studio/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <button class="btn-primary" onclick="selectAppWorkbench('eve'); switchShowcaseCityscape('fix-vanguard');">Inline Studio</button>
+            <a href="projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
           </div>
         </div>
 
-        <!-- App 3: Site Traffic, Expected Traffic & Conversion ROI Simulator -->
+        <!-- App 2: Tailored Job, Contract & Procurement Matchmaker (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
-              App 03 • Traffic &amp; Growth Lab
+              App 02 • SCORM 2004 • 🇺🇸 MGC Cityscape
+            </span>
+            <h3 style="margin:0 0 8px;font-size:17px;">Tailored Job, Contract &amp; SAM.gov Matchmaker</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
+              6-Page SCORM 2004 4th Ed. Procurement &amp; Career OS matching NAICS 541512/541519 SDVOSB set-asides and Principal AI roles over the <code>miltongroupsecurity.org</code> cityscape.
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="projects/samgov-contract-matchmaker/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <button class="btn-primary" onclick="selectAppWorkbench('contracts'); switchShowcaseCityscape('mgc-sunset');">Inline Matchmaker</button>
+            <a href="projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
+          </div>
+        </div>
+
+        <!-- App 3: Site Traffic, Expected Traffic & Conversion ROI Simulator (F.I.X. Cityscape + F.I.X. Colors) -->
+        <div class="app-card">
+          <div>
+            <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
+              App 03 • SCORM 2004 • 🏙️ F.I.X. Cityscape
             </span>
             <h3 style="margin:0 0 8px;font-size:17px;">Site Traffic, Expected Traffic &amp; ROI Simulator</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              Forecast current vs. expected site traffic, subscriber conversion funnels, Cloud Run auto-scaling costs, and customer satisfaction metrics in real time.
+              6-Page SCORM 2004 4th Ed. Growth &amp; Cloud Run Zero-Charge ($0.00 idle) simulator forecasting visitor funnels and multi-rail revenue over the F.I.X. Cityscape.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn-primary" onclick="selectAppWorkbench('traffic')">Run Traffic Simulator</button>
-            <a href="finance-command.html" class="btn-secondary">Monetization Rail →</a>
+            <a href="projects/traffic-roi-simulator/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <button class="btn-primary" onclick="selectAppWorkbench('traffic'); switchShowcaseCityscape('fix-vanguard');">Inline Simulator</button>
+            <a href="projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
           </div>
         </div>
 
-        <!-- App 4: Ghost-CLI Kinetic Trainer & Ansible Auto-Grader -->
+        <!-- App 4: Ghost-CLI Kinetic Trainer & Ansible Auto-Grader (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
         <div class="app-card">
           <div>
-            <span class="app-tag" style="background:rgba(139,92,246,0.18);color:#c4b5fd;border:1px solid rgba(139,92,246,0.45);">
-              App 04 • Muscle-Memory CLI
+            <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
+              App 04 • SCORM 2004 • 🇺🇸 MGC Cityscape
             </span>
             <h3 style="margin:0 0 8px;font-size:17px;">Ghost-CLI Trainer &amp; Netmiko Auto-Grader</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              Decoupled fast-drill terminal for Cisco IOS-XE, Linux (CST200), SQL (SDC200), and declarative Ansible DevNet Playbook verification.
+              8-Page SCORM 2004 4th Ed. kinetic terminal for Cisco IOS-XE, Linux (CST200), 3NF SQL (SDC200), Sentinel KQL, and Ansible DevNet over the <code>miltongroupsecurity.org</code> cityscape.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn-primary" onclick="selectAppWorkbench('cli')">Open Ghost-CLI Drill</button>
-            <button class="btn-secondary" onclick="awardUserXP(250, 'Completed Ghost-CLI Ansible Drill')">+250 XP Drill</button>
+            <a href="projects/ghost-cli-trainer/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <button class="btn-primary" onclick="selectAppWorkbench('cli'); switchShowcaseCityscape('mgc-emerald');">Inline CLI Drill</button>
+            <a href="projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
           </div>
         </div>
 
-        <!-- App 5: Chronos // Aetheria Geo-Historical AI WebApp -->
+        <!-- App 5: Chronos // Aetheria Geo-Historical AI WebApp (F.I.X. Cityscape + F.I.X. Colors) -->
         <div class="app-card">
           <div>
-            <span class="app-tag" style="background:rgba(239,68,68,0.18);color:#fca5a5;border:1px solid rgba(239,68,68,0.45);">
-              App 05 • AI &amp; Archaeology
+            <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
+              App 05 • SCORM 2004 • 🏙️ F.I.X. Cityscape
             </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">Chronos // Aetheria Insight &amp; Map WebApp</h3>
+            <h3 style="margin:0 0 8px;font-size:17px;">Chronos // Aetheria Geo-Historical AI OS</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              Public &amp; subscriber 3-pane discovery engine combining Image Association Constellations, Geodesic Maps, and DeepMind Epigraphy analysis.
+              6-Page SCORM 2004 4th Ed. discovery engine combining DeepMind Ithaca/Aeneas Epigraphy, WGS-84 Geodesics, and Diachronic Latin-to-Spanish roots over the F.I.X. Cityscape.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="chronos-external-insight-webapp.html" class="btn-primary">Open Chronos WebApp</a>
-            <a href="historical-archaeology-ai-hub.html" class="btn-secondary">Internal Lab →</a>
+            <a href="projects/chronos-aetheria-scorm/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <a href="chronos-external-insight-webapp.html" class="btn-primary">3-Pane Map App</a>
+            <a href="projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
           </div>
         </div>
 
-        <!-- App 6: Custom Build & Client Satisfaction Studio -->
+        <!-- App 6: Spanish Acquisition OS (F.I.X. Cityscape + MGC Cityscape Switcher) -->
         <div class="app-card">
           <div>
-            <span class="app-tag" style="background:rgba(14,165,233,0.18);color:#7dd3fc;border:1px solid rgba(14,165,233,0.45);">
-              App 06 • Client Turnkey Forge
+            <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
+              App 06 • SCORM 2004 • 🏙️ F.I.X. &amp; MGC Cityscape
             </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">Custom Project &amp; App Experience Builder</h3>
+            <h3 style="margin:0 0 8px;font-size:17px;">Spanish Acquisition OS (10,000 Words &amp; 100 Roots)</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              Interactive showcase configurator where clients test your live projects, customize features for their industry, and submit a paid deposit.
+              10-SCO SCORM 2004 4th Ed. language OS with 344 Azure Neural MP3s, 100 Latin/Spanish root families, universal <code>←/→</code> pagination, and F.I.X. &amp; MGC cityscape filters.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn-gold" onclick="activateMainTab('tab-custom-build')">Configure Client Build →</button>
+            <a href="projects/spanish-acquisition-os/index.html" class="btn-gold">🇪🇸 Launch Spanish OS</a>
+            <a href="projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP (8.6 MB)</a>
+          </div>
+        </div>
+
+        <!-- App 7: Custom Project & Client Turnkey Forge (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
+        <div class="app-card" style="grid-column: 1 / -1;">
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;">
+            <div style="max-width:780px;">
+              <span class="app-tag" style="background:rgba(197,179,88,0.22);color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
+                App 07 • SCORM 2004 • 🇺🇸 miltongroupsecurity.org Cityscape + F.I.X. Colors
+              </span>
+              <h3 style="margin:0 0 6px;font-size:18px;">Client Turnkey Forge &amp; Custom Project Experience Builder (Includes Sterling Auto Repair OS)</h3>
+              <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0;">
+                6-Page SCORM 2004 4th Ed. Turnkey Architecture Configurator showcasing Defense VAR (<code>fix.miltongroupsecurity.org</code>), Executive Command (<code>miltongroupsecurity.org</code>), SCORM LMS Academies, and Commercial Service Booking (<code>Sterling Auto Repair</code>) with instant Finance Command invoicing.
+              </p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <a href="projects/client-turnkey-forge/index.html" class="btn-gold">🚀 Launch Turnkey Forge SCORM OS</a>
+              <a href="projects/sterling-auto-repair/index.html" class="btn-primary">🔧 Sterling Auto Showcase</a>
+              <button class="btn-secondary" onclick="activateMainTab('tab-custom-build'); switchShowcaseCityscape('mgc-sunset');">Configure Pricing →</button>
+              <a href="projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
+            </div>
           </div>
         </div>
       </div>
@@ -1122,16 +1273,70 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
     </div>
   </div>
 
+  <script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
   <script src="mgc-guided-security.js"></script>
   <script>
     let userXP = parseInt(localStorage.getItem('mgc_lms_xp') || '18450', 10);
     let userCredits = parseInt(localStorage.getItem('mgc_app_credits') || '2450', 10);
     let currentTier = localStorage.getItem('mgc_sim_tier') || 'enterprise';
+    const SHOWCASE_TABS = ['tab-apps', 'tab-lms', 'tab-leaderboard', 'tab-ai-coach', 'tab-custom-build', 'tab-profile'];
+    let currentTabIndex = 0;
+    let cityscapeStep = 0;
+
+    const CITYSCAPE_PROFILES = {
+      'mgc-sunset': {
+        showMgcSkyscraper: true,
+        filter: 'contrast(122%) brightness(64%) saturate(130%)',
+        overlay: 'radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.22) 0%, rgba(197, 179, 88, 0.16) 42%, rgba(11, 20, 38, 0.90) 85%), linear-gradient(180deg, rgba(11, 20, 38, 0.42) 0%, rgba(4, 8, 20, 0.94) 100%)'
+      },
+      'fix-vanguard': {
+        showMgcSkyscraper: false,
+        filter: 'grayscale(30%) contrast(118%) brightness(56%) sepia(24%) hue-rotate(185deg)',
+        overlay: 'radial-gradient(circle at 50% 0%, rgba(197, 179, 88, 0.22) 0%, rgba(11, 20, 38, 0.86) 75%), linear-gradient(180deg, rgba(11, 20, 38, 0.48) 0%, rgba(4, 8, 20, 0.94) 100%)'
+      },
+      'fix-greyscale': {
+        showMgcSkyscraper: false,
+        filter: 'grayscale(100%) contrast(138%) brightness(52%)',
+        overlay: 'radial-gradient(circle at 50% 0%, rgba(197, 179, 88, 0.14) 0%, rgba(9, 13, 22, 0.88) 75%), linear-gradient(180deg, rgba(15, 23, 42, 0.55) 0%, rgba(2, 6, 23, 0.96) 100%)'
+      },
+      'mgc-emerald': {
+        showMgcSkyscraper: true,
+        filter: 'grayscale(55%) sepia(40%) hue-rotate(115deg) saturate(190%) contrast(122%) brightness(54%)',
+        overlay: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.22) 0%, rgba(11, 20, 38, 0.90) 80%), linear-gradient(180deg, rgba(6, 24, 20, 0.50) 0%, rgba(2, 6, 23, 0.95) 100%)'
+      },
+      'fix-platinum': {
+        showMgcSkyscraper: false,
+        filter: 'grayscale(95%) contrast(145%) brightness(60%)',
+        overlay: 'radial-gradient(circle at 50% 0%, rgba(226, 232, 240, 0.18) 0%, rgba(11, 20, 38, 0.88) 75%), linear-gradient(180deg, rgba(15, 23, 42, 0.50) 0%, rgba(2, 6, 23, 0.95) 100%)'
+      }
+    };
+
+    function switchShowcaseCityscape(profileKey) {
+      const p = CITYSCAPE_PROFILES[profileKey] || CITYSCAPE_PROFILES['mgc-sunset'];
+      const bg = document.getElementById('showcase-cityscape-bg');
+      const ov = document.getElementById('showcase-cityscape-overlay');
+      const mgc = document.getElementById('showcase-mgc-layer');
+      const sel = document.getElementById('cityscape-theme-selector');
+      if (sel && sel.value !== profileKey && CITYSCAPE_PROFILES[profileKey]) sel.value = profileKey;
+
+      cityscapeStep++;
+      if (bg) {
+        bg.style.filter = p.filter;
+        const panX = 50 + Math.sin(cityscapeStep * 0.55) * 30;
+        const panY = 50 + Math.cos(cityscapeStep * 0.40) * 22;
+        bg.style.backgroundPosition = panX.toFixed(1) + '% ' + panY.toFixed(1) + '%';
+      }
+      if (ov) ov.style.background = p.overlay;
+      if (mgc) mgc.style.opacity = p.showMgcSkyscraper ? '1' : '0';
+    }
 
     function renderTopStats() {
-      document.getElementById('ui-xp').textContent = userXP.toLocaleString();
-      document.getElementById('lb-user-xp').textContent = userXP.toLocaleString() + ' XP';
-      document.getElementById('ui-credits').textContent = userCredits.toLocaleString();
+      const xpEl = document.getElementById('ui-xp');
+      if (xpEl) xpEl.textContent = userXP.toLocaleString();
+      const lbXpEl = document.getElementById('lb-user-xp');
+      if (lbXpEl) lbXpEl.textContent = userXP.toLocaleString() + ' XP';
+      const credEl = document.getElementById('ui-credits');
+      if (credEl) credEl.textContent = userCredits.toLocaleString();
       const savedName = localStorage.getItem('mgc_prof_name');
       const savedFocus = localStorage.getItem('mgc_prof_focus');
       if (savedName) {
@@ -1146,13 +1351,45 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
     }
 
     function activateMainTab(tabId) {
+      const idx = SHOWCASE_TABS.indexOf(tabId);
+      if (idx !== -1) currentTabIndex = idx;
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.ws-tab').forEach(b => b.classList.remove('active'));
       const target = document.getElementById(tabId);
       if (target) target.classList.add('active');
       const btn = document.querySelector(`.ws-tab[data-target="${tabId}"]`);
       if (btn) btn.classList.add('active');
+
+      // Rotate between F.I.X. Cityscape and miltongroupsecurity.org Cityscape across tabs
+      const tabThemes = ['mgc-sunset', 'fix-vanguard', 'fix-greyscale', 'mgc-emerald', 'mgc-sunset', 'fix-platinum'];
+      switchShowcaseCityscape(tabThemes[currentTabIndex % tabThemes.length]);
+
+      if (typeof SAOS_SCORM !== 'undefined') {
+        SAOS_SCORM.set('cmi.location', tabId);
+        SAOS_SCORM.commit();
+      }
     }
+
+    function nextShowcaseTab() {
+      currentTabIndex = (currentTabIndex + 1) % SHOWCASE_TABS.length;
+      activateMainTab(SHOWCASE_TABS[currentTabIndex]);
+    }
+
+    function prevShowcaseTab() {
+      currentTabIndex = (currentTabIndex - 1 + SHOWCASE_TABS.length) % SHOWCASE_TABS.length;
+      activateMainTab(SHOWCASE_TABS[currentTabIndex]);
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target && e.target.tagName) || '')) return;
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextShowcaseTab();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevShowcaseTab();
+      }
+    });
 
     function switchSimulatedTier(tier) {
       currentTier = tier;
@@ -1160,12 +1397,12 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
       const badge = document.getElementById('ui-tier-badge');
       const gate = document.getElementById('ppv-gate-banner');
       if (tier === 'enterprise') {
-        badge.textContent = 'TIER 3 • ENTERPRISE & OWNER';
-        badge.style.background = 'rgba(16,185,129,0.2)';
-        badge.style.color = '#34d399';
+        badge.textContent = 'SCORM 2004 4TH ED. • TIER 3 ENTERPRISE';
+        badge.style.background = 'rgba(197,179,88,0.2)';
+        badge.style.color = '#fbbf24';
         gate.classList.remove('locked');
       } else if (tier === 'pro') {
-        badge.textContent = 'TIER 2 • PRO SUBSCRIBER ($99/MO)';
+        badge.textContent = 'SCORM 2004 4TH ED. • TIER 2 PRO ($99/MO)';
         badge.style.background = 'rgba(59,130,246,0.2)';
         badge.style.color = '#60a5fa';
         gate.classList.remove('locked');
@@ -1287,6 +1524,11 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
         fb.style.color = '#34d399';
         fb.textContent = '✓ Correct! Cloud Run Request-Based (min-instances=0) + Local EVE-NG + .cast JSON Replay achieves $0.00 idle cost and 99.8% smaller recordings. (+400 XP Awarded!)';
         awardUserXP(400, 'Passed Architecture & Monetization Mastery Quiz');
+        if (typeof SAOS_SCORM !== 'undefined') {
+          SAOS_SCORM.set('cmi.completion_status', 'completed');
+          SAOS_SCORM.set('cmi.success_status', 'passed');
+          SAOS_SCORM.commit();
+        }
       } else {
         fb.style.color = '#f87171';
         fb.textContent = '✗ Not quite — Always-on GCP VMs and raw 4K MP4 files incur high monthly compute and storage overhead. Try Option A!';
@@ -1365,6 +1607,7 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
       renderTopStats();
     }
 
+    switchShowcaseCityscape('mgc-sunset');
     renderTopStats();
   </script>
 </body>

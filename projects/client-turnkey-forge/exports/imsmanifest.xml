@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="MGC_CLIENT_TURNKEY_FORGE_SCORM2004" version="2.0"
+          xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
+          xmlns:adlseq="http://www.adlnet.org/xsd/adlseq_v1p3"
+          xmlns:adlnav="http://www.adlnet.org/xsd/adlnav_v1p3"
+          xmlns:imsss="http://www.imsglobal.org/xsd/imsss">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>2004 4th Edition</schemaversion>
+  </metadata>
+  <organizations default="ORG_MGC_CLIENT_TURNKEY_FORGE_SCORM2004">
+    <organization identifier="ORG_MGC_CLIENT_TURNKEY_FORGE_SCORM2004">
+      <title>Custom Project & Client Turnkey Experience Builder</title>
+      <imsss:sequencing>
+        <imsss:controlMode choice="true" flow="true"/>
+      </imsss:sequencing>
+      <item identifier="PORTAL_MGC_CLIENT_TURNKEY_FORGE_SCORM2004" identifierref="RES_PORTAL">
+        <title>Custom Project & Client Turnkey Experience Builder — Unified Portal</title>
+      </item>
+      
+      <item identifier="SCO_FORGE_DEFENSE_VAR" identifierref="RES_SCO_FORGE_DEFENSE_VAR">
+        <title>Page 1: Defense Procurement & SDVOSB VAR Portal Blueprint (F.I.X. Pattern)</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_FORGE_ENTERPRISE_MGC" identifierref="RES_SCO_FORGE_ENTERPRISE_MGC">
+        <title>Page 2: Executive Enterprise & Consulting Command Portal (MGC Pattern)</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_FORGE_SCORM_LMS" identifierref="RES_SCO_FORGE_SCORM_LMS">
+        <title>Page 3: SCORM 2004 4th Edition Academy & Language/Technical OS</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_FORGE_SERVICE_AUTO" identifierref="RES_SCO_FORGE_SERVICE_AUTO">
+        <title>Page 4: Commercial Service, Automotive & Booking OS (Sterling Pattern)</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_FORGE_DATA_COMMERCE" identifierref="RES_SCO_FORGE_DATA_COMMERCE">
+        <title>Page 5: White Feather Social, Community & Data Commerce Suite</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_FORGE_INVOICE_CLOSE" identifierref="RES_SCO_FORGE_INVOICE_CLOSE">
+        <title>Page 6: Interactive Scope Finalizer & Signed Invoice Generator</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES_PORTAL" type="webcontent" adlcp:scormType="sco" href="index.html">
+      <file href="index.html"/>
+    </resource>
+    
+    <resource identifier="RES_SCO_FORGE_DEFENSE_VAR" type="webcontent" adlcp:scormType="sco" href="pages/page_1.html">
+      <file href="pages/page_1.html"/>
+    </resource>
+    <resource identifier="RES_SCO_FORGE_ENTERPRISE_MGC" type="webcontent" adlcp:scormType="sco" href="pages/page_2.html">
+      <file href="pages/page_2.html"/>
+    </resource>
+    <resource identifier="RES_SCO_FORGE_SCORM_LMS" type="webcontent" adlcp:scormType="sco" href="pages/page_3.html">
+      <file href="pages/page_3.html"/>
+    </resource>
+    <resource identifier="RES_SCO_FORGE_SERVICE_AUTO" type="webcontent" adlcp:scormType="sco" href="pages/page_4.html">
+      <file href="pages/page_4.html"/>
+    </resource>
+    <resource identifier="RES_SCO_FORGE_DATA_COMMERCE" type="webcontent" adlcp:scormType="sco" href="pages/page_5.html">
+      <file href="pages/page_5.html"/>
+    </resource>
+    <resource identifier="RES_SCO_FORGE_INVOICE_CLOSE" type="webcontent" adlcp:scormType="sco" href="pages/page_6.html">
+      <file href="pages/page_6.html"/>
+    </resource>
+  </resources>
+</manifest>

@@ -88,5 +88,127 @@
   render();
 })();
 </script>
+
+<!-- SCORM 2004 4TH EDITION + DUAL CITYSCAPE (F.I.X. & MILTONGROUPSECURITY.ORG) LAYER -->
+<style id="mgc-fix-scorm-cityscape-style">
+  #mgc-fix-bg-image {
+    position: fixed;
+    inset: -5%;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500');
+    background-size: 118% 118%;
+    background-position: 50% 50%;
+    opacity: 0.28;
+    mix-blend-mode: luminosity;
+    filter: contrast(122%) brightness(65%) saturate(130%);
+    transition: filter 0.8s ease, background-position 1s ease, opacity 0.5s ease;
+  }
+  #mgc-fix-skyscraper-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+  @keyframes waveFlagInjected {
+    0%, 100% { transform: skewY(0deg) scaleX(1); }
+    35% { transform: skewY(3.5deg) scaleX(0.93); }
+    70% { transform: skewY(-2.5deg) scaleX(0.97); }
+  }
+  #mgc-scorm-floating-dock {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: rgba(11, 20, 38, 0.94);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(197, 179, 88, 0.48);
+    border-radius: 999px;
+    padding: 7px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 11.5px;
+    color: #f8fafc;
+    max-width: 96vw;
+  }
+  #mgc-scorm-floating-dock a, #mgc-scorm-floating-dock button, #mgc-scorm-floating-dock select {
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 4px 10px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+</style>
+<div id="mgc-fix-bg-image" aria-hidden="true"></div>
+<div id="mgc-fix-skyscraper-overlay" aria-hidden="true">
+  <div style="position:absolute;top:0;left:0;width:100%;height:65vh;background:linear-gradient(180deg,rgba(249,115,22,0.18),rgba(197,179,88,0.10),transparent);mix-blend-mode:screen;"></div>
+  <div style="position:absolute;bottom:0;right:4%;width:180px;height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;opacity:0.55;">
+    <div style="position:relative;width:3px;height:74px;background:#cbd5e1;margin-bottom:-4px;">
+      <div style="position:absolute;top:3px;left:3px;width:74px;height:44px;transform-origin:left center;animation:waveFlagInjected 2.6s infinite ease-in-out;">
+        <svg viewBox="0 0 60 40" style="width:100%;height:100%;border-radius:2px;">
+          <rect width="60" height="40" fill="#fff"/>
+          <rect width="60" height="3.07" y="0" fill="#b22234"/><rect width="60" height="3.07" y="6.15" fill="#b22234"/><rect width="60" height="3.07" y="12.3" fill="#b22234"/><rect width="60" height="3.07" y="18.46" fill="#b22234"/><rect width="60" height="3.07" y="24.61" fill="#b22234"/><rect width="60" height="3.07" y="30.76" fill="#b22234"/><rect width="60" height="3.07" y="36.92" fill="#b22234"/>
+          <rect width="24" height="21.5" fill="#3c3b6e"/>
+        </svg>
+      </div>
+    </div>
+    <div style="width:45px;height:60px;background:rgba(11,20,38,0.9);border-top:1px solid rgba(197,179,88,0.4);"></div>
+    <div style="width:110px;height:100px;background:rgba(11,20,38,0.92);border-top:1px solid rgba(197,179,88,0.4);"></div>
+    <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
+  </div>
+</div>
+<div id="mgc-scorm-floating-dock">
+  <span style="color:#fbbf24;font-weight:800;">● SCORM 2004 4th Ed.</span>
+  <span style="color:#94a3b8;" id="mgc-dock-label">Agile Board • miltongroupsecurity.org Cityscape</span>
+  <select onchange="window.switchInjectedCityscape(this.value)" style="background:#0B1426;color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
+    <option value="mgc-cityscape">🎨 Switch Cityscape / Filter ▾</option>
+    <option value="fix-cityscape">🏙️ F.I.X. Cityscape (Mission Navy &amp; Gold)</option>
+    <option value="mgc-cityscape">🇺🇸 miltongroupsecurity.org Cityscape (Flag + Sunset)</option>
+    <option value="noir-greyscale">🎬 Tactical Noir 100% Greyscale</option>
+    <option value="emerald-matrix">🌱 Tactical Emerald Luminosity</option>
+  </select>
+  <a href="projects/client-turnkey-forge/index.html" style="background:linear-gradient(135deg,#C5B358,#a38f36);color:#060B16;">🚀 Multi-Page SCORM OS</a>
+  <a href="projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip" download style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.45);">📦 SCORM .ZIP</a>
+  <button onclick="window.commitInjectedScorm()" style="background:rgba(30,41,59,0.9);color:#e2e8f0;border:1px solid rgba(197,179,88,0.35);">Complete SCO ✓</button>
+</div>
+<script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
+<script>
+  window.switchInjectedCityscape = function(mode) {
+    var bg = document.getElementById('mgc-fix-bg-image');
+    var sky = document.getElementById('mgc-fix-skyscraper-overlay');
+    if (!bg || !sky) return;
+    if (mode === 'mgc-cityscape') {
+      sky.style.opacity = '1';
+      bg.style.filter = 'contrast(122%) brightness(65%) saturate(130%)';
+    } else if (mode === 'noir-greyscale') {
+      sky.style.opacity = '0';
+      bg.style.filter = 'grayscale(100%) contrast(138%) brightness(52%)';
+    } else if (mode === 'emerald-matrix') {
+      sky.style.opacity = '1';
+      bg.style.filter = 'grayscale(55%) sepia(40%) hue-rotate(115deg) saturate(190%) contrast(122%) brightness(54%)';
+    } else {
+      sky.style.opacity = '0';
+      bg.style.filter = 'grayscale(30%) contrast(118%) brightness(58%) sepia(24%) hue-rotate(185deg)';
+    }
+    bg.style.backgroundPosition = (30 + Math.floor(Math.random() * 45)) + '% ' + (30 + Math.floor(Math.random() * 45)) + '%';
+  };
+  window.commitInjectedScorm = function() {
+    if (typeof SAOS_SCORM !== 'undefined') {
+      SAOS_SCORM.set('cmi.completion_status', 'completed');
+      SAOS_SCORM.set('cmi.success_status', 'passed');
+      SAOS_SCORM.commit();
+    }
+    alert('✓ SCORM 2004 4th Edition Completion committed (MGC_AGILE_BOARD_SCO)!');
+  };
+</script>
+
 </body>
 </html>

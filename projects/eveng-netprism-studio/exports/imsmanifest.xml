@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="MGC_EVENG_NETPRISM_SCORM2004" version="2.0"
+          xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
+          xmlns:adlseq="http://www.adlnet.org/xsd/adlseq_v1p3"
+          xmlns:adlnav="http://www.adlnet.org/xsd/adlnav_v1p3"
+          xmlns:imsss="http://www.imsglobal.org/xsd/imsss">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>2004 4th Edition</schemaversion>
+  </metadata>
+  <organizations default="ORG_MGC_EVENG_NETPRISM_SCORM2004">
+    <organization identifier="ORG_MGC_EVENG_NETPRISM_SCORM2004">
+      <title>EVE-NG & NetPrism Topology + .cast Studio</title>
+      <imsss:sequencing>
+        <imsss:controlMode choice="true" flow="true"/>
+      </imsss:sequencing>
+      <item identifier="PORTAL_MGC_EVENG_NETPRISM_SCORM2004" identifierref="RES_PORTAL">
+        <title>EVE-NG & NetPrism Topology + .cast Studio — Unified Portal</title>
+      </item>
+      
+      <item identifier="SCO_OSPF_CORE" identifierref="RES_SCO_OSPF_CORE">
+        <title>Page 1: Multi-Area OSPF & DR/BDR Adjacency Verification</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_BGP_EDGE" identifierref="RES_SCO_BGP_EDGE">
+        <title>Page 2: eBGP Peering (AS 65001 ↔ AS 65000) & Route-Map Policy</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_ZTNA_FW" identifierref="RES_SCO_ZTNA_FW">
+        <title>Page 3: Zero-Trust SC-100 Enclave Firewall & Micro-Segmentation</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_DMVPN_IPSEC" identifierref="RES_SCO_DMVPN_IPSEC">
+        <title>Page 4: DMVPN Phase 3 Dual-Hub NHRP &IKEv2 Suite-B Crypto</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_EVPN_VXLAN" identifierref="RES_SCO_EVPN_VXLAN">
+        <title>Page 5: Data Center Spine-Leaf BGP EVPN-VXLAN Fabric</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_MPLS_L3VPN" identifierref="RES_SCO_MPLS_L3VPN">
+        <title>Page 6: MPLS L3VPN Provider Core, LDP & VRF Route-Targets</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_CAST_STUDIO" identifierref="RES_SCO_CAST_STUDIO">
+        <title>Page 7: 18 KB .cast Terminal Recording & Read-Only Spectator Link</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_NETMIKO_GRADER" identifierref="RES_SCO_NETMIKO_GRADER">
+        <title>Page 8: Declarative Ansible & Netmiko Automated Lab Grader</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES_PORTAL" type="webcontent" adlcp:scormType="sco" href="index.html">
+      <file href="index.html"/>
+    </resource>
+    
+    <resource identifier="RES_SCO_OSPF_CORE" type="webcontent" adlcp:scormType="sco" href="pages/page_1.html">
+      <file href="pages/page_1.html"/>
+    </resource>
+    <resource identifier="RES_SCO_BGP_EDGE" type="webcontent" adlcp:scormType="sco" href="pages/page_2.html">
+      <file href="pages/page_2.html"/>
+    </resource>
+    <resource identifier="RES_SCO_ZTNA_FW" type="webcontent" adlcp:scormType="sco" href="pages/page_3.html">
+      <file href="pages/page_3.html"/>
+    </resource>
+    <resource identifier="RES_SCO_DMVPN_IPSEC" type="webcontent" adlcp:scormType="sco" href="pages/page_4.html">
+      <file href="pages/page_4.html"/>
+    </resource>
+    <resource identifier="RES_SCO_EVPN_VXLAN" type="webcontent" adlcp:scormType="sco" href="pages/page_5.html">
+      <file href="pages/page_5.html"/>
+    </resource>
+    <resource identifier="RES_SCO_MPLS_L3VPN" type="webcontent" adlcp:scormType="sco" href="pages/page_6.html">
+      <file href="pages/page_6.html"/>
+    </resource>
+    <resource identifier="RES_SCO_CAST_STUDIO" type="webcontent" adlcp:scormType="sco" href="pages/page_7.html">
+      <file href="pages/page_7.html"/>
+    </resource>
+    <resource identifier="RES_SCO_NETMIKO_GRADER" type="webcontent" adlcp:scormType="sco" href="pages/page_8.html">
+      <file href="pages/page_8.html"/>
+    </resource>
+  </resources>
+</manifest>

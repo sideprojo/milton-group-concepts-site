@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="MGC_CHRONOS_AETHERIA_SCORM2004" version="2.0"
+          xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
+          xmlns:adlseq="http://www.adlnet.org/xsd/adlseq_v1p3"
+          xmlns:adlnav="http://www.adlnet.org/xsd/adlnav_v1p3"
+          xmlns:imsss="http://www.imsglobal.org/xsd/imsss">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>2004 4th Edition</schemaversion>
+  </metadata>
+  <organizations default="ORG_MGC_CHRONOS_AETHERIA_SCORM2004">
+    <organization identifier="ORG_MGC_CHRONOS_AETHERIA_SCORM2004">
+      <title>Chronos // Aetheria Geo-Historical AI & Epigraphy OS</title>
+      <imsss:sequencing>
+        <imsss:controlMode choice="true" flow="true"/>
+      </imsss:sequencing>
+      <item identifier="PORTAL_MGC_CHRONOS_AETHERIA_SCORM2004" identifierref="RES_PORTAL">
+        <title>Chronos // Aetheria Geo-Historical AI & Epigraphy OS — Unified Portal</title>
+      </item>
+      
+      <item identifier="SCO_CHRONOS_EPIGRAPHY" identifierref="RES_SCO_CHRONOS_EPIGRAPHY">
+        <title>Page 1: Ancient Text Restoration & Attribution (Ithaca & Aeneas)</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_CHRONOS_GEODESIC" identifierref="RES_SCO_CHRONOS_GEODESIC">
+        <title>Page 2: Great-Circle Geodesic Alignments & Trade Corridor Mapping</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_CHRONOS_CONSTELLATION" identifierref="RES_SCO_CHRONOS_CONSTELLATION">
+        <title>Page 3: High-Dimensional Embedding & Visual Constellation Graph</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_CHRONOS_STRATIGRAPHY" identifierref="RES_SCO_CHRONOS_STRATIGRAPHY">
+        <title>Page 4: Radiocarbon (C-14) Calibration & Stratigraphic Matrix</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_CHRONOS_ETYMOLOGY" identifierref="RES_SCO_CHRONOS_ETYMOLOGY">
+        <title>Page 5: Diachronic Latin-to-Castilian Phonological Evolution Bridge</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_CHRONOS_SYNTHESIS" identifierref="RES_SCO_CHRONOS_SYNTHESIS">
+        <title>Page 6: Live Multi-Source Intelligence Wire & Research Dossier Export</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES_PORTAL" type="webcontent" adlcp:scormType="sco" href="index.html">
+      <file href="index.html"/>
+    </resource>
+    
+    <resource identifier="RES_SCO_CHRONOS_EPIGRAPHY" type="webcontent" adlcp:scormType="sco" href="pages/page_1.html">
+      <file href="pages/page_1.html"/>
+    </resource>
+    <resource identifier="RES_SCO_CHRONOS_GEODESIC" type="webcontent" adlcp:scormType="sco" href="pages/page_2.html">
+      <file href="pages/page_2.html"/>
+    </resource>
+    <resource identifier="RES_SCO_CHRONOS_CONSTELLATION" type="webcontent" adlcp:scormType="sco" href="pages/page_3.html">
+      <file href="pages/page_3.html"/>
+    </resource>
+    <resource identifier="RES_SCO_CHRONOS_STRATIGRAPHY" type="webcontent" adlcp:scormType="sco" href="pages/page_4.html">
+      <file href="pages/page_4.html"/>
+    </resource>
+    <resource identifier="RES_SCO_CHRONOS_ETYMOLOGY" type="webcontent" adlcp:scormType="sco" href="pages/page_5.html">
+      <file href="pages/page_5.html"/>
+    </resource>
+    <resource identifier="RES_SCO_CHRONOS_SYNTHESIS" type="webcontent" adlcp:scormType="sco" href="pages/page_6.html">
+      <file href="pages/page_6.html"/>
+    </resource>
+  </resources>
+</manifest>

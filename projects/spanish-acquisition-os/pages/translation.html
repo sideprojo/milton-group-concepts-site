@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 9: 5-Layer Translation Ladder — Spanish Acquisition OS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #060b16;
+      color: #f8fafc;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    #fix-cityscape-bg {
+      position: fixed;
+      inset: -4%;
+      z-index: -2;
+      background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2000&auto=format&fit=crop');
+      background-size: 118% 118%;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      opacity: 0.46;
+      mix-blend-mode: luminosity;
+      transition: filter 0.85s cubic-bezier(0.16, 1, 0.3, 1), background-position 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #fix-cityscape-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(197, 179, 88, 0.16) 0%, rgba(16, 185, 129, 0.10) 38%, rgba(11, 20, 38, 0.90) 80%),
+        linear-gradient(180deg, rgba(6, 11, 22, 0.55) 0%, rgba(11, 20, 38, 0.82) 55%, rgba(2, 6, 23, 0.95) 100%);
+      transition: background 0.85s ease;
+    }
+    .glass-panel { background: rgba(11, 20, 38, 0.78); backdrop-filter: blur(20px); border: 1px solid rgba(197, 179, 88, 0.18); box-shadow: 0 22px 55px -12px rgba(0, 0, 0, 0.75); }
+    .glass-dropdown { background: rgba(8, 14, 28, 0.96); backdrop-filter: blur(24px); border: 1px solid rgba(16, 185, 129, 0.32); box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9); }
+    .nav-dock { background: rgba(11, 20, 38, 0.88); backdrop-filter: blur(22px); border: 1px solid rgba(197, 179, 88, 0.22); box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.75); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; font-weight: 600; border-radius: 0.75rem; padding: 0.5rem 1rem; transition: all 150ms ease; cursor: pointer; }
+    .btn-sm { padding: 0.35rem 0.85rem; font-size: 0.8125rem; }
+    .btn-xs { padding: 0.22rem 0.65rem; font-size: 0.75rem; border-radius: 0.5rem; }
+    .btn-primary { background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; }
+    .btn-outline { border: 1px solid #334155; color: #cbd5e1; background: rgba(15, 23, 42, 0.65); }
+    .btn-outline:hover { background: #1e293b; color: #ffffff; border-color: #C5B358; }
+    .btn-icon { background: rgba(30, 41, 59, 0.75); border: 1px solid #334155; border-radius: 9999px; width: 2.25rem; height: 2.25rem; display: inline-flex; align-items: center; justify-content: center; transition: all 150ms ease; }
+    .btn-icon:hover { background: rgba(16, 185, 129, 0.25); border-color: #10b981; }
+    .badge { display: inline-flex; align-items: center; border-radius: 9999px; padding: 0.18rem 0.6rem; font-size: 0.72rem; font-weight: 700; }
+    .badge-accent { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+    .badge-outline { border: 1px solid #334155; color: #94a3b8; }
+    .badge-secondary { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .btn-error { background: rgba(153, 27, 27, 0.85); color: #fecaca; border: 1px solid rgba(239, 68, 68, 0.35); }
+    .btn-warning { background: rgba(133, 77, 14, 0.85); color: #fef08a; border: 1px solid rgba(234, 179, 8, 0.35); }
+    .btn-success { background: rgba(6, 95, 70, 0.9); color: #a7f3d0; border: 1px solid rgba(16, 185, 129, 0.4); }
+  </style>
+</head>
+<body class="px-3 sm:px-6 pt-5 pb-20 flex flex-col items-center">
+
+  <!-- F.I.X SOLUTIONS CITYSCAPE BACKGROUND & FILTER LAYER -->
+  <div id="fix-cityscape-bg" aria-hidden="true"></div>
+  <div id="fix-cityscape-overlay" aria-hidden="true"></div>
+
+  <!-- CENTER-FOCUSED SCORM 2004 4TH EDITION COMMAND DOCK -->
+  <header class="w-full max-w-4xl mx-auto flex flex-col items-center text-center mb-8 relative z-40">
+    <div class="hidden" aria-hidden="true">
+      <span id="active-filter-badge"></span>
+    </div>
+
+    <nav class="nav-dock w-full rounded-2xl p-2 flex flex-wrap items-center justify-center gap-2 relative">
+      <a href="derivation.html" onclick="SAOS_SCORM.requestNav('previous')" class="btn btn-outline btn-xs" title="Module 8: Derivation Forge & Affix Synthesizer">← Prev SCO</a>
+
+      <!-- Center Dropdown 1: SCO Module Switcher -->
+      <div class="relative" id="dd-container-scos">
+        <button onclick="window.SAOS.toggleDropdown('scos')" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-lg flex items-center gap-2">
+          <span>🏛️</span> <span>Translation Ladder</span> <span class="text-[10px]">▾</span>
+        </button>
+        <div id="dropdown-scos" class="hidden glass-dropdown absolute left-1/2 -translate-x-1/2 mt-2.5 w-72 rounded-2xl p-3 text-left z-50 space-y-1">
+          <div class="text-[10px] font-mono uppercase text-emerald-400 font-bold px-2 pb-1.5 mb-1 border-b border-slate-800">Switch SCORM SCO Module</div>
+          
+    <a href="dashboards.html" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800/80 text-slate-200 flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>📈</span> Telemetry Grid</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 1</span>
+    </a>
+  
+    <a href="diagnostics.html" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800/80 text-slate-200 flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>🩺</span> Diagnostics Lab</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 2</span>
+    </a>
+  
+    <a href="vocabulary.html" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800/80 text-slate-200 flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>📖</span> Vocabulary Explorer</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 3</span>
+    </a>
+  
+    <a href="roots.html" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800/80 text-slate-200 flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>🌱</span> Root Matrix</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 4</span>
+    </a>
+  
+    <a href="listening.html" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800/80 text-slate-200 flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>🎧</span> Listening Lab</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 5</span>
+    </a>
+  
+    <a href="reading.html" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800/80 text-slate-200 flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>📜</span> Reading (CI)</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 6</span>
+    </a>
+  
+    <a href="pronunciation.html" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800/80 text-slate-200 flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>🎙️</span> Pronunciation Lab</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 7</span>
+    </a>
+  
+    <a href="derivation.html" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800/80 text-slate-200 flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>🧬</span> Derivation Forge</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 8</span>
+    </a>
+  
+    <a href="translation.html" class="w-full px-3 py-2 rounded-xl bg-emerald-600/25 border border-emerald-500/40 text-emerald-300 font-bold flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>🏛️</span> Translation Ladder</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 9</span>
+    </a>
+  
+    <a href="review.html" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800/80 text-slate-200 flex items-center justify-between text-xs transition">
+      <span class="flex items-center gap-2"><span>⚡</span> Review Queue</span>
+      <span class="text-[10px] font-mono text-slate-400">SCO 10</span>
+    </a>
+  
+        </div>
+      </div>
+
+      <!-- Center Dropdown 2: Live Trackers & LMS Status -->
+      <div class="relative" id="dd-container-trackers">
+        <button onclick="window.SAOS.toggleDropdown('trackers')" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-200 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 flex items-center gap-1.5">
+          <span>📊</span> <span>Trackers &amp; LMS</span> <span class="text-emerald-400 text-[10px]">▾</span>
+        </button>
+        <div id="dropdown-trackers" class="hidden glass-dropdown absolute left-1/2 -translate-x-1/2 mt-2.5 w-80 rounded-2xl p-4 text-left z-50">
+          <div class="flex justify-between items-center pb-2 mb-3 border-b border-slate-800">
+            <span class="text-xs font-bold text-white uppercase">LMS &amp; SRS Telemetry</span>
+            <span id="scorm-lms-status" class="badge badge-accent text-[10px]">Active</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+            <div class="p-2 rounded-xl bg-slate-900 border border-slate-800">
+              <div class="text-base font-black text-emerald-400 font-mono" id="trk-due">25</div>
+              <div class="text-[10px] text-slate-400">Due</div>
+            </div>
+            <div class="p-2 rounded-xl bg-slate-900 border border-slate-800">
+              <div class="text-base font-black text-amber-400 font-mono" id="trk-events">0</div>
+              <div class="text-[10px] text-slate-400">Events</div>
+            </div>
+            <div class="p-2 rounded-xl bg-slate-900 border border-slate-800">
+              <div class="text-base font-black text-teal-300 font-mono" id="trk-score">100%</div>
+              <div class="text-[10px] text-slate-400">Score</div>
+            </div>
+          </div>
+          <button onclick="window.SAOS.markScoComplete()" class="w-full btn btn-primary btn-xs py-2">Record SCO Completion to LMS ✓</button>
+        </div>
+      </div>
+
+      <!-- Center Dropdown 3: Cityscape Color/Greyscale Filter -->
+      <div class="relative" id="dd-container-themes">
+        <button onclick="window.SAOS.toggleDropdown('themes')" class="px-3 py-2 rounded-xl text-xs font-bold text-amber-300 bg-slate-900/90 hover:bg-slate-800 border border-amber-500/30 flex items-center gap-1.5">
+          <span>🎨</span> <span class="hidden sm:inline">Filter</span> <span class="text-[10px]">▾</span>
+        </button>
+        <div id="dropdown-themes" class="hidden glass-dropdown absolute left-1/2 -translate-x-1/2 mt-2.5 w-72 rounded-2xl p-3 text-left z-50 space-y-1 text-xs">
+          <div class="text-[10px] font-mono uppercase text-amber-400 font-bold px-2 pb-1.5 mb-1 border-b border-slate-800">F.I.X. Cityscape Filter</div>
+          <button onclick="window.SAOS.setVisualTheme('auto'); window.SAOS.closeDropdowns();" class="w-full px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-200 font-bold text-left">✨ Auto-Adapt by Step</button>
+          <button onclick="window.SAOS.setVisualTheme('fix-vanguard'); window.SAOS.closeDropdowns();" class="w-full px-3 py-1.5 rounded-xl hover:bg-slate-800 text-slate-200 text-left">🏛️ F.I.X. Vanguard Navy &amp; Gold</button>
+          <button onclick="window.SAOS.setVisualTheme('noir-greyscale'); window.SAOS.closeDropdowns();" class="w-full px-3 py-1.5 rounded-xl hover:bg-slate-800 text-slate-200 text-left">🎬 Tactical Noir Greyscale</button>
+          <button onclick="window.SAOS.setVisualTheme('platinum-mono'); window.SAOS.closeDropdowns();" class="w-full px-3 py-1.5 rounded-xl hover:bg-slate-800 text-slate-200 text-left">🪙 Silver Monochrome</button>
+          <button onclick="window.SAOS.setVisualTheme('emerald-matrix'); window.SAOS.closeDropdowns();" class="w-full px-3 py-1.5 rounded-xl hover:bg-slate-800 text-slate-200 text-left">🌱 Emerald Matrix</button>
+          <button onclick="window.SAOS.setVisualTheme('archival-amber'); window.SAOS.closeDropdowns();" class="w-full px-3 py-1.5 rounded-xl hover:bg-slate-800 text-slate-200 text-left">📜 Castilian Sepia &amp; Gold</button>
+          <button onclick="window.SAOS.setVisualTheme('cobalt-acoustic'); window.SAOS.closeDropdowns();" class="w-full px-3 py-1.5 rounded-xl hover:bg-slate-800 text-slate-200 text-left">🎧 Cobalt Acoustic</button>
+          <button onclick="window.SAOS.setVisualTheme('violet-forge'); window.SAOS.closeDropdowns();" class="w-full px-3 py-1.5 rounded-xl hover:bg-slate-800 text-slate-200 text-left">🧬 Morphological Violet</button>
+        </div>
+      </div>
+
+      <a href="../index.html?mode=translation" class="btn btn-outline btn-xs text-emerald-300">Unified OS Portal ↗</a>
+      <a href="review.html" onclick="SAOS_SCORM.requestNav('continue')" class="btn btn-primary btn-xs" title="Module 10: Adaptive Spaced Repetition Queue">Next SCO →</a>
+    </nav>
+  </header>
+
+  <!-- CENTER STAGE VIEWPORT -->
+  <main id="app-viewport" class="w-full max-w-2xl mx-auto flex-1 relative z-10">
+    <div class="glass-panel rounded-2xl p-12 text-center">
+      <div class="animate-spin text-3xl mb-3 text-emerald-400 inline-block">⟳</div>
+      <h3 class="text-lg font-bold text-white">Loading Translation Ladder...</h3>
+    </div>
+  </main>
+
+  <!-- FLOATING CENTER PILL FOOTER -->
+  <footer class="fixed bottom-3 left-1/2 -translate-x-1/2 z-30 w-auto max-w-[95vw]">
+    <div class="nav-dock px-4 py-2 rounded-full flex items-center gap-3 text-[11px] text-slate-400 whitespace-nowrap">
+      <span class="text-emerald-400 font-bold">SCO_TRANSLATION</span>
+      <span>•</span>
+      <span class="font-mono text-slate-300" id="global-stats-ticker">Lexicon: 10,000</span>
+      <span class="hidden sm:inline">•</span>
+      <span class="hidden sm:inline font-mono text-[10px] text-slate-400"><kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300">←/→</kbd> Navigate Pages</span>
+      <span class="hidden sm:inline">•</span>
+      <button onclick="window.SAOS.markScoComplete()" class="hidden sm:inline text-emerald-300 hover:underline font-semibold">Complete SCO ✓</button>
+    </div>
+  </footer>
+
+  <script>window._SAOS_CUSTOM_SCORM_INIT = true;</script>
+  <script src="../src/modules/scorm_adapter.js"></script>
+  <script src="../src/modules/srs_engine.js"></script>
+  <script src="../src/modules/learning_modes.js"></script>
+  <script src="../src/dashboards/dashboard_engine.js"></script>
+
+  <script>
+    (async function initScoPage() {
+      try {
+        SAOS_SCORM.init("translation");
+        const response = await fetch('../src/data/master_corpus.json');
+        const corpus = await response.json();
+
+        const srsEngine = new SpacedRepetitionEngine();
+        const modesEngine = new LearningModesEngine(corpus, srsEngine);
+        const dashEngine = new DashboardEngine(corpus, srsEngine);
+
+        const VISUAL_THEMES = {
+          'fix-vanguard': {
+            label: 'F.I.X. Vanguard',
+            filter: 'grayscale(32%) contrast(118%) brightness(58%) sepia(24%) hue-rotate(185deg)',
+            overlay: 'radial-gradient(circle at 50% 0%, rgba(197, 179, 88, 0.20) 0%, rgba(11, 20, 38, 0.86) 75%), linear-gradient(180deg, rgba(11, 20, 38, 0.50) 0%, rgba(2, 6, 23, 0.94) 100%)'
+          },
+          'noir-greyscale': {
+            label: 'Tactical Noir Greyscale',
+            filter: 'grayscale(100%) contrast(138%) brightness(52%)',
+            overlay: 'radial-gradient(circle at 50% 0%, rgba(148, 163, 184, 0.16) 0%, rgba(9, 13, 22, 0.88) 75%), linear-gradient(180deg, rgba(15, 23, 42, 0.55) 0%, rgba(2, 6, 23, 0.96) 100%)'
+          },
+          'platinum-mono': {
+            label: 'Silver Monochrome',
+            filter: 'grayscale(95%) contrast(145%) brightness(62%)',
+            overlay: 'radial-gradient(circle at 50% 0%, rgba(226, 232, 240, 0.18) 0%, rgba(15, 23, 42, 0.88) 75%), linear-gradient(180deg, rgba(15, 23, 42, 0.48) 0%, rgba(2, 6, 23, 0.94) 100%)'
+          },
+          'emerald-matrix': {
+            label: 'Emerald Matrix',
+            filter: 'grayscale(60%) sepia(42%) hue-rotate(115deg) saturate(190%) contrast(122%) brightness(54%)',
+            overlay: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.20) 0%, rgba(6, 78, 59, 0.12) 45%, rgba(2, 6, 23, 0.92) 85%), linear-gradient(180deg, rgba(6, 24, 20, 0.50) 0%, rgba(2, 6, 23, 0.95) 100%)'
+          },
+          'archival-amber': {
+            label: 'Castilian Sepia',
+            filter: 'grayscale(40%) sepia(78%) hue-rotate(10deg) saturate(145%) contrast(116%) brightness(54%)',
+            overlay: 'radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.20) 0%, rgba(120, 53, 15, 0.14) 45%, rgba(10, 12, 20, 0.92) 85%), linear-gradient(180deg, rgba(24, 18, 11, 0.52) 0%, rgba(2, 6, 23, 0.95) 100%)'
+          },
+          'cobalt-acoustic': {
+            label: 'Cobalt Acoustic',
+            filter: 'grayscale(48%) sepia(55%) hue-rotate(175deg) saturate(210%) contrast(124%) brightness(56%)',
+            overlay: 'radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.20) 0%, rgba(30, 58, 138, 0.15) 45%, rgba(2, 6, 23, 0.92) 85%), linear-gradient(180deg, rgba(8, 20, 38, 0.50) 0%, rgba(2, 6, 23, 0.95) 100%)'
+          },
+          'violet-forge': {
+            label: 'Morphological Violet',
+            filter: 'grayscale(55%) sepia(48%) hue-rotate(235deg) saturate(185%) contrast(126%) brightness(52%)',
+            overlay: 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.20) 0%, rgba(76, 29, 149, 0.14) 45%, rgba(2, 6, 23, 0.92) 85%), linear-gradient(180deg, rgba(18, 12, 36, 0.52) 0%, rgba(2, 6, 23, 0.95) 100%)'
+          }
+        };
+
+        const THEME_KEYS = Object.keys(VISUAL_THEMES);
+
+        window.SAOS = {
+          corpus,
+          srs: srsEngine,
+          modes: modesEngine,
+          dashboards: dashEngine,
+          currentMode: "translation",
+          currentIndex: 0,
+          currentFamilyId: corpus.rootFamilies[0].id,
+          interactionAttempts: 0,
+          interactionScore: 0,
+          activeDropdown: null,
+          themePreference: 'auto',
+          navStepCount: 0,
+
+          setVisualTheme(key) {
+            this.themePreference = key || 'auto';
+            this.applyCityscapeFilter();
+          },
+
+          applyCityscapeFilter() {
+            const bgEl = document.getElementById('fix-cityscape-bg');
+            const ovEl = document.getElementById('fix-cityscape-overlay');
+            const badgeEl = document.getElementById('active-filter-badge');
+            if (!bgEl || !ovEl) return;
+
+            const resolvedKey = this.themePreference === 'auto'
+              ? THEME_KEYS[this.navStepCount % THEME_KEYS.length]
+              : this.themePreference;
+            const themeObj = VISUAL_THEMES[resolvedKey] || VISUAL_THEMES['fix-vanguard'];
+            bgEl.style.filter = themeObj.filter;
+            ovEl.style.background = themeObj.overlay;
+
+            const panX = 50 + Math.sin(this.navStepCount * 0.45) * 32;
+            const panY = 50 + Math.cos(this.navStepCount * 0.35) * 24;
+            bgEl.style.backgroundPosition = panX.toFixed(1) + "% " + panY.toFixed(1) + "%";
+            if (badgeEl) badgeEl.innerText = themeObj.label;
+          },
+
+          stepCamera() {
+            this.navStepCount++;
+            this.applyCityscapeFilter();
+          },
+
+          toggleDropdown(name) {
+            ['scos', 'trackers', 'themes'].forEach(id => {
+              const el = document.getElementById('dropdown-' + id);
+              if (!el) return;
+              if (id === name && this.activeDropdown !== name) el.classList.remove('hidden');
+              else el.classList.add('hidden');
+            });
+            this.activeDropdown = (this.activeDropdown === name) ? null : name;
+          },
+
+          closeDropdowns() {
+            ['scos', 'trackers', 'themes'].forEach(id => {
+              const el = document.getElementById('dropdown-' + id);
+              if (el) el.classList.add('hidden');
+            });
+            this.activeDropdown = null;
+          },
+
+          speak(text, rate, audioRef = null) {
+            let ref = audioRef;
+            if (ref && !ref.startsWith('../') && !ref.startsWith('/')) ref = '../' + ref;
+            this.modes.speak(text, rate, ref);
+          },
+
+          gradeItem(itemId, grade, mode = 'translation') {
+            const itemMeta = this.corpus.lexicon.find(l => l.id === itemId) || null;
+            this.srs.processReview(itemId, grade, mode, 1500, itemMeta);
+            this.interactionAttempts++;
+            if (grade >= 3) this.interactionScore += 10;
+            this.updateTicker();
+            this.recordLmsProgress();
+            if (this.currentMode === 'review') {
+              this.stepCamera();
+              this.render();
+            } else {
+              this.nextWord();
+            }
+          },
+
+          nextWord() {
+            this.currentIndex = (this.currentIndex + 1) % this.corpus.lexicon.length;
+            this.stepCamera();
+            this.render();
+          },
+
+          prevWord() {
+            this.currentIndex = (this.currentIndex - 1 + this.corpus.lexicon.length) % this.corpus.lexicon.length;
+            this.stepCamera();
+            this.render();
+          },
+
+          viewWord(wordText) {
+            const idx = this.corpus.lexicon.findIndex(l => l.word === wordText || l.lemma === wordText);
+            if (idx !== -1) {
+              this.currentIndex = idx;
+              window.location.href = 'vocabulary.html';
+            }
+          },
+
+          nextFamily(currentId) {
+            const cid = currentId || this.currentFamilyId;
+            const idx = this.corpus.rootFamilies.findIndex(f => f.id === cid);
+            this.currentFamilyId = this.corpus.rootFamilies[(idx + 1) % this.corpus.rootFamilies.length].id;
+            this.stepCamera();
+            this.render();
+          },
+
+          prevFamily(currentId) {
+            const cid = currentId || this.currentFamilyId;
+            const idx = this.corpus.rootFamilies.findIndex(f => f.id === cid);
+            this.currentFamilyId = this.corpus.rootFamilies[(idx - 1 + this.corpus.rootFamilies.length) % this.corpus.rootFamilies.length].id;
+            this.stepCamera();
+            this.render();
+          },
+
+          nextReading() {
+            this.modes.readingCursor = (this.modes.readingCursor || 0) + 1;
+            this.stepCamera();
+            this.render();
+          },
+
+          prevReading() {
+            const total = this.modes.getReadingPassages().length;
+            this.modes.readingCursor = ((this.modes.readingCursor || 0) - 1 + total) % total;
+            this.stepCamera();
+            this.render();
+          },
+
+          nextDiagnostic() {
+            this.modes.diagCursor = (this.modes.diagCursor || 0) + 1;
+            this.stepCamera();
+            this.render();
+          },
+
+          prevDiagnostic() {
+            this.modes.diagCursor = Math.max(0, (this.modes.diagCursor || 0) - 1);
+            this.stepCamera();
+            this.render();
+          },
+
+          nextReviewCard() {
+            this.modes.reviewCursor = (this.modes.reviewCursor || 0) + 1;
+            this.stepCamera();
+            this.render();
+          },
+
+          prevReviewCard() {
+            const dueLen = Math.max(1, this.srs.getDueItems(this.corpus.lexicon).length);
+            this.modes.reviewCursor = ((this.modes.reviewCursor || 0) - 1 + dueLen) % dueLen;
+            this.stepCamera();
+            this.render();
+          },
+
+          inspectWordInReader(wordStr) {
+            const item = this.corpus.lexicon.find(l => l.word === wordStr || l.lemma === wordStr);
+            const inspector = document.getElementById('reader-inspector');
+            if (item && inspector) {
+              document.getElementById('reader-word-title').innerText = item.word + " (" + item.partOfSpeech + ")";
+              document.getElementById('reader-word-cefr').innerText = item.cefrLevel;
+              document.getElementById('reader-word-gloss').innerText = item.translations.en.join('; ');
+              document.getElementById('reader-word-root').innerText = "Root: " + item.root + " • Family: " + item.familyName;
+              inspector.classList.remove('hidden');
+              this.speak(item.word, 1.0, item.audioRef);
+            }
+          },
+
+          checkDiagnostic(selectedIdx) {
+            const diag = this.modes.currentDiagnostic;
+            const res = document.getElementById('diagnostic-result');
+            if (!diag || !res) return;
+
+            const chosen = diag.options[selectedIdx];
+            const target = diag.target;
+            res.classList.remove('hidden');
+            this.interactionAttempts++;
+
+            if (chosen && chosen.isCorrect) {
+              this.interactionScore += 10;
+              this.srs.processReview(target.id, 5, 'diagnostics', 1200, target);
+              this.speak(target.word, 1.0, target.audioRef);
+              res.className = 'p-4 rounded-xl mt-4 bg-emerald-950/80 border border-emerald-600 text-emerald-200 text-sm font-semibold';
+              res.innerHTML = "✅ Correct! <strong>" + target.word + "</strong> (" + target.partOfSpeech + ", " + target.cefrLevel + ") derives from root <code>" + target.root + "</code> — " + target.translations.en.join('; ') + ".";
+              SAOS_SCORM.recordInteraction(target.id, "choice", chosen.item.word, true, target.word + " diagnostic probe");
+            } else {
+              this.srs.processReview(target.id, 1, 'diagnostics', 2000, target);
+              this.speak(target.word, 0.75, target.slowAudioRef);
+              res.className = 'p-4 rounded-xl mt-4 bg-rose-950/80 border border-rose-600 text-rose-200 text-sm font-semibold';
+              res.innerHTML = "❌ Incorrect. Context requires <strong>" + target.word + "</strong> (Root: " + target.root + "). Error recorded to LMS & Weak Family Detection.";
+              SAOS_SCORM.recordInteraction(target.id, "choice", (chosen ? chosen.item.word : "none"), false, target.word + " diagnostic probe");
+            }
+            this.recordLmsProgress();
+            this.updateTicker();
+          },
+
+          recordLmsProgress() {
+            const pct = Math.min(100, Math.round((this.interactionScore / Math.max(1, this.interactionAttempts * 10)) * 100));
+            SAOS_SCORM.recordScore(pct, this.interactionAttempts, 6);
+            const evEl = document.getElementById('trk-events');
+            if (evEl) evEl.innerText = this.interactionAttempts;
+            const scEl = document.getElementById('trk-score');
+            if (scEl) scEl.innerText = pct + "%";
+          },
+
+          markScoComplete() {
+            this.interactionAttempts = Math.max(6, this.interactionAttempts);
+            this.recordLmsProgress();
+            SAOS_SCORM.set("cmi.completion_status", "completed");
+            SAOS_SCORM.set("cmi.success_status", "passed");
+            SAOS_SCORM.commit();
+            this.closeDropdowns();
+            alert("✓ SCO Module marked completed in LMS (cmi.completion_status: completed).");
+          },
+
+          updateTicker() {
+            const m = this.srs.calculateMetrics(this.corpus.lexicon);
+            const due = this.srs.getDueItems(this.corpus.lexicon).length;
+            const el = document.getElementById('global-stats-ticker');
+            if (el) el.innerText = "Lexicon: " + m.totalItems.toLocaleString() + " • Due: " + due;
+            const trkDue = document.getElementById('trk-due');
+            if (trkDue) trkDue.innerText = due;
+          },
+
+          render() {
+            const viewport = document.getElementById('app-viewport');
+            const item = this.corpus.lexicon[this.currentIndex];
+
+            switch(this.currentMode) {
+              case 'review': viewport.innerHTML = this.modes.renderReviewQueue(); break;
+              case 'vocabulary':
+                viewport.innerHTML = `
+                  <div class="w-full mx-auto">
+                    <div class="flex justify-between items-center mb-3 px-2 text-xs text-slate-400">
+                      <span class="font-mono">Record #${(this.currentIndex + 1).toLocaleString()} of ${this.corpus.lexicon.length.toLocaleString()}</span>
+                      <div class="flex gap-2">
+                        <button onclick="window.SAOS.prevWord()" class="px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-800 hover:text-white">← Prev</button>
+                        <button onclick="window.SAOS.nextWord()" class="px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-800 hover:text-white">Next →</button>
+                      </div>
+                    </div>
+                    ${this.modes.renderVocabularyMode(item)}
+                  </div>`;
+                break;
+              case 'roots': viewport.innerHTML = this.modes.renderRootFamiliesMode(this.currentFamilyId); break;
+              case 'listening': viewport.innerHTML = this.modes.renderListeningMode(item, this.currentIndex); break;
+              case 'reading': viewport.innerHTML = this.modes.renderReadingMode(); break;
+              case 'pronunciation': viewport.innerHTML = this.modes.renderPronunciationLab(item, this.currentIndex); break;
+              case 'derivation': viewport.innerHTML = this.modes.renderDerivationForge(item, this.currentIndex); break;
+              case 'translation': viewport.innerHTML = this.modes.renderTranslationLadder(item, this.currentIndex); break;
+              case 'diagnostics': viewport.innerHTML = this.modes.renderDiagnosticsMode(); break;
+              case 'dashboards':
+              default: viewport.innerHTML = this.dashboards.renderAllDashboards(); break;
+            }
+          }
+        };
+
+        document.addEventListener('click', (e) => {
+          if (!window.SAOS || !window.SAOS.activeDropdown) return;
+          const containers = ['dd-container-scos', 'dd-container-trackers', 'dd-container-themes'];
+          const inside = containers.some(id => {
+            const c = document.getElementById(id);
+            return c && c.contains(e.target);
+          });
+          if (!inside) window.SAOS.closeDropdowns();
+        });
+
+        window.addEventListener('keydown', (e) => {
+          const app = window.SAOS;
+          if (!app) return;
+          if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target && e.target.tagName) || '')) return;
+
+          if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            if (app.currentMode === 'roots') app.nextFamily(app.currentFamilyId);
+            else if (app.currentMode === 'reading') app.nextReading();
+            else if (app.currentMode === 'diagnostics') app.nextDiagnostic();
+            else if (app.currentMode === 'review') app.nextReviewCard();
+            else app.nextWord();
+          } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            if (app.currentMode === 'roots') app.prevFamily(app.currentFamilyId);
+            else if (app.currentMode === 'reading') app.prevReading();
+            else if (app.currentMode === 'diagnostics') app.prevDiagnostic();
+            else if (app.currentMode === 'review') app.prevReviewCard();
+            else app.prevWord();
+          }
+        });
+
+        window.SAOS.applyCityscapeFilter();
+        window.SAOS.updateTicker();
+        window.SAOS.render();
+      } catch (err) {
+        console.error('Fatal initialization error in SCO page:', err);
+      }
+    })();
+  </script>
+</body>
+</html>

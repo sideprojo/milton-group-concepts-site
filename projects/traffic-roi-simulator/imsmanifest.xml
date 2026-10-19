@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="MGC_TRAFFIC_ROI_SCORM2004" version="2.0"
+          xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
+          xmlns:adlseq="http://www.adlnet.org/xsd/adlseq_v1p3"
+          xmlns:adlnav="http://www.adlnet.org/xsd/adlnav_v1p3"
+          xmlns:imsss="http://www.imsglobal.org/xsd/imsss">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>2004 4th Edition</schemaversion>
+  </metadata>
+  <organizations default="ORG_MGC_TRAFFIC_ROI_SCORM2004">
+    <organization identifier="ORG_MGC_TRAFFIC_ROI_SCORM2004">
+      <title>Site Traffic, Expected Traffic & Conversion ROI Simulator</title>
+      <imsss:sequencing>
+        <imsss:controlMode choice="true" flow="true"/>
+      </imsss:sequencing>
+      <item identifier="PORTAL_MGC_TRAFFIC_ROI_SCORM2004" identifierref="RES_PORTAL">
+        <title>Site Traffic, Expected Traffic & Conversion ROI Simulator — Unified Portal</title>
+      </item>
+      
+      <item identifier="SCO_TRAFFIC_BASELINE" identifierref="RES_SCO_TRAFFIC_BASELINE">
+        <title>Page 1: Current vs. Expected Traffic Growth & Funnel Elasticity</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_CLOUDRUN_ECONOMICS" identifierref="RES_SCO_CLOUDRUN_ECONOMICS">
+        <title>Page 2: Cloud Run Zero-Charge Auto-Scaling Economics ($0.00 Idle)</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_TIERED_MONETIZATION" identifierref="RES_SCO_TIERED_MONETIZATION">
+        <title>Page 3: 3-Tier Subscriber & Pay-Per-View Monetization Ladder</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_PAYMENT_RAILS" identifierref="RES_SCO_PAYMENT_RAILS">
+        <title>Page 4: Multi-Rail Payment Acceptance (Stripe, GPC, Mercury ACH & WAWF)</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_SEO_STRUCTURED_DATA" identifierref="RES_SCO_SEO_STRUCTURED_DATA">
+        <title>Page 5: JSON-LD Schema.org & AI Procurement Crawler Indexing</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_CSAT_RETENTION" identifierref="RES_SCO_CSAT_RETENTION">
+        <title>Page 6: 99.4% Customer Satisfaction (CSAT) & Churn Prevention Loop</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES_PORTAL" type="webcontent" adlcp:scormType="sco" href="index.html">
+      <file href="index.html"/>
+    </resource>
+    
+    <resource identifier="RES_SCO_TRAFFIC_BASELINE" type="webcontent" adlcp:scormType="sco" href="pages/page_1.html">
+      <file href="pages/page_1.html"/>
+    </resource>
+    <resource identifier="RES_SCO_CLOUDRUN_ECONOMICS" type="webcontent" adlcp:scormType="sco" href="pages/page_2.html">
+      <file href="pages/page_2.html"/>
+    </resource>
+    <resource identifier="RES_SCO_TIERED_MONETIZATION" type="webcontent" adlcp:scormType="sco" href="pages/page_3.html">
+      <file href="pages/page_3.html"/>
+    </resource>
+    <resource identifier="RES_SCO_PAYMENT_RAILS" type="webcontent" adlcp:scormType="sco" href="pages/page_4.html">
+      <file href="pages/page_4.html"/>
+    </resource>
+    <resource identifier="RES_SCO_SEO_STRUCTURED_DATA" type="webcontent" adlcp:scormType="sco" href="pages/page_5.html">
+      <file href="pages/page_5.html"/>
+    </resource>
+    <resource identifier="RES_SCO_CSAT_RETENTION" type="webcontent" adlcp:scormType="sco" href="pages/page_6.html">
+      <file href="pages/page_6.html"/>
+    </resource>
+  </resources>
+</manifest>
