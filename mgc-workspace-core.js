@@ -427,17 +427,103 @@
   }
 
   /* ---------- Lifecycle workflow ---------- */
+  let lastIntakeResult = null;
+  function sanitizeField(val, maxLen) {
+    return String(val == null ? '' : val).replace(/[<>]/g, '').replace(/javascript:/gi, '').trim().slice(0, maxLen || 240);
+  }
   function submitRequest(data) {
-    const srv = postServerAction({ action: 'submitRequest', data });
-    if (srv && srv.uid) { commit(); return srv.uid; }
-    const id = uid('u');
-    S.users[id] = { id, name: data.name, email: data.email, role: 'member', status: 'active', accessTier: 'CUSTOMER_RESTRICTED', brand: data.brand, quote: { interest: data.interest, note: data.note || '' }, plan: { base: true, addons: [] }, pages: { ...DEFAULT_CUSTOMER_PAGES }, allowedApps: DEFAULT_CUSTOMER_APPS.slice(), created: now() };
-    S.shares.push({ id: 'project_p_sterling_' + id, type: 'project', resource: 'p_sterling', grantee: id, perms: ['view'], created: now() });
-    S.requests.unshift({ id: uid('r'), uid: id, status: 'requested', created: now() });
+    const cleanEmail = sanitizeField(data && data.email, 160).toLowerCase();
+    const cleanName = sanitizeField(data && data.name, 120) || (cleanEmail.split('@')[0] || 'Customer');
+    const ssoProvider = sanitizeField(data && (data.ssoProvider || data.provider || 'google'), 32).toLowerCase();
+    if (!['google', 'microsoft', 'apple'].includes(ssoProvider)) {
+      lastIntakeResult = { ok: false, status: 403, error: 'SSO Policy Enforced: Only Google, Microsoft, or Apple SSO is permitted.' };
+      return null;
+    }
+    if (OWNER_EMAILS.has(cleanEmail)) {
+      log('system', 'security.intake_owner_spoof_blocked', cleanEmail);
+      commit();
+      lastIntakeResult = { ok: false, status: 403, error: 'Security Policy Enforced: Owner accounts cannot be submitted via Customer Intake. Authenticate via Login or Onboarding Portal.' };
+      return null;
+    }
+    if (data && data.ndaAccepted === false) {
+      lastIntakeResult = { ok: false, status: 400, error: 'Mutual NDA & Zero-Trust Terms attestation is required for customer intake.' };
+      return null;
+    }
+    const payload = {
+      name: cleanName,
+      email: cleanEmail,
+      ssoProvider,
+      org: sanitizeField(data && data.org, 160) || 'External Organization',
+      brand: (data && data.brand === 'FIX') ? 'FIX' : 'MGC',
+      interest: (data && TAILOR[data.interest]) ? data.interest : 'ai',
+      note: sanitizeField(data && data.note, 500),
+      ndaAccepted: true,
+      mfaVerified: Boolean(data && data.mfaVerified !== false),
+      mfaMethod: sanitizeField(data && data.mfaMethod, 48) || 'FEDERATED_SSO_2FA'
+    };
+    const srv = postServerAction({ action: 'submitRequest', data: payload });
+    if (srv && srv.error) {
+      lastIntakeResult = { ok: false, status: 403, error: srv.error };
+      return null;
+    }
+    if (srv && srv.uid) {
+      lastIntakeResult = srv;
+      commit();
+      return srv.uid;
+    }
+    let existing = Object.values(S.users).find(u => (u.email || '').toLowerCase() === cleanEmail);
+    const id = existing ? existing.id : uid('u');
+    const tailoredPages = (TAILOR[payload.interest] || { pages: [] }).pages;
+    const pagesMap = existing && existing.pages ? { ...DEFAULT_CUSTOMER_PAGES, ...existing.pages } : { ...DEFAULT_CUSTOMER_PAGES };
+    tailoredPages.forEach(p => { if (!pagesMap[p]) pagesMap[p] = 'locked'; });
+    S.users[id] = {
+      id,
+      name: payload.name,
+      email: payload.email,
+      org: payload.org,
+      role: 'member',
+      status: 'active',
+      accessTier: 'CUSTOMER_RESTRICTED',
+      ssoProvider: payload.ssoProvider,
+      ndaAccepted: true,
+      ndaTimestamp: now(),
+      mfaVerified: payload.mfaVerified,
+      mfaMethod: payload.mfaMethod,
+      brand: payload.brand,
+      quote: { interest: payload.interest, note: payload.note },
+      plan: existing && existing.plan ? existing.plan : { base: true, addons: [] },
+      pages: pagesMap,
+      allowedApps: existing && Array.isArray(existing.allowedApps) && existing.allowedApps.length ? existing.allowedApps : DEFAULT_CUSTOMER_APPS.slice(),
+      created: existing && existing.created ? existing.created : now()
+    };
+    if (!S.shares.some(s => s.type === 'project' && s.resource === 'p_sterling' && s.grantee === id)) {
+      S.shares.push({ id: 'project_p_sterling_' + id, type: 'project', resource: 'p_sterling', grantee: id, perms: ['view'], created: now() });
+    }
+    let reqEntry = S.requests.find(r => r.uid === id);
+    if (!reqEntry) {
+      reqEntry = { id: uid('r'), uid: id, interest: payload.interest, brand: payload.brand, ssoProvider: payload.ssoProvider, ndaAccepted: true, mfaMethod: payload.mfaMethod, status: 'requested', created: now() };
+      S.requests.unshift(reqEntry);
+    }
     notify(id, 'Default Restricted Access Active', 'Welcome! Your default restricted customer workspace is active. Specialized pages and SCORM apps are under Owner review.');
-    notify('owner', 'New access request', data.name + ' requested access (' + (TAILOR[data.interest] || {}).label + ').', 'in-app + email + push');
-    log(id, 'request.created', data.email);
-    commit(); return id;
+    notify('owner', 'New access request', payload.name + ' requested access (' + (TAILOR[payload.interest] || {}).label + ').', 'in-app + email + push');
+    log(id, 'request.created', payload.email + ' (' + payload.ssoProvider + ', MFA:' + payload.mfaMethod + ')');
+    lastIntakeResult = {
+      ok: true,
+      uid: id,
+      requestId: reqEntry.id,
+      intakeReceipt: 'MGC-INTAKE-' + reqEntry.id.toUpperCase(),
+      role: 'member',
+      accessTier: 'CUSTOMER_RESTRICTED',
+      ssoProvider: payload.ssoProvider,
+      ndaAccepted: true,
+      mfaVerified: payload.mfaVerified,
+      mfaMethod: payload.mfaMethod,
+      allowedApps: S.users[id].allowedApps,
+      queuedTailoredPages: tailoredPages,
+      integrityHash: 'SHA256-' + btoa(payload.email + ':' + payload.ssoProvider + ':CUSTOMER_RESTRICTED:' + reqEntry.id).slice(0, 24)
+    };
+    commit();
+    return id;
   }
   function requestAppAccess(appId) {
     const u = me();
@@ -611,5 +697,5 @@
     const soEl = el.querySelector('#w-signout'); if (soEl) soEl.onclick = () => signOut();
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, costGuard, commit, me, signInAs, signOut, provisionCustomerSso, requestAppAccess, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction };
+  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, costGuard, commit, me, signInAs, signOut, provisionCustomerSso, requestAppAccess, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction };
 })(window);

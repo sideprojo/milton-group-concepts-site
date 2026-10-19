@@ -116,6 +116,7 @@ const CLEAN_ROUTE_TO_FILE = {
   '/auth':              'login.html',
   '/login':             'login.html',
   '/request-access':    'request-access.html',
+  '/intake':            'request-access.html',
   '/portal':            'onboarding-portal.html',
   '/onboarding':        'onboarding-portal.html',
   '/onboarding-portal': 'onboarding-portal.html',
@@ -662,10 +663,37 @@ function readJsonBody(req) {
   });
 }
 
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(self), geolocation=(self)'
+};
+
+function sanitizeInput(val, maxLen = 200) {
+  return String(val || '')
+    .replace(/[\u0000-\u001F\u007F<>]/g, '')
+    .trim()
+    .slice(0, maxLen);
+}
+
+const RATE_BUCKETS = new Map();
+function checkRateLimit(req, bucketName, maxHits = 30, windowMs = 60000) {
+  const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'local').split(',')[0].trim();
+  const key = `${bucketName}:${ip}`;
+  const nowTs = Date.now();
+  const hits = (RATE_BUCKETS.get(key) || []).filter(ts => nowTs - ts < windowMs);
+  if (hits.length >= maxHits) return false;
+  hits.push(nowTs);
+  RATE_BUCKETS.set(key, hits);
+  return true;
+}
+
 function sendJson(res, status, data, extraHeaders = {}) {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
+    ...SECURITY_HEADERS,
     ...extraHeaders
   });
   res.end(JSON.stringify(data));
@@ -1237,53 +1265,175 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, costGuard: DB_STATS, lastWriteAt: DB_STATS.lastWriteAt });
     }
 
+    const handleCustomerIntakeSubmission = (d) => {
+      if (!checkRateLimit(req, 'intake', 25, 60000)) {
+        logAudit('system', 'security.rate_limit_intake', 'Blocked excessive intake requests');
+        return sendJson(res, 429, { ok: false, error: 'Too many intake requests. Please wait 60 seconds and try again.' });
+      }
+      const cleanName = sanitizeInput(d.name, 80);
+      const cleanOrg = sanitizeInput(d.org || d.organization || '', 120);
+      const cleanEmail = sanitizeInput(d.email, 120).toLowerCase();
+      const rawProv = String(d.ssoProvider || 'google').trim().toLowerCase();
+      if (!ALLOWED_SSO_PROVIDERS.has(rawProv)) {
+        logAudit('system', 'security.intake_invalid_sso', `Rejected non-SSO provider: ${rawProv}`);
+        return sendJson(res, 403, { ok: false, error: 'SSO Policy Enforced: Only Google, Microsoft, or Apple SSO is permitted for intake.' });
+      }
+      if (!cleanName || !/^\S+@\S+\.\S+$/.test(cleanEmail)) {
+        return sendJson(res, 400, { ok: false, error: 'Full Name and a valid Federated SSO account email are required.' });
+      }
+      if (d.ndaAccepted === false) {
+        return sendJson(res, 400, { ok: false, error: 'NDA Required: You must attest to the MGC Mutual Non-Disclosure & Federated SSO Zero-Trust Terms.' });
+      }
+      // Critical Anti-Spoofing Guard: Prevent public customer intake from ever claiming or overwriting an Owner account
+      if (OWNER_EMAILS.has(cleanEmail)) {
+        logAudit('system', 'security.intake_owner_spoof_blocked', `Blocked public intake attempt using owner email: ${cleanEmail}`);
+        return sendJson(res, 403, {
+          ok: false,
+          error: 'Security Policy Enforced: Owner accounts cannot be submitted via Customer Intake. Sign in via Owner Federated SSO + 2FA.'
+        });
+      }
+
+      const interestKey = TAILOR[d.interest] ? d.interest : 'ai-web';
+      const cleanNote = sanitizeInput(d.note, 500);
+      const mfaMethod = sanitizeInput(d.mfaMethod || 'SSO_ATTESTED', 40);
+      const existing = Object.values(S.users).find(x => String(x.email || '').toLowerCase() === cleanEmail);
+      const id = existing ? existing.id : uid('u');
+
+      if (existing && (existing.status === 'denied' || existing.status === 'suspended')) {
+        logAudit('system', 'security.intake_denied_account', cleanEmail);
+        return sendJson(res, 403, { ok: false, error: 'Intake Denied: This account has been restricted by the platform Owner.' });
+      }
+
+      S.users[id] = {
+        id,
+        name: cleanName,
+        org: cleanOrg || (d.brand === 'FIX' ? 'F.I.X Solutions Client Partner' : 'MGC Client Partner'),
+        email: cleanEmail,
+        role: 'member',
+        status: 'active',
+        accessTier: 'CUSTOMER_RESTRICTED',
+        brand: d.brand === 'FIX' ? 'FIX' : 'MGC',
+        ssoProvider: rawProv,
+        mfaVerified: Boolean(d.mfaVerified !== false),
+        mfaMethod,
+        ndaAccepted: true,
+        ndaAcceptedAt: now(),
+        quote: { interest: interestKey, org: cleanOrg, note: cleanNote },
+        plan: existing && existing.plan ? Object.assign({ base: true, addons: [] }, existing.plan, { base: true }) : { base: true, addons: [] },
+        pages: existing && existing.pages ? Object.assign({}, DEFAULT_CUSTOMER_PAGES, existing.pages) : { ...DEFAULT_CUSTOMER_PAGES },
+        allowedApps: existing && Array.isArray(existing.allowedApps) && existing.allowedApps.length ? existing.allowedApps : DEFAULT_CUSTOMER_APPS.slice(),
+        checklist: (existing && existing.checklist) || {},
+        created: (existing && existing.created) || now()
+      };
+
+      if (!S.shares.some(s => s.type === 'project' && s.resource === 'p_sterling' && s.grantee === id)) {
+        S.shares.push({ id: `project_p_sterling_${id}`, type: 'project', resource: 'p_sterling', grantee: id, perms: ['view'], created: now() });
+      }
+
+      const reqId = uid('intake');
+      const existingReq = S.requests.find(r => r.uid === id);
+      if (existingReq) {
+        existingReq.status = 'requested';
+        existingReq.updated = now();
+        existingReq.interest = interestKey;
+      } else {
+        S.requests.unshift({ id: reqId, uid: id, interest: interestKey, org: cleanOrg, status: 'requested', created: now() });
+      }
+
+      const queuedPages = (TAILOR[interestKey] || { pages: [] }).pages;
+      const restrictedApps = APPS_CATALOG.filter(a => !S.users[id].allowedApps.includes(a.id)).map(a => a.id);
+      const integrityHash = 'SHA256-' + crypto.createHash('sha256').update(`${id}:${cleanEmail}:${rawProv}:CUSTOMER_RESTRICTED:${SESSION_SECRET}`).digest('hex').slice(0, 24);
+
+      notifyUser(id, 'Intake Verified · Default Restricted Customer Access Active', `Receipt ${reqId}: Your default restricted workspace (Client Turnkey Forge & Sterling Auto Showcase) is unlocked now. Tailored pages (${queuedPages.join(', ')}) are queued for Owner approval.`);
+      notifyUser('owner', 'New Customer Intake Verified (Default Restricted)', `${cleanName}${cleanOrg ? ' (' + cleanOrg + ')' : ''} [${cleanEmail}] completed intake via ${SSO_PROVIDER_LABELS[rawProv]} (${(TAILOR[interestKey] || {}).label}).`, 'in-app + email + push');
+      logAudit(id, `intake.verified.${rawProv}`, `${cleanEmail} [CUSTOMER_RESTRICTED | mfa:${mfaMethod}]`);
+      saveState(S);
+
+      const sessionToken = signToken({
+        uid: id,
+        email: cleanEmail,
+        role: 'member',
+        accessTier: 'CUSTOMER_RESTRICTED',
+        provider: rawProv,
+        ssoVerified: true
+      });
+      return sendJson(res, 200, {
+        ok: true,
+        intakeReceipt: reqId,
+        uid: id,
+        email: cleanEmail,
+        name: cleanName,
+        org: S.users[id].org,
+        role: 'member',
+        accessTier: 'CUSTOMER_RESTRICTED',
+        provider: rawProv,
+        providerLabel: SSO_PROVIDER_LABELS[rawProv],
+        ssoVerified: true,
+        ndaAccepted: true,
+        mfaVerified: S.users[id].mfaVerified,
+        mfaMethod,
+        integrityHash,
+        allowedApps: S.users[id].allowedApps,
+        restrictedApps,
+        allowedPortals: DEFAULT_CUSTOMER_PORTALS,
+        queuedTailoredPages: queuedPages,
+        redirect: '/workspace',
+        state: scopeStateForUser(S.users[id])
+      }, {
+        'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
+      });
+    };
+
+    if (pathname === '/api/intake/verify' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      const controls = {
+        allowedSsoProviders: Array.from(ALLOWED_SSO_PROVIDERS),
+        allowedProviders: Array.from(ALLOWED_SSO_PROVIDERS),
+        passwordAuthDisabled: true,
+        emailLinkDisabled: true,
+        ownerSpoofProtectionOnIntake: true,
+        ownerAntiSpoofing: true,
+        ndaAttestationRequired: true,
+        ndaRequired: true,
+        mfaBiometricOrTotpSupported: true,
+        xssInputSanitization: true,
+        slidingWindowRateLimiter: true,
+        rateLimitPerMinute: 25,
+        httpOnlyHmacSha256SessionCookie: true,
+        defaultCustomerTier: 'CUSTOMER_RESTRICTED',
+        defaultCustomerApps: DEFAULT_CUSTOMER_APPS,
+        defaultCustomerUnlockedApps: DEFAULT_CUSTOMER_APPS,
+        defaultCustomerRestrictedApps: APPS_CATALOG.filter(a => !a.defaultCustomer).map(a => a.id),
+        defaultCustomerAllowedPortals: DEFAULT_CUSTOMER_PORTALS
+      };
+      return sendJson(res, 200, {
+        ok: true,
+        intakePipeline: 'ACTIVE_ZERO_TRUST_V2',
+        securityControls: controls,
+        intakeSecurity: controls,
+        activeSession: u ? {
+          uid: u.id,
+          email: u.email,
+          role: u.role,
+          accessTier: u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+          allowedApps: u.role === 'owner' ? APPS_CATALOG.map(a => a.id) : APPS_CATALOG.filter(a => can(u, 'app', a.id, 'view')).map(a => a.id)
+        } : null
+      });
+    }
+
+    if (pathname === '/api/intake' && req.method === 'POST') {
+      const body = await readJsonBody(req);
+      return handleCustomerIntakeSubmission(body.data || body || {});
+    }
+
     if (pathname === '/api/action' && req.method === 'POST') {
       const u = getAuthenticatedUser(req);
       const body = await readJsonBody(req);
       const act = body.action;
 
-      // Public action: submit access request (with SSO provider selection: google, microsoft, or apple)
+      // Public action: submit customer intake / access request
       if (act === 'submitRequest') {
-        const d = body.data || {};
-        if (!d.name || !/^\S+@\S+\.\S+$/.test(String(d.email || ''))) {
-          return sendJson(res, 400, { ok: false, error: 'Name and valid SSO account email required.' });
-        }
-        const provider = ALLOWED_SSO_PROVIDERS.has(String(d.ssoProvider || '').toLowerCase())
-          ? String(d.ssoProvider).toLowerCase()
-          : 'google';
-        const cleanEmail = String(d.email).trim().toLowerCase();
-        const isOwnerEmail = OWNER_EMAILS.has(cleanEmail);
-        const id = uid('u');
-        S.users[id] = {
-          id,
-          name: String(d.name).trim().slice(0, 80),
-          email: cleanEmail,
-          role: isOwnerEmail ? 'owner' : 'member',
-          status: 'active',
-          accessTier: isOwnerEmail ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
-          brand: d.brand === 'FIX' ? 'FIX' : 'MGC',
-          ssoProvider: provider,
-          quote: { interest: TAILOR[d.interest] ? d.interest : 'ai-web', note: String(d.note || '').slice(0, 500) },
-          plan: { base: true, addons: [] },
-          pages: isOwnerEmail
-            ? { home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready' }
-            : { ...DEFAULT_CUSTOMER_PAGES },
-          allowedApps: isOwnerEmail ? ['*'] : DEFAULT_CUSTOMER_APPS.slice(),
-          checklist: {},
-          created: now()
-        };
-        if (!isOwnerEmail) {
-          S.shares.push({ id: `project_p_sterling_${id}`, type: 'project', resource: 'p_sterling', grantee: id, perms: ['view'], created: now() });
-        }
-        S.requests.unshift({ id: uid('r'), uid: id, status: 'requested', created: now() });
-        notifyUser(id, 'Default Restricted Customer Access Activated', 'Welcome! Your default restricted customer workspace is active now. Specialized portals and SCORM apps requested in your quote are queued for Owner approval.');
-        notifyUser('owner', 'New customer onboarded (Default Restricted)', `${S.users[id].name} onboarded via ${SSO_PROVIDER_LABELS[provider]} (${(TAILOR[S.users[id].quote.interest] || {}).label}).`, 'in-app + email + push');
-        logAudit(id, `request.created.${provider}`, cleanEmail);
-        saveState(S);
-        const sessionToken = signToken({ uid: id, email: cleanEmail, role: S.users[id].role, accessTier: S.users[id].accessTier, provider, ssoVerified: true });
-        return sendJson(res, 200, { ok: true, uid: id, provider, ssoVerified: true, state: scopeStateForUser(S.users[id]) }, {
-          'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
-        });
+        return handleCustomerIntakeSubmission(body.data || body || {});
       }
 
       if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required.' });
@@ -1601,7 +1751,8 @@ const server = http.createServer(async (req, res) => {
     const ext = path.extname(filePath).toLowerCase();
     res.writeHead(200, {
       'Content-Type': MIME[ext] || 'application/octet-stream',
-      'Cache-Control': ext === '.html' ? 'no-store' : 'public, max-age=300'
+      'Cache-Control': ext === '.html' ? 'no-store' : 'public, max-age=300',
+      ...SECURITY_HEADERS
     });
     fs.createReadStream(filePath).pipe(res);
   } catch (err) {

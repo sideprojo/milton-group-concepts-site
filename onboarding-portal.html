@@ -515,9 +515,9 @@
       }
 
       const isAdminCred = email === 'malik.khabir@miltongroupsecurity.org' || email === 'owner@miltongroupsecurity.org';
-      const validTotp = totp === '440921' || totp === '250100' || totp.length === 6;
+      const validTotp = totp === '440921' || totp === '250100';
       if (!mfaBiometricCleared && !validTotp) {
-        showAuthAlert('Hardware Passkey / 2FA Required: Tap the Biometric Fingerprint sensor OR enter your 6-digit TOTP authenticator code.');
+        showAuthAlert('Hardware Passkey / 2FA Required: Tap the Biometric Fingerprint sensor OR enter authorized TOTP code (250100 or 440921).');
         return null;
       }
 
@@ -534,16 +534,42 @@
       const res = validateOnboardingInputs();
       if (!res) return;
 
-      const name = document.getElementById('ob-name').value || (res.isAdmin ? 'Malik A. Khabir' : res.email.split('@')[0]);
+      const name = (document.getElementById('ob-name').value || (res.isAdmin ? 'Malik A. Khabir' : res.email.split('@')[0])).replace(/[<>]/g, '').trim();
       const track = res.isAdmin ? (document.getElementById('ob-track').value || 'ALL_INTERNAL_VIEW') : 'CUSTOMER_RESTRICTED';
       const role = res.isAdmin ? 'OWNER_ADMIN (' + OB_SSO_LABELS[res.ssoProvider].toUpperCase() + ')' : 'VERIFIED_CLIENT (' + OB_SSO_LABELS[res.ssoProvider].toUpperCase() + ')';
-      const token = 'SHA256-' + btoa(res.email + ':' + res.ssoProvider + ':' + role + ':MGC-2026').slice(0, 24);
+      let token = 'SHA256-' + btoa(res.email + ':' + res.ssoProvider + ':' + role + ':MGC-2026').slice(0, 24);
       let serverApps = ['sterling-auto-repair', 'client-turnkey-forge'];
       let serverPortals = ['member-portal.html', 'agile-board.html', 'saas-apps-and-lms-showcase.html', 'onboarding-portal.html'];
       let serverUid = res.isAdmin ? 'owner' : 'cara';
+      let intakeReceipt = null;
 
       if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
         try {
+          if (!res.isAdmin) {
+            const ir = await fetch('/api/intake', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name,
+                email: res.email,
+                ssoProvider: res.ssoProvider,
+                brand: 'MGC',
+                interest: 'ai',
+                note: 'Onboarded via Zero-Trust Onboarding Portal (' + res.mfaMethod + ')',
+                ndaAccepted: true,
+                mfaVerified: true,
+                mfaMethod: res.mfaMethod
+              })
+            });
+            const idata = await ir.json();
+            if (idata && idata.ok) {
+              serverUid = idata.uid || serverUid;
+              intakeReceipt = idata.intakeReceipt || null;
+              if (idata.integrityHash) token = idata.integrityHash;
+              if (Array.isArray(idata.allowedApps)) serverApps = idata.allowedApps;
+              if (Array.isArray(idata.allowedPortals)) serverPortals = idata.allowedPortals;
+            }
+          }
           const r = await fetch('/api/auth/sso', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -568,6 +594,7 @@
       }
 
       const sessionObj = {
+        uid: serverUid,
         email: res.email,
         name,
         org: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
@@ -577,6 +604,8 @@
         ssoProvider: res.ssoProvider,
         mfaVerified: true,
         mfaMethod: res.mfaMethod,
+        ndaAccepted: true,
+        intakeReceipt: intakeReceipt || ('MGC-ONBOARD-' + String(serverUid).toUpperCase()),
         access: res.isAdmin ? 'INTERNAL_SUITE_FULL' : 'CUSTOMER_RESTRICTED',
         accessTier: res.isAdmin ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
         allowedApps: res.isAdmin ? ['*'] : serverApps,
