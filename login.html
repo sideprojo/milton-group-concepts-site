@@ -62,16 +62,20 @@
     align-items: center;
     justify-content: center;
     padding: 28px 20px;
+    position: relative;
+    z-index: 10;
   }
   .login-card {
     width: min(880px, 100%);
-    background: rgba(11, 19, 37, 0.78) !important;
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid rgba(197, 179, 88, 0.42) !important;
+    background: rgba(8, 14, 28, 0.95) !important;
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    border: 1.5px solid rgba(197, 179, 88, 0.52) !important;
     border-radius: 22px !important;
-    padding: 28px !important;
-    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.72), 0 0 40px rgba(37, 99, 235, 0.14) !important;
+    padding: 30px !important;
+    box-shadow: 0 32px 90px rgba(0, 0, 0, 0.88), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    position: relative;
+    z-index: 10;
   }
 
   .sso-grid {
@@ -83,10 +87,10 @@
     .sso-grid { grid-template-columns: 1fr; }
   }
   .sso-provider-card {
-    background: rgba(12, 21, 42, 0.84);
-    border: 1px solid rgba(148, 163, 184, 0.28);
+    background: rgba(13, 22, 44, 0.96);
+    border: 1.5px solid rgba(148, 163, 184, 0.34);
     border-radius: 16px;
-    padding: 20px;
+    padding: 22px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -239,8 +243,7 @@
 
     <p id="authMsg" style="color:#f87171;margin-top:14px;font-weight:700;text-align:center;min-height:18px"></p>
 
-    <div class="row" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
-      <span><b>Default Customer Login Policy:</b> Customer SSO sign-in automatically provisions <b>Restricted Customer Access</b> (Workspace, Shared Agile Board, Client Turnkey Forge &amp; Sterling Auto Showcase unlocked; internal command portals &amp; 6 enterprise SCORM apps restricted until Owner approval).</span>
+    <div class="row" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);justify-content:flex-end;gap:10px">
       <a class="btn" href="onboarding-portal.html">2FA Onboarding Gate →</a>
       <a class="btn" href="request-access.html">Request Custom Build →</a>
     </div>
@@ -255,10 +258,7 @@
       <button type="button" class="btn" id="ssoModalClose" style="padding:4px 10px;font-size:11px">✕ Close</button>
     </div>
     <h2 id="ssoModalTitle" style="margin-bottom:6px">Continue with Google</h2>
-    <p id="ssoModalSub" style="margin-bottom:10px">Sign in with your Google Workspace or Google Cloud account.</p>
-    <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:8px 10px;margin-bottom:10px;font-size:11px;color:#a7f3d0;line-height:1.45">
-      🛡️ <b>Default Restricted Customer Access:</b> Any customer email signs into a restricted workspace (2/8 showcase apps unlocked by default; 6 SCORM apps &amp; internal hubs require Owner approval).
-    </div>
+    <p id="ssoModalSub" style="margin-bottom:14px">Sign in with your Google Workspace or Google Cloud account.</p>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
       <button type="button" class="btn" id="btnQuickCustomer" style="font-size:11px;padding:5px 9px;border-color:rgba(56,189,248,0.45);color:#7dd3fc">🛡️ Fill Customer Login (Restricted)</button>
       <button type="button" class="btn" id="btnQuickOwner" style="font-size:11px;padding:5px 9px;border-color:rgba(197,179,88,0.5);color:#fde047">👑 Fill Owner Login (Full Access)</button>

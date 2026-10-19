@@ -2,113 +2,431 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Zero-Trust Customer Intake &amp; Access Request | MGC / F.I.X</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<title>Executive Client Intake &amp; Workspace Provisioning | MGC &amp; F.I.X</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  .sec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 8px; margin: 12px 0 16px; }
-  .sec-pill { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.28); border-radius: 10px; padding: 8px 10px; font-size: 11px; color: #cbd5e1; }
-  .sec-pill b { display: block; color: #38bdf8; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
-  .mfa-box { background: rgba(15, 23, 42, 0.78); border: 1px solid rgba(251, 191, 36, 0.35); border-radius: 12px; padding: 14px; margin-top: 12px; }
-  .receipt-box { background: rgba(6, 10, 21, 0.88); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 14px; margin: 14px 0; text-align: left; font-size: 13px; }
-  .receipt-row { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px dashed rgba(148, 163, 184, 0.18); }
+  :root {
+    --intake-bg: #040814;
+    --intake-surface: rgba(8, 14, 28, 0.96);
+    --intake-subpanel: rgba(13, 22, 43, 0.95);
+    --intake-input-bg: #050a16;
+    --intake-border: rgba(148, 163, 184, 0.34);
+    --intake-border-strong: rgba(197, 179, 88, 0.55);
+    --intake-gold: #c5b358;
+    --intake-gold-bright: #fde047;
+    --intake-blue: #38bdf8;
+    --intake-emerald: #10b981;
+    --intake-text: #f8fafc;
+    --intake-muted: #cbd5e1;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    color: var(--intake-text) !important;
+    background-color: var(--intake-bg) !important;
+    position: relative;
+    isolation: isolate;
+  }
+
+  main.wrap {
+    position: relative;
+    z-index: 10;
+    max-width: 940px !important;
+    padding-bottom: 110px !important;
+  }
+
+  /* Main Executive Intake Card — Solid foreground contrast & crisp double border */
+  .intake-shell-card {
+    background: linear-gradient(180deg, rgba(9, 16, 32, 0.97) 0%, rgba(5, 10, 22, 0.98) 100%) !important;
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1.5px solid var(--intake-border-strong) !important;
+    border-radius: 22px !important;
+    padding: 34px 36px !important;
+    box-shadow:
+      0 32px 85px rgba(0, 0, 0, 0.88),
+      0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+      0 0 38px rgba(197, 179, 88, 0.12) !important;
+    position: relative;
+    z-index: 10;
+  }
+
+  .intake-shell-card h1 {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin: 8px 0 6px;
+  }
+
+  .intake-lead {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #cbd5e1;
+    margin: 0 0 20px;
+  }
+
+  /* Telemetry / Security Status Strip */
+  .sec-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 18px 0 24px;
+  }
+  @media (max-width: 760px) {
+    .sec-grid { grid-template-columns: repeat(2, 1fr); }
+    .intake-shell-card { padding: 22px 18px !important; }
+  }
+  .sec-pill {
+    background: rgba(5, 10, 22, 0.96);
+    border: 1.5px solid rgba(56, 189, 248, 0.36);
+    border-radius: 12px;
+    padding: 11px 13px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f1f5f9;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .sec-pill b {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--intake-gold-bright);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+
+  /* Structured Bordered Form Sections */
+  .intake-section {
+    background: var(--intake-subpanel);
+    border: 1.5px solid var(--intake-border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .intake-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  }
+  .intake-section-title {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .intake-step-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(197, 179, 88, 0.18);
+    border: 1px solid rgba(197, 179, 88, 0.48);
+    color: var(--intake-gold-bright);
+  }
+
+  .intake-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 680px) {
+    .intake-grid-2 { grid-template-columns: 1fr; }
+  }
+
+  .field-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #e2e8f0;
+  }
+  .intake-input,
+  .intake-select,
+  .intake-textarea {
+    width: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #ffffff !important;
+    background: var(--intake-input-bg) !important;
+    border: 1.5px solid rgba(148, 163, 184, 0.38) !important;
+    border-radius: 11px !important;
+    padding: 11px 14px !important;
+    outline: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .intake-input::placeholder,
+  .intake-textarea::placeholder {
+    color: #64748b;
+  }
+  .intake-input:focus,
+  .intake-select:focus,
+  .intake-textarea:focus {
+    border-color: var(--intake-gold-bright) !important;
+    box-shadow: 0 0 0 3px rgba(197, 179, 88, 0.22) !important;
+  }
+
+  /* 2FA Passkey & TOTP Verification Panel */
+  .mfa-section {
+    background: linear-gradient(180deg, rgba(14, 24, 47, 0.96), rgba(8, 14, 29, 0.98));
+    border: 1.5px solid rgba(251, 191, 36, 0.48);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+  }
+  .bio-passkey-btn {
+    width: 100%;
+    padding: 12px 16px !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    border-radius: 11px !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.55) !important;
+    background: rgba(15, 23, 42, 0.96) !important;
+    color: #f8fafc !important;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .bio-passkey-btn:hover {
+    border-color: #38bdf8 !important;
+    background: rgba(30, 58, 138, 0.45) !important;
+  }
+  .totp-code-input {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.22em;
+    text-align: center;
+  }
+
+  /* NDA Attestation Box */
+  .nda-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    background: rgba(5, 10, 22, 0.95);
+    padding: 14px 16px;
+    border-radius: 13px;
+    border: 1.5px solid rgba(148, 163, 184, 0.34);
+    margin-bottom: 20px;
+  }
+  .nda-box:hover {
+    border-color: rgba(197, 179, 88, 0.55);
+  }
+  .nda-box input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: #10b981;
+    flex-shrink: 0;
+  }
+
+  /* Primary Submit Button */
+  .submit-intake-btn {
+    padding: 13px 24px !important;
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+    font-size: 14.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.02em;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #c5b358 0%, #eab308 100%) !important;
+    color: #040814 !important;
+    border: 1.5px solid #fde047 !important;
+    box-shadow: 0 10px 26px rgba(197, 179, 88, 0.32) !important;
+  }
+  .submit-intake-btn:hover {
+    filter: brightness(1.07);
+    transform: translateY(-1px);
+  }
+
+  /* Post-Intake Receipt Box */
+  .receipt-box {
+    background: #050a16;
+    border: 1.5px solid rgba(16, 185, 129, 0.5);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin: 18px 0;
+    text-align: left;
+    font-size: 13px;
+  }
+  .receipt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  }
   .receipt-row:last-child { border-bottom: none; }
+  .receipt-row span:first-child {
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
 </style>
 </head>
-<body class="mgc-cityscape-fix">
-<main class="wrap" id="app" style="max-width:860px">
-  <div class="card" id="form">
-    <div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px">
+<body>
+<main class="wrap" id="app">
+  <div class="card intake-shell-card" id="form">
+    <div class="row" style="justify-content:space-between;align-items:flex-start;gap:14px">
       <div>
-        <span class="chip ok">🛡️ ZERO-TRUST CUSTOMER INTAKE · FEDERATED SSO + 2FA ENFORCED</span>
-        <h1 style="margin-top:8px">Customer Intake &amp; Access Request</h1>
+        <span class="chip ok" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;border-width:1.5px">🛡️ ZERO-TRUST EXECUTIVE INTAKE · FEDERATED SSO + 2FA</span>
+        <h1>Client Intake &amp; Custom Workspace Request</h1>
       </div>
-      <div class="row" style="gap:6px">
-        <button type="button" class="btn" id="fillDemoBtn" style="font-size:12px">⚡ Fill Sample Customer Intake</button>
-        <a class="btn" href="login.html" style="font-size:12px">Existing Account Sign In →</a>
+      <div class="row" style="gap:8px">
+        <button type="button" class="btn" id="fillDemoBtn" style="font-size:12px;border-width:1.5px;border-color:rgba(56,189,248,0.45);color:#7dd3fc">⚡ Fill Sample Intake</button>
+        <a class="btn" href="login.html" style="font-size:12px;border-width:1.5px">Existing Account Sign In →</a>
       </div>
     </div>
-    <p style="margin-top:6px">Submit your organization's requirements below. Every customer intake is verified via <b>Federated SSO (Google, Microsoft, or Apple)</b>, <b>2FA Passkey / TOTP</b>, and <b>Mutual NDA Attestation</b>. Upon submission, your account is immediately provisioned into <b>Default Restricted Customer Access (`2/8` Showcase Apps + Sterling Agile Board)</b> while the Owner reviews your tailored pages and enterprise SCORM modules.</p>
+    <p class="intake-lead">Provide your organization details and mission objectives below. Every intake request is authenticated via <b>Federated SSO (Google, Microsoft, or Apple)</b>, <b>FIDO2 Passkey / 2FA</b>, and <b>Mutual NDA Attestation</b> to provision your dedicated workspace and custom build queue.</p>
 
     <div class="sec-grid" id="secPostureGrid">
-      <div class="sec-pill"><b>Federated SSO Gate</b><span id="sp-sso">Google · Microsoft · Apple Only</span></div>
-      <div class="sec-pill"><b>Owner Anti-Spoof Guard</b><span id="sp-spoof">Active (Blocks Root Claim)</span></div>
-      <div class="sec-pill"><b>XSS &amp; Rate-Limit Shield</b><span id="sp-xss">Sanitized · 25 req/min</span></div>
-      <div class="sec-pill"><b>Default Provisioning Tier</b><span id="sp-tier">CUSTOMER_RESTRICTED (2/8 Apps)</span></div>
+      <div class="sec-pill"><b>Federated Identity</b><span id="sp-sso">Google · Microsoft · Apple</span></div>
+      <div class="sec-pill"><b>Identity Protection</b><span id="sp-spoof">Anti-Spoof Shield Active</span></div>
+      <div class="sec-pill"><b>Payload Inspection</b><span id="sp-xss">XSS Sanitized · Rate Guarded</span></div>
+      <div class="sec-pill"><b>Session Binding</b><span id="sp-tier">HMAC-SHA256 Zero-Trust</span></div>
     </div>
 
-    <div class="grid" style="margin-top:10px">
-      <label><p>Full Name (Required)</p><input id="name" value="" placeholder="e.g., Jordan Vance" style="width:100%" autocomplete="off"></label>
-      <label><p>Organization / Agency / CAGE (Required)</p><input id="org" value="" placeholder="e.g., Apex Defense Logistics LLC" style="width:100%" autocomplete="off"></label>
-      <label><p>Federated SSO Provider (Required)</p>
-        <select id="ssoProvider" style="width:100%">
-          <option value="google">Google SSO (Google Workspace / Gmail)</option>
-          <option value="microsoft">Microsoft SSO (Entra ID / Microsoft 365)</option>
-          <option value="apple">Apple SSO (Sign in with Apple)</option>
-        </select>
-      </label>
-      <label><p>Authorized SSO Account Email (Required)</p><input id="email" type="email" value="" placeholder="jordan.vance@apexdefense.org" style="width:100%" autocomplete="off" spellcheck="false"></label>
-      <label><p>Contracting / Service Track</p>
-        <select id="brand" style="width:100%">
-          <option value="MGC">Milton Group Concepts (AI, Cyber, SCORM Training &amp; Data Governance)</option>
-          <option value="FIX">F.I.X Solutions (Federal SDVOSB, Turnkey SaaS &amp; Contracting)</option>
-        </select>
-      </label>
-      <label><p>Primary Mission / Tailored Workspace Goal</p><select id="interest" style="width:100%"></select></label>
-    </div>
-
-    <label style="display:block;margin-top:10px"><p>Mission Scope &amp; Specific Modules Needed (Sanitized · Max 500 chars)</p><textarea id="note" rows="3" placeholder="Describe your team's training, compliance, or turnkey software goals..." style="width:100%"></textarea></label>
-
-    <div class="mfa-box">
-      <div class="row" style="justify-content:space-between">
-        <div>
-          <b style="color:#fbbf24;font-size:13px">Step 2 · Hardware Passkey / 2FA Verification (Required for Intake)</b>
-          <p style="font-size:12px;margin-top:2px">Verify your identity using FIDO2 Biometric Passkey OR enter an authorized 6-digit TOTP code (<code>250100</code> or <code>440921</code>).</p>
+    <!-- Section 01: Organization & Federated SSO Identity -->
+    <div class="intake-section">
+      <div class="intake-section-head">
+        <div class="intake-section-title">
+          <span class="intake-step-tag">SECTION 01</span>
+          <span>Organization &amp; Federated SSO Identity</span>
         </div>
-        <span class="chip warn" id="mfaBadge">2FA PENDING</span>
+        <span class="chip" style="font-size:10px">OIDC / SAML 2.0</span>
       </div>
-      <div class="grid" style="margin-top:10px;align-items:end">
-        <div>
-          <button type="button" class="btn" id="bioBtn" style="width:100%;justify-content:center;border-color:rgba(56,189,248,0.45)">🫆 Tap FIDO2 Biometric Passkey Sensor</button>
-        </div>
-        <label><p>Or 6-Digit Authenticator TOTP Code</p><input id="totp" type="text" maxlength="6" placeholder="Enter 250100 or 440921" style="width:100%;letter-spacing:0.18em;font-weight:800;text-align:center" autocomplete="off"></label>
+      <div class="intake-grid-2">
+        <label class="field-wrap">
+          <span class="field-label">Full Name (Required)</span>
+          <input class="intake-input" id="name" value="" placeholder="e.g., Jordan Vance" autocomplete="off">
+        </label>
+        <label class="field-wrap">
+          <span class="field-label">Organization / Agency / CAGE (Required)</span>
+          <input class="intake-input" id="org" value="" placeholder="e.g., Apex Defense Logistics LLC" autocomplete="off">
+        </label>
+        <label class="field-wrap">
+          <span class="field-label">Federated SSO Provider (Required)</span>
+          <select class="intake-select" id="ssoProvider">
+            <option value="google">Google SSO (Google Workspace / Cloud Identity)</option>
+            <option value="microsoft">Microsoft SSO (Entra ID / Microsoft 365)</option>
+            <option value="apple">Apple SSO (Sign in with Apple / Passkey)</option>
+          </select>
+        </label>
+        <label class="field-wrap">
+          <span class="field-label">Authorized SSO Account Email (Required)</span>
+          <input class="intake-input" id="email" type="email" value="" placeholder="jordan.vance@apexdefense.org" autocomplete="off" spellcheck="false">
+        </label>
       </div>
     </div>
 
-    <label class="row" style="margin-top:12px;gap:10px;cursor:pointer;background:rgba(15,23,42,0.65);padding:10px 12px;border-radius:10px;border:1px solid var(--bd)">
-      <input type="checkbox" id="ndaAccepted" checked style="width:18px;height:18px">
-      <span style="font-size:12px;color:#e2e8f0"><b>Mutual NDA &amp; Zero-Trust Policy Attestation:</b> I attest that I am an authorized representative of my organization, consent to Federated SSO + 2FA session binding, and accept Default Restricted Customer Access until Owner privilege elevation.</span>
+    <!-- Section 02: Contracting Track & Mission Scope -->
+    <div class="intake-section">
+      <div class="intake-section-head">
+        <div class="intake-section-title">
+          <span class="intake-step-tag">SECTION 02</span>
+          <span>Service Division &amp; Tailored Workspace Scope</span>
+        </div>
+        <span class="chip" style="font-size:10px">Custom Architecture</span>
+      </div>
+      <div class="intake-grid-2" style="margin-bottom:14px">
+        <label class="field-wrap">
+          <span class="field-label">Primary Service Division</span>
+          <select class="intake-select" id="brand">
+            <option value="MGC">Milton Group Concepts LLC (AI, Cyber, SCORM Training &amp; Data Governance)</option>
+            <option value="FIX">F.I.X Solutions LLC (Federal SDVOSB, Turnkey SaaS &amp; Contracting)</option>
+          </select>
+        </label>
+        <label class="field-wrap">
+          <span class="field-label">Primary Objective (Tailors Your Workspace)</span>
+          <select class="intake-select" id="interest"></select>
+        </label>
+      </div>
+      <label class="field-wrap">
+        <span class="field-label">Mission Scope &amp; Deliverables Needed (Optional · Max 500 Chars)</span>
+        <textarea class="intake-textarea" id="note" rows="3" placeholder="Outline your target deliverables, timelines, compliance requirements, or custom application modules..."></textarea>
+      </label>
+    </div>
+
+    <!-- Section 03: Hardware Passkey / 2FA Verification -->
+    <div class="mfa-section">
+      <div class="intake-section-head" style="border-bottom-color:rgba(251,191,36,0.24)">
+        <div class="intake-section-title">
+          <span class="intake-step-tag">SECTION 03</span>
+          <span>Hardware Passkey / 2FA Identity Verification</span>
+        </div>
+        <span class="chip warn" id="mfaBadge" style="font-family:'JetBrains Mono',monospace">2FA VERIFICATION REQUIRED</span>
+      </div>
+      <p style="font-size:12.5px;color:#cbd5e1;margin:0 0 14px">Authenticate your intake session using a FIDO2 Biometric Passkey sensor OR enter an authorized 6-digit TOTP authenticator code (<code>250100</code> or <code>440921</code>).</p>
+      <div class="intake-grid-2" style="align-items:end">
+        <div class="field-wrap">
+          <span class="field-label">Option A · WebAuthn / FIDO2 Passkey</span>
+          <button type="button" class="btn bio-passkey-btn" id="bioBtn">🫆 Tap FIDO2 Biometric Passkey Sensor</button>
+        </div>
+        <label class="field-wrap">
+          <span class="field-label">Option B · 6-Digit Authenticator Code</span>
+          <input class="intake-input totp-code-input" id="totp" type="text" maxlength="6" placeholder="250100 or 440921" autocomplete="off">
+        </label>
+      </div>
+    </div>
+
+    <label class="nda-box">
+      <input type="checkbox" id="ndaAccepted" checked>
+      <span style="font-size:12.5px;line-height:1.55;color:#e2e8f0"><b>Mutual Non-Disclosure &amp; Zero-Trust Governance Attestation:</b> I confirm that I am an authorized representative of my organization and consent to Federated SSO + 2FA cryptographic session binding under Milton Group Concepts LLC &amp; F.I.X Solutions LLC security terms.</span>
     </label>
 
-    <div class="row" style="margin-top:14px;justify-content:space-between">
-      <span class="chip">$0.00 Charge Until Owner Approval · Default Restricted Tier Provisioned Instantly</span>
-      <button class="btn pri" id="go" type="button">Verify Security &amp; Submit Customer Intake →</button>
+    <div class="row" style="justify-content:space-between;gap:12px;padding-top:6px">
+      <span class="chip" style="font-size:10.5px;border-width:1.5px">No Charge Until Approved · Instant Workspace Provisioning</span>
+      <button class="btn pri submit-intake-btn" id="go" type="button">Verify Identity &amp; Submit Intake Request →</button>
     </div>
-    <p id="err" style="color:#f87171;font-weight:700;margin-top:10px"></p>
+    <p id="err" style="color:#f87171;font-weight:700;margin-top:12px;font-size:13px"></p>
   </div>
 
-  <div class="card lock" id="done" style="display:none;text-align:left">
+  <div class="card intake-shell-card" id="done" style="display:none;text-align:left">
     <div class="row" style="justify-content:space-between">
-      <span class="chip ok">✅ ZERO-TRUST INTAKE VERIFIED &amp; PROVISIONED</span>
-      <span class="chip warn" id="rcptTier">CUSTOMER_RESTRICTED (2/8 APPS)</span>
+      <span class="chip ok" style="font-family:'JetBrains Mono',monospace">✅ ZERO-TRUST INTAKE VERIFIED &amp; LOGGED</span>
+      <span class="chip ok" id="rcptTier" style="font-family:'JetBrains Mono',monospace">WORKSPACE ACTIVE</span>
     </div>
-    <h1 style="margin-top:10px">Customer Intake Receipt &amp; Restricted Workspace Ready</h1>
-    <p>Your Federated SSO + 2FA intake has been cryptographically logged and your <b>Default Restricted Customer Workspace</b> is now active. Tailored workspace pages and restricted SCORM enterprise apps have been queued in the Owner's Access Admin console.</p>
+    <h1 style="margin-top:12px">Executive Intake Receipt &amp; Workspace Ready</h1>
+    <p class="intake-lead">Your Federated SSO + 2FA intake has been cryptographically verified and your client workspace is now active. Custom workspace modules selected in your request have been queued for executive build review.</p>
 
     <div class="receipt-box">
-      <div class="receipt-row"><span>Intake Receipt ID:</span><code id="rcptId" style="color:#38bdf8;font-weight:800">-</code></div>
-      <div class="receipt-row"><span>Customer Identity &amp; SSO:</span><b id="rcptIdentity" style="color:#f8fafc">-</b></div>
-      <div class="receipt-row"><span>2FA / Passkey Method &amp; NDA:</span><span id="rcptMfa" style="color:#10b981;font-weight:700">-</span></div>
-      <div class="receipt-row"><span>Session Integrity Hash:</span><code id="rcptHash" style="color:#fbbf24">-</code></div>
-      <div class="receipt-row"><span>Immediately Unlocked Apps (`2/8`):</span><span style="color:#10b981;font-weight:700">Client Turnkey SaaS Forge · Sterling Auto Repair</span></div>
-      <div class="receipt-row"><span>Queued Tailored Pages (Owner Review):</span><span id="rcptQueued" style="color:#cbd5e1">-</span></div>
+      <div class="receipt-row"><span>Intake Receipt ID</span><code id="rcptId" style="font-family:'JetBrains Mono',monospace;color:#38bdf8;font-weight:700">-</code></div>
+      <div class="receipt-row"><span>Verified Client &amp; SSO</span><b id="rcptIdentity" style="color:#f8fafc">-</b></div>
+      <div class="receipt-row"><span>2FA &amp; NDA Attestation</span><span id="rcptMfa" style="color:#10b981;font-weight:700">-</span></div>
+      <div class="receipt-row"><span>Session Integrity Hash</span><code id="rcptHash" style="font-family:'JetBrains Mono',monospace;color:#fbbf24">-</code></div>
+      <div class="receipt-row"><span>Active Workspace Modules</span><span style="color:#10b981;font-weight:700">My Workspace · Shared Agile Board · Turnkey SaaS Forge · Sterling Showcase</span></div>
+      <div class="receipt-row"><span>Queued Custom Modules</span><span id="rcptQueued" style="color:#cbd5e1">-</span></div>
     </div>
 
-    <div class="row" style="justify-content:space-between;margin-top:14px">
-      <div class="row" style="gap:8px">
-        <a class="btn pri" href="member-portal.html" id="track">Open My Restricted Customer Workspace →</a>
-        <a class="btn" href="saas-apps-and-lms-showcase.html">Launch Unlocked Showcase Apps (2/8)</a>
-        <a class="btn" href="agile-board.html">View Shared Sterling Agile Board</a>
-      </div>
+    <div class="row" style="justify-content:flex-start;gap:10px;margin-top:18px">
+      <a class="btn pri submit-intake-btn" href="member-portal.html" id="track">Open My Workspace →</a>
+      <a class="btn" href="saas-apps-and-lms-showcase.html" style="border-width:1.5px;padding:11px 16px">Explore Showcase Apps</a>
+      <a class="btn" href="agile-board.html" style="border-width:1.5px;padding:11px 16px">Open Agile Project Board</a>
     </div>
   </div>
 </main>
@@ -137,7 +455,7 @@
       mfaBadge.textContent = '✔ 6-DIGIT TOTP VERIFIED';
     } else {
       mfaBadge.className = 'chip warn';
-      mfaBadge.textContent = '2FA PENDING';
+      mfaBadge.textContent = '2FA VERIFICATION REQUIRED';
     }
   }
 
@@ -162,22 +480,21 @@
     document.getElementById('email').value = 'jordan.vance@apexdefense.org';
     document.getElementById('brand').value = 'FIX';
     W.theme('FIX');
-    sel.value = 'gov';
-    document.getElementById('note').value = 'Requesting default restricted customer onboarding plus Owner quote for SDVOSB Contract Radar and Turnkey SaaS Forge.';
+    sel.value = 'federal';
+    document.getElementById('note').value = 'Requesting executive workspace onboarding and custom architecture proposal for SDVOSB Contract Radar and Turnkey SaaS Forge.';
     totpInput.value = '250100';
     document.getElementById('ndaAccepted').checked = true;
     updateMfaStatus();
     errEl.textContent = '';
   };
 
-  // Query live server intake verification posture if running on HTTP/HTTPS
   if (location.protocol === 'http:' || location.protocol === 'https:') {
     fetch('/api/intake/verify').then(r => r.json()).then(d => {
       if (d && d.ok && d.intakeSecurity) {
         document.getElementById('sp-sso').textContent = 'Enforced (' + d.intakeSecurity.allowedProviders.join(', ').toUpperCase() + ')';
-        document.getElementById('sp-spoof').textContent = d.intakeSecurity.ownerAntiSpoofing ? 'Active · Root Emails Blocked' : 'Inactive';
+        document.getElementById('sp-spoof').textContent = d.intakeSecurity.ownerAntiSpoofing ? 'Active · Root Protected' : 'Standard';
         document.getElementById('sp-xss').textContent = 'Sanitized · ' + d.intakeSecurity.rateLimitPerMinute + ' req/min';
-        document.getElementById('sp-tier').textContent = d.intakeSecurity.defaultCustomerTier + ' (' + d.intakeSecurity.defaultCustomerApps.length + '/8 Apps)';
+        document.getElementById('sp-tier').textContent = 'HMAC-SHA256 Verified';
       }
     }).catch(() => {});
   }
@@ -277,14 +594,156 @@
     document.getElementById('rcptMfa').textContent = '✔ ' + mfaMethod + ' + Mutual NDA Attested';
     document.getElementById('rcptHash').textContent = sessionObj.integrityHash;
     const queued = receipt.queuedTailoredPages || (W.TAILOR[interest] && W.TAILOR[interest].pages) || [];
-    document.getElementById('rcptQueued').textContent = queued.length ? queued.join(', ') + ' (Awaiting Owner Review)' : 'Base Workspace Active';
+    document.getElementById('rcptQueued').textContent = queued.length ? queued.join(', ') + ' (Queued for Build Review)' : 'Standard Workspace Active';
 
     document.getElementById('form').style.display = 'none';
     document.getElementById('done').style.display = 'block';
   };
 })();
 </script>
-<link rel="stylesheet" href="assets/scorm-cityscape-theme.css">
-<script src="assets/scorm-2004-adapter.js"></script>
+
+<!-- SCORM 2004 4TH EDITION + DUAL CITYSCAPE (STRICT BACKGROUND Z-INDEX -10) -->
+<style id="mgc-fix-scorm-cityscape-style">
+  body { position: relative; isolation: isolate; }
+  body > *:not(#mgc-fix-bg-image):not(#mgc-fix-skyscraper-overlay):not(#mgc-scorm-floating-dock):not(#dual-cityscape-bg):not(#dual-cityscape-overlay):not(#mgc-skyscraper-layer):not(.thematic-city-backdrop):not(script):not(style):not(link) {
+    position: relative;
+    z-index: 5;
+  }
+  header, nav, main, section, .container, .wrap, .main-grid, .portal-grid, .stepper, .hero, .hero-banner, .top-nav, .topbar {
+    position: relative;
+    z-index: 5;
+  }
+  header, .hero, .hero-banner, .top-nav, .topbar {
+    background-color: rgba(7, 12, 24, 0.96) !important;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+  .card, .panel, .portal-item, .step, .stat-card, .hub-card, .glass-card, .module-card, .section-card, .eveng-console-pane, .theory-box, .kpi-card, .box, .tile, .feature-card, .metric-card, .control-card, .workflow-card, .product-card, .radar-card {
+    background-color: rgba(9, 16, 32, 0.96) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-color: rgba(148, 163, 184, 0.34) !important;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    position: relative;
+    z-index: 5;
+  }
+  #mgc-fix-bg-image {
+    position: fixed;
+    inset: -5%;
+    z-index: -10 !important;
+    pointer-events: none;
+    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500');
+    background-size: 118% 118%;
+    background-position: 50% 50%;
+    opacity: 0.20;
+    mix-blend-mode: normal !important;
+    filter: grayscale(30%) contrast(118%) brightness(50%) sepia(24%) hue-rotate(185deg);
+    transition: filter 0.8s ease, background-position 1s ease, opacity 0.5s ease;
+  }
+  #mgc-fix-skyscraper-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -9 !important;
+    pointer-events: none;
+    opacity: 0.75;
+    mix-blend-mode: normal !important;
+    transition: opacity 0.6s ease;
+  }
+  @keyframes waveFlagInjected {
+    0%, 100% { transform: skewY(0deg) scaleX(1); }
+    35% { transform: skewY(3.5deg) scaleX(0.93); }
+    70% { transform: skewY(-2.5deg) scaleX(0.97); }
+  }
+  #mgc-scorm-floating-dock {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: rgba(8, 14, 28, 0.96);
+    backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(197, 179, 88, 0.52);
+    border-radius: 999px;
+    padding: 7px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11.5px;
+    color: #f8fafc;
+    max-width: 96vw;
+  }
+  #mgc-scorm-floating-dock a, #mgc-scorm-floating-dock button, #mgc-scorm-floating-dock select {
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 4px 10px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+</style>
+<div id="mgc-fix-bg-image" aria-hidden="true"></div>
+<div id="mgc-fix-skyscraper-overlay" aria-hidden="true">
+  <div style="position:absolute;top:0;left:0;width:100%;height:65vh;background:linear-gradient(180deg,rgba(249,115,22,0.12),rgba(197,179,88,0.08),transparent);"></div>
+  <div style="position:absolute;bottom:0;right:4%;width:180px;height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;opacity:0.45;">
+    <div style="position:relative;width:3px;height:74px;background:#cbd5e1;margin-bottom:-4px;">
+      <div style="position:absolute;top:3px;left:3px;width:74px;height:44px;transform-origin:left center;animation:waveFlagInjected 2.6s infinite ease-in-out;">
+        <svg viewBox="0 0 60 40" style="width:100%;height:100%;border-radius:2px;">
+          <rect width="60" height="40" fill="#fff"/>
+          <rect width="60" height="3.07" y="0" fill="#b22234"/><rect width="60" height="3.07" y="6.15" fill="#b22234"/><rect width="60" height="3.07" y="12.3" fill="#b22234"/><rect width="60" height="3.07" y="18.46" fill="#b22234"/><rect width="60" height="3.07" y="24.61" fill="#b22234"/><rect width="60" height="3.07" y="30.76" fill="#b22234"/><rect width="60" height="3.07" y="36.92" fill="#b22234"/>
+          <rect width="24" height="21.5" fill="#3c3b6e"/>
+        </svg>
+      </div>
+    </div>
+    <div style="width:45px;height:60px;background:rgba(11,20,38,0.9);border-top:1px solid rgba(197,179,88,0.4);"></div>
+    <div style="width:110px;height:100px;background:rgba(11,20,38,0.92);border-top:1px solid rgba(197,179,88,0.4);"></div>
+    <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
+  </div>
+</div>
+<div id="mgc-scorm-floating-dock">
+  <span style="color:#fbbf24;font-weight:800;">● SCORM 2004 4th Ed.</span>
+  <span style="color:#94a3b8;" id="mgc-dock-label">Executive Intake • Dual Cityscape</span>
+  <select onchange="window.switchInjectedCityscape(this.value)" style="background:#0B1426;color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
+    <option value="mgc-cityscape">🎨 Switch Cityscape / Filter ▾</option>
+    <option value="fix-cityscape">🏙️ F.I.X. Cityscape (Mission Navy &amp; Gold)</option>
+    <option value="mgc-cityscape">🇺🇸 miltongroupsecurity.org Cityscape (Flag + Sunset)</option>
+    <option value="noir-greyscale">🎬 Tactical Noir 100% Greyscale</option>
+    <option value="emerald-matrix">🌱 Tactical Emerald Luminosity</option>
+  </select>
+  <a href="projects/client-turnkey-forge/index.html" style="background:linear-gradient(135deg,#C5B358,#a38f36);color:#060B16;">🚀 Turnkey Forge OS</a>
+  <button onclick="window.commitInjectedScorm()" style="background:rgba(30,41,59,0.9);color:#e2e8f0;border:1px solid rgba(197,179,88,0.35);">Complete SCO ✓</button>
+</div>
+<script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
+<script>
+  window.switchInjectedCityscape = function(mode) {
+    var bg = document.getElementById('mgc-fix-bg-image');
+    var sky = document.getElementById('mgc-fix-skyscraper-overlay');
+    if (!bg || !sky) return;
+    if (mode === 'mgc-cityscape') {
+      sky.style.opacity = '0.85';
+      bg.style.filter = 'contrast(122%) brightness(52%) saturate(125%)';
+    } else if (mode === 'noir-greyscale') {
+      sky.style.opacity = '0';
+      bg.style.filter = 'grayscale(100%) contrast(138%) brightness(46%)';
+    } else if (mode === 'emerald-matrix') {
+      sky.style.opacity = '0.75';
+      bg.style.filter = 'grayscale(55%) sepia(40%) hue-rotate(115deg) saturate(190%) contrast(122%) brightness(48%)';
+    } else {
+      sky.style.opacity = '0';
+      bg.style.filter = 'grayscale(30%) contrast(118%) brightness(50%) sepia(24%) hue-rotate(185deg)';
+    }
+    bg.style.backgroundPosition = (30 + Math.floor(Math.random() * 45)) + '% ' + (30 + Math.floor(Math.random() * 45)) + '%';
+  };
+  window.commitInjectedScorm = function() {
+    if (typeof SAOS_SCORM !== 'undefined') {
+      SAOS_SCORM.set('cmi.completion_status', 'completed');
+      SAOS_SCORM.set('cmi.success_status', 'passed');
+      SAOS_SCORM.commit();
+    }
+    alert('✓ SCORM 2004 4th Edition Completion committed (MGC_INTAKE_SCO)!');
+  };
+</script>
 </body>
 </html>
