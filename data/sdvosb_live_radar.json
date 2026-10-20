@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-19T16:42:24.715585Z",
+  "fetchedAt": "2026-10-20T14:34:37.193642Z",
   "source": "USAspending.gov Official v2 API + SAM.gov NAICS Filter (541611, 541512, 541614, 541330)",
   "region": "VA / DC / MD Defense & Federal Corridor",
   "count": 20,
@@ -42,7 +42,7 @@
       "Recipient Name": "BAE SYSTEMS TECHNOLOGY SOLUTIONS & SERVICES INC.",
       "Start Date": "2013-08-01",
       "End Date": "2027-01-31",
-      "Award Amount": 2383938533.46,
+      "Award Amount": 2389363988.54,
       "Awarding Agency": "Department of Defense",
       "Awarding Sub Agency": "Department of the Air Force",
       "Description": "IGF::CL::IGF SYSTEMS ENGINEERING, INTEGRATION AND PROGRAM MANAGEMENT SUPPORT FOR THE ICBM SYSTEMS DIRECTORATE.",
