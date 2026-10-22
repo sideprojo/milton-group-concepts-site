@@ -88,9 +88,16 @@
         '</div>' +
 
         '<form id="legalPaymentForm" onsubmit="return false;" style="display:flex;flex-direction:column;gap:14px">' +
-          '<div class="bento-2">' +
+          '<div class="bento-3">' +
             '<div>' +
-              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">1. Select Subscription / Invoice Tier</label>' +
+              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">1. Merchant Entity (LLC)</label>' +
+              '<select id="payMerchantEntity" style="width:100%">' +
+                '<option value="MGC"' + ((prof && prof.merchantEntity === 'MGC') ? ' selected' : '') + '>🏛️ Milton Group Concepts LLC (Option 1: Stripe SAQ-A)</option>' +
+                '<option value="FIX"' + ((!prof || prof.merchantEntity === 'FIX') ? ' selected' : '') + '>⚡ F.I.X Solutions LLC (Option 1: Stripe SAQ-A &amp; Option 4: WAWF/PIEE)</option>' +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">2. Subscription / Invoice Tier</label>' +
               '<select id="payPlanTier" style="width:100%">' +
                 '<option value="saas_lms_base"' + (prof && prof.planTier === 'saas_lms_base' ? ' selected' : '') + '>SaaS Apps &amp; LMS Base Subscription — $5.00 / month</option>' +
                 '<option value="pro_enterprise"' + (prof && prof.planTier === 'pro_enterprise' ? ' selected' : '') + '>MGC &amp; F.I.X Pro SaaS + Enterprise LMS Suite — $49.00 / month</option>' +
@@ -98,11 +105,11 @@
               '</select>' +
             '</div>' +
             '<div>' +
-              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">2. Payment Rail</label>' +
+              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">3. Official PCI-DSS / Federal Rail</label>' +
               '<select id="payMethod" style="width:100%">' +
-                '<option value="card_tokenized"' + (prof && prof.method === 'card_tokenized' ? ' selected' : '') + '>💳 Commercial / Personal Card (PCI-DSS v4.0 Tokenized)</option>' +
-                '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>🏦 NACHA Commercial ACH Direct Debit (Mercury Treasury)</option>' +
-                '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>🏛️ Federal GPC / PIEE WAWF (CAGE 17GC6 · UEI XN89KKM6JT89)</option>' +
+                '<option value="card_tokenized"' + (prof && prof.method === 'card_tokenized' ? ' selected' : '') + '>💳 Option 1: Stripe Checkout &amp; Elements (PCI SAQ-A Tokenized)</option>' +
+                '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>🏛️ Option 4: DoD WAWF / PIEE &amp; SAM.gov Federal EFT (FIX / MGC)</option>' +
+                '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>🏦 Commercial ACH Direct Debit (NACHA)</option>' +
               '</select>' +
             '</div>' +
           '</div>' +
@@ -110,7 +117,7 @@
           '<div class="bento-3">' +
             '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Cardholder / Signer Legal Name *</label>' +
               '<input id="payBillingName" required maxlength="100" value="' + esc((prof && prof.billingName) || u.name || '') + '" placeholder="Full Legal Name" style="width:100%"></div>' +
-            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Billing Receipt Email *</label>' +
+            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Billing Receipt Email * <span id="valBadgeEmail" style="color:#34d399;font-size:10px">✓ Valid</span></label>' +
               '<input id="payBillingEmail" type="email" required maxlength="120" value="' + esc((prof && prof.billingEmail) || u.email || '') + '" placeholder="billing@company.com" style="width:100%"></div>' +
             '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Organization / Agency</label>' +
               '<input id="payBillingOrg" maxlength="120" value="' + esc((prof && prof.billingOrg) || u.org || '') + '" placeholder="Company or Agency Name" style="width:100%"></div>' +
@@ -121,18 +128,21 @@
               '<input id="payAddress" required maxlength="140" value="' + esc((prof && prof.addressLine1) || '') + '" placeholder="100 Enterprise Pkwy Suite 200" style="width:100%"></div>' +
             '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">City &amp; State *</label>' +
               '<div style="display:flex;gap:8px"><input id="payCity" required maxlength="80" value="' + esc((prof && prof.city) || '') + '" placeholder="Raleigh" style="flex:2"><input id="payState" required maxlength="40" value="' + esc((prof && prof.stateRegion) || '') + '" placeholder="NC" style="flex:1"></div></div>' +
-            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Postal / ZIP Code *</label>' +
-              '<input id="payZip" required maxlength="24" value="' + esc((prof && prof.postalCode) || '') + '" placeholder="27601" style="width:100%"></div>' +
+            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Postal / ZIP Code (5-Digit) * <span id="valBadgeZip" style="color:#34d399;font-size:10px"></span></label>' +
+              '<input id="payZip" required maxlength="10" pattern="^\\d{5}(-\\d{4})?$" value="' + esc((prof && prof.postalCode) || '') + '" placeholder="27601" style="width:100%"></div>' +
           '</div>' +
 
-          '<div class="card" style="padding:14px 16px;background:rgba(4,8,20,0.9);border-color:rgba(59,130,246,0.4)">' +
-            '<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#60a5fa;margin-bottom:8px">🔐 PCI-DSS v4.0 SAQ-A Tokenized Instrument Vault (Only Last 4 Digits Stored)</div>' +
+          '<div class="card" id="pciInstrumentVaultCard" style="padding:14px 16px;background:rgba(4,8,20,0.9);border-color:rgba(59,130,246,0.4);transition:opacity .22s ease,transform .22s ease">' +
+            '<div class="row" style="margin-bottom:8px">' +
+              '<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#60a5fa">🔐 Attack-Hardened PCI-DSS v4.0 SAQ-A Tokenized Instrument Fields (Zero Raw PAN Storage)</div>' +
+              '<span class="chip ok" id="valBadgeToken" style="font-size:10px">SAQ-A Isolated</span>' +
+            '</div>' +
             '<div class="bento-3">' +
-              '<div><label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Card Brand / Bank / WAWF Office</label>' +
-                '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa Commercial') + '" placeholder="Visa / Mastercard / Mercury ACH" style="width:100%"></div>' +
-              '<div><label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Card or Account Number (Auto-Tokenized to Last 4) *</label>' +
-                '<input id="payCardOrLast4" required maxlength="24" value="' + esc((prof && prof.last4) || '') + '" placeholder="Enter card/account or last 4 digits (e.g. 4242)" autocomplete="off" style="width:100%"></div>' +
-              '<div><label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Exp (MM / YYYY) or Routing Last 4</label>' +
+              '<div><label id="lblPayBrand" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Card Network / WAWF DoDAAC</label>' +
+                '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa Commercial') + '" placeholder="Visa / Mastercard / WAWF DoDAAC" style="width:100%"></div>' +
+              '<div><label id="lblPayLast4" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Tokenized Last 4 Digits (or CLIN Last 4) *</label>' +
+                '<input id="payCardOrLast4" required maxlength="4" inputmode="numeric" pattern="^\\d{4}$" value="' + esc((prof && prof.last4) || '') + '" placeholder="4242 (4 digits only)" autocomplete="off" style="width:100%;letter-spacing:.12em;font-weight:800"></div>' +
+              '<div id="expFieldsWrap" style="transition:opacity .2s ease"><label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Expiration (MM / YYYY)</label>' +
                 '<div style="display:flex;gap:8px"><input id="payExpMonth" type="number" min="1" max="12" value="' + esc((prof && prof.expMonth) || 12) + '" placeholder="MM" style="flex:1"><input id="payExpYear" type="number" min="2026" max="2040" value="' + esc((prof && prof.expYear) || 2029) + '" placeholder="YYYY" style="flex:1"></div></div>' +
             '</div>' +
           '</div>' +
@@ -257,6 +267,55 @@
 
     const payForm = document.getElementById('legalPaymentForm');
     if (payForm) {
+      const payMethodEl = document.getElementById('payMethod');
+      const payMerchantEl = document.getElementById('payMerchantEntity');
+      const expWrapEl = document.getElementById('expFieldsWrap');
+      const lblBrand = document.getElementById('lblPayBrand');
+      const lblLast4 = document.getElementById('lblPayLast4');
+      const last4Input = document.getElementById('payCardOrLast4');
+      const zipInput = document.getElementById('payZip');
+      const badgeToken = document.getElementById('valBadgeToken');
+      const badgeZip = document.getElementById('valBadgeZip');
+
+      function syncPaymentFieldFade() {
+        const m = payMethodEl ? payMethodEl.value : 'card_tokenized';
+        const isWawf = m === 'gpc_wawf';
+        if (expWrapEl) {
+          expWrapEl.style.opacity = isWawf ? '0.35' : '1';
+        }
+        if (lblBrand) lblBrand.textContent = isWawf ? 'WAWF DoDAAC / Contracting Office' : 'Card Network / Bank';
+        if (lblLast4) lblLast4.textContent = isWawf ? 'Contract / CLIN Last 4 Digits *' : 'Tokenized Card/Account Last 4 *';
+      }
+      if (payMethodEl) payMethodEl.onchange = syncPaymentFieldFade;
+      if (payMerchantEl) {
+        payMerchantEl.onchange = () => {
+          if (payMerchantEl.value === 'MGC' && payMethodEl && payMethodEl.value === 'gpc_wawf') {
+            payMethodEl.value = 'card_tokenized';
+          }
+          syncPaymentFieldFade();
+        };
+      }
+      if (last4Input) {
+        last4Input.oninput = () => {
+          const digits = last4Input.value.replace(/\D/g, '').slice(-4);
+          if (last4Input.value !== digits) last4Input.value = digits;
+          if (badgeToken) {
+            badgeToken.textContent = digits.length === 4 ? '✓ 4-Digit Token Ready' : 'Enter 4 Digits';
+            badgeToken.className = 'chip ' + (digits.length === 4 ? 'ok' : 'warn');
+          }
+        };
+      }
+      if (zipInput) {
+        zipInput.oninput = () => {
+          const ok = /^\d{5}(-\d{4})?$/.test(zipInput.value.trim());
+          if (badgeZip) {
+            badgeZip.textContent = ok ? '✓ Valid ZIP' : '5 digits required';
+            badgeZip.style.color = ok ? '#34d399' : '#fbbf24';
+          }
+        };
+      }
+      syncPaymentFieldFade();
+
       payForm.onsubmit = async (ev) => {
         ev.preventDefault();
         lastPaymentError = '';
@@ -265,9 +324,13 @@
         // Immediately scrub the input field to last4 so full PAN never lingers in DOM
         if (last4) document.getElementById('payCardOrLast4').value = last4;
 
+        const merchantEntity = (document.getElementById('payMerchantEntity') && document.getElementById('payMerchantEntity').value) || 'FIX';
+        const methodVal = document.getElementById('payMethod').value;
         const payload = {
+          merchantEntity,
+          gatewayOption: methodVal === 'gpc_wawf' ? 'wawf_piee_eft' : 'stripe_saq_a',
           planTier: document.getElementById('payPlanTier').value,
-          method: document.getElementById('payMethod').value,
+          method: methodVal,
           billingName: document.getElementById('payBillingName').value.trim(),
           billingEmail: document.getElementById('payBillingEmail').value.trim(),
           billingOrg: document.getElementById('payBillingOrg').value.trim(),

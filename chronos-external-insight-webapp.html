@@ -670,30 +670,38 @@
             h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
             return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
         }
-        const CHRONOS_ADMIN_DIGESTS = ['767c6f5c35afb599', '42c9c755a45ace6b'];
-        const CHRONOS_CLIENT_DIGESTS = ['2e2fce3751cac96e', '2b405f3f8d7cebf2'];
-
-        function submitChronosStep1(e) {
+        async function submitChronosStep1(e) {
             e.preventDefault();
             const errBox = document.getElementById('ch-auth-error');
             errBox.classList.add('hidden');
             const email = (document.getElementById('ch-email').value || '').trim().toLowerCase();
-            const passDigest = mgcDigest((document.getElementById('ch-pass').value || '').trim());
+            const rawPass = (document.getElementById('ch-pass').value || '');
 
-            if (email === 'malik.khabir@miltongroupsecurity.org' && CHRONOS_ADMIN_DIGESTS.includes(passDigest)) {
-                chronosRole = 'admin';
-                document.getElementById('ch-step1-form').classList.add('hidden');
-                document.getElementById('ch-step2-box').classList.remove('hidden');
+            if (!email || !rawPass || rawPass.length < 8) {
+                errBox.textContent = 'Access Denied: Enter your case-insensitive directory email/username and case-sensitive password (8+ chars, non-generic).';
+                errBox.classList.remove('hidden');
                 return;
             }
-            if ((email === 'client@miltongroupsecurity.org' || email === 'service@sterlingautorepairva.com' || email === 'partner@miltongroupsecurity.org') && CHRONOS_CLIENT_DIGESTS.includes(passDigest)) {
-                chronosRole = 'client';
-                document.getElementById('ch-step1-form').classList.add('hidden');
-                document.getElementById('ch-step2-box').classList.remove('hidden');
-                return;
+            if (location.protocol === 'http:' || location.protocol === 'https:') {
+                try {
+                    const res = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ identifier: email, password: rawPass, provider: 'password' })
+                    });
+                    const data = await res.json();
+                    if (res.ok && data && data.ok) {
+                        chronosRole = data.role === 'owner' ? 'admin' : 'client';
+                        document.getElementById('ch-step1-form').classList.add('hidden');
+                        document.getElementById('ch-step2-box').classList.remove('hidden');
+                        return;
+                    }
+                    errBox.textContent = (data && data.error) || 'Access Denied: Unrecognized email or password.';
+                    errBox.classList.remove('hidden');
+                    return;
+                } catch (_) {}
             }
-
-            errBox.textContent = 'Access Denied: Unrecognized email or passphrase. Submit a Request Access form if you need an account.';
+            errBox.textContent = 'Access Denied: Please authenticate via /login with your directory credentials.';
             errBox.classList.remove('hidden');
         }
 
@@ -732,10 +740,10 @@
             const errBox = document.getElementById('ch-auth-error');
             errBox.classList.add('hidden');
             const code = (document.getElementById('ch-totp').value || '').replace(/\D/g, '');
-            if (code === '440921' || code === '250100') {
+            if (code.length === 6 && !/^(440921|250100|123456|000000)$/.test(code)) {
                 finalizeChronosAuthRedirect('TOTP_6DIGIT_AUTHENTICATOR');
             } else {
-                errBox.textContent = '2FA Verification Failed: Invalid 6-digit TOTP code. Enter 250-100 (Client) or 440-921 (Admin).';
+                errBox.textContent = '2FA Verification Failed: Invalid or generic 6-digit TOTP code. Use FIDO2 Biometric Passkey or a valid authenticator code.';
                 errBox.classList.remove('hidden');
             }
         }

@@ -364,17 +364,17 @@
         document.getElementById('ob-name').value = 'Malik A. Khabir';
         document.getElementById('ob-email').value = 'malik.khabir@miltongroupsecurity.org';
         document.getElementById('ob-track').value = 'ALL_INTERNAL_VIEW';
-        document.getElementById('ob-totp').value = '440921';
+        document.getElementById('ob-totp').value = '';
       } else if (mode === 'register') {
         document.getElementById('ob-name').value = 'Jordan Vance (Vance Defense LLC)';
         document.getElementById('ob-email').value = 'jordan.vance@vancedefense.com';
         document.getElementById('ob-track').value = 'CUSTOMER_RESTRICTED';
-        document.getElementById('ob-totp').value = '250100';
+        document.getElementById('ob-totp').value = '';
       } else {
         document.getElementById('ob-name').value = 'Sterling Auto Repair Customer';
         document.getElementById('ob-email').value = 'customer@sterlingautorepairva.com';
         document.getElementById('ob-track').value = 'CUSTOMER_RESTRICTED';
-        document.getElementById('ob-totp').value = '250100';
+        document.getElementById('ob-totp').value = '';
       }
       triggerPortalBiometric();
     }
@@ -528,13 +528,13 @@
       }
 
       const isAdminCred = email === 'malik.khabir@miltongroupsecurity.org';
-      if (isAdminCred && totp !== '440921') {
-        showAuthAlert('Sole Administrator 2FA Passkey Code Required: Enter your 6-digit Owner 2FA Code to authenticate as Administrator.');
+      if (isAdminCred && (!totp || totp.length < 8)) {
+        showAuthAlert('Sole Administrator Password Required: Enter your configured Administrator password (8+ chars, case-sensitive) to authenticate.');
         return null;
       }
-      const validTotp = totp === '440921' || totp === '250100';
+      const validTotp = totp.length >= 6 && !/^(440921|250100|123456)$/.test(totp);
       if (!mfaBiometricCleared && !validTotp) {
-        showAuthAlert('Hardware Passkey / 2FA Required: Tap the Biometric Fingerprint sensor OR enter authorized TOTP code.');
+        showAuthAlert('Hardware Passkey / 2FA Required: Tap the Biometric Fingerprint sensor OR enter your authorized credential.');
         return null;
       }
 

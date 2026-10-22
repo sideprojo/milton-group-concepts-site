@@ -300,22 +300,18 @@
     return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
   }
 
-  const ADMIN_PASSWORD_DIGESTS = new Set([
-    '767c6f5c35afb599',
-    '42c9c755a45ace6b',
-    '18d7d511b6590da6',
-    'aa31dd0913f77481',
-    '71afc1af3d0ce934',
-    '410eb8431aed35a8',
-    '7a236eaf847a4da3',
-    '5f92394ec6485615'
-  ]);
+  function isGenericOrRevokedSecret(secretStr) {
+    const raw = String(secretStr || '').trim();
+    if (!raw || raw.length < 8) return true;
+    if (/^\d+$/.test(raw)) return true;
+    if (/^(password|admin|welcome|qwerty|123456|letmein|default|test|guest|mgcadmin|miltongroup|customer|sovereign|malikadmin|horizon|passkey|440921|250100)/i.test(raw)) return true;
+    return false;
+  }
 
   function isValidAdminSecret(secretStr) {
     const clean = String(secretStr || '');
-    if (!clean) return false;
+    if (!clean || isGenericOrRevokedSecret(clean)) return false;
     const dig = mgcDigest(clean);
-    if (ADMIN_PASSWORD_DIGESTS.has(dig)) return true;
     if (S && S.users && S.users.owner && S.users.owner.customPasswordDigest && dig === S.users.owner.customPasswordDigest) return true;
     return false;
   }

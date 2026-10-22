@@ -183,11 +183,21 @@
 <main class="login-shell">
   <div class="card login-card">
     <!-- Clean Segmented Mode Switcher: Sign In vs Register New Account -->
-    <div style="display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(148,163,184,0.18)">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(148,163,184,0.18)">
+      <button type="button" class="btn" id="btnOpenAdminBootstrap" style="padding:7px 12px;font-size:11px;border-color:rgba(245,158,11,0.5);color:#fde047;background:rgba(245,158,11,0.1)">🛡️ Set Administrator Username &amp; Password</button>
       <div style="display:inline-flex;background:rgba(4,8,20,0.85);padding:4px;border-radius:12px;border:1px solid rgba(148,163,184,0.24)" role="tablist" aria-label="Authentication Mode">
         <button type="button" class="btn pri" id="modeTabSignIn" role="tab" aria-selected="true" style="padding:8px 14px;border-radius:9px;font-size:12px">🔑 Sign In</button>
         <button type="button" class="btn" id="modeTabRegister" role="tab" aria-selected="false" style="padding:8px 14px;border-radius:9px;font-size:12px;border-color:transparent;background:transparent">✨ Register Account</button>
       </div>
+    </div>
+
+    <!-- Immediate Administrator Credential Setup Alert Banner -->
+    <div id="adminBootstrapBanner" style="display:none;margin-bottom:16px;padding:12px 16px;border-radius:14px;background:rgba(245,158,11,0.14);border:1.5px solid rgba(245,158,11,0.55);color:#fef08a;font-size:12px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div>
+        <strong style="color:#fde047;display:block;margin-bottom:2px">⚠️ IMMEDIATE SECURITY NOTICE: Set Administrator Username &amp; Case-Sensitive Password</strong>
+        <span>All generic/default passwords have been permanently revoked. Configure your custom Administrator username (<code>sAMAccountName</code>) and case-sensitive password for <code>malik.khabir@Miltongroupsecurity.org</code>.</span>
+      </div>
+      <button type="button" class="btn pri" id="btnBannerAdminBootstrap" style="padding:8px 14px;font-size:11.5px">Configure Now →</button>
     </div>
 
     <!-- SIGN IN VIEW: Email / Username + Password Logon Screen + Federated SSO -->
@@ -390,6 +400,34 @@
   </div>
 </div>
 
+<!-- Sole Administrator Username & Case-Sensitive Password Bootstrap Modal -->
+<div class="sso-modal-backdrop" id="adminBootstrapModal" role="dialog" aria-modal="true" aria-labelledby="adminBootstrapTitle">
+  <div class="sso-modal" style="max-width:480px">
+    <div class="row" style="margin-bottom:12px">
+      <span class="chip warn">Sole Domain Administrator · Builtin\Administrator</span>
+      <button type="button" class="btn" id="adminBootstrapClose" style="padding:4px 10px;font-size:11px">✕ Close</button>
+    </div>
+    <h2 id="adminBootstrapTitle" style="margin-bottom:6px">Set Administrator Username &amp; Password</h2>
+    <p style="margin-bottom:14px;font-size:12px;color:#cbd5e1">Tied to <code>malik.khabir@Miltongroupsecurity.org</code> (case-insensitive UPN / username logon). Passwords are strictly case-sensitive and generic passwords are permanently blocked.</p>
+    <form id="adminBootstrapForm" onsubmit="return false" style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;margin-bottom:5px">Administrator Username (sAMAccountName — Case-Insensitive)</label>
+        <input id="admBootUsername" type="text" value="malik.khabir" placeholder="malik.khabir" autocomplete="username" required style="width:100%;padding:11px 13px;font-size:13px">
+      </div>
+      <div>
+        <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;margin-bottom:5px">New Case-Sensitive Administrator Password (8+ Characters)</label>
+        <input id="admBootPassword" type="password" placeholder="Enter strong case-sensitive password" autocomplete="new-password" required style="width:100%;padding:11px 13px;font-size:13px">
+      </div>
+      <div>
+        <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;margin-bottom:5px">Current Password (Required Only If Updating Existing Password)</label>
+        <input id="admBootCurrentPassword" type="password" placeholder="Leave blank on initial setup" autocomplete="current-password" style="width:100%;padding:10px 13px;font-size:12.5px">
+      </div>
+      <button type="submit" class="btn pri" id="btnSaveAdminBootstrap" style="width:100%;justify-content:center;padding:12px 18px;font-size:13px">🛡️ Save Administrator Credentials &amp; Open Console →</button>
+    </form>
+    <p id="adminBootstrapMsg" style="color:#f87171;margin-top:10px;font-weight:700;font-size:12px;min-height:16px"></p>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="mgc-workspace-core.js"></script>
@@ -456,8 +494,74 @@
       .then(cfg => {
         serverOidcConfig = cfg;
         initFirebaseIfConfigured(cfg);
+        const bootBanner = document.getElementById('adminBootstrapBanner');
+        if (bootBanner && cfg && cfg.adminCredentialSetupRequired) {
+          bootBanner.style.display = 'flex';
+        }
       })
       .catch(() => {});
+  }
+
+  const adminBootstrapModal = document.getElementById('adminBootstrapModal');
+  const adminBootstrapForm = document.getElementById('adminBootstrapForm');
+  const adminBootstrapMsg = document.getElementById('adminBootstrapMsg');
+  function openAdminBootstrapModal() {
+    if (!adminBootstrapModal) return;
+    if (adminBootstrapMsg) adminBootstrapMsg.textContent = '';
+    adminBootstrapModal.classList.add('open');
+  }
+  function closeAdminBootstrapModal() {
+    if (adminBootstrapModal) adminBootstrapModal.classList.remove('open');
+  }
+  const btnOpenAdminBoot = document.getElementById('btnOpenAdminBootstrap');
+  const btnBannerAdminBoot = document.getElementById('btnBannerAdminBootstrap');
+  const btnCloseAdminBoot = document.getElementById('adminBootstrapClose');
+  if (btnOpenAdminBoot) btnOpenAdminBoot.onclick = openAdminBootstrapModal;
+  if (btnBannerAdminBoot) btnBannerAdminBoot.onclick = openAdminBootstrapModal;
+  if (btnCloseAdminBoot) btnCloseAdminBoot.onclick = closeAdminBootstrapModal;
+  if (adminBootstrapModal) {
+    adminBootstrapModal.addEventListener('click', (e) => {
+      if (e.target === adminBootstrapModal) closeAdminBootstrapModal();
+    });
+  }
+  if (adminBootstrapForm) {
+    adminBootstrapForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = (document.getElementById('admBootUsername').value || 'malik.khabir').trim();
+      const newPassword = (document.getElementById('admBootPassword').value || '');
+      const currentPassword = (document.getElementById('admBootCurrentPassword').value || '');
+      if (!newPassword || newPassword.length < 8) {
+        adminBootstrapMsg.style.color = '#f87171';
+        adminBootstrapMsg.textContent = 'Administrator password must be at least 8 characters and case-sensitive.';
+        return;
+      }
+      adminBootstrapMsg.style.color = '#34d399';
+      adminBootstrapMsg.textContent = 'Provisioning Sole Administrator credentials...';
+      try {
+        const res = await fetch('/api/auth/admin-bootstrap', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, newPassword, currentPassword })
+        });
+        const data = await res.json();
+        if (!res.ok || !data || !data.ok) {
+          adminBootstrapMsg.style.color = '#f87171';
+          adminBootstrapMsg.textContent = (data && data.error) || 'Unable to configure Administrator credentials.';
+          return;
+        }
+        try {
+          sessionStorage.setItem('mgcw.uid', 'owner');
+          sessionStorage.setItem('mgcw.sso_provider', 'password');
+        } catch (_) {}
+        persistOnboardingBridge('malik.khabir@miltongroupsecurity.org', 'Malik A. Khabir', 'owner', 'password', ['*'], ['*']);
+        adminBootstrapMsg.style.color = '#34d399';
+        adminBootstrapMsg.textContent = '✓ Administrator credentials configured! Redirecting to Active Directory Console...';
+        location.href = data.redirect || '/access-admin';
+      } catch (_) {
+        adminBootstrapMsg.style.color = '#f87171';
+        adminBootstrapMsg.textContent = 'Network error configuring Administrator credentials.';
+      }
+    });
   }
 
   function hasLiveClientId(prov) {
@@ -783,9 +887,9 @@
     modalMsg.textContent = 'Verifying ' + PROVIDER_META[provider].name + ' SSO...';
 
     if (location.protocol === 'file:') {
-      if (email === 'malik.khabir@miltongroupsecurity.org' && mfaCode !== '440921') {
+      if (email === 'malik.khabir@miltongroupsecurity.org' && (!W.isValidAdminSecret || !W.isValidAdminSecret(mfaCode))) {
         modalMsg.style.color = '#f87171';
-        modalMsg.textContent = 'Invalid Sole Administrator 2FA Passkey code.';
+        modalMsg.textContent = 'Invalid Sole Administrator password/attestation.';
         return;
       }
       const u = W.provisionCustomerSso ? W.provisionCustomerSso(email, undefined, provider) : Object.values(W.S.users).find(x => x.email.toLowerCase() === email);

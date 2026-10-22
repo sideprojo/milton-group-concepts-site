@@ -20,9 +20,27 @@ const ROOT = __dirname;
 const DATA_DIR = process.env.MGCW_DATA_DIR || path.join(ROOT, '.data');
 const DATA_FILE = path.join(DATA_DIR, 'workspace-state.json');
 const SESSION_SECRET = process.env.MGCW_SESSION_SECRET || crypto.createHash('sha256').update(ROOT + '::mgc-fix-zero-trust-secret-v1').digest('hex');
+// Load local .env / ~/.env safely without logging secrets
+(function loadEnvFiles() {
+  const os = require('node:os');
+  const candidates = [path.join(ROOT, '.env'), path.join(os.homedir(), '.env')];
+  for (const envPath of candidates) {
+    try {
+      if (fs.existsSync(envPath)) {
+        const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
+        for (const line of lines) {
+          const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+          if (m && !process.env[m[1]]) {
+            process.env[m[1]] = m[2].replace(/^['"]|['"]$/g, '');
+          }
+        }
+      }
+    } catch (_) {}
+  }
+})();
+
 // Strictly 1 Administrator Account (Malik K.) — zero secondary admin accounts permitted (case-insensitive)
 const SOLE_ADMIN_EMAIL = 'malik.khabir@miltongroupsecurity.org';
-const ADMIN_MFA_CODE = process.env.MGCW_ADMIN_MFA_CODE || '440921';
 const OWNER_EMAILS = new Set([SOLE_ADMIN_EMAIL]);
 
 function mgcDigest(s) {
@@ -38,18 +56,14 @@ function mgcDigest(s) {
   return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
 }
 
-// Non-reversible salted digests for the Sole Administrator (malik.khabir@Miltongroupsecurity.org) — STRICTLY CASE-SENSITIVE
-const ADMIN_PASSWORD_DIGESTS = new Set([
-  '767c6f5c35afb599',
-  '42c9c755a45ace6b',
-  '18d7d511b6590da6',
-  'aa31dd0913f77481',
-  '71afc1af3d0ce934',
-  '410eb8431aed35a8',
-  '7a236eaf847a4da3',
-  '5f92394ec6485615'
-]);
-const DEFAULT_SEEDED_USER_PASSWORD_DIGEST = '2e2fce3751cac96e';
+// Pure pattern-based weak/generic password blocker (zero hardcoded secret or digest literals in source code)
+function isGenericOrRevokedSecret(secretStr) {
+  const raw = String(secretStr || '').trim();
+  if (!raw || raw.length < 8) return true;
+  if (/^\d+$/.test(raw)) return true;
+  if (/^(password|admin|welcome|qwerty|123456|letmein|default|test|guest|mgcadmin|miltongroup|customer|sovereign|malikadmin|horizon|passkey|440921|250100)/i.test(raw)) return true;
+  return false;
+}
 
 const CATALOG = [
   { id: 'saasapps',   icon: '⚡', title: 'SaaS Apps & LMS',       brand: 'FIX', kind: 'app',  base: true,  price: 0,  href: 'saas-apps-and-lms-showcase.html', desc: 'Default unlocked user view: SaaS Apps, Simulators & Subscriber LMS.' },
@@ -251,8 +265,8 @@ function seedState() {
     status,
     brand,
     accessTier: role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
-    passwordDigest: role === 'owner' ? null : DEFAULT_SEEDED_USER_PASSWORD_DIGEST,
-    hasPassword: true,
+    passwordDigest: null,
+    hasPassword: false,
     quote: { interest, note: '' },
     plan: { base: paid, addons: [] },
     pages: pages || {},
@@ -680,13 +694,19 @@ const SSO_PROVIDER_LABELS = {
   password: 'Email & Password'
 };
 
+function hasAdminCredentialsConfigured() {
+  if (process.env.MGCW_ADMIN_PASSWORD && !isGenericOrRevokedSecret(process.env.MGCW_ADMIN_PASSWORD)) return true;
+  if (process.env.MGCW_ADMIN_PASSWORD_DIGEST) return true;
+  if (S && S.users && S.users.owner && S.users.owner.customPasswordDigest) return true;
+  return false;
+}
+
 function isValidAdminSecret(secretStr) {
-  const clean = String(secretStr || '').trim();
-  if (!clean) return false;
-  if (clean === ADMIN_MFA_CODE) return true;
+  const clean = String(secretStr || '');
+  if (!clean || isGenericOrRevokedSecret(clean)) return false;
   if (process.env.MGCW_ADMIN_PASSWORD && clean === process.env.MGCW_ADMIN_PASSWORD) return true;
   const dig = mgcDigest(clean);
-  if (ADMIN_PASSWORD_DIGESTS.has(dig)) return true;
+  if (process.env.MGCW_ADMIN_PASSWORD_DIGEST && dig === process.env.MGCW_ADMIN_PASSWORD_DIGEST) return true;
   if (S && S.users && S.users.owner && S.users.owner.customPasswordDigest && dig === S.users.owner.customPasswordDigest) return true;
   return false;
 }
@@ -1159,13 +1179,20 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/auth/config' && req.method === 'GET') {
       const cfg = await autoDiscoverIdentityPlatformViaAdc();
+      const adminConfigured = hasAdminCredentialsConfigured();
       return sendJson(res, 200, {
         ssoEnforced: true,
         allowedProviders: ['google', 'microsoft', 'apple', 'password'],
         passwordAuthAllowed: true,
         emailLinkAllowed: false,
-        soleAdministratorEmail: SOLE_ADMIN_EMAIL,
         caseInsensitiveLogin: true,
+        caseSensitivePassword: true,
+        genericPasswordsRevoked: true,
+        adminCredentialsConfigured: adminConfigured,
+        adminCredentialSetupRequired: !adminConfigured,
+        securityAlert: !adminConfigured
+          ? 'IMMEDIATE ACTION REQUIRED: Generic passwords have been permanently revoked. Set your Administrator Account Username and Case-Sensitive Password immediately.'
+          : null,
         discoveryStatus: cfg.status || 'READY',
         firebaseProjectId: cfg.firebaseProjectId,
         firebaseAuthDomain: cfg.firebaseAuthDomain,
@@ -1194,6 +1221,72 @@ const server = http.createServer(async (req, res) => {
             liveConfigured: Boolean(cfg.appleClientId || cfg.firebaseApiKey)
           }
         }
+      });
+    }
+
+    if (pathname === '/api/auth/admin-bootstrap' && req.method === 'POST') {
+      if (!checkRateLimit(req, 'admin_bootstrap', 15, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'Too many requests. Please wait 60 seconds.' });
+      }
+      const u = getAuthenticatedUser(req);
+      const isOwnerSession = Boolean(u && u.role === 'owner' && u.id === 'owner');
+      const body = await readJsonBody(req);
+      if (hasAdminCredentialsConfigured() && !isOwnerSession && !isValidAdminSecret(body.currentPassword || '')) {
+        return sendJson(res, 403, {
+          ok: false,
+          code: 'ADMIN_ALREADY_CONFIGURED',
+          error: 'Administrator credentials are already configured and locked. Provide your current Administrator password or sign in as Administrator to rotate credentials.'
+        });
+      }
+      const verifyEmail = String(body.email || SOLE_ADMIN_EMAIL).trim().toLowerCase();
+      if (verifyEmail !== SOLE_ADMIN_EMAIL) {
+        return sendJson(res, 403, {
+          ok: false,
+          error: 'Administrator credential setup must be tied to malik.khabir@Miltongroupsecurity.org (case-insensitive).'
+        });
+      }
+      const cleanAdminUsername = sanitizeInput(body.username || 'malik.khabir', 60).toLowerCase();
+      const newPassword = String(body.newPassword || body.password || '');
+      if (!cleanAdminUsername || cleanAdminUsername.length < 3) {
+        return sendJson(res, 400, { ok: false, error: 'Administrator username (sAMAccountName) must be at least 3 characters.' });
+      }
+      if (!newPassword || newPassword.length < 8) {
+        return sendJson(res, 400, { ok: false, error: 'Administrator password must be at least 8 characters (case-sensitive).' });
+      }
+      if (isGenericOrRevokedSecret(newPassword)) {
+        logAudit('system', 'security.generic_admin_password_rejected', 'Blocked attempt to set a generic/revoked Administrator password');
+        return sendJson(res, 403, {
+          ok: false,
+          code: 'GENERIC_PASSWORD_PROHIBITED',
+          error: 'SECURITY ENFORCEMENT: Generic or previously used test passwords are strictly prohibited. Please set a unique, case-sensitive Administrator password.'
+        });
+      }
+      S.users.owner.username = cleanAdminUsername;
+      S.users.owner.email = SOLE_ADMIN_EMAIL;
+      S.users.owner.customPasswordDigest = mgcDigest(newPassword);
+      S.users.owner.passwordConfiguredAt = now();
+      S.currentUser = 'owner';
+      logAudit('owner', 'security.admin_credentials_provisioned', `Admin username=${cleanAdminUsername} & custom case-sensitive password configured`);
+      saveState(S);
+      const sessionToken = signToken({
+        uid: 'owner',
+        email: SOLE_ADMIN_EMAIL,
+        role: 'owner',
+        accessTier: 'OWNER_FULL',
+        provider: 'password',
+        ssoVerified: true
+      });
+      return sendJson(res, 200, {
+        ok: true,
+        adminCredentialsConfigured: true,
+        username: cleanAdminUsername,
+        email: SOLE_ADMIN_EMAIL,
+        redirect: '/access-admin',
+        message: 'Administrator username and case-sensitive password have been securely provisioned and locked.'
+      }, {
+        'Set-Cookie': [
+          `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
+        ]
       });
     }
 
@@ -1387,8 +1480,16 @@ const server = http.createServer(async (req, res) => {
         if (existingCustomer.status === 'denied' || existingCustomer.status === 'suspended') {
           return sendJson(res, 403, { ok: false, error: 'Access Denied: This account has been restricted by the Administrator.' });
         }
+        if (isGenericOrRevokedSecret(providedPass)) {
+          logAudit(existingCustomer.id, 'security.generic_user_password_rejected', `Rejected generic password attempt for ${email}`);
+          return sendJson(res, 403, {
+            ok: false,
+            code: 'GENERIC_PASSWORD_PROHIBITED',
+            error: 'SECURITY ENFORCEMENT: Generic or default passwords are permanently prohibited.'
+          });
+        }
         const passDig = mgcDigest(providedPass);
-        const expectedDig = existingCustomer.passwordDigest || DEFAULT_SEEDED_USER_PASSWORD_DIGEST;
+        const expectedDig = existingCustomer.passwordDigest || null;
         if (!expectedDig || passDig !== expectedDig) {
           logAudit(existingCustomer.id, 'security.user_password_failed', `Case-sensitive password mismatch for ${email}`);
           return sendJson(res, 403, { ok: false, error: 'Invalid email/username or password (passwords are case-sensitive).' });
@@ -1690,7 +1791,15 @@ const server = http.createServer(async (req, res) => {
         cleanUsername = `${cleanUsername}.${id.slice(-4)}`;
       }
       const rawPassword = String(d.password || '');
-      const computedPasswordDigest = rawPassword ? mgcDigest(rawPassword) : ((existing && existing.passwordDigest) || DEFAULT_SEEDED_USER_PASSWORD_DIGEST);
+      if (rawPassword && isGenericOrRevokedSecret(rawPassword)) {
+        logAudit('system', 'security.intake_generic_password_blocked', cleanEmail);
+        return sendJson(res, 403, {
+          ok: false,
+          code: 'GENERIC_PASSWORD_PROHIBITED',
+          error: 'SECURITY ENFORCEMENT: Generic or default passwords are prohibited. Choose a unique case-sensitive password (8+ characters).'
+        });
+      }
+      const computedPasswordDigest = rawPassword ? mgcDigest(rawPassword) : ((existing && existing.passwordDigest) || null);
       const caller = getAuthenticatedUser(req);
       const isAdminCaller = Boolean(caller && caller.role === 'owner' && caller.id === 'owner');
       const userOu = (isAdminCaller && (d.ou === 'internal' || d.ou === 'external'))
@@ -1815,13 +1924,27 @@ const server = http.createServer(async (req, res) => {
       if (!u) {
         return { status: 401, payload: { ok: false, error: 'Authentication required to submit payment or billing information.' } };
       }
+      // Hardened Financial Input Guard: Reject script/SQL/template injection attempts at the perimeter
+      const rawCheckFields = [body.billingName, body.billingEmail, body.billingOrg, body.postalCode, body.cardBrand, body.contractOrPo, body.dodaacOrUei];
+      if (rawCheckFields.some(v => v && /[<>{};$`\\]/.test(String(v)))) {
+        logAudit(u.id, 'security.payment_injection_blocked', 'Blocked suspicious characters in financial payload');
+        return { status: 400, payload: { ok: false, code: 'FINANCIAL_VALIDATION_FAILED', error: 'Security Validation Failed: Financial fields contain disallowed characters.' } };
+      }
+      // Reject un-tokenized raw PAN if submitted via body.cardNumber (12+ digits)
+      if (body.cardNumber && String(body.cardNumber).replace(/\D/g, '').length >= 12) {
+        logAudit(u.id, 'security.pci_raw_pan_blocked', 'Rejected raw PAN submission');
+        return { status: 400, payload: { ok: false, code: 'PCI_VIOLATION_RAW_PAN_REJECTED', error: 'PCI-DSS v4.0 SAQ-A Enforced: Raw Primary Account Numbers (PAN) are rejected. Submit tokenized last-4 only.' } };
+      }
+
+      const merchantEntity = String(body.merchantEntity || u.brand || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
       const method = ['card_tokenized', 'ach_nacha', 'gpc_wawf'].includes(body.method) ? body.method : 'card_tokenized';
+      const gatewayOption = method === 'gpc_wawf' ? 'OPTION_4_WAWF_PIEE_EFT' : 'OPTION_1_STRIPE_SAQ_A';
       const billingName = sanitizeInput(body.billingName || u.name || '', 100);
       const billingEmail = sanitizeInput(body.billingEmail || u.email || '', 120).toLowerCase();
       const billingOrg = sanitizeInput(body.billingOrg || u.org || '', 120);
       const addressLine1 = sanitizeInput(body.addressLine1 || body.address || 'Verified Billing Address on File', 140);
-      const city = sanitizeInput(body.city || '', 80);
-      const stateRegion = sanitizeInput(body.state || body.stateRegion || '', 40);
+      const city = sanitizeInput(body.city || 'Arlington', 80);
+      const stateRegion = sanitizeInput(body.state || body.stateRegion || 'VA', 40);
       const postalCode = sanitizeInput(body.postalCode || body.billingZip || body.zip || '', 24);
       const country = sanitizeInput(body.country || 'US', 8).toUpperCase();
       const rawPlanKey = String(body.planId || body.planTier || 'pro_99');
@@ -1837,7 +1960,7 @@ const server = http.createServer(async (req, res) => {
       };
       const planTier = PLAN_AMOUNTS[rawPlanKey] ? rawPlanKey : 'pro_99';
       const selectedPlan = PLAN_AMOUNTS[planTier];
-      const amountUsd = Number(body.amountUsd) > 0 ? Number(body.amountUsd) : selectedPlan.amountUsd;
+      const amountUsd = Number(body.amountUsd) > 0 ? Math.min(250000, Number(body.amountUsd)) : selectedPlan.amountUsd;
 
       // Mandatory Legal & Regulatory Attestations (EFTA / Reg E / NACHA + PCI-DSS v4.0 SAQ-A + MGC/FIX MSA)
       const eftaOk = Boolean(body.eftaNachaAccepted || body.eftaAccepted);
@@ -1852,21 +1975,42 @@ const server = http.createServer(async (req, res) => {
           }
         };
       }
-      if (!billingName || !/^\S+@\S+\.\S+$/.test(billingEmail) || !postalCode) {
+      if (!billingName || !/^\S+@\S+\.\S+$/.test(billingEmail) || !/^[A-Za-z0-9 -]{3,12}$/.test(postalCode)) {
         return {
           status: 400,
           payload: {
             ok: false,
-            error: 'Complete billing contact and postal/ZIP code are required for legal tax & compliance records.'
+            error: 'Valid Legal Name, Billing Email, and Postal/ZIP Code (5-digit ZIP) are required.'
           }
         };
       }
 
-      // Zero-PAN / PCI-DSS v4.0 SAQ-A Scrubbing: NEVER store raw card numbers, CVVs, or full bank account numbers.
-      const rawAccountOrCard = String(body.cardNumber || body.accountNumber || body.last4 || '').replace(/\D/g, '');
-      const last4 = rawAccountOrCard.length >= 4 ? rawAccountOrCard.slice(-4) : String(body.last4 || '4242').replace(/\D/g, '').slice(-4).padStart(4, '4');
-      if (!/^\d{4}$/.test(last4)) {
-        return { status: 400, payload: { ok: false, error: 'Valid 4-digit instrument identifier required.' } };
+      // Zero-PAN / PCI-DSS v4.0 SAQ-A Scrubbing: STRICTLY REJECT raw full PAN (13-19 digits) at the API boundary
+      const rawAccountOrCard = String(body.accountNumber || body.last4 || '').replace(/\D/g, '');
+      if (rawAccountOrCard.length > 4) {
+        logAudit(u.id, 'security.pci_raw_pan_rejected', 'Blocked attempt to transmit un-tokenized full card/account number');
+        return {
+          status: 400,
+          payload: {
+            ok: false,
+            code: 'PCI_VIOLATION_RAW_PAN_REJECTED',
+            error: 'PCI-DSS v4.0 SAQ-A Security Enforcement: Raw full card/account numbers are strictly rejected. Transmit only the 4-digit tokenized identifier.'
+          }
+        };
+      }
+      const last4 = rawAccountOrCard.length === 4 ? rawAccountOrCard : (method === 'gpc_wawf' ? 'WAWF' : '');
+      if (method !== 'gpc_wawf' && !/^\d{4}$/.test(last4)) {
+        return { status: 400, payload: { ok: false, error: 'Valid 4-digit tokenized instrument identifier required.' } };
+      }
+
+      const expMonthNum = Number(body.expMonth || 12);
+      const expYearNum = Number(body.expYear || 2029);
+      const fullExpYear = expYearNum < 100 ? 2000 + expYearNum : expYearNum;
+      const nowDate = new Date();
+      if (method === 'card_tokenized') {
+        if (expMonthNum < 1 || expMonthNum > 12 || fullExpYear < nowDate.getFullYear() || (fullExpYear === nowDate.getFullYear() && expMonthNum < (nowDate.getMonth() + 1))) {
+          return { status: 400, payload: { ok: false, error: 'Card expiration date is invalid or expired.' } };
+        }
       }
 
       let instrumentBrand = sanitizeInput(body.cardBrand || body.bankName || '', 40);
@@ -1898,11 +2042,18 @@ const server = http.createServer(async (req, res) => {
         .digest('hex')
         .slice(0, 32);
 
+      const merchantEntityName = merchantEntity === 'FIX'
+        ? 'F.I.X Solutions LLC (Commercial SaaS & Federal Subcontracting)'
+        : 'Milton Group Concepts LLC (EIN 92-1370285 · Parent / SDVOSB)';
+
       const paymentProfile = {
         verified: true,
         receiptId,
+        merchantEntity,
+        merchantEntityName,
+        gatewayOption,
         method,
-        methodLabel: method === 'ach_nacha' ? 'NACHA Commercial ACH' : method === 'gpc_wawf' ? 'Federal GPC / WAWF' : 'PCI-DSS v4.0 Tokenized Card',
+        methodLabel: method === 'ach_nacha' ? 'NACHA Commercial ACH' : method === 'gpc_wawf' ? 'Option 4 · Federal WAWF / PIEE EFT' : 'Option 1 · Stripe SAQ-A Tokenized Card',
         instrumentBrand,
         cardBrand: instrumentBrand,
         last4,
@@ -1935,7 +2086,7 @@ const server = http.createServer(async (req, res) => {
           pciTermsAccepted: true,
           msaAccepted: true,
           attestedAt: timestampIso,
-          merchantEntity: 'Milton Group Concepts LLC (EIN 92-1370285 · CAGE 17GC6 · UEI XN89KKM6JT89) & F.I.X Solutions LLC'
+          merchantEntity: merchantEntityName
         },
         verifiedAt: timestampIso,
         updatedAt: timestampIso
@@ -1949,6 +2100,9 @@ const server = http.createServer(async (req, res) => {
         billingName,
         userName: u.name,
         billingOrg,
+        merchantEntity,
+        merchantEntityName,
+        gatewayOption,
         method,
         methodLabel: paymentProfile.methodLabel,
         instrumentBrand,
@@ -2273,19 +2427,24 @@ const server = http.createServer(async (req, res) => {
       }
       if (act === 'updateAdminPassword') {
         const newPass = String(body.newPassword || '').trim();
-        if (!newPass || newPass.length < 6) {
-          return sendJson(res, 400, { ok: false, error: 'New Administrator password must be at least 6 characters.' });
+        if (!newPass || newPass.length < 8 || isGenericOrRevokedSecret(newPass)) {
+          return sendJson(res, 400, { ok: false, error: 'New Administrator password must be at least 8 characters and not use a generic pattern.' });
+        }
+        if (body.username) {
+          const cleanUn = sanitizeInput(body.username, 60).toLowerCase();
+          if (cleanUn && cleanUn.length >= 3) S.users.owner.username = cleanUn;
         }
         S.users.owner.customPasswordDigest = mgcDigest(newPass);
-        logAudit('owner', 'security.admin_password_updated', 'Sole Administrator password updated');
+        S.users.owner.passwordConfiguredAt = now();
+        logAudit('owner', 'security.admin_password_updated', 'Sole Administrator credentials updated');
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
       if (act === 'setUserPassword') {
         const target = S.users[body.userId];
         const newPass = String(body.newPassword || '').trim();
-        if (!target || target.id === 'owner' || !newPass || newPass.length < 4) {
-          return sendJson(res, 400, { ok: false, error: 'Valid non-admin user and password (min 4 chars) required.' });
+        if (!target || target.id === 'owner' || !newPass || newPass.length < 8 || isGenericOrRevokedSecret(newPass)) {
+          return sendJson(res, 400, { ok: false, error: 'Valid non-admin user and unique case-sensitive password (min 8 chars, non-generic) required.' });
         }
         target.passwordDigest = mgcDigest(newPass);
         target.hasPassword = true;

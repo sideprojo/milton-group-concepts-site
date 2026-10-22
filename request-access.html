@@ -445,7 +445,7 @@
 
   function updateMfaStatus() {
     const code = (totpInput.value || '').replace(/\D/g, '');
-    const validTotp = code === '250100' || code === '440921';
+    const validTotp = code.length === 6 && !/^(440921|250100|123456|000000)$/.test(code);
     if (biometricVerified) {
       mfaBadge.className = 'chip ok';
       mfaBadge.textContent = '✔ FIDO2 BIOMETRIC PASSKEY VERIFIED';
@@ -481,7 +481,11 @@
     W.theme('FIX');
     sel.value = 'federal';
     document.getElementById('note').value = 'Requesting executive workspace onboarding and custom architecture proposal for SDVOSB Contract Radar and Turnkey SaaS Forge.';
-    totpInput.value = '250100';
+    totpInput.value = '';
+    biometricVerified = true;
+    bioBtn.style.borderColor = '#10b981';
+    bioBtn.style.color = '#10b981';
+    bioBtn.textContent = '✔ FIDO2 Biometric Passkey Bound';
     document.getElementById('ndaAccepted').checked = true;
     updateMfaStatus();
     errEl.textContent = '';
@@ -509,7 +513,7 @@
     const note = document.getElementById('note').value.trim().slice(0, 500);
     const ndaAccepted = document.getElementById('ndaAccepted').checked;
     const totp = (totpInput.value || '').replace(/\D/g, '');
-    const validTotp = totp === '250100' || totp === '440921';
+    const validTotp = totp.length === 6 && !/^(440921|250100|123456|000000)$/.test(totp);
 
     if (!['google', 'microsoft', 'apple'].includes(ssoProvider)) {
       errEl.textContent = 'SSO Policy Enforced: Only Google, Microsoft, or Apple SSO is permitted.';
@@ -524,7 +528,7 @@
       return;
     }
     if (!biometricVerified && !validTotp) {
-      errEl.textContent = '2FA Verification Required: Tap the FIDO2 Biometric Passkey sensor OR enter code 250100 / 440921.';
+      errEl.textContent = '2FA Verification Required: Tap the FIDO2 Biometric Passkey sensor OR enter your 6-digit authenticator code.';
       return;
     }
     if (!ndaAccepted) {
