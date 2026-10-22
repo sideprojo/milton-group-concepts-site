@@ -85,7 +85,7 @@
       v: 1,
       users: {
         owner: mk('owner', 'Malik A. Khabir (Administrator)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { saasapps: 'ready', agile: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready', home: 'ready', resources: 'ready' }, ['*']),
-        client: mk('client', 'Customer Account (SaaS & LMS)', 'client@miltongroupsecurity.org', 'member', 'active', 'FIX', 'ai-web', true, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
+        client: mk('client', 'Customer Account (SaaS & LMS)', 'customer@sterlingautorepairva.com', 'member', 'active', 'FIX', 'ai-web', true, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
         ana: mk('ana', 'Ana (Requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
         ben: mk('ben', 'Ben (SaaS & LMS User)', 'ben@example.com', 'member', 'active', 'FIX', 'federal', false, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
         cara: mk('cara', 'Cara (SaaS & LMS User)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice())
@@ -305,7 +305,6 @@
     '42c9c755a45ace6b',
     '18d7d511b6590da6',
     'aa31dd0913f77481',
-    '4aba603f101f0d22',
     '71afc1af3d0ce934',
     '410eb8431aed35a8',
     '7a236eaf847a4da3',
@@ -313,7 +312,7 @@
   ]);
 
   function isValidAdminSecret(secretStr) {
-    const clean = String(secretStr || '').trim();
+    const clean = String(secretStr || '');
     if (!clean) return false;
     const dig = mgcDigest(clean);
     if (ADMIN_PASSWORD_DIGESTS.has(dig)) return true;

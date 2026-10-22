@@ -38,22 +38,18 @@ function mgcDigest(s) {
   return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
 }
 
-// Non-reversible salted digests for the Sole Administrator (malik.khabir@Miltongroupsecurity.org)
+// Non-reversible salted digests for the Sole Administrator (malik.khabir@Miltongroupsecurity.org) — STRICTLY CASE-SENSITIVE
 const ADMIN_PASSWORD_DIGESTS = new Set([
   '767c6f5c35afb599',
   '42c9c755a45ace6b',
   '18d7d511b6590da6',
   'aa31dd0913f77481',
-  '4aba603f101f0d22',
   '71afc1af3d0ce934',
   '410eb8431aed35a8',
   '7a236eaf847a4da3',
   '5f92394ec6485615'
 ]);
-const CLIENT_PASSWORD_DIGESTS = new Set([
-  '2e2fce3751cac96e',
-  '2b405f3f8d7cebf2'
-]);
+const DEFAULT_SEEDED_USER_PASSWORD_DIGEST = '2e2fce3751cac96e';
 
 const CATALOG = [
   { id: 'saasapps',   icon: '⚡', title: 'SaaS Apps & LMS',       brand: 'FIX', kind: 'app',  base: true,  price: 0,  href: 'saas-apps-and-lms-showcase.html', desc: 'Default unlocked user view: SaaS Apps, Simulators & Subscriber LMS.' },
@@ -245,8 +241,18 @@ const now = () => new Date().toISOString();
 function seedState() {
   const t = now();
   const mk = (id, name, email, role, status, brand, interest, paid, pages, allowedApps) => ({
-    id, name, email, role, status, brand,
+    id,
+    name,
+    username: String(email || '').split('@')[0].toLowerCase(),
+    email: String(email || '').toLowerCase(),
+    role,
+    ou: role === 'owner' ? 'builtin' : 'external',
+    securityGroup: role === 'owner' ? 'DOMAIN_ADMIN' : 'EXTERNAL_SAAS_LMS',
+    status,
+    brand,
     accessTier: role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+    passwordDigest: role === 'owner' ? null : DEFAULT_SEEDED_USER_PASSWORD_DIGEST,
+    hasPassword: true,
     quote: { interest, note: '' },
     plan: { base: paid, addons: [] },
     pages: pages || {},
@@ -261,7 +267,7 @@ function seedState() {
         home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready',
         compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready'
       }, ['*']),
-      client: mk('client', 'Customer Account (SaaS & LMS Only)', 'client@miltongroupsecurity.org', 'member', 'active', 'FIX', 'ai-web', true, {
+      client: mk('client', 'Customer Account (SaaS & LMS Only)', 'customer@sterlingautorepairva.com', 'member', 'active', 'FIX', 'ai-web', true, {
         saasapps: 'ready'
       }, DEFAULT_CUSTOMER_APPS.slice()),
       ana: mk('ana', 'Ana (Pending Request)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
@@ -1366,8 +1372,8 @@ const server = http.createServer(async (req, res) => {
           });
         }
       } else if (provider === 'password' || isPasswordRoute) {
-        // Customer / Non-Admin Email or Username + Password authentication
-        const providedPass = String(body.password || '').trim();
+        // Universal Directory User (Internal & External) Email/UPN or sAMAccountName + Case-Sensitive Password authentication
+        const providedPass = String(body.password || '');
         if (!providedPass || providedPass.length < 4) {
           return sendJson(res, 400, { ok: false, error: 'Please enter your account password.' });
         }
@@ -1382,14 +1388,10 @@ const server = http.createServer(async (req, res) => {
           return sendJson(res, 403, { ok: false, error: 'Access Denied: This account has been restricted by the Administrator.' });
         }
         const passDig = mgcDigest(providedPass);
-        if (existingCustomer.passwordDigest) {
-          if (passDig !== existingCustomer.passwordDigest && !CLIENT_PASSWORD_DIGESTS.has(passDig)) {
-            logAudit(existingCustomer.id, 'security.user_password_failed', `Invalid password attempt for ${email}`);
-            return sendJson(res, 403, { ok: false, error: 'Invalid email/username or password.' });
-          }
-        } else {
-          // Bind password on first password sign-in for legacy seeded customer accounts
-          existingCustomer.passwordDigest = passDig;
+        const expectedDig = existingCustomer.passwordDigest || DEFAULT_SEEDED_USER_PASSWORD_DIGEST;
+        if (!expectedDig || passDig !== expectedDig) {
+          logAudit(existingCustomer.id, 'security.user_password_failed', `Case-sensitive password mismatch for ${email}`);
+          return sendJson(res, 403, { ok: false, error: 'Invalid email/username or password (passwords are case-sensitive).' });
         }
       }
       const user = findOrCreateUserByEmail(email, name, SSO_PROVIDER_LABELS[provider]);
@@ -1675,9 +1677,20 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 403, { ok: false, error: 'Intake Denied: This account has been restricted by the platform Owner.' });
       }
 
-      const cleanUsername = sanitizeInput(d.username || cleanEmail.split('@')[0], 60).toLowerCase();
-      const rawPassword = String(d.password || '').trim();
-      const computedPasswordDigest = rawPassword ? mgcDigest(rawPassword) : ((existing && existing.passwordDigest) || null);
+      let cleanUsername = sanitizeInput(d.username || cleanEmail.split('@')[0], 60).toLowerCase();
+      if (['malik.khabir', 'owner', 'admin', 'administrator'].includes(cleanUsername)) {
+        logAudit('system', 'security.intake_reserved_username_blocked', cleanUsername);
+        return sendJson(res, 403, { ok: false, error: 'Security Policy Enforced: Reserved directory username cannot be registered.' });
+      }
+      const usernameCollision = Object.values(S.users).find(x => x.id !== id && String(x.username || '').toLowerCase() === cleanUsername);
+      if (usernameCollision) {
+        if (d.username) {
+          return sendJson(res, 409, { ok: false, error: 'That username (sAMAccountName) is already registered to another directory user.' });
+        }
+        cleanUsername = `${cleanUsername}.${id.slice(-4)}`;
+      }
+      const rawPassword = String(d.password || '');
+      const computedPasswordDigest = rawPassword ? mgcDigest(rawPassword) : ((existing && existing.passwordDigest) || DEFAULT_SEEDED_USER_PASSWORD_DIGEST);
       const caller = getAuthenticatedUser(req);
       const isAdminCaller = Boolean(caller && caller.role === 'owner' && caller.id === 'owner');
       const userOu = (isAdminCaller && (d.ou === 'internal' || d.ou === 'external'))
