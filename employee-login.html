@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; connect-src 'self' https:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Internal Staff Sign In &amp; Credential Activation | Milton Group Concepts LLC</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  body.mgc-login-screen {
+    min-height: 100vh;
+    margin: 0;
+    font-family: Inter, system-ui, sans-serif;
+    background:
+      linear-gradient(160deg, rgba(4, 9, 20, 0.90) 0%, rgba(7, 16, 34, 0.88) 52%, rgba(5, 12, 26, 0.94) 100%),
+      url("assets/exec_dc_skyline.png") center/cover no-repeat fixed !important;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .login-stage {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    padding: 28px 18px 44px;
+    position: relative;
+    z-index: 1;
+  }
+  .login-card {
+    max-width: 820px;
+    width: 100%;
+    background: rgba(6, 12, 26, 0.92);
+    border: 1px solid rgba(56, 189, 248, 0.42);
+    border-radius: 18px;
+    padding: 26px 28px;
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.72), 0 0 36px rgba(56, 189, 248, 0.12);
+    backdrop-filter: blur(20px);
+  }
+  .ms-form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 16px;
+    align-items: start;
+  }
+  .ms-form-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 16px;
+    align-items: start;
+  }
+  @media (max-width: 680px) {
+    .ms-form-grid-2, .ms-form-grid-3 { grid-template-columns: 1fr; }
+  }
+  .ms-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-width: 0;
+  }
+  .ms-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ms-label-req {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #93c5fd;
+    flex-shrink: 0;
+  }
+  .ms-input {
+    width: 100%;
+    height: 42px !important;
+    box-sizing: border-box !important;
+    padding: 0 13px !important;
+    border-radius: 6px !important;
+    background: rgba(6, 11, 24, 0.94) !important;
+    border: 1px solid rgba(148, 163, 184, 0.42) !important;
+    border-bottom: 2px solid #0067b8 !important;
+    color: #f8fafc !important;
+    font-size: 13px !important;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+  }
+  .ms-input:focus {
+    outline: none !important;
+    border-color: #38bdf8 !important;
+    border-bottom: 2px solid #38bdf8 !important;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.18) !important;
+  }
+  .ms-input.violating {
+    border-color: rgba(239, 68, 68, 0.85) !important;
+    border-bottom: 2px solid #ef4444 !important;
+    background: rgba(127, 29, 29, 0.18) !important;
+  }
+  .ms-input.valid {
+    border-color: rgba(16, 185, 129, 0.65) !important;
+    border-bottom: 2px solid #10b981 !important;
+  }
+  .ms-violation-alert {
+    display: none;
+    background: rgba(127, 29, 29, 0.32);
+    border: 1px solid rgba(248, 113, 113, 0.58);
+    border-left: 4px solid #ef4444;
+    color: #fecaca;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 12px;
+    line-height: 1.45;
+    margin-top: 10px;
+  }
+  .ms-violation-alert.active {
+    display: block;
+  }
+  .ms-req-matrix {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  @media (max-width: 680px) {
+    .ms-req-matrix { grid-template-columns: 1fr; }
+  }
+  .ms-req-box {
+    background: rgba(8, 14, 29, 0.88);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 8px;
+    padding: 9px 11px;
+  }
+  .ms-req-title {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+  }
+  .ms-req-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .ms-req-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(30, 41, 59, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    color: #cbd5e1;
+  }
+  .ms-req-pill.ok {
+    background: rgba(6, 78, 59, 0.45);
+    border-color: rgba(16, 185, 129, 0.58);
+    color: #6ee7b7;
+  }
+  .ms-req-pill.violated {
+    background: rgba(127, 29, 29, 0.45);
+    border-color: rgba(248, 113, 113, 0.65);
+    color: #fca5a5;
+  }
+  .tos-reader-panel {
+    display: none;
+    max-height: 210px;
+    overflow-y: auto;
+    margin-top: 10px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: rgba(3, 7, 18, 0.94);
+    border: 1px solid rgba(56, 189, 248, 0.36);
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: #cbd5e1;
+  }
+  .tos-reader-panel.open {
+    display: block;
+  }
+  .tos-schedule-item {
+    padding-bottom: 9px;
+    margin-bottom: 9px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  }
+  .tos-schedule-item:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+</style>
+</head>
+<body class="mgc-login-screen">
+<main class="login-stage">
+  <div class="login-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(148,163,184,0.18)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg width="20" height="20" viewBox="0 0 23 23" aria-hidden="true">
+          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#f8fafc;letter-spacing:.01em">Internal Employee Directory Sign-On</div>
+          <div style="font-size:11px;color:#94a3b8">Assigned Staff Usernames · Mandatory Password Reset &amp; Email Verification</div>
+        </div>
+      </div>
+      <div style="display:inline-flex;background:rgba(4,8,20,0.85);padding:4px;border-radius:10px;border:1px solid rgba(148,163,184,0.22)" role="tablist" aria-label="Employee Authentication Mode">
+        <button type="button" class="btn pri" id="modeTabSignIn" role="tab" aria-selected="true" style="padding:7px 18px;border-radius:7px;font-size:12.5px">Staff Sign In</button>
+        <button type="button" class="btn" id="modeTabRegister" role="tab" aria-selected="false" style="padding:7px 18px;border-radius:7px;font-size:12.5px;border-color:transparent;background:transparent">Activate / Reset Password</button>
+      </div>
+    </div>
+
+    <!-- STAFF SIGN IN PANE -->
+    <div id="signInPane">
+      <form id="empSignInForm" onsubmit="return false" style="background:rgba(4,8,20,0.78);border:1px solid rgba(56,189,248,0.38);border-radius:14px;padding:18px 20px">
+        <div class="ms-form-grid-2">
+          <div class="ms-field">
+            <label for="empLoginUsername" class="ms-label"><span>Assigned Employee Username</span><span class="ms-label-req">Required</span></label>
+            <input id="empLoginUsername" class="ms-input" type="text" maxlength="64" placeholder="emp.first.last" autocomplete="username" spellcheck="false" required>
+          </div>
+          <div class="ms-field">
+            <label for="empLoginPassword" class="ms-label"><span>Employee Password</span><span class="ms-label-req">Case-Sensitive</span></label>
+            <input id="empLoginPassword" class="ms-input" type="password" maxlength="128" placeholder="Enter your password" autocomplete="current-password" required>
+          </div>
+        </div>
+        <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
+          <span style="font-size:11.5px;color:#94a3b8">First-time staff members must complete password reset and email verification in the Activate tab.</span>
+          <button type="submit" class="btn pri" id="btnEmpLogin" style="padding:9px 22px;font-size:13px">Sign In to Staff Portal →</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 3-PAGE EMPLOYEE CREDENTIAL ACTIVATION & MANDATORY PASSWORD RESET -->
+    <form id="registerPane" style="display:none" onsubmit="return false">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+        <div id="regStepPill1" class="step on" style="padding:8px 12px;border-radius:9px;font-size:11.5px;display:flex;align-items:center;justify-content:space-between">
+          <span><b>1.</b> Assigned ID &amp; Password Reset</span>
+          <span id="regStepIcon1" style="font-size:11px">Active</span>
+        </div>
+        <div id="regStepPill2" class="step" style="padding:8px 12px;border-radius:9px;font-size:11.5px;display:flex;align-items:center;justify-content:space-between;opacity:.6">
+          <span><b>2.</b> Recovery &amp; Email Verify</span>
+          <span id="regStepIcon2" style="font-size:11px">Locked</span>
+        </div>
+        <div id="regStepPill3" class="step" style="padding:8px 12px;border-radius:9px;font-size:11.5px;display:flex;align-items:center;justify-content:space-between;opacity:.6">
+          <span><b>3.</b> Address &amp; Staff Terms</span>
+          <span id="regStepIcon3" style="font-size:11px">Locked</span>
+        </div>
+      </div>
+
+      <!-- PAGE 1: ASSIGNED EMPLOYEE USERNAME & MANDATORY PASSWORD RESET -->
+      <div id="regPage1" style="background:rgba(4,8,20,0.82);border:1px solid rgba(56,189,248,0.42);border-radius:14px;padding:18px 20px">
+        <div class="row" style="margin-bottom:14px">
+          <div>
+            <span class="chip ok" style="font-size:10.5px">Page 1 of 3 · Assigned Username &amp; Password Reset</span>
+            <h2 id="regPage1Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Enter Assigned Username &amp; Set New Password</h2>
+          </div>
+          <span id="regPage1StatusChip" class="chip warn" style="font-size:11px">Required</span>
+        </div>
+
+        <div class="ms-form-grid-2" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regUsername" class="ms-label">
+              <span>Assigned Employee Username</span>
+              <span id="regUsernameRoleTag" class="ms-label-req">Provided by Admin</span>
+            </label>
+            <input id="regUsername" class="ms-input" type="text" maxlength="32" placeholder="e.g. emp.jordan.vance" required spellcheck="false" autocomplete="username">
+          </div>
+          <div class="ms-field">
+            <label for="regProvider" class="ms-label">
+              <span>Authentication Method</span>
+              <span class="ms-label-req">2FA / OIDC Ready</span>
+            </label>
+            <select id="regProvider" class="ms-input">
+              <option value="password">Assigned Username &amp; Password</option>
+              <option value="microsoft">Microsoft Entra ID + Assigned Username</option>
+              <option value="google">Google Workspace + Assigned Username</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ms-form-grid-2">
+          <div class="ms-field">
+            <label for="regPassword" class="ms-label">
+              <span id="lblRegPasswordText">New Password (Reset)</span>
+              <span class="ms-label-req">8+ Chars · Case-Sensitive</span>
+            </label>
+            <input id="regPassword" class="ms-input" type="password" maxlength="128" placeholder="8+ chars, upper, lower, number, symbol" required autocomplete="new-password">
+          </div>
+          <div class="ms-field">
+            <label for="regPasswordConfirm" class="ms-label">
+              <span id="lblRegPasswordConfirmText">Confirm New Password</span>
+              <span class="ms-label-req">Must Match</span>
+            </label>
+            <input id="regPasswordConfirm" class="ms-input" type="password" maxlength="128" placeholder="Re-enter new password" required autocomplete="new-password">
+          </div>
+        </div>
+
+        <div id="regPage1ViolationBanner" class="ms-violation-alert" role="alert"></div>
+
+        <div class="ms-req-matrix">
+          <div class="ms-req-box">
+            <div class="ms-req-title">
+              <span>Username Standards</span>
+              <span id="unSummaryBadge" style="color:#93c5fd">3 Checks</span>
+            </div>
+            <div class="ms-req-list">
+              <span id="unChkLen" class="ms-req-pill">○ 4–32 Chars</span>
+              <span id="unChkFmt" class="ms-req-pill">○ Valid Format</span>
+              <span id="unChkUniq" class="ms-req-pill">○ Assigned Staff ID</span>
+            </div>
+          </div>
+          <div class="ms-req-box">
+            <div class="ms-req-title">
+              <span>Password Standards</span>
+              <span id="pwSummaryBadge" style="color:#93c5fd">5 Checks</span>
+            </div>
+            <div class="ms-req-list">
+              <span id="pwChkLen" class="ms-req-pill">○ 8+ Chars</span>
+              <span id="pwChkCase" class="ms-req-pill">○ Upper &amp; Lower</span>
+              <span id="pwChkNum" class="ms-req-pill">○ Number (0-9)</span>
+              <span id="pwChkSym" class="ms-req-pill">○ Special Symbol</span>
+              <span id="pwChkMatch" class="ms-req-pill">○ Confirmed &amp; Unique</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
+          <span style="font-size:11.5px;color:#94a3b8">Enter the username provided in your onboarding notice and set your new password.</span>
+          <button type="button" class="btn pri" id="btnRegNext1" disabled style="padding:9px 20px;font-size:13px">Next: Recovery &amp; Email Verification →</button>
+        </div>
+      </div>
+
+      <!-- PAGE 2: RECOVERY EMAIL, SECURITY PHONE & 6-DIGIT EMAIL VERIFICATION -->
+      <div id="regPage2" style="display:none;background:rgba(4,8,20,0.82);border:1px solid rgba(56,189,248,0.42);border-radius:14px;padding:18px 20px">
+        <div class="row" style="margin-bottom:14px">
+          <div>
+            <span class="chip ok" style="font-size:10.5px">Page 2 of 3 · Recovery &amp; Email Verification</span>
+            <h2 style="margin:4px 0 0;font-size:15.5px;font-weight:700">Recovery Email, Phone &amp; Email Code Verification</h2>
+          </div>
+          <span id="regPage2StatusChip" class="chip warn" style="font-size:11px">Required</span>
+        </div>
+
+        <div class="ms-form-grid-2" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regName" class="ms-label"><span>Full Legal Name</span><span class="ms-label-req">Required</span></label>
+            <input id="regName" class="ms-input" type="text" maxlength="100" placeholder="Enter full legal name" required>
+          </div>
+          <div class="ms-field">
+            <label for="regEmail" class="ms-label"><span>Work Email Address</span><span class="ms-label-req">Verification Target</span></label>
+            <input id="regEmail" class="ms-input" type="email" maxlength="140" placeholder="name@miltongroupsecurity.org" required spellcheck="false">
+          </div>
+        </div>
+
+        <div class="ms-form-grid-2" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regRecoveryEmail" class="ms-label"><span style="color:#fde047">Recovery Email Address</span><span class="ms-label-req" style="color:#fde047">Required</span></label>
+            <input id="regRecoveryEmail" class="ms-input" type="email" maxlength="140" placeholder="personal.recovery@domain.com" required spellcheck="false">
+          </div>
+          <div class="ms-field">
+            <label for="regPhone" class="ms-label"><span style="color:#fde047">Security Phone Number</span><span class="ms-label-req" style="color:#fde047">10–15 Digits Required</span></label>
+            <input id="regPhone" class="ms-input" type="tel" maxlength="24" placeholder="+1 (555) 234-5678" required>
+          </div>
+        </div>
+
+        <div class="ms-form-grid-2" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regOrg" class="ms-label"><span>Assigned Department / Division</span><span class="ms-label-req">Required</span></label>
+            <input id="regOrg" class="ms-input" type="text" maxlength="120" placeholder="MGC Internal Operations">
+          </div>
+          <div class="ms-field">
+            <label for="regDetectedScopeDisplay" class="ms-label"><span>Directory Classification</span><span class="ms-label-req">Internal</span></label>
+            <input id="regDetectedScopeDisplay" class="ms-input" type="text" readonly value="Internal Staff Directory" style="color:#93c5fd !important;cursor:default">
+            <input type="hidden" id="regAccountScope" value="internal">
+          </div>
+        </div>
+
+        <div id="regEmailVerificationBox" style="padding:12px 14px;border-radius:10px;background:rgba(7,13,27,0.92);border:1px solid rgba(56,189,248,0.38)">
+          <div class="row" style="margin-bottom:8px">
+            <div>
+              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#38bdf8">Email &amp; Username Verification</span>
+              <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px">Send a 6-digit verification code to your Work Email to verify your assigned username and password reset.</div>
+            </div>
+            <span id="regEmailVerifiedBadge" class="chip warn" style="font-size:10.5px">Required</span>
+          </div>
+          <div style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center">
+            <button type="button" class="btn" id="btnSendEmailCode" style="height:40px;padding:0 14px;font-size:12px;border-color:rgba(56,189,248,0.55);color:#7dd3fc">📧 Send Verification Code</button>
+            <input id="regEmailVerifyCode" class="ms-input" type="text" maxlength="6" inputmode="numeric" placeholder="Enter 6-digit email verification code" style="height:40px !important;letter-spacing:0.14em;font-weight:700;text-align:center">
+            <button type="button" class="btn pri" id="btnVerifyEmailCode" style="height:40px;padding:0 16px;font-size:12px">Verify Email Code</button>
+          </div>
+          <div id="regEmailDispatchBanner" style="display:none;margin-top:8px;padding:8px 11px;border-radius:6px;background:rgba(6,78,59,0.28);border:1px solid rgba(16,185,129,0.45);font-size:11.5px;color:#a7f3d0"></div>
+        </div>
+
+        <div id="regPage2ViolationBanner" class="ms-violation-alert" role="alert"></div>
+
+        <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
+          <button type="button" class="btn" id="btnRegBack2" style="padding:9px 16px;font-size:12.5px">← Back to Page 1</button>
+          <button type="button" class="btn pri" id="btnRegNext2" disabled style="padding:9px 20px;font-size:13px">Next: Address &amp; Staff Terms →</button>
+        </div>
+      </div>
+
+      <!-- PAGE 3: MANDATORY PHYSICAL ADDRESS & CLICKABLE STAFF TERMS -->
+      <div id="regPage3" style="display:none;background:rgba(4,8,20,0.82);border:1px solid rgba(56,189,248,0.42);border-radius:14px;padding:18px 20px">
+        <div class="row" style="margin-bottom:14px">
+          <div>
+            <span class="chip ok" style="font-size:10.5px">Page 3 of 3 · Physical Address &amp; Terms of Service</span>
+            <h2 id="regPage3Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Physical Address &amp; Terms of Service</h2>
+          </div>
+          <span id="regAddressPolicyBadge" class="chip warn" style="font-size:11px">Required</span>
+        </div>
+
+        <div class="ms-field" style="margin-bottom:14px">
+          <label for="regStreet" class="ms-label"><span style="color:#fde047">Street Address</span><span class="ms-label-req" style="color:#fde047">Required</span></label>
+          <input id="regStreet" class="ms-input" type="text" maxlength="140" placeholder="Street address, apartment, or unit number" required>
+        </div>
+
+        <div class="ms-form-grid-3" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regCity" class="ms-label"><span style="color:#fde047">City</span><span class="ms-label-req">Required</span></label>
+            <input id="regCity" class="ms-input" type="text" maxlength="80" placeholder="City" required>
+          </div>
+          <div class="ms-field">
+            <label for="regState" class="ms-label"><span style="color:#fde047">State / Region</span><span class="ms-label-req">Required</span></label>
+            <input id="regState" class="ms-input" type="text" maxlength="60" placeholder="State or province" required>
+          </div>
+          <div class="ms-field">
+            <label for="regZip" class="ms-label"><span style="color:#fde047">Postal / ZIP Code</span><span class="ms-label-req">Required</span></label>
+            <input id="regZip" class="ms-input" type="text" maxlength="24" placeholder="ZIP or postal code" required>
+          </div>
+        </div>
+
+        <div style="padding:12px 14px;border-radius:10px;background:rgba(7,13,27,0.92);border:1px solid rgba(56,189,248,0.42)">
+          <div class="row" style="gap:10px">
+            <div>
+              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fde047">Terms of Service &amp; Security Policy Review</span>
+              <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px">Click below to review all required schedules before accepting.</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span id="tosReviewBadge" class="chip warn" style="font-size:10.5px">Click Terms to Review</span>
+              <button type="button" class="btn" id="btnToggleTosReader" style="padding:6px 12px;font-size:11.5px;border-color:rgba(56,189,248,0.55);color:#7dd3fc">📄 View Required Terms of Service (5 Schedules)</button>
+            </div>
+          </div>
+
+          <div id="tosFullReaderPanel" class="tos-reader-panel" role="region" aria-label="Required Terms of Service Schedules">
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 1 · Acceptable Use &amp; Zero-Trust Access Policy:</strong>
+              Access to internal portals is restricted to authorized personnel using their assigned username, verified email, and 2FA credential.
+            </div>
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 2 · Personnel Privacy &amp; Directory Data Governance:</strong>
+              Identity, recovery email, security phone number, and residential address records are safeguarded under NIST SP 800-171 Rev 3 and CMMC 2.0 Level 2 controls.
+            </div>
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 3 · Assigned Username, Password Reset &amp; Email Verification Policy:</strong>
+              Staff members are issued official directory usernames and must complete email verification and a mandatory password reset prior to session authentication.
+            </div>
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 4 · Audit Logging &amp; Compliance Attestation:</strong>
+              All directory actions and task updates are recorded in immutable SHA-256 operational logs.
+            </div>
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 5 · Non-Disclosure Agreement (NDA) &amp; Defined-Template AI Governance:</strong>
+              All internal architectures, training materials, and operational records remain confidential property of Milton Group Concepts LLC &amp; F.I.X Solutions LLC.
+            </div>
+            <div style="margin-top:10px;display:flex;justify-content:flex-end">
+              <button type="button" class="btn pri" id="btnAcknowledgeTosSchedules" style="padding:6px 14px;font-size:11.5px">✓ I Have Read &amp; Accept All 5 Schedules</button>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid rgba(148,163,184,0.18)">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#f8fafc;cursor:pointer;font-weight:600">
+              <input type="checkbox" id="regNda" style="width:16px;height:16px">
+              <span>I have clicked, reviewed, and accept the Required Terms of Service (Schedules 1–5) &amp; Confidentiality Agreement (Required)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:16px;justify-content:space-between;gap:10px">
+          <button type="button" class="btn" id="btnRegBack3" style="padding:9px 16px;font-size:12.5px">← Back to Page 2</button>
+          <button type="button" class="btn pri" id="btnSubmitRegister" disabled style="padding:10px 22px;font-size:13px">Complete Activation &amp; Launch Staff Portal →</button>
+        </div>
+      </div>
+    </form>
+
+    <p id="authMsg" style="color:#f87171;margin-top:14px;font-weight:500;text-align:center;min-height:18px"></p>
+  </div>
+</main>
+
+<script src="mgc-workspace-core.js"></script>
+<script>
+(function() {
+  const W = window.MGCW || {};
+  if (W.injectCss) W.injectCss();
+  if (W.theme) W.theme('MGC');
+  const msg = document.getElementById('authMsg');
+  const tabSignIn = document.getElementById('modeTabSignIn');
+  const tabRegister = document.getElementById('modeTabRegister');
+  const signInPane = document.getElementById('signInPane');
+  const registerPane = document.getElementById('registerPane');
+
+  let currentRegPage = 1;
+  let emailVerifiedState = false;
+  let emailVerifiedForAddress = '';
+  let emailVerificationToken = '';
+  let tosSchedulesReviewed = false;
+
+  const regPage1 = document.getElementById('regPage1');
+  const regPage2 = document.getElementById('regPage2');
+  const regPage3 = document.getElementById('regPage3');
+  const regStepPill1 = document.getElementById('regStepPill1');
+  const regStepPill2 = document.getElementById('regStepPill2');
+  const regStepPill3 = document.getElementById('regStepPill3');
+  const regStepIcon1 = document.getElementById('regStepIcon1');
+  const regStepIcon2 = document.getElementById('regStepIcon2');
+  const regStepIcon3 = document.getElementById('regStepIcon3');
+
+  const regUsernameEl = document.getElementById('regUsername');
+  const regPasswordEl = document.getElementById('regPassword');
+  const regPasswordConfirmEl = document.getElementById('regPasswordConfirm');
+  const regProviderEl = document.getElementById('regProvider');
+  const regNameEl = document.getElementById('regName');
+  const regEmailEl = document.getElementById('regEmail');
+  const regRecoveryEmailEl = document.getElementById('regRecoveryEmail');
+  const regPhoneEl = document.getElementById('regPhone');
+  const regOrgEl = document.getElementById('regOrg');
+  const regStreetEl = document.getElementById('regStreet');
+  const regCityEl = document.getElementById('regCity');
+  const regStateEl = document.getElementById('regState');
+  const regZipEl = document.getElementById('regZip');
+  const regNdaEl = document.getElementById('regNda');
+
+  const btnSendEmailCode = document.getElementById('btnSendEmailCode');
+  const btnVerifyEmailCode = document.getElementById('btnVerifyEmailCode');
+  const regEmailVerifyCodeEl = document.getElementById('regEmailVerifyCode');
+  const regEmailVerifiedBadge = document.getElementById('regEmailVerifiedBadge');
+  const regEmailDispatchBanner = document.getElementById('regEmailDispatchBanner');
+
+  const btnToggleTosReader = document.getElementById('btnToggleTosReader');
+  const btnAcknowledgeTosSchedules = document.getElementById('btnAcknowledgeTosSchedules');
+  const tosFullReaderPanel = document.getElementById('tosFullReaderPanel');
+  const tosReviewBadge = document.getElementById('tosReviewBadge');
+
+  const btnRegNext1 = document.getElementById('btnRegNext1');
+  const btnRegBack2 = document.getElementById('btnRegBack2');
+  const btnRegNext2 = document.getElementById('btnRegNext2');
+  const btnRegBack3 = document.getElementById('btnRegBack3');
+  const btnSubmitRegister = document.getElementById('btnSubmitRegister');
+
+  function setMsReqPill(id, label, passed, touched) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (passed) {
+      el.className = 'ms-req-pill ok';
+      el.textContent = '✓ ' + label;
+    } else if (touched) {
+      el.className = 'ms-req-pill violated';
+      el.textContent = '✕ ' + label;
+    } else {
+      el.className = 'ms-req-pill';
+      el.textContent = '○ ' + label;
+    }
+  }
+
+  function setMsInputState(inputEl, passed, touched) {
+    if (!inputEl) return;
+    inputEl.classList.remove('valid', 'violating');
+    if (passed) inputEl.classList.add('valid');
+    else if (touched) inputEl.classList.add('violating');
+  }
+
+  function evaluateRegPage1() {
+    const rawUn = (regUsernameEl && regUsernameEl.value || '').trim().toLowerCase();
+    const rawPw = (regPasswordEl && regPasswordEl.value || '');
+    const rawPwConfirm = (regPasswordConfirmEl && regPasswordConfirmEl.value || '');
+    const unTouched = rawUn.length > 0;
+    const pwTouched = rawPw.length > 0;
+    const pwConfirmTouched = rawPwConfirm.length > 0;
+
+    const unRes = W.validateUsernameStandard
+      ? W.validateUsernameStandard(rawUn, undefined, 'employee')
+      : {
+          ok: /^(emp|staff)\.[a-z0-9._-]{2,28}$/.test(rawUn),
+          isAssignedEmployee: /^(emp|staff)\.[a-z0-9._-]{2,28}$/.test(rawUn),
+          checks: {
+            lenOk: rawUn.length >= 4 && rawUn.length <= 32,
+            formatOk: /^[a-z0-9][a-z0-9._-]{3,31}$/.test(rawUn),
+            notReserved: /^(emp|staff)\.[a-z0-9._-]{2,28}$/.test(rawUn),
+            uniqueOk: true
+          },
+          violations: []
+        };
+
+    const pwRes = W.validatePasswordStandard
+      ? W.validatePasswordStandard(rawPw, rawUn)
+      : {
+          ok: rawPw.length >= 8 && /[A-Z]/.test(rawPw) && /[a-z]/.test(rawPw) && /\d/.test(rawPw) && /[^A-Za-z0-9\s]/.test(rawPw),
+          checks: {
+            lenOk: rawPw.length >= 8,
+            upperOk: /[A-Z]/.test(rawPw),
+            lowerOk: /[a-z]/.test(rawPw),
+            digitOk: /\d/.test(rawPw),
+            specialOk: /[^A-Za-z0-9\s]/.test(rawPw),
+            notContainsUser: !rawUn || !rawPw.toLowerCase().includes(rawUn),
+            notGeneric: true
+          },
+          violations: []
+        };
+
+    const confirmMatch = Boolean(rawPw && rawPw === rawPwConfirm && pwRes.checks.notContainsUser && pwRes.checks.notGeneric);
+
+    setMsReqPill('unChkLen', '4–32 Chars', unRes.checks.lenOk, unTouched);
+    setMsReqPill('unChkFmt', 'Valid Format', unRes.checks.formatOk, unTouched);
+    setMsReqPill('unChkUniq', 'Assigned Staff ID', unRes.checks.notReserved && unRes.checks.uniqueOk, unTouched);
+
+    setMsReqPill('pwChkLen', '8+ Chars', pwRes.checks.lenOk, pwTouched);
+    setMsReqPill('pwChkCase', 'Upper & Lower', pwRes.checks.upperOk && pwRes.checks.lowerOk, pwTouched);
+    setMsReqPill('pwChkNum', 'Number (0-9)', pwRes.checks.digitOk, pwTouched);
+    setMsReqPill('pwChkSym', 'Special Symbol', pwRes.checks.specialOk, pwTouched);
+    setMsReqPill('pwChkMatch', 'Confirmed & Unique', confirmMatch, pwTouched || pwConfirmTouched);
+
+    setMsInputState(regUsernameEl, unRes.ok, unTouched);
+    setMsInputState(regPasswordEl, pwRes.ok, pwTouched);
+    setMsInputState(regPasswordConfirmEl, confirmMatch && pwRes.ok, pwConfirmTouched);
+
+    if (unRes.ok && unRes.assignedProfile) {
+      const prof = unRes.assignedProfile;
+      if (prof.name && regNameEl && !regNameEl.value) regNameEl.value = prof.name;
+      if (prof.email && regEmailEl && !regEmailEl.value) regEmailEl.value = prof.email;
+      if (prof.org && regOrgEl && !regOrgEl.value) regOrgEl.value = prof.org;
+    }
+
+    const roleTag = document.getElementById('regUsernameRoleTag');
+    if (roleTag) {
+      roleTag.textContent = unTouched && unRes.ok ? '✓ Assigned ID Verified' : 'Provided by Admin';
+      roleTag.style.color = unTouched && unRes.ok ? '#34d399' : '#93c5fd';
+    }
+
+    const violationBanner = document.getElementById('regPage1ViolationBanner');
+    const activeViolations = [];
+    if (unTouched && !unRes.ok) {
+      (unRes.violations && unRes.violations.length ? unRes.violations : [unRes.error]).forEach(v => { if (v) activeViolations.push(v); });
+    }
+    if (pwTouched && !pwRes.ok) {
+      (pwRes.violations && pwRes.violations.length ? pwRes.violations : [pwRes.error]).forEach(v => { if (v) activeViolations.push(v); });
+    }
+    if (pwConfirmTouched && rawPw !== rawPwConfirm) {
+      activeViolations.push('Confirmation password does not match your password.');
+    }
+    if (violationBanner) {
+      if (activeViolations.length > 0) {
+        violationBanner.className = 'ms-violation-alert active';
+        violationBanner.innerHTML = '<ul style="margin:0 0 0 18px;padding:0">' +
+          activeViolations.map(v => '<li>' + W.esc(v) + '</li>').join('') + '</ul>';
+      } else {
+        violationBanner.className = 'ms-violation-alert';
+        violationBanner.innerHTML = '';
+      }
+    }
+
+    const page1Ok = Boolean(unRes.ok && pwRes.ok && confirmMatch);
+    const chip1 = document.getElementById('regPage1StatusChip');
+    if (chip1) {
+      chip1.className = 'chip ' + (page1Ok ? 'ok' : 'warn');
+      chip1.textContent = page1Ok ? '✓ Verified' : 'Required';
+    }
+    if (btnRegNext1) btnRegNext1.disabled = !page1Ok;
+    return { ok: page1Ok, unRes, pwRes, confirmMatch };
+  }
+
+  function evaluateRegPage2() {
+    const nm = (regNameEl && regNameEl.value || '').trim();
+    const em = (regEmailEl && regEmailEl.value || '').trim().toLowerCase();
+    const recEm = (regRecoveryEmailEl && regRecoveryEmailEl.value || '').trim().toLowerCase();
+    const ph = (regPhoneEl && regPhoneEl.value || '').trim();
+
+    if (emailVerifiedState && emailVerifiedForAddress && emailVerifiedForAddress !== em) {
+      emailVerifiedState = false;
+      emailVerificationToken = '';
+    }
+
+    const nameOk = nm.length >= 2;
+    const emailOk = /^\S+@\S+\.\S+$/.test(em);
+    const recoveryOk = /^\S+@\S+\.\S+$/.test(recEm) && recEm !== em;
+    const phRes = W.validatePhoneStandard
+      ? W.validatePhoneStandard(ph)
+      : { ok: ph.replace(/\D/g, '').length >= 10 && ph.replace(/\D/g, '').length <= 15 };
+
+    setMsInputState(regNameEl, nameOk, nm.length > 0);
+    setMsInputState(regEmailEl, emailOk, em.length > 0);
+    setMsInputState(regRecoveryEmailEl, recoveryOk, recEm.length > 0);
+    setMsInputState(regPhoneEl, phRes.ok, ph.length > 0);
+
+    if (regEmailVerifiedBadge) {
+      regEmailVerifiedBadge.className = 'chip ' + (emailVerifiedState ? 'ok' : 'warn');
+      regEmailVerifiedBadge.textContent = emailVerifiedState ? '✓ Verified' : 'Required';
+    }
+
+    const page2Ok = Boolean(nameOk && emailOk && recoveryOk && phRes.ok && emailVerifiedState);
+    const chip2 = document.getElementById('regPage2StatusChip');
+    if (chip2) {
+      chip2.className = 'chip ' + (page2Ok ? 'ok' : 'warn');
+      chip2.textContent = page2Ok ? '✓ Verified' : 'Required';
+    }
+    if (btnRegNext2) btnRegNext2.disabled = !page2Ok;
+    return { ok: page2Ok, emailVerified: emailVerifiedState };
+  }
+
+  function evaluateRegPage3() {
+    const street = (regStreetEl && regStreetEl.value || '').trim();
+    const city = (regCityEl && regCityEl.value || '').trim();
+    const state = (regStateEl && regStateEl.value || '').trim();
+    const zip = (regZipEl && regZipEl.value || '').trim();
+    const ndaOk = Boolean(regNdaEl && regNdaEl.checked);
+
+    setMsInputState(regStreetEl, street.length >= 3, street.length > 0);
+    setMsInputState(regCityEl, city.length >= 2, city.length > 0);
+    setMsInputState(regStateEl, state.length >= 2, state.length > 0);
+    setMsInputState(regZipEl, zip.length >= 3, zip.length > 0);
+
+    const addressComplete = Boolean(street.length >= 3 && city.length >= 2 && state.length >= 2 && zip.length >= 3);
+    const tosComplete = Boolean(tosSchedulesReviewed && ndaOk);
+    const page3Ok = Boolean(addressComplete && tosComplete);
+
+    const badge = document.getElementById('regAddressPolicyBadge');
+    if (badge) {
+      badge.className = 'chip ' + (page3Ok ? 'ok' : 'warn');
+      badge.textContent = page3Ok ? '✓ Verified' : 'Required';
+    }
+    if (tosReviewBadge) {
+      tosReviewBadge.className = 'chip ' + (tosSchedulesReviewed ? 'ok' : 'warn');
+      tosReviewBadge.textContent = tosSchedulesReviewed ? '✓ 5 Schedules Reviewed' : 'Click Terms to Review';
+    }
+    if (btnSubmitRegister) btnSubmitRegister.disabled = !page3Ok;
+    return { ok: page3Ok, addressComplete, tosComplete };
+  }
+
+  if (btnSendEmailCode) {
+    btnSendEmailCode.onclick = async () => {
+      const un = (regUsernameEl && regUsernameEl.value || '').trim().toLowerCase();
+      const em = (regEmailEl && regEmailEl.value || '').trim().toLowerCase();
+      const recEm = (regRecoveryEmailEl && regRecoveryEmailEl.value || '').trim().toLowerCase();
+      const nm = (regNameEl && regNameEl.value || '').trim();
+      const r = await fetch('/api/auth/register/send-email-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: un, email: em, recoveryEmail: recEm, name: nm })
+      });
+      const d = await r.json();
+      if (!d || !d.ok) {
+        msg.style.color = '#f87171';
+        msg.textContent = (d && d.error) || 'Failed to dispatch verification code.';
+        return;
+      }
+      if (regEmailDispatchBanner) {
+        regEmailDispatchBanner.style.display = 'block';
+        regEmailDispatchBanner.innerHTML = '<strong>✓ ' + W.esc(d.emailSubject || 'Verification Email Dispatched') + ':</strong><br>' +
+          W.esc(d.emailPreview || '') +
+          (d.verificationCodePreview ? ' <span style="margin-left:6px;color:#fde047;font-weight:700">[Code: <code id="dispatchedEmailCodeValue">' + W.esc(d.verificationCodePreview) + '</code>]</span>' : '');
+      }
+    };
+  }
+
+  if (btnVerifyEmailCode) {
+    btnVerifyEmailCode.onclick = async () => {
+      const un = (regUsernameEl && regUsernameEl.value || '').trim().toLowerCase();
+      const em = (regEmailEl && regEmailEl.value || '').trim().toLowerCase();
+      const code = (regEmailVerifyCodeEl && regEmailVerifyCodeEl.value || '').replace(/\D/g, '').slice(0, 6);
+      const r = await fetch('/api/auth/register/verify-email-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: un, email: em, code })
+      });
+      const d = await r.json();
+      if (!d || !d.ok) {
+        msg.style.color = '#f87171';
+        msg.textContent = (d && d.error) || 'Invalid verification code.';
+        return;
+      }
+      emailVerifiedState = true;
+      emailVerifiedForAddress = em;
+      emailVerificationToken = d.verificationToken || '';
+      setMsInputState(regEmailVerifyCodeEl, true, true);
+      evaluateRegPage2();
+      msg.style.color = '#34d399';
+      msg.textContent = '✓ Work Email (' + em + ') and Assigned Username (' + un + ') verified.';
+    };
+  }
+
+  if (btnToggleTosReader && tosFullReaderPanel) {
+    btnToggleTosReader.onclick = () => {
+      const isOpen = tosFullReaderPanel.classList.toggle('open');
+      tosSchedulesReviewed = true;
+      btnToggleTosReader.textContent = isOpen
+        ? '🔼 Hide Terms of Service Schedules (Reviewed)'
+        : '📄 View Required Terms of Service (5 Schedules · Reviewed)';
+      evaluateRegPage3();
+    };
+  }
+
+  if (btnAcknowledgeTosSchedules) {
+    btnAcknowledgeTosSchedules.onclick = () => {
+      tosSchedulesReviewed = true;
+      if (regNdaEl) regNdaEl.checked = true;
+      if (tosFullReaderPanel) tosFullReaderPanel.classList.remove('open');
+      evaluateRegPage3();
+    };
+  }
+
+  function showRegPage(pageNum) {
+    currentRegPage = pageNum;
+    const p1 = evaluateRegPage1();
+    const p2 = evaluateRegPage2();
+    evaluateRegPage3();
+    if (regPage1) regPage1.style.display = pageNum === 1 ? 'block' : 'none';
+    if (regPage2) regPage2.style.display = pageNum === 2 ? 'block' : 'none';
+    if (regPage3) regPage3.style.display = pageNum === 3 ? 'block' : 'none';
+    if (regStepPill1) regStepPill1.className = 'step ' + (pageNum === 1 ? 'on' : (p1.ok ? 'done' : ''));
+    if (regStepPill2) regStepPill2.className = 'step ' + (pageNum === 2 ? 'on' : (p2.ok ? 'done' : ''));
+    if (regStepPill3) regStepPill3.className = 'step ' + (pageNum === 3 ? 'on' : '');
+  }
+
+  [regUsernameEl, regPasswordEl, regPasswordConfirmEl, regProviderEl].forEach(el => {
+    if (el) el.addEventListener('input', evaluateRegPage1);
+  });
+  [regNameEl, regEmailEl, regRecoveryEmailEl, regPhoneEl, regOrgEl, regEmailVerifyCodeEl].forEach(el => {
+    if (el) el.addEventListener('input', evaluateRegPage2);
+  });
+  [regStreetEl, regCityEl, regStateEl, regZipEl, regNdaEl].forEach(el => {
+    if (el) el.addEventListener('input', evaluateRegPage3);
+    if (el) el.addEventListener('change', evaluateRegPage3);
+  });
+
+  if (btnRegNext1) btnRegNext1.onclick = () => showRegPage(2);
+  if (btnRegBack2) btnRegBack2.onclick = () => showRegPage(1);
+  if (btnRegNext2) btnRegNext2.onclick = () => showRegPage(3);
+  if (btnRegBack3) btnRegBack3.onclick = () => showRegPage(2);
+
+  function setAuthMode(mode) {
+    const isReg = mode === 'register';
+    signInPane.style.display = isReg ? 'none' : 'block';
+    registerPane.style.display = isReg ? 'block' : 'none';
+    tabSignIn.className = isReg ? 'btn' : 'btn pri';
+    tabRegister.className = isReg ? 'btn pri' : 'btn';
+    if (isReg) showRegPage(currentRegPage || 1);
+  }
+
+  tabSignIn.onclick = () => setAuthMode('signin');
+  tabRegister.onclick = () => setAuthMode('register');
+  if (new URLSearchParams(location.search).get('mode') === 'activate' || new URLSearchParams(location.search).get('mode') === 'register') {
+    setAuthMode('register');
+  }
+
+  document.getElementById('empSignInForm').addEventListener('submit', async () => {
+    const identifier = (document.getElementById('empLoginUsername').value || '').trim().toLowerCase();
+    const password = document.getElementById('empLoginPassword').value || '';
+    const r = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: 'password', portalContext: 'employee', identifier, password })
+    });
+    const d = await r.json();
+    if (!d || !d.ok) {
+      if (d && d.requireEmployeeReset) {
+        setAuthMode('register');
+        if (regUsernameEl) regUsernameEl.value = d.username || identifier;
+        evaluateRegPage1();
+        msg.style.color = '#fbbf24';
+        msg.textContent = d.error;
+        return;
+      }
+      msg.style.color = '#f87171';
+      msg.textContent = (d && d.error) || 'Invalid credentials.';
+      return;
+    }
+    location.href = d.redirect || '/employee-portal.html';
+  });
+
+  if (btnSubmitRegister) {
+    btnSubmitRegister.onclick = async () => {
+      const p1 = evaluateRegPage1();
+      const p2 = evaluateRegPage2();
+      const p3 = evaluateRegPage3();
+      if (!p1.ok || !p2.ok || !p3.ok) return;
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guidedRegistration: true,
+          portalContext: 'employee',
+          name: (regNameEl.value || '').trim(),
+          org: (regOrgEl.value || '').trim(),
+          email: (regEmailEl.value || '').trim().toLowerCase(),
+          username: (regUsernameEl.value || '').trim().toLowerCase(),
+          password: (regPasswordEl.value || '').trim(),
+          recoveryEmail: (regRecoveryEmailEl.value || '').trim().toLowerCase(),
+          phone: (regPhoneEl.value || '').trim(),
+          ou: 'internal',
+          accountScope: 'internal',
+          address: {
+            streetAddress: (regStreetEl.value || '').trim(),
+            city: (regCityEl.value || '').trim(),
+            stateRegion: (regStateEl.value || '').trim(),
+            postalCode: (regZipEl.value || '').trim()
+          },
+          ssoProvider: (regProviderEl && regProviderEl.value) || 'password',
+          ndaAccepted: true,
+          tosAccepted: true,
+          emailVerified: emailVerifiedState,
+          emailVerificationToken
+        })
+      });
+      const data = await res.json();
+      if (!data || !data.ok) {
+        msg.style.color = '#f87171';
+        msg.textContent = (data && data.error) || 'Activation failed.';
+        return;
+      }
+      location.href = data.redirect || '/employee-portal.html';
+    };
+  }
+})();
+</script>
+</body>
+</html>

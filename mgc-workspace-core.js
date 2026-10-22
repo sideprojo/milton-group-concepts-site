@@ -688,36 +688,43 @@
     return { isAssignedEmployee: false, detectedOu: 'external' };
   }
 
-  function validateUsernameStandard(rawUsername, excludeUid) {
+  function validateUsernameStandard(rawUsername, excludeUid, portalContext) {
     const clean = String(rawUsername || '').trim().toLowerCase();
+    const mode = portalContext === 'employee' ? 'employee' : 'client';
     const empRec = resolveEmployeeAssignedRecord(clean, '');
     const lenOk = clean.length >= 4 && clean.length <= 32;
     const formatOk = /^[a-z0-9][a-z0-9._-]{3,31}$/.test(clean) && !/[._-]{2,}/.test(clean);
-    const notReserved = Boolean(clean) && !RESERVED_USERNAMES.has(clean);
+    const notReserved = mode === 'employee'
+      ? Boolean(clean) && !RESERVED_USERNAMES.has(clean) && Boolean(empRec.isAssignedEmployee)
+      : Boolean(clean) && !RESERVED_USERNAMES.has(clean) && !empRec.isAssignedEmployee;
     const noInjection = !hasInjectionPayload(clean);
     const collisionUser = Boolean(clean) && Object.values((S && S.users) || {}).find(u =>
       u && u.id !== excludeUid && String(u.username || '').toLowerCase() === clean
     );
-    const collision = empRec.isAssignedEmployee
+    const collision = mode === 'employee'
       ? Boolean(collisionUser && !collisionUser.mustResetPassword)
       : Boolean(collisionUser);
     const ok = lenOk && formatOk && notReserved && noInjection && !collision;
     const violations = [];
     if (!clean) {
-      violations.push('Enter a portal username (usernames are required and not optional).');
+      violations.push('Enter a username.');
     } else {
-      if (!lenOk) violations.push('Username length violation: Must be between 4 and 32 characters (currently ' + clean.length + ').');
-      if (!formatOk) violations.push('Character format violation: Use only letters (a–z), numbers (0–9), periods (.), underscores (_), or hyphens (-), starting with a letter or number.');
-      if (!notReserved) violations.push('Reserved identifier violation: System and administrator identifiers (' + clean + ') cannot be registered.');
-      if (!noInjection) violations.push('Security policy violation: Disallowed script or injection characters detected.');
-      if (collision) violations.push('Directory collision violation: The username "' + clean + '" is already assigned to another account.');
+      if (!lenOk) violations.push('Username must be between 4 and 32 characters.');
+      if (!formatOk) violations.push('Use only letters (a–z), numbers (0–9), periods (.), underscores (_), or hyphens (-), starting with a letter or number.');
+      if (!notReserved) {
+        violations.push(mode === 'employee'
+          ? 'Enter the organization-assigned username from your onboarding notice.'
+          : 'This username is reserved and unavailable.');
+      }
+      if (!noInjection) violations.push('Disallowed characters detected.');
+      if (collision) violations.push('This username is already in use.');
     }
     return {
       ok,
       username: clean,
-      isAssignedEmployee: Boolean(empRec.isAssignedEmployee),
-      detectedOu: empRec.isAssignedEmployee ? 'internal' : 'external',
-      assignedProfile: empRec.isAssignedEmployee ? empRec : null,
+      isAssignedEmployee: mode === 'employee' ? Boolean(empRec.isAssignedEmployee) : false,
+      detectedOu: mode === 'employee' ? 'internal' : 'external',
+      assignedProfile: mode === 'employee' && empRec.isAssignedEmployee ? empRec : null,
       checks: { lenOk, formatOk, notReserved, noInjection, uniqueOk: !collision },
       violations,
       error: violations[0] || ''
@@ -737,14 +744,14 @@
     const ok = lenOk && upperOk && lowerOk && digitOk && specialOk && notContainsUser && notGeneric;
     const violations = [];
     if (!pw) {
-      violations.push('Enter an account password.');
+      violations.push('Enter a password.');
     } else {
-      if (!lenOk) violations.push('Length violation: Password must be at least 8 characters long.');
-      if (!upperOk || !lowerOk) violations.push('Case complexity violation: Include both uppercase (A–Z) and lowercase (a–z) letters.');
-      if (!digitOk) violations.push('Numeric requirement violation: Include at least one number (0–9).');
-      if (!specialOk) violations.push('Symbol requirement violation: Include at least one special character (!@#$%^&*...).');
-      if (!notContainsUser) violations.push('Identity separation violation: Password cannot contain your portal username (' + un + ').');
-      if (!notGeneric) violations.push('Dictionary policy violation: Common or default password sequences are prohibited.');
+      if (!lenOk) violations.push('Password must be at least 8 characters long.');
+      if (!upperOk || !lowerOk) violations.push('Include both uppercase (A–Z) and lowercase (a–z) letters.');
+      if (!digitOk) violations.push('Include at least one number (0–9).');
+      if (!specialOk) violations.push('Include at least one special character (!@#$%^&*...).');
+      if (!notContainsUser) violations.push('Password cannot contain your username.');
+      if (!notGeneric) violations.push('Common or default password sequences are not allowed.');
     }
     return {
       ok,

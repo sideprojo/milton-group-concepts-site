@@ -231,6 +231,8 @@ const CLEAN_ROUTE_TO_FILE = {
   '/contact':           'marketing-home.html',
   '/auth':              'login.html',
   '/login':             'login.html',
+  '/employee-login':    'employee-login.html',
+  '/staff-login':       'employee-login.html',
   '/request-access':    'request-access.html',
   '/intake':            'request-access.html',
   '/portal':            'onboarding-portal.html',
@@ -2209,8 +2211,21 @@ const server = http.createServer(async (req, res) => {
       }
       // STRICT 1-ADMIN ZERO-LEAKAGE GUARD: Only Malik A. Khabir (malik.khabir@Miltongroupsecurity.org, case-insensitive) is Administrator.
       // Block any legacy/spoofed @miltongroupsecurity.org or owner@* / admin@* accounts unless provisioned as an active directory user by Admin.
+      const portalContext = String(body.portalContext || '').toLowerCase();
       const existingDirUser = Object.values(S.users).find(u => u.id !== 'owner' && String(u.email || '').toLowerCase() === email);
       const empRosterRec = resolveEmployeeAssignedRecord(rawIdentifier, email);
+      if (portalContext === 'client' && (empRosterRec.isAssignedEmployee || isEmployeeUser(existingDirUser))) {
+        return sendJson(res, 403, {
+          ok: false,
+          error: 'Invalid email/username or password.'
+        });
+      }
+      if (portalContext === 'employee' && !empRosterRec.isAssignedEmployee && !isEmployeeUser(existingDirUser)) {
+        return sendJson(res, 403, {
+          ok: false,
+          error: 'Enter your organization-assigned employee username.'
+        });
+      }
       if (empRosterRec.isAssignedEmployee && (!existingDirUser || existingDirUser.mustResetPassword)) {
         logAudit('system', `auth.employee_reset_required.${provider}`, `Assigned employee username ${empRosterRec.username || email} requires mandatory password reset & email verification`);
         return sendJson(res, 403, {
@@ -2220,7 +2235,7 @@ const server = http.createServer(async (req, res) => {
           email: empRosterRec.email || email,
           name: empRosterRec.name || '',
           org: empRosterRec.org || 'MGC Internal Operations',
-          error: 'Employee Security Policy: Your Admin-provided employee username requires Email Verification and a Mandatory Password Reset before authenticating into your session.'
+          error: 'Please complete your first-logon password reset and email verification in the Activate tab.'
         });
       }
       if (((email.endsWith('@miltongroupsecurity.org') && email !== SOLE_ADMIN_EMAIL && !existingDirUser && !empRosterRec.isAssignedEmployee) || email.startsWith('owner@') || email.startsWith('admin@'))) {
@@ -2859,6 +2874,19 @@ const server = http.createServer(async (req, res) => {
       }
       let cleanUsername = sanitizeInput(rawUsernameInput || cleanEmail.split('@')[0], 60).toLowerCase();
       const empRec = resolveEmployeeAssignedRecord(cleanUsername, cleanEmail);
+      const portalContext = String(d.portalContext || '').toLowerCase();
+      if (portalContext === 'client' && empRec.isAssignedEmployee) {
+        return sendJson(res, 403, {
+          ok: false,
+          error: 'This username is reserved and unavailable.'
+        });
+      }
+      if (portalContext === 'employee' && !empRec.isAssignedEmployee) {
+        return sendJson(res, 403, {
+          ok: false,
+          error: 'Enter the organization-assigned username from your onboarding notice.'
+        });
+      }
 
       // Critical Anti-Spoofing Guard: Prevent public customer intake from ever claiming or overwriting an Owner account
       if (OWNER_EMAILS.has(cleanEmail) || (!isAdminCaller && !empRec.isAssignedEmployee && cleanEmail.endsWith('@miltongroupsecurity.org')) || cleanEmail.startsWith('owner@') || cleanEmail.startsWith('admin@')) {
@@ -3094,7 +3122,9 @@ const server = http.createServer(async (req, res) => {
 
       const mobileClient = isMobileRequest(req, parsedUrl);
       const reqNext = d.next ? toCleanRoute(String(d.next).trim()) : '';
-      const targetRedirect = mobileClient ? '/mobile' : ((reqNext && reqNext !== '/auth' && reqNext !== '/login') ? reqNext : '/apps');
+      const targetRedirect = userOu === 'internal'
+        ? '/employee-portal.html'
+        : (mobileClient ? '/mobile' : ((reqNext && reqNext !== '/auth' && reqNext !== '/login') ? reqNext : '/workspace?onboard=1'));
 
       const sessionToken = signToken({
         uid: id,
@@ -4707,7 +4737,7 @@ const server = http.createServer(async (req, res) => {
     }
     // Enforce Mobile-Only Minimalist Control & Workflow Experience when accessed from a mobile device
     const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
-    const isExplicitAuthRoute = pathname === '/auth' || pathname === '/login' || pathname === '/login.html';
+    const isExplicitAuthRoute = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login';
     if (isHtmlRoute && !isExplicitAuthRoute && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
       cleanRel = 'mobile-control.html';
     }

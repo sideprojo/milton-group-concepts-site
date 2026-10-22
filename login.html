@@ -240,21 +240,6 @@
   .ms-violation-alert.active {
     display: block;
   }
-  .ms-employee-alert {
-    display: none;
-    background: linear-gradient(135deg, rgba(30, 58, 138, 0.42), rgba(6, 78, 59, 0.34));
-    border: 1px solid rgba(56, 189, 248, 0.55);
-    border-left: 4px solid #38bdf8;
-    color: #e0f2fe;
-    border-radius: 6px;
-    padding: 9px 12px;
-    font-size: 12px;
-    line-height: 1.45;
-    margin-top: 10px;
-  }
-  .ms-employee-alert.active {
-    display: block;
-  }
   .ms-req-matrix {
     display: grid;
     grid-template-columns: 1fr 1.35fr;
@@ -403,7 +388,7 @@
           </div>
         </div>
         <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
-          <span id="loginIdentityHint" style="font-size:11.5px;color:#94a3b8">Employees with an assigned username will be prompted for Email Verification &amp; Password Reset on first logon.</span>
+          <span id="loginIdentityHint" style="font-size:11.5px;color:#94a3b8">Sign in with your registered username or email and password.</span>
           <button type="submit" class="btn pri" id="btnPasswordLogin" style="padding:9px 22px;font-size:13px">Sign In →</button>
         </div>
       </form>
@@ -480,14 +465,14 @@
         </div>
       </div>
 
-      <!-- PAGE 1: MANDATORY USERNAME & PASSWORD SECURITY STANDARDS (MICROSOFT LOGON ALIGNMENT & VIOLATION NOTIFICATIONS) -->
+      <!-- PAGE 1: MANDATORY USERNAME & PASSWORD -->
       <div id="regPage1" style="background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.42);border-radius:14px;padding:18px 20px">
         <div class="row" style="margin-bottom:14px">
           <div>
-            <span class="chip ok" style="font-size:10.5px">Page 1 of 3 · Microsoft-Style Credential &amp; Security Check</span>
+            <span class="chip ok" style="font-size:10.5px">Page 1 of 3 · Account Credentials</span>
             <h2 id="regPage1Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Set Your Portal Username &amp; Password</h2>
           </div>
-          <span id="regPage1StatusChip" class="chip warn" style="font-size:11px">Security Check Required</span>
+          <span id="regPage1StatusChip" class="chip warn" style="font-size:11px">Required</span>
         </div>
 
         <!-- Row 1: 2 Equal Pixel-Aligned Columns (Username + Authentication Method) -->
@@ -495,9 +480,9 @@
           <div class="ms-field">
             <label for="regUsername" class="ms-label">
               <span>Portal Username (Not Optional)</span>
-              <span id="regUsernameRoleTag" class="ms-label-req">Client or Assigned Employee ID</span>
+              <span id="regUsernameRoleTag" class="ms-label-req">4–32 Characters</span>
             </label>
-            <input id="regUsername" class="ms-input" type="text" maxlength="32" placeholder="Client username or assigned emp.name" required spellcheck="false" autocomplete="username">
+            <input id="regUsername" class="ms-input" type="text" maxlength="32" placeholder="Choose your portal username" required spellcheck="false" autocomplete="username">
           </div>
           <div class="ms-field">
             <label for="regProvider" class="ms-label">
@@ -531,10 +516,7 @@
           </div>
         </div>
 
-        <!-- Employee Assigned-Username Auto-Detection Callout -->
-        <div id="regEmployeeDetectedBanner" class="ms-employee-alert" role="status"></div>
-
-        <!-- Microsoft-Style Live Requirement Violation Callout -->
+        <!-- Live Requirement Callout -->
         <div id="regPage1ViolationBanner" class="ms-violation-alert" role="alert"></div>
 
         <!-- Aligned 2-Box Security Standards Checklist (Username Standards | Password Standards) -->
@@ -566,7 +548,7 @@
         </div>
 
         <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
-          <span style="font-size:11.5px;color:#94a3b8">Employees enter their Admin-provided username (<code style="color:#93c5fd">emp.first.last</code>) to complete mandatory password reset.</span>
+          <span style="font-size:11.5px;color:#94a3b8">Complete all username and password requirements above to continue.</span>
           <button type="button" class="btn pri" id="btnRegNext1" disabled style="padding:9px 20px;font-size:13px">Next: Recovery &amp; Email Verification →</button>
         </div>
       </div>
@@ -605,15 +587,15 @@
           </div>
         </div>
 
-        <!-- Row 3: Organization / Department | Auto-Detected Account Classification (From Username) -->
+        <!-- Row 3: Organization / Company | Account Type -->
         <div class="ms-form-grid-2" style="margin-bottom:14px">
           <div class="ms-field">
-            <label for="regOrg" class="ms-label"><span>Organization or Department</span><span class="ms-label-req">Optional / Auto</span></label>
-            <input id="regOrg" class="ms-input" type="text" maxlength="120" placeholder="Organization or department">
+            <label for="regOrg" class="ms-label"><span>Organization or Company</span><span class="ms-label-req">Optional</span></label>
+            <input id="regOrg" class="ms-input" type="text" maxlength="120" placeholder="Organization or company name">
           </div>
           <div class="ms-field">
-            <label for="regDetectedScopeDisplay" class="ms-label"><span>Directory Classification (Detected from Username)</span><span class="ms-label-req">Locked</span></label>
-            <input id="regDetectedScopeDisplay" class="ms-input" type="text" readonly value="Client / Partner User (Self-Selected Username)" style="color:#93c5fd !important;cursor:default">
+            <label for="regDetectedScopeDisplay" class="ms-label"><span>Account Type</span><span class="ms-label-req">Client Portal</span></label>
+            <input id="regDetectedScopeDisplay" class="ms-input" type="text" readonly value="Client / Partner Account" style="color:#93c5fd !important;cursor:default">
             <input type="hidden" id="regAccountScope" value="external">
           </div>
         </div>
@@ -643,34 +625,34 @@
         </div>
       </div>
 
-      <!-- PAGE 3: MANDATORY PHYSICAL ADDRESS (MANDATORY FOR ALL USERS: CLIENTS & EMPLOYEES) & CLICKABLE TERMS OF SERVICE -->
+      <!-- PAGE 3: MANDATORY PHYSICAL ADDRESS & CLICKABLE TERMS OF SERVICE -->
       <div id="regPage3" style="display:none;background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.42);border-radius:14px;padding:18px 20px">
         <div class="row" style="margin-bottom:14px">
           <div>
             <span class="chip ok" style="font-size:10.5px">Page 3 of 3 · Mandatory Physical Address &amp; Terms of Service</span>
-            <h2 id="regPage3Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Physical Address &amp; Terms of Service (Required for All Users)</h2>
+            <h2 id="regPage3Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Physical Address &amp; Terms of Service</h2>
           </div>
-          <span id="regAddressPolicyBadge" class="chip warn" style="font-size:11px">Address &amp; Terms Required</span>
+          <span id="regAddressPolicyBadge" class="chip warn" style="font-size:11px">Required</span>
         </div>
 
         <!-- Row 1: Full-Width Street Address -->
         <div class="ms-field" style="margin-bottom:14px">
-          <label for="regStreet" id="lblRegStreet" class="ms-label"><span style="color:#fde047">Street Address (Required)</span><span class="ms-label-req" style="color:#fde047">Mandatory for Clients &amp; Employees</span></label>
+          <label for="regStreet" id="lblRegStreet" class="ms-label"><span style="color:#fde047">Street Address</span><span class="ms-label-req" style="color:#fde047">Required</span></label>
           <input id="regStreet" class="ms-input" type="text" maxlength="140" placeholder="Street address, suite, or unit number" required>
         </div>
 
         <!-- Row 2: 3 Equal Pixel-Aligned Columns (City | State / Region | Postal / ZIP Code) -->
         <div class="ms-form-grid-3" style="margin-bottom:14px">
           <div class="ms-field">
-            <label for="regCity" id="lblRegCity" class="ms-label"><span style="color:#fde047">City (Required)</span><span class="ms-label-req">Required</span></label>
+            <label for="regCity" id="lblRegCity" class="ms-label"><span style="color:#fde047">City</span><span class="ms-label-req">Required</span></label>
             <input id="regCity" class="ms-input" type="text" maxlength="80" placeholder="City" required>
           </div>
           <div class="ms-field">
-            <label for="regState" id="lblRegState" class="ms-label"><span style="color:#fde047">State / Region (Required)</span><span class="ms-label-req">Required</span></label>
+            <label for="regState" id="lblRegState" class="ms-label"><span style="color:#fde047">State / Region</span><span class="ms-label-req">Required</span></label>
             <input id="regState" class="ms-input" type="text" maxlength="60" placeholder="State or province" required>
           </div>
           <div class="ms-field">
-            <label for="regZip" id="lblRegZip" class="ms-label"><span style="color:#fde047">Postal / ZIP Code (Required)</span><span class="ms-label-req">Required</span></label>
+            <label for="regZip" id="lblRegZip" class="ms-label"><span style="color:#fde047">Postal / ZIP Code</span><span class="ms-label-req">Required</span></label>
             <input id="regZip" class="ms-input" type="text" maxlength="24" placeholder="ZIP or postal code" required>
           </div>
         </div>
@@ -699,8 +681,8 @@
               Your identity, mandatory recovery email, security phone number, and physical address are encrypted and safeguarded in alignment with NIST SP 800-171 Rev 3 and CMMC 2.0 Level 2. Optional partner data-sharing programs require separate opt-in consent during Otto onboarding and may be revoked at any time.
             </div>
             <div class="tos-schedule-item">
-              <strong style="color:#f8fafc">Schedule 3 · Electronic Communications, Email Verification, 2FA &amp; Employee Credential Policy (E-SIGN Act):</strong>
-              You consent to receive electronic security notices, 6-digit email verification codes, and 2FA challenges. Employees are assigned official directory usernames (<code style="color:#93c5fd">emp.*</code>) via email and must complete email verification and a mandatory password reset before authenticating into any workspace session.
+              <strong style="color:#f8fafc">Schedule 3 · Electronic Communications, Email Verification &amp; 2FA Policy (E-SIGN Act):</strong>
+              You consent to receive electronic security notices, 6-digit email verification codes, and 2FA challenges required to protect your account and verify ownership of your registered email address and username.
             </div>
             <div class="tos-schedule-item">
               <strong style="color:#f8fafc">Schedule 4 · Membership Billing, EFTA / Reg E, NACHA ACH, WAWF &amp; PCI-DSS v4.0 SAQ-A Terms:</strong>
@@ -1071,6 +1053,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           provider: 'password',
+          portalContext: 'client',
           identifier: rawId,
           email: normalizedEmail,
           password,
@@ -1079,17 +1062,6 @@
       });
       const data = await res.json();
       if (!data || !data.ok) {
-        if (data && data.requireEmployeeReset) {
-          setAuthMode('register');
-          if (regUsernameEl) regUsernameEl.value = data.username || rawId.toLowerCase();
-          if (regEmailEl && data.email) regEmailEl.value = data.email;
-          if (regNameEl && data.name) regNameEl.value = data.name;
-          if (regOrgEl && data.org) regOrgEl.value = data.org;
-          evaluateRegPage1();
-          msg.style.color = '#fbbf24';
-          msg.textContent = data.error || 'Employee Security Policy: Complete Mandatory Password Reset & Email Verification to activate your session.';
-          return;
-        }
         msg.style.color = '#f87171';
         msg.textContent = (data && data.error) || 'Invalid email/username or password.';
         return;
@@ -1312,15 +1284,13 @@
     const pwConfirmTouched = rawPwConfirm.length > 0;
 
     const unRes = W.validateUsernameStandard
-      ? W.validateUsernameStandard(rawUn)
+      ? W.validateUsernameStandard(rawUn, undefined, 'client')
       : {
-          ok: /^[a-z0-9][a-z0-9._-]{3,31}$/.test(rawUn) && !['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir'].includes(rawUn),
-          isAssignedEmployee: /^(emp|staff)\.[a-z0-9._-]{2,28}$/.test(rawUn),
-          detectedOu: /^(emp|staff)\.[a-z0-9._-]{2,28}$/.test(rawUn) ? 'internal' : 'external',
+          ok: /^[a-z0-9][a-z0-9._-]{3,31}$/.test(rawUn) && !/^(emp|staff)\./.test(rawUn) && !['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir'].includes(rawUn),
           checks: {
             lenOk: rawUn.length >= 4 && rawUn.length <= 32,
             formatOk: /^[a-z0-9][a-z0-9._-]{3,31}$/.test(rawUn),
-            notReserved: Boolean(rawUn) && !['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir'].includes(rawUn),
+            notReserved: Boolean(rawUn) && !/^(emp|staff)\./.test(rawUn) && !['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir'].includes(rawUn),
             uniqueOk: true
           },
           violations: []
@@ -1344,10 +1314,10 @@
 
     const confirmMatch = Boolean(rawPw && rawPw === rawPwConfirm && pwRes.checks.notContainsUser && pwRes.checks.notGeneric);
 
-    // Update Microsoft-style requirement pills
+    // Update requirement pills
     setMsReqPill('unChkLen', '4–32 Chars', unRes.checks.lenOk, unTouched);
     setMsReqPill('unChkFmt', 'Letters / Numbers / . _ -', unRes.checks.formatOk, unTouched);
-    setMsReqPill('unChkUniq', unRes.isAssignedEmployee ? 'Assigned Employee ID' : 'Unique & Non-Reserved', unRes.checks.notReserved && unRes.checks.uniqueOk, unTouched);
+    setMsReqPill('unChkUniq', 'Unique & Non-Reserved', unRes.checks.notReserved && unRes.checks.uniqueOk, unTouched);
 
     setMsReqPill('pwChkLen', '8+ Chars', pwRes.checks.lenOk, pwTouched);
     setMsReqPill('pwChkCase', 'Upper & Lower', pwRes.checks.upperOk && pwRes.checks.lowerOk, pwTouched);
@@ -1359,47 +1329,17 @@
     setMsInputState(regPasswordEl, pwRes.ok, pwTouched);
     setMsInputState(regPasswordConfirmEl, confirmMatch && pwRes.ok, pwConfirmTouched);
 
-    // Employee Assigned-Username Detection & Password Reset Mode
-    const isEmployee = Boolean(unRes.isAssignedEmployee);
-    if (regAccountScopeEl) regAccountScopeEl.value = isEmployee ? 'internal' : 'external';
+    if (regAccountScopeEl) regAccountScopeEl.value = 'external';
     if (regDetectedScopeDisplayEl) {
-      regDetectedScopeDisplayEl.value = isEmployee
-        ? 'Internal Employee Account (Admin-Provided Username · Password Reset Mode)'
-        : 'Client / Partner User (Self-Selected Username)';
+      regDetectedScopeDisplayEl.value = 'Client / Partner Account';
     }
     const roleTag = document.getElementById('regUsernameRoleTag');
     if (roleTag) {
-      roleTag.textContent = isEmployee ? '✓ Assigned Employee Username' : (unTouched && unRes.ok ? '✓ Client Username Available' : 'Client or Assigned Employee ID');
-      roleTag.style.color = isEmployee ? '#34d399' : '#93c5fd';
-    }
-    const lblPw = document.getElementById('lblRegPasswordText');
-    const lblPwConf = document.getElementById('lblRegPasswordConfirmText');
-    const h2P1 = document.getElementById('regPage1Heading');
-    if (lblPw) lblPw.textContent = isEmployee ? 'New Employee Password (Reset)' : 'Account Password';
-    if (lblPwConf) lblPwConf.textContent = isEmployee ? 'Confirm New Employee Password' : 'Confirm Password';
-    if (h2P1) {
-      h2P1.textContent = isEmployee
-        ? 'Employee Username Verified · Complete Mandatory Password Reset'
-        : 'Set Your Portal Username & Password';
+      roleTag.textContent = unTouched && unRes.ok ? '✓ Username Available' : '4–32 Characters';
+      roleTag.style.color = unTouched && unRes.ok ? '#34d399' : '#93c5fd';
     }
 
-    const empBanner = document.getElementById('regEmployeeDetectedBanner');
-    if (empBanner) {
-      if (isEmployee) {
-        const prof = unRes.assignedProfile || {};
-        if (prof.name && regNameEl && !regNameEl.value) regNameEl.value = prof.name;
-        if (prof.email && regEmailEl && !regEmailEl.value) regEmailEl.value = prof.email;
-        if (prof.org && regOrgEl && !regOrgEl.value) regOrgEl.value = prof.org;
-        empBanner.className = 'ms-employee-alert active';
-        empBanner.innerHTML = '<strong>🏢 Admin-Provided Employee Username Detected (<code>' + W.esc(unRes.username) + '</code>):</strong> ' +
-          'Employees are provided official directory usernames by the organization. You must complete this <strong>Mandatory Password Reset</strong> and verify your email on Page 2 before authenticating into your session.';
-      } else {
-        empBanner.className = 'ms-employee-alert';
-        empBanner.innerHTML = '';
-      }
-    }
-
-    // Microsoft Logon Live Violation Callout Banner
+    // Live Violation Callout Banner (No AI Headlines or Violation Prefix Labels)
     const violationBanner = document.getElementById('regPage1ViolationBanner');
     const activeViolations = [];
     if (unTouched && !unRes.ok) {
@@ -1409,12 +1349,12 @@
       (pwRes.violations && pwRes.violations.length ? pwRes.violations : [pwRes.error]).forEach(v => { if (v) activeViolations.push(v); });
     }
     if (pwConfirmTouched && rawPw !== rawPwConfirm) {
-      activeViolations.push('Password confirmation violation: The confirmation password does not match your password.');
+      activeViolations.push('Confirmation password does not match your password.');
     }
     if (violationBanner) {
       if (activeViolations.length > 0) {
         violationBanner.className = 'ms-violation-alert active';
-        violationBanner.innerHTML = '<strong>⚠ Security Requirement Violation Detected:</strong><ul style="margin:4px 0 0 18px;padding:0">' +
+        violationBanner.innerHTML = '<ul style="margin:0 0 0 18px;padding:0">' +
           activeViolations.map(v => '<li>' + W.esc(v) + '</li>').join('') + '</ul>';
       } else {
         violationBanner.className = 'ms-violation-alert';
@@ -1438,12 +1378,10 @@
     const chip1 = document.getElementById('regPage1StatusChip');
     if (chip1) {
       chip1.className = 'chip ' + (page1Ok ? 'ok' : 'warn');
-      chip1.textContent = page1Ok
-        ? (isEmployee ? '✓ Employee Reset Ready' : '✓ Security Standards Passed')
-        : 'Security Check Required';
+      chip1.textContent = page1Ok ? '✓ Verified' : 'Required';
     }
     if (btnRegNext1) btnRegNext1.disabled = !page1Ok;
-    return { ok: page1Ok, unRes, pwRes, confirmMatch, isEmployee };
+    return { ok: page1Ok, unRes, pwRes, confirmMatch };
   }
 
   function evaluateRegPage2() {
@@ -1474,13 +1412,13 @@
     if (em.length > 0 && !emailOk) violations2.push('Enter a valid Primary Logon Email address.');
     if (recEm.length > 0 && !/^\S+@\S+\.\S+$/.test(recEm)) violations2.push('Enter a valid Recovery Email address.');
     else if (recEm.length > 0 && recEm === em) violations2.push('Recovery Email must be different from your Primary Logon Email.');
-    if (ph.length > 0 && !phRes.ok) violations2.push('Enter a valid 10–15 digit Mobile / Security Phone number.');
+    if (ph.length > 0 && !phRes.ok) violations2.push('Enter a valid 10–15 digit phone number.');
 
     const vBanner2 = document.getElementById('regPage2ViolationBanner');
     if (vBanner2) {
       if (violations2.length > 0) {
         vBanner2.className = 'ms-violation-alert active';
-        vBanner2.innerHTML = '<strong>⚠ Identity &amp; Recovery Validation:</strong> ' + W.esc(violations2[0]);
+        vBanner2.textContent = violations2[0];
       } else {
         vBanner2.className = 'ms-violation-alert';
         vBanner2.innerHTML = '';
@@ -1489,24 +1427,20 @@
 
     if (regEmailVerifiedBadge) {
       regEmailVerifiedBadge.className = 'chip ' + (emailVerifiedState ? 'ok' : 'warn');
-      regEmailVerifiedBadge.textContent = emailVerifiedState ? '✓ Email & Username Verified' : 'Email Verification Required';
+      regEmailVerifiedBadge.textContent = emailVerifiedState ? '✓ Email & Username Verified' : 'Required';
     }
 
     const page2Ok = Boolean(nameOk && emailOk && recoveryOk && phRes.ok && emailVerifiedState);
     const chip2 = document.getElementById('regPage2StatusChip');
     if (chip2) {
       chip2.className = 'chip ' + (page2Ok ? 'ok' : 'warn');
-      chip2.textContent = page2Ok
-        ? '✓ Identity & Email Verified'
-        : (nameOk && emailOk && recoveryOk && phRes.ok ? 'Verify 6-Digit Email Code' : 'Recovery Details Required');
+      chip2.textContent = page2Ok ? '✓ Verified' : 'Required';
     }
     if (btnRegNext2) btnRegNext2.disabled = !page2Ok;
     return { ok: page2Ok, nameOk, emailOk, recoveryOk, phoneOk: phRes.ok, emailVerified: emailVerifiedState };
   }
 
   function evaluateRegPage3() {
-    const scope = (regAccountScopeEl && regAccountScopeEl.value) === 'internal' ? 'internal' : 'external';
-    const isEmployeeScope = scope === 'internal';
     const street = (regStreetEl && regStreetEl.value || '').trim();
     const city = (regCityEl && regCityEl.value || '').trim();
     const state = (regStateEl && regStateEl.value || '').trim();
@@ -1518,7 +1452,6 @@
     setMsInputState(regStateEl, state.length >= 2, state.length > 0);
     setMsInputState(regZipEl, zip.length >= 3, zip.length > 0);
 
-    // Physical Address is mandatory for ALL users (both Client users and Employee users)
     const addressComplete = Boolean(street.length >= 3 && city.length >= 2 && state.length >= 2 && zip.length >= 3);
     const tosComplete = Boolean(tosSchedulesReviewed && ndaOk);
     const page3Ok = Boolean(addressComplete && tosComplete);
@@ -1526,16 +1459,14 @@
     const badge = document.getElementById('regAddressPolicyBadge');
     if (badge) {
       badge.className = 'chip ' + (page3Ok ? 'ok' : 'warn');
-      badge.textContent = page3Ok
-        ? '✓ Address & Terms Verified'
-        : (!addressComplete ? 'All 4 Address Fields Required (Mandatory)' : 'Click & Accept Terms of Service');
+      badge.textContent = page3Ok ? '✓ Verified' : 'Required';
     }
     if (tosReviewBadge) {
       tosReviewBadge.className = 'chip ' + (tosSchedulesReviewed ? 'ok' : 'warn');
       tosReviewBadge.textContent = tosSchedulesReviewed ? '✓ 5 Schedules Reviewed' : 'Click Terms to Review';
     }
     if (btnSubmitRegister) btnSubmitRegister.disabled = !page3Ok;
-    return { ok: page3Ok, isEmployeeScope, addressComplete, tosComplete, ndaOk };
+    return { ok: page3Ok, addressComplete, tosComplete, ndaOk };
   }
 
   if (btnSendEmailCode) {
@@ -1788,7 +1719,7 @@
       const email = (regEmailEl.value || '').trim().toLowerCase();
       const recoveryEmail = (regRecoveryEmailEl.value || '').trim().toLowerCase();
       const phone = (regPhoneEl.value || '').trim();
-      const accountScope = p1.isEmployee ? 'internal' : 'external';
+      const accountScope = 'external';
       const org = (regOrgEl.value || '').trim();
       const interest = (regTrackEl && regTrackEl.value) || 'ai-web';
       const brand = (regBrandEl && regBrandEl.value) || 'MGC';
@@ -1836,6 +1767,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             guidedRegistration: true,
+            portalContext: 'client',
             name,
             org,
             email,
