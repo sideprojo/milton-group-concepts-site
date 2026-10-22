@@ -1342,70 +1342,70 @@ function sanitizeInput(val, maxLen = 200) {
     .slice(0, maxLen);
 }
 
-// Divergent Learning & Resource Association Catalog (Netflix-Style Post-2FA Onboarding + Associative Bridge Engine)
+// Otto Guided Personalization & Resource Association Catalog
 const ONBOARDING_CATEGORIES = [
   {
     id: 'cat_ai_saas',
-    title: 'Autonomous AI Agents & Turnkey SaaS',
-    tag: 'AI & SaaS',
+    title: 'AI Receptionist & Web Portals',
+    tag: 'AI & Web',
     accent: '#3b82f6',
     gradient: 'linear-gradient(135deg, rgba(30,58,138,0.85), rgba(15,23,42,0.96))',
-    summary: '24/7 AI receptionists, LangGraph multi-agent orchestration, and commercial turnkey client portals.',
+    summary: '24/7 client intake, automated booking, and turnkey business portals.',
     associatedApps: ['client-turnkey-forge', 'sterling-auto-repair', 'traffic-roi-simulator'],
     associatedResources: ['white-feather'],
     learningTrack: 'ai-web'
   },
   {
     id: 'cat_divergent_lang',
-    title: 'Divergent Language & Cognitive Transfer',
-    tag: 'Associative Bridge',
+    title: 'Otto Language Studio',
+    tag: 'Otto Languages',
     accent: '#10b981',
     gradient: 'linear-gradient(135deg, rgba(6,78,59,0.85), rgba(15,23,42,0.96))',
-    summary: 'Learn through high-familiarity cognitive bridges (Spanish → French, English + Arabic → Farsi & Spanish, Korean Hangul → Chinese).',
+    summary: 'Fast-track new languages using languages you already know.',
     associatedApps: ['spanish-acquisition-os', 'chronos-aetheria-scorm'],
     associatedResources: [],
     learningTrack: 'training'
   },
   {
     id: 'cat_cyber_eveng',
-    title: 'Zero-Trust Cyber, EVE-NG & Netmiko CLI',
+    title: 'Network & Cyber Labs',
     tag: 'Cyber & NetOps',
     accent: '#06b6d4',
     gradient: 'linear-gradient(135deg, rgba(8,51,68,0.85), rgba(15,23,42,0.96))',
-    summary: '15-topology EVE-NG network simulation, IOS-XE/Linux/SQL Ghost-CLI auto-grading, and CMMC 2.0 compliance.',
+    summary: 'Hands-on routing, Linux, SQL, and security practice labs.',
     associatedApps: ['eveng-netprism-studio', 'ghost-cli-trainer'],
     associatedResources: [],
     learningTrack: 'cyber'
   },
   {
     id: 'cat_federal_sdvosb',
-    title: 'SDVOSB Federal Contracting & WAWF',
+    title: 'Federal Contracting',
     tag: 'Federal & Defense',
     accent: '#c5b358',
     gradient: 'linear-gradient(135deg, rgba(120,53,15,0.78), rgba(15,23,42,0.96))',
-    summary: 'SAM.gov NAICS 541512/541519 opportunity matching, capability architecture, and PIEE/WAWF settlement.',
+    summary: 'SAM.gov contract matching, proposal readiness, and federal billing.',
     associatedApps: ['samgov-contract-matchmaker', 'client-turnkey-forge'],
     associatedResources: [],
     learningTrack: 'federal'
   },
   {
     id: 'cat_capital_dealflow',
-    title: 'Capital, Deal-Flow & Executive Strategy',
-    tag: 'Resource + Fast-Track AI',
+    title: 'Executive Deal-Flow & Growth',
+    tag: 'Partner Resources',
     accent: '#eab308',
     gradient: 'linear-gradient(135deg, rgba(113,63,18,0.82), rgba(15,23,42,0.96))',
-    summary: 'Deal-flow structuring, agency automation blueprints, and qualified partner resource accelerators.',
+    summary: 'Capital strategy, growth modeling, and qualified partner tools.',
     associatedApps: ['traffic-roi-simulator', 'client-turnkey-forge'],
     associatedResources: ['white-feather'],
     learningTrack: 'ai-web'
   },
   {
     id: 'cat_chronos_epigraphy',
-    title: 'Chronos Geo-Historical & Epigraphy AI',
-    tag: 'DeepMind Ithaca / Aeneas',
+    title: 'Chronos Historical Atlas',
+    tag: 'History & Archives',
     accent: '#8b5cf6',
     gradient: 'linear-gradient(135deg, rgba(76,29,149,0.80), rgba(15,23,42,0.96))',
-    summary: 'Ancient text restoration, Mediterranean/Near-East linguistic evolution, and 3D geospatial excavation.',
+    summary: 'Interactive maps, primary texts, and regional history.',
     associatedApps: ['chronos-aetheria-scorm', 'spanish-acquisition-os'],
     associatedResources: [],
     learningTrack: 'training'
@@ -1415,42 +1415,42 @@ const ONBOARDING_CATEGORIES = [
 const DIVERGENT_BRIDGES = {
   en_us_native: {
     id: 'en_us_native',
-    label: 'American English Speaker → Romance & Global Bridge',
-    familiarAnchors: ['English (Germanic + 60% Latin/Norman Lexical Overlap)', 'High U.S. Spanish Cultural & Lexical Familiarity'],
+    label: 'English → Spanish → French',
+    familiarAnchors: ['English', 'Everyday U.S. Spanish'],
     sequence: [
-      { step: 1, domain: 'Spanish (Anchor Bridge)', transferPct: '82% Lexical & Phonetic Familiarity', rationale: 'High everyday familiarity across U.S. states unlocks Romance verb conjugation, gender agreement, and Latin roots rapidly.' },
-      { step: 2, domain: 'French & Italian (Secondary Romance Transfer)', transferPct: '89% Structural & Lexical Transfer from Spanish + English', rationale: 'Once Spanish grammatical scaffolding is internalized alongside English Norman-French cognates, French reading and syntax accelerate by 2.4x.' },
-      { step: 3, domain: 'Portuguese & Latin Epigraphy (Chronos OS)', transferPct: '91% Direct Cognate Mapping', rationale: 'Completes pan-Romance fluency and unlocks direct primary-source historical analysis.' }
+      { step: 1, domain: 'Spanish Foundation', transferPct: '82% Match', rationale: 'Uses familiar U.S. Spanish vocabulary to build rapid conversational confidence.' },
+      { step: 2, domain: 'French & Italian', transferPct: '89% Match', rationale: 'Connects Spanish grammar with shared English-French roots for faster reading.' },
+      { step: 3, domain: 'Portuguese & Classical Texts', transferPct: '91% Match', rationale: 'Completes full Romance language fluency across modern and historical sources.' }
     ]
   },
   en_arabic_heritage: {
     id: 'en_arabic_heritage',
-    label: 'English + Arabic-Influenced Background → Spanish, Farsi & French Bridge',
-    familiarAnchors: ['English', 'Arabic Root-and-Pattern & Perso-Arabic Script / Loanword Familiarity'],
+    label: 'English + Arabic → Spanish, Farsi & French',
+    familiarAnchors: ['English', 'Arabic Roots & Script'],
     sequence: [
-      { step: 1, domain: 'Spanish (Andalusian-Arabic & Latin Bridge)', transferPct: '86% Dual Cognate & Cultural Bridge', rationale: '4,000+ Arabic loanwords in Spanish (al- prefix, Guadal-, ojalá, alcalde) combine with American English familiarity to make Spanish an effortless first bridge.' },
-      { step: 2, domain: 'Farsi / Persian (Indo-European Syntax + Perso-Arabic Script)', transferPct: '88% Script + 45% Arabic Loanword + Indo-European Grammar Transfer', rationale: 'Leverages Arabic script and vocabulary familiarity alongside English Indo-European clause structure to master Farsi rapidly.' },
-      { step: 3, domain: 'French & Mediterranean Diplomacy', transferPct: '90% Romance + Levant/Maghreb Lexical Transfer', rationale: 'Combines Spanish Romance grammar with shared Arabic-French diplomatic and technical vocabulary.' }
+      { step: 1, domain: 'Spanish', transferPct: '86% Match', rationale: 'Connects 4,000+ Arabic-origin Spanish words with everyday English familiarity.' },
+      { step: 2, domain: 'Farsi (Persian)', transferPct: '88% Match', rationale: 'Pairs familiar script and vocabulary with English-style sentence structure.' },
+      { step: 3, domain: 'French', transferPct: '90% Match', rationale: 'Builds on Spanish grammar and shared Mediterranean vocabulary.' }
     ]
   },
   east_asian_hangul: {
     id: 'east_asian_hangul',
-    label: 'Korean (Hangul) First → Mandarin Chinese & Japanese Structural Bridge',
-    familiarAnchors: ['English', 'Logical Phonetic Matrix & Sino-Xenic Root System'],
+    label: 'Korean → Chinese & Japanese',
+    familiarAnchors: ['English', 'Phonetic Hangul Alphabet'],
     sequence: [
-      { step: 1, domain: 'Korean (Featural Hangul Alphabet + Hanja Roots)', transferPct: '94% Phonetic Decoding in <4 Hours + 60% Sino-Korean Vocabulary', rationale: 'Hangul is a featural phonetic alphabet learnable in a single afternoon while introducing 60% Sino-Korean (Hanja) syllable roots.' },
-      { step: 2, domain: 'Mandarin Chinese (Hanja → Hanzi Semantic & Phonetic Transfer)', transferPct: '78% Root & Compound Concept Transfer', rationale: 'Learning Korean first demystifies East Asian disyllabic compound logic before tackling tonal Mandarin and logographic Hanzi characters.' },
-      { step: 3, domain: 'Japanese (Shared SOV Syntax with Korean + Kanji Cognates)', transferPct: '85% Grammatical & Particle Equivalence with Korean', rationale: 'Korean and Japanese share near-identical agglutinative SOV grammar and topic/subject particles.' }
+      { step: 1, domain: 'Korean (Hangul)', transferPct: '94% Match', rationale: 'Learn the phonetic alphabet in hours while picking up core root words.' },
+      { step: 2, domain: 'Mandarin Chinese', transferPct: '78% Match', rationale: 'Uses shared word roots from Korean to make Chinese characters intuitive.' },
+      { step: 3, domain: 'Japanese', transferPct: '85% Match', rationale: 'Applies Korean sentence structure directly to Japanese grammar.' }
     ]
   },
   cli_netops_ai: {
     id: 'cli_netops_ai',
-    label: 'Network CLI & SQL → Ansible YAML → Autonomous LangGraph AI Agents',
-    familiarAnchors: ['Deterministic Command Syntax', 'Relational Logic & State Machines'],
+    label: 'Network Commands → Automation & AI',
+    familiarAnchors: ['Command Line', 'SQL & Logic'],
     sequence: [
-      { step: 1, domain: 'IOS-XE, Linux & 3NF SQL (Ghost-CLI & EVE-NG)', transferPct: '88% Deterministic State Mental Model', rationale: 'Grounds the learner in concrete packet routing, subnetting, and relational database normalization.' },
-      { step: 2, domain: 'Declarative Ansible Playbooks & Netmiko Python', transferPct: '91% CLI-to-Automation Transfer', rationale: 'Translates imperative CLI commands directly into idempotent infrastructure-as-code.' },
-      { step: 3, domain: 'LangGraph Multi-Agent & SAS ModelOps Pipelines', transferPct: '87% Graph Topology & Telemetry Transfer', rationale: 'Applies network routing and state-graph intuition directly to autonomous AI agent orchestration.' }
+      { step: 1, domain: 'Routing, Linux & SQL', transferPct: '88% Match', rationale: 'Builds a solid foundation in live terminal commands and data structure.' },
+      { step: 2, domain: 'Network Automation', transferPct: '91% Match', rationale: 'Turns everyday terminal commands into reusable automation playbooks.' },
+      { step: 3, domain: 'AI Workflows', transferPct: '87% Match', rationale: 'Applies network routing logic to automated business and AI workflows.' }
     ]
   }
 };
@@ -1471,10 +1471,12 @@ function computeDivergentRecommendations(user) {
     (c.associatedResources || []).forEach(r => recommendedResourceIds.add(r));
   });
   return {
+    agent: 'Otto',
     onboardingCompleted: Boolean(user && user.onboardingCompleted),
     selectedCategories: cats,
     divergentBaseline: baselineKey,
     bridge,
+    ottoProfile: (user && user.ottoProfile) || null,
     recommendedApps: Array.from(recommendedAppIds),
     recommendedResources: Array.from(recommendedResourceIds),
     qualifiedResources: getQualifiedResourcesForUser(user)
@@ -3254,10 +3256,10 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/onboarding/complete' && req.method === 'POST') {
       const u = getAuthenticatedUser(req);
-      if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required to save category preferences.' });
+      if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required to save Otto preferences.' });
       const body = await readJsonBody(req);
       if (hasInjectionPayload(body)) {
-        logAudit(u.id, 'security.onboarding_injection_blocked', 'Blocked injection payload in onboarding submission');
+        logAudit(u.id, 'security.onboarding_injection_blocked', 'Blocked injection payload in Otto onboarding submission');
         return sendJson(res, 400, { ok: false, code: 'INJECTION_PAYLOAD_REJECTED', error: 'Security Validation Failed: Disallowed input characters detected.' });
       }
       const d = body.data || body || {};
@@ -3265,28 +3267,54 @@ const server = http.createServer(async (req, res) => {
       const rawCats = Array.isArray(d.selectedCategories) ? d.selectedCategories : [];
       const cleanCats = rawCats.map(c => sanitizeInput(c, 48)).filter(c => validCatIds.has(c));
       if (cleanCats.length === 0) {
-        return sendJson(res, 400, { ok: false, error: 'Please select at least 1 category track to personalize your workspace.' });
+        return sendJson(res, 400, { ok: false, error: 'Please select at least 1 track in Step 1.' });
       }
       const rawBaseline = sanitizeInput(d.divergentBaseline || 'en_arabic_heritage', 48);
       const cleanBaseline = DIVERGENT_BRIDGES[rawBaseline] ? rawBaseline : 'en_arabic_heritage';
       const customGoal = sanitizeInput(d.learningGoal || '', 240);
+      const roleTitle = sanitizeInput(d.roleTitle || '', 120);
+      const industrySector = sanitizeInput(d.industrySector || '', 80);
+      const orgSize = sanitizeInput(d.orgSize || '1-10', 60);
+      const resourceInterest = sanitizeInput(d.resourceInterest || 'white-feather', 80);
+      const consentWorkspaceTailoring = d.consentWorkspaceTailoring !== false;
+      const dataSharingOptIn = Boolean(d.dataSharingOptIn);
 
+      if (!roleTitle || !industrySector || !consentWorkspaceTailoring) {
+        return sendJson(res, 400, { ok: false, error: 'Please complete Step 3 profile fields and workspace tailoring consent.' });
+      }
+
+      const ts = now();
       u.onboardingCompleted = true;
-      u.onboardingCompletedAt = now();
+      u.onboardingCompletedAt = ts;
       u.selectedCategories = cleanCats;
       u.divergentBaseline = cleanBaseline;
       u.learningGoal = customGoal;
+      u.ottoProfile = {
+        agent: 'Otto',
+        selectedCategories: cleanCats,
+        divergentBaseline: cleanBaseline,
+        learningGoal: customGoal,
+        roleTitle,
+        industrySector,
+        orgSize,
+        resourceInterest,
+        consentWorkspaceTailoring,
+        dataSharingOptIn,
+        consentTimestamp: ts,
+        consentStandard: 'CCPA_CPRA_GDPR_IAPP_2026'
+      };
 
       const primaryCat = ONBOARDING_CATEGORIES.find(c => c.id === cleanCats[0]);
       if (primaryCat && primaryCat.learningTrack && TAILOR[primaryCat.learningTrack]) {
         u.quote = Object.assign({}, u.quote || {}, { interest: primaryCat.learningTrack });
       }
       const profile = computeDivergentRecommendations(u);
-      logAudit(u.id, 'onboarding.netflix_categories_saved', `Categories=[${cleanCats.join(',')}] Baseline=${cleanBaseline}`);
+      logAudit(u.id, 'otto.onboarding_completed', `Categories=[${cleanCats.join(',')}] Path=${cleanBaseline} Role=${roleTitle} DataSharingOptIn=${dataSharingOptIn}`);
       saveState(S);
       return sendJson(res, 200, {
         ok: true,
         onboardingCompleted: true,
+        ottoProfile: u.ottoProfile,
         profile,
         state: scopeStateForUser(u)
       });
@@ -3314,23 +3342,46 @@ const server = http.createServer(async (req, res) => {
         const rawCats = Array.isArray(d.selectedCategories) ? d.selectedCategories : [];
         const cleanCats = rawCats.map(c => sanitizeInput(c, 48)).filter(c => validCatIds.has(c));
         if (cleanCats.length === 0) {
-          return sendJson(res, 400, { ok: false, error: 'Please select at least 1 category track.' });
+          return sendJson(res, 400, { ok: false, error: 'Please select at least 1 track in Step 1.' });
         }
         const rawBaseline = sanitizeInput(d.divergentBaseline || 'en_arabic_heritage', 48);
         const cleanBaseline = DIVERGENT_BRIDGES[rawBaseline] ? rawBaseline : 'en_arabic_heritage';
+        const customGoal = sanitizeInput(d.learningGoal || '', 240);
+        const roleTitle = sanitizeInput(d.roleTitle || 'Executive', 120);
+        const industrySector = sanitizeInput(d.industrySector || 'Technology & SaaS', 80);
+        const orgSize = sanitizeInput(d.orgSize || '1-10', 60);
+        const resourceInterest = sanitizeInput(d.resourceInterest || 'white-feather', 80);
+        const consentWorkspaceTailoring = d.consentWorkspaceTailoring !== false;
+        const dataSharingOptIn = Boolean(d.dataSharingOptIn);
+        const ts = now();
+
         u.onboardingCompleted = true;
-        u.onboardingCompletedAt = now();
+        u.onboardingCompletedAt = ts;
         u.selectedCategories = cleanCats;
         u.divergentBaseline = cleanBaseline;
-        u.learningGoal = sanitizeInput(d.learningGoal || '', 240);
+        u.learningGoal = customGoal;
+        u.ottoProfile = {
+          agent: 'Otto',
+          selectedCategories: cleanCats,
+          divergentBaseline: cleanBaseline,
+          learningGoal: customGoal,
+          roleTitle,
+          industrySector,
+          orgSize,
+          resourceInterest,
+          consentWorkspaceTailoring,
+          dataSharingOptIn,
+          consentTimestamp: ts,
+          consentStandard: 'CCPA_CPRA_GDPR_IAPP_2026'
+        };
         const primaryCat = ONBOARDING_CATEGORIES.find(c => c.id === cleanCats[0]);
         if (primaryCat && primaryCat.learningTrack && TAILOR[primaryCat.learningTrack]) {
           u.quote = Object.assign({}, u.quote || {}, { interest: primaryCat.learningTrack });
         }
         const profile = computeDivergentRecommendations(u);
-        logAudit(u.id, 'onboarding.netflix_categories_saved', `Categories=[${cleanCats.join(',')}] Baseline=${cleanBaseline}`);
+        logAudit(u.id, 'otto.onboarding_completed', `Categories=[${cleanCats.join(',')}] Path=${cleanBaseline} DataSharingOptIn=${dataSharingOptIn}`);
         saveState(S);
-        return sendJson(res, 200, { ok: true, onboardingCompleted: true, profile, state: scopeStateForUser(u) });
+        return sendJson(res, 200, { ok: true, onboardingCompleted: true, ottoProfile: u.ottoProfile, profile, state: scopeStateForUser(u) });
       }
 
       // Member / Self actions

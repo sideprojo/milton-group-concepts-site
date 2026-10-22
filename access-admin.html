@@ -544,6 +544,7 @@
             '</div>'
           : '');
     } else if (propTab === 'account') {
+      const op = sel.ottoProfile || null;
       bodyHtml =
         '<div style="display:flex;flex-direction:column;gap:8px;font-size:12px">' +
           '<div><small style="color:#94a3b8;display:block">User Principal Name (Case-Insensitive Email)</small><code style="color:#fde047">' + esc(sel.email) + '</code></div>' +
@@ -557,6 +558,16 @@
             '</select>' +
           '</div>' +
           '<button type="button" class="btn pri" id="btnSaveAccountProfile" style="justify-content:center;padding:7px 10px">Save Account Attributes</button>' +
+          '<div style="border-top:1px solid var(--line);padding-top:8px;margin-top:4px">' +
+            '<small style="color:#34d399;font-weight:700;display:block;margin-bottom:4px">Otto Qualification &amp; Data-Sharing Consent</small>' +
+            (op
+              ? '<div style="display:flex;flex-direction:column;gap:4px;font-size:11.5px;padding:8px 10px;border-radius:8px;background:rgba(4,8,20,0.85);border:1px solid rgba(16,185,129,0.35)">' +
+                  '<div><span style="color:#94a3b8">Role / Sector:</span> <b>' + esc(op.roleTitle || '—') + '</b> · ' + esc(op.industrySector || '—') + '</div>' +
+                  '<div><span style="color:#94a3b8">Team / Resource:</span> ' + esc(op.orgSize || '—') + ' · <code>' + esc(op.resourceInterest || '—') + '</code></div>' +
+                  '<div><span style="color:#94a3b8">Data-Sharing Opt-In:</span> <span class="chip ' + (op.dataSharingOptIn ? 'ok' : '') + '" style="font-size:10px">' + (op.dataSharingOptIn ? 'Opted In (CCPA/GDPR)' : 'Workspace Only') + '</span></div>' +
+                '</div>'
+              : '<div style="font-size:11.5px;color:#94a3b8">Otto guided setup not yet completed by user.</div>') +
+          '</div>' +
           '<div style="border-top:1px solid var(--line);padding-top:8px;margin-top:4px">' +
             '<small style="color:#94a3b8;display:block;margin-bottom:4px">Reset User Password</small>' +
             '<div style="display:flex;gap:6px">' +

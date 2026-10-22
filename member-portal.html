@@ -25,11 +25,18 @@
   let selectedConsultTrack = 'ai-web';
   let activeAiToolOutput = null;
 
-  // Netflix-Style Category Selection & Divergent Learning Profile State
+  // Otto Guided Personalization & DocuSign-Style Sequential Lock State
   let showNetflixOnboarding = qs.get('onboard') === '1';
   let selectedCategories = [];
   let selectedDivergentBaseline = 'en_arabic_heritage';
   let customLearningGoal = '';
+  let ottoStep2Confirmed = false;
+  let ottoRoleTitle = '';
+  let ottoIndustrySector = '';
+  let ottoOrgSize = '1-10';
+  let ottoResourceInterest = 'white-feather';
+  let ottoConsentTailor = false;
+  let ottoConsentDataSharing = false;
   let onboardingError = '';
 
   const isSoleAdmin = () => Boolean(W.isOwner ? W.isOwner(u) : (u && u.role === 'owner' && u.id === 'owner'));
@@ -44,14 +51,21 @@
     if (!u) return;
     if (Array.isArray(u.selectedCategories) && u.selectedCategories.length) {
       selectedCategories = u.selectedCategories.slice();
-    } else if (!selectedCategories.length) {
-      selectedCategories = ['cat_ai_saas', 'cat_divergent_lang'];
     }
     if (u.divergentBaseline && W.DIVERGENT_BRIDGES && W.DIVERGENT_BRIDGES[u.divergentBaseline]) {
       selectedDivergentBaseline = u.divergentBaseline;
     }
     if (u.learningGoal && !customLearningGoal) {
       customLearningGoal = u.learningGoal;
+    }
+    if (u.ottoProfile) {
+      ottoStep2Confirmed = true;
+      if (!ottoRoleTitle && u.ottoProfile.roleTitle) ottoRoleTitle = u.ottoProfile.roleTitle;
+      if (!ottoIndustrySector && u.ottoProfile.industrySector) ottoIndustrySector = u.ottoProfile.industrySector;
+      if (u.ottoProfile.orgSize) ottoOrgSize = u.ottoProfile.orgSize;
+      if (u.ottoProfile.resourceInterest) ottoResourceInterest = u.ottoProfile.resourceInterest;
+      if (typeof u.ottoProfile.consentWorkspaceTailoring === 'boolean') ottoConsentTailor = u.ottoProfile.consentWorkspaceTailoring;
+      if (typeof u.ottoProfile.dataSharingOptIn === 'boolean') ottoConsentDataSharing = u.ottoProfile.dataSharingOptIn;
     }
   }
 
@@ -109,7 +123,7 @@
       ? '<button type="button" class="btn" data-go-resources="1" style="border-color:rgba(197,179,88,0.45);color:#fde047">Resources &amp; AI Tools (' + qualifiedRes.length + ')</button>'
       : '';
 
-    const personalizeBtnHtml = '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Personalize Categories &amp; Divergent Path</button>';
+    const personalizeBtnHtml = '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Otto Setup</button>';
 
     const topRightActions = isEmp()
       ? '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '<a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
@@ -119,18 +133,23 @@
     const catsCatalog = W.ONBOARDING_CATEGORIES || [];
     const activeBaselineKey = (u && u.divergentBaseline && bridges[u.divergentBaseline]) ? u.divergentBaseline : selectedDivergentBaseline;
     const activeBridge = bridges[activeBaselineKey] || Object.values(bridges)[0];
-    const userCatObjs = catsCatalog.filter(c => (Array.isArray(u && u.selectedCategories) ? u.selectedCategories : selectedCategories).includes(c.id));
+    const activeCatIds = (Array.isArray(u && u.selectedCategories) && u.selectedCategories.length)
+      ? u.selectedCategories
+      : (selectedCategories.length ? selectedCategories : ['cat_ai_saas', 'cat_divergent_lang']);
+    const userCatObjs = catsCatalog.filter(c => activeCatIds.includes(c.id));
+    const ottoProf = (u && u.ottoProfile) || null;
 
     const divergentSummaryStrip = activeBridge
       ? '<div class="card" id="divergentLearningSummaryBanner" style="padding:16px 20px;margin-bottom:14px;border-color:rgba(16,185,129,0.42);background:linear-gradient(135deg,rgba(6,78,59,0.26),rgba(10,15,28,0.96))">' +
           '<div class="row" style="margin-bottom:10px">' +
             '<div>' +
-              '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Divergent Associative Learning &amp; Resource Path</span>' +
+              '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Otto · Personalized Path</span>' +
               '<h3 style="margin:2px 0 0;font-size:14.5px;font-weight:600;color:#fff">' + esc(activeBridge.label) + '</h3>' +
             '</div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
               userCatObjs.map(c => '<span class="chip ok" style="font-size:10.5px">' + esc(c.tag) + '</span>').join('') +
-              '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 10px;font-size:11.5px">Edit Tracks</button>' +
+              (ottoProf && ottoProf.dataSharingOptIn ? '<span class="chip" style="font-size:10.5px;border-color:rgba(197,179,88,0.55);color:#fde047">Partner Program Active</span>' : '') +
+              '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 10px;font-size:11.5px">Edit Otto</button>' +
             '</div>' +
           '</div>' +
           '<div class="bento-3">' +
@@ -468,82 +487,192 @@
     const activeBridge = bridges[selectedDivergentBaseline] || Object.values(bridges)[0];
     const qualifiedRes = getQualifiedResources();
 
+    const step1Done = selectedCategories.length > 0;
+    const step2Done = step1Done && ottoStep2Confirmed;
+    const step3Done = step2Done && Boolean(ottoRoleTitle) && Boolean(ottoIndustrySector) && Boolean(ottoConsentTailor);
+    const activeStepNum = !step1Done ? 1 : (!step2Done ? 2 : (!step3Done ? 3 : 4));
+
     const errHtml = onboardingError
       ? '<div id="netflixOnboardingError" style="padding:10px 14px;margin-bottom:14px;border-radius:10px;border:1px solid rgba(239,68,68,0.55);background:rgba(127,29,29,0.35);color:#fecaca;font-size:12.5px;font-weight:500">' + esc(onboardingError) + '</div>'
       : '';
 
-    return '<div id="netflixOnboardingBackdrop" role="dialog" aria-modal="true" aria-labelledby="netflixOnboardingTitle" style="position:fixed;inset:0;z-index:2000;background:rgba(2,5,14,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);overflow-y:auto;padding:28px 20px;display:flex;align-items:flex-start;justify-content:center">' +
-      '<div class="card" id="netflixOnboardingCard" style="width:min(1140px,100%);padding:28px 30px;border:1.5px solid rgba(197,179,88,0.55);border-radius:20px;background:rgba(6,11,24,0.97) !important;box-shadow:0 36px 96px rgba(0,0,0,0.92)">' +
-        '<div class="row" style="margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(148,163,184,0.2)">' +
+    const stepPill = (num, label, done, current) => {
+      const bg = done ? 'rgba(16,185,129,0.2)' : (current ? 'rgba(234,179,8,0.22)' : 'rgba(15,23,42,0.85)');
+      const bdr = done ? '#10b981' : (current ? '#eab308' : 'rgba(148,163,184,0.25)');
+      const col = done ? '#6ee7b7' : (current ? '#fde047' : '#64748b');
+      return '<div data-otto-step-pill="' + num + '" style="display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;border:1px solid ' + bdr + ';background:' + bg + ';color:' + col + ';font-size:11.5px;font-weight:700">' +
+        '<span>' + (done ? '✓' : (current ? '▶' : '🔒')) + ' Step ' + num + ' · ' + esc(label) + '</span>' +
+      '</div>';
+    };
+
+    return '<div id="netflixOnboardingBackdrop" role="dialog" aria-modal="true" aria-labelledby="netflixOnboardingTitle" style="position:fixed;inset:0;z-index:2000;background:rgba(2,5,14,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);overflow-y:auto;padding:14px 18px;display:flex;align-items:flex-start;justify-content:center">' +
+      '<div class="card" id="netflixOnboardingCard" style="width:min(1160px,100%);padding:18px 22px;border:1.5px solid rgba(197,179,88,0.55);border-radius:18px;background:rgba(6,11,24,0.97) !important;box-shadow:0 36px 96px rgba(0,0,0,0.92)">' +
+        '<div class="row" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(148,163,184,0.2)">' +
           '<div>' +
-            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
-              '<span class="chip ok">2FA &amp; Identity Verified</span>' +
-              '<span class="chip" style="border-color:rgba(197,179,88,0.45);color:#fde047">Step 1 of 1 · Personalize Experience</span>' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">' +
+              '<span class="chip ok">Otto Guided Setup</span>' +
+              stepPill(1, 'Focus Tracks', step1Done, activeStepNum === 1) +
+              stepPill(2, 'Otto Path', step2Done, activeStepNum === 2) +
+              stepPill(3, 'Profile & Data', step3Done, activeStepNum === 3) +
+              stepPill(4, 'Launch', false, activeStepNum === 4) +
             '</div>' +
-            '<h1 id="netflixOnboardingTitle" style="font-size:22px;font-weight:700;margin:4px 0 2px;color:#fff">Choose Your Categories &amp; Divergent Learning Baseline</h1>' +
-            '<p style="margin:0;font-size:13px;color:#94a3b8">Select the tracks that match your goals. Our Resource-Association &amp; Divergent-Learning engine sequences your workspace using high-familiarity cognitive bridges.</p>' +
+            '<h1 id="netflixOnboardingTitle" style="font-size:19px;font-weight:700;margin:2px 0;color:#fff">Tailor Your Workspace with Otto</h1>' +
+            '<p style="margin:0;font-size:12px;color:#94a3b8">Complete each guided step to unlock the next section and launch your workspace.</p>' +
           '</div>' +
-          '<button type="button" class="btn" id="btnCloseNetflixOnboarding" style="padding:7px 14px;font-size:12px">Skip for Now</button>' +
+          '<button type="button" class="btn" id="btnCloseNetflixOnboarding" style="padding:6px 12px;font-size:12px">Later</button>' +
         '</div>' +
 
         errHtml +
 
-        '<div style="margin-bottom:18px">' +
-          '<div class="row" style="margin-bottom:10px">' +
-            '<span style="font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa">1 · Select Your Focus Categories (Netflix-Style Multi-Track Selection)</span>' +
-            '<span style="font-size:12px;color:#cbd5e1;font-weight:600">' + selectedCategories.length + ' Selected</span>' +
+        '<!-- STEP 1: FOCUS TRACKS -->' +
+        '<div id="ottoStep1Section" style="margin-bottom:10px;padding:12px 14px;border-radius:12px;border:1.5px solid ' + (activeStepNum === 1 ? '#eab308' : (step1Done ? 'rgba(16,185,129,0.45)' : 'rgba(148,163,184,0.2)')) + ';background:rgba(8,14,28,0.85)">' +
+          '<div class="row" style="margin-bottom:8px">' +
+            '<div style="display:flex;align-items:center;gap:8px">' +
+              '<span class="chip ' + (step1Done ? 'ok' : '') + '" style="font-size:10px;border-color:' + (activeStepNum === 1 ? '#eab308' : '') + ';color:' + (activeStepNum === 1 ? '#fde047' : '') + '">' + (step1Done ? '✓ Step 1 Complete' : '▶ Next Action · Step 1') + '</span>' +
+              '<strong style="font-size:13px;color:#fff">Choose Your Focus Tracks</strong>' +
+            '</div>' +
+            '<span style="font-size:11.5px;color:#cbd5e1;font-weight:600">' + selectedCategories.length + ' Selected</span>' +
           '</div>' +
-          '<div class="bento-3" id="netflixCategoryGrid">' +
+          '<div class="bento-3" id="netflixCategoryGrid" style="gap:8px">' +
             cats.map(c => {
               const isSel = selectedCategories.includes(c.id);
-              return '<div class="compact-card" data-nf-cat="' + esc(c.id) + '" tabindex="0" role="checkbox" aria-checked="' + String(isSel) + '" style="cursor:pointer;padding:18px;border-radius:14px;border:1.5px solid ' + (isSel ? '#10b981' : 'rgba(148,163,184,0.25)') + ';background:' + (isSel ? c.gradient : 'rgba(10,16,32,0.92)') + ';box-shadow:' + (isSel ? '0 14px 32px rgba(16,185,129,0.22)' : 'none') + ';transition:all .18s ease">' +
+              return '<div class="compact-card" data-nf-cat="' + esc(c.id) + '" tabindex="0" role="checkbox" aria-checked="' + String(isSel) + '" style="cursor:pointer;padding:10px 12px;border-radius:10px;border:1.5px solid ' + (isSel ? '#10b981' : 'rgba(148,163,184,0.25)') + ';background:' + (isSel ? c.gradient : 'rgba(10,16,32,0.92)') + ';transition:all .16s ease">' +
                 '<div>' +
-                  '<div class="row" style="margin-bottom:8px">' +
-                    '<span class="chip' + (isSel ? ' ok' : '') + '" style="font-size:10.5px">' + esc(c.tag) + '</span>' +
-                    '<span style="font-size:11.5px;font-weight:700;color:' + (isSel ? '#34d399' : '#64748b') + '">' + (isSel ? '✓ Selected' : '+ Select') + '</span>' +
+                  '<div class="row" style="margin-bottom:4px">' +
+                    '<span class="chip' + (isSel ? ' ok' : '') + '" style="font-size:9.5px;padding:2px 7px">' + esc(c.tag) + '</span>' +
+                    '<span style="font-size:10.5px;font-weight:700;color:' + (isSel ? '#34d399' : '#64748b') + '">' + (isSel ? '✓ Selected' : '+ Select') + '</span>' +
                   '</div>' +
-                  '<h3 style="font-size:14.5px;font-weight:700;color:#fff;margin-bottom:6px">' + esc(c.title) + '</h3>' +
-                  '<p style="font-size:12px;color:#cbd5e1;line-height:1.5">' + esc(c.summary) + '</p>' +
+                  '<h3 style="font-size:12.5px;font-weight:700;color:#fff;margin-bottom:2px">' + esc(c.title) + '</h3>' +
+                  '<p style="font-size:11px;color:#cbd5e1;line-height:1.35;margin:0">' + esc(c.summary) + '</p>' +
                 '</div>' +
               '</div>';
             }).join('') +
           '</div>' +
         '</div>' +
 
-        '<div style="display:grid;grid-template-columns:1fr 1.35fr;gap:16px;align-items:start;margin-bottom:18px">' +
-          '<div class="compact-card" style="padding:18px;border-color:rgba(197,179,88,0.42)">' +
-            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047;margin-bottom:6px">2 · Cognitive &amp; Linguistic Baseline (Divergent Learning)</span>' +
-            '<label for="nfBaselineSelect" style="font-size:12px;color:#cbd5e1;margin-bottom:6px;display:block">Select your existing language / technical anchor to sequence learning through association:</label>' +
-            '<select id="nfBaselineSelect" style="width:100%;padding:10px 12px;font-size:12.5px;margin-bottom:12px">' +
-              Object.values(bridges).map(b => '<option value="' + esc(b.id) + '"' + (b.id === selectedDivergentBaseline ? ' selected' : '') + '>' + esc(b.label) + '</option>').join('') +
-            '</select>' +
-            '<label for="nfLearningGoalInput" style="font-size:11.5px;font-weight:600;color:#94a3b8;margin-bottom:4px;display:block">Specific Objective or Target Skill (Optional, Sanitized)</label>' +
-            '<input id="nfLearningGoalInput" type="text" maxlength="240" value="' + esc(customLearningGoal) + '" placeholder="e.g., Spanish -> French & Farsi fluency, or Korean -> Chinese + AI SaaS" style="width:100%;padding:9px 12px;font-size:12.5px">' +
+        '<!-- STEP 2: OTTO PATH (LOCKED UNTIL STEP 1 COMPLETE) -->' +
+        '<div id="ottoStep2Section" data-locked="' + String(!step1Done) + '" style="margin-bottom:10px;padding:12px 14px;border-radius:12px;border:1.5px solid ' + (activeStepNum === 2 ? '#eab308' : (step2Done ? 'rgba(16,185,129,0.45)' : 'rgba(148,163,184,0.2)')) + ';background:rgba(8,14,28,0.85);opacity:' + (step1Done ? '1' : '0.48') + ';transition:opacity .2s ease">' +
+          '<div class="row" style="margin-bottom:8px">' +
+            '<div style="display:flex;align-items:center;gap:8px">' +
+              '<span id="ottoStep2Badge" class="chip ' + (step2Done ? 'ok' : '') + '" style="font-size:10px;border-color:' + (activeStepNum === 2 ? '#eab308' : '') + ';color:' + (activeStepNum === 2 ? '#fde047' : '') + '">' +
+                (!step1Done ? '🔒 Locked · Complete Step 1 First' : (step2Done ? '✓ Step 2 Confirmed' : '▶ Next Action · Step 2')) +
+              '</span>' +
+              '<strong style="font-size:13px;color:#fff">Set Your Otto Starting Path</strong>' +
+            '</div>' +
             (qualifiedRes.length > 0
-              ? '<div style="margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.38);font-size:12px;color:#a7f3d0"><strong>Qualified Resources Associated:</strong> ' + qualifiedRes.map(r => esc(r.shortTitle || r.title)).join(', ') + ' (Milton UI/UX + AI Fast-Track Active)</div>'
+              ? '<span class="chip ok" style="font-size:10px">Resources Linked: ' + qualifiedRes.map(r => esc(r.shortTitle || r.title)).join(', ') + '</span>'
               : '') +
           '</div>' +
-
-          '<div class="compact-card" id="nfDivergentPreviewBox" style="padding:18px;border-color:rgba(16,185,129,0.45);background:rgba(6,24,38,0.85)">' +
-            '<div class="row" style="margin-bottom:8px">' +
-              '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Associative Bridge Sequence Preview</span>' +
-              '<span class="chip ok" style="font-size:10.5px">Divergent Transfer Matrix</span>' +
+          '<div style="display:grid;grid-template-columns:1fr 1.45fr;gap:10px;align-items:start">' +
+            '<div class="compact-card" style="padding:10px 12px;border-color:rgba(197,179,88,0.38)">' +
+              '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">' +
+                '<div>' +
+                  '<label for="nfBaselineSelect" style="font-size:11px;font-weight:600;color:#cbd5e1;margin-bottom:3px;display:block">Starting Background</label>' +
+                  '<select id="nfBaselineSelect" ' + (!step1Done ? 'disabled ' : '') + 'style="width:100%;padding:7px 9px;font-size:12px">' +
+                    Object.values(bridges).map(b => '<option value="' + esc(b.id) + '"' + (b.id === selectedDivergentBaseline ? ' selected' : '') + '>' + esc(b.label) + '</option>').join('') +
+                  '</select>' +
+                '</div>' +
+                '<div>' +
+                  '<label for="nfLearningGoalInput" style="font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:3px;display:block">Focus Goal (Optional)</label>' +
+                  '<input id="nfLearningGoalInput" type="text" maxlength="240" ' + (!step1Done ? 'disabled ' : '') + 'value="' + esc(customLearningGoal) + '" placeholder="e.g., Spanish & Farsi fluency" style="width:100%;padding:7px 9px;font-size:12px">' +
+                '</div>' +
+              '</div>' +
+              '<button type="button" class="btn ' + (step2Done ? 'ok' : 'pri') + '" id="btnConfirmOttoStep2" ' + (!step1Done ? 'disabled ' : '') + 'style="width:100%;justify-content:center;padding:7px 12px;font-size:12px">' +
+                (step2Done ? '✓ Otto Path Confirmed' : 'Confirm Otto Path &amp; Unlock Step 3 →') +
+              '</button>' +
             '</div>' +
-            '<h3 style="font-size:14px;color:#fff;margin-bottom:8px">' + esc(activeBridge ? activeBridge.label : '') + '</h3>' +
-            '<div style="display:flex;flex-direction:column;gap:8px">' +
-              ((activeBridge && activeBridge.sequence) || []).map(st =>
-                '<div style="padding:10px 12px;border-radius:9px;background:rgba(4,8,20,0.78);border:1px solid rgba(59,130,246,0.32)">' +
-                  '<div class="row" style="margin-bottom:3px"><strong style="font-size:12.5px;color:#f8fafc">Step ' + esc(st.step) + ' · ' + esc(st.domain) + '</strong><span class="chip ok" style="font-size:10px">' + esc(st.transferPct) + '</span></div>' +
-                  '<p style="margin:0;font-size:11.5px;color:#cbd5e1">' + esc(st.rationale) + '</p>' +
-                '</div>'
-              ).join('') +
+
+            '<div class="compact-card" id="nfDivergentPreviewBox" style="padding:10px 12px;border-color:rgba(16,185,129,0.42);background:rgba(6,24,38,0.85)">' +
+              '<div class="row" style="margin-bottom:6px">' +
+                '<span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Otto Sequence</span>' +
+                '<span class="chip ok" style="font-size:9.5px;padding:2px 7px">' + esc(activeBridge ? activeBridge.label : '') + '</span>' +
+              '</div>' +
+              '<div class="bento-3" style="gap:6px">' +
+                ((activeBridge && activeBridge.sequence) || []).map(st =>
+                  '<div style="padding:7px 9px;border-radius:8px;background:rgba(4,8,20,0.78);border:1px solid rgba(59,130,246,0.28)">' +
+                    '<div class="row" style="margin-bottom:2px"><strong style="font-size:11.5px;color:#f8fafc">' + esc(st.step) + '. ' + esc(st.domain) + '</strong><span class="chip ok" style="font-size:9px;padding:1px 5px">' + esc(st.transferPct) + '</span></div>' +
+                    '<p style="margin:0;font-size:10.5px;color:#cbd5e1;line-height:1.3">' + esc(st.rationale) + '</p>' +
+                  '</div>'
+                ).join('') +
+              '</div>' +
             '</div>' +
           '</div>' +
         '</div>' +
 
-        '<div class="row" style="padding-top:14px;border-top:1px solid rgba(148,163,184,0.2);justify-content:space-between">' +
-          '<span style="font-size:12px;color:#94a3b8">Strict Zero-Leakage RBAC: Only authorized applications and qualified resources appear in your workspace.</span>' +
-          '<button type="button" class="btn pri" id="btnSaveNetflixOnboarding" style="padding:10px 24px;font-size:13.5px">Save Preferences &amp; Launch Personalized Workspace</button>' +
+        '<!-- STEP 3: QUALIFIED PROFILE & DATA PREFERENCES (LOCKED UNTIL STEP 2 CONFIRMED) -->' +
+        '<div id="ottoStep3Section" data-locked="' + String(!step2Done) + '" style="margin-bottom:10px;padding:12px 14px;border-radius:12px;border:1.5px solid ' + (activeStepNum === 3 ? '#eab308' : (step3Done ? 'rgba(16,185,129,0.45)' : 'rgba(148,163,184,0.2)')) + ';background:rgba(8,14,28,0.85);opacity:' + (step2Done ? '1' : '0.48') + ';transition:opacity .2s ease">' +
+          '<div class="row" style="margin-bottom:8px">' +
+            '<div style="display:flex;align-items:center;gap:8px">' +
+              '<span id="ottoStep3Badge" class="chip ' + (step3Done ? 'ok' : '') + '" style="font-size:10px;border-color:' + (activeStepNum === 3 ? '#eab308' : '') + ';color:' + (activeStepNum === 3 ? '#fde047' : '') + '">' +
+                (!step2Done ? '🔒 Locked · Complete Step 2 First' : (step3Done ? '✓ Step 3 Complete' : '▶ Next Action · Step 3')) +
+              '</span>' +
+              '<strong style="font-size:13px;color:#fff">Qualified Profile &amp; Data Preferences</strong>' +
+            '</div>' +
+            '<span class="chip" style="font-size:10px;border-color:rgba(59,130,246,0.4);color:#93c5fd">CCPA / GDPR / IAPP Compliant</span>' +
+          '</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">' +
+            '<div>' +
+              '<label for="ottoRoleTitle" style="display:block;font-size:10.5px;font-weight:600;color:#cbd5e1;margin-bottom:3px">Role or Title *</label>' +
+              '<select id="ottoRoleTitle" ' + (!step2Done ? 'disabled ' : '') + 'style="width:100%;padding:7px 9px;font-size:12px">' +
+                '<option value=""' + (!ottoRoleTitle ? ' selected' : '') + '>Select Role...</option>' +
+                '<option value="Founder / Executive"' + (ottoRoleTitle === 'Founder / Executive' ? ' selected' : '') + '>Founder / Executive</option>' +
+                '<option value="Operations / Program Lead"' + (ottoRoleTitle === 'Operations / Program Lead' ? ' selected' : '') + '>Operations / Program Lead</option>' +
+                '<option value="Engineer / Security Analyst"' + (ottoRoleTitle === 'Engineer / Security Analyst' ? ' selected' : '') + '>Engineer / Security Analyst</option>' +
+                '<option value="Contracting / Procurement"' + (ottoRoleTitle === 'Contracting / Procurement' ? ' selected' : '') + '>Contracting / Procurement</option>' +
+                '<option value="Educator / Researcher"' + (ottoRoleTitle === 'Educator / Researcher' ? ' selected' : '') + '>Educator / Researcher</option>' +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label for="ottoIndustrySector" style="display:block;font-size:10.5px;font-weight:600;color:#cbd5e1;margin-bottom:3px">Industry Sector *</label>' +
+              '<select id="ottoIndustrySector" ' + (!step2Done ? 'disabled ' : '') + 'style="width:100%;padding:7px 9px;font-size:12px">' +
+                '<option value=""' + (!ottoIndustrySector ? ' selected' : '') + '>Select Sector...</option>' +
+                '<option value="Technology &amp; SaaS"' + (ottoIndustrySector === 'Technology & SaaS' ? ' selected' : '') + '>Technology &amp; SaaS</option>' +
+                '<option value="Defense &amp; Federal"' + (ottoIndustrySector === 'Defense & Federal' ? ' selected' : '') + '>Defense &amp; Federal</option>' +
+                '<option value="Finance &amp; Capital"' + (ottoIndustrySector === 'Finance & Capital' ? ' selected' : '') + '>Finance &amp; Capital</option>' +
+                '<option value="Commercial &amp; Agency"' + (ottoIndustrySector === 'Commercial & Agency' ? ' selected' : '') + '>Commercial &amp; Agency</option>' +
+                '<option value="Education &amp; Research"' + (ottoIndustrySector === 'Education & Research' ? ' selected' : '') + '>Education &amp; Research</option>' +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label for="ottoOrgSize" style="display:block;font-size:10.5px;font-weight:600;color:#cbd5e1;margin-bottom:3px">Team Size</label>' +
+              '<select id="ottoOrgSize" ' + (!step2Done ? 'disabled ' : '') + 'style="width:100%;padding:7px 9px;font-size:12px">' +
+                '<option value="1-10"' + (ottoOrgSize === '1-10' ? ' selected' : '') + '>1–10 Members</option>' +
+                '<option value="11-50"' + (ottoOrgSize === '11-50' ? ' selected' : '') + '>11–50 Members</option>' +
+                '<option value="51-250"' + (ottoOrgSize === '51-250' ? ' selected' : '') + '>51–250 Members</option>' +
+                '<option value="250+"' + (ottoOrgSize === '250+' ? ' selected' : '') + '>250+ Enterprise</option>' +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label for="ottoResourceInterest" style="display:block;font-size:10.5px;font-weight:600;color:#cbd5e1;margin-bottom:3px">Resource Qualification</label>' +
+              '<select id="ottoResourceInterest" ' + (!step2Done ? 'disabled ' : '') + 'style="width:100%;padding:7px 9px;font-size:12px">' +
+                '<option value="white-feather"' + (ottoResourceInterest === 'white-feather' ? ' selected' : '') + '>White Feather + AI Tools</option>' +
+                '<option value="turnkey-saas"' + (ottoResourceInterest === 'turnkey-saas' ? ' selected' : '') + '>Turnkey Client Portals</option>' +
+                '<option value="federal-teaming"' + (ottoResourceInterest === 'federal-teaming' ? ' selected' : '') + '>Federal SDVOSB Teaming</option>' +
+                '<option value="language-academy"' + (ottoResourceInterest === 'language-academy' ? ' selected' : '') + '>Otto Language &amp; Lab Studio</option>' +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 12px;border-radius:9px;background:rgba(4,8,20,0.85);border:1px solid rgba(148,163,184,0.2)">' +
+            '<label style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:#e2e8f0;cursor:' + (step2Done ? 'pointer' : 'not-allowed') + ';font-weight:500">' +
+              '<input type="checkbox" id="ottoConsentTailor" ' + (!step2Done ? 'disabled ' : '') + (ottoConsentTailor ? 'checked ' : '') + '>' +
+              '<span>Allow Otto to organize my workspace and qualified resources (Required)</span>' +
+            '</label>' +
+            '<label style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:#cbd5e1;cursor:' + (step2Done ? 'pointer' : 'not-allowed') + ';font-weight:400">' +
+              '<input type="checkbox" id="ottoConsentDataSharing" ' + (!step2Done ? 'disabled ' : '') + (ottoConsentDataSharing ? 'checked ' : '') + '>' +
+              '<span>Join Qualified Partner &amp; Data-Sharing Programs (CCPA/GDPR; opt out anytime)</span>' +
+            '</label>' +
+          '</div>' +
+        '</div>' +
+
+        '<!-- STEP 4: FINISH & LAUNCH (LOCKED UNTIL STEP 3 COMPLETE) -->' +
+        '<div id="ottoStep4Section" data-locked="' + String(!step3Done) + '" class="row" style="padding-top:10px;border-top:1px solid rgba(148,163,184,0.2);justify-content:space-between;opacity:' + (step3Done ? '1' : '0.55') + '">' +
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<span id="ottoStep4Badge" class="chip ' + (step3Done ? 'ok' : '') + '" style="font-size:10px;border-color:' + (step3Done ? '#eab308' : '') + ';color:' + (step3Done ? '#fde047' : '') + '">' +
+              (step3Done ? '▶ Step 4 Ready · Finish Setup' : '🔒 Step 4 Locked · Complete Steps 1–3') +
+            '</span>' +
+            '<span style="font-size:11.5px;color:#94a3b8">Only your authorized apps and qualified resources are shown.</span>' +
+          '</div>' +
+          '<button type="button" class="btn pri" id="btnSaveNetflixOnboarding" ' + (!step3Done ? 'disabled ' : '') + 'style="padding:9px 22px;font-size:13px;cursor:' + (step3Done ? 'pointer' : 'not-allowed') + '">Finish &amp; Launch with Otto</button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -612,16 +741,35 @@
         render();
       };
     }
+    const captureOttoFormFields = () => {
+      const goalInput = document.getElementById('nfLearningGoalInput');
+      if (goalInput) customLearningGoal = goalInput.value;
+      const roleEl = document.getElementById('ottoRoleTitle');
+      if (roleEl) ottoRoleTitle = roleEl.value;
+      const indEl = document.getElementById('ottoIndustrySector');
+      if (indEl) ottoIndustrySector = indEl.value;
+      const sizeEl = document.getElementById('ottoOrgSize');
+      if (sizeEl) ottoOrgSize = sizeEl.value;
+      const resEl = document.getElementById('ottoResourceInterest');
+      if (resEl) ottoResourceInterest = resEl.value;
+      const tailorEl = document.getElementById('ottoConsentTailor');
+      if (tailorEl) ottoConsentTailor = tailorEl.checked;
+      const shareEl = document.getElementById('ottoConsentDataSharing');
+      if (shareEl) ottoConsentDataSharing = shareEl.checked;
+    };
+
     app.querySelectorAll('[data-nf-cat]').forEach(card => {
       const toggleCat = () => {
         const cid = card.dataset.nfCat;
         if (!cid) return;
-        const goalInput = document.getElementById('nfLearningGoalInput');
-        if (goalInput) customLearningGoal = goalInput.value;
+        captureOttoFormFields();
         if (selectedCategories.includes(cid)) {
           selectedCategories = selectedCategories.filter(x => x !== cid);
         } else {
           selectedCategories.push(cid);
+        }
+        if (selectedCategories.length === 0) {
+          ottoStep2Confirmed = false;
         }
         onboardingError = '';
         render();
@@ -634,35 +782,78 @@
         }
       };
     });
+
     const nfBaselineSelect = document.getElementById('nfBaselineSelect');
     if (nfBaselineSelect) {
       nfBaselineSelect.onchange = () => {
-        const goalInput = document.getElementById('nfLearningGoalInput');
-        if (goalInput) customLearningGoal = goalInput.value;
+        captureOttoFormFields();
         selectedDivergentBaseline = nfBaselineSelect.value;
         render();
       };
     }
+
+    const btnConfirmOttoStep2 = document.getElementById('btnConfirmOttoStep2');
+    if (btnConfirmOttoStep2) {
+      btnConfirmOttoStep2.onclick = () => {
+        captureOttoFormFields();
+        if (W.hasInjectionPayload && W.hasInjectionPayload(customLearningGoal)) {
+          onboardingError = 'Security Validation Failed: Input contains disallowed script, SQL, or template injection patterns.';
+          render();
+          return;
+        }
+        ottoStep2Confirmed = true;
+        onboardingError = '';
+        render();
+      };
+    }
+
+    ['ottoRoleTitle', 'ottoIndustrySector', 'ottoOrgSize', 'ottoResourceInterest', 'ottoConsentTailor', 'ottoConsentDataSharing'].forEach(fid => {
+      const el = document.getElementById(fid);
+      if (el) {
+        el.onchange = () => {
+          captureOttoFormFields();
+          onboardingError = '';
+          render();
+        };
+      }
+    });
+
     const btnSaveNf = document.getElementById('btnSaveNetflixOnboarding');
     if (btnSaveNf) {
       btnSaveNf.onclick = async () => {
         onboardingError = '';
-        const goalInput = document.getElementById('nfLearningGoalInput');
-        const rawGoal = goalInput ? goalInput.value.trim() : customLearningGoal;
-        if (W.hasInjectionPayload && W.hasInjectionPayload(rawGoal)) {
+        captureOttoFormFields();
+        const rawGoal = (customLearningGoal || '').trim();
+        if (W.hasInjectionPayload && (W.hasInjectionPayload(rawGoal) || W.hasInjectionPayload(ottoRoleTitle) || W.hasInjectionPayload(ottoIndustrySector))) {
           onboardingError = 'Security Validation Failed: Input contains disallowed script, SQL, or template injection patterns.';
           render();
           return;
         }
         if (!selectedCategories.length) {
-          onboardingError = 'Please select at least 1 category card to personalize your workspace.';
+          onboardingError = 'Please select at least 1 track in Step 1.';
+          render();
+          return;
+        }
+        if (!ottoStep2Confirmed) {
+          onboardingError = 'Please confirm your Otto Path in Step 2 first.';
+          render();
+          return;
+        }
+        if (!ottoRoleTitle || !ottoIndustrySector || !ottoConsentTailor) {
+          onboardingError = 'Please complete your Role, Sector, and required workspace consent in Step 3.';
           render();
           return;
         }
         const payload = {
           selectedCategories,
           divergentBaseline: selectedDivergentBaseline,
-          learningGoal: W.sanitizeField ? W.sanitizeField(rawGoal, 240) : rawGoal
+          learningGoal: W.sanitizeField ? W.sanitizeField(rawGoal, 240) : rawGoal,
+          roleTitle: W.sanitizeField ? W.sanitizeField(ottoRoleTitle, 120) : ottoRoleTitle,
+          industrySector: W.sanitizeField ? W.sanitizeField(ottoIndustrySector, 80) : ottoIndustrySector,
+          orgSize: W.sanitizeField ? W.sanitizeField(ottoOrgSize, 60) : ottoOrgSize,
+          resourceInterest: W.sanitizeField ? W.sanitizeField(ottoResourceInterest, 80) : ottoResourceInterest,
+          consentWorkspaceTailoring: Boolean(ottoConsentTailor),
+          dataSharingOptIn: Boolean(ottoConsentDataSharing)
         };
         try {
           const resp = await fetch('/api/onboarding/complete', {
@@ -672,7 +863,7 @@
           });
           const data = await resp.json();
           if (!data || !data.ok) {
-            onboardingError = (data && data.error) || 'Failed to save category preferences.';
+            onboardingError = (data && data.error) || 'Failed to save Otto preferences.';
             render();
             return;
           }
@@ -681,10 +872,11 @@
             u.selectedCategories = selectedCategories.slice();
             u.divergentBaseline = selectedDivergentBaseline;
             u.learningGoal = payload.learningGoal;
+            u.ottoProfile = data.ottoProfile || payload;
           }
           if (W.completeNetflixOnboarding) W.completeNetflixOnboarding(payload);
           showNetflixOnboarding = false;
-          W.toast('Personalized Categories & Divergent Path Saved');
+          W.toast('Otto Setup Complete');
           render();
         } catch (_) {
           const localRes = W.completeNetflixOnboarding ? W.completeNetflixOnboarding(payload) : { ok: true };
@@ -694,7 +886,7 @@
             return;
           }
           showNetflixOnboarding = false;
-          W.toast('Personalized Categories & Divergent Path Saved');
+          W.toast('Otto Setup Complete');
           render();
         }
       };
