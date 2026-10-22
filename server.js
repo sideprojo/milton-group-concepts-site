@@ -2550,6 +2550,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === '/api/newsletter/donate' && req.method === 'POST') {
+      if (!checkRateLimit(req, 'newsletter_donate', 15, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'Too many requests. Please wait a moment.' });
+      }
       const body = await readJsonBody(req);
       if (hasInjectionPayload(body)) {
         return sendJson(res, 400, { ok: false, error: 'Security check failed: Invalid characters detected.' });
@@ -2600,6 +2603,75 @@ const server = http.createServer(async (req, res) => {
         donation: donationRecord,
         donationsTotalUsd: S.newsletter.donations.reduce((acc, d) => acc + (Number(d.amountUsd) || 0), 0),
         message: `Thank you, ${donorName}! Donation ${donationId} ($${amountUsd.toFixed(2)}) recorded.`
+      });
+    }
+
+    if ((pathname === '/api/newsletter/consultation' || pathname === '/api/consultation/public') && req.method === 'POST') {
+      if (!checkRateLimit(req, 'newsletter_consultation', 12, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'Too many requests. Please wait 60 seconds and try again.' });
+      }
+      const body = await readJsonBody(req);
+      if (hasInjectionPayload(body)) {
+        logAudit('public', 'security.newsletter_consultation_injection_blocked', 'Blocked disallowed payload in newsletter consultation submission');
+        return sendJson(res, 400, { ok: false, code: 'INJECTION_PAYLOAD_REJECTED', error: 'Invalid characters detected in submission fields.' });
+      }
+      const d = body.data || body || {};
+      const clientName = sanitizeInput(d.clientName || d.name || '', 120);
+      const clientEmail = sanitizeInput(d.clientEmail || d.email || '', 160).toLowerCase();
+      const organization = sanitizeInput(d.organization || d.org || '', 140);
+      const phone = sanitizeInput(d.phone || '', 32);
+      const track = sanitizeInput(d.track || 'ai-web', 60);
+      const architectureScope = sanitizeInput(d.architectureScope || 'Executive Consultation & Information Request', 140);
+      const timeline = sanitizeInput(d.timeline || '2-4 Weeks', 60);
+      const projectBrief = sanitizeInput(d.projectBrief || d.note || '', 600);
+
+      if (!clientName || !/^\S+@\S+\.\S+$/.test(clientEmail)) {
+        return sendJson(res, 400, { ok: false, error: 'Please provide your Full Name and a valid Email Address.' });
+      }
+      if (OWNER_EMAILS.has(clientEmail)) {
+        return sendJson(res, 403, { ok: false, error: 'Protected domain address cannot be used for public submissions.' });
+      }
+      if (!Array.isArray(S.consultations)) S.consultations = [];
+      const receiptId = 'MGC-REQ-' + Date.now().toString(36).toUpperCase().slice(-5) + '-' + crypto.randomBytes(2).toString('hex').toUpperCase();
+      const entry = {
+        id: uid('cons'),
+        receiptId,
+        uid: 'public_newsletter',
+        clientName,
+        clientEmail,
+        organization,
+        phone,
+        track,
+        architectureScope,
+        timeline,
+        projectBrief,
+        source: 'newsletter_public_form',
+        status: 'submitted',
+        createdAt: now()
+      };
+      S.consultations.unshift(entry);
+      S.requests.unshift({
+        id: entry.id,
+        receipt: entry.receiptId,
+        uid: 'public_newsletter',
+        name: clientName,
+        email: clientEmail,
+        org: organization,
+        interest: track,
+        consultationScope: architectureScope,
+        timeline,
+        note: projectBrief,
+        status: 'consultation_requested',
+        created: entry.createdAt
+      });
+      notifyUser('owner', 'New Newsletter Consultation & Information Request', `${clientName} (${clientEmail}${organization ? ' · ' + organization : ''}) submitted ${receiptId}: ${architectureScope} [${timeline}].`);
+      logAudit('public', 'newsletter.consultation_submitted', `${receiptId} [${clientEmail} · ${architectureScope}]`);
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        receiptId,
+        consultation: entry,
+        message: `Request ${receiptId} submitted. Our team will follow up at ${clientEmail}.`
       });
     }
 

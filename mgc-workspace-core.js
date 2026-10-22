@@ -1868,8 +1868,12 @@
       '</div>';
     }
 
+    const isNewsletterPage = String(active || '').includes('newsletter') || (typeof location !== 'undefined' && /newsletter/i.test(location.pathname || ''));
     let navInner = '';
-    if (admin) {
+    if (isNewsletterPage) {
+      // Public Newsletter Hardened Navigation: ONLY render "Submit Request & Consultation" (zero links to Workspace, SaaS & LMS, or Billing)
+      navInner = '<button type="button" class="btn pri" id="btnNavSubmitConsultation" data-open-nl-consultation="1" style="padding:7px 14px;font-size:12.5px">Submit Request &amp; Consultation</button>';
+    } else if (admin) {
       const dirDrop = buildDropdown('dir', 'MGC Directory', active.includes('access-admin'), [
         {
           title: 'Organizational Units',
@@ -1963,9 +1967,6 @@
         '<a class="btn' + (active === 'member-portal.html' ? ' pri' : '') + '" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Workspace</a>' +
         empDirDrop + empInternalDrop + empAppsDrop + empResDrop;
     } else {
-      // Client & Public view: On newsletter or unauthenticated views, show Donations instead of Billing & Payment.
-      // Membership & Billing only appears inside the workspace after authentication & onboarding flow.
-      const isNewsletterPage = String(active || '').includes('newsletter');
       const clientLinks = [
         ['member-portal.html', 'Workspace'],
         ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase']
@@ -1977,7 +1978,7 @@
         }
       }
       clientLinks.push(['member-portal.html?view=consultation', 'Submit Request & Consultation']);
-      if (isNewsletterPage || !u) {
+      if (!u) {
         clientLinks.push(['newsletter.html#donations', '💝 Donations']);
       } else {
         clientLinks.push(['member-portal.html?view=payment', 'Membership & Billing']);
@@ -2010,14 +2011,15 @@
             ? '<span class="chip ok">Internal Staff</span>'
             : (paymentVerified ? '<span class="chip ok">Billing Verified</span>' : ''))
       : '';
-    const right = '<div class="nav">' + tierChip + authBtn + '</div>';
+    const right = isNewsletterPage ? '' : ('<div class="nav">' + tierChip + authBtn + '</div>');
     const existingBar = document.querySelector('.wrap > .bar');
     if (existingBar) existingBar.remove();
     const el = document.createElement('div');
     el.className = 'bar';
     const brandCode = (u && u.brand === 'FIX') ? 'FIX' : 'MGC';
     const brandTitle = (u && u.brand === 'FIX') ? 'F.I.X Solutions' : 'Milton Group Concepts';
-    el.innerHTML = '<div class="brand"><span class="brand-mark">' + brandCode + '</span><div>' + brandTitle + '<small>' + (u ? esc(u.name) : 'Not signed in') + '</small></div></div>' + nav + right;
+    const subLabel = isNewsletterPage ? 'Executive Intelligence' : (u ? esc(u.name) : 'Not signed in');
+    el.innerHTML = '<div class="brand"><span class="brand-mark">' + brandCode + '</span><div>' + brandTitle + '<small>' + subLabel + '</small></div></div>' + nav + right;
     const host = document.querySelector('.wrap');
     if (host) host.prepend(el);
     const soEl = el.querySelector('#w-signout');

@@ -1592,7 +1592,13 @@
             </a>
           `).join('')}
         `
-        : `
+        : currentFile === 'newsletter.html'
+          ? `
+          <a href="#consultation" data-open-nl-consultation="1" class="os-menu-trigger" style="text-decoration:none;color:#fde047;border-color:rgba(197,179,88,0.45);">
+            <span>Submit Request &amp; Consultation</span>
+          </a>
+          `
+          : `
           <a href="member-portal.html" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'member-portal.html' ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
             <span>Workspace</span>
           </a>
@@ -1602,15 +1608,9 @@
           <a href="member-portal.html?view=consultation" class="os-menu-trigger" style="text-decoration:none;">
             <span>Submit Request &amp; Consultation</span>
           </a>
-          ${currentFile === 'newsletter.html' ? `
-          <a href="newsletter.html#donations" class="os-menu-trigger" style="text-decoration:none;color:#fde047;border-color:rgba(197,179,88,0.45);">
-            <span>💝 Donations</span>
-          </a>
-          ` : `
           <a href="member-portal.html?view=payment" class="os-menu-trigger" style="text-decoration:none;">
             <span>Membership &amp; Billing</span>
           </a>
-          `}
           ${adminGrantedPortalEntries.map(item => `
             <a href="${item.file}" class="os-menu-trigger" style="text-decoration:none;${item.file.toLowerCase() === currentFile ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
               <span>${item.label}</span>

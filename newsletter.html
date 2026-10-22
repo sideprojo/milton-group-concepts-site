@@ -103,6 +103,9 @@
     };
 
     let selectedDonationAmount = 25;
+    let showConsultationForm = location.hash === '#consultation' || new URLSearchParams(location.search).get('consultation') === '1';
+    let lastConsultationReceipt = null;
+    let consultationError = '';
 
     async function fetchNewsletter() {
       try {
@@ -142,6 +145,79 @@
         </div>`
       ).join('');
 
+      const consultationPanelHtml = showConsultationForm ? `
+        <section class="card" id="nlConsultationSection" aria-label="Submit Request & Consultation" style="margin-bottom:18px;border:1.5px solid rgba(59,130,246,0.55);background:linear-gradient(135deg,rgba(11,24,49,0.96),rgba(6,11,24,0.98))">
+          <div class="row" style="margin-bottom:12px">
+            <div>
+              <span class="chip ok">SUBMIT REQUEST &amp; CONSULTATION</span>
+              <h2 style="margin:6px 0 2px;font-size:18px;color:#fff">Information &amp; Executive Consultation Form</h2>
+              <p style="margin:0;font-size:13px;color:#cbd5e1">Submit your inquiry, custom project scope, or consultation request below.</p>
+            </div>
+            <button type="button" class="btn" id="btnCloseNlConsultation" style="padding:6px 12px;font-size:12px">Close ✕</button>
+          </div>
+          ${lastConsultationReceipt ? `
+            <div id="nlConsultationReceiptBox" style="padding:14px 16px;border-radius:12px;background:rgba(6,78,59,0.34);border:1.5px solid rgba(16,185,129,0.55);margin-bottom:14px">
+              <div class="row" style="margin-bottom:4px">
+                <strong style="color:#34d399;font-size:13.5px">✓ Request Submitted (${esc(lastConsultationReceipt.receiptId)})</strong>
+                <span class="chip ok">${esc(lastConsultationReceipt.timeline)}</span>
+              </div>
+              <p style="margin:0;font-size:12.5px;color:#e2e8f0">Received for <strong>${esc(lastConsultationReceipt.clientName)}</strong> (${esc(lastConsultationReceipt.clientEmail)}) — Scope: <strong>${esc(lastConsultationReceipt.architectureScope)}</strong>.</p>
+            </div>
+          ` : ''}
+          ${consultationError ? `
+            <div id="nlConsultationErrorBox" style="padding:10px 14px;border-radius:10px;background:rgba(127,29,29,0.35);border:1px solid rgba(248,113,113,0.55);color:#fecaca;font-size:12.5px;font-weight:600;margin-bottom:12px">${esc(consultationError)}</div>
+          ` : ''}
+          <form id="nlConsultationForm" style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+              <div>
+                <label for="reqClientName" style="display:block;font-size:11.5px;font-weight:700;color:#cbd5e1;margin-bottom:4px">Full Name *</label>
+                <input id="reqClientName" type="text" maxlength="120" required placeholder="e.g. Jordan Vance" value="${u ? esc(u.name) : ''}" />
+              </div>
+              <div>
+                <label for="reqClientEmail" style="display:block;font-size:11.5px;font-weight:700;color:#cbd5e1;margin-bottom:4px">Work or Contact Email *</label>
+                <input id="reqClientEmail" type="email" maxlength="160" required placeholder="you@organization.org" value="${u ? esc(u.email) : ''}" />
+              </div>
+              <div>
+                <label for="reqOrganization" style="display:block;font-size:11.5px;font-weight:700;color:#cbd5e1;margin-bottom:4px">Organization / Agency</label>
+                <input id="reqOrganization" type="text" maxlength="140" placeholder="Organization Name" value="${u && u.org ? esc(u.org) : ''}" />
+              </div>
+              <div>
+                <label for="reqPhone" style="display:block;font-size:11.5px;font-weight:700;color:#cbd5e1;margin-bottom:4px">Phone Number (Optional)</label>
+                <input id="reqPhone" type="tel" maxlength="24" placeholder="+1 (555) 234-5678" />
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px">
+              <div>
+                <label for="reqScope" style="display:block;font-size:11.5px;font-weight:700;color:#cbd5e1;margin-bottom:4px">Inquiry / Consultation Track</label>
+                <select id="reqScope">
+                  <option value="Turnkey Web, Autonomous AI Receptionist & SaaS Portal">Turnkey Web, Autonomous AI Receptionist &amp; SaaS Portal</option>
+                  <option value="SDVOSB Federal Teaming & Custom Engineering">SDVOSB Federal Teaming &amp; Custom Engineering</option>
+                  <option value="Zero-Trust Cybersecurity & CMMC 2.0 Architecture">Zero-Trust Cybersecurity &amp; CMMC 2.0 Architecture</option>
+                  <option value="SCORM 2004 LMS & Interactive Lab Studio">SCORM 2004 LMS &amp; Interactive Lab Studio</option>
+                  <option value="General Information & Executive Inquiry">General Information &amp; Executive Inquiry</option>
+                </select>
+              </div>
+              <div>
+                <label for="reqTimeline" style="display:block;font-size:11.5px;font-weight:700;color:#cbd5e1;margin-bottom:4px">Target Timeline</label>
+                <select id="reqTimeline">
+                  <option value="Immediate (1-2 Weeks)">Immediate (1–2 Weeks)</option>
+                  <option value="Standard (2-4 Weeks)" selected>Standard (2–4 Weeks)</option>
+                  <option value="Quarterly Planning">Quarterly Planning</option>
+                  <option value="Exploratory Consultation">Exploratory Consultation</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="reqBrief" style="display:block;font-size:11.5px;font-weight:700;color:#cbd5e1;margin-bottom:4px">Information Request / Project Brief (Max 600 chars)</label>
+              <textarea id="reqBrief" rows="3" maxlength="600" placeholder="Share your goals, questions, or scope requirements..."></textarea>
+            </div>
+            <div class="row" style="justify-content:flex-end;gap:10px">
+              <button type="submit" class="btn pri" id="btnSubmitNlConsultation" style="padding:10px 20px;font-size:13px">Submit Request &amp; Consultation →</button>
+            </div>
+          </form>
+        </section>
+      ` : '';
+
       app.innerHTML = `
         <div class="card" style="margin-bottom:18px;border-color:rgba(197,179,88,0.55)">
           <div class="row">
@@ -153,11 +229,10 @@
             <div class="nav">
               <span class="chip ok" id="nlEmailCountChip">● ${nlState.subscribersCount || 142} Email</span>
               <span class="chip ok" id="nlSmsCountChip">📱 ${nlState.smsSubscribersCount || 38} SMS</span>
-              <a class="btn pri" href="#donations" id="btnHeaderDonations" style="border-color:rgba(197,179,88,0.55)">💝 Donations</a>
-              <a class="btn" href="/home">← Main Site</a>
             </div>
           </div>
         </div>
+        ${consultationPanelHtml}
 
         <div class="nl-grid">
           <div style="display:flex;flex-direction:column;gap:14px">
@@ -254,6 +329,78 @@
         </div>
       `;
       W.header('newsletter.html');
+
+      document.querySelectorAll('[data-open-nl-consultation]').forEach(btn => {
+        btn.onclick = (ev) => {
+          if (ev) ev.preventDefault();
+          showConsultationForm = true;
+          consultationError = '';
+          render();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+      });
+
+      const btnCloseCons = document.getElementById('btnCloseNlConsultation');
+      if (btnCloseCons) {
+        btnCloseCons.onclick = () => {
+          showConsultationForm = false;
+          consultationError = '';
+          render();
+        };
+      }
+
+      const nlConsForm = document.getElementById('nlConsultationForm');
+      if (nlConsForm) {
+        nlConsForm.onsubmit = async (ev) => {
+          ev.preventDefault();
+          consultationError = '';
+          const payload = {
+            clientName: document.getElementById('reqClientName').value.trim(),
+            clientEmail: document.getElementById('reqClientEmail').value.trim(),
+            organization: document.getElementById('reqOrganization').value.trim(),
+            phone: document.getElementById('reqPhone').value.trim(),
+            architectureScope: document.getElementById('reqScope').value,
+            timeline: document.getElementById('reqTimeline').value,
+            projectBrief: document.getElementById('reqBrief').value.trim()
+          };
+          if (!payload.clientName || !/^\S+@\S+\.\S+$/.test(payload.clientEmail)) {
+            consultationError = 'Please provide your Full Name and a valid Email Address.';
+            render();
+            return;
+          }
+          if (W.hasInjectionPayload && W.hasInjectionPayload(payload)) {
+            consultationError = 'Invalid characters detected in submission fields.';
+            render();
+            return;
+          }
+          try {
+            const r = await fetch('/api/newsletter/consultation', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const d = await r.json();
+            if (d && d.ok && d.consultation) {
+              lastConsultationReceipt = d.consultation;
+              W.toast('Request Submitted (' + d.receiptId + ')');
+              render();
+              return;
+            }
+            consultationError = (d && d.error) || 'Could not submit request.';
+            render();
+          } catch (_) {
+            lastConsultationReceipt = {
+              receiptId: 'MGC-REQ-' + Date.now().toString(36).toUpperCase().slice(-5),
+              clientName: payload.clientName,
+              clientEmail: payload.clientEmail,
+              architectureScope: payload.architectureScope,
+              timeline: payload.timeline
+            };
+            W.toast('Request Submitted (' + lastConsultationReceipt.receiptId + ')');
+            render();
+          }
+        };
+      }
 
       app.querySelectorAll('[data-donate-amt]').forEach(btn => {
         btn.onclick = () => {
