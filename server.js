@@ -603,12 +603,18 @@ function loadState() {
             u.securityGroup = 'DOMAIN_ADMIN';
             u.email = SOLE_ADMIN_EMAIL;
             u.accessTier = 'OWNER_FULL';
+            u.clientTier = 'administrator';
+            u.workspaceConnected = true;
             u.allowedApps = ['*'];
             u.qualifiedResources = ['*'];
           } else {
             u.role = 'member';
             u.ou = u.ou === 'internal' ? 'internal' : 'external';
             u.accessTier = u.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED';
+            const prov = String(u.ssoProvider || '').toLowerCase();
+            const hasWorkspaceSso = ['google', 'microsoft', 'apple'].includes(prov) || u.workspaceConnected === true || u.clientTier === 'workspace';
+            u.workspaceConnected = Boolean(hasWorkspaceSso);
+            u.clientTier = hasWorkspaceSso ? 'workspace' : 'access';
             if (!Array.isArray(u.allowedApps)) {
               u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
             }
@@ -740,6 +746,15 @@ function isEmployeeUser(u) {
 function isClientUser(u) {
   return Boolean(u && u.role !== 'owner' && u.ou !== 'internal');
 }
+function isWorkspaceClientUser(u) {
+  if (!u || isOwnerUser(u) || isEmployeeUser(u)) return false;
+  if (u.clientTier === 'workspace' || u.workspaceConnected === true) return true;
+  const prov = String(u.ssoProvider || '').toLowerCase();
+  return ['google', 'microsoft', 'apple'].includes(prov);
+}
+function isAccessClientUser(u) {
+  return Boolean(u && isClientUser(u) && !isWorkspaceClientUser(u));
+}
 
 function subActive(u) {
   return Boolean(u && (u.role === 'owner' || (u.plan && u.plan.base && u.status === 'active')));
@@ -758,6 +773,7 @@ function can(u, type, id, action) {
   if (!u) return false;
   if (isOwnerUser(u)) return true;
   if (!subActive(u)) return false;
+  const accessOnly = isAccessClientUser(u);
   if (type === 'page') {
     const entry = CATALOG.find(c => c.id === id);
     if (!entry || action !== 'view') return false;
@@ -765,14 +781,19 @@ function can(u, type, id, action) {
     if (isEmployeeUser(u) && id === 'finance') return false;
     // New users and standard users ALWAYS have access to SaaS Apps & LMS ('saasapps')
     if (id === 'saasapps') return true;
-    // Users qualified for at least 1 resource automatically have access to the Resources section
+    // Users qualified for at least 1 resource automatically have access to the Resources / Tools & Insights section
     if (id === 'resources' && Array.isArray(u.qualifiedResources) && u.qualifiedResources.length > 0) return true;
+    // Access Clients (non-workspace connected) only get Showcase Access & Tools/Insights
+    if (accessOnly) return false;
     // All other features/pages require explicit Administrator grant
     if (S.shares.some(s => (s.type === 'page' || s.type === 'element') && s.resource === id && s.grantee === u.id)) return true;
     if (Array.isArray(u.adminGrantedPages) && u.adminGrantedPages.includes(id)) return true;
     return (u.pages || {})[id] === 'ready';
   }
   if (type === 'app') {
+    if (accessOnly) {
+      return DEFAULT_CUSTOMER_APPS.includes(id);
+    }
     const apps = Array.isArray(u.allowedApps) ? u.allowedApps : DEFAULT_CUSTOMER_APPS;
     if (apps.includes('*') || apps.includes(id)) return true;
     return S.shares.some(s => (s.type === 'app' || s.type === 'element') && s.resource === id && s.grantee === u.id);
@@ -783,11 +804,13 @@ function can(u, type, id, action) {
     return S.shares.some(s => s.type === 'resource' && s.resource === id && s.grantee === u.id);
   }
   if (type === 'project') {
+    if (accessOnly) return false;
     const sh = S.shares.find(s => s.type === 'project' && s.resource === id && s.grantee === u.id);
     if (!sh) return false;
     return action === 'view' ? true : (sh.perms || []).includes(action);
   }
   if (type === 'element') {
+    if (accessOnly) return false;
     return S.shares.some(s => (s.type === 'element' || s.type === 'app' || s.type === 'page' || s.type === 'resource') && s.resource === id && s.grantee === u.id);
   }
   return false;
@@ -1230,6 +1253,8 @@ function resolveEmployeeAssignedRecord(rawUsername, rawEmail) {
   return { isAssignedEmployee: false, detectedOu: 'external' };
 }
 
+const SESSION_INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes (600,000 ms)
+
 function getAuthenticatedUser(req) {
   const cookies = parseCookies(req);
   const authHeader = req.headers.authorization || '';
@@ -1239,17 +1264,26 @@ function getAuthenticatedUser(req) {
   if (!claims || !claims.uid) return null;
   if (!claims.ssoVerified || !ALLOWED_SSO_PROVIDERS.has(claims.provider)) return null;
   const u = S.users[claims.uid] || null;
-  if (u) u.ssoProvider = claims.provider;
+  if (!u) return null;
+  const nowTs = Date.now();
+  if (u.lastActivityTs && (nowTs - Number(u.lastActivityTs) > SESSION_INACTIVITY_TIMEOUT_MS)) {
+    return null;
+  }
+  u.lastActivityTs = nowTs;
+  u.ssoProvider = claims.provider;
   return u;
 }
 
-function findOrCreateUserByEmail(email, name, method) {
+function findOrCreateUserByEmail(email, name, method, providerKey) {
   const cleanEmail = String(email || '').trim().toLowerCase();
   if (!cleanEmail) return null;
+  const isWorkspaceOAuth = ['google', 'microsoft', 'apple'].includes(String(providerKey || '').toLowerCase());
   if (cleanEmail === SOLE_ADMIN_EMAIL) {
     S.users.owner.role = 'owner';
     S.users.owner.email = SOLE_ADMIN_EMAIL;
     S.users.owner.accessTier = 'OWNER_FULL';
+    S.users.owner.clientTier = 'administrator';
+    S.users.owner.workspaceConnected = true;
     S.users.owner.allowedApps = ['*'];
     S.users.owner.qualifiedResources = ['*'];
     return S.users.owner;
@@ -1261,6 +1295,13 @@ function findOrCreateUserByEmail(email, name, method) {
       return existing;
     }
     existing.accessTier = existing.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED';
+    if (isWorkspaceOAuth) {
+      existing.workspaceConnected = true;
+      existing.clientTier = 'workspace';
+    } else if (existing.clientTier !== 'workspace' && !existing.workspaceConnected) {
+      existing.workspaceConnected = false;
+      existing.clientTier = 'access';
+    }
     if (!Array.isArray(existing.allowedApps) || existing.allowedApps.length === 0) {
       existing.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
     }
@@ -1292,6 +1333,8 @@ function findOrCreateUserByEmail(email, name, method) {
     role: 'member',
     status: 'active',
     accessTier: 'CUSTOMER_RESTRICTED',
+    clientTier: isWorkspaceOAuth ? 'workspace' : 'access',
+    workspaceConnected: isWorkspaceOAuth,
     brand: 'FIX',
     quote: { interest: 'ai-web', note: `Provisioned with SaaS Apps & LMS Access via ${method || 'SSO'}` },
     plan: { base: true, addons: [] },
@@ -2132,6 +2175,10 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === '/api/auth/config' && req.method === 'POST') {
+      const caller = getAuthenticatedUser(req);
+      if (!isOwnerUser(caller)) {
+        return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required to modify OAuth configuration.' });
+      }
       const body = await readJsonBody(req);
       S.oauthConfig = Object.assign({}, S.oauthConfig || {}, {
         ...(body.googleClientId !== undefined ? { googleClientId: String(body.googleClientId).trim() } : {}),
@@ -2363,7 +2410,7 @@ const server = http.createServer(async (req, res) => {
           return sendJson(res, 403, { ok: false, error: 'Invalid email/username or password (passwords are case-sensitive).' });
         }
       }
-      const user = findOrCreateUserByEmail(email, name, SSO_PROVIDER_LABELS[provider]);
+      const user = findOrCreateUserByEmail(email, name, SSO_PROVIDER_LABELS[provider], provider);
       if (!user || user.status === 'denied' || user.status === 'suspended') {
         logAudit('system', `auth.sso.denied.${provider}`, `Rejected denied/suspended SSO attempt for ${email}`);
         return sendJson(res, 403, {
@@ -2372,6 +2419,18 @@ const server = http.createServer(async (req, res) => {
         });
       }
       user.ssoProvider = provider;
+      user.lastActivityTs = Date.now();
+      if (user.role === 'owner') {
+        user.clientTier = 'administrator';
+        user.workspaceConnected = true;
+      } else if (['google', 'microsoft', 'apple'].includes(provider)) {
+        user.clientTier = 'workspace';
+        user.workspaceConnected = true;
+      } else {
+        // Explicit password login without external Workspace OAuth scopes to Access Client unless explicitly connected via OAuth
+        user.clientTier = user.workspaceConnected === true ? 'workspace' : 'access';
+        user.workspaceConnected = Boolean(user.workspaceConnected === true);
+      }
       if (name && user.role !== 'owner') user.name = sanitizeInput(name, 80);
       if (body.org && user.role !== 'owner') user.org = sanitizeInput(body.org, 120);
       if (body.interest && TAILOR[body.interest] && user.role !== 'owner') {
@@ -2392,18 +2451,20 @@ const server = http.createServer(async (req, res) => {
         email: user.email,
         role: user.role,
         accessTier: user.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+        clientTier: user.clientTier,
+        workspaceConnected: user.workspaceConnected,
         provider,
         ssoVerified: true,
         jwksVerified
       });
-      logAudit(user.id, `auth.sso.${provider}`, `${user.email} via ${SSO_PROVIDER_LABELS[provider]} [${user.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED'}]${jwksVerified ? ' (JWKS-RS256)' : ''}`);
+      logAudit(user.id, `auth.sso.${provider}`, `${user.email} via ${SSO_PROVIDER_LABELS[provider]} [${user.role === 'owner' ? 'OWNER_FULL' : user.clientTier.toUpperCase()}]${jwksVerified ? ' (JWKS-RS256)' : ''}`);
       saveState(S);
       const reqCookies = parseCookies(req);
       const returnClaims = verifyToken(reqCookies.mgcw_return);
       const requestedNext = (body.next && String(body.next).trim()) || (returnClaims && returnClaims.next) || '';
       const cleanNext = toCleanRoute(requestedNext);
       const mobileClient = isMobileRequest(req, parsedUrl);
-      const defaultClean = mobileClient ? '/mobile' : (user.role === 'owner' ? '/access-admin' : '/apps');
+      const defaultClean = mobileClient ? '/mobile' : (user.role === 'owner' ? '/access-admin' : (user.clientTier === 'workspace' ? '/workspace' : '/apps'));
       const target = mobileClient ? '/mobile' : ((cleanNext && cleanNext !== '/auth' && cleanNext !== '/login') ? cleanNext : defaultClean);
       const effectiveAllowedApps = user.role === 'owner'
         ? APPS_CATALOG.map(a => a.id)
@@ -2417,6 +2478,9 @@ const server = http.createServer(async (req, res) => {
         name: user.name,
         role: user.role,
         accessTier: user.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+        clientTier: user.clientTier,
+        workspaceConnected: user.workspaceConnected,
+        inactivityTimeoutMs: SESSION_INACTIVITY_TIMEOUT_MS,
         allowedApps: effectiveAllowedApps,
         allowedPages: effectiveAllowedPages,
         allowedPortals: effectiveAllowedPortals,
@@ -2435,14 +2499,103 @@ const server = http.createServer(async (req, res) => {
 
     // Sign out
     if (pathname === '/api/auth/logout' && (req.method === 'POST' || req.method === 'GET')) {
+      const reasonParam = parsedUrl.searchParams.get('reason') === 'inactivity' ? '?reason=inactivity' : '';
       res.writeHead(302, {
         'Set-Cookie': [
           'mgcw_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0',
           'mgcw_return=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0'
         ],
-        'Location': '/auth'
+        'Location': '/auth' + reasonParam
       });
       return res.end();
+    }
+
+    /* ---------- $0 Automated Contact Number Attendant & Callback Triage (+1 (804) 760-5797) ---------- */
+    if (pathname === '/api/voice/attendant' && (req.method === 'GET' || req.method === 'POST')) {
+      const body = req.method === 'POST' ? await readJsonBody(req) : {};
+      const digit = String(body.Digits || parsedUrl.searchParams.get('digit') || '').trim();
+      const acceptHdr = String(req.headers.accept || '').toLowerCase();
+      const wantsXml = acceptHdr.includes('xml') || Boolean(body.CallSid) || parsedUrl.searchParams.get('format') === 'twiml';
+
+      const menuMap = {
+        '1': { track: 'ai-web', label: 'Commercial Web, Autonomous AI Receptionist & SaaS Portals', route: 'https://miltongroupsecurity.org/consultation?track=ai-web' },
+        '2': { track: 'cyber', label: 'Zero-Trust Cybersecurity & CMMC 2.0 Compliance', route: 'https://miltongroupsecurity.org/consultation?track=cyber' },
+        '3': { track: 'federal', label: 'SDVOSB Federal Contracting & Teaming (NAICS 541512 / 541519)', route: 'https://miltongroupsecurity.org/consultation?track=federal' },
+        '4': { track: 'training', label: 'SCORM 2004 Enterprise LMS & Interactive Lab Studio', route: 'https://miltongroupsecurity.org/consultation?track=training' }
+      };
+
+      if (wantsXml) {
+        const selected = menuMap[digit];
+        const twiml = selected
+          ? `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="Polly.Matthew">Thank you for calling Milton Group Concepts and F.I.X Solutions. Routing your request for ${selected.label}. We have also dispatched a direct consultation link to your mobile number.</Say><Sms>${selected.label}: Complete your priority intake at ${selected.route}</Sms></Response>`
+          : `<?xml version="1.0" encoding="UTF-8"?><Response><Gather numDigits="1" action="/api/voice/attendant?format=twiml" method="POST" timeout="6"><Say voice="Polly.Matthew">Thank you for calling Milton Group Concepts and F.I.X Solutions at 8 0 4, 7 6 0, 5 7 9 7. Press 1 for Commercial AI and Web Portals. Press 2 for Zero-Trust Cybersecurity and C M M C Compliance. Press 3 for S D V O S B Federal Contracting. Press 4 for Enterprise L M S and Training.</Say></Gather></Response>`;
+        res.writeHead(200, { 'Content-Type': 'text/xml; charset=utf-8', ...SECURITY_HEADERS });
+        return res.end(twiml);
+      }
+
+      return sendJson(res, 200, {
+        ok: true,
+        phoneNumber: '+1 (804) 760-5797',
+        e164: '+18047605797',
+        provider: 'Northwest Registered Agent Business Identity VoIP + Cloud Run $0 Automated Attendant',
+        monthlyCostUsd: 0,
+        status: 'ACTIVE_24_7',
+        selectedOption: menuMap[digit] || null,
+        ivrMenu: [
+          { digit: '1', label: 'Commercial Web, AI Receptionist & SaaS Portals', track: 'ai-web', smsAutoReply: 'https://miltongroupsecurity.org/consultation' },
+          { digit: '2', label: 'Zero-Trust Cybersecurity & CMMC 2.0 Architecture', track: 'cyber', smsAutoReply: 'https://miltongroupsecurity.org/consultation' },
+          { digit: '3', label: 'SDVOSB Federal Contracting & Teaming', track: 'federal', smsAutoReply: 'https://miltongroupsecurity.org/consultation' },
+          { digit: '4', label: 'SCORM 2004 LMS & Interactive Lab Studio', track: 'training', smsAutoReply: 'https://miltongroupsecurity.org/consultation' }
+        ]
+      });
+    }
+
+    if (pathname === '/api/voice/callback' && req.method === 'POST') {
+      if (!checkRateLimit(req, 'voice_callback', 15, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'Too many requests. Please wait a moment.' });
+      }
+      const body = await readJsonBody(req);
+      if (hasInjectionPayload(body)) {
+        return sendJson(res, 400, { ok: false, error: 'Invalid characters detected.' });
+      }
+      const callerName = sanitizeInput(body.name || body.callerName || 'Executive Caller', 100);
+      const callerPhone = sanitizeInput(body.phone || body.callerPhone || '', 32);
+      const digit = sanitizeInput(body.digit || '1', 4);
+      const digitsOnly = callerPhone.replace(/\D/g, '');
+      if (digitsOnly.length < 10 || digitsOnly.length > 15) {
+        return sendJson(res, 400, { ok: false, error: 'Please enter a valid 10–15 digit phone number for automated attendant callback.' });
+      }
+      const trackByDigit = {
+        '1': 'Commercial AI & Web Portals',
+        '2': 'Zero-Trust Cybersecurity & CMMC 2.0',
+        '3': 'SDVOSB Federal Contracting',
+        '4': 'SCORM 2004 LMS & Training'
+      };
+      const routedDepartment = trackByDigit[digit] || trackByDigit['1'];
+      const ticketId = 'ATT-' + Date.now().toString(36).toUpperCase().slice(-5);
+      if (!Array.isArray(S.voiceCallbacks)) S.voiceCallbacks = [];
+      const record = {
+        id: ticketId,
+        line: '+1 (804) 760-5797',
+        callerName,
+        callerPhone,
+        digit,
+        routedDepartment,
+        status: 'QUEUED_AUTO_ATTENDANT',
+        createdAt: now()
+      };
+      S.voiceCallbacks.unshift(record);
+      notifyUser('owner', `Automated Phone Attendant [${ticketId}]`, `${callerName} (${callerPhone}) selected Option ${digit} (${routedDepartment}) on +1 (804) 760-5797.`);
+      logAudit('public', 'voice.attendant_callback', `${ticketId} ${callerPhone} -> Option ${digit} (${routedDepartment})`);
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        ticketId,
+        line: '+1 (804) 760-5797',
+        routedDepartment,
+        record,
+        message: `Automated Attendant (${ticketId}): Callback & SMS intake link queued for ${callerPhone} [${routedDepartment}].`
+      });
     }
 
     /* ---------- Executive Intelligence Newsletter, Source Collection, Distros, SMS & Donations API ---------- */
@@ -3190,6 +3343,7 @@ const server = http.createServer(async (req, res) => {
         initialGrantedPages.push('resources');
       }
 
+      const isWorkspaceSso = ['google', 'microsoft', 'apple'].includes(rawProv);
       S.users[id] = {
         id,
         name: cleanName,
@@ -3206,6 +3360,9 @@ const server = http.createServer(async (req, res) => {
         securityGroup: userGroup,
         status: 'active',
         accessTier: userOu === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED',
+        clientTier: isWorkspaceSso ? 'workspace' : 'access',
+        workspaceConnected: isWorkspaceSso,
+        lastActivityTs: Date.now(),
         brand: d.brand === 'FIX' ? 'FIX' : 'MGC',
         ssoProvider: rawProv,
         passwordDigest: computedPasswordDigest,
@@ -3289,6 +3446,8 @@ const server = http.createServer(async (req, res) => {
         email: cleanEmail,
         role: 'member',
         accessTier: userOu === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED',
+        clientTier: S.users[id].clientTier,
+        workspaceConnected: S.users[id].workspaceConnected,
         provider: rawProv,
         ssoVerified: true
       });
@@ -3308,6 +3467,9 @@ const server = http.createServer(async (req, res) => {
         org: S.users[id].org,
         role: 'member',
         accessTier: S.users[id].accessTier,
+        clientTier: S.users[id].clientTier,
+        workspaceConnected: S.users[id].workspaceConnected,
+        inactivityTimeoutMs: SESSION_INACTIVITY_TIMEOUT_MS,
         provider: rawProv,
         providerLabel: SSO_PROVIDER_LABELS[rawProv],
         ssoVerified: true,
@@ -4970,19 +5132,19 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Gate access-admin.html (/access-admin): Allowed for Administrator OR Internal Employee (Client scope); blocked for External Clients
+    // Gate access-admin.html (/access-admin): Strictly Administrator only (security, authentication & actionable interfaces)
     if (baseName === 'access-admin.html') {
       if (!u) {
         return redirectToCleanAuth(baseName);
       }
-      if (!isOwnerUser(u) && !isEmployeeUser(u)) {
+      if (!isOwnerUser(u)) {
         res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
         return res.end(renderLockedHtml(
           u,
-          'Directory Authorization Required',
-          'The MGC Directory console is restricted to Internal Staff and the Domain Administrator. Client accounts have access to SaaS & LMS Showcases, Guided Consultations, and Billing & Payment.',
-          '/apps',
-          'Return to SaaS Apps & LMS →'
+          'Administrator Authorization Required',
+          'The MGC Directory, Security Groups & Access Matrix, and Authentication interfaces are strictly restricted to the Domain Administrator.',
+          '/workspace',
+          'Return to Portal →'
         ));
       }
     }

@@ -404,7 +404,7 @@
             </svg>
           </div>
           <button type="button" class="sso-btn" data-sso-trigger="google" id="btnSsoGoogle">
-            <span>Continue with Google</span>
+            <span>🌐 Launch Google Sign-In</span>
           </button>
         </div>
 
@@ -420,7 +420,7 @@
             </svg>
           </div>
           <button type="button" class="sso-btn" data-sso-trigger="microsoft" id="btnSsoMicrosoft">
-            <span>Continue with Microsoft</span>
+            <span>🌐 Launch Microsoft Sign-In</span>
           </button>
         </div>
 
@@ -433,7 +433,7 @@
             </svg>
           </div>
           <button type="button" class="sso-btn" data-sso-trigger="apple" id="btnSsoApple">
-            <span>Continue with Apple</span>
+            <span>🌐 Launch Apple Sign-In</span>
           </button>
         </div>
       </div>
@@ -714,34 +714,18 @@
   </div>
 </main>
 
-<!-- Provider OAuth / OIDC Account Dialog (Opens on clicking Continue with Google / Microsoft / Apple) -->
+<!-- Provider OAuth / OIDC Account Dialog (Enforced External Sign-In Only) -->
 <div class="sso-modal-backdrop" id="ssoModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="ssoModalTitle">
   <div class="sso-modal">
     <div class="row" style="margin-bottom:12px">
       <span class="chip ok" id="ssoModalChip">Google OIDC</span>
       <button type="button" class="btn" id="ssoModalClose" style="padding:4px 10px;font-size:11.5px">Close</button>
     </div>
-    <h2 id="ssoModalTitle" style="margin-bottom:6px;font-weight:600">Continue with Google</h2>
-    <p id="ssoModalSub" style="margin-bottom:14px">Sign in with your Google Workspace or Google Cloud account.</p>
+    <h2 id="ssoModalTitle" style="margin-bottom:12px;font-weight:600">Google Sign-In</h2>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button type="button" class="btn pri" id="btnLaunchOidcRedirect" style="width:100%;justify-content:center;padding:11px 18px;font-size:13px;display:none">Redirect to Provider OIDC Sign-In</button>
-      <input id="ssoEmail" type="email" value="" placeholder="name@organization.com" autocomplete="off" spellcheck="false" style="width:100%;padding:11px 14px;font-size:13px">
-      <div id="adminMfaWrap" style="display:none;padding:10px 12px;border-radius:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.42)">
-        <label style="display:block;font-size:11px;font-weight:600;color:#fde047;margin-bottom:6px">ADMINISTRATOR 2FA PASSKEY ATTESTATION REQUIRED</label>
-        <input id="ssoAdminMfa" type="password" value="" placeholder="Enter 6-digit Owner 2FA Code" autocomplete="one-time-code" style="width:100%;padding:10px 12px;font-size:13px;text-align:center;letter-spacing:.12em;font-weight:600">
-      </div>
-      <button type="button" class="btn pri" id="btnCompleteSso" style="width:100%;justify-content:center;padding:11px 18px;font-size:13px">Continue</button>
+      <button type="button" class="btn pri" id="btnLaunchOidcRedirect" style="width:100%;justify-content:center;padding:11px 18px;font-size:13px">🌐 Launch Google Sign-In</button>
     </div>
     <p id="modalAuthMsg" style="color:#f87171;margin-top:10px;font-weight:500;font-size:12px;min-height:16px"></p>
-
-    <details style="margin-top:12px;background:rgba(4,8,20,0.75);border-color:rgba(148,163,184,0.2)">
-      <summary style="font-size:11.5px;color:#94a3b8">OAuth 2.0 Client ID</summary>
-      <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
-        <p style="font-size:11.5px;margin:0">Redirect URI:<br><code id="oidcRedirectUriDisplay" style="color:#fde047;word-break:break-all">/api/auth/oauth/callback</code></p>
-        <input id="oidcClientIdInput" type="text" value="" placeholder="OAuth 2.0 Client ID" autocomplete="off" spellcheck="false" style="width:100%;padding:9px 11px;font-size:12px">
-        <button type="button" class="btn" id="btnSaveOidcClient" style="justify-content:center;font-size:12px">Save &amp; Redirect</button>
-      </div>
-    </details>
   </div>
 </div>
 
@@ -756,17 +740,20 @@
   const msg = document.getElementById('authMsg');
   const modalMsg = document.getElementById('modalAuthMsg');
   const modalBackdrop = document.getElementById('ssoModalBackdrop');
-  const emailInput = document.getElementById('ssoEmail');
-  const clientIdInput = document.getElementById('oidcClientIdInput');
   const btnLaunchOidc = document.getElementById('btnLaunchOidcRedirect');
   let activeProvider = 'google';
   let serverOidcConfig = null;
   let firebaseAuthReady = false;
 
+  if (params.get('reason') === 'inactivity' && msg) {
+    msg.style.color = '#fbbf24';
+    msg.textContent = 'Signed out automatically after 10 minutes of inactivity.';
+  }
+
   const PROVIDER_META = {
-    google:    { name: 'Google',    chip: 'Google OIDC · JWKS',    sub: 'Sign in with your Google Workspace or Google Cloud account.', cfgKey: 'googleClientId' },
-    microsoft: { name: 'Microsoft', chip: 'Microsoft Entra · JWKS', sub: 'Sign in with your Microsoft Entra ID or Microsoft 365 account.', cfgKey: 'microsoftClientId' },
-    apple:     { name: 'Apple',     chip: 'Apple OIDC · JWKS',     sub: 'Sign in with your Apple ID & Passkey federation.', cfgKey: 'appleClientId' }
+    google:    { name: 'Google',    chip: 'Google OIDC · JWKS',    launchLabel: '🌐 Launch Google Sign-In',    cfgKey: 'googleClientId' },
+    microsoft: { name: 'Microsoft', chip: 'Microsoft Entra · JWKS', launchLabel: '🌐 Launch Microsoft Sign-In', cfgKey: 'microsoftClientId' },
+    apple:     { name: 'Apple',     chip: 'Apple OIDC · JWKS',     launchLabel: '🌐 Launch Apple Sign-In',     cfgKey: 'appleClientId' }
   };
 
   function initFirebaseIfConfigured(cfg) {
@@ -795,7 +782,7 @@
           const data = await res.json();
           if (data && data.ok) {
             W.signInAs(data.uid, prov);
-            persistOnboardingBridge(data.email || email, data.name || result.user.displayName, data.role, prov);
+            persistOnboardingBridge(data.email || email, data.name || result.user.displayName, data.role, prov, data.allowedApps, data.allowedPortals, data.clientTier);
             location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
           }
         }
@@ -805,7 +792,6 @@
 
   let configReadyPromise = Promise.resolve();
   if (location.protocol === 'http:' || location.protocol === 'https:') {
-    document.getElementById('oidcRedirectUriDisplay').textContent = location.origin + '/api/auth/oauth/callback';
     configReadyPromise = fetch('/api/auth/config')
       .then(r => r.json())
       .then(cfg => {
@@ -813,11 +799,6 @@
         initFirebaseIfConfigured(cfg);
       })
       .catch(() => {});
-  }
-
-  function hasLiveClientId(prov) {
-    if (!serverOidcConfig || !serverOidcConfig.oidcProviders || !serverOidcConfig.oidcProviders[prov]) return false;
-    return Boolean(serverOidcConfig.oidcProviders[prov].clientId);
   }
 
   async function launchFirebaseFederatedPopup(prov) {
@@ -835,7 +816,7 @@
     if (!providerObj) return false;
     try {
       msg.style.color = '#34d399';
-      msg.textContent = 'Opening ' + PROVIDER_META[prov].name + ' Federated SSO...';
+      msg.textContent = 'Redirecting to ' + PROVIDER_META[prov].name + ' Sign-In...';
       const result = await firebase.auth().signInWithPopup(providerObj);
       if (result && result.user) {
         const idToken = await result.user.getIdToken();
@@ -848,7 +829,7 @@
         const data = await res.json();
         if (data && data.ok) {
           W.signInAs(data.uid, prov);
-          persistOnboardingBridge(data.email || email, data.name || result.user.displayName, data.role, prov);
+          persistOnboardingBridge(data.email || email, data.name || result.user.displayName, data.role, prov, data.allowedApps, data.allowedPortals, data.clientTier);
           location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
           return true;
         } else {
@@ -872,84 +853,44 @@
     return false;
   }
 
-  function openProviderModal(prov) {
+  async function launchExternalOAuth(prov) {
     if (!PROVIDER_META[prov]) return;
     activeProvider = prov;
     document.querySelectorAll('.sso-provider-card').forEach(c => {
       c.classList.toggle('active', c.dataset.provider === prov);
     });
     const meta = PROVIDER_META[prov];
-    document.getElementById('ssoModalChip').textContent = meta.chip;
-    document.getElementById('ssoModalTitle').textContent = 'Continue with ' + meta.name;
-    document.getElementById('ssoModalSub').textContent = meta.sub;
-    document.getElementById('btnCompleteSso').textContent = 'Continue with ' + meta.name + ' →';
-    if (serverOidcConfig && serverOidcConfig.oidcProviders && serverOidcConfig.oidcProviders[prov]) {
-      clientIdInput.value = serverOidcConfig.oidcProviders[prov].clientId || '';
-    } else {
-      clientIdInput.value = '';
+    if (document.getElementById('ssoModalChip')) document.getElementById('ssoModalChip').textContent = meta.chip;
+    if (document.getElementById('ssoModalTitle')) document.getElementById('ssoModalTitle').textContent = meta.name + ' Sign-In';
+    if (btnLaunchOidc) btnLaunchOidc.textContent = meta.launchLabel;
+    await configReadyPromise;
+    if (firebaseAuthReady) {
+      const handled = await launchFirebaseFederatedPopup(prov);
+      if (handled) return;
     }
-    if (firebaseAuthReady || hasLiveClientId(prov)) {
-      btnLaunchOidc.style.display = 'inline-flex';
-      btnLaunchOidc.textContent = '🌐 Launch ' + meta.name + ' Federated OIDC Sign-In →';
-    } else {
-      btnLaunchOidc.style.display = 'none';
-    }
-    modalMsg.textContent = '';
-    msg.textContent = '';
-    modalBackdrop.classList.add('open');
-    setTimeout(() => emailInput.focus(), 40);
+    location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
   }
 
   function closeProviderModal() {
-    modalBackdrop.classList.remove('open');
+    if (modalBackdrop) modalBackdrop.classList.remove('open');
   }
 
-  document.getElementById('ssoModalClose').onclick = closeProviderModal;
-  modalBackdrop.addEventListener('click', (e) => {
-    if (e.target === modalBackdrop) closeProviderModal();
-  });
+  if (document.getElementById('ssoModalClose')) {
+    document.getElementById('ssoModalClose').onclick = closeProviderModal;
+  }
+  if (modalBackdrop) {
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) closeProviderModal();
+    });
+  }
 
-  btnLaunchOidc.onclick = async () => {
-    await configReadyPromise;
-    if (firebaseAuthReady) {
-      const handled = await launchFirebaseFederatedPopup(activeProvider);
-      if (handled) return;
-    }
-    location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(activeProvider);
-  };
-
-  document.getElementById('btnSaveOidcClient').onclick = async () => {
-    const cid = (clientIdInput.value || '').trim();
-    if (!cid) {
-      modalMsg.style.color = '#f87171';
-      modalMsg.textContent = 'Please paste a valid OAuth 2.0 Client ID first.';
-      return;
-    }
-    const meta = PROVIDER_META[activeProvider];
-    try {
-      const r = await fetch('/api/auth/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ [meta.cfgKey]: cid })
-      });
-      const d = await r.json();
-      if (d && d.ok) {
-        location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(activeProvider);
-      }
-    } catch (_) {
-      modalMsg.style.color = '#f87171';
-      modalMsg.textContent = 'Failed to save OAuth Client ID.';
-    }
-  };
-
-  async function handleProviderTrigger(prov) {
-    await configReadyPromise;
-    openProviderModal(prov);
+  if (btnLaunchOidc) {
+    btnLaunchOidc.onclick = () => launchExternalOAuth(activeProvider);
   }
 
   document.querySelectorAll('.sso-provider-card').forEach(card => {
     card.addEventListener('click', () => {
-      handleProviderTrigger(card.dataset.provider);
+      launchExternalOAuth(card.dataset.provider);
     });
   });
 
@@ -957,24 +898,9 @@
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const prov = btn.getAttribute('data-sso-trigger');
-      const val = (emailInput.value || '').trim();
-      if (val && modalBackdrop.classList.contains('open')) {
-        completeFederatedSso(prov, val);
-      } else {
-        handleProviderTrigger(prov);
-      }
+      launchExternalOAuth(prov);
     });
   });
-
-  const adminMfaWrap = document.getElementById('adminMfaWrap');
-  const adminMfaInput = document.getElementById('ssoAdminMfa');
-
-  function syncAdminMfaVisibility() {
-    const em = (emailInput.value || '').trim().toLowerCase();
-    const isAdmin = em === 'malik.khabir@miltongroupsecurity.org' || em === 'malik.khabir';
-    if (adminMfaWrap) adminMfaWrap.style.display = isAdmin ? 'block' : 'none';
-  }
-  emailInput.addEventListener('input', syncAdminMfaVisibility);
 
   // Wire Direct Email / Username + Password Logon Form (Case-Insensitive)
   const loginIdentifierInput = document.getElementById('loginIdentifier');
@@ -1013,7 +939,7 @@
           return;
         }
         W.signInAs('owner', 'password', password);
-        persistOnboardingBridge('malik.khabir@miltongroupsecurity.org', 'Malik A. Khabir', 'owner', 'password', ['*'], ['*']);
+        persistOnboardingBridge('malik.khabir@miltongroupsecurity.org', 'Malik A. Khabir', 'owner', 'password', ['*'], ['*'], 'administrator');
         location.href = nextUrl ? nextUrl.replace(/^\/+/, '') : 'access-admin.html';
         return;
       }
@@ -1034,7 +960,7 @@
         return;
       }
       W.signInAs(existing.id, 'password');
-      persistOnboardingBridge(existing.email, existing.name, 'member', 'password', existing.allowedApps, undefined);
+      persistOnboardingBridge(existing.email, existing.name, 'member', 'password', existing.allowedApps, undefined, existing.clientTier || 'access');
       location.href = nextUrl ? nextUrl.replace(/^\/+/, '') : 'member-portal.html';
       return;
     }
@@ -1062,11 +988,11 @@
         sessionStorage.setItem('mgcw.uid', data.uid);
         sessionStorage.setItem('mgcw.sso_provider', data.provider || 'password');
       } catch (_) {}
-      persistOnboardingBridge(data.email || normalizedEmail, data.name, data.role, data.provider || 'password', data.allowedApps, data.allowedPortals);
+      persistOnboardingBridge(data.email || normalizedEmail, data.name, data.role, data.provider || 'password', data.allowedApps, data.allowedPortals, data.clientTier);
       msg.style.color = '#34d399';
       msg.textContent = data.role === 'owner'
         ? 'Domain Administrator Verified. Opening Directory Console...'
-        : 'Signed in. Redirecting to Workspace...';
+        : 'Signed in. Redirecting...';
       location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
     } catch (err) {
       msg.style.color = '#f87171';
@@ -1081,108 +1007,36 @@
     });
   }
 
-  function persistOnboardingBridge(email, name, role, provider, allowedApps, allowedPortals) {
+  function persistOnboardingBridge(email, name, role, provider, allowedApps, allowedPortals, clientTier) {
     const isAdmin = role === 'owner' && email === 'malik.khabir@miltongroupsecurity.org';
+    const isWorkspace = !isAdmin && (clientTier === 'workspace' || ['google', 'microsoft', 'apple'].includes(String(provider || '').toLowerCase()));
+    const resolvedTier = isAdmin ? 'administrator' : (isWorkspace ? 'workspace' : 'access');
     const sessionObj = {
       email,
       name: name || (isAdmin ? 'Malik A. Khabir' : email),
       org: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
-      role: isAdmin ? 'OWNER_ADMIN' : 'VERIFIED_CLIENT',
+      role: isAdmin ? 'OWNER_ADMIN' : (isWorkspace ? 'WORKSPACE_CLIENT' : 'ACCESS_CLIENT'),
+      clientTier: resolvedTier,
+      workspaceConnected: isWorkspace,
       track: isAdmin ? 'ALL_INTERNAL_VIEW' : 'CUSTOMER_RESTRICTED',
       ssoVerified: true,
       ssoProvider: provider,
       mfaVerified: true,
       mfaMethod: 'OIDC_PASSKEY',
-      access: isAdmin ? 'INTERNAL_SUITE_FULL' : 'CUSTOMER_RESTRICTED',
+      access: isAdmin ? 'INTERNAL_SUITE_FULL' : (isWorkspace ? 'WORKSPACE_CLIENT_ACCESS' : 'SHOWCASE_AND_INSIGHTS_ONLY'),
       accessTier: isAdmin ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
       allowedApps: isAdmin ? ['*'] : (Array.isArray(allowedApps) ? allowedApps : (W.DEFAULT_CUSTOMER_APPS || ['sterling-auto-repair', 'client-turnkey-forge'])),
       allowedPortals: isAdmin ? ['*'] : (Array.isArray(allowedPortals) ? allowedPortals : ['saas-apps-and-lms-showcase.html', 'member-portal.html']),
-      verifiedAt: new Date().toISOString()
+      verifiedAt: new Date().toISOString(),
+      lastActivityTs: Date.now()
     };
     try {
       localStorage.removeItem('mgc_edge_gate_locked');
+      localStorage.setItem('mgc_last_activity_ts', String(Date.now()));
       localStorage.setItem('mgc_onboarded_session', JSON.stringify(sessionObj));
       localStorage.setItem('mgc_onboarded_user', JSON.stringify(sessionObj));
     } catch (_) {}
   }
-
-  async function completeFederatedSso(provider, rawEmail) {
-    const email = (rawEmail || emailInput.value || '').trim().toLowerCase();
-    const mfaCode = adminMfaInput ? (adminMfaInput.value || '').trim() : '';
-    syncAdminMfaVisibility();
-    if (!['google', 'microsoft', 'apple'].includes(provider)) {
-      modalMsg.textContent = 'Only Google, Microsoft, or Apple SSO is permitted.';
-      return;
-    }
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      modalMsg.style.color = '#f87171';
-      modalMsg.textContent = 'Please enter a valid ' + PROVIDER_META[provider].name + ' account email.';
-      emailInput.focus();
-      return;
-    }
-    if (email === 'malik.khabir@miltongroupsecurity.org' && !mfaCode) {
-      if (adminMfaWrap) adminMfaWrap.style.display = 'block';
-      modalMsg.style.color = '#fbbf24';
-      modalMsg.textContent = 'Sole Administrator 2FA Passkey attestation code is required.';
-      if (adminMfaInput) adminMfaInput.focus();
-      return;
-    }
-    modalMsg.style.color = '#34d399';
-    modalMsg.textContent = 'Verifying ' + PROVIDER_META[provider].name + ' SSO...';
-
-    if (location.protocol === 'file:') {
-      if (email === 'malik.khabir@miltongroupsecurity.org' && (!W.isValidAdminSecret || !W.isValidAdminSecret(mfaCode))) {
-        modalMsg.style.color = '#f87171';
-        modalMsg.textContent = 'Invalid Sole Administrator password/attestation.';
-        return;
-      }
-      const u = W.provisionCustomerSso ? W.provisionCustomerSso(email, undefined, provider) : Object.values(W.S.users).find(x => x.email.toLowerCase() === email);
-      if (u && u.status === 'active') {
-        W.signInAs(u.id, provider);
-        persistOnboardingBridge(u.email, u.name, u.role, provider, u.allowedApps, undefined);
-        location.href = nextUrl ? nextUrl.replace(/^\/+/, '') : (u.role === 'owner' ? 'access-admin.html' : 'member-portal.html');
-      } else {
-        modalMsg.style.color = '#f87171';
-        modalMsg.textContent = 'Account is pending owner approval.';
-      }
-      return;
-    }
-
-    try {
-      const res = await fetch('/api/auth/sso', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider, email, mfaCode, next: nextUrl })
-      });
-      const data = await res.json();
-      if (!data.ok) {
-        if (data.requireAdminMfa && adminMfaWrap) {
-          adminMfaWrap.style.display = 'block';
-          if (adminMfaInput) adminMfaInput.focus();
-        }
-        modalMsg.style.color = '#f87171';
-        modalMsg.textContent = data.error || 'SSO authentication failed.';
-        return;
-      }
-      try {
-        sessionStorage.setItem('mgcw.uid', data.uid);
-        sessionStorage.setItem('mgcw.sso_provider', provider);
-      } catch (_) {}
-      persistOnboardingBridge(data.email || email, data.name, data.role, provider, data.allowedApps, data.allowedPortals);
-      location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
-    } catch (err) {
-      modalMsg.style.color = '#f87171';
-      modalMsg.textContent = 'Could not reach SSO authentication server.';
-    }
-  }
-
-  document.getElementById('btnCompleteSso').onclick = () => completeFederatedSso(activeProvider);
-  emailInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      completeFederatedSso(activeProvider);
-    }
-  });
 
   // Wire Sign In vs Guided 3-Page Register New Account Mode Switcher
   const tabSignIn = document.getElementById('modeTabSignIn');
@@ -1793,7 +1647,7 @@
           sessionStorage.setItem('mgcw.uid', data.uid);
           sessionStorage.setItem('mgcw.sso_provider', ssoProvider);
         } catch (_) {}
-        persistOnboardingBridge(data.email || email, data.name || name, data.role || 'member', ssoProvider, data.allowedApps, data.allowedPortals);
+        persistOnboardingBridge(data.email || email, data.name || name, data.role || 'member', ssoProvider, data.allowedApps, data.allowedPortals, data.clientTier);
         msg.style.color = '#34d399';
         msg.textContent = '✓ Account Registered (' + (data.intakeReceipt || data.uid) + ')! Launching Otto Guided Setup...';
         setTimeout(() => {

@@ -46,6 +46,8 @@
   const isSoleAdmin = () => Boolean(W.isOwner ? W.isOwner(u) : (u && u.role === 'owner' && u.id === 'owner'));
   const isEmp = () => Boolean(W.isEmployee ? W.isEmployee(u) : (u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active'));
   const isClientUser = () => Boolean(W.isClient ? W.isClient(u) : (u && u.role !== 'owner' && u.ou !== 'internal'));
+  const isWorkspaceClientUser = () => Boolean(W.isWorkspaceClient ? W.isWorkspaceClient(u) : (isClientUser() && (u.clientTier === 'workspace' || u.workspaceConnected === true || ['google', 'microsoft', 'apple'].includes(String(u.ssoProvider || '').toLowerCase()))));
+  const isAccessClientUser = () => Boolean(W.isAccessClient ? W.isAccessClient(u) : (isClientUser() && !isWorkspaceClientUser()));
   const getQualifiedResources = () => {
     const cat = W.getResourcesCatalog ? W.getResourcesCatalog() : (W.RESOURCES_CATALOG || []);
     return cat.filter(r => isSoleAdmin() || W.can(u, 'resource', r.id, 'view'));
@@ -123,11 +125,14 @@
       : '';
 
     const qualifiedRes = getQualifiedResources();
+    const accessOnly = isAccessClientUser();
     const resBtnHtml = qualifiedRes.length > 0
-      ? '<button type="button" class="btn" data-go-resources="1" style="border-color:rgba(197,179,88,0.45);color:#fde047">Resources &amp; AI Tools (' + qualifiedRes.length + ')</button>'
+      ? '<button type="button" class="btn" data-go-resources="1" style="border-color:rgba(197,179,88,0.45);color:#fde047">' + (accessOnly ? 'Tools &amp; Insights' : ('Resources &amp; AI Tools (' + qualifiedRes.length + ')')) + '</button>'
       : '';
 
-    const personalizeBtnHtml = '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Otto Setup</button>';
+    const personalizeBtnHtml = accessOnly
+      ? ''
+      : '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Otto Setup</button>';
 
     const topRightActions = isEmp()
       ? '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '<a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
@@ -145,9 +150,35 @@
     const assocTelem = (u && u.associativeTelemetry) || { completedStages: {}, weightBoosts: {}, scenarioSelections: {}, events: [] };
     const thresholdInfo = W.getCatalogThresholdStatus ? W.getCatalogThresholdStatus() : { currentCount: 18, threshold: 50, reached: false };
 
-    const userTierLabel = isSoleAdmin() ? 'Administrator' : (isEmp() ? 'Internal Staff' : ((u && u.paymentProfile && u.paymentProfile.verified) ? 'Verified Subscriber' : 'Standard Client'));
+    const userTierLabel = isSoleAdmin()
+      ? 'Administrator'
+      : (isEmp()
+          ? 'Internal Staff'
+          : (isWorkspaceClientUser()
+              ? 'Workspace Client'
+              : 'Access Client · Showcase & Insights'));
 
-    const divergentSummaryStrip = activeBridge
+    const accessClientBoundaryBanner = accessOnly
+      ? '<div class="card" id="accessClientBoundaryBanner" style="padding:16px 20px;margin-bottom:14px;border-color:rgba(59,130,246,0.45);background:linear-gradient(135deg,rgba(15,23,42,0.95),rgba(10,16,32,0.98))">' +
+          '<div class="row" style="margin-bottom:8px;flex-wrap:wrap;gap:8px">' +
+            '<div>' +
+              '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+                '<span class="chip" id="iseClientSgtChip" style="font-size:10.5px;border-color:rgba(59,130,246,0.55);color:#93c5fd">Access Client · Showcase &amp; Tools</span>' +
+                '<span style="font-size:11.5px;color:#94a3b8">Standard Portal Logon</span>' +
+              '</div>' +
+              '<h3 style="margin:4px 0 0;font-size:15px;font-weight:700;color:#fff">Showcase Access &amp; Operational Insights</h3>' +
+            '</div>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+              '<button type="button" class="btn" data-connect-workspace="google" style="padding:6px 12px;font-size:11.5px">🌐 Launch Google Sign-In</button>' +
+              '<button type="button" class="btn" data-connect-workspace="microsoft" style="padding:6px 12px;font-size:11.5px">🌐 Launch Microsoft Sign-In</button>' +
+              '<button type="button" class="btn" data-connect-workspace="apple" style="padding:6px 12px;font-size:11.5px">🌐 Launch Apple Sign-In</button>' +
+            '</div>' +
+          '</div>' +
+          '<p style="margin:0;font-size:12.5px;color:#cbd5e1;line-height:1.5">Your account has access to interactive Showcases, Operational Tools &amp; Insights, and Guided Consultations. Connect your Google, Microsoft, or Apple Workspace above to unlock full Workspace &amp; Otto Agent interactions.</p>' +
+        '</div>'
+      : '';
+
+    const divergentSummaryStrip = (!accessOnly && activeBridge)
       ? '<div class="card" id="divergentLearningSummaryBanner" style="padding:14px 18px;margin-bottom:14px;border-color:rgba(16,185,129,0.42);background:linear-gradient(135deg,rgba(6,78,59,0.26),rgba(10,15,28,0.96))">' +
           '<div class="row" style="margin-bottom:' + (showAssociativeGraph ? '10px' : '0') + ';flex-wrap:wrap;gap:8px">' +
             '<div>' +
@@ -195,15 +226,16 @@
         '</div>'
       : '';
 
-    return divergentSummaryStrip +
+    return accessClientBoundaryBanner +
+      divergentSummaryStrip +
       '<div class="card" style="padding:18px 20px;margin-top:0">' +
         '<div class="row" style="margin-bottom:14px">' +
-          '<h2 style="margin:0;font-size:15px;font-weight:600">Authorized Applications &amp; LMS (' + unlockedApps.length + ')</h2>' +
+          '<h2 style="margin:0;font-size:15px;font-weight:600">' + (accessOnly ? ('Showcase Access (' + unlockedApps.length + ')') : ('Authorized Applications &amp; LMS (' + unlockedApps.length + ')')) + '</h2>' +
           topRightActions +
         '</div>' +
         '<div class="bento-2">' + unlockedApps.map(renderAppCard).join('') + '</div>' +
       '</div>' +
-      grantedPagesHtml;
+      (accessOnly ? ('<div style="margin-top:14px">' + resourcesPanel() + '</div>') : grantedPagesHtml);
   }
 
   function consultationPanel() {
@@ -416,6 +448,39 @@
   }
 
   function resourcesPanel() {
+    // Access Clients get Tools & Insights (Showcase + Operational Insights); Workspace Clients get full Agent Templates & Scenario Orchestration
+    if (isAccessClientUser()) {
+      return '<div class="card" id="accessClientToolsInsightsCard" style="padding:18px 20px;margin-bottom:14px;border-color:rgba(59,130,246,0.45)">' +
+        '<div class="row" style="margin-bottom:10px;flex-wrap:wrap;gap:8px">' +
+          '<div>' +
+            '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa">Access Client · Tools &amp; Insights</span>' +
+            '<h2 style="margin:2px 0 0;font-size:16px;font-weight:700;color:#fff">Operational Tools &amp; Executive Insights</h2>' +
+          '</div>' +
+          '<span class="chip">Showcase &amp; Insights Tier</span>' +
+        '</div>' +
+        '<p style="font-size:12.5px;color:#cbd5e1;margin:0 0 14px;line-height:1.5">Explore architecture readiness benchmarks, turnkey scope estimators, and executive briefings. Connect your external Workspace (Google, Microsoft, or Apple) to unlock interactive Otto Agent workflows.</p>' +
+        '<div class="bento-3" style="gap:10px">' +
+          '<div class="compact-card" style="padding:14px 16px;border-color:rgba(59,130,246,0.35)">' +
+            '<div class="row" style="margin-bottom:6px"><span class="chip ok" style="font-size:10px">Tool · Scope Estimator</span><small style="color:#93c5fd;font-size:10.5px">Turnkey SaaS</small></div>' +
+            '<h3 style="font-size:13.5px;color:#fff;margin-bottom:4px">Turnkey Portal &amp; Receptionist Scope</h3>' +
+            '<p style="font-size:11.5px;color:#94a3b8;margin-bottom:10px">Interactive configurator for 24/7 lead capture, booking workflows, and multi-rail settlement.</p>' +
+            '<a class="btn pri" href="projects/client-turnkey-forge/index.html" style="width:100%;justify-content:center;font-size:11.5px">Open Turnkey Forge Showcase</a>' +
+          '</div>' +
+          '<div class="compact-card" style="padding:14px 16px;border-color:rgba(16,185,129,0.35)">' +
+            '<div class="row" style="margin-bottom:6px"><span class="chip ok" style="font-size:10px">Insight · Commercial AI</span><small style="color:#6ee7b7;font-size:10.5px">Live Demo</small></div>' +
+            '<h3 style="font-size:13.5px;color:#fff;margin-bottom:4px">Commercial Web &amp; AI Receptionist</h3>' +
+            '<p style="font-size:11.5px;color:#94a3b8;margin-bottom:10px">Benchmark how automated scheduling and customer intake operate in production.</p>' +
+            '<a class="btn pri" href="projects/sterling-auto-repair/index.html" style="width:100%;justify-content:center;font-size:11.5px">Open Sterling Auto Showcase</a>' +
+          '</div>' +
+          '<div class="compact-card" style="padding:14px 16px;border-color:rgba(197,179,88,0.4)">' +
+            '<div class="row" style="margin-bottom:6px"><span class="chip" style="font-size:10px;color:#fde047">Insight · Architecture</span><small style="color:#fde047;font-size:10.5px">Readiness</small></div>' +
+            '<h3 style="font-size:13.5px;color:#fff;margin-bottom:4px">Custom Architecture &amp; Advisory</h3>' +
+            '<p style="font-size:11.5px;color:#94a3b8;margin-bottom:10px">Request a tailored deployment blueprint across Commercial SaaS, Cyber, or Federal tracks.</p>' +
+            '<button type="button" class="btn" data-go-consultation="1" style="width:100%;justify-content:center;font-size:11.5px">Open Consultation Form</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
     // Strict Zero-Leakage Policy: Only render resources the user is qualified for
     const qualifiedResources = getQualifiedResources();
     const templates = W.DEFINED_AI_TEMPLATES || [];
@@ -566,12 +631,14 @@
   }
 
   function getAvailableTabsForUser() {
+    const accessOnly = isAccessClientUser();
     const list = [
-      ['apps', 'Applications & LMS', saasAppsAndLmsPanel]
+      ['apps', accessOnly ? 'Showcase Access' : 'Applications & LMS', saasAppsAndLmsPanel]
     ];
     const qualifiedRes = getQualifiedResources();
-    // Resources section appears right alongside Applications & LMS when the user is qualified for at least 1 resource (or granted 'resources' page)
-    if (isSoleAdmin() || qualifiedRes.length > 0 || W.can(u, 'page', 'resources', 'view')) {
+    if (accessOnly) {
+      list.push(['resources', 'Tools & Insights', resourcesPanel]);
+    } else if (isSoleAdmin() || qualifiedRes.length > 0 || W.can(u, 'page', 'resources', 'view')) {
       list.push(['resources', 'Resources & AI Tools', resourcesPanel]);
     }
     // Clients & Admin have access to Guided Consultation & Payment; Employees have NO access to Payment Settings
@@ -579,7 +646,7 @@
       list.push(['consultation', 'Submit Request & Consultation', consultationPanel]);
       list.push(['payment', 'Billing & Payment', paymentPanel]);
     }
-    if (isSoleAdmin() || W.can(u, 'page', 'home', 'view')) {
+    if (!accessOnly && (isSoleAdmin() || W.can(u, 'page', 'home', 'view'))) {
       list.push(['overview', 'Overview Hub', overviewPanel]);
     }
     return list;
@@ -800,7 +867,9 @@
       return;
     }
     syncOnboardingStateFromUser();
-    if (!isSoleAdmin() && !u.onboardingCompleted && sessionStorage.getItem('mgc_nf_prompted_' + u.id) !== '1') {
+    if ( isAccessClientUser() ) {
+      showNetflixOnboarding = false;
+    } else if (!isSoleAdmin() && !u.onboardingCompleted && sessionStorage.getItem('mgc_nf_prompted_' + u.id) !== '1') {
       showNetflixOnboarding = true;
       sessionStorage.setItem('mgc_nf_prompted_' + u.id, '1');
     }
@@ -812,10 +881,12 @@
     const activeTabEntry = availableTabs.find(t => t[0] === tab) || availableTabs[0];
     const body = activeTabEntry[2]();
 
-    const grantedFeatureLinks = W.CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'home' && c.id !== 'resources' && (!isEmp() || c.id !== 'finance') && W.can(u, 'page', c.id, 'view'));
+    const grantedFeatureLinks = isAccessClientUser()
+      ? []
+      : W.CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'home' && c.id !== 'resources' && (!isEmp() || c.id !== 'finance') && W.can(u, 'page', c.id, 'view'));
 
     const sideNav = '<aside class="ws-side" aria-label="Authorized User Navigation">' +
-      '<div class="ws-side-title">Workspace</div>' +
+      '<div class="ws-side-title">' + (isAccessClientUser() ? 'Access Portal' : 'Workspace') + '</div>' +
       availableTabs.map(t => '<button type="button" class="ws-nav-btn' + (t[0] === tab ? ' active' : '') + '" data-tab="' + t[0] + '"><span>' + t[1] + '</span></button>').join('') +
       '<a class="ws-nav-btn" href="saas-apps-and-lms-showcase.html" style="text-decoration:none"><span>SaaS &amp; LMS Showcase</span></a>' +
       grantedFeatureLinks.map(c => '<a class="ws-nav-btn" href="' + esc(c.href) + '" style="text-decoration:none"><span>' + esc(c.title) + '</span></a>').join('') +
@@ -834,6 +905,11 @@
       lastPaymentError = '';
       lastConsultationError = '';
       render();
+    });
+    app.querySelectorAll('[data-connect-workspace]').forEach(b => b.onclick = () => {
+      const prov = b.getAttribute('data-connect-workspace') || 'google';
+      if (W.connectWorkspace) W.connectWorkspace(prov);
+      else location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
     });
     const btnOpenNf = document.getElementById('btnOpenNetflixOnboarding');
     if (btnOpenNf) {

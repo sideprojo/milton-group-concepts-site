@@ -290,6 +290,8 @@
     Object.values(state.users).forEach(u => {
       if (u.role === 'owner') {
         u.accessTier = 'OWNER_FULL';
+        u.clientTier = 'administrator';
+        u.workspaceConnected = true;
         u.ou = 'internal';
         u.securityGroup = 'DOMAIN_ADMIN';
         u.allowedApps = ['*'];
@@ -297,6 +299,10 @@
       } else {
         u.ou = u.ou === 'internal' ? 'internal' : 'external';
         u.accessTier = u.accessTier || (u.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED');
+        const prov = String(u.ssoProvider || '').toLowerCase();
+        const hasWorkspaceSso = ['google', 'microsoft', 'apple'].includes(prov) || u.workspaceConnected === true || u.clientTier === 'workspace';
+        u.workspaceConnected = Boolean(hasWorkspaceSso);
+        u.clientTier = hasWorkspaceSso ? 'workspace' : 'access';
         if (!Array.isArray(u.allowedApps)) {
           u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
         }
@@ -474,9 +480,48 @@
     return null;
   };
 
-  const isOwner = (u) => Boolean(u && u.role === 'owner' && u.id === 'owner');
-  const isEmployee = (u) => Boolean(u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active');
-  const isClient = (u) => Boolean(u && u.role !== 'owner' && u.ou !== 'internal');
+  const isOwner = (u = me()) => Boolean(u && u.role === 'owner' && u.id === 'owner');
+  const isEmployee = (u = me()) => Boolean(u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active');
+  const isClient = (u = me()) => Boolean(u && u.role !== 'owner' && u.ou !== 'internal');
+  const isWorkspaceClient = (u = me()) => {
+    if (!u || isOwner(u) || isEmployee(u)) return false;
+    if (u.clientTier === 'workspace' || u.workspaceConnected === true) return true;
+    const prov = String(u.ssoProvider || sessionStorage.getItem('mgcw.sso_provider') || '').toLowerCase();
+    if (['google', 'microsoft', 'apple'].includes(prov)) return true;
+    try {
+      const sess = JSON.parse(localStorage.getItem('mgc_onboarded_session') || 'null');
+      if (sess && String(sess.email || '').toLowerCase() === String(u.email || '').toLowerCase()) {
+        if (sess.clientTier === 'workspace' || sess.workspaceConnected === true || ['google', 'microsoft', 'apple'].includes(String(sess.ssoProvider || '').toLowerCase())) {
+          return true;
+        }
+      }
+    } catch (_) {}
+    return false;
+  };
+  const isAccessClient = (u = me()) => Boolean(u && isClient(u) && !isWorkspaceClient(u));
+
+  const INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes (600,000 ms)
+  const ACTIVITY_KEY = 'mgc_last_activity_ts';
+  let lastActivityTouch = 0;
+
+  function touchActivity(force) {
+    const nowTs = Date.now();
+    if (!force && nowTs - lastActivityTouch < 4000) return;
+    lastActivityTouch = nowTs;
+    try {
+      localStorage.setItem(ACTIVITY_KEY, String(nowTs));
+    } catch (_) {}
+  }
+
+  function getRemainingInactivityMs() {
+    try {
+      const raw = Number(localStorage.getItem(ACTIVITY_KEY) || 0);
+      if (!raw) return INACTIVITY_TIMEOUT_MS;
+      return Math.max(0, INACTIVITY_TIMEOUT_MS - (Date.now() - raw));
+    } catch (_) {
+      return INACTIVITY_TIMEOUT_MS;
+    }
+  }
 
   function getAllowedPortalsForUser(u) {
     if (!u) return [];
@@ -485,13 +530,14 @@
     if (isEmployee(u)) {
       portals.add('access-admin.html');
     }
-    CATALOG.forEach(c => {
-      if (c.href && can(u, 'page', c.id, 'view')) {
-        // Employees never get payment settings access
-        if (isEmployee(u) && c.id === 'finance') return;
-        portals.add(c.href.split('?')[0].split('#')[0]);
-      }
-    });
+    if (isWorkspaceClient(u) || isEmployee(u)) {
+      CATALOG.forEach(c => {
+        if (c.href && can(u, 'page', c.id, 'view')) {
+          if (isEmployee(u) && c.id === 'finance') return;
+          portals.add(c.href.split('?')[0].split('#')[0]);
+        }
+      });
+    }
     return Array.from(portals);
   }
 
@@ -503,7 +549,7 @@
     if (u.role === 'owner' && serverSyncOk && S.currentUser !== 'owner' && !mfaCode) {
       return;
     }
-    if (serverSyncOk && u.email) {
+    if (serverSyncOk && u.email && cleanProv !== 'password') {
       try {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/auth/sso', false);
@@ -514,36 +560,102 @@
         return;
       }
     }
+    const isAdminUser = u.role === 'owner' && u.id === 'owner';
+    const isWs = !isAdminUser && (['google', 'microsoft', 'apple'].includes(cleanProv) || u.workspaceConnected === true);
+    u.ssoProvider = cleanProv;
+    u.workspaceConnected = isAdminUser ? true : isWs;
+    u.clientTier = isAdminUser ? 'administrator' : (isWs ? 'workspace' : 'access');
+    commit();
     sessionStorage.setItem('mgcw.uid', id);
     sessionStorage.setItem('mgcw.sso_provider', cleanProv);
-    const isOwner = u.role === 'owner' && u.id === 'owner';
+    touchActivity(true);
     const sessionObj = {
       email: u.email,
       name: u.name,
       org: u.brand === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC',
-      role: isOwner ? 'OWNER_ADMIN (SSO VERIFIED)' : 'CUSTOMER_RESTRICTED (SSO)',
+      role: isAdminUser ? 'OWNER_ADMIN (SSO VERIFIED)' : (isWs ? 'WORKSPACE_CLIENT' : 'ACCESS_CLIENT'),
+      clientTier: u.clientTier,
+      workspaceConnected: u.workspaceConnected,
       ssoVerified: true,
       ssoProvider: cleanProv,
-      access: isOwner ? 'INTERNAL_SUITE_FULL' : 'CUSTOMER_RESTRICTED',
-      allowedApps: isOwner ? ['*'] : (u.allowedApps || DEFAULT_CUSTOMER_APPS),
+      access: isAdminUser ? 'INTERNAL_SUITE_FULL' : (isWs ? 'WORKSPACE_CLIENT_ACCESS' : 'SHOWCASE_AND_INSIGHTS_ONLY'),
+      allowedApps: isAdminUser ? ['*'] : (u.allowedApps || DEFAULT_CUSTOMER_APPS),
       allowedPortals: getAllowedPortalsForUser(u),
       verifiedAt: now(),
+      lastActivityTs: Date.now(),
       integrityHash: 'SHA256-' + btoa(u.email + ':' + cleanProv + ':' + u.role + ':MGC-2026').slice(0, 16),
       zeroChargeGuard: 'ACTIVE_MIN0_MAX2'
     };
     localStorage.setItem('mgc_onboarded_session', JSON.stringify(sessionObj));
     localStorage.removeItem('mgc_edge_gate_locked');
-    localStorage.setItem('mgc_sim_tier', isOwner ? 'enterprise' : 'ppv');
+    localStorage.setItem('mgc_sim_tier', isAdminUser ? 'enterprise' : 'ppv');
   };
 
-  const signOut = () => {
+  const signOut = (reason) => {
     sessionStorage.removeItem('mgcw.uid');
     sessionStorage.removeItem('mgcw.sso_provider');
     localStorage.removeItem('mgc_onboarded_session');
+    localStorage.removeItem('mgc_onboarded_user');
+    localStorage.removeItem(ACTIVITY_KEY);
     localStorage.setItem('mgc_edge_gate_locked', '1');
-    if (serverSyncOk) location.href = '/api/auth/logout';
-    else location.href = 'login.html';
+    const q = reason === 'inactivity' ? '?reason=inactivity' : '';
+    if (serverSyncOk) location.href = '/api/auth/logout' + q;
+    else location.href = 'login.html' + q;
   };
+
+  function connectWorkspace(provider = 'google') {
+    const prov = ['google', 'microsoft', 'apple'].includes(String(provider || '').toLowerCase())
+      ? String(provider).toLowerCase()
+      : 'google';
+    if (isHttp) {
+      location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
+      return;
+    }
+    const curr = me();
+    if (curr && !isOwner(curr)) {
+      curr.workspaceConnected = true;
+      curr.clientTier = 'workspace';
+      curr.ssoProvider = prov;
+      commit();
+      signInAs(curr.id, prov);
+    }
+  }
+
+  function checkInactivityAutoLogoff() {
+    const activeUser = me();
+    if (!activeUser) return false;
+    try {
+      const rawTs = Number(localStorage.getItem(ACTIVITY_KEY) || 0);
+      if (!rawTs) {
+        touchActivity(true);
+        return false;
+      }
+      if (Date.now() - rawTs >= INACTIVITY_TIMEOUT_MS) {
+        signOut('inactivity');
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  }
+
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt => {
+      window.addEventListener(evt, () => {
+        if (localStorage.getItem('mgc_edge_gate_locked') !== '1' && (S.currentUser || sessionStorage.getItem('mgcw.uid') || localStorage.getItem('mgc_onboarded_session'))) {
+          if (!checkInactivityAutoLogoff()) {
+            touchActivity(false);
+          }
+        }
+      }, { passive: true });
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        checkInactivityAutoLogoff();
+      }
+    });
+    setInterval(checkInactivityAutoLogoff, 10000);
+    setTimeout(checkInactivityAutoLogoff, 50);
+  }
 
   const log = (actor, action, detail) => { S.audit.unshift({ id: uid('a'), ts: now(), actor, action, detail }); S.audit = S.audit.slice(0, 200); };
   const notify = (toUid, title, body, channel) => { S.notifications.unshift({ id: uid('n'), toUid, title, body, channel: channel || 'in-app + email', ts: now(), read: false }); };
@@ -562,6 +674,8 @@
     if (!u) return false;
     if (u.role === 'owner' && u.id === 'owner') return true;       // sole Administrator: everything
     if (!subActive(u)) return false;                              // members need an active account
+    // Access Clients (non-workspace connected) only get Showcase Access & Tools/Insights
+    const accessOnlyClient = isAccessClient(u);
     if (type === 'resource') {
       const resList = Array.isArray(u.qualifiedResources) ? u.qualifiedResources : DEFAULT_CUSTOMER_RESOURCES;
       if (resList.includes('*') || resList.includes(id)) return true;
@@ -571,25 +685,33 @@
       const entry = CATALOG.find(c => c.id === id);
       if (!entry || action !== 'view') return false;
       if (isEmployee(u) && id === 'finance') return false;
-      if (id === 'saasapps') return true;                         // SaaS Apps & LMS is always unlocked for active users
+      if (id === 'saasapps') return true;                         // SaaS Apps & LMS Showcase is always unlocked for active users
       if (id === 'resources') {
         const hasAnyResource = getResourcesCatalog().some(r => can(u, 'resource', r.id, 'view'));
         if (hasAnyResource) return true;
       }
+      if (accessOnlyClient) return false;                         // Access Clients do not get Workspace-only modules until Workspace is connected
       if ((S.shares || []).some(s => (s.type === 'page' || s.type === 'element') && s.resource === id && s.grantee === u.id)) return true;
       return (u.pages || {})[id] === 'ready';                     // only ready pages explicitly granted by Administrator
     }
     if (type === 'app') {
+      if (accessOnlyClient) {
+        return DEFAULT_CUSTOMER_APPS.includes(id);                // Access Clients strictly get Showcase Access apps
+      }
       const apps = Array.isArray(u.allowedApps) ? u.allowedApps : DEFAULT_CUSTOMER_APPS;
       if (apps.includes('*') || apps.includes(id)) return true;
       return (S.shares || []).some(s => (s.type === 'app' || s.type === 'element') && s.resource === id && s.grantee === u.id);
     }
     if (type === 'project') {
+      if (accessOnlyClient) return false;
       const sh = S.shares.find(s => s.type === 'project' && s.resource === id && s.grantee === u.id);
       if (!sh) return false;
       return action === 'view' ? true : sh.perms.includes(action);
     }
-    if (type === 'element') return S.shares.some(s => (s.type === 'element' || s.type === 'app' || s.type === 'resource') && s.resource === id && s.grantee === u.id);
+    if (type === 'element') {
+      if (accessOnlyClient) return false;
+      return S.shares.some(s => (s.type === 'element' || s.type === 'app' || s.type === 'resource') && s.resource === id && s.grantee === u.id);
+    }
     return false;
   }
 
@@ -1967,11 +2089,18 @@
         '<a class="btn' + (active === 'member-portal.html' ? ' pri' : '') + '" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Workspace</a>' +
         empDirDrop + empInternalDrop + empAppsDrop + empResDrop;
     } else {
-      const clientLinks = [
-        ['member-portal.html', 'Workspace'],
-        ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase']
-      ];
-      if (u) {
+      const wsClient = isWorkspaceClient(u);
+      const clientLinks = wsClient
+        ? [
+            ['member-portal.html', 'Workspace'],
+            ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase']
+          ]
+        : [
+            ['member-portal.html', 'Showcase Access'],
+            ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase'],
+            ['member-portal.html?view=resources', 'Tools & Insights']
+          ];
+      if (u && wsClient) {
         const qualifiedClientRes = getResourcesCatalog().filter(r => can(u, 'resource', r.id, 'view'));
         if (qualifiedClientRes.length > 0 || (u.pages && u.pages.resources === 'ready')) {
           clientLinks.push(['member-portal.html?view=resources', 'Resources']);
@@ -1983,7 +2112,7 @@
       } else {
         clientLinks.push(['member-portal.html?view=payment', 'Membership & Billing']);
       }
-      if (u) {
+      if (u && wsClient) {
         CATALOG.forEach(c => {
           if (c.id !== 'saasapps' && c.id !== 'resources' && can(u, 'page', c.id, 'view')) {
             clientLinks.push([c.href, c.title]);
@@ -2009,7 +2138,9 @@
           ? '<span class="chip ok">Domain Admin</span>'
           : emp
             ? '<span class="chip ok">Internal Staff</span>'
-            : (paymentVerified ? '<span class="chip ok">Billing Verified</span>' : ''))
+            : isWorkspaceClient(u)
+              ? '<span class="chip ok">Workspace Client</span>'
+              : '<span class="chip">Access Client</span>' + (paymentVerified ? ' <span class="chip ok">Billing Verified</span>' : ''))
       : '';
     const right = isNewsletterPage ? '' : ('<div class="nav">' + tierChip + authBtn + '</div>');
     const existingBar = document.querySelector('.wrap > .bar');
@@ -2084,5 +2215,5 @@
     }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);
