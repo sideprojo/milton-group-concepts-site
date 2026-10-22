@@ -622,28 +622,105 @@
 
   const RESERVED_USERNAMES = new Set(['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir', 'security', 'postmaster', 'support']);
 
+  const EMPLOYEE_ASSIGNED_ROSTER = {
+    'emp.jordan.vance': {
+      username: 'emp.jordan.vance',
+      name: 'Jordan Vance',
+      email: 'jordan.vance@miltongroupsecurity.org',
+      org: 'MGC Internal Operations',
+      ou: 'internal',
+      assignedByAdmin: true,
+      mustResetPassword: true
+    },
+    'emp.elena.rostova': {
+      username: 'emp.elena.rostova',
+      name: 'Elena Rostova',
+      email: 'elena.rostova@miltongroupsecurity.org',
+      org: 'MGC Cyber Operations',
+      ou: 'internal',
+      assignedByAdmin: true,
+      mustResetPassword: true
+    }
+  };
+
+  function resolveEmployeeAssignedRecord(rawUsername, rawEmail) {
+    const un = String(rawUsername || '').trim().toLowerCase();
+    const em = String(rawEmail || '').trim().toLowerCase();
+    const roster = Object.assign({}, EMPLOYEE_ASSIGNED_ROSTER, (S && S.employeeAssignedUsernames) || {});
+    if (un && roster[un]) {
+      return Object.assign({ isAssignedEmployee: true, detectedOu: 'internal' }, roster[un]);
+    }
+    const byEmail = em ? Object.values(roster).find(r => r && String(r.email || '').toLowerCase() === em) : null;
+    if (byEmail) {
+      return Object.assign({ isAssignedEmployee: true, detectedOu: 'internal' }, byEmail);
+    }
+    const existingEmp = Object.values((S && S.users) || {}).find(u =>
+      u && u.id !== 'owner' && u.ou === 'internal' &&
+      ((un && String(u.username || '').toLowerCase() === un) || (em && String(u.email || '').toLowerCase() === em))
+    );
+    if (existingEmp) {
+      return {
+        isAssignedEmployee: true,
+        detectedOu: 'internal',
+        username: existingEmp.username,
+        name: existingEmp.name,
+        email: existingEmp.email,
+        org: existingEmp.org || 'MGC Internal Operations',
+        ou: 'internal',
+        assignedByAdmin: true,
+        mustResetPassword: Boolean(existingEmp.mustResetPassword)
+      };
+    }
+    if (un && (/^(emp|staff)\.[a-z0-9._-]{2,28}$/.test(un))) {
+      const cleanSlug = un.replace(/^(emp|staff)\./, '');
+      return {
+        isAssignedEmployee: true,
+        detectedOu: 'internal',
+        username: un,
+        name: cleanSlug.split(/[._-]/).filter(Boolean).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' '),
+        email: em || (cleanSlug + '@miltongroupsecurity.org'),
+        org: 'MGC Internal Operations',
+        ou: 'internal',
+        assignedByAdmin: true,
+        mustResetPassword: true
+      };
+    }
+    return { isAssignedEmployee: false, detectedOu: 'external' };
+  }
+
   function validateUsernameStandard(rawUsername, excludeUid) {
     const clean = String(rawUsername || '').trim().toLowerCase();
+    const empRec = resolveEmployeeAssignedRecord(clean, '');
     const lenOk = clean.length >= 4 && clean.length <= 32;
     const formatOk = /^[a-z0-9][a-z0-9._-]{3,31}$/.test(clean) && !/[._-]{2,}/.test(clean);
     const notReserved = Boolean(clean) && !RESERVED_USERNAMES.has(clean);
     const noInjection = !hasInjectionPayload(clean);
-    const collision = Boolean(clean) && Object.values((S && S.users) || {}).some(u =>
+    const collisionUser = Boolean(clean) && Object.values((S && S.users) || {}).find(u =>
       u && u.id !== excludeUid && String(u.username || '').toLowerCase() === clean
     );
+    const collision = empRec.isAssignedEmployee
+      ? Boolean(collisionUser && !collisionUser.mustResetPassword)
+      : Boolean(collisionUser);
     const ok = lenOk && formatOk && notReserved && noInjection && !collision;
-    let error = '';
-    if (!clean) error = 'Username is required for portal logon.';
-    else if (!lenOk) error = 'Username must be 4–32 characters.';
-    else if (!formatOk) error = 'Use letters, numbers, dots, underscores, or hyphens (start with letter/number).';
-    else if (!notReserved) error = 'Reserved directory identifier cannot be used.';
-    else if (!noInjection) error = 'Disallowed security characters in username.';
-    else if (collision) error = 'Username is already registered in the directory.';
+    const violations = [];
+    if (!clean) {
+      violations.push('Enter a portal username (usernames are required and not optional).');
+    } else {
+      if (!lenOk) violations.push('Username length violation: Must be between 4 and 32 characters (currently ' + clean.length + ').');
+      if (!formatOk) violations.push('Character format violation: Use only letters (a–z), numbers (0–9), periods (.), underscores (_), or hyphens (-), starting with a letter or number.');
+      if (!notReserved) violations.push('Reserved identifier violation: System and administrator identifiers (' + clean + ') cannot be registered.');
+      if (!noInjection) violations.push('Security policy violation: Disallowed script or injection characters detected.');
+      if (collision) violations.push('Directory collision violation: The username "' + clean + '" is already assigned to another account.');
+    }
     return {
       ok,
       username: clean,
+      isAssignedEmployee: Boolean(empRec.isAssignedEmployee),
+      detectedOu: empRec.isAssignedEmployee ? 'internal' : 'external',
+      assignedProfile: empRec.isAssignedEmployee ? empRec : null,
       checks: { lenOk, formatOk, notReserved, noInjection, uniqueOk: !collision },
-      error
+      violations,
+      error: violations[0] || ''
     };
   }
 
@@ -658,18 +735,22 @@
     const notContainsUser = !un || un.length < 3 || !pw.toLowerCase().includes(un);
     const notGeneric = !/^(password|12345678|qwertyui|admin123|letmein1|welcome1)/i.test(pw);
     const ok = lenOk && upperOk && lowerOk && digitOk && specialOk && notContainsUser && notGeneric;
-    let error = '';
-    if (!pw) error = 'Password is required.';
-    else if (!lenOk) error = 'Password must be 8–128 characters.';
-    else if (!upperOk || !lowerOk) error = 'Password requires both uppercase and lowercase letters.';
-    else if (!digitOk) error = 'Password requires at least 1 number (0–9).';
-    else if (!specialOk) error = 'Password requires at least 1 special symbol (!@#$%^&*...).';
-    else if (!notContainsUser) error = 'Password cannot contain your username.';
-    else if (!notGeneric) error = 'Common or generic password patterns are prohibited.';
+    const violations = [];
+    if (!pw) {
+      violations.push('Enter an account password.');
+    } else {
+      if (!lenOk) violations.push('Length violation: Password must be at least 8 characters long.');
+      if (!upperOk || !lowerOk) violations.push('Case complexity violation: Include both uppercase (A–Z) and lowercase (a–z) letters.');
+      if (!digitOk) violations.push('Numeric requirement violation: Include at least one number (0–9).');
+      if (!specialOk) violations.push('Symbol requirement violation: Include at least one special character (!@#$%^&*...).');
+      if (!notContainsUser) violations.push('Identity separation violation: Password cannot contain your portal username (' + un + ').');
+      if (!notGeneric) violations.push('Dictionary policy violation: Common or default password sequences are prohibited.');
+    }
     return {
       ok,
       checks: { lenOk, upperOk, lowerOk, digitOk, specialOk, notContainsUser, notGeneric },
-      error
+      violations,
+      error: violations[0] || ''
     };
   }
 
@@ -685,20 +766,20 @@
     };
   }
 
-  function validateAddressStandard(addr, ou) {
+  function validateAddressStandard(addr, ou, isGuidedReg) {
     const a = addr && typeof addr === 'object' ? addr : {};
     const streetAddress = sanitizeField(a.streetAddress || a.street || '', 140);
     const city = sanitizeField(a.city || '', 80);
     const stateRegion = sanitizeField(a.stateRegion || a.state || '', 60);
     const postalCode = sanitizeField(a.postalCode || a.zip || '', 24);
-    const isEmployeeOu = String(ou || 'external').toLowerCase() === 'internal';
     const hasAll = Boolean(streetAddress && city && stateRegion && postalCode);
-    const ok = isEmployeeOu ? hasAll : true;
+    const required = Boolean(isGuidedReg !== false || String(ou || 'external').toLowerCase() === 'internal');
+    const ok = required ? hasAll : true;
     return {
       ok,
-      required: isEmployeeOu,
+      required,
       address: { streetAddress, city, stateRegion, postalCode },
-      error: ok ? '' : 'Complete physical address (Street, City, State, ZIP) is mandatory for Employee (OU=Internal) accounts.'
+      error: ok ? '' : 'Complete physical address (Street Address, City, State/Region, and Postal/ZIP Code) is mandatory for all portal registrations.'
     };
   }
 
@@ -948,18 +1029,20 @@
     const qualifiedResources = Array.isArray(data && data.qualifiedResources)
       ? data.qualifiedResources.map(r => sanitizeField(r, 60)).filter(Boolean)
       : [];
-    const targetOu = (data && data.ou === 'internal') ? 'internal' : 'external';
     const rawUsername = sanitizeField(data && data.username, 60).toLowerCase();
     if (!rawUsername) {
       lastIntakeResult = { ok: false, status: 400, error: 'Username is mandatory for portal registration and logon.' };
       return null;
     }
-    const addrCheck = validateAddressStandard(data && data.address, targetOu);
+    const empRec = resolveEmployeeAssignedRecord(rawUsername, cleanEmail);
+    const targetOu = (data && data.ou === 'internal') || empRec.isAssignedEmployee ? 'internal' : 'external';
+    const addrCheck = validateAddressStandard(data && data.address, targetOu, Boolean(data && data.guidedRegistration));
     if (!addrCheck.ok) {
       lastIntakeResult = { ok: false, status: 400, error: addrCheck.error };
       return null;
     }
     const payload = {
+      guidedRegistration: Boolean(data && data.guidedRegistration),
       name: cleanName,
       email: cleanEmail,
       username: rawUsername,
@@ -970,12 +1053,14 @@
       ou: targetOu,
       securityGroup: sanitizeField(data && data.securityGroup, 48) || (targetOu === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS'),
       ssoProvider,
-      org: sanitizeField(data && data.org, 160) || 'External Organization',
+      org: sanitizeField(data && data.org, 160) || (targetOu === 'internal' ? 'MGC Internal Operations' : 'External Organization'),
       brand: (data && data.brand === 'FIX') ? 'FIX' : 'MGC',
       interest: (data && TAILOR[data.interest]) ? data.interest : 'ai-web',
       qualifiedResources,
       note: sanitizeField(data && data.note, 500),
       ndaAccepted: true,
+      tosAccepted: Boolean(data && data.tosAccepted !== false),
+      emailVerified: Boolean(data && data.emailVerified !== false),
       mfaVerified: Boolean(data && data.mfaVerified !== false),
       mfaMethod: sanitizeField(data && data.mfaMethod, 48) || 'FEDERATED_SSO_2FA'
     };
@@ -1775,5 +1860,5 @@
     }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

@@ -151,6 +151,190 @@
     padding: 24px;
     box-shadow: 0 28px 70px rgba(0, 0, 0, 0.85);
   }
+
+  /* Microsoft Sign-In / Entra ID Fluent Form Alignment & Live Security Violation Styles */
+  .ms-form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 18px;
+    align-items: start;
+  }
+  .ms-form-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 16px;
+    align-items: start;
+  }
+  @media (max-width: 680px) {
+    .ms-form-grid-2, .ms-form-grid-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+  .ms-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-width: 0;
+  }
+  .ms-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ms-label-req {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #93c5fd;
+    flex-shrink: 0;
+  }
+  .ms-input {
+    width: 100%;
+    height: 42px !important;
+    box-sizing: border-box !important;
+    padding: 0 13px !important;
+    border-radius: 6px !important;
+    background: rgba(6, 11, 24, 0.94) !important;
+    border: 1px solid rgba(148, 163, 184, 0.42) !important;
+    border-bottom: 2px solid #0067b8 !important;
+    color: #f8fafc !important;
+    font-size: 13px !important;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+  }
+  .ms-input:focus {
+    outline: none !important;
+    border-color: #38bdf8 !important;
+    border-bottom: 2px solid #38bdf8 !important;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.18) !important;
+  }
+  .ms-input.violating {
+    border-color: rgba(239, 68, 68, 0.85) !important;
+    border-bottom: 2px solid #ef4444 !important;
+    background: rgba(127, 29, 29, 0.18) !important;
+  }
+  .ms-input.valid {
+    border-color: rgba(16, 185, 129, 0.65) !important;
+    border-bottom: 2px solid #10b981 !important;
+  }
+  .ms-violation-alert {
+    display: none;
+    background: rgba(127, 29, 29, 0.32);
+    border: 1px solid rgba(248, 113, 113, 0.58);
+    border-left: 4px solid #ef4444;
+    color: #fecaca;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 12px;
+    line-height: 1.45;
+    margin-top: 10px;
+  }
+  .ms-violation-alert.active {
+    display: block;
+  }
+  .ms-employee-alert {
+    display: none;
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.42), rgba(6, 78, 59, 0.34));
+    border: 1px solid rgba(56, 189, 248, 0.55);
+    border-left: 4px solid #38bdf8;
+    color: #e0f2fe;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 12px;
+    line-height: 1.45;
+    margin-top: 10px;
+  }
+  .ms-employee-alert.active {
+    display: block;
+  }
+  .ms-req-matrix {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  @media (max-width: 680px) {
+    .ms-req-matrix { grid-template-columns: 1fr; }
+  }
+  .ms-req-box {
+    background: rgba(7, 13, 27, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .ms-req-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #94a3b8;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ms-req-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .ms-req-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    color: #cbd5e1;
+    transition: all 0.15s ease;
+  }
+  .ms-req-pill.ok {
+    background: rgba(6, 78, 59, 0.38);
+    border-color: rgba(16, 185, 129, 0.62);
+    color: #6ee7b7;
+  }
+  .ms-req-pill.violated {
+    background: rgba(127, 29, 29, 0.38);
+    border-color: rgba(239, 68, 68, 0.72);
+    color: #fca5a5;
+  }
+  .tos-reader-panel {
+    display: none;
+    margin-top: 10px;
+    max-height: 210px;
+    overflow-y: auto;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: rgba(3, 7, 18, 0.95);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: #cbd5e1;
+  }
+  .tos-reader-panel.open {
+    display: block;
+  }
+  .tos-schedule-item {
+    padding-bottom: 9px;
+    margin-bottom: 9px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  }
+  .tos-schedule-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
 </style>
 </head>
 <body>
@@ -182,8 +366,20 @@
 
 <main class="login-shell">
   <div class="card login-card">
-    <!-- Clean Segmented Mode Switcher: Sign In vs Register New Account (Centered) -->
-    <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(148,163,184,0.18)">
+    <!-- Microsoft Fluent Identity Header & Segmented Mode Switcher -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(148,163,184,0.18)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <svg width="20" height="20" viewBox="0 0 23 23" aria-hidden="true">
+          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+        </svg>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#f8fafc;letter-spacing:.01em">Milton Group Concepts &amp; F.I.X Identity</div>
+          <div style="font-size:11px;color:#94a3b8">Zero-Trust Directory · Mandatory Username, Email Verification &amp; 2FA</div>
+        </div>
+      </div>
       <div style="display:inline-flex;background:rgba(4,8,20,0.85);padding:4px;border-radius:10px;border:1px solid rgba(148,163,184,0.22)" role="tablist" aria-label="Authentication Mode">
         <button type="button" class="btn pri" id="modeTabSignIn" role="tab" aria-selected="true" style="padding:7px 18px;border-radius:7px;font-size:12.5px">Sign In</button>
         <button type="button" class="btn" id="modeTabRegister" role="tab" aria-selected="false" style="padding:7px 18px;border-radius:7px;font-size:12.5px;border-color:transparent;background:transparent">Register</button>
@@ -193,22 +389,22 @@
     <!-- SIGN IN VIEW: Username + Password Logon Screen + Federated SSO -->
     <div id="signInPane">
       <form id="emailPasswordForm" onsubmit="return false" style="background:rgba(4,8,20,0.78);border:1px solid rgba(197,179,88,0.38);border-radius:14px;padding:18px 20px;margin-bottom:16px">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:end">
-          <div>
-            <label for="loginIdentifier" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Username or Logon Email (Required)</label>
-            <input id="loginIdentifier" type="text" maxlength="140" placeholder="username or name@domain.com" autocomplete="username" spellcheck="false" required style="width:100%;padding:10px 13px;font-size:13px">
+        <div class="ms-form-grid-2">
+          <div class="ms-field">
+            <label for="loginIdentifier" class="ms-label"><span>Portal Username or Logon Email</span><span class="ms-label-req">Required</span></label>
+            <input id="loginIdentifier" class="ms-input" type="text" maxlength="140" placeholder="username (e.g. client.verified) or email" autocomplete="username" spellcheck="false" required>
           </div>
-          <div>
-            <label for="loginPassword" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Password (Required)</label>
-            <div style="display:flex;gap:6px">
-              <input id="loginPassword" type="password" maxlength="128" placeholder="Enter password" autocomplete="current-password" required style="flex:1;width:100%;padding:10px 13px;font-size:13px">
-              <button type="button" class="btn" id="btnTogglePassVis" title="Show or Hide Password" style="padding:0 12px;font-size:12px">Show</button>
+          <div class="ms-field">
+            <label for="loginPassword" class="ms-label"><span>Account Password</span><span class="ms-label-req">Case-Sensitive</span></label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input id="loginPassword" class="ms-input" type="password" maxlength="128" placeholder="Enter account password" autocomplete="current-password" required style="flex:1">
+              <button type="button" class="btn" id="btnTogglePassVis" title="Show or Hide Password" style="height:42px;padding:0 12px;font-size:12px">Show</button>
             </div>
           </div>
         </div>
-        <div class="row" style="margin-top:14px;justify-content:flex-end;gap:10px">
-          <span id="loginIdentityHint" style="display:none"></span>
-          <button type="submit" class="btn pri" id="btnPasswordLogin" style="padding:9px 22px;font-size:13px">Sign In</button>
+        <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
+          <span id="loginIdentityHint" style="font-size:11.5px;color:#94a3b8">Employees with an assigned username will be prompted for Email Verification &amp; Password Reset on first logon.</span>
+          <button type="submit" class="btn pri" id="btnPasswordLogin" style="padding:9px 22px;font-size:13px">Sign In →</button>
         </div>
       </form>
 
@@ -266,166 +462,276 @@
       </div>
     </div>
 
-    <!-- GUIDED 3-PAGE REGISTRATION WIZARD -->
+    <!-- GUIDED 3-PAGE REGISTRATION & CREDENTIAL VERIFICATION WIZARD (MICROSOFT LOGON STYLE) -->
     <form id="registerPane" style="display:none" onsubmit="return false">
       <!-- Sequential Guided Progress Bar -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
         <div id="regStepPill1" class="step on" style="padding:8px 12px;border-radius:9px;font-size:11.5px;display:flex;align-items:center;justify-content:space-between">
           <span><b>1.</b> Username &amp; Password</span>
           <span id="regStepIcon1" style="font-size:11px">Active</span>
         </div>
         <div id="regStepPill2" class="step" style="padding:8px 12px;border-radius:9px;font-size:11.5px;display:flex;align-items:center;justify-content:space-between;opacity:.6">
-          <span><b>2.</b> Recovery &amp; Phone</span>
+          <span><b>2.</b> Recovery &amp; Email Verify</span>
           <span id="regStepIcon2" style="font-size:11px">Locked</span>
         </div>
         <div id="regStepPill3" class="step" style="padding:8px 12px;border-radius:9px;font-size:11.5px;display:flex;align-items:center;justify-content:space-between;opacity:.6">
-          <span><b>3.</b> Address &amp; Finalize</span>
+          <span><b>3.</b> Address &amp; Terms</span>
           <span id="regStepIcon3" style="font-size:11px">Locked</span>
         </div>
       </div>
 
-      <!-- PAGE 1: MANDATORY USERNAME & PASSWORD SECURITY STANDARDS -->
-      <div id="regPage1" style="background:rgba(4,8,20,0.78);border:1px solid rgba(197,179,88,0.38);border-radius:14px;padding:18px 20px">
-        <div class="row" style="margin-bottom:12px">
+      <!-- PAGE 1: MANDATORY USERNAME & PASSWORD SECURITY STANDARDS (MICROSOFT LOGON ALIGNMENT & VIOLATION NOTIFICATIONS) -->
+      <div id="regPage1" style="background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.42);border-radius:14px;padding:18px 20px">
+        <div class="row" style="margin-bottom:14px">
           <div>
-            <span class="chip ok" style="font-size:10.5px">Page 1 of 3 · Credentials &amp; Security Check</span>
-            <h2 style="margin:4px 0 0;font-size:15px">Set Your Portal Username &amp; Password</h2>
+            <span class="chip ok" style="font-size:10.5px">Page 1 of 3 · Microsoft-Style Credential &amp; Security Check</span>
+            <h2 id="regPage1Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Set Your Portal Username &amp; Password</h2>
           </div>
           <span id="regPage1StatusChip" class="chip warn" style="font-size:11px">Security Check Required</span>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
-          <div>
-            <label for="regUsername" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Portal Username (Required · Not Optional)</label>
-            <input id="regUsername" type="text" maxlength="32" placeholder="e.g. jordan.vance" required spellcheck="false" autocomplete="username" style="width:100%;padding:10px 13px">
-            <div id="regUsernameCheckStrip" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;font-size:11px">
-              <span id="unChkLen" class="chip" style="padding:2px 7px;font-size:10.5px">4–32 Chars</span>
-              <span id="unChkFmt" class="chip" style="padding:2px 7px;font-size:10.5px">Letters / Numbers / . _ -</span>
-              <span id="unChkUniq" class="chip" style="padding:2px 7px;font-size:10.5px">Unique &amp; Non-Reserved</span>
-            </div>
+        <!-- Row 1: 2 Equal Pixel-Aligned Columns (Username + Authentication Method) -->
+        <div class="ms-form-grid-2" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regUsername" class="ms-label">
+              <span>Portal Username (Not Optional)</span>
+              <span id="regUsernameRoleTag" class="ms-label-req">Client or Assigned Employee ID</span>
+            </label>
+            <input id="regUsername" class="ms-input" type="text" maxlength="32" placeholder="Client username or assigned emp.name" required spellcheck="false" autocomplete="username">
           </div>
-          <div>
-            <label for="regProvider" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Authentication Method</label>
-            <select id="regProvider" style="width:100%;padding:10px 13px">
+          <div class="ms-field">
+            <label for="regProvider" class="ms-label">
+              <span>Authentication Method</span>
+              <span class="ms-label-req">2FA / OIDC Ready</span>
+            </label>
+            <select id="regProvider" class="ms-input">
               <option value="password">Username / Email &amp; Password</option>
               <option value="google">Google SSO + Portal Username</option>
               <option value="microsoft">Microsoft SSO + Portal Username</option>
               <option value="apple">Apple SSO + Portal Username</option>
             </select>
           </div>
-          <div>
-            <label for="regPassword" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Account Password (Required)</label>
-            <input id="regPassword" type="password" maxlength="128" placeholder="8+ chars, upper, lower, number, symbol" required autocomplete="new-password" style="width:100%;padding:10px 13px">
+        </div>
+
+        <!-- Row 2: 2 Equal Pixel-Aligned Columns (Password + Confirm Password) -->
+        <div class="ms-form-grid-2">
+          <div class="ms-field">
+            <label for="regPassword" class="ms-label">
+              <span id="lblRegPasswordText">Account Password</span>
+              <span class="ms-label-req">8+ Chars · Case-Sensitive</span>
+            </label>
+            <input id="regPassword" class="ms-input" type="password" maxlength="128" placeholder="8+ chars, upper, lower, number, symbol" required autocomplete="new-password">
           </div>
-          <div>
-            <label for="regPasswordConfirm" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Confirm Password (Required)</label>
-            <input id="regPasswordConfirm" type="password" maxlength="128" placeholder="Re-enter password to confirm" required autocomplete="new-password" style="width:100%;padding:10px 13px">
+          <div class="ms-field">
+            <label for="regPasswordConfirm" class="ms-label">
+              <span id="lblRegPasswordConfirmText">Confirm Password</span>
+              <span class="ms-label-req">Must Match</span>
+            </label>
+            <input id="regPasswordConfirm" class="ms-input" type="password" maxlength="128" placeholder="Re-enter password to confirm" required autocomplete="new-password">
           </div>
         </div>
 
-        <div id="regPasswordCheckStrip" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:9px;background:rgba(8,14,28,0.85);border:1px solid rgba(148,163,184,0.18)">
-          <span style="font-size:11px;font-weight:600;color:#94a3b8;margin-right:4px">Password Standards:</span>
-          <span id="pwChkLen" class="chip" style="padding:2px 8px;font-size:10.5px">8+ Chars</span>
-          <span id="pwChkCase" class="chip" style="padding:2px 8px;font-size:10.5px">Upper &amp; Lower</span>
-          <span id="pwChkNum" class="chip" style="padding:2px 8px;font-size:10.5px">Number (0-9)</span>
-          <span id="pwChkSym" class="chip" style="padding:2px 8px;font-size:10.5px">Special Symbol</span>
-          <span id="pwChkMatch" class="chip" style="padding:2px 8px;font-size:10.5px">Confirmed &amp; Unique</span>
-        </div>
+        <!-- Employee Assigned-Username Auto-Detection Callout -->
+        <div id="regEmployeeDetectedBanner" class="ms-employee-alert" role="status"></div>
 
-        <div class="row" style="margin-top:14px;justify-content:flex-end;gap:10px">
-          <button type="button" class="btn pri" id="btnRegNext1" disabled style="padding:9px 20px;font-size:13px">Next: Recovery &amp; Contact →</button>
-        </div>
-      </div>
+        <!-- Microsoft-Style Live Requirement Violation Callout -->
+        <div id="regPage1ViolationBanner" class="ms-violation-alert" role="alert"></div>
 
-      <!-- PAGE 2: IDENTITY, MANDATORY RECOVERY EMAIL & PHONE NUMBER -->
-      <div id="regPage2" style="display:none;background:rgba(4,8,20,0.78);border:1px solid rgba(197,179,88,0.38);border-radius:14px;padding:18px 20px">
-        <div class="row" style="margin-bottom:12px">
-          <div>
-            <span class="chip ok" style="font-size:10.5px">Page 2 of 3 · Identity &amp; Account Recovery</span>
-            <h2 style="margin:4px 0 0;font-size:15px">Recovery Email, Phone &amp; Account Scope</h2>
+        <!-- Aligned 2-Box Security Standards Checklist (Username Standards | Password Standards) -->
+        <div class="ms-req-matrix">
+          <div class="ms-req-box">
+            <div class="ms-req-title" style="white-space:nowrap">
+              <span>Username Standards</span>
+              <span id="unSummaryBadge" style="color:#93c5fd">3 Checks</span>
+            </div>
+            <div id="regUsernameCheckStrip" class="ms-req-list">
+              <span id="unChkLen" class="ms-req-pill">○ 4–32 Chars</span>
+              <span id="unChkFmt" class="ms-req-pill">○ Letters / Numbers / . _ -</span>
+              <span id="unChkUniq" class="ms-req-pill">○ Unique &amp; Non-Reserved</span>
+            </div>
           </div>
-          <span id="regPage2StatusChip" class="chip warn" style="font-size:11px">Recovery Details Required</span>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
-          <div>
-            <label for="regName" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Full Name (Required)</label>
-            <input id="regName" type="text" maxlength="100" placeholder="Enter full name" required style="width:100%;padding:10px 13px">
-          </div>
-          <div>
-            <label for="regEmail" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Primary Logon Email (Required)</label>
-            <input id="regEmail" type="email" maxlength="140" placeholder="name@company.com" required spellcheck="false" style="width:100%;padding:10px 13px">
-          </div>
-          <div>
-            <label for="regRecoveryEmail" style="display:block;font-size:11.5px;font-weight:600;color:#fde047;letter-spacing:.02em;margin-bottom:6px">Recovery Email Address (Required)</label>
-            <input id="regRecoveryEmail" type="email" maxlength="140" placeholder="recovery@domain.com" required spellcheck="false" style="width:100%;padding:10px 13px">
-          </div>
-          <div>
-            <label for="regPhone" style="display:block;font-size:11.5px;font-weight:600;color:#fde047;letter-spacing:.02em;margin-bottom:6px">Mobile / Security Phone Number (Required)</label>
-            <input id="regPhone" type="tel" maxlength="24" placeholder="+1 (555) 234-5678" required style="width:100%;padding:10px 13px">
-          </div>
-          <div>
-            <label for="regAccountScope" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Account Role &amp; Scope</label>
-            <select id="regAccountScope" style="width:100%;padding:10px 13px">
-              <option value="external">Client / Partner User (Address Optional)</option>
-              <option value="internal">Employee / Staff Member (Address Required)</option>
-            </select>
-          </div>
-          <div>
-            <label for="regOrg" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Organization / Department</label>
-            <input id="regOrg" type="text" maxlength="120" placeholder="Organization or department" style="width:100%;padding:10px 13px">
+          <div class="ms-req-box">
+            <div class="ms-req-title" style="white-space:nowrap">
+              <span>Password Standards</span>
+              <span id="pwSummaryBadge" style="color:#93c5fd">5 Checks</span>
+            </div>
+            <div id="regPasswordCheckStrip" class="ms-req-list">
+              <span id="pwChkLen" class="ms-req-pill">○ 8+ Chars</span>
+              <span id="pwChkCase" class="ms-req-pill">○ Upper &amp; Lower</span>
+              <span id="pwChkNum" class="ms-req-pill">○ Number (0-9)</span>
+              <span id="pwChkSym" class="ms-req-pill">○ Special Symbol</span>
+              <span id="pwChkMatch" class="ms-req-pill">○ Confirmed &amp; Unique</span>
+            </div>
           </div>
         </div>
 
         <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
-          <button type="button" class="btn" id="btnRegBack2" style="padding:9px 16px;font-size:12.5px">← Back to Page 1</button>
-          <button type="button" class="btn pri" id="btnRegNext2" disabled style="padding:9px 20px;font-size:13px">Next: Address &amp; Finalize →</button>
+          <span style="font-size:11.5px;color:#94a3b8">Employees enter their Admin-provided username (<code style="color:#93c5fd">emp.first.last</code>) to complete mandatory password reset.</span>
+          <button type="button" class="btn pri" id="btnRegNext1" disabled style="padding:9px 20px;font-size:13px">Next: Recovery &amp; Email Verification →</button>
         </div>
       </div>
 
-      <!-- PAGE 3: ADDRESS INFORMATION (OPTIONAL FOR CLIENTS ONLY; MANDATORY FOR EMPLOYEES) & FINALIZE -->
-      <div id="regPage3" style="display:none;background:rgba(4,8,20,0.78);border:1px solid rgba(197,179,88,0.38);border-radius:14px;padding:18px 20px">
-        <div class="row" style="margin-bottom:12px">
+      <!-- PAGE 2: PIXEL-ALIGNED IDENTITY, MANDATORY RECOVERY EMAIL, PHONE NUMBER & EMAIL VERIFICATION -->
+      <div id="regPage2" style="display:none;background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.42);border-radius:14px;padding:18px 20px">
+        <div class="row" style="margin-bottom:14px">
           <div>
-            <span class="chip ok" style="font-size:10.5px">Page 3 of 3 · Physical Address &amp; Final Attestation</span>
-            <h2 id="regPage3Heading" style="margin:4px 0 0;font-size:15px">Address Information (Optional for Client Users)</h2>
+            <span class="chip ok" style="font-size:10.5px">Page 2 of 3 · Identity, Recovery &amp; Email Verification</span>
+            <h2 style="margin:4px 0 0;font-size:15.5px;font-weight:700">Recovery Email, Phone &amp; Email Code Verification</h2>
           </div>
-          <span id="regAddressPolicyBadge" class="chip ok" style="font-size:11px">Client Scope · Address Optional</span>
+          <span id="regPage2StatusChip" class="chip warn" style="font-size:11px">Email Verification Required</span>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
-          <div style="grid-column:1 / -1">
-            <label for="regStreet" id="lblRegStreet" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Street Address (Optional for Clients)</label>
-            <input id="regStreet" type="text" maxlength="140" placeholder="Street address, suite, or unit" style="width:100%;padding:10px 13px">
+        <!-- Row 1: Full Name | Primary Logon Email (Pixel-Aligned) -->
+        <div class="ms-form-grid-2" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regName" class="ms-label"><span>Full Legal Name</span><span class="ms-label-req">Required</span></label>
+            <input id="regName" class="ms-input" type="text" maxlength="100" placeholder="Enter full name" required>
           </div>
-          <div>
-            <label for="regCity" id="lblRegCity" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">City (Optional for Clients)</label>
-            <input id="regCity" type="text" maxlength="80" placeholder="City" style="width:100%;padding:10px 13px">
-          </div>
-          <div>
-            <label for="regState" id="lblRegState" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">State / Region (Optional for Clients)</label>
-            <input id="regState" type="text" maxlength="60" placeholder="State or province" style="width:100%;padding:10px 13px">
-          </div>
-          <div>
-            <label for="regZip" id="lblRegZip" style="display:block;font-size:11.5px;font-weight:600;color:#cbd5e1;letter-spacing:.02em;margin-bottom:6px">Postal / ZIP Code (Optional for Clients)</label>
-            <input id="regZip" type="text" maxlength="24" placeholder="ZIP or postal code" style="width:100%;padding:10px 13px">
+          <div class="ms-field">
+            <label for="regEmail" class="ms-label"><span>Primary Logon Email</span><span class="ms-label-req">Verification Target</span></label>
+            <input id="regEmail" class="ms-input" type="email" maxlength="140" placeholder="name@organization.com" required spellcheck="false">
           </div>
         </div>
 
-        <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-top:14px;padding:12px 14px;border-radius:10px;background:rgba(4,8,20,0.68);border:1px solid rgba(148,163,184,0.2)">
-          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#e2e8f0;cursor:pointer">
-            <input type="checkbox" id="regNda" checked style="width:15px;height:15px">
-            <span>I attest to the MGC Mutual NDA &amp; Zero-Trust Terms.</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#94a3b8;cursor:pointer">
-            <input type="checkbox" id="regNewsletter" checked style="width:15px;height:15px">
-            <span>Receive weekly Executive Intelligence Briefings</span>
-          </label>
+        <!-- Row 2: Recovery Email Address | Mobile / Security Phone (Pixel-Aligned Single-Line Labels) -->
+        <div class="ms-form-grid-2" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regRecoveryEmail" class="ms-label"><span style="color:#fde047">Recovery Email Address</span><span class="ms-label-req" style="color:#fde047">Required</span></label>
+            <input id="regRecoveryEmail" class="ms-input" type="email" maxlength="140" placeholder="recovery@domain.com" required spellcheck="false">
+          </div>
+          <div class="ms-field">
+            <label for="regPhone" class="ms-label"><span style="color:#fde047">Security Phone Number</span><span class="ms-label-req" style="color:#fde047">10–15 Digits Required</span></label>
+            <input id="regPhone" class="ms-input" type="tel" maxlength="24" placeholder="+1 (555) 234-5678" required>
+          </div>
         </div>
+
+        <!-- Row 3: Organization / Department | Auto-Detected Account Classification (From Username) -->
+        <div class="ms-form-grid-2" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regOrg" class="ms-label"><span>Organization or Department</span><span class="ms-label-req">Optional / Auto</span></label>
+            <input id="regOrg" class="ms-input" type="text" maxlength="120" placeholder="Organization or department">
+          </div>
+          <div class="ms-field">
+            <label for="regDetectedScopeDisplay" class="ms-label"><span>Directory Classification (Detected from Username)</span><span class="ms-label-req">Locked</span></label>
+            <input id="regDetectedScopeDisplay" class="ms-input" type="text" readonly value="Client / Partner User (Self-Selected Username)" style="color:#93c5fd !important;cursor:default">
+            <input type="hidden" id="regAccountScope" value="external">
+          </div>
+        </div>
+
+        <!-- Mandatory Email Verification Gate (Dispatches Email with Username + 6-Digit Verification Code) -->
+        <div id="regEmailVerificationBox" style="padding:12px 14px;border-radius:10px;background:rgba(7,13,27,0.92);border:1px solid rgba(56,189,248,0.38)">
+          <div class="row" style="margin-bottom:8px">
+            <div>
+              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#38bdf8">Mandatory Email &amp; Username Verification</span>
+              <div id="regEmailVerifySubtext" style="font-size:11.5px;color:#cbd5e1;margin-top:2px">Send a 6-digit verification code to your Primary Logon Email (includes your username confirmation) to unlock Page 3.</div>
+            </div>
+            <span id="regEmailVerifiedBadge" class="chip warn" style="font-size:10.5px">Unverified</span>
+          </div>
+          <div style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center">
+            <button type="button" class="btn" id="btnSendEmailCode" style="height:40px;padding:0 14px;font-size:12px;border-color:rgba(56,189,248,0.55);color:#7dd3fc">📧 Send Verification Code</button>
+            <input id="regEmailVerifyCode" class="ms-input" type="text" maxlength="6" inputmode="numeric" placeholder="Enter 6-digit email verification code" style="height:40px !important;letter-spacing:0.14em;font-weight:700;text-align:center">
+            <button type="button" class="btn pri" id="btnVerifyEmailCode" style="height:40px;padding:0 16px;font-size:12px">Verify Email Code</button>
+          </div>
+          <div id="regEmailDispatchBanner" style="display:none;margin-top:8px;padding:8px 11px;border-radius:6px;background:rgba(6,78,59,0.28);border:1px solid rgba(16,185,129,0.45);font-size:11.5px;color:#a7f3d0"></div>
+        </div>
+
+        <div id="regPage2ViolationBanner" class="ms-violation-alert" role="alert"></div>
+
+        <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
+          <button type="button" class="btn" id="btnRegBack2" style="padding:9px 16px;font-size:12.5px">← Back to Page 1</button>
+          <button type="button" class="btn pri" id="btnRegNext2" disabled style="padding:9px 20px;font-size:13px">Next: Address &amp; Terms of Service →</button>
+        </div>
+      </div>
+
+      <!-- PAGE 3: MANDATORY PHYSICAL ADDRESS (MANDATORY FOR ALL USERS: CLIENTS & EMPLOYEES) & CLICKABLE TERMS OF SERVICE -->
+      <div id="regPage3" style="display:none;background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.42);border-radius:14px;padding:18px 20px">
+        <div class="row" style="margin-bottom:14px">
+          <div>
+            <span class="chip ok" style="font-size:10.5px">Page 3 of 3 · Mandatory Physical Address &amp; Terms of Service</span>
+            <h2 id="regPage3Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Physical Address &amp; Terms of Service (Required for All Users)</h2>
+          </div>
+          <span id="regAddressPolicyBadge" class="chip warn" style="font-size:11px">Address &amp; Terms Required</span>
+        </div>
+
+        <!-- Row 1: Full-Width Street Address -->
+        <div class="ms-field" style="margin-bottom:14px">
+          <label for="regStreet" id="lblRegStreet" class="ms-label"><span style="color:#fde047">Street Address (Required)</span><span class="ms-label-req" style="color:#fde047">Mandatory for Clients &amp; Employees</span></label>
+          <input id="regStreet" class="ms-input" type="text" maxlength="140" placeholder="Street address, suite, or unit number" required>
+        </div>
+
+        <!-- Row 2: 3 Equal Pixel-Aligned Columns (City | State / Region | Postal / ZIP Code) -->
+        <div class="ms-form-grid-3" style="margin-bottom:14px">
+          <div class="ms-field">
+            <label for="regCity" id="lblRegCity" class="ms-label"><span style="color:#fde047">City (Required)</span><span class="ms-label-req">Required</span></label>
+            <input id="regCity" class="ms-input" type="text" maxlength="80" placeholder="City" required>
+          </div>
+          <div class="ms-field">
+            <label for="regState" id="lblRegState" class="ms-label"><span style="color:#fde047">State / Region (Required)</span><span class="ms-label-req">Required</span></label>
+            <input id="regState" class="ms-input" type="text" maxlength="60" placeholder="State or province" required>
+          </div>
+          <div class="ms-field">
+            <label for="regZip" id="lblRegZip" class="ms-label"><span style="color:#fde047">Postal / ZIP Code (Required)</span><span class="ms-label-req">Required</span></label>
+            <input id="regZip" class="ms-input" type="text" maxlength="24" placeholder="ZIP or postal code" required>
+          </div>
+        </div>
+
+        <!-- Interactive Clickable Terms of Service Suite (All 5 Required Legal & Regulatory Schedules) -->
+        <div style="padding:12px 14px;border-radius:10px;background:rgba(7,13,27,0.92);border:1px solid rgba(197,179,88,0.42)">
+          <div class="row" style="gap:10px">
+            <div>
+              <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fde047">Mandatory Legal &amp; Terms of Service Review</span>
+              <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px">Click below to view all required Terms of Service schedules before accepting.</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span id="tosReviewBadge" class="chip warn" style="font-size:10.5px">Click Terms to Review</span>
+              <button type="button" class="btn" id="btnToggleTosReader" style="padding:6px 12px;font-size:11.5px;border-color:rgba(56,189,248,0.55);color:#7dd3fc">📄 View Required Terms of Service (5 Schedules)</button>
+            </div>
+          </div>
+
+          <!-- Full Scrollable 5-Schedule Terms of Service Reader -->
+          <div id="tosFullReaderPanel" class="tos-reader-panel" role="region" aria-label="Required Terms of Service Schedules">
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 1 · Master Terms of Service &amp; Acceptable Use Policy (AUP):</strong>
+              Access to Milton Group Concepts LLC (EIN 92-1370285) and F.I.X Solutions LLC portals is restricted to authenticated users with a verified username, email, and 2FA credential. Unauthorized directory traversal, automated scraping, credential sharing, reverse engineering, or injection payloads are strictly prohibited and logged via immutable SHA-256 audit trails.
+            </div>
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 2 · Privacy Notice, CCPA/CPRA, GDPR &amp; Data Governance Policy:</strong>
+              Your identity, mandatory recovery email, security phone number, and physical address are encrypted and safeguarded in alignment with NIST SP 800-171 Rev 3 and CMMC 2.0 Level 2. Optional partner data-sharing programs require separate opt-in consent during Otto onboarding and may be revoked at any time.
+            </div>
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 3 · Electronic Communications, Email Verification, 2FA &amp; Employee Credential Policy (E-SIGN Act):</strong>
+              You consent to receive electronic security notices, 6-digit email verification codes, and 2FA challenges. Employees are assigned official directory usernames (<code style="color:#93c5fd">emp.*</code>) via email and must complete email verification and a mandatory password reset before authenticating into any workspace session.
+            </div>
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 4 · Membership Billing, EFTA / Reg E, NACHA ACH, WAWF &amp; PCI-DSS v4.0 SAQ-A Terms:</strong>
+              Commercial card transactions are tokenized under PCI-DSS v4.0 SAQ-A (zero raw PAN storage), ACH settlements follow NACHA Operating Rules and the Electronic Fund Transfer Act (15 U.S.C. 1693), and Federal engagements settle via DoD Wide Area Workflow (DFARS 252.232-7003).
+            </div>
+            <div class="tos-schedule-item">
+              <strong style="color:#f8fafc">Schedule 5 · Mutual Non-Disclosure Agreement (NDA), IP &amp; Defined-Template AI Governance:</strong>
+              All SCORM 2004 courseware, network topologies, Resource Fast-Track templates, and Otto associative sequences remain proprietary intellectual property of Milton Group Concepts LLC &amp; F.I.X Solutions LLC. AI interactions operate strictly through verified templates with zero open-prompt execution.
+            </div>
+            <div style="margin-top:10px;display:flex;justify-content:flex-end">
+              <button type="button" class="btn pri" id="btnAcknowledgeTosSchedules" style="padding:6px 14px;font-size:11.5px">✓ I Have Read &amp; Accept All 5 Terms of Service Schedules</button>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid rgba(148,163,184,0.18)">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#f8fafc;cursor:pointer;font-weight:600">
+              <input type="checkbox" id="regNda" style="width:16px;height:16px">
+              <span>I have clicked, reviewed, and accept the Required Terms of Service (Schedules 1–5), Privacy Policy &amp; Mutual NDA (Required)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8;cursor:pointer">
+              <input type="checkbox" id="regNewsletter" checked style="width:15px;height:15px">
+              <span>Receive weekly Executive Intelligence Briefings</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="regPage3ViolationBanner" class="ms-violation-alert" role="alert"></div>
 
         <div class="row" style="margin-top:16px;justify-content:space-between;gap:10px">
           <button type="button" class="btn" id="btnRegBack3" style="padding:9px 16px;font-size:12.5px">← Back to Page 2</button>
-          <button type="button" class="btn pri" id="btnSubmitRegister" style="padding:10px 22px;font-size:13px">Complete Registration &amp; Launch →</button>
+          <button type="button" class="btn pri" id="btnSubmitRegister" disabled style="padding:10px 22px;font-size:13px">Complete Registration &amp; Launch →</button>
         </div>
       </div>
     </form>
@@ -773,6 +1079,17 @@
       });
       const data = await res.json();
       if (!data || !data.ok) {
+        if (data && data.requireEmployeeReset) {
+          setAuthMode('register');
+          if (regUsernameEl) regUsernameEl.value = data.username || rawId.toLowerCase();
+          if (regEmailEl && data.email) regEmailEl.value = data.email;
+          if (regNameEl && data.name) regNameEl.value = data.name;
+          if (regOrgEl && data.org) regOrgEl.value = data.org;
+          evaluateRegPage1();
+          msg.style.color = '#fbbf24';
+          msg.textContent = data.error || 'Employee Security Policy: Complete Mandatory Password Reset & Email Verification to activate your session.';
+          return;
+        }
         msg.style.color = '#f87171';
         msg.textContent = (data && data.error) || 'Invalid email/username or password.';
         return;
@@ -911,6 +1228,12 @@
   const cardHeading = document.getElementById('loginCardHeading');
 
   let currentRegPage = 1;
+  let emailVerifiedState = false;
+  let emailVerifiedForAddress = '';
+  let emailVerificationToken = '';
+  let lastDispatchedCodePreview = '';
+  let tosSchedulesReviewed = false;
+
   const regPage1 = document.getElementById('regPage1');
   const regPage2 = document.getElementById('regPage2');
   const regPage3 = document.getElementById('regPage3');
@@ -930,6 +1253,7 @@
   const regRecoveryEmailEl = document.getElementById('regRecoveryEmail');
   const regPhoneEl = document.getElementById('regPhone');
   const regAccountScopeEl = document.getElementById('regAccountScope');
+  const regDetectedScopeDisplayEl = document.getElementById('regDetectedScopeDisplay');
   const regOrgEl = document.getElementById('regOrg');
   const regTrackEl = document.getElementById('regTrack');
   const regBrandEl = document.getElementById('regBrand');
@@ -940,33 +1264,66 @@
   const regNdaEl = document.getElementById('regNda');
   const regNewsletterEl = document.getElementById('regNewsletter');
 
+  const btnSendEmailCode = document.getElementById('btnSendEmailCode');
+  const btnVerifyEmailCode = document.getElementById('btnVerifyEmailCode');
+  const regEmailVerifyCodeEl = document.getElementById('regEmailVerifyCode');
+  const regEmailVerifiedBadge = document.getElementById('regEmailVerifiedBadge');
+  const regEmailDispatchBanner = document.getElementById('regEmailDispatchBanner');
+
+  const btnToggleTosReader = document.getElementById('btnToggleTosReader');
+  const btnAcknowledgeTosSchedules = document.getElementById('btnAcknowledgeTosSchedules');
+  const tosFullReaderPanel = document.getElementById('tosFullReaderPanel');
+  const tosReviewBadge = document.getElementById('tosReviewBadge');
+
   const btnRegNext1 = document.getElementById('btnRegNext1');
   const btnRegBack2 = document.getElementById('btnRegBack2');
   const btnRegNext2 = document.getElementById('btnRegNext2');
   const btnRegBack3 = document.getElementById('btnRegBack3');
   const btnSubmitRegister = document.getElementById('btnSubmitRegister');
 
-  function setChipState(id, ok) {
+  function setMsReqPill(id, label, passed, touched) {
     const el = document.getElementById(id);
     if (!el) return;
-    el.className = 'chip ' + (ok ? 'ok' : '');
+    if (passed) {
+      el.className = 'ms-req-pill ok';
+      el.textContent = '✓ ' + label;
+    } else if (touched) {
+      el.className = 'ms-req-pill violated';
+      el.textContent = '✕ ' + label;
+    } else {
+      el.className = 'ms-req-pill';
+      el.textContent = '○ ' + label;
+    }
+  }
+
+  function setMsInputState(inputEl, passed, touched) {
+    if (!inputEl) return;
+    inputEl.classList.remove('valid', 'violating');
+    if (passed) inputEl.classList.add('valid');
+    else if (touched) inputEl.classList.add('violating');
   }
 
   function evaluateRegPage1() {
     const rawUn = (regUsernameEl && regUsernameEl.value || '').trim().toLowerCase();
     const rawPw = (regPasswordEl && regPasswordEl.value || '');
     const rawPwConfirm = (regPasswordConfirmEl && regPasswordConfirmEl.value || '');
+    const unTouched = rawUn.length > 0;
+    const pwTouched = rawPw.length > 0;
+    const pwConfirmTouched = rawPwConfirm.length > 0;
 
     const unRes = W.validateUsernameStandard
       ? W.validateUsernameStandard(rawUn)
       : {
           ok: /^[a-z0-9][a-z0-9._-]{3,31}$/.test(rawUn) && !['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir'].includes(rawUn),
+          isAssignedEmployee: /^(emp|staff)\.[a-z0-9._-]{2,28}$/.test(rawUn),
+          detectedOu: /^(emp|staff)\.[a-z0-9._-]{2,28}$/.test(rawUn) ? 'internal' : 'external',
           checks: {
             lenOk: rawUn.length >= 4 && rawUn.length <= 32,
             formatOk: /^[a-z0-9][a-z0-9._-]{3,31}$/.test(rawUn),
             notReserved: Boolean(rawUn) && !['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir'].includes(rawUn),
             uniqueOk: true
-          }
+          },
+          violations: []
         };
 
     const pwRes = W.validatePasswordStandard
@@ -981,28 +1338,112 @@
             specialOk: /[^A-Za-z0-9\s]/.test(rawPw),
             notContainsUser: !rawUn || !rawPw.toLowerCase().includes(rawUn),
             notGeneric: true
-          }
+          },
+          violations: []
         };
 
     const confirmMatch = Boolean(rawPw && rawPw === rawPwConfirm && pwRes.checks.notContainsUser && pwRes.checks.notGeneric);
-    setChipState('unChkLen', unRes.checks.lenOk);
-    setChipState('unChkFmt', unRes.checks.formatOk);
-    setChipState('unChkUniq', unRes.checks.notReserved && unRes.checks.uniqueOk);
 
-    setChipState('pwChkLen', pwRes.checks.lenOk);
-    setChipState('pwChkCase', pwRes.checks.upperOk && pwRes.checks.lowerOk);
-    setChipState('pwChkNum', pwRes.checks.digitOk);
-    setChipState('pwChkSym', pwRes.checks.specialOk);
-    setChipState('pwChkMatch', confirmMatch);
+    // Update Microsoft-style requirement pills
+    setMsReqPill('unChkLen', '4–32 Chars', unRes.checks.lenOk, unTouched);
+    setMsReqPill('unChkFmt', 'Letters / Numbers / . _ -', unRes.checks.formatOk, unTouched);
+    setMsReqPill('unChkUniq', unRes.isAssignedEmployee ? 'Assigned Employee ID' : 'Unique & Non-Reserved', unRes.checks.notReserved && unRes.checks.uniqueOk, unTouched);
+
+    setMsReqPill('pwChkLen', '8+ Chars', pwRes.checks.lenOk, pwTouched);
+    setMsReqPill('pwChkCase', 'Upper & Lower', pwRes.checks.upperOk && pwRes.checks.lowerOk, pwTouched);
+    setMsReqPill('pwChkNum', 'Number (0-9)', pwRes.checks.digitOk, pwTouched);
+    setMsReqPill('pwChkSym', 'Special Symbol', pwRes.checks.specialOk, pwTouched);
+    setMsReqPill('pwChkMatch', 'Confirmed & Unique', confirmMatch, pwTouched || pwConfirmTouched);
+
+    setMsInputState(regUsernameEl, unRes.ok, unTouched);
+    setMsInputState(regPasswordEl, pwRes.ok, pwTouched);
+    setMsInputState(regPasswordConfirmEl, confirmMatch && pwRes.ok, pwConfirmTouched);
+
+    // Employee Assigned-Username Detection & Password Reset Mode
+    const isEmployee = Boolean(unRes.isAssignedEmployee);
+    if (regAccountScopeEl) regAccountScopeEl.value = isEmployee ? 'internal' : 'external';
+    if (regDetectedScopeDisplayEl) {
+      regDetectedScopeDisplayEl.value = isEmployee
+        ? 'Internal Employee Account (Admin-Provided Username · Password Reset Mode)'
+        : 'Client / Partner User (Self-Selected Username)';
+    }
+    const roleTag = document.getElementById('regUsernameRoleTag');
+    if (roleTag) {
+      roleTag.textContent = isEmployee ? '✓ Assigned Employee Username' : (unTouched && unRes.ok ? '✓ Client Username Available' : 'Client or Assigned Employee ID');
+      roleTag.style.color = isEmployee ? '#34d399' : '#93c5fd';
+    }
+    const lblPw = document.getElementById('lblRegPasswordText');
+    const lblPwConf = document.getElementById('lblRegPasswordConfirmText');
+    const h2P1 = document.getElementById('regPage1Heading');
+    if (lblPw) lblPw.textContent = isEmployee ? 'New Employee Password (Reset)' : 'Account Password';
+    if (lblPwConf) lblPwConf.textContent = isEmployee ? 'Confirm New Employee Password' : 'Confirm Password';
+    if (h2P1) {
+      h2P1.textContent = isEmployee
+        ? 'Employee Username Verified · Complete Mandatory Password Reset'
+        : 'Set Your Portal Username & Password';
+    }
+
+    const empBanner = document.getElementById('regEmployeeDetectedBanner');
+    if (empBanner) {
+      if (isEmployee) {
+        const prof = unRes.assignedProfile || {};
+        if (prof.name && regNameEl && !regNameEl.value) regNameEl.value = prof.name;
+        if (prof.email && regEmailEl && !regEmailEl.value) regEmailEl.value = prof.email;
+        if (prof.org && regOrgEl && !regOrgEl.value) regOrgEl.value = prof.org;
+        empBanner.className = 'ms-employee-alert active';
+        empBanner.innerHTML = '<strong>🏢 Admin-Provided Employee Username Detected (<code>' + W.esc(unRes.username) + '</code>):</strong> ' +
+          'Employees are provided official directory usernames by the organization. You must complete this <strong>Mandatory Password Reset</strong> and verify your email on Page 2 before authenticating into your session.';
+      } else {
+        empBanner.className = 'ms-employee-alert';
+        empBanner.innerHTML = '';
+      }
+    }
+
+    // Microsoft Logon Live Violation Callout Banner
+    const violationBanner = document.getElementById('regPage1ViolationBanner');
+    const activeViolations = [];
+    if (unTouched && !unRes.ok) {
+      (unRes.violations && unRes.violations.length ? unRes.violations : [unRes.error]).forEach(v => { if (v) activeViolations.push(v); });
+    }
+    if (pwTouched && !pwRes.ok) {
+      (pwRes.violations && pwRes.violations.length ? pwRes.violations : [pwRes.error]).forEach(v => { if (v) activeViolations.push(v); });
+    }
+    if (pwConfirmTouched && rawPw !== rawPwConfirm) {
+      activeViolations.push('Password confirmation violation: The confirmation password does not match your password.');
+    }
+    if (violationBanner) {
+      if (activeViolations.length > 0) {
+        violationBanner.className = 'ms-violation-alert active';
+        violationBanner.innerHTML = '<strong>⚠ Security Requirement Violation Detected:</strong><ul style="margin:4px 0 0 18px;padding:0">' +
+          activeViolations.map(v => '<li>' + W.esc(v) + '</li>').join('') + '</ul>';
+      } else {
+        violationBanner.className = 'ms-violation-alert';
+        violationBanner.innerHTML = '';
+      }
+    }
+
+    const unBadge = document.getElementById('unSummaryBadge');
+    if (unBadge) {
+      unBadge.textContent = unRes.ok ? '✓ 3/3 Passed' : (unTouched ? '⚠ Action Needed' : '3 Checks');
+      unBadge.style.color = unRes.ok ? '#34d399' : (unTouched ? '#f87171' : '#93c5fd');
+    }
+    const pwBadge = document.getElementById('pwSummaryBadge');
+    if (pwBadge) {
+      const allPw = Boolean(pwRes.ok && confirmMatch);
+      pwBadge.textContent = allPw ? '✓ 5/5 Passed' : ((pwTouched || pwConfirmTouched) ? '⚠ Action Needed' : '5 Checks');
+      pwBadge.style.color = allPw ? '#34d399' : ((pwTouched || pwConfirmTouched) ? '#f87171' : '#93c5fd');
+    }
 
     const page1Ok = Boolean(unRes.ok && pwRes.ok && confirmMatch);
     const chip1 = document.getElementById('regPage1StatusChip');
     if (chip1) {
       chip1.className = 'chip ' + (page1Ok ? 'ok' : 'warn');
-      chip1.textContent = page1Ok ? '✓ Security Standards Passed' : 'Security Check Required';
+      chip1.textContent = page1Ok
+        ? (isEmployee ? '✓ Employee Reset Ready' : '✓ Security Standards Passed')
+        : 'Security Check Required';
     }
     if (btnRegNext1) btnRegNext1.disabled = !page1Ok;
-    return { ok: page1Ok, unRes, pwRes, confirmMatch };
+    return { ok: page1Ok, unRes, pwRes, confirmMatch, isEmployee };
   }
 
   function evaluateRegPage2() {
@@ -1011,21 +1452,56 @@
     const recEm = (regRecoveryEmailEl && regRecoveryEmailEl.value || '').trim().toLowerCase();
     const ph = (regPhoneEl && regPhoneEl.value || '').trim();
 
+    if (emailVerifiedState && emailVerifiedForAddress && emailVerifiedForAddress !== em) {
+      emailVerifiedState = false;
+      emailVerificationToken = '';
+    }
+
     const nameOk = nm.length >= 2 && !(W.hasInjectionPayload && W.hasInjectionPayload(nm));
     const emailOk = /^\S+@\S+\.\S+$/.test(em);
-    const recoveryOk = /^\S+@\S+\.\S+$/.test(recEm);
+    const recoveryOk = /^\S+@\S+\.\S+$/.test(recEm) && recEm !== em;
     const phRes = W.validatePhoneStandard
       ? W.validatePhoneStandard(ph)
       : { ok: ph.replace(/\D/g, '').length >= 10 && ph.replace(/\D/g, '').length <= 15 };
 
-    const page2Ok = Boolean(nameOk && emailOk && recoveryOk && phRes.ok);
+    setMsInputState(regNameEl, nameOk, nm.length > 0);
+    setMsInputState(regEmailEl, emailOk, em.length > 0);
+    setMsInputState(regRecoveryEmailEl, recoveryOk, recEm.length > 0);
+    setMsInputState(regPhoneEl, phRes.ok, ph.length > 0);
+
+    const violations2 = [];
+    if (nm.length > 0 && !nameOk) violations2.push('Enter your full legal name (minimum 2 characters).');
+    if (em.length > 0 && !emailOk) violations2.push('Enter a valid Primary Logon Email address.');
+    if (recEm.length > 0 && !/^\S+@\S+\.\S+$/.test(recEm)) violations2.push('Enter a valid Recovery Email address.');
+    else if (recEm.length > 0 && recEm === em) violations2.push('Recovery Email must be different from your Primary Logon Email.');
+    if (ph.length > 0 && !phRes.ok) violations2.push('Enter a valid 10–15 digit Mobile / Security Phone number.');
+
+    const vBanner2 = document.getElementById('regPage2ViolationBanner');
+    if (vBanner2) {
+      if (violations2.length > 0) {
+        vBanner2.className = 'ms-violation-alert active';
+        vBanner2.innerHTML = '<strong>⚠ Identity &amp; Recovery Validation:</strong> ' + W.esc(violations2[0]);
+      } else {
+        vBanner2.className = 'ms-violation-alert';
+        vBanner2.innerHTML = '';
+      }
+    }
+
+    if (regEmailVerifiedBadge) {
+      regEmailVerifiedBadge.className = 'chip ' + (emailVerifiedState ? 'ok' : 'warn');
+      regEmailVerifiedBadge.textContent = emailVerifiedState ? '✓ Email & Username Verified' : 'Email Verification Required';
+    }
+
+    const page2Ok = Boolean(nameOk && emailOk && recoveryOk && phRes.ok && emailVerifiedState);
     const chip2 = document.getElementById('regPage2StatusChip');
     if (chip2) {
       chip2.className = 'chip ' + (page2Ok ? 'ok' : 'warn');
-      chip2.textContent = page2Ok ? '✓ Identity & Recovery Verified' : 'Recovery Details Required';
+      chip2.textContent = page2Ok
+        ? '✓ Identity & Email Verified'
+        : (nameOk && emailOk && recoveryOk && phRes.ok ? 'Verify 6-Digit Email Code' : 'Recovery Details Required');
     }
     if (btnRegNext2) btnRegNext2.disabled = !page2Ok;
-    return { ok: page2Ok, nameOk, emailOk, recoveryOk, phoneOk: phRes.ok };
+    return { ok: page2Ok, nameOk, emailOk, recoveryOk, phoneOk: phRes.ok, emailVerified: emailVerifiedState };
   }
 
   function evaluateRegPage3() {
@@ -1037,38 +1513,159 @@
     const zip = (regZipEl && regZipEl.value || '').trim();
     const ndaOk = Boolean(regNdaEl && regNdaEl.checked);
 
-    const h2 = document.getElementById('regPage3Heading');
+    setMsInputState(regStreetEl, street.length >= 3, street.length > 0);
+    setMsInputState(regCityEl, city.length >= 2, city.length > 0);
+    setMsInputState(regStateEl, state.length >= 2, state.length > 0);
+    setMsInputState(regZipEl, zip.length >= 3, zip.length > 0);
+
+    // Physical Address is mandatory for ALL users (both Client users and Employee users)
+    const addressComplete = Boolean(street.length >= 3 && city.length >= 2 && state.length >= 2 && zip.length >= 3);
+    const tosComplete = Boolean(tosSchedulesReviewed && ndaOk);
+    const page3Ok = Boolean(addressComplete && tosComplete);
+
     const badge = document.getElementById('regAddressPolicyBadge');
-    const tagText = isEmployeeScope ? '(Required for Employees)' : '(Optional for Clients)';
-    const lblColor = isEmployeeScope ? '#fde047' : '#cbd5e1';
-
-    if (h2) {
-      h2.textContent = isEmployeeScope
-        ? 'Address Information (Mandatory for Employees)'
-        : 'Address Information (Optional for Client Users)';
-    }
-    [
-      ['lblRegStreet', 'Street Address ' + tagText],
-      ['lblRegCity', 'City ' + tagText],
-      ['lblRegState', 'State / Region ' + tagText],
-      ['lblRegZip', 'Postal / ZIP Code ' + tagText]
-    ].forEach(([id, txt]) => {
-      const l = document.getElementById(id);
-      if (l) { l.textContent = txt; l.style.color = lblColor; }
-    });
-
-    const addressComplete = Boolean(street && city && state && zip);
-    const addressValid = isEmployeeScope ? addressComplete : true;
-    const page3Ok = Boolean(addressValid && ndaOk);
-
     if (badge) {
-      badge.className = 'chip ' + (addressValid ? 'ok' : 'warn');
-      badge.textContent = isEmployeeScope
-        ? (addressComplete ? '✓ Employee Address Complete' : 'Employee Scope · All 4 Address Fields Required')
-        : 'Client Scope · Address Optional';
+      badge.className = 'chip ' + (page3Ok ? 'ok' : 'warn');
+      badge.textContent = page3Ok
+        ? '✓ Address & Terms Verified'
+        : (!addressComplete ? 'All 4 Address Fields Required (Mandatory)' : 'Click & Accept Terms of Service');
+    }
+    if (tosReviewBadge) {
+      tosReviewBadge.className = 'chip ' + (tosSchedulesReviewed ? 'ok' : 'warn');
+      tosReviewBadge.textContent = tosSchedulesReviewed ? '✓ 5 Schedules Reviewed' : 'Click Terms to Review';
     }
     if (btnSubmitRegister) btnSubmitRegister.disabled = !page3Ok;
-    return { ok: page3Ok, isEmployeeScope, addressComplete, ndaOk };
+    return { ok: page3Ok, isEmployeeScope, addressComplete, tosComplete, ndaOk };
+  }
+
+  if (btnSendEmailCode) {
+    btnSendEmailCode.onclick = async () => {
+      const un = (regUsernameEl && regUsernameEl.value || '').trim().toLowerCase();
+      const em = (regEmailEl && regEmailEl.value || '').trim().toLowerCase();
+      const recEm = (regRecoveryEmailEl && regRecoveryEmailEl.value || '').trim().toLowerCase();
+      const nm = (regNameEl && regNameEl.value || '').trim();
+      if (!/^\S+@\S+\.\S+$/.test(em)) {
+        msg.style.color = '#f87171';
+        msg.textContent = 'Please enter a valid Primary Logon Email before requesting a verification code.';
+        if (regEmailEl) regEmailEl.focus();
+        return;
+      }
+      if (location.protocol === 'file:') {
+        lastDispatchedCodePreview = '849204';
+        if (regEmailDispatchBanner) {
+          regEmailDispatchBanner.style.display = 'block';
+          regEmailDispatchBanner.innerHTML = '<strong>✓ Verification Email Dispatched to <code>' + W.esc(em) + '</code>:</strong><br>' +
+            'Registered Username: <code>' + W.esc(un) + '</code> · 6-Digit Verification Code: <strong style="color:#fde047;letter-spacing:.08em">' + lastDispatchedCodePreview + '</strong>';
+        }
+        return;
+      }
+      try {
+        const r = await fetch('/api/auth/register/send-email-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: un, email: em, recoveryEmail: recEm, name: nm })
+        });
+        const d = await r.json();
+        if (!d || !d.ok) {
+          msg.style.color = '#f87171';
+          msg.textContent = (d && d.error) || 'Failed to dispatch verification code.';
+          return;
+        }
+        lastDispatchedCodePreview = d.verificationCodePreview || '';
+        msg.textContent = '';
+        if (regEmailDispatchBanner) {
+          regEmailDispatchBanner.style.display = 'block';
+          regEmailDispatchBanner.innerHTML = '<strong>✓ ' + W.esc(d.emailSubject || 'Verification Email Dispatched') + ' (' + W.esc(d.dispatchId || 'SENT') + '):</strong><br>' +
+            W.esc(d.emailPreview || '') +
+            (d.verificationCodePreview ? ' <span style="margin-left:6px;color:#fde047;font-weight:700">[Code: <code id="dispatchedEmailCodeValue">' + W.esc(d.verificationCodePreview) + '</code>]</span>' : '');
+        }
+        if (regEmailVerifyCodeEl) regEmailVerifyCodeEl.focus();
+      } catch (_) {
+        msg.style.color = '#f87171';
+        msg.textContent = 'Could not reach email verification service.';
+      }
+    };
+  }
+
+  if (btnVerifyEmailCode) {
+    btnVerifyEmailCode.onclick = async () => {
+      const un = (regUsernameEl && regUsernameEl.value || '').trim().toLowerCase();
+      const em = (regEmailEl && regEmailEl.value || '').trim().toLowerCase();
+      const code = (regEmailVerifyCodeEl && regEmailVerifyCodeEl.value || '').replace(/\D/g, '').slice(0, 6);
+      if (code.length !== 6) {
+        msg.style.color = '#f87171';
+        msg.textContent = 'Please enter the 6-digit email verification code.';
+        return;
+      }
+      if (location.protocol === 'file:') {
+        if (code === (lastDispatchedCodePreview || '849204')) {
+          emailVerifiedState = true;
+          emailVerifiedForAddress = em;
+          evaluateRegPage2();
+          msg.style.color = '#34d399';
+          msg.textContent = '✓ Email & Username verified.';
+        } else {
+          msg.style.color = '#f87171';
+          msg.textContent = 'Invalid 6-digit verification code.';
+        }
+        return;
+      }
+      try {
+        const r = await fetch('/api/auth/register/verify-email-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: un, email: em, code })
+        });
+        const d = await r.json();
+        if (!d || !d.ok) {
+          msg.style.color = '#f87171';
+          msg.textContent = (d && d.error) || 'Invalid verification code.';
+          return;
+        }
+        emailVerifiedState = true;
+        emailVerifiedForAddress = em;
+        emailVerificationToken = d.verificationToken || '';
+        setMsInputState(regEmailVerifyCodeEl, true, true);
+        evaluateRegPage2();
+        msg.style.color = '#34d399';
+        msg.textContent = '✓ Primary Email (' + em + ') and Username (' + un + ') cryptographically verified.';
+      } catch (_) {
+        msg.style.color = '#f87171';
+        msg.textContent = 'Failed to verify email code.';
+      }
+    };
+  }
+
+  if (btnToggleTosReader && tosFullReaderPanel) {
+    btnToggleTosReader.onclick = () => {
+      const isOpen = tosFullReaderPanel.classList.toggle('open');
+      tosSchedulesReviewed = true;
+      btnToggleTosReader.textContent = isOpen
+        ? '🔼 Hide Terms of Service Schedules (Reviewed)'
+        : '📄 View Required Terms of Service (5 Schedules · Reviewed)';
+      evaluateRegPage3();
+    };
+  }
+
+  if (btnAcknowledgeTosSchedules) {
+    btnAcknowledgeTosSchedules.onclick = () => {
+      tosSchedulesReviewed = true;
+      if (regNdaEl) regNdaEl.checked = true;
+      if (tosFullReaderPanel) tosFullReaderPanel.classList.remove('open');
+      if (btnToggleTosReader) btnToggleTosReader.textContent = '📄 View Required Terms of Service (5 Schedules · Reviewed)';
+      evaluateRegPage3();
+    };
+  }
+
+  if (regNdaEl) {
+    regNdaEl.addEventListener('click', (e) => {
+      if (!tosSchedulesReviewed) {
+        if (tosFullReaderPanel) tosFullReaderPanel.classList.add('open');
+        tosSchedulesReviewed = true;
+        if (btnToggleTosReader) btnToggleTosReader.textContent = '🔼 Hide Terms of Service Schedules (Reviewed)';
+      }
+      evaluateRegPage3();
+    });
   }
 
   function showRegPage(pageNum) {
@@ -1103,7 +1700,7 @@
     if (el) el.addEventListener('input', evaluateRegPage1);
     if (el) el.addEventListener('change', evaluateRegPage1);
   });
-  [regNameEl, regEmailEl, regRecoveryEmailEl, regPhoneEl, regAccountScopeEl, regOrgEl].forEach(el => {
+  [regNameEl, regEmailEl, regRecoveryEmailEl, regPhoneEl, regOrgEl, regEmailVerifyCodeEl].forEach(el => {
     if (el) el.addEventListener('input', () => { evaluateRegPage2(); evaluateRegPage3(); });
     if (el) el.addEventListener('change', () => { evaluateRegPage2(); evaluateRegPage3(); });
   });
@@ -1121,7 +1718,7 @@
         return;
       }
       showRegPage(2);
-      setTimeout(() => { if (regNameEl) regNameEl.focus(); }, 30);
+      setTimeout(() => { if (regNameEl && !regNameEl.value) regNameEl.focus(); else if (regRecoveryEmailEl) regRecoveryEmailEl.focus(); }, 30);
     };
   }
   if (btnRegBack2) btnRegBack2.onclick = () => showRegPage(1);
@@ -1130,7 +1727,9 @@
       const p2 = evaluateRegPage2();
       if (!p2.ok) {
         msg.style.color = '#f87171';
-        msg.textContent = 'Please complete Full Name, Primary Logon Email, Recovery Email, and 10–15 digit Phone Number.';
+        msg.textContent = !p2.emailVerified
+          ? 'Please send and verify your 6-digit Email Verification Code before proceeding to Page 3.'
+          : 'Please complete Full Name, Primary Logon Email, Recovery Email, and 10–15 digit Phone Number.';
         return;
       }
       showRegPage(3);
@@ -1173,12 +1772,12 @@
       const p2 = evaluateRegPage2();
       const p3 = evaluateRegPage3();
       if (!p1.ok) { showRegPage(1); msg.style.color = '#f87171'; msg.textContent = 'Please complete Page 1 username & password security checks.'; return; }
-      if (!p2.ok) { showRegPage(2); msg.style.color = '#f87171'; msg.textContent = 'Please complete Page 2 recovery email & phone number.'; return; }
+      if (!p2.ok) { showRegPage(2); msg.style.color = '#f87171'; msg.textContent = 'Please complete Page 2 recovery details & 6-digit email verification.'; return; }
       if (!p3.ok) {
         msg.style.color = '#f87171';
-        msg.textContent = p3.isEmployeeScope && !p3.addressComplete
-          ? 'Employee accounts require a complete physical address (Street, City, State, and Postal Code).'
-          : 'Please accept the Mutual NDA & Zero-Trust Terms to complete registration.';
+        msg.textContent = !p3.addressComplete
+          ? 'A complete physical address (Street Address, City, State/Region, and Postal/ZIP Code) is mandatory for all users.'
+          : 'Please click to review and accept the Required Terms of Service (Schedules 1–5) to complete registration.';
         return;
       }
 
@@ -1189,7 +1788,7 @@
       const email = (regEmailEl.value || '').trim().toLowerCase();
       const recoveryEmail = (regRecoveryEmailEl.value || '').trim().toLowerCase();
       const phone = (regPhoneEl.value || '').trim();
-      const accountScope = (regAccountScopeEl && regAccountScopeEl.value) === 'internal' ? 'internal' : 'external';
+      const accountScope = p1.isEmployee ? 'internal' : 'external';
       const org = (regOrgEl.value || '').trim();
       const interest = (regTrackEl && regTrackEl.value) || 'ai-web';
       const brand = (regBrandEl && regBrandEl.value) || 'MGC';
@@ -1200,6 +1799,7 @@
         postalCode: (regZipEl.value || '').trim()
       };
       const ndaAccepted = Boolean(regNdaEl && regNdaEl.checked);
+      const tosAccepted = Boolean(tosSchedulesReviewed && ndaAccepted);
       const subscribeNewsletter = Boolean(regNewsletterEl && regNewsletterEl.checked);
 
       if (W.hasInjectionPayload && W.hasInjectionPayload({ name, org, email, username, recoveryEmail, phone, address })) {
@@ -1216,7 +1816,8 @@
           guidedRegistration: true,
           name, org, email, username, password, recoveryEmail, phone,
           ou: accountScope, accountScope, address,
-          ssoProvider, interest, brand, ndaAccepted, mfaVerified: true
+          ssoProvider, interest, brand, ndaAccepted, tosAccepted,
+          emailVerified: true, mfaVerified: true
         });
         if (!uidVal) {
           msg.style.color = '#f87171';
@@ -1249,9 +1850,12 @@
             interest,
             brand,
             ndaAccepted,
+            tosAccepted,
+            emailVerified: emailVerifiedState,
+            emailVerificationToken,
             subscribeNewsletter,
             mfaVerified: true,
-            mfaMethod: 'FEDERATED_SSO_2FA',
+            mfaMethod: 'EMAIL_2FA_VERIFIED',
             next: nextUrl
           })
         });

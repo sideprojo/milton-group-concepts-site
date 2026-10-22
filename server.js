@@ -105,14 +105,14 @@ const PORTAL_TO_CATALOG = {
 
 // Granular SCORM 2004 & Showcase App Entitlement Catalog (Default Restricted Customer Access vs Owner Full Access)
 const APPS_CATALOG = [
-  { id: 'client-turnkey-forge',       icon: '🛠️', title: 'Client Turnkey Forge SCORM OS',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Included by default on customer login: interactive custom build scope & pricing configurator.' },
-  { id: 'sterling-auto-repair',       icon: '🔧', title: 'Sterling Auto Repair Showcase',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Included by default on customer login: live commercial web & AI receptionist showcase.' },
-  { id: 'eveng-netprism-studio',      icon: '🖧', title: 'EVE-NG & NetPrism Topology Studio',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 8-page OSPF/BGP/ZTNA/EVPN network simulator & .cast studio.' },
-  { id: 'samgov-contract-matchmaker', icon: '🏛️', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Restricted by default on customer login: 6-page SDVOSB NAICS 541512/541519 & Principal AI role matchmaker.' },
-  { id: 'traffic-roi-simulator',      icon: '📈', title: 'Site Traffic & Conversion ROI OS',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Restricted by default on customer login: 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
-  { id: 'ghost-cli-trainer',          icon: '⌨️', title: 'Ghost-CLI & Netmiko Auto-Grader',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
-  { id: 'chronos-aetheria-scorm',     icon: '🏺', title: 'Chronos // Aetheria Geo-Historical OS',brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Restricted by default on customer login: 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
-  { id: 'spanish-acquisition-os',     icon: '🇪🇸', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
+  { id: 'client-turnkey-forge',       icon: '🛠️', title: 'Client Turnkey Forge SCORM OS',        brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Included by default on customer login: interactive custom build scope & pricing configurator.' },
+  { id: 'sterling-auto-repair',       icon: '🔧', title: 'Sterling Auto Repair Showcase',        brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Included by default on customer login: live commercial web & AI receptionist showcase.' },
+  { id: 'eveng-netprism-studio',      icon: '🖧', title: 'EVE-NG & NetPrism Topology Studio',    brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Unlocked in Tier 2 Pro Suite: 8-page OSPF/BGP/ZTNA/EVPN network simulator & .cast studio.' },
+  { id: 'samgov-contract-matchmaker', icon: '🏛️', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Unlocked in Tier 2 Pro Suite: 6-page SDVOSB NAICS 541512/541519 & Principal AI role matchmaker.' },
+  { id: 'traffic-roi-simulator',      icon: '📈', title: 'Site Traffic & Conversion ROI OS',     brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Unlocked in Tier 2 Pro Suite: 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
+  { id: 'ghost-cli-trainer',          icon: '⌨️', title: 'Ghost-CLI & Netmiko Auto-Grader',      brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Unlocked in Tier 2 Pro Suite: 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
+  { id: 'chronos-aetheria-scorm',     icon: '🏺', title: 'Chronos // Aetheria Geo-Historical OS',brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Unlocked in Tier 2 Pro Suite: 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
+  { id: 'spanish-acquisition-os',     icon: '🇪🇸', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Unlocked in Tier 2 Pro Suite: 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
 ];
 
 // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -124,6 +124,7 @@ const RESOURCES_CATALOG = [
     shortTitle: 'Resource Fast-Track',
     brand: 'MGC',
     defaultCustomer: false,
+    minTier: 'tier_1_starter',
     category: 'Guided Interactive AI Templates & Workspace Accelerator',
     href: 'member-portal.html?view=resources',
     desc: 'Structured, template-driven Resource Fast-Track suite across Languages, Business Endeavors, Schooling, and Technical Upskilling (zero free-form prompting).',
@@ -639,7 +640,7 @@ function loadState() {
             email: 'client.verified@partner-org.com',
             recoveryEmail: 'recovery.client@partner-org.com',
             phone: '+1 (703) 555-0194',
-            address: { streetAddress: '', city: '', stateRegion: '', postalCode: '' },
+            address: { streetAddress: '1400 Crystal Dr Suite 400', city: 'Arlington', stateRegion: 'VA', postalCode: '22202' },
             role: 'member',
             ou: 'external',
             securityGroup: 'EXTERNAL_SAAS_LMS',
@@ -649,9 +650,11 @@ function loadState() {
             ssoProvider: 'password',
             passwordDigest: mgcDigest('Client#Verify2026!'),
             hasPassword: true,
+            emailVerified: true,
             mfaVerified: true,
             mfaMethod: 'EMAIL_2FA_VERIFIED',
             ndaAccepted: true,
+            tosAccepted: true,
             quote: { interest: 'ai-web', note: 'Dedicated Client-Only Verification Account' },
             plan: { base: true, addons: [] },
             pages: { saasapps: 'ready', resources: 'ready' },
@@ -664,6 +667,29 @@ function loadState() {
             created: now()
           };
         }
+        parsed.employeeAssignedUsernames = Object.assign({
+          'emp.jordan.vance': {
+            username: 'emp.jordan.vance',
+            name: 'Jordan Vance',
+            email: 'jordan.vance@miltongroupsecurity.org',
+            org: 'MGC Internal Operations',
+            ou: 'internal',
+            securityGroup: 'INTERNAL_ANALYST',
+            assignedByAdmin: true,
+            mustResetPassword: true
+          },
+          'emp.elena.rostova': {
+            username: 'emp.elena.rostova',
+            name: 'Elena Rostova',
+            email: 'elena.rostova@miltongroupsecurity.org',
+            org: 'MGC Cyber Operations',
+            ou: 'internal',
+            securityGroup: 'INTERNAL_ANALYST',
+            assignedByAdmin: true,
+            mustResetPassword: true
+          }
+        }, parsed.employeeAssignedUsernames || {});
+        parsed.emailVerifications = parsed.emailVerifications || {};
         parsed.payments = Array.isArray(parsed.payments) ? parsed.payments : [];
         parsed.projects = Object.assign({}, def.projects, parsed.projects || {});
         if (!parsed.items.some(i => i.project === 'p_sterling')) {
@@ -1143,8 +1169,58 @@ function resolveCaseInsensitiveIdentifier(rawIdentifier) {
     });
     if (matched && matched.email) return String(matched.email).trim().toLowerCase();
   }
+  if (S && S.employeeAssignedUsernames && S.employeeAssignedUsernames[clean] && S.employeeAssignedUsernames[clean].email) {
+    return String(S.employeeAssignedUsernames[clean].email).trim().toLowerCase();
+  }
   if (clean === 'malik.khabir') return SOLE_ADMIN_EMAIL;
   return clean;
+}
+
+function resolveEmployeeAssignedRecord(rawUsername, rawEmail) {
+  const un = String(rawUsername || '').trim().toLowerCase();
+  const em = String(rawEmail || '').trim().toLowerCase();
+  const roster = (S && S.employeeAssignedUsernames) || {};
+  if (un && roster[un]) {
+    return Object.assign({ isAssignedEmployee: true, detectedOu: 'internal' }, roster[un]);
+  }
+  const byEmail = em ? Object.values(roster).find(r => r && String(r.email || '').toLowerCase() === em) : null;
+  if (byEmail) {
+    return Object.assign({ isAssignedEmployee: true, detectedOu: 'internal' }, byEmail);
+  }
+  const existingEmp = Object.values((S && S.users) || {}).find(u =>
+    u && u.id !== 'owner' && u.ou === 'internal' &&
+    ((un && String(u.username || '').toLowerCase() === un) || (em && String(u.email || '').toLowerCase() === em))
+  );
+  if (existingEmp) {
+    return {
+      isAssignedEmployee: true,
+      detectedOu: 'internal',
+      username: existingEmp.username,
+      name: existingEmp.name,
+      email: existingEmp.email,
+      org: existingEmp.org || 'MGC Internal Operations',
+      ou: 'internal',
+      securityGroup: existingEmp.securityGroup || 'INTERNAL_ANALYST',
+      assignedByAdmin: true,
+      mustResetPassword: Boolean(existingEmp.mustResetPassword)
+    };
+  }
+  if (un && (/^(emp|staff)\.[a-z0-9._-]{2,28}$/.test(un))) {
+    const cleanSlug = un.replace(/^(emp|staff)\./, '');
+    return {
+      isAssignedEmployee: true,
+      detectedOu: 'internal',
+      username: un,
+      name: cleanSlug.split(/[._-]/).filter(Boolean).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' '),
+      email: em || `${cleanSlug}@miltongroupsecurity.org`,
+      org: 'MGC Internal Operations',
+      ou: 'internal',
+      securityGroup: 'INTERNAL_ANALYST',
+      assignedByAdmin: true,
+      mustResetPassword: true
+    };
+  }
+  return { isAssignedEmployee: false, detectedOu: 'external' };
 }
 
 function getAuthenticatedUser(req) {
@@ -2134,7 +2210,20 @@ const server = http.createServer(async (req, res) => {
       // STRICT 1-ADMIN ZERO-LEAKAGE GUARD: Only Malik A. Khabir (malik.khabir@Miltongroupsecurity.org, case-insensitive) is Administrator.
       // Block any legacy/spoofed @miltongroupsecurity.org or owner@* / admin@* accounts unless provisioned as an active directory user by Admin.
       const existingDirUser = Object.values(S.users).find(u => u.id !== 'owner' && String(u.email || '').toLowerCase() === email);
-      if (((email.endsWith('@miltongroupsecurity.org') && email !== SOLE_ADMIN_EMAIL && !existingDirUser) || email.startsWith('owner@') || email.startsWith('admin@'))) {
+      const empRosterRec = resolveEmployeeAssignedRecord(rawIdentifier, email);
+      if (empRosterRec.isAssignedEmployee && (!existingDirUser || existingDirUser.mustResetPassword)) {
+        logAudit('system', `auth.employee_reset_required.${provider}`, `Assigned employee username ${empRosterRec.username || email} requires mandatory password reset & email verification`);
+        return sendJson(res, 403, {
+          ok: false,
+          requireEmployeeReset: true,
+          username: empRosterRec.username || rawIdentifier.toLowerCase(),
+          email: empRosterRec.email || email,
+          name: empRosterRec.name || '',
+          org: empRosterRec.org || 'MGC Internal Operations',
+          error: 'Employee Security Policy: Your Admin-provided employee username requires Email Verification and a Mandatory Password Reset before authenticating into your session.'
+        });
+      }
+      if (((email.endsWith('@miltongroupsecurity.org') && email !== SOLE_ADMIN_EMAIL && !existingDirUser && !empRosterRec.isAssignedEmployee) || email.startsWith('owner@') || email.startsWith('admin@'))) {
         logAudit('system', `security.admin_spoof_blocked.${provider}`, `Blocked spoofed/legacy admin email: ${email}`);
         return sendJson(res, 403, {
           ok: false,
@@ -2576,6 +2665,172 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, costGuard: DB_STATS, lastWriteAt: DB_STATS.lastWriteAt });
     }
 
+    if (pathname === '/api/auth/check-username' && req.method === 'GET') {
+      const rawUn = String(parsedUrl.searchParams.get('username') || '').trim().toLowerCase();
+      const reservedSet = new Set(['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir', 'security', 'postmaster', 'support']);
+      const empRec = resolveEmployeeAssignedRecord(rawUn, '');
+      const lenOk = rawUn.length >= 4 && rawUn.length <= 32;
+      const formatOk = /^[a-z0-9][a-z0-9._-]{3,31}$/.test(rawUn) && !/[._-]{2,}/.test(rawUn);
+      const notReserved = Boolean(rawUn) && !reservedSet.has(rawUn);
+      const collisionUser = Object.values(S.users || {}).find(u => u && String(u.username || '').toLowerCase() === rawUn);
+      // If it is an Admin-assigned employee username undergoing registration/password reset, allow it!
+      const uniqueOk = empRec.isAssignedEmployee
+        ? (!collisionUser || Boolean(collisionUser.mustResetPassword))
+        : !collisionUser;
+      const ok = Boolean(lenOk && formatOk && notReserved && uniqueOk);
+      const violations = [];
+      if (!rawUn) violations.push('Username is required for portal logon (not optional).');
+      else {
+        if (!lenOk) violations.push('Must be between 4 and 32 characters.');
+        if (!formatOk) violations.push('Use only letters (a-z), numbers (0-9), periods (.), underscores (_), or hyphens (-), starting with a letter or number.');
+        if (!notReserved) violations.push('This system identifier is reserved and cannot be used.');
+        if (!uniqueOk) violations.push('This username is already registered to an active directory account.');
+      }
+      return sendJson(res, 200, {
+        ok,
+        username: rawUn,
+        isAssignedEmployee: Boolean(empRec.isAssignedEmployee),
+        detectedOu: empRec.isAssignedEmployee ? 'internal' : 'external',
+        assignedProfile: empRec.isAssignedEmployee ? {
+          username: empRec.username,
+          name: empRec.name || '',
+          email: empRec.email || '',
+          org: empRec.org || 'MGC Internal Operations',
+          mustResetPassword: true
+        } : null,
+        checks: { lenOk, formatOk, notReserved, uniqueOk },
+        violations,
+        error: violations[0] || ''
+      });
+    }
+
+    if (pathname === '/api/auth/register/send-email-code' && req.method === 'POST') {
+      if (!checkRateLimit(req, 'reg_email_code', 20, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'Too many verification code requests. Please wait 60 seconds.' });
+      }
+      const body = await readJsonBody(req);
+      if (hasInjectionPayload(body)) {
+        return sendJson(res, 400, { ok: false, error: 'Security Validation Failed: Disallowed input characters detected.' });
+      }
+      const cleanEmail = sanitizeInput(body.email || '', 140).toLowerCase();
+      const cleanUsername = sanitizeInput(body.username || '', 60).toLowerCase();
+      const cleanRecovery = sanitizeInput(body.recoveryEmail || '', 140).toLowerCase();
+      const cleanName = sanitizeInput(body.name || '', 100);
+      if (!cleanEmail || !/^\S+@\S+\.\S+$/.test(cleanEmail)) {
+        return sendJson(res, 400, { ok: false, error: 'Enter a valid Primary Logon Email address before requesting a verification code.' });
+      }
+      if (!cleanUsername || cleanUsername.length < 4) {
+        return sendJson(res, 400, { ok: false, error: 'Complete Page 1 Username verification first.' });
+      }
+      const empRec = resolveEmployeeAssignedRecord(cleanUsername, cleanEmail);
+      const code = String(100000 + (crypto.randomBytes(3).readUIntBE(0, 3) % 900000));
+      if (!S.emailVerifications) S.emailVerifications = {};
+      const dispatchId = 'MGC-EMV-' + Date.now().toString(36).toUpperCase().slice(-5);
+      const emailSubject = empRec.isAssignedEmployee
+        ? `[MGC Directory] Employee Username (${cleanUsername}), Mandatory Password Reset & Email Verification Code`
+        : `[MGC Portal] Confirm Your Portal Username (${cleanUsername}) & Email Verification Code`;
+      const emailPreview = empRec.isAssignedEmployee
+        ? `Assigned Employee Username: ${cleanUsername} | Mandatory First-Logon Password Reset Attested | Verification Code: ${code}`
+        : `Registered Client Username: ${cleanUsername} | Primary Email: ${cleanEmail} | Verification Code: ${code}`;
+      S.emailVerifications[cleanEmail] = {
+        dispatchId,
+        code,
+        email: cleanEmail,
+        username: cleanUsername,
+        recoveryEmail: cleanRecovery,
+        name: cleanName || (empRec.name || ''),
+        isAssignedEmployee: Boolean(empRec.isAssignedEmployee),
+        emailSubject,
+        emailPreview,
+        verified: false,
+        sentAt: now(),
+        expiresAt: Date.now() + 15 * 60 * 1000
+      };
+      logAudit('system', 'auth.email_verification_sent', `${dispatchId} to ${cleanEmail} [username=${cleanUsername} emp=${empRec.isAssignedEmployee}]`);
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        dispatchId,
+        email: cleanEmail,
+        username: cleanUsername,
+        isAssignedEmployee: Boolean(empRec.isAssignedEmployee),
+        emailSubject,
+        emailPreview,
+        verificationCodePreview: code,
+        message: `Verification email (${dispatchId}) sent to ${cleanEmail} with your username (${cleanUsername}) and 6-digit security code.`
+      });
+    }
+
+    if (pathname === '/api/auth/register/verify-email-code' && req.method === 'POST') {
+      const body = await readJsonBody(req);
+      const cleanEmail = sanitizeInput(body.email || '', 140).toLowerCase();
+      const cleanUsername = sanitizeInput(body.username || '', 60).toLowerCase();
+      const cleanCode = String(body.code || '').replace(/\D/g, '').slice(0, 6);
+      if (!cleanEmail || cleanCode.length !== 6) {
+        return sendJson(res, 400, { ok: false, error: 'Please enter the 6-digit email verification code.' });
+      }
+      const rec = S.emailVerifications && S.emailVerifications[cleanEmail];
+      if (!rec) {
+        return sendJson(res, 400, { ok: false, error: 'No active verification code found for that email. Click "Send Verification Code" first.' });
+      }
+      if (rec.expiresAt && Date.now() > rec.expiresAt) {
+        return sendJson(res, 400, { ok: false, error: 'Verification code has expired. Please request a new code.' });
+      }
+      if (rec.code !== cleanCode) {
+        return sendJson(res, 403, { ok: false, error: 'Invalid 6-digit verification code. Please check your email and try again.' });
+      }
+      rec.verified = true;
+      rec.verifiedAt = now();
+      if (cleanUsername) rec.username = cleanUsername;
+      const verificationToken = signToken({ email: cleanEmail, username: rec.username, emailVerified: true }, 3600);
+      logAudit('system', 'auth.email_verification_confirmed', `${cleanEmail} [username=${rec.username}] verified`);
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        emailVerified: true,
+        email: cleanEmail,
+        username: rec.username,
+        isAssignedEmployee: Boolean(rec.isAssignedEmployee),
+        verifiedAt: rec.verifiedAt,
+        verificationToken
+      });
+    }
+
+    if (pathname === '/api/auth/employee-provision' && req.method === 'POST') {
+      const u = getAuthenticatedUser(req);
+      if (!isOwnerUser(u)) {
+        return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required to provision assigned Employee usernames.' });
+      }
+      const body = await readJsonBody(req);
+      const rawUn = sanitizeInput(body.username || '', 32).toLowerCase();
+      const empEmail = sanitizeInput(body.email || '', 140).toLowerCase();
+      const empName = sanitizeInput(body.name || '', 100);
+      const empOrg = sanitizeInput(body.org || 'MGC Internal Operations', 120);
+      const cleanUn = rawUn.startsWith('emp.') || rawUn.startsWith('staff.') ? rawUn : `emp.${rawUn}`;
+      if (!cleanUn || cleanUn.length < 5 || !/^\S+@\S+\.\S+$/.test(empEmail) || !empName) {
+        return sendJson(res, 400, { ok: false, error: 'Employee Full Name, valid Email, and Assigned Username are required.' });
+      }
+      if (!S.employeeAssignedUsernames) S.employeeAssignedUsernames = {};
+      S.employeeAssignedUsernames[cleanUn] = {
+        username: cleanUn,
+        name: empName,
+        email: empEmail,
+        org: empOrg,
+        ou: 'internal',
+        securityGroup: sanitizeInput(body.securityGroup || 'INTERNAL_ANALYST', 60),
+        assignedByAdmin: true,
+        mustResetPassword: true,
+        provisionedAt: now()
+      };
+      logAudit('owner', 'directory.employee_username_assigned', `Assigned employee username=${cleanUn} for ${empName} (${empEmail})`);
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        employeeAssignment: S.employeeAssignedUsernames[cleanUn],
+        message: `Assigned employee username "${cleanUn}" provisioned for ${empName} (${empEmail}). Employee must complete Email Verification & Mandatory Password Reset before session login.`
+      });
+    }
+
     const handleCustomerIntakeSubmission = (d) => {
       if (!checkRateLimit(req, 'intake', 25, 60000)) {
         logAudit('system', 'security.rate_limit_intake', 'Blocked excessive intake requests');
@@ -2590,16 +2845,23 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 403, { ok: false, error: 'SSO Policy Enforced: Only Google, Microsoft, or Apple SSO is permitted for intake.' });
       }
       if (!cleanName || !/^\S+@\S+\.\S+$/.test(cleanEmail)) {
-        return sendJson(res, 400, { ok: false, error: 'Full Name and a valid Federated SSO account email are required.' });
+        return sendJson(res, 400, { ok: false, error: 'Full Name and a valid Primary Logon Email are required.' });
       }
-      if (d.ndaAccepted === false) {
-        return sendJson(res, 400, { ok: false, error: 'NDA Required: You must attest to the MGC Mutual Non-Disclosure & Federated SSO Zero-Trust Terms.' });
+      if (d.ndaAccepted === false || (d.guidedRegistration && d.tosAccepted === false)) {
+        return sendJson(res, 400, { ok: false, error: 'Terms of Service Required: You must review and accept the MGC Master Terms of Service, Privacy Notice, and Mutual NDA.' });
       }
       const caller = getAuthenticatedUser(req);
       const isAdminCaller = Boolean(caller && caller.role === 'owner' && caller.id === 'owner');
       const isEmpCaller = isEmployeeUser(caller);
+      const rawUsernameInput = String(d.username || '').trim().toLowerCase();
+      if (d.guidedRegistration && !rawUsernameInput) {
+        return sendJson(res, 400, { ok: false, error: 'Username is mandatory for portal registration and logon (not optional).' });
+      }
+      let cleanUsername = sanitizeInput(rawUsernameInput || cleanEmail.split('@')[0], 60).toLowerCase();
+      const empRec = resolveEmployeeAssignedRecord(cleanUsername, cleanEmail);
+
       // Critical Anti-Spoofing Guard: Prevent public customer intake from ever claiming or overwriting an Owner account
-      if (OWNER_EMAILS.has(cleanEmail) || (!isAdminCaller && cleanEmail.endsWith('@miltongroupsecurity.org')) || cleanEmail.startsWith('owner@') || cleanEmail.startsWith('admin@')) {
+      if (OWNER_EMAILS.has(cleanEmail) || (!isAdminCaller && !empRec.isAssignedEmployee && cleanEmail.endsWith('@miltongroupsecurity.org')) || cleanEmail.startsWith('owner@') || cleanEmail.startsWith('admin@')) {
         logAudit('system', 'security.intake_owner_spoof_blocked', `Blocked public intake attempt using owner/admin email: ${cleanEmail}`);
         return sendJson(res, 403, {
           ok: false,
@@ -2610,7 +2872,7 @@ const server = http.createServer(async (req, res) => {
       const interestKey = TAILOR[d.interest] ? d.interest : 'ai-web';
       const cleanNote = sanitizeInput(d.note, 500);
       const mfaMethod = sanitizeInput(d.mfaMethod || 'SSO_ATTESTED', 40);
-      const existing = Object.values(S.users).find(x => String(x.email || '').toLowerCase() === cleanEmail);
+      const existing = Object.values(S.users).find(x => String(x.email || '').toLowerCase() === cleanEmail || (empRec.isAssignedEmployee && String(x.username || '').toLowerCase() === cleanUsername));
       const id = existing ? existing.id : uid('u');
 
       if (existing && (existing.status === 'denied' || existing.status === 'suspended')) {
@@ -2618,11 +2880,6 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 403, { ok: false, error: 'Intake Denied: This account has been restricted by the platform Owner.' });
       }
 
-      const rawUsernameInput = String(d.username || '').trim().toLowerCase();
-      if (d.guidedRegistration && !rawUsernameInput) {
-        return sendJson(res, 400, { ok: false, error: 'Username is mandatory for portal registration and logon (not optional).' });
-      }
-      let cleanUsername = sanitizeInput(rawUsernameInput || cleanEmail.split('@')[0], 60).toLowerCase();
       if (['malik.khabir', 'owner', 'admin', 'administrator', 'root', 'system'].includes(cleanUsername)) {
         logAudit('system', 'security.intake_reserved_username_blocked', cleanUsername);
         return sendJson(res, 403, { ok: false, error: 'Security Policy Enforced: Reserved directory username cannot be registered.' });
@@ -2646,7 +2903,7 @@ const server = http.createServer(async (req, res) => {
           error: 'SECURITY ENFORCEMENT: Generic or default passwords are prohibited. Choose a unique case-sensitive password (8+ characters).'
         });
       }
-      if (d.guidedRegistration && (rawProv === 'password' || rawPassword)) {
+      if (d.guidedRegistration && (rawProv === 'password' || rawPassword || empRec.isAssignedEmployee)) {
         const pwLenOk = rawPassword.length >= 8 && rawPassword.length <= 128;
         const pwUpper = /[A-Z]/.test(rawPassword);
         const pwLower = /[a-z]/.test(rawPassword);
@@ -2670,12 +2927,34 @@ const server = http.createServer(async (req, res) => {
         if (phoneDigits.length < 10 || phoneDigits.length > 15) {
           return sendJson(res, 400, { ok: false, error: 'A valid 10–15 digit Phone Number is required to complete registration.' });
         }
+        const emailVerRec = S.emailVerifications && S.emailVerifications[cleanEmail];
+        const tokenClaims = d.emailVerificationToken ? verifyToken(d.emailVerificationToken) : null;
+        const isEmailVerified = Boolean((emailVerRec && emailVerRec.verified) || (tokenClaims && tokenClaims.emailVerified && tokenClaims.email === cleanEmail) || d.emailVerified === true);
+        if (!isEmailVerified) {
+          return sendJson(res, 400, { ok: false, error: 'Email Verification Required: Please verify your Primary Email with the 6-digit verification code on Page 2 before completing registration.' });
+        }
       }
       const computedPasswordDigest = rawPassword ? mgcDigest(rawPassword) : ((existing && existing.passwordDigest) || null);
-      const requestedScopeOu = (d.ou === 'internal' || d.accountScope === 'internal') ? 'internal' : 'external';
+      // Employee role is determined by whether the username is an Admin-assigned employee username (or provisioned by Admin)
       const userOu = (isAdminCaller && (d.ou === 'internal' || d.ou === 'external'))
         ? d.ou
-        : (d.guidedRegistration ? requestedScopeOu : ((existing && existing.ou) || 'external'));
+        : (empRec.isAssignedEmployee ? 'internal' : ((existing && existing.ou) || 'external'));
+      if (isAdminCaller && userOu === 'internal' && cleanUsername) {
+        if (!S.employeeAssignedUsernames) S.employeeAssignedUsernames = {};
+        S.employeeAssignedUsernames[cleanUsername] = {
+          username: cleanUsername,
+          name: cleanName,
+          email: cleanEmail,
+          org: cleanOrg || 'MGC Internal Operations',
+          ou: 'internal',
+          securityGroup: String(d.securityGroup || 'INTERNAL_ANALYST'),
+          assignedByAdmin: true,
+          mustResetPassword: Boolean(d.mustResetPassword !== false)
+        };
+      } else if (empRec.isAssignedEmployee && S.employeeAssignedUsernames && S.employeeAssignedUsernames[cleanUsername] && d.guidedRegistration) {
+        S.employeeAssignedUsernames[cleanUsername].mustResetPassword = false;
+        S.employeeAssignedUsernames[cleanUsername].passwordResetAt = now();
+      }
       const rawAddr = (d.address && typeof d.address === 'object') ? d.address : {};
       const cleanAddress = {
         streetAddress: sanitizeInput(rawAddr.streetAddress || rawAddr.street || d.streetAddress || '', 140),
@@ -2683,11 +2962,18 @@ const server = http.createServer(async (req, res) => {
         stateRegion: sanitizeInput(rawAddr.stateRegion || rawAddr.state || d.stateRegion || '', 60),
         postalCode: sanitizeInput(rawAddr.postalCode || rawAddr.zip || d.postalCode || '', 24)
       };
-      if (userOu === 'internal' && (d.guidedRegistration || d.address !== undefined)) {
+      // Physical Address is now mandatory for ALL users (both Client users and Employee users) during guided registration
+      if (d.guidedRegistration) {
         if (!cleanAddress.streetAddress || !cleanAddress.city || !cleanAddress.stateRegion || !cleanAddress.postalCode) {
           return sendJson(res, 400, {
             ok: false,
-            error: 'Employee Address Policy: Complete physical address (Street, City, State, Postal Code) is mandatory for Employee (OU=Internal) accounts.'
+            error: 'Address Policy Enforced: Complete physical address (Street Address, City, State/Region, and Postal/ZIP Code) is mandatory for all portal registrations.'
+          });
+        }
+        if (d.tosAccepted !== true && d.ndaAccepted !== true) {
+          return sendJson(res, 400, {
+            ok: false,
+            error: 'Terms of Service Required: You must review and accept the Terms of Service to complete registration.'
           });
         }
       }
@@ -2738,9 +3024,16 @@ const server = http.createServer(async (req, res) => {
         ssoProvider: rawProv,
         passwordDigest: computedPasswordDigest,
         hasPassword: Boolean(computedPasswordDigest),
+        assignedByAdmin: Boolean(empRec.isAssignedEmployee || (isAdminCaller && userOu === 'internal')),
+        mustResetPassword: Boolean(isAdminCaller && userOu === 'internal' && !d.guidedRegistration),
+        passwordResetCompletedAt: (empRec.isAssignedEmployee && d.guidedRegistration) ? now() : ((existing && existing.passwordResetCompletedAt) || null),
+        emailVerified: true,
+        emailVerifiedAt: now(),
         mfaVerified: Boolean(d.mfaVerified !== false),
         mfaMethod,
         ndaAccepted: true,
+        tosAccepted: true,
+        tosAcceptedAt: now(),
         ndaAcceptedAt: now(),
         quote: { interest: interestKey, org: cleanOrg, note: cleanNote },
         plan: existing && existing.plan ? Object.assign({ base: true, addons: [] }, existing.plan, { base: true }) : { base: true, addons: [] },
@@ -3087,7 +3380,41 @@ const server = http.createServer(async (req, res) => {
       S.payments.unshift(receipt);
       u.plan = Object.assign({}, u.plan || {}, { base: true, tier: planTier, paymentVerified: true });
 
-      notifyUser(u.id, 'Payment & Billing Information Verified', `Receipt ${receiptId}: ${instrumentBrand} •••• ${last4} ($${amountUsd.toFixed(2)} USD) is cryptographically tokenized and verified under PCI-DSS v4.0 SAQ-A.`);
+      // Scalable Tiered Membership Gate: Automatically unlock apps & workspace modules based on verified planTier
+      const isTier3Enterprise = ['enterprise_499', 'sdvosb_contract_retainer', 'custom_retainer'].includes(planTier) || amountUsd >= 250;
+      const isTier2Pro = isTier3Enterprise || ['pro_99', 'pro_enterprise'].includes(planTier) || amountUsd >= 49;
+      const unlockedTierApps = APPS_CATALOG.filter(a => {
+        if (isTier3Enterprise || isTier2Pro) return true;
+        return a.minTier === 'tier_1_starter' || a.defaultCustomer;
+      }).map(a => a.id);
+      const currentApps = Array.isArray(u.allowedApps) ? u.allowedApps : [];
+      u.allowedApps = Array.from(new Set([...currentApps, ...unlockedTierApps]));
+      const currentRes = Array.isArray(u.qualifiedResources) ? u.qualifiedResources : [];
+      if (!currentRes.includes('resource-fast-track')) {
+        u.qualifiedResources = [...currentRes, 'resource-fast-track'];
+      }
+      u.pages = Object.assign({}, u.pages || {}, { saasapps: 'ready', resources: 'ready' });
+      if (isTier3Enterprise) {
+        u.accessTier = 'ENTERPRISE_RETAINER';
+        u.pages = Object.assign({}, u.pages, { agile: 'ready', contracts: 'ready', compliance: 'ready', academy: 'ready', chronos: 'ready' });
+        u.adminGrantedPages = Array.from(new Set([...(u.adminGrantedPages || []), 'resources', 'agile', 'contracts', 'compliance', 'academy', 'chronos']));
+      } else if (isTier2Pro) {
+        u.accessTier = 'PRO_SUBSCRIBER';
+        u.pages = Object.assign({}, u.pages, { academy: 'ready' });
+        u.adminGrantedPages = Array.from(new Set([...(u.adminGrantedPages || []), 'resources', 'academy']));
+      }
+      u.allowedApps.forEach(appId => {
+        if (!S.shares.some(s => s.type === 'app' && s.resource === appId && s.grantee === u.id)) {
+          S.shares.push({ id: `app_${appId}_${u.id}`, type: 'app', resource: appId, grantee: u.id, perms: ['view', 'launch'], created: timestampIso });
+        }
+      });
+      u.qualifiedResources.forEach(resId => {
+        if (!S.shares.some(s => s.type === 'resource' && s.resource === resId && s.grantee === u.id)) {
+          S.shares.push({ id: `resource_${resId}_${u.id}`, type: 'resource', resource: resId, grantee: u.id, perms: ['view', 'launch'], created: timestampIso });
+        }
+      });
+
+      notifyUser(u.id, 'Payment Verified & Membership Tier Unlocked', `Receipt ${receiptId}: ${instrumentBrand} •••• ${last4} ($${amountUsd.toFixed(2)} USD) verified under PCI-DSS v4.0 SAQ-A. Unlocked ${u.allowedApps.length} applications.`);
       notifyUser('owner', 'Customer Payment Method Verified + Ledger Posted', `${u.name} (${u.email}) submitted verified payment [${instrumentBrand} •••• ${last4} · Gross $${amountUsd.toFixed(2)} · Net $${journalEntry.netCashUsd.toFixed(2)}] — Receipt ${receiptId} / Journal ${journalEntry.journalId}.`);
       logAudit(u.id, 'payment.verified', `${receiptId} [${method} •••• ${last4} Gross=$${amountUsd.toFixed(2)} Net=$${journalEntry.netCashUsd.toFixed(2)} JRN=${journalEntry.journalId}]`);
       saveState(S);
