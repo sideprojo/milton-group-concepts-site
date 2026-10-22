@@ -24,35 +24,46 @@
   function kpis() {
     const m = members(); const c = (s) => m.filter(x => x.status === s).length;
     const open = S().tasks.filter(t => !t.done).length;
-    return '<div class="grid" style="margin-bottom:12px">' + [['Pending approval', c('requested')], ['Building pages', c('approved_building')], ['Open build tasks', open], ['Active members', c('active')], ['MRR (base)', '$' + (m.filter(x => x.plan.base).length * 5)]].map(k => '<div class="card"><p>' + k[0] + '</p><h1>' + k[1] + '</h1></div>').join('') + '</div>';
+    return '<div class="kpi-strip">' +
+      [['Pending Approval', c('requested')], ['Building Pages', c('approved_building')], ['Open Build Tasks', open], ['Active Members', c('active')], ['Active Accounts', m.length]]
+      .map(k => '<div class="kpi-tile"><small>' + k[0] + '</small><strong>' + k[1] + '</strong></div>').join('') +
+      '</div>';
   }
 
   function requests() {
     const list = members().filter(x => x.status === 'requested');
-    if (!list.length) return '<div class="card"><p>No pending requests. 🎉</p></div>';
-    return list.map(x => '<div class="card" style="margin-bottom:10px"><div class="row"><div><h2>' + esc(x.name) + ' · ' + esc(x.email) + '</h2><p>' + (x.brand === 'FIX' ? 'F.I.X Solutions' : 'MGC') + ' quote · interest: <b>' + esc((W.TAILOR[x.quote.interest] || {}).label) + '</b></p></div><div class="nav"><button class="btn pri" data-ap="' + x.id + '">Approve → create pages</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div>' +
-      '<details><summary>Pages that will be created</summary><p>' + ['home', 'agile', 'resources'].concat((W.TAILOR[x.quote.interest] || { pages: [] }).pages).map(p => W.CATALOG.find(c => c.id === p).title).join(' · ') + '</p></details></div>').join('');
+    const reqLog = (S().requests || []).slice(0, 12);
+    const pendingHtml = !list.length
+      ? '<div class="compact-card" style="margin-bottom:12px"><h3>Pending Queue</h3><p>All registered accounts are provisioned and active. Use the <b>Users &amp; Entitlements</b> tab to register a new user or review active accounts.</p></div>'
+      : list.map(x => '<div class="compact-card" style="margin-bottom:10px"><div class="row"><div><h3>' + esc(x.name) + ' · ' + esc(x.email) + '</h3><p>' + (x.brand === 'FIX' ? 'F.I.X Solutions' : 'MGC') + ' · Track: <b>' + esc(((W.TAILOR[x.quote && x.quote.interest] || {}).label) || (x.quote && x.quote.interest) || 'SaaS') + '</b></p></div><div class="nav"><button class="btn pri" data-ap="' + x.id + '">Approve → Build Pages</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div></div>').join('');
+    const logHtml = reqLog.length
+      ? '<div class="card"><h2>Verified Intake &amp; Registration Ledger (' + reqLog.length + ')</h2><table><thead><tr><th>Receipt</th><th>Name &amp; Org</th><th>Email / SSO</th><th>Track</th><th>Status</th></tr></thead><tbody>' +
+        reqLog.map(r => '<tr><td><span class="chip">' + esc(r.receipt || r.id) + '</span></td><td><b>' + esc(r.name) + '</b><br><span style="font-size:11px;color:var(--mut)">' + esc(r.org || 'External') + '</span></td><td>' + esc(r.email) + ' <span class="chip">' + esc((r.ssoProvider || 'google').toUpperCase()) + '</span></td><td>' + esc(r.interest || 'saas') + '</td><td><span class="chip ok">' + esc(r.status || 'active') + '</span></td></tr>').join('') +
+        '</tbody></table></div>'
+      : '';
+    return pendingHtml + logHtml;
   }
 
   function tasks() {
     const t = S().tasks;
     if (!t.length) return '<div class="card"><p>No build tasks. Approve a request to generate the page-creation workflow.</p></div>';
     const by = {}; t.forEach(x => (by[x.uid] = by[x.uid] || []).push(x));
-    return Object.keys(by).map(id => { const done = by[id].filter(x => x.done).length;
-      return '<div class="card" style="margin-bottom:10px"><div class="row"><h2>' + esc(name(id)) + '</h2><span class="chip ' + (done === by[id].length ? 'ok' : 'warn') + '">' + done + '/' + by[id].length + ' built</span></div>' +
-        by[id].map(x => '<label class="row" style="justify-content:flex-start;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" data-task="' + x.id + '"' + (x.done ? ' checked' : '') + '><span>' + esc(x.title) + '</span></label>').join('') +
-        '<p>When the last box is checked the member is notified: <i>"Access approved — your pages are ready."</i></p></div>'; }).join('');
+    return '<div class="bento-2">' + Object.keys(by).map(id => { const done = by[id].filter(x => x.done).length;
+      return '<div class="compact-card"><div class="row"><h3>' + esc(name(id)) + '</h3><span class="chip ' + (done === by[id].length ? 'ok' : 'warn') + '">' + done + '/' + by[id].length + ' built</span></div>' +
+        by[id].map(x => '<label class="row" style="justify-content:flex-start;padding:6px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" data-task="' + x.id + '"' + (x.done ? ' checked' : '') + '><span>' + esc(x.title) + '</span></label>').join('') +
+        '</div>'; }).join('') + '</div>';
   }
 
   function users() {
     const cols = W.CATALOG;
     const apps = W.APPS_CATALOG || [];
-    return '<div class="card" style="overflow:auto"><table><thead><tr><th>User</th><th>Status</th><th>Tier</th><th>Apps</th><th>Plan</th>' + cols.map(c => '<th title="' + esc(c.title) + '">' + c.icon + '</th>').join('') + '</tr></thead><tbody>' +
+    return '<div class="card" style="margin-bottom:12px"><h2>+ Provision &amp; Register New Account</h2><div class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><input id="admRegName" placeholder="Full Name" style="flex:1;min-width:150px"><input id="admRegEmail" placeholder="work@organization.org" style="flex:1;min-width:180px"><input id="admRegOrg" placeholder="Organization" style="flex:1;min-width:140px"><select id="admRegProvider"><option value="google">Google SSO</option><option value="microsoft">Microsoft Entra</option><option value="apple">Apple ID</option></select><select id="admRegInterest"><option value="saas">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="ai">Agentic AI</option><option value="cyber">Zero-Trust Cyber</option></select><button class="btn pri" id="admRegGo">Register User</button></div></div>' +
+      '<div class="card" style="overflow:auto"><h2>Registered Accounts (' + members().length + ')</h2><table><thead><tr><th>User</th><th>Email</th><th>Status</th><th>Tier</th><th>Apps</th>' + cols.map(c => '<th title="' + esc(c.title) + '">' + c.icon + '</th>').join('') + '</tr></thead><tbody>' +
       members().map(x => {
         const appCnt = apps.filter(a => W.can(x, 'app', a.id, 'view')).length;
-        return '<tr><td>' + esc(x.name) + '</td><td><span class="chip">' + esc(W.STATUS_LABEL[x.status]) + '</span></td><td><span class="chip warn">' + esc(x.accessTier || 'CUSTOMER_RESTRICTED') + '</span></td><td><b>' + appCnt + '/' + apps.length + '</b></td><td>' + (x.plan.base ? '$5' : '—') + (x.plan.addons.length ? ' +' + x.plan.addons.length : '') + '</td>' +
-        cols.map(c => { const s = x.pages[c.id]; return '<td>' + (s === 'ready' ? '✅' : s === 'pending' ? '⏳' : '·') + '</td>'; }).join('') + '</tr>';
-      }).join('') + '</tbody></table><p>✅ ready · ⏳ being built · · not granted. Customers default to <b>CUSTOMER_RESTRICTED (2/8 apps unlocked)</b>; grant additional apps in the Sharing tab.</p></div>';
+        return '<tr><td><b>' + esc(x.name) + '</b><br><span style="font-size:11px;color:var(--mut)">' + esc(x.org || '') + '</span></td><td>' + esc(x.email) + '</td><td><span class="chip ok">' + esc(W.STATUS_LABEL[x.status] || x.status) + '</span></td><td><span class="chip warn">' + esc(x.accessTier || 'CUSTOMER_RESTRICTED') + '</span></td><td><b>' + appCnt + '/' + apps.length + '</b></td>' +
+        cols.map(c => { const s = x.pages && x.pages[c.id]; return '<td>' + (s === 'ready' ? '✅' : s === 'pending' ? '⏳' : '·') + '</td>'; }).join('') + '</tr>';
+      }).join('') + '</tbody></table></div>';
   }
 
   function sharing() {
@@ -60,37 +71,63 @@
     const projects = Object.values(S().projects);
     const apps = W.APPS_CATALOG || [];
     const sh = S().shares;
-    return '<div class="card"><h2>Share an App, Project, Page or Single Element</h2><p>Customer logins default to <b>Restricted App Access</b> (only Client Turnkey Forge &amp; Sterling Auto Repair unlocked). Granting an App or Project here unlocks only that specific resource for that customer.</p>' +
+    return '<div class="card"><h2>Grant Granular Entitlement</h2><p style="margin-bottom:10px">Customers default to <b>CUSTOMER_RESTRICTED (2/8 apps)</b>. Granting an App or Project unlocks only that resource.</p>' +
       '<div class="row" style="justify-content:flex-start"><select id="shUser">' + members().map(x => '<option value="' + x.id + '">' + esc(x.name) + ' (' + esc(x.email) + ')</option>').join('') + '</select>' +
       '<select id="shRes">' +
-      apps.map(a => '<option value="app|' + a.id + '">App: ' + a.icon + ' ' + esc(a.title) + (a.defaultCustomer ? ' (Default Unlocked)' : ' (Restricted SCORM)') + '</option>').join('') +
+      apps.map(a => '<option value="app|' + a.id + '">App: ' + a.icon + ' ' + esc(a.title) + (a.defaultCustomer ? ' (Default)' : ' (Restricted)') + '</option>').join('') +
       projects.map(p => '<option value="project|' + p.id + '">Project: ' + esc(p.name) + '</option>').join('') +
       elements.map(e => '<option value="element|' + e[0] + '">' + e[1] + '</option>').join('') + '</select>' +
       '<select id="shPerm"><option value="view">view / launch</option><option value="view,edit">view + edit (projects)</option></select><button class="btn pri" id="shGo">Grant Access</button></div></div>' +
-      '<div class="card" style="margin-top:10px"><h2>Active shares &amp; app entitlements (' + sh.length + ')</h2>' + (sh.length ? sh.map(s => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(s.type) + ' · <b>' + esc(s.resource) + '</b> → <b>' + esc(name(s.grantee)) + '</b> <span class="chip">' + esc(s.perms.join('+')) + '</span></span><button class="btn" data-rv="' + esc(s.id) + '">Revoke</button></div>').join('') : '<p>No shares yet.</p>') + '</div>';
+      '<div class="card" style="margin-top:10px"><h2>Active Entitlements (' + sh.length + ')</h2>' + (sh.length ? sh.map(s => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(s.type) + ' · <b>' + esc(s.resource) + '</b> → <b>' + esc(name(s.grantee)) + '</b> <span class="chip">' + esc(s.perms.join('+')) + '</span></span><button class="btn" data-rv="' + esc(s.id) + '">Revoke</button></div>').join('') : '<p>No custom shares yet.</p>') + '</div>';
   }
 
   function notifs() {
     const l = S().notifications.slice(0, 40);
-    return '<div class="card"><h2>Notification outbox</h2><p>Prototype: shown here. Production: Cloud Function sends email/push on each event.</p>' + l.map(n => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(name(n.toUid)) + '</b> · ' + esc(n.title) + '<br><span style="color:var(--mut);font-size:12px">' + esc(n.body) + '</span></span><span class="chip">' + esc(n.channel) + '</span></div>').join('') + '</div>';
+    return '<div class="card"><h2>Notification Outbox (' + l.length + ')</h2>' + l.map(n => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(name(n.toUid)) + '</b> · ' + esc(n.title) + '<br><span style="color:var(--mut);font-size:12px">' + esc(n.body) + '</span></span><span class="chip">' + esc(n.channel) + '</span></div>').join('') + '</div>';
   }
   function audit() {
-    return '<div class="card"><h2>Audit log</h2><table><tbody>' + S().audit.slice(0, 60).map(a => '<tr><td>' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') + '</tbody></table>' + (S().audit.length ? '' : '<p>Empty.</p>') + '</div>';
+    return '<div class="card"><h2>Audit Ledger</h2><table><tbody>' + S().audit.slice(0, 50).map(a => '<tr><td>' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') + '</tbody></table>' + (S().audit.length ? '' : '<p>Empty.</p>') + '</div>';
   }
 
-  const TABS = [['requests', 'Requests', requests], ['tasks', 'Build workflow', tasks], ['users', 'Users & entitlements', users], ['sharing', 'Sharing', sharing], ['notifs', 'Notifications', notifs], ['audit', 'Audit log', audit]];
+  const TABS = [['requests', '📥 Intake & Requests', requests], ['users', '👥 Users & Registration', users], ['sharing', '🔑 Sharing & Entitlements', sharing], ['tasks', '🛠 Build Workflow', tasks], ['notifs', '🔔 Outbox', notifs], ['audit', '📜 Audit Log', audit]];
   function render() {
-    const nav = '<div class="row" style="margin:12px 0"><div class="nav">' + TABS.map(t => '<button class="btn' + (t[0] === tab ? ' pri' : '') + '" data-tab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><select id="tabSel">' + TABS.map(t => '<option value="' + t[0] + '"' + (t[0] === tab ? ' selected' : '') + '>' + t[1] + '</option>').join('') + '</select></div>';
-    app.innerHTML = '<h1>Access Admin</h1><p>Approve people, build their pages, share only what you choose.</p>' + kpis() + nav + TABS.find(t => t[0] === tab)[2]();
+    const sideHtml =
+      '<aside class="ws-side">' +
+        '<span class="chip ok">👑 Owner Control</span>' +
+        '<h2 style="margin:8px 0 4px;font-size:17px">Access Admin</h2>' +
+        '<p style="font-size:12px;margin-bottom:12px">Provision accounts, verify registrations, and grant granular app entitlements.</p>' +
+        '<div style="display:flex;flex-direction:column;gap:6px">' +
+          TABS.map(t => '<button class="btn' + (t[0] === tab ? ' pri' : '') + '" data-tab="' + t[0] + '" style="text-align:left;justify-content:flex-start">' + t[1] + '</button>').join('') +
+        '</div>' +
+        '<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px;display:flex;flex-direction:column;gap:6px">' +
+          '<a class="btn" href="login.html?mode=register">+ Open Public Registration ↗</a>' +
+          '<a class="btn" href="request-access.html">📋 Client Intake Form ↗</a>' +
+        '</div>' +
+      '</aside>';
+    app.innerHTML = '<div class="ws-layout">' + sideHtml + '<div class="ws-main">' + kpis() + TABS.find(t => t[0] === tab)[2]() + '</div></div>';
     W.header('access-admin.html'); bind();
   }
   function bind() {
     app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
-    document.getElementById('tabSel').onchange = (e) => { tab = e.target.value; render(); };
     app.querySelectorAll('[data-ap]').forEach(b => b.onclick = () => { W.approve(b.dataset.ap); W.toast('Approved — build tasks created'); tab = 'tasks'; render(); });
     app.querySelectorAll('[data-dn]').forEach(b => b.onclick = () => { W.deny(b.dataset.dn); render(); });
     app.querySelectorAll('[data-task]').forEach(c => c.onchange = () => { W.completeTask(c.dataset.task, c.checked); render(); });
     app.querySelectorAll('[data-rv]').forEach(b => b.onclick = () => { W.revoke(b.dataset.rv); render(); });
+    const regBtn = document.getElementById('admRegGo');
+    if (regBtn) regBtn.onclick = async () => {
+      const nm = document.getElementById('admRegName').value.trim();
+      const em = document.getElementById('admRegEmail').value.trim().toLowerCase();
+      const og = document.getElementById('admRegOrg').value.trim() || 'Client Organization';
+      const pv = document.getElementById('admRegProvider').value;
+      const tr = document.getElementById('admRegInterest').value;
+      if (!nm || !/^\S+@\S+\.\S+$/.test(em)) { W.toast('Enter valid name and email'); return; }
+      try {
+        await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: nm, email: em, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true }) });
+      } catch (_) {}
+      W.submitRequest({ name: nm, email: em, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true, mfaVerified: true });
+      W.toast('Registered ' + nm + ' (' + em + ')');
+      render();
+    };
     const go = document.getElementById('shGo'); if (go) go.onclick = () => { const r = document.getElementById('shRes').value.split('|'); let p = document.getElementById('shPerm').value.split(','); if (r[0] === 'element' || r[0] === 'app') p = ['view']; W.share(document.getElementById('shUser').value, r[0], r[1], p); W.toast('Entitlement granted'); render(); };
   }
   render();
@@ -197,20 +234,7 @@
     <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
   </div>
 </div>
-<div id="mgc-scorm-floating-dock">
-  <span style="color:#fbbf24;font-weight:800;">● SCORM 2004 4th Ed.</span>
-  <span style="color:#94a3b8;" id="mgc-dock-label">Access Admin • F.I.X. Cityscape</span>
-  <select onchange="window.switchInjectedCityscape(this.value)" style="background:#0B1426;color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
-    <option value="fix-cityscape">🎨 Switch Cityscape / Filter ▾</option>
-    <option value="fix-cityscape">🏙️ F.I.X. Cityscape (Mission Navy &amp; Gold)</option>
-    <option value="mgc-cityscape">🇺🇸 miltongroupsecurity.org Cityscape (Flag + Sunset)</option>
-    <option value="noir-greyscale">🎬 Tactical Noir 100% Greyscale</option>
-    <option value="emerald-matrix">🌱 Tactical Emerald Luminosity</option>
-  </select>
-  <a href="saas-apps-and-lms-showcase.html" style="background:linear-gradient(135deg,#C5B358,#a38f36);color:#060B16;">🚀 Multi-Page SCORM OS</a>
-  <a href="projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip" download style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.45);">📦 SCORM .ZIP</a>
-  <button onclick="window.commitInjectedScorm()" style="background:rgba(30,41,59,0.9);color:#e2e8f0;border:1px solid rgba(197,179,88,0.35);">Complete SCO ✓</button>
-</div>
+
 <script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
 <script>
   window.switchInjectedCityscape = function(mode) {

@@ -1177,6 +1177,10 @@
         color: #cbd5e1;
         line-height: 1.5;
       }
+      #mgc-scorm-floating-dock,
+      #mgc-portal-action-suite {
+        display: none !important;
+      }
 
       /* Standardized SaaS Apps Workspace Tab Bar for Section Filtering */
       #mgc-subpage-bar {
@@ -2181,8 +2185,8 @@
       return;
     }
 
-    // Case B: Top-level vertical <section> blocks — convert into SaaS Apps single-pane tabs
-    const sections = Array.from(document.querySelectorAll('main > section, .shell > section, .container > section, body > section, [data-subpage]'));
+    // Case B: Only convert sections that explicitly declare [data-subpage-title] or [data-subpage]
+    const sections = Array.from(document.querySelectorAll('[data-subpage-title], [data-subpage]'));
     if (sections.length <= 1) return;
 
     selectEl.style.display = 'inline-block';
@@ -2262,7 +2266,7 @@
    * Collapsed by default so the canvas remains clean and uncluttered.
    */
   function injectPortalModuleActionSuite() {
-    if (currentFile === 'elearning-upskilling-hub.html' || currentFile === 'saas-apps-and-lms-showcase.html' || document.getElementById('mgc-portal-action-suite')) return;
+    return;
 
     const PORTAL_MODULES = {
       'sdvosb-contract-radar.html': {

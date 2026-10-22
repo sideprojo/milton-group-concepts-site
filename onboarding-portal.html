@@ -110,38 +110,19 @@
 <body>
   <script src="mgc-guided-security.js"></script>
 
-  <header style="padding: 12px 28px;">
-    <div class="brand">
-      <img src="assets/mgc-logo.png" alt="MGC" onerror="this.style.display='none'" />
-      <div>
-        <h1>MGC &amp; F.I.X <span>// CLIENT &amp; PARTNER 2FA GATE</span></h1>
-      </div>
-    </div>
-    <div class="status-pill" id="session-badge">2FA BIOMETRIC GATE // READY</div>
-  </header>
-
-  <div class="container" style="padding-top: 22px;">
-    <div class="stepper" style="margin-bottom: 22px;">
-      <div class="step active" id="step-1">
-        <div class="step-num">1</div>
+  <div class="container" style="padding-top: 18px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;padding:12px 18px;border-radius:12px;background:rgba(11,17,32,0.92);border:1px solid var(--border);">
+      <div class="brand">
+        <img src="assets/mgc-logo.png" alt="MGC" onerror="this.style.display='none'" style="width:32px;height:32px;" />
         <div>
-          <h4>1. Select Identity</h4>
-          <p>Client or Root Admin preset</p>
+          <h1 style="font-size:1.05rem;">MGC &amp; F.I.X <span>// CLIENT &amp; PARTNER 2FA ONBOARDING</span></h1>
         </div>
       </div>
-      <div class="step" id="step-2">
-        <div class="step-num">2</div>
-        <div>
-          <h4>2. Biometric / TOTP 2FA</h4>
-          <p>Fingerprint sensor or 6-digit code</p>
-        </div>
-      </div>
-      <div class="step" id="step-3">
-        <div class="step-num">3</div>
-        <div>
-          <h4>3. Launch Assigned Portals</h4>
-          <p>Instant verified suite access</p>
-        </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="step active" id="step-1" style="padding:5px 10px;font-size:0.72rem;border-radius:999px;"><b>1.</b> Identity</span>
+        <span class="step" id="step-2" style="padding:5px 10px;font-size:0.72rem;border-radius:999px;"><b>2.</b> Passkey / 2FA</span>
+        <span class="step" id="step-3" style="padding:5px 10px;font-size:0.72rem;border-radius:999px;"><b>3.</b> Launch Portals</span>
+        <div class="status-pill" id="session-badge">2FA BIOMETRIC GATE // READY</div>
       </div>
     </div>
 
@@ -168,8 +149,9 @@
         </div>
 
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
-          <button type="button" onclick="quickFillOnboarding('customer')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(56,189,248,0.5);background:rgba(56,189,248,0.12);color:#7dd3fc;font-size:0.72rem;font-weight:800;cursor:pointer;">🛡️ Fill Customer Login (Default Restricted)</button>
-          <button type="button" onclick="quickFillOnboarding('owner')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(245,158,11,0.5);background:rgba(245,158,11,0.14);color:#fde047;font-size:0.72rem;font-weight:800;cursor:pointer;">👑 Fill Owner Login (Full Access)</button>
+          <button type="button" id="presetCustomer" onclick="quickFillOnboarding('customer')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(56,189,248,0.5);background:rgba(56,189,248,0.12);color:#7dd3fc;font-size:0.72rem;font-weight:800;cursor:pointer;">🛡️ Customer Login</button>
+          <button type="button" id="presetNewPartner" onclick="quickFillOnboarding('register')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(16,185,129,0.5);background:rgba(16,185,129,0.14);color:#6ee7b7;font-size:0.72rem;font-weight:800;cursor:pointer;">✨ Register Partner</button>
+          <button type="button" id="presetOwner" onclick="quickFillOnboarding('owner')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(245,158,11,0.5);background:rgba(245,158,11,0.14);color:#fde047;font-size:0.72rem;font-weight:800;cursor:pointer;">👑 Owner Login</button>
         </div>
         <div class="form-group">
           <label>Full Name / Client Organization</label>
@@ -217,94 +199,107 @@
         </div>
       </div>
 
-      <!-- Right Column: Internal Sites & Customer Incentive Directory -->
+      <!-- Right Column: Clean Framework Workspace Directory -->
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px;">
-          <h2>Client &amp; Internal Portals (2FA Protected)</h2>
-          <button type="button" id="admin-nav-btn" onclick="attemptAdminPortalLaunch()" class="portal-link" style="background:rgba(245,158,11,0.2);border-color:var(--gold);color:var(--gold);cursor:pointer;">★ All 16 Sites Admin Navigator (2FA) →</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+          <div>
+            <h2 style="margin-bottom:2px;">Workspace &amp; Portal Directory</h2>
+            <p style="font-size:0.78rem;color:var(--muted);margin:0;">Select a category below to launch your assigned portals.</p>
+          </div>
+          <button type="button" id="admin-nav-btn" onclick="attemptAdminPortalLaunch()" class="portal-link" style="background:rgba(245,158,11,0.18);border-color:var(--gold);color:var(--gold);cursor:pointer;">★ 16-Portal Command Hub →</button>
         </div>
-        <div id="portal-lock-banner" style="margin-bottom:14px;padding:10px 14px;border-radius:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.4);color:#fde68a;font-size:0.78rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-          <span id="portal-lock-text">🔒 Authentication Enforced: Verify credentials + 2FA on the left to unlock portal links.</span>
-          <span id="portal-lock-pill" style="padding:3px 8px;border-radius:999px;background:rgba(220,38,38,0.25);color:#fca5a5;font-size:0.68rem;">LOCKED</span>
+
+        <div id="portal-lock-banner" style="margin-bottom:12px;padding:9px 13px;border-radius:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.4);color:#fde68a;font-size:0.76rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <span id="portal-lock-text">🔒 Verify Federated SSO + 2FA on the left to unlock portal links.</span>
+          <span id="portal-lock-pill" style="padding:3px 8px;border-radius:999px;background:rgba(220,38,38,0.25);color:#fca5a5;font-size:0.66rem;">LOCKED</span>
+        </div>
+
+        <!-- Clean Framework Segmented Filter Tabs -->
+        <div id="portal-cat-tabs" style="display:flex;flex-wrap:wrap;gap:6px;padding:5px;border-radius:12px;background:rgba(4,8,20,0.75);border:1px solid var(--border);margin-bottom:14px;">
+          <button type="button" data-pcat-btn="all" onclick="filterPortalDirectory('all')" style="flex:1;min-width:110px;padding:7px 10px;border-radius:8px;border:1px solid rgba(56,189,248,0.45);background:rgba(56,189,248,0.18);color:#fff;font-size:0.74rem;font-weight:800;cursor:pointer;">All Portals (10)</button>
+          <button type="button" data-pcat-btn="workspace" onclick="filterPortalDirectory('workspace')" style="flex:1;min-width:125px;padding:7px 10px;border-radius:8px;border:1px solid transparent;background:transparent;color:#cbd5e1;font-size:0.74rem;font-weight:700;cursor:pointer;">Assigned Workspace (3)</button>
+          <button type="button" data-pcat-btn="ops" onclick="filterPortalDirectory('ops')" style="flex:1;min-width:125px;padding:7px 10px;border-radius:8px;border:1px solid transparent;background:transparent;color:#cbd5e1;font-size:0.74rem;font-weight:700;cursor:pointer;">Operations &amp; Finance (3)</button>
+          <button type="button" data-pcat-btn="ai" onclick="filterPortalDirectory('ai')" style="flex:1;min-width:125px;padding:7px 10px;border-radius:8px;border:1px solid transparent;background:transparent;color:#cbd5e1;font-size:0.74rem;font-weight:700;cursor:pointer;">AI &amp; Intelligence (4)</button>
         </div>
 
         <div class="portal-grid" id="portal-grid">
-          <div class="portal-item locked" id="p-member" data-customer-default="1" style="border-color:rgba(16,185,129,0.55);box-shadow:0 0 22px rgba(16,185,129,0.16);">
-            <span class="role-badge" style="background:rgba(16,185,129,0.18);color:#6ee7b7;">🛡️ DEFAULT CUSTOMER WORKSPACE // UNLOCKED ON CUSTOMER LOGIN</span>
-            <h3>My Customer Workspace &amp; Default Restricted App Launcher</h3>
-            <p>Default landing workspace on Customer Login. Includes your unlocked default apps (<b>Client Turnkey Forge</b> &amp; <b>Sterling Auto Repair</b>) and 1-click access requests for restricted enterprise SCORM apps.</p>
-            <a href="member-portal.html" class="portal-link" style="background:rgba(16,185,129,0.2);border-color:#10b981;color:#6ee7b7;">Open Customer Workspace →</a>
-          </div>
-          <div class="portal-item locked" id="p-agile" data-customer-default="1" style="border-color:rgba(197,179,88,0.55);box-shadow:0 0 22px rgba(197,179,88,0.16);">
-            <span class="role-badge" style="background:rgba(197,179,88,0.18);color:#fde047;">★ AGILE WORKSPACE // CLIENT PROJECTS &amp; DELIVERABLES</span>
-            <h3>Agile Project Board (Sprints, Backlog &amp; Client Deliverables)</h3>
-            <p>Coordinate sprints, feature requests, and client deliverables (including the Sterling Auto Repair web &amp; AI receptionist project) with IndexedDB + Server WAL persistence.</p>
-            <a href="agile-board.html" class="portal-link" style="background:rgba(197,179,88,0.2);border-color:#c5b358;color:#fde047;">Open Agile Project Board →</a>
+          <div class="portal-item locked" id="p-member" data-customer-default="1" data-pcat="workspace" style="border-color:rgba(16,185,129,0.45);">
+            <span class="role-badge" style="background:rgba(16,185,129,0.16);color:#6ee7b7;">🛡️ DEFAULT WORKSPACE</span>
+            <h3>Customer Workspace &amp; App Launcher</h3>
+            <p>Access unlocked default apps (Turnkey Forge &amp; Sterling Auto) and request enterprise add-ons.</p>
+            <a href="member-portal.html" class="portal-link" style="background:rgba(16,185,129,0.2);border-color:#10b981;color:#6ee7b7;">Open Workspace →</a>
           </div>
 
-          <div class="portal-item locked" id="p-fin">
-            <span class="role-badge">COLLECTION 01 // TREASURY &amp; PAYMENTS</span>
-            <h3>Finance, Treasury &amp; Payment Command</h3>
-            <p>Internal payment system, multi-rail payment acceptance (ACH/FedNow, SAM.gov WAWF/IPP, GPC/Stripe, Escrow), and multi-entity ledger.</p>
-            <a href="finance-command.html" class="portal-link">Open Finance &amp; Payment System →</a>
+          <div class="portal-item locked" id="p-agile" data-customer-default="1" data-pcat="workspace" style="border-color:rgba(197,179,88,0.45);">
+            <span class="role-badge" style="background:rgba(197,179,88,0.16);color:#fde047;">🗂️ AGILE DELIVERY</span>
+            <h3>Agile Project &amp; Sprint Board</h3>
+            <p>Track shared project sprints, backlog items, and live client deliverables.</p>
+            <a href="agile-board.html" class="portal-link" style="background:rgba(197,179,88,0.2);border-color:#c5b358;color:#fde047;">Open Agile Board →</a>
           </div>
 
-          <div class="portal-item locked" id="p-edu">
-            <span class="role-badge">COLLECTION 02 // ELEARNING &amp; INSIGHTS ATLAS</span>
-            <h3>eLearning, Upskilling &amp; Cross-Industry Insights</h3>
-            <p>Aggregates LinkedIn, Gmail, Industry &amp; Procurement News with smooth 3-stage tracing across Visualizations → Geospatial Map → Internal Collaborations.</p>
-            <a href="elearning-upskilling-hub.html" class="portal-link">Open eLearning &amp; Insights Atlas →</a>
+          <div class="portal-item locked" id="p-saas" data-customer-default="1" data-pcat="workspace" style="border-color:rgba(245,158,11,0.45);">
+            <span class="role-badge" style="background:rgba(16,185,129,0.16);color:var(--emerald);">⚡ SAAS &amp; SIMULATORS</span>
+            <h3>SaaS Apps, LMS &amp; Showcase</h3>
+            <p>Interactive simulators, SCORM 2004 modules, leaderboards, and custom scope builder.</p>
+            <a href="saas-apps-and-lms-showcase.html" class="portal-link" style="background:rgba(245,158,11,0.2);border-color:var(--gold);color:var(--gold);">Launch Apps &amp; LMS →</a>
           </div>
 
-          <div class="portal-item locked" id="p-wf">
-            <span class="role-badge">COLLECTION 03 // WHITE FEATHER &amp; ECOMMERCE</span>
-            <h3>White Feather, eCommerce &amp; Dual Aggregate News</h3>
-            <p>Storefront for White Feather AI, 4biddenKnowledge affiliates, MGC Data Commerce &amp; F.I.X VAR, plus 2 built-in NBA-RSS Aggregate News sites.</p>
-            <a href="whitefeather-ecommerce-hub.html" class="portal-link">Open eCommerce &amp; News Hub →</a>
+          <div class="portal-item locked" id="p-fin" data-pcat="ops">
+            <span class="role-badge">💳 TREASURY &amp; PAYMENTS</span>
+            <h3>Finance &amp; Payment Command</h3>
+            <p>Multi-entity treasury, ACH/FedNow, SAM.gov WAWF/IPP invoicing, and Stripe settlement.</p>
+            <a href="finance-command.html" class="portal-link">Open Finance →</a>
           </div>
 
-          <div class="portal-item locked" id="p-hist">
-            <span class="role-badge">COLLECTION 04 // AI, HISTORY &amp; ARCHAEOLOGY</span>
-            <h3>AI, Historical &amp; Archaeological Endeavors + Chronos WebApp</h3>
-            <p>Interactive Image Association constellations, geodesic excavation maps, article examination reports, and the public Chronos Insight WebApp.</p>
-            <a href="historical-archaeology-ai-hub.html" class="portal-link">Open AI &amp; Historical Lab →</a>
+          <div class="portal-item locked" id="p-wf" data-pcat="ops">
+            <span class="role-badge">🛍️ DIGITAL COMMERCE</span>
+            <h3>White Feather &amp; eCommerce Hub</h3>
+            <p>Digital products, enterprise cohorts, and curated intelligence feeds.</p>
+            <a href="whitefeather-ecommerce-hub.html" class="portal-link">Open Commerce →</a>
           </div>
 
-          <div class="portal-item locked" id="p-saas" data-customer-default="1" style="border-color: var(--gold); box-shadow: 0 0 22px rgba(245, 158, 11, 0.18);">
-            <span class="role-badge" style="background: rgba(16, 185, 129, 0.18); color: var(--emerald);">COLLECTION 05 // MONETIZED APPS, LMS &amp; CLIENT SHOWCASE</span>
-            <h3>Decoupled Apps, Subscriber LMS, Leaderboards, AI Coach &amp; Custom Build Showcase</h3>
-            <p>Pay-Per-View ($19) &amp; Pro Subscription ($99/mo) access to Decoupled Apps (Traffic Simulator, EVE-NG Studio, SAM.gov Matcher), Course LMS Trackers, Leaderboards, AI Coach, and Customer-Satisfaction Project Configurator.</p>
-            <a href="saas-apps-and-lms-showcase.html" class="portal-link" style="background: rgba(245, 158, 11, 0.2); border-color: var(--gold); color: var(--gold);">Launch Apps, LMS &amp; Showcase →</a>
-          </div>
-
-          <div class="portal-item locked" id="p-1">
-            <span class="role-badge">INTERNAL SITE 06 // VIEWER &amp; ADMIN ACCESS</span>
+          <div class="portal-item locked" id="p-1" data-pcat="ops">
+            <span class="role-badge">📊 DATA GOVERNANCE</span>
             <h3>Data Commerce, SAS &amp; CIPP Hub</h3>
-            <p>Internal capability matrix covering HIPAA Safe Harbor, GLBA/FCRA, SAS ModelOps (A00-440), and Pentagon ORSA architecture.</p>
-            <a href="index.html?mode=viewer" class="portal-link">Open Internal Data Hub →</a>
+            <p>HIPAA Safe Harbor, GLBA/FCRA, SAS ModelOps (A00-440), and privacy governance.</p>
+            <a href="index.html?mode=viewer" class="portal-link">Open Data Hub →</a>
           </div>
 
-          <div class="portal-item locked" id="p-2">
-            <span class="role-badge">INTERNAL SITE 07 // VIEWER &amp; ADMIN ACCESS</span>
-            <h3>Visual Cloud Agent &amp; LangGraph Studio</h3>
-            <p>Interactive topology of MGC's Google Cloud Run, Microsoft Copilot Studio, and Local RTX 5050 LangGraph agents.</p>
-            <a href="agent-workflow-studio.html?mode=viewer" class="portal-link">Open Visual Agent Studio →</a>
+          <div class="portal-item locked" id="p-edu" data-pcat="ai">
+            <span class="role-badge">🎓 ACADEMY &amp; LABS</span>
+            <h3>eLearning &amp; EVE-NG Academy</h3>
+            <p>15-topology EVE-NG workbench, Ghost-CLI auto-grader, and certification paths.</p>
+            <a href="elearning-upskilling-hub.html" class="portal-link">Open Academy →</a>
           </div>
 
-          <div class="portal-item locked" id="p-3">
-            <span class="role-badge">INTERNAL SITE 08 // VIEWER &amp; ADMIN ACCESS</span>
-            <h3>3D Geospatial Command (&lt;gmp-map-3d&gt;)</h3>
-            <p>Zero-seat-cost Photorealistic 3D Tiles command center mapping Richmond HQ, Sterling/Dulles, and Pentagon Corridors.</p>
-            <a href="earth-3d.html?mode=viewer" class="portal-link">Open 3D Geospatial View →</a>
+          <div class="portal-item locked" id="p-hist" data-pcat="ai">
+            <span class="role-badge">🏛️ EPIGRAPHY &amp; AI</span>
+            <h3>Historical &amp; Chronos AI Lab</h3>
+            <p>Geodesic excavation maps, epigraphy analysis, and Chronos Discovery WebApp.</p>
+            <a href="historical-archaeology-ai-hub.html" class="portal-link">Open History Lab →</a>
+          </div>
+
+          <div class="portal-item locked" id="p-2" data-pcat="ai">
+            <span class="role-badge">🤖 CLOUD AGENTS</span>
+            <h3>Visual Cloud Agent Studio</h3>
+            <p>Multi-agent orchestration across Google Cloud Run, Copilot Studio, and LangGraph.</p>
+            <a href="agent-workflow-studio.html?mode=viewer" class="portal-link">Open Agent Studio →</a>
+          </div>
+
+          <div class="portal-item locked" id="p-3" data-pcat="ai">
+            <span class="role-badge">🌍 3D GEOSPATIAL</span>
+            <h3>3D Geospatial Command</h3>
+            <p>Zero-seat-cost Photorealistic 3D Tiles mapping Virginia &amp; NC operational corridors.</p>
+            <a href="earth-3d.html?mode=viewer" class="portal-link">Open 3D Earth →</a>
           </div>
         </div>
 
-        <details style="margin-top:16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 14px;">
-          <summary style="cursor:pointer;font-size:0.78rem;font-weight:800;color:var(--cyan);list-style:none;display:flex;justify-content:space-between;align-items:center;">
-            <span>🛡️ Active 2FA Verified Session Roster (Root Admin &amp; Enterprise Client)</span>
-            <span style="color:var(--muted);font-size:0.72rem;">Click to expand ▾</span>
+        <details style="margin-top:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 13px;">
+          <summary style="cursor:pointer;font-size:0.75rem;font-weight:800;color:var(--cyan);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+            <span>🛡️ Active 2FA Verified Session Roster</span>
+            <span style="color:var(--muted);font-size:0.7rem;">Expand ▾</span>
           </summary>
-          <table class="roster-table" style="margin-top:10px;">
+          <table class="roster-table" style="margin-top:8px;">
             <thead>
               <tr>
                 <th>2FA Verified Identity</th>
@@ -339,6 +334,19 @@
     let currentSessionIsAdmin = false;
     let portalUnlockedState = false;
 
+    function filterPortalDirectory(cat) {
+      document.querySelectorAll('#portal-cat-tabs [data-pcat-btn]').forEach(btn => {
+        const active = btn.getAttribute('data-pcat-btn') === cat;
+        btn.style.borderColor = active ? 'rgba(56,189,248,0.45)' : 'transparent';
+        btn.style.background = active ? 'rgba(56,189,248,0.18)' : 'transparent';
+        btn.style.color = active ? '#fff' : '#cbd5e1';
+      });
+      document.querySelectorAll('#portal-grid .portal-item').forEach(card => {
+        const match = cat === 'all' || card.getAttribute('data-pcat') === cat;
+        card.style.display = match ? '' : 'none';
+      });
+    }
+
     function showAuthAlert(msg) {
       const box = document.getElementById('ob-auth-alert');
       if (!box) return;
@@ -358,6 +366,11 @@
         document.getElementById('ob-email').value = 'malik.khabir@miltongroupsecurity.org';
         document.getElementById('ob-track').value = 'ALL_INTERNAL_VIEW';
         document.getElementById('ob-totp').value = '440921';
+      } else if (mode === 'register') {
+        document.getElementById('ob-name').value = 'Jordan Vance (Vance Defense LLC)';
+        document.getElementById('ob-email').value = 'jordan.vance@vancedefense.com';
+        document.getElementById('ob-track').value = 'CUSTOMER_RESTRICTED';
+        document.getElementById('ob-totp').value = '250100';
       } else {
         document.getElementById('ob-name').value = 'Sterling Auto Repair Customer';
         document.getElementById('ob-email').value = 'customer@sterlingautorepairva.com';
@@ -627,9 +640,11 @@
       setPortalsUnlockedUI(true, res.email + ' · ' + OB_SSO_LABELS[res.ssoProvider], res.isAdmin);
 
       const tbody = document.getElementById('roster-body');
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td><code>' + res.email + '</code> (' + name + ')</td><td>' + track + '</td><td style="color:#38bdf8;font-weight:700;">' + (res.isAdmin ? 'ROOT_SUPER_ADMIN (8/8 APPS)' : 'CUSTOMER_RESTRICTED (2/8 APPS)') + '</td><td style="color:#10b981;">✔ ' + OB_SSO_LABELS[res.ssoProvider] + ' + ' + res.mfaMethod + '</td>';
-      tbody.appendChild(tr);
+      if (tbody) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td><code>' + res.email + '</code> (' + name + ')</td><td>' + track + '</td><td style="color:#38bdf8;font-weight:700;">' + (res.isAdmin ? 'ROOT_SUPER_ADMIN (8/8 APPS)' : 'CUSTOMER_RESTRICTED (2/8 APPS)') + '</td><td style="color:#10b981;">✔ ' + OB_SSO_LABELS[res.ssoProvider] + ' + ' + res.mfaMethod + '</td>';
+        tbody.appendChild(tr);
+      }
 
       if (res.isAdmin) {
         window.location.href = 'admin-command-portal.html?mgc_verify=1&sso=' + encodeURIComponent(res.ssoProvider) + '&role=OWNER_ADMIN&email=' + encodeURIComponent(res.email) + '&mfa=' + encodeURIComponent(res.mfaMethod) + '&token=' + encodeURIComponent(token);
@@ -808,20 +823,7 @@
     <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
   </div>
 </div>
-<div id="mgc-scorm-floating-dock">
-  <span style="color:#fbbf24;font-weight:800;">● SCORM 2004 4th Ed.</span>
-  <span style="color:#94a3b8;" id="mgc-dock-label">Onboarding Portal • miltongroupsecurity.org Cityscape</span>
-  <select onchange="window.switchInjectedCityscape(this.value)" style="background:#0B1426;color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
-    <option value="mgc-cityscape">🎨 Switch Cityscape / Filter ▾</option>
-    <option value="fix-cityscape">🏙️ F.I.X. Cityscape (Mission Navy &amp; Gold)</option>
-    <option value="mgc-cityscape">🇺🇸 miltongroupsecurity.org Cityscape (Flag + Sunset)</option>
-    <option value="noir-greyscale">🎬 Tactical Noir 100% Greyscale</option>
-    <option value="emerald-matrix">🌱 Tactical Emerald Luminosity</option>
-  </select>
-  <a href="projects/client-turnkey-forge/index.html" style="background:linear-gradient(135deg,#C5B358,#a38f36);color:#060B16;">🚀 Multi-Page SCORM OS</a>
-  <a href="projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip" download style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.45);">📦 SCORM .ZIP</a>
-  <button onclick="window.commitInjectedScorm()" style="background:rgba(30,41,59,0.9);color:#e2e8f0;border:1px solid rgba(197,179,88,0.35);">Complete SCO ✓</button>
-</div>
+
 <script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
 <script>
   window.switchInjectedCityscape = function(mode) {

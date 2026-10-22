@@ -553,13 +553,16 @@
       } catch (_) {}
     }
 
-    const id = W.submitRequest(payload);
+    let id = receipt && receipt.uid ? receipt.uid : W.submitRequest(payload);
     if (!id) {
-      const lastErr = W.lastIntakeResult && W.lastIntakeResult.error;
+      const lastErr = (receipt && receipt.error) || (W.lastIntakeResult && W.lastIntakeResult.error);
       errEl.textContent = lastErr || 'Intake submission blocked by security policy.';
       return;
     }
     if (!receipt) receipt = W.lastIntakeResult || {};
+    if (receipt && receipt.user && W.S && W.S.users) {
+      W.S.users[id] = receipt.user;
+    }
 
     W.signInAs(id, ssoProvider);
 
@@ -702,19 +705,7 @@
     <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
   </div>
 </div>
-<div id="mgc-scorm-floating-dock">
-  <span style="color:#fbbf24;font-weight:800;">● SCORM 2004 4th Ed.</span>
-  <span style="color:#94a3b8;" id="mgc-dock-label">Executive Intake • Dual Cityscape</span>
-  <select onchange="window.switchInjectedCityscape(this.value)" style="background:#0B1426;color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
-    <option value="mgc-cityscape">🎨 Switch Cityscape / Filter ▾</option>
-    <option value="fix-cityscape">🏙️ F.I.X. Cityscape (Mission Navy &amp; Gold)</option>
-    <option value="mgc-cityscape">🇺🇸 miltongroupsecurity.org Cityscape (Flag + Sunset)</option>
-    <option value="noir-greyscale">🎬 Tactical Noir 100% Greyscale</option>
-    <option value="emerald-matrix">🌱 Tactical Emerald Luminosity</option>
-  </select>
-  <a href="projects/client-turnkey-forge/index.html" style="background:linear-gradient(135deg,#C5B358,#a38f36);color:#060B16;">🚀 Turnkey Forge OS</a>
-  <button onclick="window.commitInjectedScorm()" style="background:rgba(30,41,59,0.9);color:#e2e8f0;border:1px solid rgba(197,179,88,0.35);">Complete SCO ✓</button>
-</div>
+
 <script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
 <script>
   window.switchInjectedCityscape = function(mode) {

@@ -38,43 +38,54 @@
   function appsPanelHtml() {
     const apps = W.APPS_CATALOG || [];
     if (!apps.length) return '';
-    const unlockedCount = apps.filter(a => W.can(u, 'app', a.id, 'view')).length;
-    const rows = apps.map(a => {
+    const unlockedApps = apps.filter(a => W.can(u, 'app', a.id, 'view'));
+    const lockedApps = apps.filter(a => !W.can(u, 'app', a.id, 'view'));
+
+    const renderAppCard = (a) => {
       const allowed = W.can(u, 'app', a.id, 'view');
       const badge = allowed
-        ? '<span class="chip ok">' + (u.role === 'owner' ? '👑 Owner Full Access' : a.defaultCustomer ? '✅ Default Customer Access' : '✅ Owner Granted') + '</span>'
-        : '<span class="chip warn">🔒 Restricted on Customer Login</span>';
+        ? '<span class="chip ok">' + (u.role === 'owner' ? '👑 Owner' : a.defaultCustomer ? '✅ Default Unlocked' : '✅ Granted') + '</span>'
+        : '<span class="chip warn">🔒 Restricted</span>';
       const act = allowed
         ? '<a class="btn pri" href="' + esc(a.href) + '">Launch App →</a>'
-        : '<button class="btn" data-req-app="' + esc(a.id) + '">Request Owner Unlock →</button> <a class="btn" href="saas-apps-and-lms-showcase.html">Preview Tier →</a>';
-      return '<div class="card" style="border-color:' + (allowed ? 'rgba(16,185,129,0.45)' : 'rgba(148,163,184,0.22)') + ';opacity:' + (allowed ? '1' : '1') + '">' +
-        '<div class="row"><h2>' + a.icon + ' ' + esc(a.title) + '</h2>' + badge + '</div>' +
-        '<p style="margin:6px 0 10px">' + (allowed ? 'Unlocked in your session. Full interactive SCORM 2004 &amp; workspace access enabled.' : 'Restricted by default on customer login. Requires Owner entitlement grant in Access Admin or Pro Subscription.') + '</p>' +
+        : '<button class="btn" data-req-app="' + esc(a.id) + '">Request Owner Unlock →</button> <a class="btn" href="saas-apps-and-lms-showcase.html">Preview →</a>';
+      return '<div class="compact-card" style="border-color:' + (allowed ? 'rgba(16,185,129,0.42)' : 'rgba(148,163,184,0.2)') + '">' +
+        '<div><div class="row"><h3>' + a.icon + ' ' + esc(a.title) + '</h3>' + badge + '</div>' +
+        '<p>' + (allowed ? 'Ready in your workspace session.' : 'Restricted on customer login. Request Owner unlock or upgrade.') + '</p></div>' +
         '<div class="row" style="justify-content:flex-start;gap:8px">' + act + '</div></div>';
-    }).join('');
-    return '<div class="card" style="margin-bottom:14px;border-color:rgba(197,179,88,0.45)">' +
-      '<div class="row"><div><h2>🛡️ App Entitlements (' + unlockedCount + '/' + apps.length + ' Apps Unlocked)</h2>' +
-      '<p>Default Customer Login automatically unlocks <b>Client Turnkey Forge</b> and <b>Sterling Auto Repair</b>. Enterprise SCORM 2004 apps remain restricted until granted by the Owner.</p></div>' +
-      '<span class="chip ' + (u.role === 'owner' ? 'ok' : 'warn') + '">' + (u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED') + '</span></div></div>' +
-      '<div class="grid" style="margin-bottom:18px">' + rows + '</div>';
+    };
+
+    return '<div class="card" style="padding:18px 20px">' +
+      '<div class="row" style="margin-bottom:12px"><div><h2 style="margin:0">🚀 Unlocked Applications (' + unlockedApps.length + '/' + apps.length + ')</h2><p style="margin:2px 0 0">Launch your provisioned customer deliverables and interactive workspaces.</p></div>' +
+      '<span class="chip ' + (u.role === 'owner' ? 'ok' : 'warn') + '">' + (u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED') + '</span></div>' +
+      '<div class="bento-2">' + unlockedApps.map(renderAppCard).join('') + '</div>' +
+      (lockedApps.length ? '<details style="margin-top:14px"><summary>🔒 Restricted Enterprise SCORM Apps (' + lockedApps.length + ' available via Owner Unlock)</summary><div class="bento-2" style="margin-top:12px">' + lockedApps.map(renderAppCard).join('') + '</div></details>' : '') +
+      '</div>';
   }
 
   function pagesPanel() {
-    const cards = W.CATALOG.map(c => {
+    const readyCards = [];
+    const addonCards = [];
+    W.CATALOG.forEach(c => {
       const st = u.pages[c.id];
       const includedByQuote = ((W.TAILOR[u.quote.interest] || { pages: [] }).pages).includes(c.id);
       const mine = u.role === 'owner' || c.base || includedByQuote || (u.plan.addons || []).includes(c.id);
       const ok = W.can(u, 'page', c.id, 'view');
-      let body, action;
-      if (st === 'pending') { body = '<div class="skel" style="height:44px;border-radius:9px;background:var(--card2);margin:8px 0"></div><span class="chip warn">Pending · being created for you</span>'; action = ''; }
-      else if (ok) { body = '<p>' + esc(c.desc) + '</p><span class="chip ok">Ready</span>'; action = '<button class="btn pri" data-open="' + c.id + '">Open →</button>'; }
-      else if (st === 'ready' && !gated()) { body = '<p>' + esc(c.desc) + '</p>'; action = ''; }
-      else if (!mine && u.role !== 'owner') { body = '<p>' + esc(c.desc) + '</p><span class="chip">Add-on · $' + c.price + '/mo</span>'; action = '<button class="btn" data-addon="' + c.id + '"' + (u.plan.base ? '' : ' disabled title="Activate base plan first"') + '>Add page</button>'; }
-      else { body = '<p>' + esc(c.desc) + '</p><span class="chip">' + (gated() ? 'Locked · activate plan' : 'Restricted · Owner approval') + '</span>'; action = ''; }
-      if ((u.plan.addons || []).includes(c.id) && st !== 'ready' && st !== 'pending') body += '<span class="chip warn">Queued</span>';
-      return '<div class="card"><div class="row"><h2>' + c.icon + ' ' + esc(c.title) + '</h2><span class="chip">' + c.kind + '</span></div>' + body + '<div style="margin-top:8px">' + action + '</div></div>';
-    }).join('');
-    return appsPanelHtml() + '<h2 style="margin:12px 0 10px">Workspace Pages &amp; Internal Hubs</h2><div class="grid">' + cards + '</div>' + (open ? preview(open) : '');
+      let badge, action;
+      if (st === 'pending') { badge = '<span class="chip warn">Pending Build</span>'; action = ''; }
+      else if (ok) { badge = '<span class="chip ok">Ready</span>'; action = '<button class="btn pri" data-open="' + c.id + '">Open →</button>'; }
+      else if (!mine && u.role !== 'owner') { badge = '<span class="chip">Add-on</span>'; action = '<button class="btn" data-addon="' + c.id + '"' + (u.plan.base ? '' : ' disabled title="Activate base plan first"') + '>Add Module</button>'; }
+      else { badge = '<span class="chip">' + (gated() ? 'Locked' : 'Owner Approval') + '</span>'; action = ''; }
+      const html = '<div class="compact-card"><div><div class="row"><h3>' + c.icon + ' ' + esc(c.title) + '</h3>' + badge + '</div><p>' + esc(c.desc) + '</p></div>' + (action ? '<div>' + action + '</div>' : '') + '</div>';
+      if (ok || st === 'pending') readyCards.push(html);
+      else addonCards.push(html);
+    });
+    return appsPanelHtml() +
+      (open ? preview(open) : '') +
+      '<div class="card" style="padding:18px 20px"><div class="row" style="margin-bottom:12px"><div><h2 style="margin:0">📂 Workspace Modules (' + readyCards.length + ' Ready)</h2><p style="margin:2px 0 0">Core workspace pages and tailored hubs provisioned for your account.</p></div></div>' +
+      '<div class="bento-2">' + readyCards.join('') + '</div>' +
+      (addonCards.length ? '<details style="margin-top:14px"><summary>➕ Available Add-On Modules (' + addonCards.length + ')</summary><div class="bento-2" style="margin-top:12px">' + addonCards.join('') + '</div></details>' : '') +
+      '</div>';
   }
 
   function preview(id) {
@@ -116,7 +127,15 @@
     return '<div class="card" id="inbox"><h2>Notifications</h2>' + (list.length ? list.map(n => '<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="row"><b style="font-size:13px">' + esc(n.title) + '</b><span class="chip">' + esc(n.channel) + '</span></div><p>' + esc(n.body) + '</p></div>').join('') : '<p>Nothing yet.</p>') + '</div>';
   }
 
-  const TABS = [['pages', 'My Apps & Pages', pagesPanel], ['actions', 'Action items', actionsPanel], ['resources', 'Resources', resourcesPanel], ['workflows', 'Workflows', workflowsPanel], ['features', 'Feature requests', featuresPanel], ['billing', 'Billing', billingPanel], ['inbox', 'Inbox', inboxPanel]];
+  const TABS = [
+    ['pages', '🚀 Active Apps & Modules', pagesPanel],
+    ['actions', '✅ Action Checklist', actionsPanel],
+    ['resources', '📚 Curated Resources', resourcesPanel],
+    ['workflows', '⚡ Guided Workflows', workflowsPanel],
+    ['features', '💡 Feature Requests', featuresPanel],
+    ['billing', '💳 Plan & Add-Ons', billingPanel],
+    ['inbox', '🔔 Notifications', inboxPanel]
+  ];
   const needsActive = ['actions', 'resources', 'workflows'];
 
   function render() {
@@ -125,15 +144,29 @@
     if (u.status === 'denied') body = '';
     else if (needsActive.includes(tab) && u.role !== 'owner' && !W.subActive(u)) body = '<div class="card lock"><h2>🔒 Locked until your workspace is active</h2><p>Complete the steps above to unlock this section.</p></div>';
     else body = (TABS.find(t => t[0] === tab) || TABS[0])[2]();
-    const nav = '<div class="row" style="margin:12px 0"><div class="nav">' + TABS.map(t => '<button class="btn' + (t[0] === tab ? ' pri' : '') + '" data-tab="' + t[0] + '">' + t[1] + '</button>').join('') + '</div><select id="tabSel" aria-label="Section">' + TABS.map(t => '<option value="' + t[0] + '"' + (t[0] === tab ? ' selected' : '') + '>' + t[1] + '</option>').join('') + '</select></div>';
-    app.innerHTML = '<h1>Welcome, ' + esc(u.name.split(' (')[0]) + '</h1><p>' + ((W.TAILOR[u.quote.interest] || {}).label || 'Tailored Customer Workspace') + ' · ' + (u.brand === 'FIX' ? 'F.I.X Solutions' : 'Milton Group Concepts') + ' · <b>' + (u.role === 'owner' ? 'Owner Full Access' : 'Default Restricted Customer Access') + '</b></p>' + banner() + nav + body;
+
+    const apps = W.APPS_CATALOG || [];
+    const unlockedCount = apps.filter(a => W.can(u, 'app', a.id, 'view')).length;
+    const kpiHtml = '<div class="kpi-strip">' +
+      '<div class="kpi-tile"><small>Access Tier</small><strong>' + (u.role === 'owner' ? 'Owner Full' : 'Customer Tier') + '</strong></div>' +
+      '<div class="kpi-tile"><small>Unlocked Apps</small><strong>' + unlockedCount + ' / ' + apps.length + ' Ready</strong></div>' +
+      '<div class="kpi-tile"><small>Workspace Track</small><strong>' + esc(((W.TAILOR[u.quote.interest] || {}).label || 'Custom Scope')) + '</strong></div>' +
+      '</div>';
+
+    const sideNav = '<aside class="ws-side" aria-label="Workspace Navigation">' +
+      '<div class="ws-side-title">Workspace Views</div>' +
+      TABS.map(t => '<button type="button" class="ws-nav-btn' + (t[0] === tab ? ' active' : '') + '" data-tab="' + t[0] + '"><span>' + t[1] + '</span></button>').join('') +
+      '</aside>';
+
+    app.innerHTML = '<div style="margin-bottom:14px"><div class="row"><div><h1 style="margin:0">Welcome, ' + esc(u.name.split(' (')[0]) + '</h1><p style="margin:2px 0 0">' + (u.brand === 'FIX' ? 'F.I.X Solutions' : 'Milton Group Concepts') + ' · <b>' + (u.role === 'owner' ? 'Owner Full Access' : 'Default Restricted Customer Access') + '</b></p></div></div></div>' +
+      banner() +
+      '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + kpiHtml + body + '</div></div>';
     W.header('member-portal.html');
     bind();
   }
 
   function bind() {
     app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; open = null; render(); });
-    const sel = document.getElementById('tabSel'); if (sel) sel.onchange = () => { tab = sel.value; open = null; render(); };
     app.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { if (W.can(u, 'page', b.dataset.open, 'view')) { open = b.dataset.open; render(); } });
     app.querySelectorAll('[data-req-app]').forEach(b => b.onclick = () => { if (W.requestAppAccess) W.requestAppAccess(b.dataset.reqApp); W.toast('Unlock request sent to Owner — you will be notified when granted'); b.textContent = '✓ Request Sent to Owner'; b.disabled = true; });
     const cp = document.getElementById('closePrev'); if (cp) cp.onclick = () => { open = null; render(); };
@@ -246,20 +279,7 @@
     <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
   </div>
 </div>
-<div id="mgc-scorm-floating-dock">
-  <span style="color:#fbbf24;font-weight:800;">● SCORM 2004 4th Ed.</span>
-  <span style="color:#94a3b8;" id="mgc-dock-label">Member Portal • F.I.X. Cityscape</span>
-  <select onchange="window.switchInjectedCityscape(this.value)" style="background:#0B1426;color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
-    <option value="fix-cityscape">🎨 Switch Cityscape / Filter ▾</option>
-    <option value="fix-cityscape">🏙️ F.I.X. Cityscape (Mission Navy &amp; Gold)</option>
-    <option value="mgc-cityscape">🇺🇸 miltongroupsecurity.org Cityscape (Flag + Sunset)</option>
-    <option value="noir-greyscale">🎬 Tactical Noir 100% Greyscale</option>
-    <option value="emerald-matrix">🌱 Tactical Emerald Luminosity</option>
-  </select>
-  <a href="saas-apps-and-lms-showcase.html" style="background:linear-gradient(135deg,#C5B358,#a38f36);color:#060B16;">🚀 Multi-Page SCORM OS</a>
-  <a href="projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip" download style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.45);">📦 SCORM .ZIP</a>
-  <button onclick="window.commitInjectedScorm()" style="background:rgba(30,41,59,0.9);color:#e2e8f0;border:1px solid rgba(197,179,88,0.35);">Complete SCO ✓</button>
-</div>
+
 <script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
 <script>
   window.switchInjectedCityscape = function(mode) {

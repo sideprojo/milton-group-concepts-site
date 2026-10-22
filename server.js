@@ -1243,6 +1243,21 @@ const server = http.createServer(async (req, res) => {
         });
       }
       user.ssoProvider = provider;
+      if (name && user.role !== 'owner') user.name = sanitizeInput(name, 80);
+      if (body.org && user.role !== 'owner') user.org = sanitizeInput(body.org, 120);
+      if (body.interest && TAILOR[body.interest] && user.role !== 'owner') {
+        user.quote = Object.assign({}, user.quote || {}, { interest: body.interest });
+      }
+      if (user.role !== 'owner' && !S.requests.some(r => r.uid === user.id)) {
+        S.requests.unshift({
+          id: uid('intake'),
+          uid: user.id,
+          interest: (user.quote && user.quote.interest) || 'ai-web',
+          org: user.org || 'MGC Partner',
+          status: 'requested',
+          created: now()
+        });
+      }
       const sessionToken = signToken({
         uid: user.id,
         email: user.email,
@@ -1539,10 +1554,30 @@ const server = http.createServer(async (req, res) => {
       const restrictedApps = APPS_CATALOG.filter(a => !S.users[id].allowedApps.includes(a.id)).map(a => a.id);
       const integrityHash = 'SHA256-' + crypto.createHash('sha256').update(`${id}:${cleanEmail}:${rawProv}:CUSTOMER_RESTRICTED:${SESSION_SECRET}`).digest('hex').slice(0, 24);
 
+      if (d.subscribeNewsletter !== false) {
+        if (!S.newsletter) S.newsletter = seedState().newsletter;
+        const nlTrack = interestKey === 'federal' ? 'SDVOSB_FEDERAL' : interestKey === 'cyber' ? 'ZERO_TRUST_CYBER' : interestKey === 'ai-web' ? 'AI_AUTOMATION' : 'ALL';
+        const existingSub = (S.newsletter.subscribers || []).find(s => s.email === cleanEmail);
+        if (!existingSub) {
+          S.newsletter.subscribers.unshift({
+            email: cleanEmail,
+            name: cleanName,
+            track: nlTrack,
+            frequency: 'weekly',
+            subscribedAt: now(),
+            verified: true
+          });
+        }
+      }
+
       notifyUser(id, 'Intake Verified · Default Restricted Customer Access Active', `Receipt ${reqId}: Your default restricted workspace (Client Turnkey Forge & Sterling Auto Showcase) is unlocked now. Tailored pages (${queuedPages.join(', ')}) are queued for Owner approval.`);
       notifyUser('owner', 'New Customer Intake Verified (Default Restricted)', `${cleanName}${cleanOrg ? ' (' + cleanOrg + ')' : ''} [${cleanEmail}] completed intake via ${SSO_PROVIDER_LABELS[rawProv]} (${(TAILOR[interestKey] || {}).label}).`, 'in-app + email + push');
       logAudit(id, `intake.verified.${rawProv}`, `${cleanEmail} [CUSTOMER_RESTRICTED | mfa:${mfaMethod}]`);
       saveState(S);
+
+      const mobileClient = isMobileRequest(req, parsedUrl);
+      const reqNext = d.next ? toCleanRoute(String(d.next).trim()) : '';
+      const targetRedirect = mobileClient ? '/mobile' : ((reqNext && reqNext !== '/auth' && reqNext !== '/login') ? reqNext : '/workspace');
 
       const sessionToken = signToken({
         uid: id,
@@ -1554,8 +1589,10 @@ const server = http.createServer(async (req, res) => {
       });
       return sendJson(res, 200, {
         ok: true,
+        registered: true,
         intakeReceipt: reqId,
         uid: id,
+        user: S.users[id],
         email: cleanEmail,
         name: cleanName,
         org: S.users[id].org,
@@ -1572,12 +1609,34 @@ const server = http.createServer(async (req, res) => {
         restrictedApps,
         allowedPortals: DEFAULT_CUSTOMER_PORTALS,
         queuedTailoredPages: queuedPages,
-        redirect: '/workspace',
+        redirect: targetRedirect,
         state: scopeStateForUser(S.users[id])
       }, {
         'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
       });
     };
+
+    if (pathname === '/api/auth/session' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      return sendJson(res, 200, {
+        ok: true,
+        authenticated: Boolean(u),
+        user: u ? {
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          org: u.org || 'Milton Group Concepts Partner',
+          role: u.role,
+          status: u.status,
+          accessTier: u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+          ssoProvider: u.ssoProvider || 'google',
+          ndaAccepted: Boolean(u.ndaAccepted),
+          mfaVerified: Boolean(u.mfaVerified),
+          allowedApps: u.role === 'owner' ? APPS_CATALOG.map(a => a.id) : APPS_CATALOG.filter(a => can(u, 'app', a.id, 'view')).map(a => a.id),
+          allowedPortals: u.role === 'owner' ? ['*'] : DEFAULT_CUSTOMER_PORTALS
+        } : null
+      });
+    }
 
     if (pathname === '/api/intake/verify' && req.method === 'GET') {
       const u = getAuthenticatedUser(req);
@@ -1616,7 +1675,7 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    if (pathname === '/api/intake' && req.method === 'POST') {
+    if ((pathname === '/api/intake' || pathname === '/api/auth/register') && req.method === 'POST') {
       const body = await readJsonBody(req);
       return handleCustomerIntakeSubmission(body.data || body || {});
     }
@@ -1626,8 +1685,8 @@ const server = http.createServer(async (req, res) => {
       const body = await readJsonBody(req);
       const act = body.action;
 
-      // Public action: submit customer intake / access request
-      if (act === 'submitRequest') {
+      // Public action: submit customer intake / access request / user registration
+      if (act === 'submitRequest' || act === 'registerUser') {
         return handleCustomerIntakeSubmission(body.data || body || {});
       }
 

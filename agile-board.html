@@ -61,24 +61,35 @@
     const vis = visible();
     if (!pid || !vis.find(p => p.id === pid)) pid = vis[0] && vis[0].id;
     const curProj = pid ? S().projects[pid] : null;
-    const tabs = [['board', 'Board'], ['plan', 'Sprint & ceremonies'], ['features', 'Feature requests']];
+    const tabs = [['board', '📋 Kanban Board'], ['plan', '📈 Sprint & Ceremonies'], ['features', '💡 Feature Requests']];
     let body;
     if (view === 'features') body = features();
     else if (!pid) body = '<div class="card lock"><h2>No shared projects yet</h2><p>Projects appear here only when the owner shares them with you.</p></div>';
-    else if (view === 'plan') body = '<div class="grid">' + burndown(pid) + ceremonies(pid) + '</div>';
+    else if (view === 'plan') body = '<div class="bento-2">' + burndown(pid) + ceremonies(pid) + '</div>';
     else body = board(pid) + (canEdit(pid) ? '<div class="card" style="margin-top:10px"><div class="row" style="justify-content:flex-start"><input id="nt" placeholder="New story / task / bug" style="flex:1;min-width:200px"><select id="ntype"><option>story</option><option>task</option><option>bug</option></select><select id="npts"><option>1</option><option>2</option><option>3</option><option selected>5</option><option>8</option></select><button class="btn pri" id="nadd">Add to backlog</button></div></div>' : '<p>You have view-only access to this project.</p>');
     const projMeta = curProj && (curProj.demoUrl || curProj.budget)
-      ? '<div class="row" style="margin-top:8px;justify-content:flex-start">' +
-        (curProj.budget ? '<span class="chip ok">💰 Scope: ' + esc(curProj.budget) + '</span>' : '') +
-        (curProj.demoUrl ? '<a class="btn pri" href="' + esc(curProj.demoUrl) + '">🚀 Open Live Project Deliverable ↗</a>' : '') +
+      ? '<div class="nav">' +
+        (curProj.budget ? '<span class="chip ok">💰 ' + esc(curProj.budget) + '</span>' : '') +
+        (curProj.demoUrl ? '<a class="btn pri" href="' + esc(curProj.demoUrl) + '">🚀 Live Deliverable ↗</a>' : '') +
         '</div>'
       : '';
-    app.innerHTML = '<div class="card" style="margin-bottom:14px"><div class="row"><div><span class="chip">Agile Project Delivery</span><h1 style="margin-top:6px">Agile Projects &amp; Client Deliverables</h1><p>Manage client project sprints (including Sterling Auto Repair) and internal deliverables in one place.</p>' + projMeta + '</div><div class="nav"><select id="proj" aria-label="Project">' + vis.map(p => '<option value="' + p.id + '"' + (p.id === pid ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select><select id="viewSel">' + tabs.map(t => '<option value="' + t[0] + '"' + (t[0] === view ? ' selected' : '') + '>' + t[1] + '</option>').join('') + '</select></div></div></div><div style="margin-top:12px">' + body + '</div>';
+    app.innerHTML =
+      '<div class="card" style="margin-bottom:12px">' +
+        '<div class="row">' +
+          '<div><span class="chip">Agile Delivery</span><h1 style="margin:4px 0 2px;font-size:20px">Agile Projects &amp; Deliverables</h1><p style="font-size:12px">Manage sprint backlog, client deliverables, and feature votes.</p></div>' +
+          '<div class="nav">' +
+            '<select id="proj" aria-label="Project">' + vis.map(p => '<option value="' + p.id + '"' + (p.id === pid ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select>' +
+            tabs.map(t => '<button class="btn' + (t[0] === view ? ' pri' : '') + '" data-vtab="' + t[0] + '">' + t[1] + '</button>').join('') +
+            projMeta +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div>' + body + '</div>';
     W.header('agile-board.html'); bind();
   }
   function bind() {
     const pr = document.getElementById('proj'); if (pr) pr.onchange = (e) => { pid = e.target.value; render(); };
-    document.getElementById('viewSel').onchange = (e) => { view = e.target.value; render(); };
+    app.querySelectorAll('[data-vtab]').forEach(b => b.onclick = () => { view = b.dataset.vtab; render(); });
     app.querySelectorAll('[data-mv]').forEach(b => b.onclick = () => { const [id, d] = b.dataset.mv.split(':'); const it = S().items.find(i => i.id === id); if (!canEdit(it.project)) return; const i = COLS.findIndex(c => c[0] === it.col) + Number(d); if (COLS[i]) { it.col = COLS[i][0]; W.log(u.id, 'item.move', it.title + ' → ' + it.col); W.commit(); render(); } });
     const na = document.getElementById('nadd'); if (na) na.onclick = () => { const t = document.getElementById('nt').value.trim(); if (!t || !canEdit(pid)) return; S().items.push({ id: W.uid('i'), project: pid, type: document.getElementById('ntype').value, title: t, points: Number(document.getElementById('npts').value), col: 'backlog', sprint: 0, assignee: '', createdBy: u.id }); W.log(u.id, 'item.create', t); W.commit(); render(); };
     app.querySelectorAll('[data-note]').forEach(t => t.onchange = () => localStorage.setItem('mgcw.notes.' + t.dataset.note, JSON.stringify(t.value)));
@@ -189,20 +200,7 @@
     <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
   </div>
 </div>
-<div id="mgc-scorm-floating-dock">
-  <span style="color:#fbbf24;font-weight:800;">● SCORM 2004 4th Ed.</span>
-  <span style="color:#94a3b8;" id="mgc-dock-label">Agile Board • miltongroupsecurity.org Cityscape</span>
-  <select onchange="window.switchInjectedCityscape(this.value)" style="background:#0B1426;color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
-    <option value="mgc-cityscape">🎨 Switch Cityscape / Filter ▾</option>
-    <option value="fix-cityscape">🏙️ F.I.X. Cityscape (Mission Navy &amp; Gold)</option>
-    <option value="mgc-cityscape">🇺🇸 miltongroupsecurity.org Cityscape (Flag + Sunset)</option>
-    <option value="noir-greyscale">🎬 Tactical Noir 100% Greyscale</option>
-    <option value="emerald-matrix">🌱 Tactical Emerald Luminosity</option>
-  </select>
-  <a href="projects/client-turnkey-forge/index.html" style="background:linear-gradient(135deg,#C5B358,#a38f36);color:#060B16;">🚀 Multi-Page SCORM OS</a>
-  <a href="projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip" download style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.45);">📦 SCORM .ZIP</a>
-  <button onclick="window.commitInjectedScorm()" style="background:rgba(30,41,59,0.9);color:#e2e8f0;border:1px solid rgba(197,179,88,0.35);">Complete SCO ✓</button>
-</div>
+
 <script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
 <script>
   window.switchInjectedCityscape = function(mode) {
