@@ -215,19 +215,6 @@
       ` : '';
 
       app.innerHTML = `
-        <div class="card" style="margin-bottom:18px;border-color:rgba(197,179,88,0.55)">
-          <div class="row">
-            <div>
-              <span class="chip warn">📰 MGC &amp; F.I.X EXECUTIVE INTELLIGENCE</span>
-              <h1 style="margin-top:8px">Executive Briefings &amp; Operational Newsletter</h1>
-              <p>Actionable monthly dispatches via Email &amp; SMS covering Zero-Trust security, SDVOSB contracting, and Otto AI automation.</p>
-            </div>
-            <div class="nav">
-              <span class="chip ok" id="nlEmailCountChip">● ${nlState.subscribersCount || 142} Email</span>
-              <span class="chip ok" id="nlSmsCountChip">📱 ${nlState.smsSubscribersCount || 38} SMS</span>
-            </div>
-          </div>
-        </div>
         ${consultationPanelHtml}
 
         <div class="nl-grid">
@@ -454,12 +441,6 @@
             });
             const d = await r.json();
             if (d && d.ok) {
-              nlState.subscribersCount = d.subscribersCount || nlState.subscribersCount;
-              nlState.smsSubscribersCount = d.smsSubscribersCount || nlState.smsSubscribersCount;
-              const ec = document.getElementById('nlEmailCountChip');
-              if (ec) ec.textContent = '● ' + nlState.subscribersCount + ' Email';
-              const sc = document.getElementById('nlSmsCountChip');
-              if (sc) sc.textContent = '📱 ' + nlState.smsSubscribersCount + ' SMS';
               st.textContent = '✓ ' + (d.message || 'Subscribed to MGC & F.I.X Executive Briefings.');
               W.toast('Subscribed to Executive Distro');
             } else {
