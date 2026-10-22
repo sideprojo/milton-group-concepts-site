@@ -419,14 +419,13 @@
       <div class="receipt-row"><span>Verified Client &amp; SSO</span><b id="rcptIdentity" style="color:#f8fafc">-</b></div>
       <div class="receipt-row"><span>2FA &amp; NDA Attestation</span><span id="rcptMfa" style="color:#10b981;font-weight:700">-</span></div>
       <div class="receipt-row"><span>Session Integrity Hash</span><code id="rcptHash" style="font-family:'JetBrains Mono',monospace;color:#fbbf24">-</code></div>
-      <div class="receipt-row"><span>Active Workspace Modules</span><span style="color:#10b981;font-weight:700">My Workspace · Shared Agile Board · Turnkey SaaS Forge · Sterling Showcase</span></div>
+      <div class="receipt-row"><span>Active Workspace Modules</span><span style="color:#10b981;font-weight:700">⚡ SaaS Apps &amp; LMS · 💳 Legal &amp; Secure Payment &amp; Billing</span></div>
       <div class="receipt-row"><span>Queued Custom Modules</span><span id="rcptQueued" style="color:#cbd5e1">-</span></div>
     </div>
 
     <div class="row" style="justify-content:flex-start;gap:10px;margin-top:18px">
-      <a class="btn pri submit-intake-btn" href="member-portal.html" id="track">Open My Workspace →</a>
-      <a class="btn" href="saas-apps-and-lms-showcase.html" style="border-width:1.5px;padding:11px 16px">Explore Showcase Apps</a>
-      <a class="btn" href="agile-board.html" style="border-width:1.5px;padding:11px 16px">Open Agile Project Board</a>
+      <a class="btn pri submit-intake-btn" href="saas-apps-and-lms-showcase.html" id="track">⚡ Open SaaS Apps &amp; LMS →</a>
+      <a class="btn" href="member-portal.html?view=payment" style="border-width:1.5px;padding:11px 16px">💳 Submit Payment &amp; Billing →</a>
     </div>
   </div>
 </main>
@@ -581,7 +580,7 @@
       access: 'CUSTOMER_RESTRICTED',
       accessTier: 'CUSTOMER_RESTRICTED',
       allowedApps: receipt.allowedApps || W.DEFAULT_CUSTOMER_APPS,
-      allowedPortals: receipt.allowedPortals || ['member-portal.html', 'agile-board.html', 'saas-apps-and-lms-showcase.html', 'onboarding-portal.html'],
+      allowedPortals: receipt.allowedPortals || ['saas-apps-and-lms-showcase.html', 'member-portal.html'],
       intakeReceipt: receipt.intakeReceipt || ('MGC-INTAKE-' + id.toUpperCase()),
       verifiedAt: new Date().toISOString(),
       integrityHash: receipt.integrityHash || ('SHA256-' + btoa(email + ':' + ssoProvider + ':CUSTOMER_RESTRICTED').slice(0, 24))

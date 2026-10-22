@@ -30,37 +30,63 @@
   }
 
   const ALLOWED_SSO_PROVIDERS = ['google', 'microsoft', 'apple'];
+  const SOLE_ADMIN_EMAIL = 'malik.khabir@miltongroupsecurity.org';
+  const DEFAULT_CUSTOMER_PORTALS = ['saas-apps-and-lms-showcase.html', 'member-portal.html'];
 
   const params = new URLSearchParams(window.location.search);
   if (params.get('from') === 'external' || params.get('locked') === '1') {
     localStorage.setItem(GATE_LOCK_KEY, '1');
     localStorage.removeItem(SESSION_KEY);
-  } else if (params.get('mgc_verify') === '1' && ALLOWED_SSO_PROVIDERS.includes((params.get('sso') || '').toLowerCase())) {
-    const ssoProvider = params.get('sso').toLowerCase();
-    const role = params.get('role') || 'VIEWER_ONBOARDED';
-    const name = params.get('name') || 'Verified SSO Partner';
-    const org = params.get('org') || 'Milton Group Concepts LLC & F.I.X Solutions LLC';
-    const email = params.get('email') || '';
-    if (email) {
-      const sessionObj = {
-        email,
-        name,
-        org,
-        role,
-        ssoVerified: true,
-        ssoProvider,
-        access: 'INTERNAL_SUITE_VIEW',
-        verifiedAt: new Date().toISOString(),
-        integrityHash: 'SHA256-' + btoa(email + ':' + ssoProvider + ':' + role + ':MGC-2026').slice(0, 16),
-        zeroChargeGuard: 'ACTIVE_MIN0_MAX2'
-      };
-      localStorage.setItem(SESSION_KEY, JSON.stringify(sessionObj));
-      localStorage.removeItem(GATE_LOCK_KEY);
-    }
+  }
+
+  // Synchronize authoritative server session & Administrator-granted features from /api/auth/session
+  let serverAuthUser = null;
+  if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/auth/session', false);
+      xhr.send(null);
+      if (xhr.status === 200) {
+        const res = JSON.parse(xhr.responseText);
+        if (res && res.authenticated && res.user) {
+          serverAuthUser = res.user;
+          const isSoleAdmin = res.user.role === 'owner' && res.user.id === 'owner' && String(res.user.email || '').toLowerCase() === SOLE_ADMIN_EMAIL;
+          const syncedSess = {
+            uid: res.user.id,
+            email: res.user.email,
+            name: res.user.name,
+            org: res.user.org || 'Milton Group Concepts LLC & F.I.X Solutions LLC',
+            role: isSoleAdmin ? 'OWNER_ADMIN' : 'CUSTOMER_RESTRICTED',
+            ssoVerified: true,
+            ssoProvider: res.user.ssoProvider || 'google',
+            access: isSoleAdmin ? 'INTERNAL_SUITE_FULL' : 'CUSTOMER_RESTRICTED',
+            accessTier: isSoleAdmin ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+            allowedPages: Array.isArray(res.user.allowedPages) ? res.user.allowedPages : ['saasapps'],
+            allowedApps: Array.isArray(res.user.allowedApps) ? res.user.allowedApps : ['sterling-auto-repair', 'client-turnkey-forge'],
+            allowedPortals: Array.isArray(res.user.allowedPortals) ? res.user.allowedPortals : DEFAULT_CUSTOMER_PORTALS,
+            paymentVerified: Boolean(res.user.paymentProfile && res.user.paymentProfile.verified),
+            verifiedAt: new Date().toISOString()
+          };
+          localStorage.setItem(SESSION_KEY, JSON.stringify(syncedSess));
+          localStorage.removeItem(GATE_LOCK_KEY);
+          sessionStorage.setItem('mgcw.uid', res.user.id);
+          sessionStorage.setItem('mgcw.sso_provider', syncedSess.ssoProvider);
+        } else if (res && res.authenticated === false) {
+          // Prevent any stale or spoofed localStorage admin session when server session is unauthenticated
+          try {
+            const localRaw = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+            if (localRaw && (String(localRaw.email || '').toLowerCase() === SOLE_ADMIN_EMAIL || String(localRaw.role || '').toUpperCase().includes('OWNER'))) {
+              localStorage.removeItem(SESSION_KEY);
+            }
+          } catch (_) {}
+        }
+      }
+    } catch (_) {}
   }
 
   function hasValidSession() {
     if (localStorage.getItem(GATE_LOCK_KEY) === '1') return false;
+    if (serverAuthUser && serverAuthUser.email) return true;
     try {
       const raw = localStorage.getItem(SESSION_KEY);
       if (raw) {
@@ -72,13 +98,14 @@
           parsed.ssoVerified === true &&
           ALLOWED_SSO_PROVIDERS.includes(String(parsed.ssoProvider || '').toLowerCase())
         ) {
+          // Never trust a localStorage Administrator claim without serverAuthUser verification
+          if (String(parsed.email).toLowerCase() === SOLE_ADMIN_EMAIL && (!serverAuthUser || serverAuthUser.role !== 'owner')) {
+            return false;
+          }
           return true;
         }
       }
     } catch (_) {}
-    const uid = sessionStorage.getItem('mgcw.uid');
-    const ssoProv = (sessionStorage.getItem('mgcw.sso_provider') || '').toLowerCase();
-    if (uid && ALLOWED_SSO_PROVIDERS.includes(ssoProv)) return true;
     return false;
   }
 
@@ -93,7 +120,9 @@
         name: 'Unauthenticated Visitor (Sign-In Required)',
         org: 'External Edge Gate • Zero-Trust Enforced',
         role: 'LOCKED_PENDING_AUTH',
-        access: 'LOCKED'
+        access: 'LOCKED',
+        allowedPortals: DEFAULT_CUSTOMER_PORTALS,
+        allowedPages: ['saasapps']
       };
     }
     try {
@@ -107,12 +136,15 @@
       email: 'authenticated@miltongroupsecurity.org',
       name: 'Authenticated Workspace Member',
       org: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
-      role: 'VERIFIED_SESSION',
-      access: 'INTERNAL_SUITE_VIEW',
+      role: 'CUSTOMER_RESTRICTED',
+      access: 'CUSTOMER_RESTRICTED',
+      allowedPortals: DEFAULT_CUSTOMER_PORTALS,
+      allowedPages: ['saasapps'],
       verifiedAt: new Date().toISOString(),
       zeroChargeGuard: 'ACTIVE_MIN0_MAX2'
     };
   }
+  const getSession = getVerifiedSession;
 
   const CLEAN_SLUG_TO_FILE = {
     'auth': 'login.html',
@@ -1491,53 +1523,122 @@
       }
     }
 
-    // Group pages by category for Desktop Dropdowns & Mobile/Tablet Off-Canvas Drawer
-    const categories = ['Command & Auth', 'Apps & Labs', 'Canvas Academy', 'Commerce & Gov'];
-    const menusHtml = categories.map(cat => {
-      const items = pages.filter(p => p.cat === cat);
-      const isCatActive = items.some(p => p.file.toLowerCase() === currentFile);
-      return `
-        <div class="os-menu-wrap" data-os-menu>
-          <button type="button" class="os-menu-trigger" aria-expanded="false" style="${isCatActive ? 'color:#fcd34d;' : ''}">
-            <span>${cat}</span>
-            <span class="os-caret">▾</span>
-          </button>
-          <div class="os-dropdown-panel" role="menu">
-            ${items.map(item => `
-              <a href="${item.file}" role="menuitem" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
-                <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
-                <span style="flex:1;min-width:0;">
-                  <span class="os-drop-title">${item.full}</span>
-                  <span class="os-drop-sub">${item.tag}</span>
-                </span>
-                <span class="os-item-brand-pill ${item.brand === 'FIX' ? 'fix' : 'mgc'}">${item.brand === 'FIX' ? 'F.I.X' : 'MGC'}</span>
-              </a>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }).join('');
+    const isSoleOwner = Boolean(
+      (serverAuthUser && serverAuthUser.role === 'owner' && serverAuthUser.id === 'owner' && String(serverAuthUser.email || '').toLowerCase() === SOLE_ADMIN_EMAIL) ||
+      (!isHttpProtocol() && String(session.email || '').toLowerCase() === SOLE_ADMIN_EMAIL && String(session.role || '').toUpperCase().includes('OWNER'))
+    );
+    function isHttpProtocol() {
+      return window.location.protocol === 'http:' || window.location.protocol === 'https:';
+    }
+    const userAllowedPortals = isSoleOwner
+      ? ['*']
+      : (Array.isArray(session.allowedPortals) && session.allowedPortals.length ? session.allowedPortals : DEFAULT_CUSTOMER_PORTALS);
 
-    const drawerCategoriesHtml = categories.map(cat => {
-      const items = pages.filter(p => p.cat === cat);
-      return `
+    const adminGrantedPortalEntries = isSoleOwner
+      ? pages
+      : pages.filter(p => p.file !== 'saas-apps-and-lms-showcase.html' && p.file !== 'member-portal.html' && userAllowedPortals.includes(p.file));
+
+    // Group pages by category for Administrator; for standard users, render ONLY SaaS Apps & LMS + Submit Payment & Billing + Admin-granted features
+    const categories = ['Command & Auth', 'Apps & Labs', 'Canvas Academy', 'Commerce & Gov'];
+    const menusHtml = isSoleOwner
+      ? categories.map(cat => {
+          const items = pages.filter(p => p.cat === cat);
+          const isCatActive = items.some(p => p.file.toLowerCase() === currentFile);
+          return `
+            <div class="os-menu-wrap" data-os-menu>
+              <button type="button" class="os-menu-trigger" aria-expanded="false" style="${isCatActive ? 'color:#fcd34d;' : ''}">
+                <span>${cat}</span>
+                <span class="os-caret">▾</span>
+              </button>
+              <div class="os-dropdown-panel" role="menu">
+                ${items.map(item => `
+                  <a href="${item.file}" role="menuitem" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
+                    <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
+                    <span style="flex:1;min-width:0;">
+                      <span class="os-drop-title">${item.full}</span>
+                      <span class="os-drop-sub">${item.tag}</span>
+                    </span>
+                    <span class="os-item-brand-pill ${item.brand === 'FIX' ? 'fix' : 'mgc'}">${item.brand === 'FIX' ? 'F.I.X' : 'MGC'}</span>
+                  </a>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }).join('') + `
+          <a href="access-admin.html" class="os-menu-trigger" style="text-decoration:none;color:#fde047;border:1px solid rgba(197,179,88,0.45);background:rgba(197,179,88,0.14);font-weight:800;">
+            <span>👑 Access Admin (Grant Features)</span>
+          </a>
+        `
+      : `
+        <a href="saas-apps-and-lms-showcase.html" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'saas-apps-and-lms-showcase.html' ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
+          <span>⚡ SaaS Apps &amp; LMS</span>
+        </a>
+        <a href="member-portal.html?view=payment" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'member-portal.html' ? 'color:#34d399;border-color:rgba(16,185,129,0.45);background:rgba(16,185,129,0.15);' : ''}">
+          <span>💳 Submit Payment &amp; Billing</span>
+        </a>
+        ${adminGrantedPortalEntries.map(item => `
+          <a href="${item.file}" class="os-menu-trigger" style="text-decoration:none;${item.file.toLowerCase() === currentFile ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
+            <span>${item.icon} ${item.label}</span>
+          </a>
+        `).join('')}
+      `;
+
+    const drawerCategoriesHtml = isSoleOwner
+      ? categories.map(cat => {
+          const items = pages.filter(p => p.cat === cat);
+          return `
+            <div class="os-drawer-cat">
+              <div class="os-drawer-cat-title">${cat}</div>
+              ${items.map(item => `
+                <a href="${item.file}" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
+                  <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
+                  <span style="flex:1;min-width:0;">
+                    <span class="os-drop-title">${item.full}</span>
+                    <span class="os-drop-sub">${item.tag}</span>
+                  </span>
+                  <span class="os-item-brand-pill ${item.brand === 'FIX' ? 'fix' : 'mgc'}">${item.brand === 'FIX' ? 'F.I.X' : 'MGC'}</span>
+                </a>
+              `).join('')}
+            </div>
+          `;
+        }).join('')
+      : `
         <div class="os-drawer-cat">
-          <div class="os-drawer-cat-title">${cat}</div>
-          ${items.map(item => `
+          <div class="os-drawer-cat-title">Authorized User Menu</div>
+          <a href="saas-apps-and-lms-showcase.html" class="os-drop-item ${currentFile === 'saas-apps-and-lms-showcase.html' ? 'active' : ''}">
+            <span class="os-drop-icon" style="border-color:#C5B35866;">⚡</span>
+            <span style="flex:1;min-width:0;">
+              <span class="os-drop-title">SaaS Apps &amp; LMS</span>
+              <span class="os-drop-sub">Included Default Access</span>
+            </span>
+          </a>
+          <a href="member-portal.html?view=payment" class="os-drop-item ${currentFile === 'member-portal.html' ? 'active' : ''}">
+            <span class="os-drop-icon" style="border-color:#10B98166;">💳</span>
+            <span style="flex:1;min-width:0;">
+              <span class="os-drop-title">Submit Payment &amp; Billing</span>
+              <span class="os-drop-sub">PCI-DSS v4.0 &amp; EFTA/NACHA Verified</span>
+            </span>
+          </a>
+          ${adminGrantedPortalEntries.map(item => `
             <a href="${item.file}" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
               <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
               <span style="flex:1;min-width:0;">
                 <span class="os-drop-title">${item.full}</span>
-                <span class="os-drop-sub">${item.tag}</span>
+                <span class="os-drop-sub">Granted by Administrator</span>
               </span>
-              <span class="os-item-brand-pill ${item.brand === 'FIX' ? 'fix' : 'mgc'}">${item.brand === 'FIX' ? 'F.I.X' : 'MGC'}</span>
             </a>
           `).join('')}
         </div>
       `;
-    }).join('');
 
-    const railItems = pages.filter(p => p.rail);
+    const railItems = isSoleOwner
+      ? [
+          { file: 'access-admin.html', icon: '👑', label: 'Admin', full: 'Access Admin · Grant User Features' }
+        ].concat(pages.filter(p => p.rail))
+      : [
+          { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', label: 'SaaS & LMS', full: 'SaaS Apps & SCORM LMS Showcase' },
+          { file: 'member-portal.html?view=payment', icon: '💳', label: 'Payment', full: 'Legal & Secure Payment & Billing Center' }
+        ].concat(adminGrantedPortalEntries.map(p => ({ file: p.file, icon: p.icon, label: p.label, full: p.full })));
 
     const shellWrapper = document.createElement('div');
     shellWrapper.id = 'mgc-os-shell';
@@ -1550,24 +1651,24 @@
             <span>Menu</span>
           </button>
 
-          <button type="button" class="os-waffle-btn" id="os-waffle-trigger" aria-label="All 16 Workspace Apps" title="Google-Style 9-Dot App Launcher">
+          <button type="button" class="os-waffle-btn" id="os-waffle-trigger" aria-label="All 16 Workspace Apps" title="Google-Style 9-Dot App Launcher" style="${isSoleOwner ? '' : 'display:none;'}">
             <svg class="os-waffle-svg" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM16,6c0,1.1 0.9,2 2,2s2,-0.9 2,-2 -0.9,-2 -2,-2 -2,0.9 -2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z"/>
             </svg>
           </button>
 
-          <a href="admin-command-portal.html" class="os-brand">
+          <a href="${isSoleOwner ? 'admin-command-portal.html' : 'saas-apps-and-lms-showcase.html'}" class="os-brand">
             <span id="os-brand-logo-slot">${defaultPageBrand === 'FIX' ? FIX_SHIELD_SVG : MGC_SHIELD_SVG}</span>
             <span id="os-brand-title-slot">${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE'}</span>
           </a>
 
-          <nav class="os-menus" aria-label="Primary Workspace Categories">
+          <nav class="os-menus" aria-label="Primary Workspace Navigation">
             ${menusHtml}
           </nav>
         </div>
 
-        <!-- Google Omnibox Search Trigger -->
-        <div class="os-omnibox">
+        <!-- Google Omnibox Search Trigger (Administrator Only) -->
+        <div class="os-omnibox" style="${isSoleOwner ? '' : 'display:none;'}">
           <button type="button" class="os-search-btn" id="os-omnibox-trigger" aria-label="Search portals, courses, tools">
             <span>🔍 Search Portals</span>
             <span class="os-kbd">⌘K</span>
@@ -1576,7 +1677,7 @@
 
         <!-- Right: Brand Theme + Section Jump + Profile Menu (Zero Clutter) -->
         <div class="os-right">
-          <button type="button" id="os-brand-theme-toggle" class="os-brand-badge ${defaultPageBrand === 'FIX' ? 'fix' : 'mgc'}" title="Portal Brand Theme (8 MGC Portals vs 8 F.I.X Portals — Click to preview either theme)">
+          <button type="button" id="os-brand-theme-toggle" class="os-brand-badge ${defaultPageBrand === 'FIX' ? 'fix' : 'mgc'}" style="${isSoleOwner ? '' : 'display:none;'}" title="Portal Brand Theme">
             ${defaultPageBrand === 'FIX' ? '⚡ F.I.X Theme (8/16) • Switch' : '🛡️ MGC Theme (8/16) • Switch'}
           </button>
 
@@ -1584,64 +1685,58 @@
 
           <div class="os-menu-wrap" data-os-menu>
             <button type="button" class="os-profile-btn" aria-expanded="false">
-              <span class="os-avatar" id="os-avatar-initials">${hasValidSession() ? 'MK' : '🔒'}</span>
-              <span id="os-profile-short">${hasValidSession() ? 'Me' : 'Sign In'}</span>
+              <span class="os-avatar" id="os-avatar-initials">${hasValidSession() ? (isSoleOwner ? 'MK' : 'US') : '🔒'}</span>
+              <span id="os-profile-short">${hasValidSession() ? (isSoleOwner ? 'Admin' : 'Account') : 'Sign In'}</span>
               <span class="os-caret">▾</span>
             </button>
             <div class="os-dropdown-panel" style="right:0;left:auto;min-width:255px;">
               <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:4px;">
                 <div id="os-profile-name" style="font-size:13px;font-weight:800;color:#fff;">${session.name}</div>
-                <div id="os-profile-status" style="font-size:11px;color:${hasValidSession() ? '#86efac' : '#fca5a5'};font-weight:700;">${hasValidSession() ? '🫆 2FA Biometric Verified' : '🔒 Authentication Required'}</div>
+                <div id="os-profile-status" style="font-size:11px;color:${hasValidSession() ? '#86efac' : '#fca5a5'};font-weight:700;">${hasValidSession() ? (isSoleOwner ? '👑 Sole Administrator Verified' : '🛡️ SaaS Apps & LMS + Secure Billing') : '🔒 Authentication Required'}</div>
               </div>
-              <button type="button" class="os-drop-item" id="os-toggle-clean" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;">
+              <button type="button" class="os-drop-item" id="os-toggle-clean" style="display:none;width:100%;background:none;border:none;cursor:pointer;text-align:left;">
                 <span class="os-drop-icon">✨</span>
                 <span>
                   <span class="os-drop-title" id="os-clean-label">Minimalist UI: ${cleanOn ? 'ON' : 'OFF'}</span>
-                  <span class="os-drop-sub">Toggle compact vs detailed text</span>
                 </span>
               </button>
-              <a href="login.html" class="os-drop-item">
-                <span class="os-drop-icon">🔑</span>
+              <a href="saas-apps-and-lms-showcase.html" class="os-drop-item">
+                <span class="os-drop-icon">⚡</span>
                 <span>
-                  <span class="os-drop-title">Sign In / Switch Account</span>
-                  <span class="os-drop-sub">Google OAuth • Email Link • 2FA</span>
+                  <span class="os-drop-title">SaaS Apps &amp; LMS</span>
+                  <span class="os-drop-sub">Launch authorized apps &amp; simulators</span>
                 </span>
               </a>
-              <a href="onboarding-portal.html" class="os-drop-item">
-                <span class="os-drop-icon">🫆</span>
+              <a href="member-portal.html?view=payment" class="os-drop-item">
+                <span class="os-drop-icon">💳</span>
                 <span>
-                  <span class="os-drop-title">2FA Biometric Gate</span>
-                  <span class="os-drop-sub">Admin vs Client Provisioning</span>
+                  <span class="os-drop-title">Submit Payment &amp; Billing</span>
+                  <span class="os-drop-sub">PCI-DSS v4.0 &amp; EFTA/NACHA Verified</span>
                 </span>
               </a>
+              ${isSoleOwner ? `
+                <a href="access-admin.html" class="os-drop-item">
+                  <span class="os-drop-icon">👑</span>
+                  <span>
+                    <span class="os-drop-title">Access Admin (Grant Features)</span>
+                    <span class="os-drop-sub">Fluidly grant or revoke user features</span>
+                  </span>
+                </a>
+                <a href="admin-command-portal.html" class="os-drop-item">
+                  <span class="os-drop-icon">🛡️</span>
+                  <span>
+                    <span class="os-drop-title">16-Portal Command Hub</span>
+                    <span class="os-drop-sub">Master Administrator Overview</span>
+                  </span>
+                </a>
+              ` : ''}
               <button type="button" class="os-drop-item" id="os-lock-session" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;">
                 <span class="os-drop-icon" style="border-color:rgba(220,38,38,0.45);background:rgba(220,38,38,0.12);">🔒</span>
                 <span>
-                  <span class="os-drop-title" style="color:#fca5a5;">Lock Session (Sign Out)</span>
-                  <span class="os-drop-sub">Enforce 2-Step Biometric / TOTP Gate</span>
+                  <span class="os-drop-title" style="color:#fca5a5;">Sign Out</span>
+                  <span class="os-drop-sub">End active session</span>
                 </span>
               </button>
-              <a href="access-admin.html" class="os-drop-item">
-                <span class="os-drop-icon">🗝️</span>
-                <span>
-                  <span class="os-drop-title">Access Admin</span>
-                  <span class="os-drop-sub">Approve, build pages, share</span>
-                </span>
-              </a>
-              <a href="member-portal.html" class="os-drop-item">
-                <span class="os-drop-icon">👤</span>
-                <span>
-                  <span class="os-drop-title">Member Workspace</span>
-                  <span class="os-drop-sub">What a member sees ($5/mo tier)</span>
-                </span>
-              </a>
-              <a href="agile-board.html" class="os-drop-item">
-                <span class="os-drop-icon">🗂️</span>
-                <span>
-                  <span class="os-drop-title">Agile Projects & Deliverables</span>
-                  <span class="os-drop-sub">Backlog • sprints • client projects</span>
-                </span>
-              </a>
             </div>
           </div>
         </div>
@@ -1655,13 +1750,13 @@
             <span id="os-drawer-logo-slot">${defaultPageBrand === 'FIX' ? FIX_SHIELD_SVG : MGC_SHIELD_SVG}</span>
             <div>
               <div id="os-drawer-title-slot" style="font-size:0.82rem;font-weight:900;color:#fff;letter-spacing:0.04em;">${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE'}</div>
-              <div style="font-size:0.65rem;color:#fcd34d;font-weight:700;">8 MGC • 8 F.I.X Portals</div>
+              <div style="font-size:0.65rem;color:#fcd34d;font-weight:700;">${isSoleOwner ? 'Sole Administrator' : 'SaaS Apps & LMS + Billing'}</div>
             </div>
           </div>
           <button type="button" class="os-drawer-close" id="os-drawer-close-btn" aria-label="Close Navigation Drawer">✕</button>
         </div>
         <div class="os-drawer-body">
-          <button type="button" id="os-drawer-search-btn" style="width:100%;min-height:2.75rem;margin-bottom:0.9rem;background:rgba(30,58,138,0.35);border:1px solid rgba(252,211,77,0.35);border-radius:0.65rem;color:#f8fafc;font-weight:700;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 0.85rem;">
+          <button type="button" id="os-drawer-search-btn" style="${isSoleOwner ? '' : 'display:none;'}width:100%;min-height:2.75rem;margin-bottom:0.9rem;background:rgba(30,58,138,0.35);border:1px solid rgba(252,211,77,0.35);border-radius:0.65rem;color:#f8fafc;font-weight:700;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 0.85rem;">
             <span>🔍 Quick Search All Portals</span>
             <span class="os-kbd">⌘K</span>
           </button>
@@ -1669,11 +1764,11 @@
         </div>
       </aside>
 
-      <!-- 3. GOOGLE 9-DOT WAFFLE APP LAUNCHER POPOVER -->
-      <div id="os-waffle-popover">
+      <!-- 3. GOOGLE 9-DOT WAFFLE APP LAUNCHER POPOVER (Administrator Only) -->
+      <div id="os-waffle-popover" style="${isSoleOwner ? '' : 'display:none !important;'}">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px;">
           <span style="font-size:11px;font-weight:800;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;">8 MGC + 8 F.I.X Portals</span>
-          <a href="admin-command-portal.html" style="font-size:11px;color:#93c5fd;text-decoration:none;font-weight:700;">Admin Hub →</a>
+          <a href="access-admin.html" style="font-size:11px;color:#93c5fd;text-decoration:none;font-weight:700;">Access Admin →</a>
         </div>
         <div class="waffle-grid">
           ${pages.map(p => `
@@ -1689,14 +1784,17 @@
       <!-- 4. INSTRUCTURE CANVAS LEFT ICON RAIL -->
       <aside id="mgc-os-rail" aria-label="Quick Launch Dock">
         <div class="rail-group">
-          ${railItems.map(p => `
-            <a href="${p.file}" class="rail-item ${p.file.toLowerCase() === currentFile ? 'active' : ''}" title="${p.full}">
-              <span class="rail-ico">${p.icon}</span>
-              <span class="rail-txt">${p.label}</span>
-            </a>
-          `).join('')}
+          ${railItems.map(p => {
+            const baseFile = p.file.split('?')[0].toLowerCase();
+            return `
+              <a href="${p.file}" class="rail-item ${baseFile === currentFile ? 'active' : ''}" title="${p.full}">
+                <span class="rail-ico">${p.icon}</span>
+                <span class="rail-txt">${p.label}</span>
+              </a>
+            `;
+          }).join('')}
         </div>
-        <div class="rail-group rail-bottom">
+        <div class="rail-group rail-bottom" style="${isSoleOwner ? '' : 'display:none;'}">
           <button type="button" class="rail-item" id="rail-cmd-btn" style="background:none;border:none;cursor:pointer;" title="Search All Portals (Ctrl+K)">
             <span class="rail-ico">🔍</span>
             <span class="rail-txt">Search</span>
@@ -1716,7 +1814,7 @@
         </div>
       </div>
 
-      <!-- 6. FEDERATED SSO ENFORCEMENT GATE OVERLAY (Enforced by default when Unauthenticated — ONLY Google, Microsoft, or Apple SSO) -->
+      <!-- 6. FEDERATED SSO ENFORCEMENT GATE OVERLAY -->
       <div id="os-2fa-gate-backdrop" role="dialog" aria-modal="true" aria-label="Federated SSO Enforcement Gate" style="position:fixed;inset:0;background:rgba(4,8,20,0.96);backdrop-filter:blur(16px);z-index:100001;display:none;align-items:center;justify-content:center;padding:1.25rem;font-family:'Inter',sans-serif;">
         <div style="width:100%;max-width:34rem;background:rgba(15,23,42,0.96);border:1px solid rgba(197,179,88,0.48);border-radius:18px;padding:1.65rem;box-shadow:0 30px 90px rgba(0,0,0,0.95);">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;">
@@ -1725,7 +1823,7 @@
           </div>
           <h3 style="font-size:1.15rem;font-weight:900;color:#fff;margin:0 0 0.35rem;">Single Sign-On Required</h3>
           <p style="font-size:0.78rem;color:#cbd5e1;line-height:1.5;margin:0 0 1rem;">
-            Local passwords and email links are disabled. Authenticate exclusively with <strong>Google</strong>, <strong>Microsoft</strong>, or <strong>Apple</strong> SSO to unlock this portal.
+            Authenticate with <strong>Google</strong>, <strong>Microsoft</strong>, or <strong>Apple</strong> SSO. Standard accounts receive access to <strong>SaaS Apps &amp; LMS</strong> and <strong>Payment &amp; Billing</strong>.
           </p>
 
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.55rem;margin-bottom:0.9rem;" role="group" aria-label="Choose SSO Identity Provider">
@@ -1743,6 +1841,11 @@
           <div style="margin-bottom:0.85rem;">
             <label id="os-sso-email-label" style="display:block;font-size:0.68rem;font-weight:800;color:#fde047;text-transform:uppercase;margin-bottom:0.3rem;">Google SSO Account Email</label>
             <input id="os-2fa-email" type="email" value="" placeholder="Enter your authorized SSO email" autocomplete="off" spellcheck="false" style="width:100%;padding:0.65rem 0.8rem;border-radius:0.55rem;background:#040814;border:1px solid rgba(197,179,88,0.45);color:#fff;font-size:0.82rem;" />
+          </div>
+
+          <div id="os-2fa-admin-mfa-wrap" style="display:none;margin-bottom:0.85rem;">
+            <label style="display:block;font-size:0.68rem;font-weight:800;color:#fde047;text-transform:uppercase;margin-bottom:0.3rem;">👑 Sole Administrator 2FA / Passkey Code</label>
+            <input id="os-2fa-mfa-code" type="password" value="" placeholder="Enter Owner 2FA Code" autocomplete="off" style="width:100%;padding:0.65rem 0.8rem;border-radius:0.55rem;background:#040814;border:1px solid rgba(197,179,88,0.45);color:#fff;font-size:0.82rem;" />
           </div>
 
           <div id="os-2fa-msg" style="display:none;padding:0.55rem 0.75rem;border-radius:0.5rem;font-size:0.74rem;font-weight:700;margin-bottom:0.75rem;"></div>
@@ -1800,6 +1903,7 @@
     offcanvasScrim.addEventListener('click', closeOffcanvasDrawer);
 
     waffleBtn.addEventListener('click', (e) => {
+      if (!isSoleOwner) return;
       e.stopPropagation();
       closeOffcanvasDrawer();
       const wasOpen = wafflePop.classList.contains('open');
@@ -1812,6 +1916,7 @@
 
     menuWraps.forEach(wrap => {
       const btn = wrap.querySelector('button');
+      if (!btn) return;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         closeOffcanvasDrawer();
@@ -1855,10 +1960,19 @@
     const gateBackdrop = document.getElementById('os-2fa-gate-backdrop');
     const lockSessionBtn = document.getElementById('os-lock-session');
     const gateEmail = document.getElementById('os-2fa-email');
+    const gateAdminMfaWrap = document.getElementById('os-2fa-admin-mfa-wrap');
+    const gateAdminMfaInput = document.getElementById('os-2fa-mfa-code');
     const gateEmailLabel = document.getElementById('os-sso-email-label');
     const gateSubmitBtn = document.getElementById('os-2fa-submit');
     const gateMsg = document.getElementById('os-2fa-msg');
     let selectedSsoProvider = 'google';
+
+    gateEmail.addEventListener('input', () => {
+      const em = gateEmail.value.trim().toLowerCase();
+      if (gateAdminMfaWrap) {
+        gateAdminMfaWrap.style.display = em === SOLE_ADMIN_EMAIL ? 'block' : 'none';
+      }
+    });
 
     const SSO_NAMES = {
       google: 'Google SSO',
@@ -1887,12 +2001,11 @@
       });
     });
 
-    const CUSTOMER_ALLOWED_PORTALS = [
+    const PUBLIC_AND_BASE_PORTALS = [
       'onboarding-portal.html',
       'login.html',
       'request-access.html',
       'member-portal.html',
-      'agile-board.html',
       'saas-apps-and-lms-showcase.html'
     ];
 
@@ -1904,17 +2017,19 @@
         const slug = projMatch[1];
         return allowedApps.includes('*') || allowedApps.includes(slug);
       }
-      return CUSTOMER_ALLOWED_PORTALS.includes(currentFile);
+      if (PUBLIC_AND_BASE_PORTALS.includes(currentFile)) return true;
+      const portals = (sess && Array.isArray(sess.allowedPortals)) ? sess.allowedPortals : DEFAULT_CUSTOMER_PORTALS;
+      return portals.includes('*') || portals.includes(currentFile);
     }
 
     function isSessionOwner(sess) {
       if (!sess || !sess.email) return false;
       const em = String(sess.email).toLowerCase();
-      return em === 'malik.khabir@miltongroupsecurity.org' ||
-             em === 'owner@miltongroupsecurity.org' ||
-             String(sess.role || '').toUpperCase().includes('OWNER') ||
-             sess.accessTier === 'OWNER_FULL' ||
-             sess.access === 'INTERNAL_SUITE_FULL';
+      if (em !== SOLE_ADMIN_EMAIL) return false;
+      if (isHttpProtocol()) {
+        return Boolean(serverAuthUser && serverAuthUser.role === 'owner' && serverAuthUser.id === 'owner');
+      }
+      return String(sess.role || '').toUpperCase().includes('OWNER');
     }
 
     function checkAndEnforce2FAGate() {
@@ -1935,7 +2050,7 @@
           gateMsg.style.background = 'rgba(245,158,11,0.16)';
           gateMsg.style.border = '1px solid rgba(245,158,11,0.5)';
           gateMsg.style.color = '#fde68a';
-          gateMsg.innerHTML = `🛡️ <b>Default Restricted Customer Access Enforced:</b> Signed in as <code>${sess ? sess.email : 'Customer'}</code> (Restricted Tier). Internal command portals &amp; non-default SCORM apps require Owner approval.<br/><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"><a href="member-portal.html" style="padding:5px 10px;border-radius:6px;background:#10b981;color:#04130d;font-weight:800;text-decoration:none;">Open My Customer Workspace →</a><a href="saas-apps-and-lms-showcase.html" style="padding:5px 10px;border-radius:6px;background:rgba(197,179,88,0.25);border:1px solid #c5b358;color:#fde047;font-weight:800;text-decoration:none;">Open Allowed Showcase Apps →</a><a href="agile-board.html" style="padding:5px 10px;border-radius:6px;background:rgba(59,130,246,0.25);border:1px solid #60a5fa;color:#93c5fd;font-weight:800;text-decoration:none;">Shared Agile Board →</a></div>`;
+          gateMsg.innerHTML = `🛡️ <b>SaaS Apps &amp; LMS Access Scope Enforced:</b> Signed in as <code>${sess ? sess.email : 'Customer'}</code>. Standard users have access strictly to <b>SaaS Apps &amp; LMS</b> and <b>Legal &amp; Secure Payment Submission</b> unless granted additional features by the Administrator.<br/><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"><a href="saas-apps-and-lms-showcase.html" style="padding:5px 10px;border-radius:6px;background:rgba(197,179,88,0.25);border:1px solid #c5b358;color:#fde047;font-weight:800;text-decoration:none;">⚡ Open SaaS Apps &amp; LMS →</a><a href="member-portal.html?view=payment" style="padding:5px 10px;border-radius:6px;background:#10b981;color:#04130d;font-weight:800;text-decoration:none;">💳 Submit Payment &amp; Billing →</a></div>`;
         }
         return;
       }
@@ -1951,24 +2066,17 @@
         sessionStorage.removeItem('mgcw.uid');
         sessionStorage.removeItem('mgcw.sso_provider');
       } catch (_) {}
-      const av = document.getElementById('os-avatar-initials');
-      const ps = document.getElementById('os-profile-short');
-      const pn = document.getElementById('os-profile-name');
-      const pst = document.getElementById('os-profile-status');
-      if (av) av.textContent = '🔒';
-      if (ps) ps.textContent = 'Sign In';
-      if (pn) pn.textContent = 'Unverified Session';
-      if (pst) { pst.textContent = '🔒 SSO Authentication Required'; pst.style.color = '#fca5a5'; }
-      if (currentFile === 'onboarding-portal.html') {
-        window.location.href = 'onboarding-portal.html?locked=1';
+      if (isHttpProtocol()) {
+        window.location.href = '/api/auth/logout';
       } else {
-        checkAndEnforce2FAGate();
+        window.location.href = 'login.html';
       }
     });
 
     async function verifyGateSsoSubmission(provOverride) {
       const provider = provOverride || selectedSsoProvider || 'google';
       const em = gateEmail.value.trim().toLowerCase();
+      const mfaVal = gateAdminMfaInput ? gateAdminMfaInput.value.trim() : '';
       if (!ALLOWED_SSO_PROVIDERS.includes(provider)) {
         gateMsg.style.display = 'block';
         gateMsg.style.background = 'rgba(220,38,38,0.18)';
@@ -1994,20 +2102,34 @@
         return;
       }
 
-      const isAdmin = em === 'malik.khabir@miltongroupsecurity.org' || em === 'owner@miltongroupsecurity.org';
-      let allowedApps = isAdmin ? ['*'] : ['sterling-auto-repair', 'client-turnkey-forge'];
-      let allowedPortals = isAdmin ? ['*'] : CUSTOMER_ALLOWED_PORTALS;
-      let serverUid = isAdmin ? 'owner' : 'cara';
+      const isAdmin = em === SOLE_ADMIN_EMAIL;
+      if (isAdmin && !mfaVal) {
+        if (gateAdminMfaWrap) gateAdminMfaWrap.style.display = 'block';
+        gateMsg.style.display = 'block';
+        gateMsg.style.background = 'rgba(245,158,11,0.18)';
+        gateMsg.style.border = '1px solid rgba(245,158,11,0.45)';
+        gateMsg.style.color = '#fde68a';
+        gateMsg.textContent = '👑 Administrator Account Protected: Enter your Owner 2FA / Passkey code to authenticate.';
+        if (gateAdminMfaInput) gateAdminMfaInput.focus();
+        return;
+      }
 
-      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+      let allowedApps = ['sterling-auto-repair', 'client-turnkey-forge'];
+      let allowedPortals = DEFAULT_CUSTOMER_PORTALS;
+      let serverUid = 'cara';
+
+      if (isHttpProtocol()) {
         try {
           const resp = await fetch('/api/auth/sso', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ provider, email: em })
+            body: JSON.stringify({ provider, email: em, mfaCode: mfaVal || undefined })
           });
           const data = await resp.json();
           if (!data || !data.ok) {
+            if (data && data.requireAdminMfa && gateAdminMfaWrap) {
+              gateAdminMfaWrap.style.display = 'block';
+            }
             gateMsg.style.display = 'block';
             gateMsg.style.background = 'rgba(220,38,38,0.18)';
             gateMsg.style.border = '1px solid rgba(220,38,38,0.45)';
@@ -2018,10 +2140,22 @@
           serverUid = data.uid || serverUid;
           if (Array.isArray(data.allowedApps)) allowedApps = data.allowedApps;
           if (Array.isArray(data.allowedPortals)) allowedPortals = data.allowedPortals;
-        } catch (_) {}
+          serverAuthUser = {
+            id: serverUid,
+            email: em,
+            role: data.role,
+            allowedApps,
+            allowedPortals
+          };
+        } catch (_) {
+          gateMsg.style.display = 'block';
+          gateMsg.style.color = '#fca5a5';
+          gateMsg.textContent = '❌ Unable to reach authentication server.';
+          return;
+        }
       }
 
-      if (typeof MGCW !== 'undefined' && MGCW.provisionCustomerSso) {
+      if (!isAdmin && typeof MGCW !== 'undefined' && MGCW.provisionCustomerSso) {
         const u = MGCW.provisionCustomerSso(em, undefined, provider);
         if (u && u.id) {
           serverUid = u.id;
@@ -2050,33 +2184,7 @@
         sessionStorage.setItem('mgcw.sso_provider', provider);
       } catch (_) {}
 
-      const av = document.getElementById('os-avatar-initials');
-      const ps = document.getElementById('os-profile-short');
-      const pn = document.getElementById('os-profile-name');
-      const pst = document.getElementById('os-profile-status');
-      if (av) av.textContent = isAdmin ? 'MK' : 'SSO';
-      if (ps) ps.textContent = 'Me';
-      if (pn) pn.textContent = verifiedObj.name;
-      if (pst) {
-        pst.textContent = isAdmin ? `✔ ${SSO_NAMES[provider]} Owner Full` : `🛡️ ${SSO_NAMES[provider]} Restricted`;
-        pst.style.color = isAdmin ? '#86efac' : '#7dd3fc';
-      }
-
-      if (!isAdmin && !isCurrentPathAllowedForCustomer(verifiedObj)) {
-        checkAndEnforce2FAGate();
-        return;
-      }
-
-      gateMsg.style.display = 'block';
-      gateMsg.style.background = 'rgba(22,163,74,0.2)';
-      gateMsg.style.border = '1px solid rgba(22,163,74,0.5)';
-      gateMsg.style.color = '#86efac';
-      gateMsg.textContent = isAdmin
-        ? `✅ ${SSO_NAMES[provider]} Owner Verified! Unlocking full command suite...`
-        : `✅ ${SSO_NAMES[provider]} Customer Verified (Default Restricted Access)! Unlocking...`;
-      setTimeout(() => {
-        gateBackdrop.style.display = 'none';
-      }, 250);
+      window.location.reload();
     }
 
     gateSubmitBtn.addEventListener('click', () => verifyGateSsoSubmission(selectedSsoProvider));
@@ -2088,14 +2196,15 @@
     });
     checkAndEnforce2FAGate();
 
-    // Wire Omnibox Modal (Ctrl+K)
+    // Wire Omnibox Modal (Ctrl+K) — Administrator Only
     const cmdBackdrop = document.getElementById('os-cmd-backdrop');
     const cmdInput = document.getElementById('os-cmd-input');
     const cmdResults = document.getElementById('os-cmd-results');
 
     function renderCmdList(q = '') {
       const norm = q.trim().toLowerCase();
-      const matches = pages.filter(p => !norm || p.full.toLowerCase().includes(norm) || p.cat.toLowerCase().includes(norm) || p.tag.toLowerCase().includes(norm));
+      const sourcePages = isSoleOwner ? pages : adminGrantedPortalEntries;
+      const matches = sourcePages.filter(p => !norm || p.full.toLowerCase().includes(norm) || p.cat.toLowerCase().includes(norm) || p.tag.toLowerCase().includes(norm));
       cmdResults.innerHTML = matches.map(p => `
         <a href="${p.file}" class="os-drop-item" style="border:1px solid rgba(255,255,255,0.08);">
           <span class="os-drop-icon" style="border-color:${p.color}66;">${p.icon}</span>
@@ -2108,6 +2217,7 @@
     }
 
     function openCmd() {
+      if (!isSoleOwner) return;
       closeAllPopovers();
       closeOffcanvasDrawer();
       cmdBackdrop.classList.add('open');
@@ -2124,6 +2234,7 @@
     cmdInput.addEventListener('input', e => renderCmdList(e.target.value));
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        if (!isSoleOwner) return;
         e.preventDefault();
         openCmd();
       } else if (e.key === 'Escape') {

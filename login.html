@@ -338,12 +338,15 @@
     <h2 id="ssoModalTitle" style="margin-bottom:6px">Continue with Google</h2>
     <p id="ssoModalSub" style="margin-bottom:14px">Sign in with your Google Workspace or Google Cloud account.</p>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-      <button type="button" class="btn" id="btnQuickCustomer" style="font-size:11px;padding:5px 9px;border-color:rgba(56,189,248,0.45);color:#7dd3fc">🛡️ Fill Customer Login (Restricted)</button>
-      <button type="button" class="btn" id="btnQuickOwner" style="font-size:11px;padding:5px 9px;border-color:rgba(197,179,88,0.5);color:#fde047">👑 Fill Owner Login (Full Access)</button>
+      <button type="button" class="btn" id="btnQuickCustomer" style="font-size:11px;padding:5px 9px;border-color:rgba(56,189,248,0.45);color:#7dd3fc">🛡️ Fill Verified Customer Login (SaaS Apps &amp; LMS)</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px">
       <button type="button" class="btn pri" id="btnLaunchOidcRedirect" style="width:100%;justify-content:center;padding:12px 18px;font-size:13px;display:none">🌐 Redirect to Provider OIDC Sign-In →</button>
       <input id="ssoEmail" type="email" value="" placeholder="name@organization.com" autocomplete="off" spellcheck="false" style="width:100%;padding:12px 14px;font-size:13px">
+      <div id="adminMfaWrap" style="display:none;padding:10px 12px;border-radius:12px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.45)">
+        <label style="display:block;font-size:11px;font-weight:800;color:#fde047;margin-bottom:6px">🔒 SOLE ADMINISTRATOR 2FA PASSKEY ATTESTATION REQUIRED</label>
+        <input id="ssoAdminMfa" type="password" value="" placeholder="Enter 6-digit Owner 2FA Code" autocomplete="one-time-code" style="width:100%;padding:10px 12px;font-size:13px;text-align:center;letter-spacing:.14em;font-weight:800">
+      </div>
       <button type="button" class="btn pri" id="btnCompleteSso" style="width:100%;justify-content:center;padding:12px 18px;font-size:13px">Continue →</button>
     </div>
     <p id="modalAuthMsg" style="color:#f87171;margin-top:10px;font-weight:700;font-size:12px;min-height:16px"></p>
@@ -558,14 +561,6 @@
 
   async function handleProviderTrigger(prov) {
     await configReadyPromise;
-    if (firebaseAuthReady) {
-      const ok = await launchFirebaseFederatedPopup(prov);
-      if (ok) return;
-    }
-    if (hasLiveClientId(prov)) {
-      location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
-      return;
-    }
     openProviderModal(prov);
   }
 
@@ -588,25 +583,28 @@
     });
   });
 
+  const adminMfaWrap = document.getElementById('adminMfaWrap');
+  const adminMfaInput = document.getElementById('ssoAdminMfa');
+
+  function syncAdminMfaVisibility() {
+    const em = (emailInput.value || '').trim().toLowerCase();
+    const isAdmin = em === 'malik.khabir@miltongroupsecurity.org';
+    if (adminMfaWrap) adminMfaWrap.style.display = isAdmin ? 'block' : 'none';
+  }
+  emailInput.addEventListener('input', syncAdminMfaVisibility);
+
   const btnQuickCustomer = document.getElementById('btnQuickCustomer');
   if (btnQuickCustomer) {
     btnQuickCustomer.onclick = () => {
       emailInput.value = 'customer@sterlingautorepairva.com';
+      syncAdminMfaVisibility();
       modalMsg.style.color = '#38bdf8';
-      modalMsg.textContent = 'Customer Restricted account selected (2/8 apps unlocked by default). Click Continue →';
-    };
-  }
-  const btnQuickOwner = document.getElementById('btnQuickOwner');
-  if (btnQuickOwner) {
-    btnQuickOwner.onclick = () => {
-      emailInput.value = 'malik.khabir@miltongroupsecurity.org';
-      modalMsg.style.color = '#fbbf24';
-      modalMsg.textContent = 'Owner Full Access account selected (all portals & 8/8 apps unlocked). Click Continue →';
+      modalMsg.textContent = 'Verified Customer account selected (restricted to SaaS Apps & LMS + Payment Submission). Click Continue →';
     };
   }
 
   function persistOnboardingBridge(email, name, role, provider, allowedApps, allowedPortals) {
-    const isAdmin = role === 'owner' || email === 'malik.khabir@miltongroupsecurity.org' || email === 'owner@miltongroupsecurity.org';
+    const isAdmin = role === 'owner' && email === 'malik.khabir@miltongroupsecurity.org';
     const sessionObj = {
       email,
       name: name || (isAdmin ? 'Malik A. Khabir' : email),
@@ -620,7 +618,7 @@
       access: isAdmin ? 'INTERNAL_SUITE_FULL' : 'CUSTOMER_RESTRICTED',
       accessTier: isAdmin ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
       allowedApps: isAdmin ? ['*'] : (Array.isArray(allowedApps) ? allowedApps : (W.DEFAULT_CUSTOMER_APPS || ['sterling-auto-repair', 'client-turnkey-forge'])),
-      allowedPortals: isAdmin ? ['*'] : (Array.isArray(allowedPortals) ? allowedPortals : ['member-portal.html', 'agile-board.html', 'saas-apps-and-lms-showcase.html', 'onboarding-portal.html']),
+      allowedPortals: isAdmin ? ['*'] : (Array.isArray(allowedPortals) ? allowedPortals : ['saas-apps-and-lms-showcase.html', 'member-portal.html']),
       verifiedAt: new Date().toISOString()
     };
     try {
@@ -632,6 +630,8 @@
 
   async function completeFederatedSso(provider, rawEmail) {
     const email = (rawEmail || emailInput.value || '').trim().toLowerCase();
+    const mfaCode = adminMfaInput ? (adminMfaInput.value || '').trim() : '';
+    syncAdminMfaVisibility();
     if (!['google', 'microsoft', 'apple'].includes(provider)) {
       modalMsg.textContent = 'Only Google, Microsoft, or Apple SSO is permitted.';
       return;
@@ -642,10 +642,22 @@
       emailInput.focus();
       return;
     }
+    if (email === 'malik.khabir@miltongroupsecurity.org' && !mfaCode) {
+      if (adminMfaWrap) adminMfaWrap.style.display = 'block';
+      modalMsg.style.color = '#fbbf24';
+      modalMsg.textContent = 'Sole Administrator 2FA Passkey attestation code is required.';
+      if (adminMfaInput) adminMfaInput.focus();
+      return;
+    }
     modalMsg.style.color = '#34d399';
     modalMsg.textContent = 'Verifying ' + PROVIDER_META[provider].name + ' SSO...';
 
     if (location.protocol === 'file:') {
+      if (email === 'malik.khabir@miltongroupsecurity.org' && mfaCode !== '440921') {
+        modalMsg.style.color = '#f87171';
+        modalMsg.textContent = 'Invalid Sole Administrator 2FA Passkey code.';
+        return;
+      }
       const u = W.provisionCustomerSso ? W.provisionCustomerSso(email, undefined, provider) : Object.values(W.S.users).find(x => x.email.toLowerCase() === email);
       if (u && u.status === 'active') {
         W.signInAs(u.id, provider);
@@ -662,26 +674,25 @@
       const res = await fetch('/api/auth/sso', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider, email, next: nextUrl })
+        body: JSON.stringify({ provider, email, mfaCode, next: nextUrl })
       });
       const data = await res.json();
       if (!data.ok) {
+        if (data.requireAdminMfa && adminMfaWrap) {
+          adminMfaWrap.style.display = 'block';
+          if (adminMfaInput) adminMfaInput.focus();
+        }
         modalMsg.style.color = '#f87171';
         modalMsg.textContent = data.error || 'SSO authentication failed.';
         return;
       }
-      if (W.provisionCustomerSso) W.provisionCustomerSso(data.email || email, data.name, provider);
-      W.signInAs(data.uid, provider);
+      try {
+        sessionStorage.setItem('mgcw.uid', data.uid);
+        sessionStorage.setItem('mgcw.sso_provider', provider);
+      } catch (_) {}
       persistOnboardingBridge(data.email || email, data.name, data.role, provider, data.allowedApps, data.allowedPortals);
       location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
     } catch (err) {
-      const u = W.provisionCustomerSso ? W.provisionCustomerSso(email, undefined, provider) : null;
-      if (u && u.status === 'active') {
-        W.signInAs(u.id, provider);
-        persistOnboardingBridge(u.email, u.name, u.role, provider, u.allowedApps, undefined);
-        location.href = nextUrl ? nextUrl.replace(/^\/+/, '') : (u.role === 'owner' ? 'access-admin.html' : 'member-portal.html');
-        return;
-      }
       modalMsg.style.color = '#f87171';
       modalMsg.textContent = 'Could not reach SSO authentication server.';
     }
@@ -792,8 +803,10 @@
           msg.textContent = (data && data.error) || 'Account registration failed.';
           return;
         }
-        if (W.provisionCustomerSso) W.provisionCustomerSso(data.email || email, data.name || name, ssoProvider);
-        W.signInAs(data.uid, ssoProvider);
+        try {
+          sessionStorage.setItem('mgcw.uid', data.uid);
+          sessionStorage.setItem('mgcw.sso_provider', ssoProvider);
+        } catch (_) {}
         persistOnboardingBridge(data.email || email, data.name || name, data.role || 'member', ssoProvider, data.allowedApps, data.allowedPortals);
         msg.style.color = '#34d399';
         msg.textContent = '✓ Account Registered (' + (data.intakeReceipt || data.uid) + ')! Redirecting to workspace...';

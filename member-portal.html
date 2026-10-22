@@ -12,168 +12,303 @@
 (function () {
   const W = MGCW, S = () => W.S, esc = W.esc;
   const app = document.getElementById('app');
-  const u = W.me();
-  let tab = (location.hash || '#pages').slice(1);
-  let open = null; // page being previewed
+  let u = W.me();
+  const qs = new URLSearchParams(location.search);
+  const initialView = qs.get('view') || (location.hash || '').slice(1) || 'apps';
+  let tab = ['payment', 'billing'].includes(initialView) ? 'payment' : initialView;
+  let lastPaymentReceipt = null;
+  let lastPaymentError = '';
 
-  function stepper(status) {
-    const labels = ['1 · Request received', '2 · Approved · pages being built', '3 · Active · sign in'];
-    const idx = Math.max(0, W.STEPS.indexOf(status));
-    return '<div class="steps">' + labels.map((l, i) => '<div class="step ' + (i < idx ? 'done' : i === idx ? 'on' : '') + '">' + l + '</div>').join('') + '</div>';
-  }
+  const isSoleAdmin = () => Boolean(u && u.role === 'owner' && u.id === 'owner');
 
-  function banner() {
-    if (u.status === 'denied') return '<div class="card"><h2>Request not approved</h2><p>Contact us if you think this is a mistake.</p></div>';
-    if (u.role === 'owner') return '';
-    if (u.status !== 'active') {
-      const msg = u.status === 'requested' ? 'We are reviewing your request. You will be notified the moment it is approved.' : 'Approved! We are building your pages now. You will be notified when they are ready — nothing else is needed from you.';
-      return '<div class="card"><div class="row"><h2>' + esc(W.STATUS_LABEL[u.status]) + '</h2><span class="chip warn">Hello, ' + esc(u.name.split(' ')[0]) + '</span></div>' + stepper(u.status) + '<p>' + msg + '</p></div>';
-    }
-    if (!u.plan.base) return '<div class="card"><div class="row"><div><h2>Your pages are ready 🎉</h2><p>Activate your workspace for <b>$5 / month</b>. Add individual pages later (pay per page).</p></div><button class="btn pri" id="subBase">Activate · $5/mo</button></div></div>';
-    return '';
-  }
-
-  const gated = () => u.role !== 'owner' && !W.subActive(u);
-
-  function appsPanelHtml() {
+  function saasAppsAndLmsPanel() {
     const apps = W.APPS_CATALOG || [];
-    if (!apps.length) return '';
     const unlockedApps = apps.filter(a => W.can(u, 'app', a.id, 'view'));
     const lockedApps = apps.filter(a => !W.can(u, 'app', a.id, 'view'));
+    const grantedPages = W.CATALOG.filter(c => c.id !== 'saasapps' && W.can(u, 'page', c.id, 'view'));
 
     const renderAppCard = (a) => {
       const allowed = W.can(u, 'app', a.id, 'view');
       const badge = allowed
-        ? '<span class="chip ok">' + (u.role === 'owner' ? '👑 Owner' : a.defaultCustomer ? '✅ Default Unlocked' : '✅ Granted') + '</span>'
-        : '<span class="chip warn">🔒 Restricted</span>';
+        ? '<span class="chip ok">' + (isSoleAdmin() ? '👑 Admin' : a.defaultCustomer ? '✅ Default Included' : '✅ Admin Granted') + '</span>'
+        : '<span class="chip warn">🔒 Admin Grant Required</span>';
       const act = allowed
-        ? '<a class="btn pri" href="' + esc(a.href) + '">Launch App →</a>'
-        : '<button class="btn" data-req-app="' + esc(a.id) + '">Request Owner Unlock →</button> <a class="btn" href="saas-apps-and-lms-showcase.html">Preview →</a>';
+        ? '<a class="btn pri" href="' + esc(a.href) + '">Launch App →</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>⬇ SCORM ZIP</a>' : '')
+        : '<button class="btn" data-go-payment="1">💳 Submit Payment Info</button>';
       return '<div class="compact-card" style="border-color:' + (allowed ? 'rgba(16,185,129,0.42)' : 'rgba(148,163,184,0.2)') + '">' +
         '<div><div class="row"><h3>' + a.icon + ' ' + esc(a.title) + '</h3>' + badge + '</div>' +
-        '<p>' + (allowed ? 'Ready in your workspace session.' : 'Restricted on customer login. Request Owner unlock or upgrade.') + '</p></div>' +
+        '<p>' + esc(a.desc) + '</p></div>' +
         '<div class="row" style="justify-content:flex-start;gap:8px">' + act + '</div></div>';
     };
 
-    return '<div class="card" style="padding:18px 20px">' +
-      '<div class="row" style="margin-bottom:12px"><div><h2 style="margin:0">🚀 Unlocked Applications (' + unlockedApps.length + '/' + apps.length + ')</h2><p style="margin:2px 0 0">Launch your provisioned customer deliverables and interactive workspaces.</p></div>' +
-      '<span class="chip ' + (u.role === 'owner' ? 'ok' : 'warn') + '">' + (u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED') + '</span></div>' +
-      '<div class="bento-2">' + unlockedApps.map(renderAppCard).join('') + '</div>' +
-      (lockedApps.length ? '<details style="margin-top:14px"><summary>🔒 Restricted Enterprise SCORM Apps (' + lockedApps.length + ' available via Owner Unlock)</summary><div class="bento-2" style="margin-top:12px">' + lockedApps.map(renderAppCard).join('') + '</div></details>' : '') +
-      '</div>';
+    const grantedPagesHtml = grantedPages.length
+      ? '<div class="card" style="padding:18px 20px;margin-top:14px">' +
+          '<div class="row" style="margin-bottom:12px"><div><h2 style="margin:0">🔓 Additional Features Granted by Administrator (' + grantedPages.length + ')</h2><p style="margin:2px 0 0">These modules were explicitly unlocked for your account by the Administrator.</p></div><span class="chip ok">ADMIN VERIFIED</span></div>' +
+          '<div class="bento-2">' + grantedPages.map(c =>
+            '<div class="compact-card" style="border-color:rgba(59,130,246,0.45)"><div><div class="row"><h3>' + c.icon + ' ' + esc(c.title) + '</h3><span class="chip ok">Granted</span></div><p>' + esc(c.desc) + '</p></div><div><a class="btn pri" href="' + esc(c.href) + '">Open ' + esc(c.title) + ' →</a></div></div>'
+          ).join('') + '</div></div>'
+      : '';
+
+    return '<div class="card" style="padding:18px 20px;border-color:rgba(197,179,88,0.48)">' +
+        '<div class="row"><div><span class="chip ok">⚡ SAAS APPS &amp; LMS HUB</span><h2 style="margin:6px 0 2px">SaaS Applications &amp; SCORM 2004 LMS Suite</h2><p style="margin:0">Launch your interactive SaaS applications, Turnkey Configurator, Sterling Auto Repair Showcase, and SCORM 2004 LMS packages.</p></div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn pri" href="saas-apps-and-lms-showcase.html">⚡ Open Full SaaS Apps &amp; LMS Showcase →</a><button class="btn" data-go-payment="1">💳 Submit Payment &amp; Billing →</button></div></div>' +
+      '</div>' +
+      '<div class="card" style="padding:18px 20px;margin-top:14px">' +
+        '<div class="row" style="margin-bottom:12px"><div><h2 style="margin:0">🚀 Your Active SaaS &amp; LMS Applications (' + unlockedApps.length + '/' + apps.length + ')</h2><p style="margin:2px 0 0">Ready to launch in your browser session.</p></div></div>' +
+        '<div class="bento-2">' + unlockedApps.map(renderAppCard).join('') + '</div>' +
+        (lockedApps.length ? '<details style="margin-top:14px"><summary>🔒 Additional SCORM 2004 Simulators (' + lockedApps.length + ' — Unlocked by Administrator after Payment Verification)</summary><div class="bento-2" style="margin-top:12px">' + lockedApps.map(renderAppCard).join('') + '</div></details>' : '') +
+      '</div>' +
+      grantedPagesHtml;
   }
 
-  function pagesPanel() {
-    const readyCards = [];
-    const addonCards = [];
-    W.CATALOG.forEach(c => {
-      const st = u.pages[c.id];
-      const includedByQuote = ((W.TAILOR[u.quote.interest] || { pages: [] }).pages).includes(c.id);
-      const mine = u.role === 'owner' || c.base || includedByQuote || (u.plan.addons || []).includes(c.id);
-      const ok = W.can(u, 'page', c.id, 'view');
-      let badge, action;
-      if (st === 'pending') { badge = '<span class="chip warn">Pending Build</span>'; action = ''; }
-      else if (ok) { badge = '<span class="chip ok">Ready</span>'; action = '<button class="btn pri" data-open="' + c.id + '">Open →</button>'; }
-      else if (!mine && u.role !== 'owner') { badge = '<span class="chip">Add-on</span>'; action = '<button class="btn" data-addon="' + c.id + '"' + (u.plan.base ? '' : ' disabled title="Activate base plan first"') + '>Add Module</button>'; }
-      else { badge = '<span class="chip">' + (gated() ? 'Locked' : 'Owner Approval') + '</span>'; action = ''; }
-      const html = '<div class="compact-card"><div><div class="row"><h3>' + c.icon + ' ' + esc(c.title) + '</h3>' + badge + '</div><p>' + esc(c.desc) + '</p></div>' + (action ? '<div>' + action + '</div>' : '') + '</div>';
-      if (ok || st === 'pending') readyCards.push(html);
-      else addonCards.push(html);
-    });
-    return appsPanelHtml() +
-      (open ? preview(open) : '') +
-      '<div class="card" style="padding:18px 20px"><div class="row" style="margin-bottom:12px"><div><h2 style="margin:0">📂 Workspace Modules (' + readyCards.length + ' Ready)</h2><p style="margin:2px 0 0">Core workspace pages and tailored hubs provisioned for your account.</p></div></div>' +
-      '<div class="bento-2">' + readyCards.join('') + '</div>' +
-      (addonCards.length ? '<details style="margin-top:14px"><summary>➕ Available Add-On Modules (' + addonCards.length + ')</summary><div class="bento-2" style="margin-top:12px">' + addonCards.join('') + '</div></details>' : '') +
-      '</div>';
+  function paymentPanel() {
+    const prof = u.paymentProfile || (lastPaymentReceipt && lastPaymentReceipt.paymentProfile) || null;
+    const receipts = Array.isArray(u.payments) ? u.payments : [];
+    const latestReceipt = (lastPaymentReceipt && lastPaymentReceipt.receipt) || receipts[0] || null;
+
+    const statusBanner = prof && prof.verified
+      ? '<div class="card" id="paymentVerifiedBanner" style="padding:18px 20px;border-color:rgba(16,185,129,0.58);background:linear-gradient(135deg,rgba(6,78,59,0.38),rgba(9,16,32,0.96))">' +
+          '<div class="row"><div><span class="chip ok">✅ LEGAL &amp; SECURE PAYMENT VERIFIED</span><h2 style="margin:6px 0 2px">' + esc(prof.instrumentBrand) + ' •••• ' + esc(prof.last4) + ' — ' + esc(prof.planLabel) + '</h2>' +
+          '<p style="margin:0;color:#a7f3d0">Vault Token: <code>' + esc(prof.vaultToken) + '</code> · ' + esc(prof.pciDssLevel) + ' · Attested ' + esc((prof.updatedAt || '').slice(0, 19).replace('T', ' ')) + ' UTC</p></div>' +
+          (latestReceipt ? '<span class="chip ok">Receipt: ' + esc(latestReceipt.receiptId) + '</span>' : '') + '</div>' +
+          (latestReceipt ? '<div style="margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(4,8,20,0.85);border:1px solid rgba(16,185,129,0.35);font-size:12px;color:#cbd5e1"><b>Cryptographic Compliance Signature:</b> <code>' + esc(latestReceipt.complianceSignature) + '</code> · <b>Merchant:</b> Milton Group Concepts LLC (EIN 92-1370285 · CAGE 17GC6 · UEI XN89KKM6JT89) &amp; F.I.X Solutions LLC</div>' : '') +
+        '</div>'
+      : '';
+
+    const errorBanner = lastPaymentError
+      ? '<div class="card" id="paymentErrorBanner" style="padding:14px 18px;border-color:rgba(239,68,68,0.6);background:rgba(127,29,29,0.28);color:#fecaca;font-weight:700">' + esc(lastPaymentError) + '</div>'
+      : '';
+
+    return statusBanner + errorBanner +
+      '<div class="card" style="padding:22px">' +
+        '<div class="row" style="margin-bottom:14px">' +
+          '<div><span class="chip warn">🔒 PCI-DSS v4.0 SAQ-A · EFTA / REG E · NACHA COMPLIANT</span>' +
+          '<h2 style="margin:6px 0 2px">💳 Legal &amp; Secure Payment &amp; Billing Submission</h2>' +
+          '<p style="margin:0">Submit or update your payment &amp; billing information. Raw card/account numbers are scrubbed client-side and tokenized via HMAC-SHA256 vaulting so full PAN/CVV never touch disk.</p></div>' +
+        '</div>' +
+
+        '<form id="legalPaymentForm" onsubmit="return false;" style="display:flex;flex-direction:column;gap:14px">' +
+          '<div class="bento-2">' +
+            '<div>' +
+              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">1. Select Subscription / Invoice Tier</label>' +
+              '<select id="payPlanTier" style="width:100%">' +
+                '<option value="saas_lms_base"' + (prof && prof.planTier === 'saas_lms_base' ? ' selected' : '') + '>SaaS Apps &amp; LMS Base Subscription — $5.00 / month</option>' +
+                '<option value="pro_enterprise"' + (prof && prof.planTier === 'pro_enterprise' ? ' selected' : '') + '>MGC &amp; F.I.X Pro SaaS + Enterprise LMS Suite — $49.00 / month</option>' +
+                '<option value="sdvosb_contract_retainer"' + (prof && prof.planTier === 'sdvosb_contract_retainer' ? ' selected' : '') + '>SDVOSB Federal / Commercial Retainer — $250.00 / month</option>' +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">2. Payment Rail</label>' +
+              '<select id="payMethod" style="width:100%">' +
+                '<option value="card_tokenized"' + (prof && prof.method === 'card_tokenized' ? ' selected' : '') + '>💳 Commercial / Personal Card (PCI-DSS v4.0 Tokenized)</option>' +
+                '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>🏦 NACHA Commercial ACH Direct Debit (Mercury Treasury)</option>' +
+                '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>🏛️ Federal GPC / PIEE WAWF (CAGE 17GC6 · UEI XN89KKM6JT89)</option>' +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="bento-3">' +
+            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Cardholder / Signer Legal Name *</label>' +
+              '<input id="payBillingName" required maxlength="100" value="' + esc((prof && prof.billingName) || u.name || '') + '" placeholder="Full Legal Name" style="width:100%"></div>' +
+            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Billing Receipt Email *</label>' +
+              '<input id="payBillingEmail" type="email" required maxlength="120" value="' + esc((prof && prof.billingEmail) || u.email || '') + '" placeholder="billing@company.com" style="width:100%"></div>' +
+            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Organization / Agency</label>' +
+              '<input id="payBillingOrg" maxlength="120" value="' + esc((prof && prof.billingOrg) || u.org || '') + '" placeholder="Company or Agency Name" style="width:100%"></div>' +
+          '</div>' +
+
+          '<div class="bento-3">' +
+            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Billing Street Address *</label>' +
+              '<input id="payAddress" required maxlength="140" value="' + esc((prof && prof.addressLine1) || '') + '" placeholder="100 Enterprise Pkwy Suite 200" style="width:100%"></div>' +
+            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">City &amp; State *</label>' +
+              '<div style="display:flex;gap:8px"><input id="payCity" required maxlength="80" value="' + esc((prof && prof.city) || '') + '" placeholder="Raleigh" style="flex:2"><input id="payState" required maxlength="40" value="' + esc((prof && prof.stateRegion) || '') + '" placeholder="NC" style="flex:1"></div></div>' +
+            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Postal / ZIP Code *</label>' +
+              '<input id="payZip" required maxlength="24" value="' + esc((prof && prof.postalCode) || '') + '" placeholder="27601" style="width:100%"></div>' +
+          '</div>' +
+
+          '<div class="card" style="padding:14px 16px;background:rgba(4,8,20,0.9);border-color:rgba(59,130,246,0.4)">' +
+            '<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#60a5fa;margin-bottom:8px">🔐 PCI-DSS v4.0 SAQ-A Tokenized Instrument Vault (Only Last 4 Digits Stored)</div>' +
+            '<div class="bento-3">' +
+              '<div><label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Card Brand / Bank / WAWF Office</label>' +
+                '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa Commercial') + '" placeholder="Visa / Mastercard / Mercury ACH" style="width:100%"></div>' +
+              '<div><label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Card or Account Number (Auto-Tokenized to Last 4) *</label>' +
+                '<input id="payCardOrLast4" required maxlength="24" value="' + esc((prof && prof.last4) || '') + '" placeholder="Enter card/account or last 4 digits (e.g. 4242)" autocomplete="off" style="width:100%"></div>' +
+              '<div><label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Exp (MM / YYYY) or Routing Last 4</label>' +
+                '<div style="display:flex;gap:8px"><input id="payExpMonth" type="number" min="1" max="12" value="' + esc((prof && prof.expMonth) || 12) + '" placeholder="MM" style="flex:1"><input id="payExpYear" type="number" min="2026" max="2040" value="' + esc((prof && prof.expYear) || 2029) + '" placeholder="YYYY" style="flex:1"></div></div>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="card" style="padding:14px 16px;background:rgba(4,8,20,0.92);border-color:rgba(197,179,88,0.42)">' +
+            '<div style="font-size:11px;font-weight:900;text-transform:uppercase;color:#fde047;margin-bottom:8px">⚖️ Mandatory Legal, Regulatory &amp; Security Attestations</div>' +
+            '<label style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#e2e8f0;padding:6px 0;cursor:pointer">' +
+              '<input type="checkbox" id="payEftaNacha" checked style="margin-top:3px">' +
+              '<span><b>EFTA (15 U.S.C. § 1693 / Regulation E) &amp; NACHA Operating Rules Authorization:</b> I authorize Milton Group Concepts LLC (EIN 92-1370285) &amp; F.I.X Solutions LLC to debit the designated payment instrument for the selected subscription or invoice amount, and I acknowledge my right to revoke recurring authorization at any time with 3 business days notice.</span>' +
+            '</label>' +
+            '<label style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#e2e8f0;padding:6px 0;cursor:pointer">' +
+              '<input type="checkbox" id="payPciTerms" checked style="margin-top:3px">' +
+              '<span><b>PCI-DSS v4.0 SAQ-A Cryptographic Tokenization Notice:</b> I understand that raw primary account numbers (PAN) and CVV codes are scrubbed immediately upon submission and replaced with an HMAC-SHA256 cryptographic vault token (<code>tok_mgc_...</code>).</span>' +
+            '</label>' +
+            '<label style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#e2e8f0;padding:6px 0;cursor:pointer">' +
+              '<input type="checkbox" id="payMsaTerms" checked style="margin-top:3px">' +
+              '<span><b>Master Services Agreement (MSA) &amp; Feature Provisioning Policy:</b> I agree to the MGC &amp; F.I.X Commercial Terms. Upon payment verification, the Administrator is notified to provision any additional requested workspace features.</span>' +
+            '</label>' +
+          '</div>' +
+
+          '<div class="row" style="justify-content:space-between">' +
+            '<span style="font-size:12px;color:#94a3b8">Merchant of Record: <b>Milton Group Concepts LLC</b> (CAGE <code>17GC6</code> · UEI <code>XN89KKM6JT89</code>)</span>' +
+            '<button type="submit" class="btn pri" id="btnSubmitLegalPayment">🔒 Verify &amp; Submit Secure Payment Information →</button>' +
+          '</div>' +
+        '</form>' +
+      '</div>' +
+
+      (receipts.length ? '<div class="card" style="padding:18px 20px;margin-top:14px"><h2 style="margin:0 0 10px">🧾 Verified Payment &amp; Tokenization Receipts (' + receipts.length + ')</h2>' +
+        '<table><thead><tr><th>Receipt ID</th><th>Instrument</th><th>Plan / Tier</th><th>Amount</th><th>Vault Token &amp; Signature</th><th>Timestamp</th></tr></thead><tbody>' +
+        receipts.map(r => '<tr><td><code>' + esc(r.receiptId) + '</code></td><td>' + esc(r.instrumentBrand) + ' •••• ' + esc(r.last4) + '</td><td>' + esc(r.planLabel) + '</td><td><b>$' + Number(r.amountUsd || 0).toFixed(2) + ' USD</b></td><td><code>' + esc(r.vaultToken) + '</code><br><small style="color:#34d399">' + esc(r.complianceSignature) + '</small></td><td>' + esc((r.createdAt || '').slice(0, 19).replace('T', ' ')) + '</td></tr>').join('') +
+        '</tbody></table></div>' : '');
   }
 
-  function preview(id) {
-    const c = W.CATALOG.find(x => x.id === id); const t = W.TAILOR[u.quote.interest] || W.TAILOR.federal;
-    const launchBtn = c && c.href ? '<div style="margin-top:10px"><a class="btn pri" href="' + esc(c.href) + '">Launch ' + esc(c.title) + ' →</a></div>' : '';
-    const body = id === 'home' ? '<p>Welcome back. Your next 3 action items:</p><ul>' + t.actions.slice(0, 3).map(a => '<li>' + esc(a) + '</li>').join('') + '</ul>'
-      : id === 'agile' ? '<p>Your shared projects live here.</p><a class="btn pri" href="agile-board.html">Open board →</a>'
-      : '<p>' + esc(c.desc) + '</p><p>This page is generated from your quote (<b>' + esc(t.label) + '</b>) and refined by us on request.</p>' + launchBtn;
-    return '<div class="card" style="margin-top:12px"><div class="row"><h2>' + c.icon + ' ' + esc(c.title) + ' — preview</h2><button class="btn" id="closePrev">Close</button></div>' + body + '</div>';
-  }
-
-  function actionsPanel() {
-    const t = W.TAILOR[u.quote.interest] || W.TAILOR.federal; const k = 'mgcw.chk.' + u.id;
+  function overviewPanel() {
+    const t = W.TAILOR[(u.quote && u.quote.interest) || 'ai-web'] || W.TAILOR.federal;
+    const k = 'mgcw.chk.' + u.id;
     const st = JSON.parse(localStorage.getItem(k) || '{}');
-    return '<div class="card"><h2>Action items — ' + esc(t.label) + '</h2>' + t.actions.map((a, i) => '<label class="row" style="justify-content:flex-start;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" data-chk="' + i + '"' + (st[i] ? ' checked' : '') + '> <span>' + esc(a) + '</span></label>').join('') + '</div>';
-  }
-  function resourcesPanel() {
-    const t = W.TAILOR[u.quote.interest] || W.TAILOR.federal;
-    return '<div class="card"><h2>Curated resources</h2>' + t.resources.map(r => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(r[0]) + '</span><a class="btn" target="_blank" rel="noopener" href="' + esc(r[1]) + '">Open ↗</a></div>').join('') + '</div>';
-  }
-  function workflowsPanel() {
-    const t = W.TAILOR[u.quote.interest] || W.TAILOR.federal;
-    return '<div class="card"><h2>Real-life workflows</h2>' + t.workflows.map(w => '<details open><summary>' + esc(w.split('→')[0].trim()) + '</summary><p>' + esc(w) + '</p></details>').join('') + '</div>';
-  }
-  function featuresPanel() {
-    const list = S().features.filter(f => u.role === 'owner' || f.by === u.id);
-    return '<div class="card"><h2>Request a feature or page</h2><div class="row" style="justify-content:flex-start"><input id="ftitle" maxlength="120" placeholder="Title" style="flex:1;min-width:200px"><button class="btn pri" id="fadd"' + (gated() ? ' disabled' : '') + '>Submit</button></div><textarea id="fbody" maxlength="2000" rows="2" placeholder="What would you like? (optional)" style="width:100%;margin-top:8px"></textarea></div>' +
-      '<div class="card" style="margin-top:10px"><h2>Your requests</h2>' + (list.length ? list.map(f => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(f.title) + '</span><span class="chip">' + esc(f.status) + '</span></div>').join('') : '<p>None yet.</p>') + '</div>';
-  }
-  function billingPanel() {
-    const addons = W.CATALOG.filter(c => !c.base);
-    return '<div class="card"><h2>Billing</h2><div class="row"><span>Base workspace · $5/mo</span><span class="chip ' + (u.plan.base ? 'ok' : 'warn') + '">' + (u.role === 'owner' ? 'Owner · free' : u.plan.base ? 'Active' : 'Not active') + '</span></div>' +
-      '<details><summary>Per-page add-ons</summary>' + addons.map(c => '<div class="row" style="padding:6px 0"><span>' + c.icon + ' ' + esc(c.title) + ' · $' + c.price + '/mo</span><span class="chip ' + ((u.plan.addons || []).includes(c.id) ? 'ok' : '') + '">' + ((u.plan.addons || []).includes(c.id) ? 'Subscribed' : 'Available') + '</span></div>').join('') + '</details>' +
-      '<p>Prototype: no real charge. Production uses Stripe Checkout; a webhook sets your <code>sub</code> claim.</p></div>';
-  }
-  function inboxPanel() {
-    const list = S().notifications.filter(n => n.toUid === u.id);
-    list.forEach(n => n.read = true); W.commit();
-    return '<div class="card" id="inbox"><h2>Notifications</h2>' + (list.length ? list.map(n => '<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="row"><b style="font-size:13px">' + esc(n.title) + '</b><span class="chip">' + esc(n.channel) + '</span></div><p>' + esc(n.body) + '</p></div>').join('') : '<p>Nothing yet.</p>') + '</div>';
+    return '<div class="card"><h2>🏠 Full Overview &amp; Action Checklist — ' + esc(t.label) + '</h2>' +
+      t.actions.map((a, i) => '<label class="row" style="justify-content:flex-start;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" data-chk="' + i + '"' + (st[i] ? ' checked' : '') + '> <span>' + esc(a) + '</span></label>').join('') +
+      '</div>';
   }
 
-  const TABS = [
-    ['pages', '🚀 Active Apps & Modules', pagesPanel],
-    ['actions', '✅ Action Checklist', actionsPanel],
-    ['resources', '📚 Curated Resources', resourcesPanel],
-    ['workflows', '⚡ Guided Workflows', workflowsPanel],
-    ['features', '💡 Feature Requests', featuresPanel],
-    ['billing', '💳 Plan & Add-Ons', billingPanel],
-    ['inbox', '🔔 Notifications', inboxPanel]
-  ];
-  const needsActive = ['actions', 'resources', 'workflows'];
+  function resourcesPanel() {
+    const t = W.TAILOR[(u.quote && u.quote.interest) || 'ai-web'] || W.TAILOR.federal;
+    return '<div class="card"><h2>📚 Curated Resources</h2>' +
+      t.resources.map(r => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(r[0]) + '</span><a class="btn" target="_blank" rel="noopener" href="' + esc(r[1]) + '">Open ↗</a></div>').join('') +
+      '</div>';
+  }
+
+  function getAvailableTabsForUser() {
+    // Base tabs for all authenticated users: Strictly SaaS Apps & LMS + Submit Payment & Billing
+    const list = [
+      ['apps', '⚡ SaaS Apps & LMS', saasAppsAndLmsPanel],
+      ['payment', '💳 Submit Payment & Billing', paymentPanel]
+    ];
+    if (isSoleAdmin() || W.can(u, 'page', 'home', 'view')) {
+      list.push(['overview', '🏠 Full Overview Hub', overviewPanel]);
+    }
+    if (isSoleAdmin() || W.can(u, 'page', 'resources', 'view')) {
+      list.push(['resources', '📚 Curated Resources', resourcesPanel]);
+    }
+    return list;
+  }
 
   function render() {
-    if (!u) { app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Federated SSO Enforced</span><h1 style="margin-top:10px">Single Sign-On Required</h1><p>Authenticate with <b>Google</b>, <b>Microsoft</b>, or <b>Apple</b> SSO to open your workspace.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=/member-portal.html">Sign In with SSO →</a></div></div>'; W.header('member-portal.html'); return; }
-    let body;
-    if (u.status === 'denied') body = '';
-    else if (needsActive.includes(tab) && u.role !== 'owner' && !W.subActive(u)) body = '<div class="card lock"><h2>🔒 Locked until your workspace is active</h2><p>Complete the steps above to unlock this section.</p></div>';
-    else body = (TABS.find(t => t[0] === tab) || TABS[0])[2]();
+    u = W.me();
+    if (!u) {
+      app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Federated SSO Enforced</span><h1 style="margin-top:10px">Single Sign-On Required</h1><p>Authenticate with <b>Google</b>, <b>Microsoft</b>, or <b>Apple</b> SSO to open your SaaS Apps &amp; LMS and Secure Payment Center.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In with SSO →</a></div></div>';
+      W.header('member-portal.html');
+      return;
+    }
+
+    const availableTabs = getAvailableTabsForUser();
+    if (!availableTabs.some(t => t[0] === tab)) {
+      tab = availableTabs[0][0];
+    }
+    const activeTabEntry = availableTabs.find(t => t[0] === tab) || availableTabs[0];
+    const body = activeTabEntry[2]();
 
     const apps = W.APPS_CATALOG || [];
     const unlockedCount = apps.filter(a => W.can(u, 'app', a.id, 'view')).length;
+    const grantedFeatureLinks = W.CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'home' && c.id !== 'resources' && W.can(u, 'page', c.id, 'view'));
+    const paymentOk = Boolean(u.paymentProfile && u.paymentProfile.verified);
+
     const kpiHtml = '<div class="kpi-strip">' +
-      '<div class="kpi-tile"><small>Access Tier</small><strong>' + (u.role === 'owner' ? 'Owner Full' : 'Customer Tier') + '</strong></div>' +
-      '<div class="kpi-tile"><small>Unlocked Apps</small><strong>' + unlockedCount + ' / ' + apps.length + ' Ready</strong></div>' +
-      '<div class="kpi-tile"><small>Workspace Track</small><strong>' + esc(((W.TAILOR[u.quote.interest] || {}).label || 'Custom Scope')) + '</strong></div>' +
+      '<div class="kpi-tile"><small>Account Scope</small><strong>' + (isSoleAdmin() ? 'Sole Administrator' : 'SaaS & LMS User') + '</strong></div>' +
+      '<div class="kpi-tile"><small>SaaS &amp; LMS Apps</small><strong>' + unlockedCount + ' / ' + apps.length + ' Ready</strong></div>' +
+      '<div class="kpi-tile"><small>Payment Status</small><strong style="color:' + (paymentOk ? '#34d399' : '#fbbf24') + '">' + (paymentOk ? 'Verified (' + esc(u.paymentProfile.last4) + ')' : 'Ready to Submit') + '</strong></div>' +
       '</div>';
 
-    const sideNav = '<aside class="ws-side" aria-label="Workspace Navigation">' +
-      '<div class="ws-side-title">Workspace Views</div>' +
-      TABS.map(t => '<button type="button" class="ws-nav-btn' + (t[0] === tab ? ' active' : '') + '" data-tab="' + t[0] + '"><span>' + t[1] + '</span></button>').join('') +
+    const sideNav = '<aside class="ws-side" aria-label="Authorized User Navigation">' +
+      '<div class="ws-side-title">Authorized Menu</div>' +
+      availableTabs.map(t => '<button type="button" class="ws-nav-btn' + (t[0] === tab ? ' active' : '') + '" data-tab="' + t[0] + '"><span>' + t[1] + '</span></button>').join('') +
+      '<a class="ws-nav-btn" href="saas-apps-and-lms-showcase.html" style="text-decoration:none"><span>🚀 Launch Full SaaS &amp; LMS Catalog →</span></a>' +
+      grantedFeatureLinks.map(c => '<a class="ws-nav-btn" href="' + esc(c.href) + '" style="text-decoration:none"><span>' + c.icon + ' ' + esc(c.title) + ' →</span></a>').join('') +
+      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.45);color:#fde047"><span>👑 Access Admin (Grant Features) →</span></a>' : '') +
       '</aside>';
 
-    app.innerHTML = '<div style="margin-bottom:14px"><div class="row"><div><h1 style="margin:0">Welcome, ' + esc(u.name.split(' (')[0]) + '</h1><p style="margin:2px 0 0">' + (u.brand === 'FIX' ? 'F.I.X Solutions' : 'Milton Group Concepts') + ' · <b>' + (u.role === 'owner' ? 'Owner Full Access' : 'Default Restricted Customer Access') + '</b></p></div></div></div>' +
-      banner() +
+    app.innerHTML = '<div style="margin-bottom:14px"><div class="row"><div><h1 style="margin:0">Welcome, ' + esc(u.name.split(' (')[0]) + '</h1><p style="margin:2px 0 0">' + (u.brand === 'FIX' ? 'F.I.X Solutions' : 'Milton Group Concepts') + ' · <b>' + (isSoleAdmin() ? 'Sole Administrator (Malik A. Khabir)' : 'SaaS Apps & LMS + Verified Payment Center') + '</b></p></div></div></div>' +
       '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + kpiHtml + body + '</div></div>';
-    W.header('member-portal.html');
+    W.header(tab === 'payment' ? 'member-portal.html?view=payment' : 'member-portal.html');
     bind();
   }
 
   function bind() {
-    app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; open = null; render(); });
-    app.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { if (W.can(u, 'page', b.dataset.open, 'view')) { open = b.dataset.open; render(); } });
-    app.querySelectorAll('[data-req-app]').forEach(b => b.onclick = () => { if (W.requestAppAccess) W.requestAppAccess(b.dataset.reqApp); W.toast('Unlock request sent to Owner — you will be notified when granted'); b.textContent = '✓ Request Sent to Owner'; b.disabled = true; });
-    const cp = document.getElementById('closePrev'); if (cp) cp.onclick = () => { open = null; render(); };
-    const sb = document.getElementById('subBase'); if (sb) sb.onclick = () => { W.subscribeBase(u.id); W.toast('Workspace activated'); render(); };
-    app.querySelectorAll('[data-addon]').forEach(b => b.onclick = () => { W.toggleAddon(u.id, b.dataset.addon); W.toast('Page requested — we will build it and notify you'); render(); });
-    app.querySelectorAll('[data-chk]').forEach(c => c.onchange = () => { const k = 'mgcw.chk.' + u.id; const st = JSON.parse(localStorage.getItem(k) || '{}'); st[c.dataset.chk] = c.checked; localStorage.setItem(k, JSON.stringify(st)); });
-    const fa = document.getElementById('fadd'); if (fa) fa.onclick = () => { const t = document.getElementById('ftitle').value.trim(); if (!t) return; const b = document.getElementById('fbody').value; if (!W.postServerAction || !W.postServerAction({ action: 'createFeature', title: t, body: b })) { S().features.unshift({ id: W.uid('f'), by: u.id, title: t, body: b, votes: [u.id], status: 'new', created: W.now() }); W.notify('owner', 'Feature request', u.name + ': ' + t); W.log(u.id, 'feature.create', t); W.commit(); } W.toast('Request sent'); render(); };
+    app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
+      tab = b.dataset.tab;
+      lastPaymentError = '';
+      render();
+    });
+    app.querySelectorAll('[data-go-payment]').forEach(b => b.onclick = () => {
+      tab = 'payment';
+      lastPaymentError = '';
+      render();
+    });
+    app.querySelectorAll('[data-chk]').forEach(c => c.onchange = () => {
+      const k = 'mgcw.chk.' + u.id;
+      const st = JSON.parse(localStorage.getItem(k) || '{}');
+      st[c.dataset.chk] = c.checked;
+      localStorage.setItem(k, JSON.stringify(st));
+    });
+
+    const payForm = document.getElementById('legalPaymentForm');
+    if (payForm) {
+      payForm.onsubmit = async (ev) => {
+        ev.preventDefault();
+        lastPaymentError = '';
+        const rawInstrument = document.getElementById('payCardOrLast4').value.replace(/\D/g, '');
+        const last4 = rawInstrument.length >= 4 ? rawInstrument.slice(-4) : '';
+        // Immediately scrub the input field to last4 so full PAN never lingers in DOM
+        if (last4) document.getElementById('payCardOrLast4').value = last4;
+
+        const payload = {
+          planTier: document.getElementById('payPlanTier').value,
+          method: document.getElementById('payMethod').value,
+          billingName: document.getElementById('payBillingName').value.trim(),
+          billingEmail: document.getElementById('payBillingEmail').value.trim(),
+          billingOrg: document.getElementById('payBillingOrg').value.trim(),
+          addressLine1: document.getElementById('payAddress').value.trim(),
+          city: document.getElementById('payCity').value.trim(),
+          state: document.getElementById('payState').value.trim(),
+          postalCode: document.getElementById('payZip').value.trim(),
+          cardBrand: document.getElementById('payBrand').value.trim(),
+          last4,
+          expMonth: Number(document.getElementById('payExpMonth').value) || 12,
+          expYear: Number(document.getElementById('payExpYear').value) || 2029,
+          eftaNachaAccepted: document.getElementById('payEftaNacha').checked,
+          pciTermsAccepted: document.getElementById('payPciTerms').checked,
+          msaAccepted: document.getElementById('payMsaTerms').checked
+        };
+
+        try {
+          const resp = await fetch('/api/payment/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await resp.json();
+          if (!data || !data.ok) {
+            lastPaymentError = (data && data.error) || 'Payment verification failed. Check all required fields and legal checkboxes.';
+            render();
+            return;
+          }
+          lastPaymentReceipt = data;
+          if (u) {
+            u.paymentProfile = data.paymentProfile;
+            u.payments = [data.receipt].concat(u.payments || []);
+          }
+          W.toast('Payment verified — Receipt ' + data.receipt.receiptId);
+          render();
+        } catch (err) {
+          lastPaymentError = 'Network error while verifying payment.';
+          render();
+        }
+      };
+    }
   }
   render();
 })();

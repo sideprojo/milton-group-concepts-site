@@ -12,10 +12,10 @@
 (function () {
   const W = MGCW, S = () => W.S, esc = W.esc, app = document.getElementById('app');
   const me = W.me();
-  let tab = 'requests';
+  let tab = 'users';
 
-  if (!me || me.role !== 'owner') {
-    app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Zero-Trust Owner Authorization Enforced</span><h1 style="margin-top:10px">Owner authentication required</h1><p>This administrative control center is restricted to the authenticated platform owner.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In as Owner →</a></div></div>';
+  if (!me || me.role !== 'owner' || me.id !== 'owner' || String(me.email || '').toLowerCase() !== 'malik.khabir@miltongroupsecurity.org') {
+    app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Sole Administrator Authorization Enforced</span><h1 style="margin-top:10px">Administrator authentication required</h1><p>This administrative control center is restricted exclusively to the sole Administrator account (Malik A. Khabir).</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In as Administrator →</a></div></div>';
     W.header('access-admin.html'); return;
   }
   const members = () => Object.values(S().users).filter(x => x.role !== 'owner');
@@ -23,9 +23,9 @@
 
   function kpis() {
     const m = members(); const c = (s) => m.filter(x => x.status === s).length;
-    const open = S().tasks.filter(t => !t.done).length;
+    const paid = m.filter(x => x.paymentProfile && x.paymentProfile.verified).length;
     return '<div class="kpi-strip">' +
-      [['Pending Approval', c('requested')], ['Building Pages', c('approved_building')], ['Open Build Tasks', open], ['Active Members', c('active')], ['Active Accounts', m.length]]
+      [['Sole Administrator', '1 (Malik)'], ['Registered Users', m.length], ['Active Users', c('active')], ['Verified Payments', paid], ['Total Receipts', (S().payments || []).length]]
       .map(k => '<div class="kpi-tile"><small>' + k[0] + '</small><strong>' + k[1] + '</strong></div>').join('') +
       '</div>';
   }
@@ -34,7 +34,7 @@
     const list = members().filter(x => x.status === 'requested');
     const reqLog = (S().requests || []).slice(0, 12);
     const pendingHtml = !list.length
-      ? '<div class="compact-card" style="margin-bottom:12px"><h3>Pending Queue</h3><p>All registered accounts are provisioned and active. Use the <b>Users &amp; Entitlements</b> tab to register a new user or review active accounts.</p></div>'
+      ? '<div class="compact-card" style="margin-bottom:12px"><h3>Pending Queue</h3><p>All registered accounts are provisioned and active (restricted by default to <b>SaaS Apps &amp; LMS</b> + <b>Payment Submission</b>). Use the <b>Fluid User Access &amp; Features</b> tab to grant or revoke additional views.</p></div>'
       : list.map(x => '<div class="compact-card" style="margin-bottom:10px"><div class="row"><div><h3>' + esc(x.name) + ' · ' + esc(x.email) + '</h3><p>' + (x.brand === 'FIX' ? 'F.I.X Solutions' : 'MGC') + ' · Track: <b>' + esc(((W.TAILOR[x.quote && x.quote.interest] || {}).label) || (x.quote && x.quote.interest) || 'SaaS') + '</b></p></div><div class="nav"><button class="btn pri" data-ap="' + x.id + '">Approve → Build Pages</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div></div>').join('');
     const logHtml = reqLog.length
       ? '<div class="card"><h2>Verified Intake &amp; Registration Ledger (' + reqLog.length + ')</h2><table><thead><tr><th>Receipt</th><th>Name &amp; Org</th><th>Email / SSO</th><th>Track</th><th>Status</th></tr></thead><tbody>' +
@@ -57,13 +57,69 @@
   function users() {
     const cols = W.CATALOG;
     const apps = W.APPS_CATALOG || [];
-    return '<div class="card" style="margin-bottom:12px"><h2>+ Provision &amp; Register New Account</h2><div class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><input id="admRegName" placeholder="Full Name" style="flex:1;min-width:150px"><input id="admRegEmail" placeholder="work@organization.org" style="flex:1;min-width:180px"><input id="admRegOrg" placeholder="Organization" style="flex:1;min-width:140px"><select id="admRegProvider"><option value="google">Google SSO</option><option value="microsoft">Microsoft Entra</option><option value="apple">Apple ID</option></select><select id="admRegInterest"><option value="saas">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="ai">Agentic AI</option><option value="cyber">Zero-Trust Cyber</option></select><button class="btn pri" id="admRegGo">Register User</button></div></div>' +
-      '<div class="card" style="overflow:auto"><h2>Registered Accounts (' + members().length + ')</h2><table><thead><tr><th>User</th><th>Email</th><th>Status</th><th>Tier</th><th>Apps</th>' + cols.map(c => '<th title="' + esc(c.title) + '">' + c.icon + '</th>').join('') + '</tr></thead><tbody>' +
+    return '<div class="card" style="margin-bottom:12px"><h2>+ Provision &amp; Register New Account (Defaults to SaaS Apps &amp; LMS Only)</h2><div class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><input id="admRegName" placeholder="Full Name" style="flex:1;min-width:150px"><input id="admRegEmail" placeholder="work@organization.org" style="flex:1;min-width:180px"><input id="admRegOrg" placeholder="Organization" style="flex:1;min-width:140px"><select id="admRegProvider"><option value="google">Google SSO</option><option value="microsoft">Microsoft Entra</option><option value="apple">Apple ID</option></select><select id="admRegInterest"><option value="saas">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="ai">Agentic AI</option><option value="cyber">Zero-Trust Cyber</option></select><button class="btn pri" id="admRegGo">Register User</button></div></div>' +
+      '<div class="card" style="margin-bottom:12px"><h2>Fluid User Access &amp; Feature Control (' + members().length + ' Non-Admin Users)</h2><p style="margin-bottom:12px">New users only see <b>⚡ SaaS Apps &amp; LMS</b> and <b>💳 Submit Payment &amp; Billing</b> in their Left Side Pane and Top Menu. Click any feature pill below to fluidly grant or revoke access for that user in real time.</p>' +
       members().map(x => {
-        const appCnt = apps.filter(a => W.can(x, 'app', a.id, 'view')).length;
-        return '<tr><td><b>' + esc(x.name) + '</b><br><span style="font-size:11px;color:var(--mut)">' + esc(x.org || '') + '</span></td><td>' + esc(x.email) + '</td><td><span class="chip ok">' + esc(W.STATUS_LABEL[x.status] || x.status) + '</span></td><td><span class="chip warn">' + esc(x.accessTier || 'CUSTOMER_RESTRICTED') + '</span></td><td><b>' + appCnt + '/' + apps.length + '</b></td>' +
-        cols.map(c => { const s = x.pages && x.pages[c.id]; return '<td>' + (s === 'ready' ? '✅' : s === 'pending' ? '⏳' : '·') + '</td>'; }).join('') + '</tr>';
-      }).join('') + '</tbody></table></div>';
+        const pay = x.paymentProfile;
+        const payBadge = (pay && pay.verified)
+          ? '<span class="chip ok">✅ Payment Verified (' + esc(pay.cardBrand || pay.method) + ' •••• ' + esc(pay.last4) + ' · ' + esc(pay.receiptId) + ')</span>'
+          : '<span class="chip warn">⏳ Awaiting Payment Submission</span>';
+        const grantedPages = cols.filter(c => W.can(x, 'page', c.id, 'view')).length;
+        const grantedApps = apps.filter(a => W.can(x, 'app', a.id, 'view')).length;
+        return '<div class="compact-card" data-user-card="' + esc(x.id) + '" style="margin-bottom:12px;border-color:rgba(197,179,88,0.38)">' +
+          '<div class="row" style="margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">' +
+            '<div>' +
+              '<h3 style="font-size:15px">' + esc(x.name) + ' <span style="font-weight:500;color:var(--mut)">(' + esc(x.email) + ')</span></h3>' +
+              '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">' +
+                '<span class="chip">' + esc((x.ssoProvider || 'google').toUpperCase()) + ' SSO</span>' +
+                '<span class="chip ok">' + grantedPages + '/' + cols.length + ' Features</span>' +
+                '<span class="chip">' + grantedApps + '/' + apps.length + ' Apps</span>' +
+                payBadge +
+              '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+              '<button type="button" class="btn pri" data-preset="' + esc(x.id) + '|grant_all_features" style="font-size:11px;padding:6px 10px">🔓 Grant All Features</button>' +
+              '<button type="button" class="btn" data-preset="' + esc(x.id) + '|reset_saas_only" style="font-size:11px;padding:6px 10px">🛡️ Reset to SaaS &amp; LMS Only</button>' +
+            '</div>' +
+          '</div>' +
+          '<div style="margin-bottom:8px">' +
+            '<div style="font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Portal Views &amp; Left/Top Menu Features (Click to Grant / Revoke):</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+              cols.map(c => {
+                const on = W.can(x, 'page', c.id, 'view');
+                const isDefaultSaas = c.id === 'saasapps';
+                return '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-page="' + esc(x.id) + '|' + esc(c.id) + '|' + (!on) + '" style="font-size:11.5px;padding:6px 10px;' + (on ? 'border-color:rgba(16,185,129,0.65);background:rgba(16,185,129,0.18);color:#6ee7b7' : 'opacity:0.75') + '">' +
+                  c.icon + ' ' + esc(c.title) + ' · <b>' + (on ? (isDefaultSaas ? '✅ Default' : '✅ Granted') : '+ Grant') + '</b>' +
+                '</button>';
+              }).join('') +
+            '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">SCORM 2004 / SaaS App Entitlements (Click to Grant / Revoke):</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+              apps.map(a => {
+                const on = W.can(x, 'app', a.id, 'view');
+                return '<button type="button" class="btn" data-toggle-app="' + esc(x.id) + '|' + esc(a.id) + '|' + (!on) + '" style="font-size:11px;padding:5px 9px;' + (on ? 'border-color:rgba(56,189,248,0.6);background:rgba(56,189,248,0.16);color:#bae6fd' : 'opacity:0.7') + '">' +
+                  a.icon + ' ' + esc(a.title) + ' · <b>' + (on ? '✅ On' : '+ Unlock') + '</b>' +
+                '</button>';
+              }).join('') +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('') +
+      '</div>';
+  }
+
+  function paymentsTab() {
+    const list = S().payments || [];
+    return '<div class="card"><h2>💳 Verified Customer Payment &amp; Billing Submissions (' + list.length + ')</h2>' +
+      '<p style="margin-bottom:12px">All customer payment instruments are tokenized under <b>PCI-DSS v4.0 SAQ-A</b> (zero raw PAN storage) with <b>EFTA / Reg E / NACHA</b> legal authorization.</p>' +
+      (list.length
+        ? '<table><thead><tr><th>Receipt</th><th>Customer</th><th>Plan / Amount</th><th>Tokenized Instrument</th><th>Legal Attestation</th><th>Timestamp</th></tr></thead><tbody>' +
+          list.map(p => '<tr><td><span class="chip ok">' + esc(p.receiptId) + '</span><br><code style="font-size:10px;color:var(--mut)">' + esc(p.signature || '') + '</code></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b><br><span style="font-size:11px;color:var(--mut)">' + esc(p.email || '') + ' · ' + esc(p.billingOrg || '') + '</span></td><td><b>' + esc(p.planLabel || p.planId) + '</b><br><span class="chip">$' + Number(p.amountUsd || 0).toLocaleString() + ' USD</span></td><td><b>' + esc(p.cardBrand || p.method) + ' •••• ' + esc(p.last4) + '</b><br><code style="font-size:10px;color:#38bdf8">' + esc(p.paymentToken || '') + '</code></td><td><span class="chip ok">EFTA + PCI + MSA</span></td><td style="font-size:11px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleString() + '</td></tr>').join('') +
+          '</tbody></table>'
+        : '<p>No customer payment submissions recorded yet.</p>') +
+      '</div>';
   }
 
   function sharing() {
@@ -89,13 +145,13 @@
     return '<div class="card"><h2>Audit Ledger</h2><table><tbody>' + S().audit.slice(0, 50).map(a => '<tr><td>' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') + '</tbody></table>' + (S().audit.length ? '' : '<p>Empty.</p>') + '</div>';
   }
 
-  const TABS = [['requests', '📥 Intake & Requests', requests], ['users', '👥 Users & Registration', users], ['sharing', '🔑 Sharing & Entitlements', sharing], ['tasks', '🛠 Build Workflow', tasks], ['notifs', '🔔 Outbox', notifs], ['audit', '📜 Audit Log', audit]];
+  const TABS = [['users', '👥 Fluid User Access & Features', users], ['payments', '💳 Verified Payments', paymentsTab], ['requests', '📥 Intake & Requests', requests], ['sharing', '🔑 Granular Shares', sharing], ['tasks', '🛠 Build Workflow', tasks], ['notifs', '🔔 Outbox', notifs], ['audit', '📜 Audit Log', audit]];
   function render() {
     const sideHtml =
       '<aside class="ws-side">' +
-        '<span class="chip ok">👑 Owner Control</span>' +
-        '<h2 style="margin:8px 0 4px;font-size:17px">Access Admin</h2>' +
-        '<p style="font-size:12px;margin-bottom:12px">Provision accounts, verify registrations, and grant granular app entitlements.</p>' +
+        '<span class="chip ok">👑 Sole Administrator</span>' +
+        '<h2 style="margin:8px 0 4px;font-size:17px">Access &amp; Feature Control</h2>' +
+        '<p style="font-size:12px;margin-bottom:12px">Fluidly grant or revoke views, features, and apps for any user, and verify PCI-DSS / EFTA payments.</p>' +
         '<div style="display:flex;flex-direction:column;gap:6px">' +
           TABS.map(t => '<button class="btn' + (t[0] === tab ? ' pri' : '') + '" data-tab="' + t[0] + '" style="text-align:left;justify-content:flex-start">' + t[1] + '</button>').join('') +
         '</div>' +
@@ -113,6 +169,26 @@
     app.querySelectorAll('[data-dn]').forEach(b => b.onclick = () => { W.deny(b.dataset.dn); render(); });
     app.querySelectorAll('[data-task]').forEach(c => c.onchange = () => { W.completeTask(c.dataset.task, c.checked); render(); });
     app.querySelectorAll('[data-rv]').forEach(b => b.onclick = () => { W.revoke(b.dataset.rv); render(); });
+    app.querySelectorAll('[data-toggle-page]').forEach(b => b.onclick = () => {
+      const [uidVal, pageId, enStr] = b.dataset.togglePage.split('|');
+      const en = enStr === 'true';
+      W.toggleUserFeature(uidVal, 'page', pageId, en);
+      W.toast((en ? '✓ Granted ' : '🔒 Revoked ') + pageId + ' for ' + name(uidVal));
+      render();
+    });
+    app.querySelectorAll('[data-toggle-app]').forEach(b => b.onclick = () => {
+      const [uidVal, appId, enStr] = b.dataset.toggleApp.split('|');
+      const en = enStr === 'true';
+      W.toggleUserFeature(uidVal, 'app', appId, en);
+      W.toast((en ? '✓ Unlocked app ' : '🔒 Locked app ') + appId + ' for ' + name(uidVal));
+      render();
+    });
+    app.querySelectorAll('[data-preset]').forEach(b => b.onclick = () => {
+      const [uidVal, presetId] = b.dataset.preset.split('|');
+      W.toggleUserFeature(uidVal, 'preset', presetId, true);
+      W.toast(presetId === 'grant_all_features' ? '✓ All features & apps granted for ' + name(uidVal) : '🛡️ Reset ' + name(uidVal) + ' to SaaS & LMS Only');
+      render();
+    });
     const regBtn = document.getElementById('admRegGo');
     if (regBtn) regBtn.onclick = async () => {
       const nm = document.getElementById('admRegName').value.trim();
@@ -125,11 +201,12 @@
         await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: nm, email: em, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true }) });
       } catch (_) {}
       W.submitRequest({ name: nm, email: em, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true, mfaVerified: true });
-      W.toast('Registered ' + nm + ' (' + em + ')');
+      W.toast('Registered ' + nm + ' (' + em + ') — Restricted to SaaS Apps & LMS');
       render();
     };
     const go = document.getElementById('shGo'); if (go) go.onclick = () => { const r = document.getElementById('shRes').value.split('|'); let p = document.getElementById('shPerm').value.split(','); if (r[0] === 'element' || r[0] === 'app') p = ['view']; W.share(document.getElementById('shUser').value, r[0], r[1], p); W.toast('Entitlement granted'); render(); };
   }
+  window.addEventListener('mgcw:remote-sync', () => render());
   render();
 })();
 </script>

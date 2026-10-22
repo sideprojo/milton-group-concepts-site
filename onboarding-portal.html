@@ -151,7 +151,6 @@
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
           <button type="button" id="presetCustomer" onclick="quickFillOnboarding('customer')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(56,189,248,0.5);background:rgba(56,189,248,0.12);color:#7dd3fc;font-size:0.72rem;font-weight:800;cursor:pointer;">🛡️ Customer Login</button>
           <button type="button" id="presetNewPartner" onclick="quickFillOnboarding('register')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(16,185,129,0.5);background:rgba(16,185,129,0.14);color:#6ee7b7;font-size:0.72rem;font-weight:800;cursor:pointer;">✨ Register Partner</button>
-          <button type="button" id="presetOwner" onclick="quickFillOnboarding('owner')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(245,158,11,0.5);background:rgba(245,158,11,0.14);color:#fde047;font-size:0.72rem;font-weight:800;cursor:pointer;">👑 Owner Login</button>
         </div>
         <div class="form-group">
           <label>Full Name / Client Organization</label>
@@ -224,21 +223,21 @@
 
         <div class="portal-grid" id="portal-grid">
           <div class="portal-item locked" id="p-member" data-customer-default="1" data-pcat="workspace" style="border-color:rgba(16,185,129,0.45);">
-            <span class="role-badge" style="background:rgba(16,185,129,0.16);color:#6ee7b7;">🛡️ DEFAULT WORKSPACE</span>
-            <h3>Customer Workspace &amp; App Launcher</h3>
-            <p>Access unlocked default apps (Turnkey Forge &amp; Sterling Auto) and request enterprise add-ons.</p>
-            <a href="member-portal.html" class="portal-link" style="background:rgba(16,185,129,0.2);border-color:#10b981;color:#6ee7b7;">Open Workspace →</a>
+            <span class="role-badge" style="background:rgba(16,185,129,0.16);color:#6ee7b7;">💳 PAYMENT &amp; WORKSPACE</span>
+            <h3>Customer Payment &amp; Billing Center</h3>
+            <p>Submit legal &amp; secure PCI-DSS tokenized payment info and launch SaaS Apps &amp; LMS.</p>
+            <a href="member-portal.html?view=payment" class="portal-link" style="background:rgba(16,185,129,0.2);border-color:#10b981;color:#6ee7b7;">Submit Payment &amp; Billing →</a>
           </div>
 
-          <div class="portal-item locked" id="p-agile" data-customer-default="1" data-pcat="workspace" style="border-color:rgba(197,179,88,0.45);">
+          <div class="portal-item locked" id="p-agile" data-pcat="workspace" style="border-color:rgba(197,179,88,0.45);">
             <span class="role-badge" style="background:rgba(197,179,88,0.16);color:#fde047;">🗂️ AGILE DELIVERY</span>
             <h3>Agile Project &amp; Sprint Board</h3>
-            <p>Track shared project sprints, backlog items, and live client deliverables.</p>
+            <p>Track shared project sprints, backlog items, and live client deliverables (Admin Grant Required).</p>
             <a href="agile-board.html" class="portal-link" style="background:rgba(197,179,88,0.2);border-color:#c5b358;color:#fde047;">Open Agile Board →</a>
           </div>
 
           <div class="portal-item locked" id="p-saas" data-customer-default="1" data-pcat="workspace" style="border-color:rgba(245,158,11,0.45);">
-            <span class="role-badge" style="background:rgba(16,185,129,0.16);color:var(--emerald);">⚡ SAAS &amp; SIMULATORS</span>
+            <span class="role-badge" style="background:rgba(16,185,129,0.16);color:var(--emerald);">⚡ SAAS &amp; LMS (DEFAULT)</span>
             <h3>SaaS Apps, LMS &amp; Showcase</h3>
             <p>Interactive simulators, SCORM 2004 modules, leaderboards, and custom scope builder.</p>
             <a href="saas-apps-and-lms-showcase.html" class="portal-link" style="background:rgba(245,158,11,0.2);border-color:var(--gold);color:var(--gold);">Launch Apps &amp; LMS →</a>
@@ -528,15 +527,20 @@
         return null;
       }
 
-      const isAdminCred = email === 'malik.khabir@miltongroupsecurity.org' || email === 'owner@miltongroupsecurity.org';
+      const isAdminCred = email === 'malik.khabir@miltongroupsecurity.org';
+      if (isAdminCred && totp !== '440921') {
+        showAuthAlert('Sole Administrator 2FA Passkey Code Required: Enter your 6-digit Owner 2FA Code to authenticate as Administrator.');
+        return null;
+      }
       const validTotp = totp === '440921' || totp === '250100';
       if (!mfaBiometricCleared && !validTotp) {
-        showAuthAlert('Hardware Passkey / 2FA Required: Tap the Biometric Fingerprint sensor OR enter authorized TOTP code (250100 or 440921).');
+        showAuthAlert('Hardware Passkey / 2FA Required: Tap the Biometric Fingerprint sensor OR enter authorized TOTP code.');
         return null;
       }
 
       return {
         email,
+        totp,
         ssoProvider,
         isAdmin: isAdminCred,
         mfaMethod: mfaBiometricCleared ? 'FIDO2_BIOMETRIC' : 'TOTP_6DIGIT'
@@ -553,7 +557,7 @@
       const role = res.isAdmin ? 'OWNER_ADMIN (' + OB_SSO_LABELS[res.ssoProvider].toUpperCase() + ')' : 'VERIFIED_CLIENT (' + OB_SSO_LABELS[res.ssoProvider].toUpperCase() + ')';
       let token = 'SHA256-' + btoa(res.email + ':' + res.ssoProvider + ':' + role + ':MGC-2026').slice(0, 24);
       let serverApps = ['sterling-auto-repair', 'client-turnkey-forge'];
-      let serverPortals = ['member-portal.html', 'agile-board.html', 'saas-apps-and-lms-showcase.html', 'onboarding-portal.html'];
+      let serverPortals = ['saas-apps-and-lms-showcase.html', 'member-portal.html'];
       let serverUid = res.isAdmin ? 'owner' : 'cara';
       let intakeReceipt = null;
 
@@ -587,7 +591,7 @@
           const r = await fetch('/api/auth/sso', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ provider: res.ssoProvider, email: res.email, name })
+            body: JSON.stringify({ provider: res.ssoProvider, email: res.email, name, mfaCode: res.totp })
           });
           const d = await r.json();
           if (d && d.ok) {
@@ -598,13 +602,15 @@
         } catch (_) {}
       }
 
-      if (typeof MGCW !== 'undefined' && MGCW.provisionCustomerSso) {
+      if (!res.isAdmin && typeof MGCW !== 'undefined' && MGCW.provisionCustomerSso) {
         const u = MGCW.provisionCustomerSso(res.email, name, res.ssoProvider);
         if (u && u.id) {
           serverUid = u.id;
           MGCW.signInAs(u.id, res.ssoProvider);
           if (Array.isArray(u.allowedApps)) serverApps = u.allowedApps;
         }
+      } else if (res.isAdmin && typeof MGCW !== 'undefined') {
+        MGCW.signInAs('owner', res.ssoProvider);
       }
 
       const sessionObj = {

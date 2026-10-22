@@ -518,7 +518,7 @@
               <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
                 <a href="/auth" class="m-btn pri">🔑 Continue with Federated SSO →</a>
                 <div class="m-grid-2">
-                  <button type="button" class="m-btn" id="btnQuickOwner">👑 Owner Control</button>
+                  <a href="/auth?mode=register" class="m-btn">✨ Register Account</a>
                   <button type="button" class="m-btn" id="btnQuickCustomer">🛡️ Customer View</button>
                 </div>
                 <button type="button" class="m-btn" data-jump-tab="briefings">📰 Read MGC Executive Newsletter</button>
@@ -888,14 +888,6 @@
         };
       });
 
-      const qOwner = document.getElementById('btnQuickOwner');
-      if (qOwner) {
-        qOwner.onclick = () => {
-          W.signInAs('owner', 'google');
-          showToast('✓ Owner Control Deck Active');
-          render(true);
-        };
-      }
       const qCust = document.getElementById('btnQuickCustomer');
       if (qCust) {
         qCust.onclick = () => {

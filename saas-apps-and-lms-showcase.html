@@ -499,13 +499,13 @@
     <div class="sub-strip">
       <div class="user-badge">
         <div class="avatar-circle">
-          <div class="avatar-inner" id="ui-avatar-initials">MK</div>
+          <div class="avatar-inner" id="ui-avatar-initials">MGC</div>
         </div>
         <div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <strong id="ui-user-name" style="font-size:14px;">Malik A. Khabir</strong>
+            <strong id="ui-user-name" style="font-size:14px;">Verified Member</strong>
             <span id="ui-tier-badge" style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:rgba(197,179,88,0.2);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
-              SCORM 2004 4TH ED. • TIER 3 ENTERPRISE
+              SCORM 2004 4TH ED. • SAAS APPS &amp; LMS
             </span>
           </div>
           <div style="font-size:11px;color:var(--text-muted);" id="ui-user-focus">
@@ -530,14 +530,14 @@
           <option value="mgc-emerald">🌱 Cityscape: MGC Skyscraper + Emerald Matrix</option>
           <option value="fix-platinum">🪙 Cityscape: F.I.X. Silver Monochrome</option>
         </select>
-        <select id="tier-simulator" class="tier-select" onchange="switchSimulatedTier(this.value)" title="Preview how different paying user tiers experience this platform">
+        <select id="tier-simulator" class="tier-select" style="display:none;" onchange="switchSimulatedTier(this.value)" title="Preview how different paying user tiers experience this platform">
           <option value="enterprise">View as: Enterprise / Owner ($499/mo)</option>
           <option value="pro">View as: Pro Subscriber ($99/mo)</option>
           <option value="ppv">View as: Pay-Per-View Visitor ($19 Pass)</option>
           <option value="customer_restricted">View as: Customer Login — Default Restricted (2/8 Apps)</option>
         </select>
         <button class="btn-pay" onclick="openSubscriptionCheckout()">
-          💳 Accept Payment
+          💳 Submit Payment &amp; Billing
         </button>
       </div>
     </div>
@@ -1339,12 +1339,21 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
       if (lbXpEl) lbXpEl.textContent = userXP.toLocaleString() + ' XP';
       const credEl = document.getElementById('ui-credits');
       if (credEl) credEl.textContent = userCredits.toLocaleString();
-      const savedName = localStorage.getItem('mgc_prof_name');
+      const meUser = (typeof MGCW !== 'undefined' && MGCW.me) ? MGCW.me() : null;
+      const isAdmin = Boolean(meUser && meUser.role === 'owner' && meUser.id === 'owner');
+      const tierSim = document.getElementById('tier-simulator');
+      if (tierSim) tierSim.style.display = isAdmin ? '' : 'none';
+      const savedName = (meUser && meUser.name) || localStorage.getItem('mgc_prof_name') || 'Verified Member';
       const savedFocus = localStorage.getItem('mgc_prof_focus');
       if (savedName) {
-        document.getElementById('ui-user-name').textContent = savedName;
-        document.getElementById('lb-user-name').textContent = savedName + ' (You)';
-        document.getElementById('prof-name').value = savedName;
+        const un = document.getElementById('ui-user-name');
+        if (un) un.textContent = savedName;
+        const lbn = document.getElementById('lb-user-name');
+        if (lbn) lbn.textContent = savedName + ' (You)';
+        const pn = document.getElementById('prof-name');
+        if (pn) pn.value = savedName;
+        const av = document.getElementById('ui-avatar-initials');
+        if (av) av.textContent = savedName.split(/\s+/).map(w => w[0] || '').join('').slice(0, 2).toUpperCase() || 'MGC';
       }
       if (savedFocus) {
         document.getElementById('ui-user-focus').textContent = savedFocus;
@@ -1581,15 +1590,15 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
 
     function sendBuildToFinance() {
       const total = calcCustomBuild();
-      window.location.href = `finance-command.html?item=Custom_Client_Showcase_Build&amount=${total}`;
+      window.location.href = `member-portal.html?view=payment&item=Custom_Client_Showcase_Build&amount=${total}`;
     }
 
     function openSubscriptionCheckout() {
-      window.location.href = `finance-command.html?item=Pro_App_And_LMS_Subscription&amount=99`;
+      window.location.href = `member-portal.html?view=payment&item=Pro_App_And_LMS_Subscription&amount=99`;
     }
 
     function checkoutSpecificTier(item, amount) {
-      window.location.href = `finance-command.html?item=${encodeURIComponent(item)}&amount=${amount}`;
+      window.location.href = `member-portal.html?view=payment&item=${encodeURIComponent(item)}&amount=${amount}`;
     }
 
     function saveProfileSettings() {
