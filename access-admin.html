@@ -2,8 +2,200 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Access Admin | MGC Workspace</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<title>Active Directory &amp; RBAC Console | MGC Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  .ad-console {
+    display: grid;
+    grid-template-columns: 235px minmax(0, 1fr) 390px;
+    gap: 14px;
+    align-items: start;
+  }
+  .ad-console.no-inspector {
+    grid-template-columns: 235px minmax(0, 1fr);
+  }
+  .ad-tree {
+    background: rgba(8, 13, 26, 0.96);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .ad-tree-root {
+    font-size: 11px;
+    font-weight: 900;
+    color: #fde047;
+    letter-spacing: .04em;
+    padding: 6px 8px 10px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ad-tree-section {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #64748b;
+    padding: 8px 8px 4px;
+  }
+  .ad-tree-item {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #cbd5e1;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    transition: all .14s;
+  }
+  .ad-tree-item:hover {
+    background: rgba(59, 130, 246, 0.12);
+    color: #fff;
+  }
+  .ad-tree-item.active {
+    background: rgba(37, 99, 235, 0.24);
+    border-color: rgba(96, 165, 250, 0.48);
+    color: #fff;
+    font-weight: 800;
+  }
+  .ad-tree-count {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    color: #94a3b8;
+  }
+  .ad-center {
+    background: rgba(8, 13, 26, 0.96);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .ad-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(15, 23, 42, 0.92);
+    border-bottom: 1px solid var(--line);
+  }
+  .ad-table-wrap {
+    overflow-x: auto;
+  }
+  table.ad-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  table.ad-table th {
+    background: rgba(4, 8, 20, 0.88);
+    padding: 8px 11px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #94a3b8;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  table.ad-table td {
+    padding: 9px 11px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    vertical-align: middle;
+  }
+  table.ad-table tbody tr {
+    cursor: pointer;
+    transition: background .12s;
+  }
+  table.ad-table tbody tr:hover {
+    background: rgba(59, 130, 246, 0.1);
+  }
+  table.ad-table tbody tr.selected {
+    background: rgba(37, 99, 235, 0.22);
+  }
+  .ad-inspector {
+    background: rgba(8, 13, 26, 0.97);
+    border: 1px solid rgba(197, 179, 88, 0.45);
+    border-radius: 12px;
+    overflow: hidden;
+    position: sticky;
+    top: 12px;
+  }
+  .ad-inspector-hdr {
+    padding: 12px 14px;
+    background: rgba(15, 23, 42, 0.95);
+    border-bottom: 1px solid var(--line);
+  }
+  .ad-prop-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--line);
+    background: rgba(4, 8, 20, 0.9);
+  }
+  .ad-prop-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 6px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #94a3b8;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+  }
+  .ad-prop-tab.active {
+    color: #fde047;
+    border-bottom-color: #fde047;
+    background: rgba(197, 179, 88, 0.08);
+  }
+  .ad-prop-body {
+    padding: 12px 14px;
+    max-height: 74vh;
+    overflow-y: auto;
+  }
+  .ad-check-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    margin-bottom: 5px;
+    background: rgba(4, 8, 20, 0.65);
+    font-size: 11.5px;
+  }
+  .ad-check-row.granted {
+    border-color: rgba(16, 185, 129, 0.48);
+    background: rgba(16, 185, 129, 0.11);
+  }
+  @media (max-width: 1160px) {
+    .ad-console {
+      grid-template-columns: 210px minmax(0, 1fr);
+    }
+    .ad-inspector {
+      grid-column: 1 / -1;
+      position: static;
+    }
+  }
+  @media (max-width: 780px) {
+    .ad-console, .ad-console.no-inspector {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 </head>
 <body>
 <main class="wrap" id="app"></main>
@@ -13,345 +205,538 @@
   const W = MGCW, S = () => W.S, esc = W.esc, app = document.getElementById('app');
   const me = W.me();
   let tab = 'users';
+  let ouFilter = 'all'; // 'all' | 'internal' | 'external'
+  let searchQuery = '';
+  let selectedUserId = '';
+  let propTab = 'rbac'; // 'rbac' | 'apps' | 'account' | 'billing'
+  let showNewUserDrawer = false;
 
   if (!me || me.role !== 'owner' || me.id !== 'owner' || String(me.email || '').toLowerCase() !== 'malik.khabir@miltongroupsecurity.org') {
-    app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Sole Administrator Authorization Enforced</span><h1 style="margin-top:10px">Administrator authentication required</h1><p>This administrative control center is restricted exclusively to the sole Administrator account (Malik A. Khabir).</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In as Administrator →</a></div></div>';
-    W.header('access-admin.html'); return;
+    app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Active Directory Domain Controller</span><h1 style="margin-top:10px">Administrator authentication required</h1><p>This Active Directory &amp; RBAC console is restricted to the Domain Administrator account.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In →</a></div></div>';
+    W.header('access-admin.html');
+    return;
   }
+
   const members = () => Object.values(S().users).filter(x => x.role !== 'owner');
   const name = (id) => (S().users[id] || {}).name || id;
+  const getUserOu = (u) => u.ou === 'internal' ? 'internal' : 'external';
+  const getUserGroup = (u) => u.securityGroup || (getUserOu(u) === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS');
 
-  function kpis() {
-    const m = members(); const c = (s) => m.filter(x => x.status === s).length;
-    const paid = m.filter(x => x.paymentProfile && x.paymentProfile.verified).length;
-    return '<div class="kpi-strip">' +
-      [['Sole Administrator', '1 (Malik)'], ['Registered Users', m.length], ['Active Users', c('active')], ['Verified Payments', paid], ['Total Receipts', (S().payments || []).length]]
-      .map(k => '<div class="kpi-tile"><small>' + k[0] + '</small><strong>' + k[1] + '</strong></div>').join('') +
-      '</div>';
+  const SECURITY_GROUPS = [
+    { id: 'EXTERNAL_SAAS_LMS',     ou: 'external', label: 'External · SaaS & LMS Subscribers (Default)', desc: 'Scoped strictly to SaaS Apps & LMS (2/8 default apps) + PCI Payment Submission.' },
+    { id: 'EXTERNAL_FULL_CLIENT',  ou: 'external', label: 'External · Turnkey Enterprise Client',        desc: 'SaaS Apps & LMS + Agile Board + Curated Resources + SCORM Academy + Invoicing.' },
+    { id: 'INTERNAL_ANALYST',      ou: 'internal', label: 'Internal · Operations & Cyber Analyst',       desc: 'Internal staff access to Agile Board, Contract Radar, Compliance, Academy & Apps.' },
+    { id: 'INTERNAL_OPERATIONS',   ou: 'internal', label: 'Internal · Full Operations Officer',          desc: 'All 10 Workspace Views & all 8 SCORM / SaaS Applications (Non-Admin).' }
+  ];
+
+  function ensureSelectedUser(list) {
+    if (selectedUserId && S().users[selectedUserId] && S().users[selectedUserId].role !== 'owner') {
+      return S().users[selectedUserId];
+    }
+    const first = (list && list[0]) || members()[0] || null;
+    selectedUserId = first ? first.id : '';
+    return first;
   }
 
-  function requests() {
-    const list = members().filter(x => x.status === 'requested');
-    const reqLog = (S().requests || []).slice(0, 12);
-    const pendingHtml = !list.length
-      ? '<div class="compact-card" style="margin-bottom:12px"><h3>Pending Queue</h3><p>All registered accounts are provisioned and active (restricted by default to <b>SaaS Apps &amp; LMS</b> + <b>Payment Submission</b>). Use the <b>Fluid User Access &amp; Features</b> tab to grant or revoke additional views.</p></div>'
-      : list.map(x => '<div class="compact-card" style="margin-bottom:10px"><div class="row"><div><h3>' + esc(x.name) + ' · ' + esc(x.email) + '</h3><p>' + (x.brand === 'FIX' ? 'F.I.X Solutions' : 'MGC') + ' · Track: <b>' + esc(((W.TAILOR[x.quote && x.quote.interest] || {}).label) || (x.quote && x.quote.interest) || 'SaaS') + '</b></p></div><div class="nav"><button class="btn pri" data-ap="' + x.id + '">Approve → Build Pages</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div></div>').join('');
-    const logHtml = reqLog.length
-      ? '<div class="card"><h2>Verified Intake &amp; Registration Ledger (' + reqLog.length + ')</h2><table><thead><tr><th>Receipt</th><th>Name &amp; Org</th><th>Email / SSO</th><th>Track</th><th>Status</th></tr></thead><tbody>' +
-        reqLog.map(r => '<tr><td><span class="chip">' + esc(r.receipt || r.id) + '</span></td><td><b>' + esc(r.name) + '</b><br><span style="font-size:11px;color:var(--mut)">' + esc(r.org || 'External') + '</span></td><td>' + esc(r.email) + ' <span class="chip">' + esc((r.ssoProvider || 'google').toUpperCase()) + '</span></td><td>' + esc(r.interest || 'saas') + '</td><td><span class="chip ok">' + esc(r.status || 'active') + '</span></td></tr>').join('') +
-        '</tbody></table></div>'
-      : '';
-    return pendingHtml + logHtml;
+  function renderNewUserModal() {
+    if (!showNewUserDrawer) return '';
+    return '<div style="padding:12px 14px;background:rgba(4,8,20,0.92);border-bottom:1px solid rgba(197,179,88,0.4)">' +
+      '<div class="row" style="margin-bottom:8px"><strong>+ New Active Directory User Object</strong><button type="button" class="btn" id="btnCloseNewUser" style="padding:4px 8px;font-size:11px">✕ Close</button></div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;align-items:center">' +
+        '<input id="admRegName" placeholder="Display Name" style="padding:7px 10px;font-size:12px">' +
+        '<input id="admRegEmail" placeholder="Logon Email (UPN)" style="padding:7px 10px;font-size:12px">' +
+        '<input id="admRegPass" type="password" placeholder="Password" style="padding:7px 10px;font-size:12px">' +
+        '<input id="admRegOrg" placeholder="Organization / Dept" style="padding:7px 10px;font-size:12px">' +
+        '<select id="admRegOu" style="padding:7px 10px;font-size:12px"><option value="external">OU=External (Client)</option><option value="internal">OU=Internal (Staff)</option></select>' +
+        '<select id="admRegProvider" style="padding:7px 10px;font-size:12px"><option value="password">Password + UPN</option><option value="google">Google OIDC</option><option value="microsoft">Microsoft Entra</option><option value="apple">Apple OIDC</option></select>' +
+        '<select id="admRegInterest" style="padding:7px 10px;font-size:12px"><option value="ai-web">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="cyber">Zero-Trust Cyber</option><option value="training">SCORM Academy</option></select>' +
+        '<button class="btn pri" id="admRegGo" type="button" style="padding:7px 12px;font-size:12px;justify-content:center">Create Object</button>' +
+      '</div>' +
+    '</div>';
   }
 
-  function tasks() {
-    const t = S().tasks;
-    if (!t.length) return '<div class="card"><p>No build tasks. Approve a request to generate the page-creation workflow.</p></div>';
-    const by = {}; t.forEach(x => (by[x.uid] = by[x.uid] || []).push(x));
-    return '<div class="bento-2">' + Object.keys(by).map(id => { const done = by[id].filter(x => x.done).length;
-      return '<div class="compact-card"><div class="row"><h3>' + esc(name(id)) + '</h3><span class="chip ' + (done === by[id].length ? 'ok' : 'warn') + '">' + done + '/' + by[id].length + ' built</span></div>' +
-        by[id].map(x => '<label class="row" style="justify-content:flex-start;padding:6px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" data-task="' + x.id + '"' + (x.done ? ' checked' : '') + '><span>' + esc(x.title) + '</span></label>').join('') +
-        '</div>'; }).join('') + '</div>';
-  }
-
-  function users() {
+  function renderUsersDirectoryView() {
     const cols = W.CATALOG;
     const apps = W.APPS_CATALOG || [];
-    return '<div class="card" style="margin-bottom:12px;border-color:rgba(197,179,88,0.45)"><div class="row"><div><span class="chip ok">👑 Sole Administrator Identity</span><h2 style="margin:6px 0 2px">malik.khabir@Miltongroupsecurity.org (Case-Insensitive)</h2><p style="margin:0">Tied exclusively to your Administrator account via Email/Username &amp; Password logon or Federated SSO.</p></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input id="admNewPassInput" type="password" placeholder="Update Admin Password (min 6 chars)" style="min-width:230px"><button class="btn pri" id="admSavePassBtn" type="button">Update Admin Password</button></div></div></div>' +
-      '<div class="card" style="margin-bottom:12px"><h2>+ Provision &amp; Register New Account (Defaults to SaaS Apps &amp; LMS Only)</h2><div class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><input id="admRegName" placeholder="Full Name" style="flex:1;min-width:140px"><input id="admRegEmail" placeholder="work@organization.org" style="flex:1;min-width:170px"><input id="admRegPass" type="password" placeholder="Password" style="flex:1;min-width:130px"><input id="admRegOrg" placeholder="Organization" style="flex:1;min-width:130px"><select id="admRegProvider"><option value="password">Email &amp; Password</option><option value="google">Google SSO</option><option value="microsoft">Microsoft Entra</option><option value="apple">Apple ID</option></select><select id="admRegInterest"><option value="saas">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="ai">Agentic AI</option><option value="cyber">Zero-Trust Cyber</option></select><button class="btn pri" id="admRegGo">Register User</button></div></div>' +
-      '<div class="card" style="margin-bottom:12px"><h2>Fluid User Access &amp; Feature Control (' + members().length + ' Non-Admin Users)</h2><p style="margin-bottom:12px">New users only see <b>⚡ SaaS Apps &amp; LMS</b> and <b>💳 Submit Payment &amp; Billing</b> in their Left Side Pane and Top Menu. Click any feature pill below to fluidly grant or revoke access for that user in real time.</p>' +
-      members().map(x => {
-        const pay = x.paymentProfile;
-        const payBadge = (pay && pay.verified)
-          ? '<span class="chip ok">✅ Payment Verified (' + esc(pay.cardBrand || pay.method) + ' •••• ' + esc(pay.last4) + ' · ' + esc(pay.receiptId) + ')</span>'
-          : '<span class="chip warn">⏳ Awaiting Payment Submission</span>';
-        const grantedPages = cols.filter(c => W.can(x, 'page', c.id, 'view')).length;
-        const grantedApps = apps.filter(a => W.can(x, 'app', a.id, 'view')).length;
-        return '<div class="compact-card" data-user-card="' + esc(x.id) + '" style="margin-bottom:12px;border-color:rgba(197,179,88,0.38)">' +
-          '<div class="row" style="margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)">' +
-            '<div>' +
-              '<h3 style="font-size:15px">' + esc(x.name) + ' <span style="font-weight:500;color:var(--mut)">(' + esc(x.email) + ')</span></h3>' +
-              '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">' +
-                '<span class="chip">' + esc((x.ssoProvider || 'google').toUpperCase()) + ' SSO</span>' +
-                '<span class="chip ok">' + grantedPages + '/' + cols.length + ' Features</span>' +
-                '<span class="chip">' + grantedApps + '/' + apps.length + ' Apps</span>' +
-                payBadge +
-              '</div>' +
-            '</div>' +
-            '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
-              '<button type="button" class="btn pri" data-preset="' + esc(x.id) + '|grant_all_features" style="font-size:11px;padding:6px 10px">🔓 Grant All Features</button>' +
-              '<button type="button" class="btn" data-preset="' + esc(x.id) + '|reset_saas_only" style="font-size:11px;padding:6px 10px">🛡️ Reset to SaaS &amp; LMS Only</button>' +
-            '</div>' +
+    const allM = members();
+    const filtered = allM.filter(u => {
+      if (ouFilter !== 'all' && getUserOu(u) !== ouFilter) return false;
+      if (!searchQuery) return true;
+      const q = searchQuery.toLowerCase();
+      return String(u.name || '').toLowerCase().includes(q) ||
+             String(u.email || '').toLowerCase().includes(q) ||
+             String(u.username || '').toLowerCase().includes(q) ||
+             String(u.org || '').toLowerCase().includes(q);
+    });
+    const sel = ensureSelectedUser(filtered);
+
+    return '<div class="ad-center">' +
+      '<div class="ad-toolbar">' +
+        '<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:220px">' +
+          '<span style="font-size:12px;font-weight:800;color:#fff">' +
+            (ouFilter === 'internal' ? '🏢 OU=Internal Users' : ouFilter === 'external' ? '🌐 OU=External Users' : '📁 All Directory Users') +
+            ' (' + filtered.length + ')' +
+          '</span>' +
+          '<input id="adSearchInput" type="search" value="' + esc(searchQuery) + '" placeholder="Filter by name, UPN/email, username, org..." style="flex:1;max-width:290px;padding:6px 10px;font-size:12px">' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+          '<button type="button" class="btn pri" id="btnToggleNewUser" style="padding:6px 10px;font-size:11.5px">+ New User</button>' +
+          (sel ? '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|grant_all_features" style="padding:6px 10px;font-size:11.5px">🔓 Grant All</button>' : '') +
+          (sel ? '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|reset_saas_only" style="padding:6px 10px;font-size:11.5px">🔒 SaaS &amp; LMS Only</button>' : '') +
+        '</div>' +
+      '</div>' +
+      renderNewUserModal() +
+      '<div class="ad-table-wrap">' +
+        '<table class="ad-table">' +
+          '<thead><tr>' +
+            '<th>Object Name</th>' +
+            '<th>Logon Name (UPN / Email)</th>' +
+            '<th>OU Scope</th>' +
+            '<th>Security Group</th>' +
+            '<th>Views</th>' +
+            '<th>Apps</th>' +
+            '<th>PCI Billing</th>' +
+            '<th>Quick RBAC</th>' +
+          '</tr></thead>' +
+          '<tbody>' +
+            (filtered.length ? filtered.map(x => {
+              const isSel = sel && sel.id === x.id;
+              const ou = getUserOu(x);
+              const grp = getUserGroup(x);
+              const pay = x.paymentProfile;
+              const grantedPages = cols.filter(c => W.can(x, 'page', c.id, 'view')).length;
+              const grantedApps = apps.filter(a => W.can(x, 'app', a.id, 'view')).length;
+              return '<tr class="' + (isSel ? 'selected' : '') + '" data-select-user="' + esc(x.id) + '" data-user-card="' + esc(x.id) + '">' +
+                '<td>' +
+                  '<div style="font-weight:800;color:#fff">' + (ou === 'internal' ? '🧑‍💻 ' : '👤 ') + esc(x.name) + '</div>' +
+                  '<div style="font-size:10.5px;color:#94a3b8">' + esc(x.org || 'External Partner') + '</div>' +
+                '</td>' +
+                '<td>' +
+                  '<div style="font-family:monospace;font-size:11.5px;color:#e2e8f0">' + esc(x.email) + '</div>' +
+                  '<div style="font-size:10px;color:#64748b">SAM: ' + esc(x.username || x.email.split('@')[0]) + ' · ' + esc((x.ssoProvider || 'password').toUpperCase()) + '</div>' +
+                '</td>' +
+                '<td><span class="chip ' + (ou === 'internal' ? 'ok' : '') + '">' + (ou === 'internal' ? 'OU=Internal' : 'OU=External') + '</span></td>' +
+                '<td><span style="font-size:11px;font-weight:700;color:#cbd5e1">' + esc(grp) + '</span></td>' +
+                '<td><span class="chip ' + (grantedPages > 1 ? 'ok' : '') + '">' + grantedPages + '/' + cols.length + '</span></td>' +
+                '<td><span class="chip">' + grantedApps + '/' + apps.length + '</span></td>' +
+                '<td>' +
+                  ((pay && pay.verified)
+                    ? '<span class="chip ok" title="' + esc(pay.receiptId) + '">✅ ' + esc(pay.cardBrand || pay.method) + ' ••' + esc(pay.last4) + '</span>'
+                    : '<span class="chip warn">⏳ Unverified</span>') +
+                '</td>' +
+                '<td onclick="event.stopPropagation()">' +
+                  '<details style="margin:0;padding:3px 7px;border-radius:7px;background:rgba(15,23,42,0.9)">' +
+                    '<summary style="font-size:11px;color:#93c5fd">🛡️ Edit (' + grantedPages + ')</summary>' +
+                    '<div style="padding-top:6px;min-width:240px;display:flex;flex-direction:column;gap:4px">' +
+                      '<div style="display:flex;gap:4px;margin-bottom:4px">' +
+                        '<button type="button" class="btn pri" data-preset="' + esc(x.id) + '|grant_all_features" style="font-size:10px;padding:4px 7px">🔓 Grant All</button>' +
+                        '<button type="button" class="btn" data-preset="' + esc(x.id) + '|reset_saas_only" style="font-size:10px;padding:4px 7px">🔒 SaaS Only</button>' +
+                      '</div>' +
+                      '<div style="display:flex;flex-wrap:wrap;gap:4px">' +
+                        cols.map(c => {
+                          const on = W.can(x, 'page', c.id, 'view');
+                          return '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-page="' + esc(x.id) + '|' + esc(c.id) + '|' + (!on) + '" style="font-size:10px;padding:3px 6px">' +
+                            c.icon + ' ' + esc(c.title) + (on ? ' ✓' : '') +
+                          '</button>';
+                        }).join('') +
+                      '</div>' +
+                      '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;padding-top:4px;border-top:1px solid var(--line)">' +
+                        apps.map(a => {
+                          const on = W.can(x, 'app', a.id, 'view');
+                          return '<button type="button" class="btn" data-toggle-app="' + esc(x.id) + '|' + esc(a.id) + '|' + (!on) + '" style="font-size:10px;padding:3px 6px">' +
+                            a.icon + ' ' + esc(a.title) + (on ? ' ✓' : '') +
+                          '</button>';
+                        }).join('') +
+                      '</div>' +
+                    '</div>' +
+                  '</details>' +
+                '</td>' +
+              '</tr>';
+            }).join('') : '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--mut)">No directory user objects match the current filter.</td></tr>') +
+          '</tbody>' +
+        '</table>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderObjectInspector() {
+    const sel = ensureSelectedUser();
+    if (!sel || tab !== 'users') return '';
+    const cols = W.CATALOG;
+    const apps = W.APPS_CATALOG || [];
+    const ou = getUserOu(sel);
+    const grp = getUserGroup(sel);
+    const pay = sel.paymentProfile;
+
+    let bodyHtml = '';
+    if (propTab === 'rbac') {
+      bodyHtml =
+        '<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--line)">' +
+          '<label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;color:#94a3b8;margin-bottom:4px">Organizational Unit (OU) &amp; Security Group</label>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">' +
+            '<select id="propUserOu" style="padding:6px 8px;font-size:11.5px">' +
+              '<option value="external"' + (ou === 'external' ? ' selected' : '') + '>🌐 OU=External (Client)</option>' +
+              '<option value="internal"' + (ou === 'internal' ? ' selected' : '') + '>🏢 OU=Internal (Staff)</option>' +
+            '</select>' +
+            '<select id="propUserGroup" style="padding:6px 8px;font-size:11.5px">' +
+              SECURITY_GROUPS.map(g => '<option value="' + g.id + '"' + (grp === g.id ? ' selected' : '') + '>' + esc(g.id) + '</option>').join('') +
+            '</select>' +
           '</div>' +
-          '<div style="margin-bottom:8px">' +
-            '<div style="font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Portal Views &amp; Left/Top Menu Features (Click to Grant / Revoke):</div>' +
-            '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
-              cols.map(c => {
-                const on = W.can(x, 'page', c.id, 'view');
-                const isDefaultSaas = c.id === 'saasapps';
-                return '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-page="' + esc(x.id) + '|' + esc(c.id) + '|' + (!on) + '" style="font-size:11.5px;padding:6px 10px;' + (on ? 'border-color:rgba(16,185,129,0.65);background:rgba(16,185,129,0.18);color:#6ee7b7' : 'opacity:0.75') + '">' +
-                  c.icon + ' ' + esc(c.title) + ' · <b>' + (on ? (isDefaultSaas ? '✅ Default' : '✅ Granted') : '+ Grant') + '</b>' +
-                '</button>';
-              }).join('') +
-            '</div>' +
+          '<button type="button" class="btn pri" id="btnApplyGroupPolicy" style="width:100%;justify-content:center;padding:6px 10px;font-size:11.5px">Apply OU &amp; Security Group Policy</button>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
+          '<span style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:#cbd5e1">Workspace Menu &amp; View Permissions</span>' +
+          '<div style="display:flex;gap:4px">' +
+            '<button type="button" class="btn pri" data-preset="' + esc(sel.id) + '|grant_all_features" style="padding:3px 7px;font-size:10px">All</button>' +
+            '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|reset_saas_only" style="padding:3px 7px;font-size:10px">SaaS Only</button>' +
           '</div>' +
-          '<div>' +
-            '<div style="font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">SCORM 2004 / SaaS App Entitlements (Click to Grant / Revoke):</div>' +
-            '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
-              apps.map(a => {
-                const on = W.can(x, 'app', a.id, 'view');
-                return '<button type="button" class="btn" data-toggle-app="' + esc(x.id) + '|' + esc(a.id) + '|' + (!on) + '" style="font-size:11px;padding:5px 9px;' + (on ? 'border-color:rgba(56,189,248,0.6);background:rgba(56,189,248,0.16);color:#bae6fd' : 'opacity:0.7') + '">' +
-                  a.icon + ' ' + esc(a.title) + ' · <b>' + (on ? '✅ On' : '+ Unlock') + '</b>' +
-                '</button>';
-              }).join('') +
+        '</div>' +
+        cols.map(c => {
+          const on = W.can(sel, 'page', c.id, 'view');
+          const isDef = c.id === 'saasapps';
+          return '<div class="ad-check-row ' + (on ? 'granted' : '') + '">' +
+            '<span>' + c.icon + ' <b>' + esc(c.title) + '</b>' + (isDef ? ' <small style="color:#34d399">(Base)</small>' : '') + '</span>' +
+            '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-page="' + esc(sel.id) + '|' + esc(c.id) + '|' + (!on) + '" style="padding:4px 9px;font-size:10.5px">' +
+              (on ? '✅ Granted' : '+ Grant') +
+            '</button>' +
+          '</div>';
+        }).join('');
+    } else if (propTab === 'apps') {
+      bodyHtml =
+        '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:6px">SCORM 2004 &amp; SaaS Application Entitlements (8)</div>' +
+        apps.map(a => {
+          const on = W.can(sel, 'app', a.id, 'view');
+          return '<div class="ad-check-row ' + (on ? 'granted' : '') + '">' +
+            '<span>' + a.icon + ' <b>' + esc(a.title) + '</b></span>' +
+            '<button type="button" class="btn" data-toggle-app="' + esc(sel.id) + '|' + esc(a.id) + '|' + (!on) + '" style="padding:4px 9px;font-size:10.5px">' +
+              (on ? '✅ Unlocked' : '+ Unlock') +
+            '</button>' +
+          '</div>';
+        }).join('');
+    } else if (propTab === 'account') {
+      bodyHtml =
+        '<div style="display:flex;flex-direction:column;gap:8px;font-size:12px">' +
+          '<div><small style="color:#94a3b8;display:block">User Principal Name (Case-Insensitive Email)</small><code style="color:#fde047">' + esc(sel.email) + '</code></div>' +
+          '<div><small style="color:#94a3b8;display:block;margin-bottom:3px">sAMAccountName (Case-Insensitive Username)</small><input id="propUsername" value="' + esc(sel.username || sel.email.split('@')[0]) + '" style="width:100%;padding:6px 9px;font-size:12px"></div>' +
+          '<div><small style="color:#94a3b8;display:block;margin-bottom:3px">Organization / Department</small><input id="propOrg" value="' + esc(sel.org || '') + '" style="width:100%;padding:6px 9px;font-size:12px"></div>' +
+          '<div><small style="color:#94a3b8;display:block;margin-bottom:3px">Account Status</small>' +
+            '<select id="propStatus" style="width:100%;padding:6px 9px;font-size:12px">' +
+              '<option value="active"' + (sel.status === 'active' ? ' selected' : '') + '>Active (Enabled)</option>' +
+              '<option value="suspended"' + (sel.status === 'suspended' ? ' selected' : '') + '>Suspended / Locked</option>' +
+              '<option value="requested"' + (sel.status === 'requested' ? ' selected' : '') + '>Pending Approval</option>' +
+            '</select>' +
+          '</div>' +
+          '<button type="button" class="btn pri" id="btnSaveAccountProfile" style="justify-content:center;padding:7px 10px">Save Account Attributes</button>' +
+          '<div style="border-top:1px solid var(--line);padding-top:8px;margin-top:4px">' +
+            '<small style="color:#94a3b8;display:block;margin-bottom:4px">🔑 Reset User Password</small>' +
+            '<div style="display:flex;gap:6px">' +
+              '<input id="propNewPass" type="password" placeholder="New password (min 4 chars)" style="flex:1;padding:6px 9px;font-size:12px">' +
+              '<button type="button" class="btn" id="btnResetUserPass" style="padding:6px 10px;font-size:11.5px">Set Password</button>' +
             '</div>' +
           '</div>' +
         '</div>';
-      }).join('') +
-      '</div>';
+    } else if (propTab === 'billing') {
+      bodyHtml = (pay && pay.verified)
+        ? '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px">' +
+            '<span class="chip ok" style="align-self:flex-start">✅ PCI-DSS Tokenized &amp; Verified</span>' +
+            '<div><small style="color:#94a3b8">Receipt ID:</small> <b>' + esc(pay.receiptId) + '</b></div>' +
+            '<div><small style="color:#94a3b8">Instrument:</small> <b>' + esc(pay.cardBrand || pay.method) + ' •••• ' + esc(pay.last4) + '</b></div>' +
+            '<div><small style="color:#94a3b8">Token:</small> <code style="font-size:11px;color:#38bdf8">' + esc(pay.paymentToken) + '</code></div>' +
+            '<div><small style="color:#94a3b8">Verified At:</small> ' + new Date(pay.verifiedAt || Date.now()).toLocaleString() + '</div>' +
+          '</div>'
+        : '<p style="font-size:12px">No verified payment submission on file for this user yet. User can submit payment via <b>💳 Submit Payment &amp; Billing</b> in their workspace.</p>';
+    }
+
+    return '<aside class="ad-inspector">' +
+      '<div class="ad-inspector-hdr">' +
+        '<div class="row">' +
+          '<span class="chip ' + (ou === 'internal' ? 'ok' : '') + '">' + (ou === 'internal' ? '🏢 OU=Internal' : '🌐 OU=External') + '</span>' +
+          '<span style="font-size:10.5px;color:#94a3b8">Object Properties</span>' +
+        '</div>' +
+        '<h3 style="margin:6px 0 2px;font-size:14.5px;color:#fff">' + esc(sel.name) + '</h3>' +
+        '<div style="font-size:11px;color:#94a3b8;font-family:monospace">' + esc(sel.email) + '</div>' +
+      '</div>' +
+      '<div class="ad-prop-tabs">' +
+        [['rbac', 'Member Of / RBAC'], ['apps', 'Apps (8)'], ['account', 'Account'], ['billing', 'PCI Billing']].map(t =>
+          '<button type="button" class="ad-prop-tab ' + (propTab === t[0] ? 'active' : '') + '" data-prop-tab="' + t[0] + '">' + t[1] + '</button>'
+        ).join('') +
+      '</div>' +
+      '<div class="ad-prop-body">' + bodyHtml + '</div>' +
+    '</aside>';
   }
 
-  function paymentsTab() {
+  function renderAdminIdentityView() {
+    return '<div class="ad-center" style="padding:18px">' +
+      '<span class="chip ok">🛡️ Builtin Domain Administrator (CN=Users,DC=miltongroupsecurity,DC=org)</span>' +
+      '<h2 style="margin:8px 0 4px">malik.khabir@Miltongroupsecurity.org</h2>' +
+      '<p style="margin-bottom:14px">Sole Domain Administrator account. Case-insensitive email/username logon works identically across all directory accounts.</p>' +
+      '<div class="row" style="justify-content:flex-start;gap:8px">' +
+        '<input id="admNewPassInput" type="password" placeholder="Update Administrator Password (min 6 chars)" style="min-width:250px">' +
+        '<button class="btn pri" id="admSavePassBtn" type="button">Update Administrator Password</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderSecurityGroupsView() {
+    return '<div class="ad-center" style="padding:16px">' +
+      '<h2>🔑 Active Directory Security Groups &amp; Feature Policies</h2>' +
+      '<p style="margin-bottom:12px">Assign any user in <b>OU=Internal</b> or <b>OU=External</b> to a security group to apply standardized RBAC templates, or override individual views in their Object Properties sheet.</p>' +
+      '<table class="ad-table"><thead><tr><th>Security Group CN</th><th>Directory Scope</th><th>Default Policy &amp; Entitlements</th><th>Members</th></tr></thead><tbody>' +
+        '<tr style="cursor:default"><td><b>DOMAIN_ADMIN</b></td><td><span class="chip ok">Builtin</span></td><td>All 16 Portals, Active Directory &amp; RBAC Console, PCI Gateway Config (Locked to 1 Owner: Malik A. Khabir)</td><td>1</td></tr>' +
+        SECURITY_GROUPS.map(g => {
+          const count = members().filter(u => getUserGroup(u) === g.id).length;
+          return '<tr style="cursor:default"><td><b>' + esc(g.id) + '</b><br><span style="font-size:11px;color:#94a3b8">' + esc(g.label) + '</span></td><td><span class="chip">' + (g.ou === 'internal' ? 'OU=Internal' : 'OU=External') + '</span></td><td>' + esc(g.desc) + '</td><td><b>' + count + '</b></td></tr>';
+        }).join('') +
+      '</tbody></table>' +
+    '</div>';
+  }
+
+  function renderPaymentsAndPciView() {
     const list = S().payments || [];
-    return '<div class="card"><h2>💳 Verified Customer Payment &amp; Billing Submissions (' + list.length + ')</h2>' +
-      '<p style="margin-bottom:12px">All customer payment instruments are tokenized under <b>PCI-DSS v4.0 SAQ-A</b> (zero raw PAN storage) with <b>EFTA / Reg E / NACHA</b> legal authorization.</p>' +
+    const gw = S().pciGatewayConfig || { activeProcessor: 'stripe_saq_a', mercuryAchEnabled: true, wawfPieeEnabled: true };
+    return '<div class="ad-center" style="padding:16px">' +
+      '<div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line)">' +
+        '<div class="row" style="margin-bottom:8px">' +
+          '<div><span class="chip ok">🛡️ Official PCI-DSS v4.0 Gateway Configuration</span><h2 style="margin:4px 0 2px">Payment Processor &amp; Settlement Rails</h2></div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-bottom:10px">' +
+          '<div><label style="display:block;font-size:10.5px;font-weight:800;color:#94a3b8;margin-bottom:4px">Active Primary Card/ACH Gateway</label>' +
+            '<select id="pciActiveProcessor" style="width:100%;padding:7px 10px;font-size:12px">' +
+              '<option value="stripe_saq_a"' + (gw.activeProcessor === 'stripe_saq_a' ? ' selected' : '') + '>1. Stripe Checkout &amp; Elements (PCI SAQ-A)</option>' +
+              '<option value="authorizenet_accept_js"' + (gw.activeProcessor === 'authorizenet_accept_js' ? ' selected' : '') + '>2. Authorize.Net / Cybersource Accept.js (Gov/B2B)</option>' +
+              '<option value="mercury_plaid_ach"' + (gw.activeProcessor === 'mercury_plaid_ach' ? ' selected' : '') + '>3. Mercury Treasury + Plaid Link ACH (NACHA)</option>' +
+              '<option value="wawf_piee_eft"' + (gw.activeProcessor === 'wawf_piee_eft' ? ' selected' : '') + '>4. DoD WAWF / PIEE &amp; SAM.gov Federal EFT</option>' +
+            '</select>' +
+          '</div>' +
+          '<div><label style="display:block;font-size:10.5px;font-weight:800;color:#94a3b8;margin-bottom:4px">Stripe Publishable Key (pk_live_*)</label>' +
+            '<input id="pciStripePk" value="' + esc(gw.stripePublishableKey || '') + '" placeholder="pk_live_..." style="width:100%;padding:7px 10px;font-size:12px">' +
+          '</div>' +
+          '<div><label style="display:block;font-size:10.5px;font-weight:800;color:#94a3b8;margin-bottom:4px">Authorize.Net API Login / Client Key</label>' +
+            '<input id="pciAuthNetKey" value="' + esc(gw.authorizeNetClientKey || '') + '" placeholder="Accept.js Public Client Key" style="width:100%;padding:7px 10px;font-size:12px">' +
+          '</div>' +
+        '</div>' +
+        '<button type="button" class="btn pri" id="btnSavePciGateway" style="padding:7px 14px;font-size:12px">Save PCI-DSS Gateway Configuration</button>' +
+      '</div>' +
+      '<h2>💳 Verified Customer Payment Ledger (' + list.length + ')</h2>' +
       (list.length
-        ? '<table><thead><tr><th>Receipt</th><th>Customer</th><th>Plan / Amount</th><th>Tokenized Instrument</th><th>Legal Attestation</th><th>Timestamp</th></tr></thead><tbody>' +
-          list.map(p => '<tr><td><span class="chip ok">' + esc(p.receiptId) + '</span><br><code style="font-size:10px;color:var(--mut)">' + esc(p.signature || '') + '</code></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b><br><span style="font-size:11px;color:var(--mut)">' + esc(p.email || '') + ' · ' + esc(p.billingOrg || '') + '</span></td><td><b>' + esc(p.planLabel || p.planId) + '</b><br><span class="chip">$' + Number(p.amountUsd || 0).toLocaleString() + ' USD</span></td><td><b>' + esc(p.cardBrand || p.method) + ' •••• ' + esc(p.last4) + '</b><br><code style="font-size:10px;color:#38bdf8">' + esc(p.paymentToken || '') + '</code></td><td><span class="chip ok">EFTA + PCI + MSA</span></td><td style="font-size:11px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleString() + '</td></tr>').join('') +
+        ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Customer</th><th>Plan / Amount</th><th>Tokenized Instrument</th><th>Attestation</th><th>Timestamp</th></tr></thead><tbody>' +
+          list.map(p => '<tr style="cursor:default"><td><span class="chip ok">' + esc(p.receiptId) + '</span><br><code style="font-size:10px;color:var(--mut)">' + esc(p.signature || '') + '</code></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b><br><span style="font-size:11px;color:var(--mut)">' + esc(p.email || '') + '</span></td><td><b>' + esc(p.planLabel || p.planId) + '</b> · $' + Number(p.amountUsd || 0).toLocaleString() + '</td><td><b>' + esc(p.cardBrand || p.method) + ' •••• ' + esc(p.last4) + '</b><br><code style="font-size:10px;color:#38bdf8">' + esc(p.paymentToken || '') + '</code></td><td><span class="chip ok">PCI SAQ-A · EFTA</span></td><td style="font-size:11px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleString() + '</td></tr>').join('') +
           '</tbody></table>'
         : '<p>No customer payment submissions recorded yet.</p>') +
-      '</div>';
+    '</div>';
   }
 
-  function sharing() {
-    const elements = [['kpi-strip', 'Element: KPI strip (read-only)'], ['radar-feed', 'Element: Contract feed (read-only)'], ['roadmap', 'Element: Roadmap view']];
-    const projects = Object.values(S().projects);
-    const apps = W.APPS_CATALOG || [];
-    const sh = S().shares;
-    return '<div class="card"><h2>Grant Granular Entitlement</h2><p style="margin-bottom:10px">Customers default to <b>CUSTOMER_RESTRICTED (2/8 apps)</b>. Granting an App or Project unlocks only that resource.</p>' +
-      '<div class="row" style="justify-content:flex-start"><select id="shUser">' + members().map(x => '<option value="' + x.id + '">' + esc(x.name) + ' (' + esc(x.email) + ')</option>').join('') + '</select>' +
-      '<select id="shRes">' +
-      apps.map(a => '<option value="app|' + a.id + '">App: ' + a.icon + ' ' + esc(a.title) + (a.defaultCustomer ? ' (Default)' : ' (Restricted)') + '</option>').join('') +
-      projects.map(p => '<option value="project|' + p.id + '">Project: ' + esc(p.name) + '</option>').join('') +
-      elements.map(e => '<option value="element|' + e[0] + '">' + e[1] + '</option>').join('') + '</select>' +
-      '<select id="shPerm"><option value="view">view / launch</option><option value="view,edit">view + edit (projects)</option></select><button class="btn pri" id="shGo">Grant Access</button></div></div>' +
-      '<div class="card" style="margin-top:10px"><h2>Active Entitlements (' + sh.length + ')</h2>' + (sh.length ? sh.map(s => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(s.type) + ' · <b>' + esc(s.resource) + '</b> → <b>' + esc(name(s.grantee)) + '</b> <span class="chip">' + esc(s.perms.join('+')) + '</span></span><button class="btn" data-rv="' + esc(s.id) + '">Revoke</button></div>').join('') : '<p>No custom shares yet.</p>') + '</div>';
+  function renderRequestsView() {
+    const list = members().filter(x => x.status === 'requested');
+    const reqLog = (S().requests || []).slice(0, 20);
+    return '<div class="ad-center" style="padding:16px">' +
+      '<h2>📥 Pending Access Requests (' + list.length + ')</h2>' +
+      (list.length
+        ? list.map(x => '<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><div><b>' + esc(x.name) + '</b> (' + esc(x.email) + ')</div><div style="display:flex;gap:6px"><button class="btn pri" data-ap="' + x.id + '">Approve</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div>').join('')
+        : '<p style="margin-bottom:12px">No pending approvals. All active external users default to <b>SaaS Apps &amp; LMS</b> + <b>Payment Submission</b>.</p>') +
+      (reqLog.length
+        ? '<h3 style="font-size:13px;margin:12px 0 6px">Recent Intake Log</h3><table class="ad-table"><thead><tr><th>Receipt</th><th>Name</th><th>Email</th><th>Status</th></tr></thead><tbody>' +
+          reqLog.map(r => '<tr style="cursor:default"><td><span class="chip">' + esc(r.receipt || r.id) + '</span></td><td>' + esc(r.name || name(r.uid)) + '</td><td>' + esc(r.email || '') + '</td><td><span class="chip ok">' + esc(r.status || 'active') + '</span></td></tr>').join('') +
+          '</tbody></table>'
+        : '') +
+    '</div>';
   }
 
-  function notifs() {
-    const l = S().notifications.slice(0, 40);
-    return '<div class="card"><h2>Notification Outbox (' + l.length + ')</h2>' + l.map(n => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(name(n.toUid)) + '</b> · ' + esc(n.title) + '<br><span style="color:var(--mut);font-size:12px">' + esc(n.body) + '</span></span><span class="chip">' + esc(n.channel) + '</span></div>').join('') + '</div>';
-  }
-  function audit() {
-    return '<div class="card"><h2>Audit Ledger</h2><table><tbody>' + S().audit.slice(0, 50).map(a => '<tr><td>' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') + '</tbody></table>' + (S().audit.length ? '' : '<p>Empty.</p>') + '</div>';
+  function renderAuditView() {
+    return '<div class="ad-center" style="padding:16px"><h2>📜 Active Directory Event &amp; Security Audit Log</h2><table class="ad-table"><thead><tr><th>Timestamp</th><th>Actor</th><th>Event</th><th>Target / Detail</th></tr></thead><tbody>' +
+      S().audit.slice(0, 50).map(a => '<tr style="cursor:default"><td style="font-size:11px;color:var(--mut)">' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') +
+      '</tbody></table></div>';
   }
 
-  const TABS = [['users', '👥 Fluid User Access & Features', users], ['payments', '💳 Verified Payments', paymentsTab], ['requests', '📥 Intake & Requests', requests], ['sharing', '🔑 Granular Shares', sharing], ['tasks', '🛠 Build Workflow', tasks], ['notifs', '🔔 Outbox', notifs], ['audit', '📜 Audit Log', audit]];
   function render() {
-    const sideHtml =
-      '<aside class="ws-side">' +
-        '<span class="chip ok">👑 Sole Administrator</span>' +
-        '<h2 style="margin:8px 0 4px;font-size:17px">Access &amp; Feature Control</h2>' +
-        '<p style="font-size:12px;margin-bottom:12px">Fluidly grant or revoke views, features, and apps for any user, and verify PCI-DSS / EFTA payments.</p>' +
-        '<div style="display:flex;flex-direction:column;gap:6px">' +
-          TABS.map(t => '<button class="btn' + (t[0] === tab ? ' pri' : '') + '" data-tab="' + t[0] + '" style="text-align:left;justify-content:flex-start">' + t[1] + '</button>').join('') +
-        '</div>' +
-        '<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px;display:flex;flex-direction:column;gap:6px">' +
-          '<a class="btn" href="login.html?mode=register">+ Open Public Registration ↗</a>' +
-          '<a class="btn" href="request-access.html">📋 Client Intake Form ↗</a>' +
-        '</div>' +
+    const allM = members();
+    const intCount = allM.filter(u => getUserOu(u) === 'internal').length;
+    const extCount = allM.filter(u => getUserOu(u) === 'external').length;
+    const payCount = (S().payments || []).length;
+
+    const treeHtml =
+      '<aside class="ad-tree">' +
+        '<div class="ad-tree-root">🖧 miltongroupsecurity.org</div>' +
+        '<div class="ad-tree-section">Organizational Units</div>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'all' ? 'active' : '') + '" data-ou="all" data-tab="users"><span>📁 All Directory Users</span><span class="ad-tree-count">' + allM.length + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'internal' ? 'active' : '') + '" data-ou="internal" data-tab="users"><span>🏢 OU=Internal (Staff)</span><span class="ad-tree-count">' + intCount + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'external' ? 'active' : '') + '" data-ou="external" data-tab="users"><span>🌐 OU=External (Clients)</span><span class="ad-tree-count">' + extCount + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'admin_identity' ? 'active' : '') + '" data-tab="admin_identity"><span>🛡️ Builtin Administrator</span><span class="ad-tree-count">1</span></button>' +
+        '<div class="ad-tree-section">RBAC &amp; Policy</div>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span>🔑 Security Groups</span><span class="ad-tree-count">5</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'payments' ? 'active' : '') + '" data-tab="payments"><span>💳 PCI-DSS &amp; Billing</span><span class="ad-tree-count">' + payCount + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span>📥 Intake Queue</span><span class="ad-tree-count">' + (S().requests || []).length + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'audit' ? 'active' : '') + '" data-tab="audit"><span>📜 Event Viewer</span><span class="ad-tree-count">' + (S().audit || []).length + '</span></button>' +
       '</aside>';
-    app.innerHTML = '<div class="ws-layout">' + sideHtml + '<div class="ws-main">' + kpis() + TABS.find(t => t[0] === tab)[2]() + '</div></div>';
-    W.header('access-admin.html'); bind();
+
+    let centerHtml = '';
+    if (tab === 'users') centerHtml = renderUsersDirectoryView();
+    else if (tab === 'admin_identity') centerHtml = renderAdminIdentityView();
+    else if (tab === 'groups') centerHtml = renderSecurityGroupsView();
+    else if (tab === 'payments') centerHtml = renderPaymentsAndPciView();
+    else if (tab === 'requests') centerHtml = renderRequestsView();
+    else if (tab === 'audit') centerHtml = renderAuditView();
+
+    const inspectorHtml = tab === 'users' ? renderObjectInspector() : '';
+    app.innerHTML = '<div class="ad-console ' + (inspectorHtml ? '' : 'no-inspector') + '">' + treeHtml + centerHtml + inspectorHtml + '</div>';
+    W.header('access-admin.html');
+    bind();
   }
+
   function bind() {
-    app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
-    app.querySelectorAll('[data-ap]').forEach(b => b.onclick = () => { W.approve(b.dataset.ap); W.toast('Approved — build tasks created'); tab = 'tasks'; render(); });
-    app.querySelectorAll('[data-dn]').forEach(b => b.onclick = () => { W.deny(b.dataset.dn); render(); });
-    app.querySelectorAll('[data-task]').forEach(c => c.onchange = () => { W.completeTask(c.dataset.task, c.checked); render(); });
-    app.querySelectorAll('[data-rv]').forEach(b => b.onclick = () => { W.revoke(b.dataset.rv); render(); });
-    app.querySelectorAll('[data-toggle-page]').forEach(b => b.onclick = () => {
+    app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
+      tab = b.dataset.tab;
+      if (b.dataset.ou) ouFilter = b.dataset.ou;
+      render();
+    });
+    app.querySelectorAll('[data-select-user]').forEach(row => row.onclick = () => {
+      selectedUserId = row.dataset.selectUser;
+      render();
+    });
+    app.querySelectorAll('[data-prop-tab]').forEach(b => b.onclick = () => {
+      propTab = b.dataset.propTab;
+      render();
+    });
+
+    const searchEl = document.getElementById('adSearchInput');
+    if (searchEl) {
+      searchEl.oninput = () => {
+        searchQuery = searchEl.value;
+        const pos = searchEl.selectionStart;
+        render();
+        const nextSearch = document.getElementById('adSearchInput');
+        if (nextSearch) { nextSearch.focus(); try { nextSearch.setSelectionRange(pos, pos); } catch (_) {} }
+      };
+    }
+
+    const btnToggleNew = document.getElementById('btnToggleNewUser');
+    if (btnToggleNew) btnToggleNew.onclick = () => { showNewUserDrawer = !showNewUserDrawer; render(); };
+    const btnCloseNew = document.getElementById('btnCloseNewUser');
+    if (btnCloseNew) btnCloseNew.onclick = () => { showNewUserDrawer = false; render(); };
+
+    app.querySelectorAll('[data-toggle-page]').forEach(b => b.onclick = (e) => {
+      e.stopPropagation();
       const [uidVal, pageId, enStr] = b.dataset.togglePage.split('|');
       const en = enStr === 'true';
+      selectedUserId = uidVal;
       W.toggleUserFeature(uidVal, 'page', pageId, en);
       W.toast((en ? '✓ Granted ' : '🔒 Revoked ') + pageId + ' for ' + name(uidVal));
       render();
     });
-    app.querySelectorAll('[data-toggle-app]').forEach(b => b.onclick = () => {
+    app.querySelectorAll('[data-toggle-app]').forEach(b => b.onclick = (e) => {
+      e.stopPropagation();
       const [uidVal, appId, enStr] = b.dataset.toggleApp.split('|');
       const en = enStr === 'true';
+      selectedUserId = uidVal;
       W.toggleUserFeature(uidVal, 'app', appId, en);
-      W.toast((en ? '✓ Unlocked app ' : '🔒 Locked app ') + appId + ' for ' + name(uidVal));
+      W.toast((en ? '✓ Unlocked ' : '🔒 Locked ') + appId + ' for ' + name(uidVal));
       render();
     });
-    app.querySelectorAll('[data-preset]').forEach(b => b.onclick = () => {
+    app.querySelectorAll('[data-preset]').forEach(b => b.onclick = (e) => {
+      e.stopPropagation();
       const [uidVal, presetId] = b.dataset.preset.split('|');
+      selectedUserId = uidVal;
       W.toggleUserFeature(uidVal, 'preset', presetId, true);
-      W.toast(presetId === 'grant_all_features' ? '✓ All features & apps granted for ' + name(uidVal) : '🛡️ Reset ' + name(uidVal) + ' to SaaS & LMS Only');
+      W.toast((presetId === 'grant_all_features' ? '🔓 Granted all features to ' : '🔒 Reset to SaaS & LMS Only for ') + name(uidVal));
       render();
     });
-    const savePassBtn = document.getElementById('admSavePassBtn');
-    if (savePassBtn) savePassBtn.onclick = async () => {
-      const np = (document.getElementById('admNewPassInput') && document.getElementById('admNewPassInput').value || '').trim();
-      if (np.length < 6) { W.toast('Enter at least 6 characters for new Admin password'); return; }
-      W.postServerAction({ action: 'updateAdminPassword', newPassword: np });
-      document.getElementById('admNewPassInput').value = '';
-      W.toast('✓ Sole Administrator password updated');
-    };
-    const regBtn = document.getElementById('admRegGo');
-    if (regBtn) regBtn.onclick = async () => {
-      const nm = document.getElementById('admRegName').value.trim();
-      const em = document.getElementById('admRegEmail').value.trim().toLowerCase();
-      const pw = (document.getElementById('admRegPass') && document.getElementById('admRegPass').value || '').trim();
-      const og = document.getElementById('admRegOrg').value.trim() || 'Client Organization';
-      const pv = document.getElementById('admRegProvider').value;
-      const tr = document.getElementById('admRegInterest').value;
-      if (!nm || !/^\S+@\S+\.\S+$/.test(em)) { W.toast('Enter valid name and email'); return; }
-      try {
-        await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: nm, email: em, password: pw, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true }) });
-      } catch (_) {}
-      W.submitRequest({ name: nm, email: em, password: pw, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true, mfaVerified: true });
-      W.toast('Registered ' + nm + ' (' + em + ') — Restricted to SaaS Apps & LMS');
-      render();
-    };
-    const go = document.getElementById('shGo'); if (go) go.onclick = () => { const r = document.getElementById('shRes').value.split('|'); let p = document.getElementById('shPerm').value.split(','); if (r[0] === 'element' || r[0] === 'app') p = ['view']; W.share(document.getElementById('shUser').value, r[0], r[1], p); W.toast('Entitlement granted'); render(); };
+
+    const btnApplyGrp = document.getElementById('btnApplyGroupPolicy');
+    if (btnApplyGrp && selectedUserId) {
+      btnApplyGrp.onclick = () => {
+        const ouVal = document.getElementById('propUserOu').value;
+        const grpVal = document.getElementById('propUserGroup').value;
+        W.setUserDirectoryProfile({ userId: selectedUserId, ou: ouVal, securityGroup: grpVal, applyGroupPolicy: true });
+        W.toast('✓ Applied ' + grpVal + ' (' + ouVal.toUpperCase() + ') to ' + name(selectedUserId));
+        render();
+      };
+    }
+
+    const btnSaveAcct = document.getElementById('btnSaveAccountProfile');
+    if (btnSaveAcct && selectedUserId) {
+      btnSaveAcct.onclick = () => {
+        const username = document.getElementById('propUsername').value.trim();
+        const org = document.getElementById('propOrg').value.trim();
+        const status = document.getElementById('propStatus').value;
+        W.setUserDirectoryProfile({ userId: selectedUserId, username, org, status });
+        W.toast('✓ Saved Active Directory attributes for ' + name(selectedUserId));
+        render();
+      };
+    }
+
+    const btnResetPass = document.getElementById('btnResetUserPass');
+    if (btnResetPass && selectedUserId) {
+      btnResetPass.onclick = () => {
+        const np = document.getElementById('propNewPass').value.trim();
+        if (!np || np.length < 4) { W.toast('Password must be at least 4 characters'); return; }
+        W.setUserPassword(selectedUserId, np);
+        W.toast('✓ Password reset for ' + name(selectedUserId));
+        document.getElementById('propNewPass').value = '';
+      };
+    }
+
+    const admSavePassBtn = document.getElementById('admSavePassBtn');
+    if (admSavePassBtn) {
+      admSavePassBtn.onclick = () => {
+        const np = (document.getElementById('admNewPassInput').value || '').trim();
+        if (!np || np.length < 6) { W.toast('Enter at least 6 characters'); return; }
+        W.postServerAction({ action: 'updateAdminPassword', newPassword: np });
+        W.toast('✓ Administrator password updated');
+        document.getElementById('admNewPassInput').value = '';
+      };
+    }
+
+    const btnSavePci = document.getElementById('btnSavePciGateway');
+    if (btnSavePci) {
+      btnSavePci.onclick = () => {
+        const activeProcessor = document.getElementById('pciActiveProcessor').value;
+        const stripePublishableKey = document.getElementById('pciStripePk').value.trim();
+        const authorizeNetClientKey = document.getElementById('pciAuthNetKey').value.trim();
+        W.savePciGatewayConfig({ activeProcessor, stripePublishableKey, authorizeNetClientKey });
+        W.toast('✓ Saved PCI-DSS Gateway Configuration (' + activeProcessor + ')');
+        render();
+      };
+    }
+
+    const admRegGo = document.getElementById('admRegGo');
+    if (admRegGo) {
+      admRegGo.onclick = () => {
+        const n = document.getElementById('admRegName').value.trim();
+        const em = document.getElementById('admRegEmail').value.trim().toLowerCase();
+        const pw = (document.getElementById('admRegPass') && document.getElementById('admRegPass').value || '').trim();
+        const org = document.getElementById('admRegOrg').value.trim();
+        const ou = (document.getElementById('admRegOu') && document.getElementById('admRegOu').value) || 'external';
+        const prov = document.getElementById('admRegProvider').value;
+        const intr = document.getElementById('admRegInterest').value;
+        if (!n || !/^\S+@\S+\.\S+$/.test(em)) { W.toast('Enter valid Name & Email'); return; }
+        const newId = W.submitRequest({
+          name: n,
+          email: em,
+          username: em.split('@')[0],
+          password: pw,
+          org: org || (ou === 'internal' ? 'MGC Internal Operations' : 'External Partner'),
+          ou,
+          securityGroup: ou === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS',
+          ssoProvider: prov,
+          interest: intr,
+          brand: 'FIX',
+          ndaAccepted: true,
+          mfaVerified: true
+        });
+        if (!newId) { W.toast((W.lastIntakeResult && W.lastIntakeResult.error) || 'Could not create object'); return; }
+        selectedUserId = newId;
+        showNewUserDrawer = false;
+        W.toast('✓ Created ' + n + ' in OU=' + ou.toUpperCase());
+        render();
+      };
+    }
+
+    app.querySelectorAll('[data-ap]').forEach(b => b.onclick = () => { W.approve(b.dataset.ap); W.toast('Approved'); render(); });
+    app.querySelectorAll('[data-dn]').forEach(b => b.onclick = () => { W.deny(b.dataset.dn); render(); });
   }
-  window.addEventListener('mgcw:remote-sync', () => render());
+
   render();
 })();
 </script>
-
-<!-- SCORM 2004 4TH EDITION + DUAL CITYSCAPE (F.I.X. & MILTONGROUPSECURITY.ORG) LAYER -->
-<style id="mgc-fix-scorm-cityscape-style">
-  body { position: relative; isolation: isolate; }
-  body > *:not(#mgc-fix-bg-image):not(#mgc-fix-skyscraper-overlay):not(#mgc-scorm-floating-dock):not(#dual-cityscape-bg):not(#dual-cityscape-overlay):not(#mgc-skyscraper-layer):not(.thematic-city-backdrop):not(script):not(style):not(link) {
-    position: relative;
-    z-index: 5;
-  }
-  header, nav, main, section, .container, .wrap, .main-grid, .portal-grid, .stepper, .hero, .hero-banner, .top-nav, .topbar {
-    position: relative;
-    z-index: 5;
-  }
-  header, .hero, .hero-banner, .top-nav, .topbar {
-    background-color: rgba(7, 12, 24, 0.96) !important;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-  }
-  .card, .panel, .portal-item, .step, .stat-card, .hub-card, .glass-card, .module-card, .section-card, .eveng-console-pane, .theory-box, .kpi-card, .box, .tile, .feature-card, .metric-card, .control-card, .workflow-card, .product-card, .radar-card {
-    background-color: rgba(9, 16, 32, 0.96) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-color: rgba(148, 163, 184, 0.34) !important;
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    position: relative;
-    z-index: 5;
-  }
-  #mgc-fix-bg-image {
-    position: fixed;
-    inset: -5%;
-    z-index: -10 !important;
-    pointer-events: none;
-    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500');
-    background-size: 118% 118%;
-    background-position: 50% 50%;
-    opacity: 0.20;
-    mix-blend-mode: normal !important;
-    filter: grayscale(30%) contrast(118%) brightness(50%) sepia(24%) hue-rotate(185deg);
-    transition: filter 0.8s ease, background-position 1s ease, opacity 0.5s ease;
-  }
-  #mgc-fix-skyscraper-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: -9 !important;
-    pointer-events: none;
-    opacity: 0.75;
-    mix-blend-mode: normal !important;
-    transition: opacity 0.6s ease;
-  }
-  @keyframes waveFlagInjected {
-    0%, 100% { transform: skewY(0deg) scaleX(1); }
-    35% { transform: skewY(3.5deg) scaleX(0.93); }
-    70% { transform: skewY(-2.5deg) scaleX(0.97); }
-  }
-  #mgc-scorm-floating-dock {
-    position: fixed;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    background: rgba(11, 20, 38, 0.94);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(197, 179, 88, 0.48);
-    border-radius: 999px;
-    padding: 7px 16px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
-    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-    font-size: 11.5px;
-    color: #f8fafc;
-    max-width: 96vw;
-  }
-  #mgc-scorm-floating-dock a, #mgc-scorm-floating-dock button, #mgc-scorm-floating-dock select {
-    font-size: 11px;
-    font-weight: 700;
-    border-radius: 999px;
-    padding: 4px 10px;
-    cursor: pointer;
-    text-decoration: none;
-  }
-</style>
-<div id="mgc-fix-bg-image" aria-hidden="true"></div>
-<div id="mgc-fix-skyscraper-overlay" aria-hidden="true">
-  <div style="position:absolute;top:0;left:0;width:100%;height:65vh;background:linear-gradient(180deg,rgba(249,115,22,0.18),rgba(197,179,88,0.10),transparent);"></div>
-  <div style="position:absolute;bottom:0;right:4%;width:180px;height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;opacity:0.55;">
-    <div style="position:relative;width:3px;height:74px;background:#cbd5e1;margin-bottom:-4px;">
-      <div style="position:absolute;top:3px;left:3px;width:74px;height:44px;transform-origin:left center;animation:waveFlagInjected 2.6s infinite ease-in-out;">
-        <svg viewBox="0 0 60 40" style="width:100%;height:100%;border-radius:2px;">
-          <rect width="60" height="40" fill="#fff"/>
-          <rect width="60" height="3.07" y="0" fill="#b22234"/><rect width="60" height="3.07" y="6.15" fill="#b22234"/><rect width="60" height="3.07" y="12.3" fill="#b22234"/><rect width="60" height="3.07" y="18.46" fill="#b22234"/><rect width="60" height="3.07" y="24.61" fill="#b22234"/><rect width="60" height="3.07" y="30.76" fill="#b22234"/><rect width="60" height="3.07" y="36.92" fill="#b22234"/>
-          <rect width="24" height="21.5" fill="#3c3b6e"/>
-        </svg>
-      </div>
-    </div>
-    <div style="width:45px;height:60px;background:rgba(11,20,38,0.9);border-top:1px solid rgba(197,179,88,0.4);"></div>
-    <div style="width:110px;height:100px;background:rgba(11,20,38,0.92);border-top:1px solid rgba(197,179,88,0.4);"></div>
-    <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
-  </div>
-</div>
-
-<script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
-<script>
-  window.switchInjectedCityscape = function(mode) {
-    var bg = document.getElementById('mgc-fix-bg-image');
-    var sky = document.getElementById('mgc-fix-skyscraper-overlay');
-    if (!bg || !sky) return;
-    if (mode === 'mgc-cityscape') {
-      sky.style.opacity = '1';
-      bg.style.filter = 'contrast(122%) brightness(65%) saturate(130%)';
-    } else if (mode === 'noir-greyscale') {
-      sky.style.opacity = '0';
-      bg.style.filter = 'grayscale(100%) contrast(138%) brightness(52%)';
-    } else if (mode === 'emerald-matrix') {
-      sky.style.opacity = '1';
-      bg.style.filter = 'grayscale(55%) sepia(40%) hue-rotate(115deg) saturate(190%) contrast(122%) brightness(54%)';
-    } else {
-      sky.style.opacity = '0';
-      bg.style.filter = 'grayscale(30%) contrast(118%) brightness(58%) sepia(24%) hue-rotate(185deg)';
-    }
-    bg.style.backgroundPosition = (30 + Math.floor(Math.random() * 45)) + '% ' + (30 + Math.floor(Math.random() * 45)) + '%';
-  };
-  window.commitInjectedScorm = function() {
-    if (typeof SAOS_SCORM !== 'undefined') {
-      SAOS_SCORM.set('cmi.completion_status', 'completed');
-      SAOS_SCORM.set('cmi.success_status', 'passed');
-      SAOS_SCORM.commit();
-    }
-    alert('✓ SCORM 2004 4th Edition Completion committed (MGC_ACCESS_ADMIN_SCO)!');
-  };
-</script>
-
 </body>
 </html>

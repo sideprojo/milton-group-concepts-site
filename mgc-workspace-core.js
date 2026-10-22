@@ -324,14 +324,16 @@
   function resolveCaseInsensitiveIdentifier(rawIdentifier) {
     const clean = String(rawIdentifier || '').trim().toLowerCase();
     if (!clean) return '';
-    if (clean === SOLE_ADMIN_EMAIL || clean === 'malik.khabir') return SOLE_ADMIN_EMAIL;
-    if (!clean.includes('@') && S && S.users) {
-      const matched = Object.values(S.users).find(u =>
-        u.id !== 'owner' &&
-        (String(u.username || '').toLowerCase() === clean || String(u.email || '').toLowerCase().split('@')[0] === clean)
-      );
-      if (matched && matched.email) return String(matched.email).toLowerCase();
+    if (S && S.users) {
+      const matched = Object.values(S.users).find(u => {
+        const uEmail = String(u.email || '').trim().toLowerCase();
+        const uName = String(u.username || '').trim().toLowerCase();
+        const uPrefix = uEmail.split('@')[0];
+        return uEmail === clean || (uName && uName === clean) || (!clean.includes('@') && uPrefix === clean);
+      });
+      if (matched && matched.email) return String(matched.email).trim().toLowerCase();
     }
+    if (clean === 'malik.khabir') return SOLE_ADMIN_EMAIL;
     return clean;
   }
 
@@ -692,6 +694,40 @@
     if (res) { commit(); return res; }
     return { ok: false, error: 'Unable to reach payment verification server.' };
   }
+  function setUserDirectoryProfile(payload) {
+    const res = postServerAction(Object.assign({ action: 'setUserDirectoryProfile' }, payload || {}));
+    if (res) { commit(); return res; }
+    const target = S.users && payload && S.users[payload.userId];
+    if (target && target.id !== 'owner') {
+      if (payload.ou) target.ou = payload.ou;
+      if (payload.securityGroup && payload.securityGroup !== 'DOMAIN_ADMIN') target.securityGroup = payload.securityGroup;
+      if (payload.username !== undefined) target.username = String(payload.username || '').trim().toLowerCase();
+      if (payload.org !== undefined) target.org = String(payload.org || '').trim();
+      if (payload.status) target.status = payload.status;
+      commit();
+      return { ok: true, state: S };
+    }
+    return { ok: false, error: 'Unable to update directory profile.' };
+  }
+  function setUserPassword(userId, newPassword) {
+    const res = postServerAction({ action: 'setUserPassword', userId, newPassword });
+    if (res) { commit(); return res; }
+    const target = S.users && S.users[userId];
+    if (target && target.id !== 'owner' && newPassword && String(newPassword).length >= 4) {
+      target.passwordDigest = mgcDigest(newPassword);
+      target.hasPassword = true;
+      commit();
+      return { ok: true, state: S };
+    }
+    return { ok: false, error: 'Unable to set user password.' };
+  }
+  function savePciGatewayConfig(payload) {
+    const res = postServerAction(Object.assign({ action: 'savePciGatewayConfig' }, payload || {}));
+    if (res) { commit(); return res; }
+    S.pciGatewayConfig = Object.assign({}, S.pciGatewayConfig || {}, payload || {});
+    commit();
+    return { ok: true, config: S.pciGatewayConfig };
+  }
   function share(grantee, type, resource, perms) {
     if (postServerAction({ action: 'share', grantee, type, resource, perms })) { commit(); return; }
     S.shares = S.shares.filter(s => !(s.type === type && s.resource === resource && s.grantee === grantee));
@@ -731,8 +767,8 @@
   body.w-fix::before{background:linear-gradient(180deg,rgba(4,8,20,0.70) 0%,rgba(11,20,38,0.85) 55%,rgba(4,8,20,0.95) 100%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23C5B358' stroke-width='3'/><path d='M30 38h40M30 58h28M30 78h34' stroke='%23FDE047' stroke-width='5' stroke-linecap='round'/></svg>") no-repeat 96% 94%/min(22vw,280px),linear-gradient(rgba(197,179,88,.04) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(197,179,88,.04) 1px,transparent 1px) 0 0/44px 44px,url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500") center 38%/cover no-repeat;opacity:.82}
   *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--tx);min-height:100vh;position:relative;isolation:isolate}
   a{color:inherit}
-  .wrap{max-width:1360px;margin:0 auto;padding:18px 22px 95px;position:relative;z-index:5}
-  .bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(9,16,32,0.97),rgba(17,28,53,0.96));border:1.5px solid var(--border-gold);border-radius:var(--r);padding:14px 20px;margin-bottom:20px;position:sticky;top:8px;z-index:30;backdrop-filter:blur(18px);box-shadow:0 16px 44px rgba(0,0,0,0.65)}
+  .wrap{max-width:1440px;margin:0 auto;padding:14px 20px 80px;position:relative;z-index:5}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:rgba(9,16,32,0.98);border:1px solid var(--border-gold);border-radius:12px;padding:10px 16px;margin-bottom:14px;position:relative;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,0.45)}
   .brand{display:flex;gap:12px;align-items:center;font-weight:900;letter-spacing:.02em}
   .brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
   .nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -904,12 +940,11 @@
     let links = [];
     if (isOwner) {
       links = [
-        ['access-admin.html', '👑 Access Admin · Grant Features'],
+        ['access-admin.html', '🖧 Directory & RBAC'],
         ['saas-apps-and-lms-showcase.html', '⚡ SaaS Apps & LMS'],
-        ['member-portal.html', 'Workspace & Billing'],
-        ['agile-board.html', 'Agile Board'],
-        ['admin-command-portal.html', '16 Portals Hub'],
-        ['newsletter.html', '📰 Newsletter']
+        ['member-portal.html', '💼 Workspace'],
+        ['agile-board.html', '📋 Agile Board'],
+        ['admin-command-portal.html', '🏛️ Portals']
       ];
     } else {
       // Standard / New User: strictly SaaS Apps & LMS + Submit Payment & Billing, plus ONLY Admin-granted features
@@ -929,27 +964,27 @@
     const nav = '<div class="nav">' + links.map(l => {
       const baseHref = l[0].split('?')[0].split('#')[0];
       const isAct = l[0] === active || baseHref === active;
-      return '<a class="btn' + (isAct ? ' pri' : '') + '" href="' + l[0] + '">' + l[1] + '</a>';
+      return '<a class="btn' + (isAct ? ' pri' : '') + '" href="' + l[0] + '" style="padding:7px 11px;font-size:12px">' + l[1] + '</a>';
     }).join('') + '</div>';
 
     const authBtn = u
-      ? '<button class="btn" id="w-signout">🔒 Sign out</button>'
-      : '<a class="btn pri" href="login.html">Sign in →</a>';
+      ? '<button class="btn" id="w-signout" style="padding:7px 11px;font-size:12px">Sign out</button>'
+      : '<a class="btn pri" href="login.html" style="padding:7px 11px;font-size:12px">Sign in →</a>';
     const paymentVerified = Boolean(u && u.paymentProfile && u.paymentProfile.verified);
     const tierChip = u
       ? (isOwner
-          ? '<span class="chip ok">👑 SOLE ADMINISTRATOR (MALIK A. KHABIR)</span>'
-          : '<span class="chip ' + (paymentVerified ? 'ok' : 'warn') + '">' + (paymentVerified ? '✅ PAYMENT VERIFIED · SAAS & LMS' : '🛡️ SAAS APPS & LMS ACCESS') + '</span>')
+          ? '<span class="chip ok">🖧 AD DOMAIN ADMIN</span>'
+          : '<span class="chip ' + (paymentVerified ? 'ok' : 'warn') + '">' + (paymentVerified ? '✅ PCI VERIFIED' : '🛡️ SAAS & LMS') + '</span>')
       : '';
     const right = '<div class="nav">' + tierChip + authBtn + '</div>';
     const el = document.createElement('div');
     el.className = 'bar';
-    el.innerHTML = '<div class="brand"><span style="font-size:22px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE') + '<small>' + (u ? esc(u.name) + ' · ' + esc(isOwner ? 'Sole Administrator' : 'SaaS Apps & LMS + Secure Billing') : 'Authentication Enforced · Signed Out') + '</small></div></div>' + nav + right;
+    el.innerHTML = '<div class="brand"><span style="font-size:18px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC DIRECTORY') + '<small>' + (u ? esc(u.name) : 'Signed Out') + '</small></div></div>' + nav + right;
     const host = document.querySelector('.wrap');
     if (host) host.prepend(el);
     const soEl = el.querySelector('#w-signout');
     if (soEl) soEl.onclick = () => signOut();
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, costGuard, commit, me, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, costGuard, commit, me, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

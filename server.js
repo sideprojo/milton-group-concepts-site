@@ -688,16 +688,16 @@ function isValidAdminSecret(secretStr) {
 function resolveCaseInsensitiveIdentifier(rawIdentifier) {
   const clean = String(rawIdentifier || '').trim().toLowerCase();
   if (!clean) return '';
-  if (clean === SOLE_ADMIN_EMAIL || clean === 'malik.khabir') {
-    return SOLE_ADMIN_EMAIL;
+  if (S && S.users) {
+    const matched = Object.values(S.users).find(u => {
+      const uEmail = String(u.email || '').trim().toLowerCase();
+      const uName = String(u.username || '').trim().toLowerCase();
+      const uPrefix = uEmail.split('@')[0];
+      return uEmail === clean || (uName && uName === clean) || (!clean.includes('@') && uPrefix === clean);
+    });
+    if (matched && matched.email) return String(matched.email).trim().toLowerCase();
   }
-  if (!clean.includes('@') && S && S.users) {
-    const matched = Object.values(S.users).find(u =>
-      u.id !== 'owner' &&
-      (String(u.username || '').toLowerCase() === clean || String(u.email || '').toLowerCase().split('@')[0] === clean)
-    );
-    if (matched && matched.email) return String(matched.email).toLowerCase();
-  }
+  if (clean === 'malik.khabir') return SOLE_ADMIN_EMAIL;
   return clean;
 }
 
@@ -1678,6 +1678,14 @@ const server = http.createServer(async (req, res) => {
       const cleanUsername = sanitizeInput(d.username || cleanEmail.split('@')[0], 60).toLowerCase();
       const rawPassword = String(d.password || '').trim();
       const computedPasswordDigest = rawPassword ? mgcDigest(rawPassword) : ((existing && existing.passwordDigest) || null);
+      const caller = getAuthenticatedUser(req);
+      const isAdminCaller = Boolean(caller && caller.role === 'owner' && caller.id === 'owner');
+      const userOu = (isAdminCaller && (d.ou === 'internal' || d.ou === 'external'))
+        ? d.ou
+        : ((existing && existing.ou) || 'external');
+      const userGroup = (isAdminCaller && d.securityGroup && d.securityGroup !== 'DOMAIN_ADMIN')
+        ? String(d.securityGroup)
+        : ((existing && existing.securityGroup) || (userOu === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS'));
 
       S.users[id] = {
         id,
@@ -1686,6 +1694,8 @@ const server = http.createServer(async (req, res) => {
         org: cleanOrg || (d.brand === 'FIX' ? 'F.I.X Solutions Client Partner' : 'MGC Client Partner'),
         email: cleanEmail,
         role: 'member',
+        ou: userOu,
+        securityGroup: userGroup,
         status: 'active',
         accessTier: 'CUSTOMER_RESTRICTED',
         brand: d.brand === 'FIX' ? 'FIX' : 'MGC',
@@ -1996,6 +2006,74 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, result.status, result.payload);
     }
 
+    if (pathname === '/api/payments/config' && req.method === 'GET') {
+      const gw = Object.assign({
+        activeProcessor: 'stripe_saq_a',
+        complianceLevel: 'PCI-DSS v4.0 SAQ-A + EFTA Reg E + NACHA + DFARS 252.232-7003',
+        stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
+        stripeCheckoutHostedUrl: process.env.STRIPE_CHECKOUT_URL || '',
+        authorizeNetApiLoginId: process.env.AUTHNET_API_LOGIN_ID || '',
+        authorizeNetClientKey: process.env.AUTHNET_CLIENT_KEY || '',
+        mercuryAchEnabled: true,
+        wawfPieeEnabled: true,
+        cageOrEin: 'EIN 92-1370285'
+      }, S.pciGatewayConfig || {});
+      return sendJson(res, 200, {
+        ok: true,
+        config: gw,
+        processors: [
+          {
+            id: 'stripe_saq_a',
+            title: 'Stripe Checkout & Payment Element (PCI-DSS v4.0 SAQ-A)',
+            scope: 'Commercial Card, Apple Pay, Google Pay & Stripe ACH',
+            saqType: 'SAQ-A (Zero Cardholder Data on MGC Servers)',
+            feeStructure: '2.9% + $0.30 (Cards) | 0.8% capped at $5.00 (ACH Direct Debit)'
+          },
+          {
+            id: 'authorizenet_accept_js',
+            title: 'Authorize.Net / Visa Cybersource Accept.js (B2B & Gov)',
+            scope: 'Enterprise & Government Procurement Cards (P-Card / GSA SmartPay)',
+            saqType: 'SAQ-A-EP (Client-Side Nonce Tokenization via Accept.js)',
+            feeStructure: 'Interchange-Plus / Level 2 & Level 3 Gov P-Card Rates'
+          },
+          {
+            id: 'mercury_plaid_ach',
+            title: 'Mercury Commercial Treasury + Plaid Link ACH (NACHA / Reg E)',
+            scope: 'Direct B2B ACH Debit & Wire into Milton Group Concepts LLC Mercury Account',
+            saqType: 'NACHA Operating Rules + EFTA 12 CFR Part 1005 (Zero Card Scope)',
+            feeStructure: '$0.00 Domestic ACH & Wire Receiving via Mercury'
+          },
+          {
+            id: 'wawf_piee_eft',
+            title: 'DoD WAWF / PIEE & SAM.gov Federal EFT (DFARS 252.232-7003)',
+            scope: 'Federal Prime & Subcontract Invoicing (SDVOSB / NAICS 541512)',
+            saqType: 'Federal Treasury EFT / Automated Clearing House',
+            feeStructure: '$0.00 Treasury EFT Settlement'
+          }
+        ]
+      });
+    }
+
+    if (pathname === '/api/payments/config' && req.method === 'POST') {
+      const u = getAuthenticatedUser(req);
+      if (!u || u.role !== 'owner' || u.id !== 'owner') {
+        return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required.' });
+      }
+      const body = await readJsonBody(req);
+      S.pciGatewayConfig = Object.assign({}, S.pciGatewayConfig || {}, {
+        activeProcessor: sanitizeInput(body.activeProcessor || 'stripe_saq_a', 60),
+        stripePublishableKey: sanitizeInput(body.stripePublishableKey || '', 160),
+        stripeCheckoutHostedUrl: sanitizeInput(body.stripeCheckoutHostedUrl || '', 240),
+        authorizeNetApiLoginId: sanitizeInput(body.authorizeNetApiLoginId || '', 120),
+        authorizeNetClientKey: sanitizeInput(body.authorizeNetClientKey || '', 160),
+        mercuryAchEnabled: body.mercuryAchEnabled !== false,
+        wawfPieeEnabled: body.wawfPieeEnabled !== false
+      });
+      logAudit('owner', 'pci.gateway_config_updated', S.pciGatewayConfig.activeProcessor);
+      saveState(S);
+      return sendJson(res, 200, { ok: true, config: S.pciGatewayConfig });
+    }
+
     if (pathname === '/api/auth/session' && req.method === 'GET') {
       const u = getAuthenticatedUser(req);
       return sendJson(res, 200, {
@@ -2199,6 +2277,73 @@ const server = http.createServer(async (req, res) => {
         target.passwordDigest = mgcDigest(newPass);
         target.hasPassword = true;
         logAudit('owner', 'security.user_password_set', target.email);
+        saveState(S);
+        return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
+      }
+      if (act === 'setUserDirectoryProfile') {
+        const target = S.users[body.userId];
+        if (!target || target.id === 'owner') {
+          return sendJson(res, 400, { ok: false, error: 'Valid non-admin directory account required.' });
+        }
+        if (body.ou === 'internal' || body.ou === 'external') {
+          target.ou = body.ou;
+        }
+        if (body.username !== undefined) {
+          const cleanUn = sanitizeInput(body.username, 60).toLowerCase();
+          if (cleanUn && cleanUn !== 'malik.khabir' && cleanUn !== 'owner' && cleanUn !== 'admin') {
+            target.username = cleanUn;
+          }
+        }
+        if (body.org !== undefined) {
+          target.org = sanitizeInput(body.org, 120);
+        }
+        if (body.status && ['active', 'suspended', 'requested', 'denied'].includes(body.status)) {
+          target.status = body.status;
+        }
+        if (body.securityGroup && body.securityGroup !== 'DOMAIN_ADMIN') {
+          target.securityGroup = String(body.securityGroup);
+          if (body.applyGroupPolicy) {
+            const grp = target.securityGroup;
+            if (grp === 'EXTERNAL_SAAS_LMS') {
+              target.ou = 'external';
+              target.pages = { saasapps: 'ready' };
+              target.adminGrantedPages = [];
+              target.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
+            } else if (grp === 'EXTERNAL_FULL_CLIENT') {
+              target.ou = 'external';
+              target.pages = { saasapps: 'ready', agile: 'ready', resources: 'ready', training: 'ready', finance: 'ready' };
+              target.adminGrantedPages = ['agile', 'resources', 'training', 'finance'];
+              target.allowedApps = APPS_CATALOG.map(a => a.id);
+            } else if (grp === 'INTERNAL_ANALYST') {
+              target.ou = 'internal';
+              target.pages = { saasapps: 'ready', agile: 'ready', radar: 'ready', resources: 'ready', training: 'ready', compliance: 'ready' };
+              target.adminGrantedPages = ['agile', 'radar', 'resources', 'training', 'compliance'];
+              target.allowedApps = APPS_CATALOG.map(a => a.id);
+            } else if (grp === 'INTERNAL_OPERATIONS') {
+              target.ou = 'internal';
+              CATALOG.forEach(c => {
+                target.pages[c.id] = 'ready';
+                if (c.id !== 'saasapps' && !target.adminGrantedPages.includes(c.id)) target.adminGrantedPages.push(c.id);
+              });
+              target.allowedApps = APPS_CATALOG.map(a => a.id);
+            }
+          }
+        }
+        logAudit('owner', 'ad.user_profile_updated', `${target.email} [OU=${target.ou || 'external'} | Group=${target.securityGroup || 'EXTERNAL_SAAS_LMS'}]`);
+        saveState(S);
+        return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
+      }
+      if (act === 'savePciGatewayConfig') {
+        S.pciGatewayConfig = Object.assign({}, S.pciGatewayConfig || {}, {
+          activeProcessor: sanitizeInput(body.activeProcessor || 'stripe_saq_a', 60),
+          stripePublishableKey: sanitizeInput(body.stripePublishableKey || '', 160),
+          stripeCheckoutHostedUrl: sanitizeInput(body.stripeCheckoutHostedUrl || '', 240),
+          authorizeNetApiLoginId: sanitizeInput(body.authorizeNetApiLoginId || '', 120),
+          authorizeNetClientKey: sanitizeInput(body.authorizeNetClientKey || '', 160),
+          mercuryAchEnabled: body.mercuryAchEnabled !== false,
+          wawfPieeEnabled: body.wawfPieeEnabled !== false
+        });
+        logAudit('owner', 'pci.gateway_config_updated', S.pciGatewayConfig.activeProcessor);
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
