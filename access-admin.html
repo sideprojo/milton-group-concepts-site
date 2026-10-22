@@ -305,20 +305,36 @@
   function renderNewUserModal() {
     if (!showNewUserDrawer) return '';
     const resCatalog = getResourcesList();
-    return '<div style="padding:12px 16px;background:rgba(4,8,20,0.92);border-bottom:1px solid rgba(197,179,88,0.4)">' +
-      '<div class="row" style="margin-bottom:8px"><strong>New Directory User Object' + (isEmp ? ' (Client Scope)' : '') + '</strong><button type="button" class="btn" id="btnCloseNewUser" style="padding:4px 10px;font-size:11.5px">Close</button></div>' +
-      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;align-items:center;margin-bottom:10px">' +
-        '<input id="admRegName" placeholder="Display Name" style="padding:7px 10px;font-size:12px">' +
-        '<input id="admRegEmail" placeholder="Logon Email (UPN)" style="padding:7px 10px;font-size:12px">' +
-        '<input id="admRegPass" type="password" placeholder="Password" style="padding:7px 10px;font-size:12px">' +
+    return '<div id="admNewUserDrawer" style="padding:14px 16px;background:rgba(4,8,20,0.95);border-bottom:1px solid rgba(197,179,88,0.45)">' +
+      '<div class="row" style="margin-bottom:10px">' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+          '<strong>Guided Directory User Provisioning' + (isEmp ? ' (Client Scope)' : '') + '</strong>' +
+          '<span id="admRegSecurityBadge" class="chip ok" style="font-size:10.5px">Username, Password, Recovery &amp; Phone Enforced</span>' +
+        '</div>' +
+        '<button type="button" class="btn" id="btnCloseNewUser" style="padding:4px 10px;font-size:11.5px">Close</button>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:8px;align-items:center;margin-bottom:10px">' +
+        '<input id="admRegUsername" placeholder="Username (Required · 4-32 chars)" style="padding:7px 10px;font-size:12px">' +
+        '<input id="admRegPass" type="password" placeholder="Password (8+ Upper/Lower/#/Sym)" style="padding:7px 10px;font-size:12px">' +
+        '<input id="admRegName" placeholder="Full Name (Required)" style="padding:7px 10px;font-size:12px">' +
+        '<input id="admRegEmail" placeholder="Logon Email / UPN (Required)" style="padding:7px 10px;font-size:12px">' +
+        '<input id="admRegRecoveryEmail" placeholder="Recovery Email (Required)" style="padding:7px 10px;font-size:12px">' +
+        '<input id="admRegPhone" placeholder="Phone Number (Required)" style="padding:7px 10px;font-size:12px">' +
         '<input id="admRegOrg" placeholder="Organization / Dept" style="padding:7px 10px;font-size:12px">' +
         '<select id="admRegOu" style="padding:7px 10px;font-size:12px">' +
-          '<option value="external">OU=External (Client)</option>' +
-          (isOwner ? '<option value="internal">OU=Internal (Staff)</option>' : '') +
+          '<option value="external">OU=External (Client · Address Optional)</option>' +
+          (isOwner ? '<option value="internal">OU=Internal (Employee · Address Required)</option>' : '') +
         '</select>' +
         '<select id="admRegProvider" style="padding:7px 10px;font-size:12px"><option value="password">Password + UPN</option><option value="google">Google OIDC</option><option value="microsoft">Microsoft Entra</option><option value="apple">Apple OIDC</option></select>' +
         '<select id="admRegInterest" style="padding:7px 10px;font-size:12px"><option value="ai-web">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="cyber">Zero-Trust Cyber</option><option value="training">SCORM Academy</option></select>' +
-        '<button class="btn pri" id="admRegGo" type="button" style="padding:7px 12px;font-size:12px;justify-content:center">Create Object</button>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;align-items:center;margin-bottom:10px;padding:8px 10px;border-radius:8px;background:rgba(15,23,42,0.75);border:1px solid rgba(148,163,184,0.2)">' +
+        '<span id="admRegAddressLabel" style="font-size:11px;font-weight:600;color:#cbd5e1">Physical Address (Optional for Clients):</span>' +
+        '<input id="admRegStreet" placeholder="Street Address" style="padding:6px 9px;font-size:12px">' +
+        '<input id="admRegCity" placeholder="City" style="padding:6px 9px;font-size:12px">' +
+        '<input id="admRegState" placeholder="State / Region" style="padding:6px 9px;font-size:12px">' +
+        '<input id="admRegZip" placeholder="Postal / ZIP Code" style="padding:6px 9px;font-size:12px">' +
+        '<button class="btn pri" id="admRegGo" type="button" style="padding:7px 12px;font-size:12px;justify-content:center">Create Directory User</button>' +
       '</div>' +
       '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(148,163,184,0.16)">' +
         '<span style="font-size:11px;font-weight:600;color:#fde047;text-transform:uppercase;letter-spacing:.04em">Note Qualified Resources at Onboarding (Includes Milton UI/UX + AI Fast-Track):</span>' +
@@ -545,11 +561,25 @@
           : '');
     } else if (propTab === 'account') {
       const op = sel.ottoProfile || null;
+      const addr = sel.address || {};
+      const isInternalUser = ou === 'internal';
+      const addrPolicyText = isInternalUser ? 'Mandatory for Employee (OU=Internal)' : 'Optional for Client (OU=External)';
       bodyHtml =
         '<div style="display:flex;flex-direction:column;gap:8px;font-size:12px">' +
-          '<div><small style="color:#94a3b8;display:block">User Principal Name (Case-Insensitive Email)</small><code style="color:#fde047">' + esc(sel.email) + '</code></div>' +
-          '<div><small style="color:#94a3b8;display:block;margin-bottom:3px">sAMAccountName (Case-Insensitive Username)</small><input id="propUsername" value="' + esc(sel.username || sel.email.split('@')[0]) + '" style="width:100%;padding:6px 9px;font-size:12px"></div>' +
+          '<div><small style="color:#94a3b8;display:block">User Principal Name (Logon Email)</small><code style="color:#fde047">' + esc(sel.email) + '</code></div>' +
+          '<div><small style="color:#fde047;display:block;margin-bottom:3px;font-weight:600">sAMAccountName (Mandatory Username · 4-32 Chars)</small><input id="propUsername" value="' + esc(sel.username || sel.email.split('@')[0]) + '" required style="width:100%;padding:6px 9px;font-size:12px"></div>' +
+          '<div><small style="color:#fde047;display:block;margin-bottom:3px;font-weight:600">Recovery Email (Mandatory)</small><input id="propRecoveryEmail" type="email" value="' + esc(sel.recoveryEmail || '') + '" placeholder="recovery@domain.com" style="width:100%;padding:6px 9px;font-size:12px"></div>' +
+          '<div><small style="color:#fde047;display:block;margin-bottom:3px;font-weight:600">Mobile / Security Phone (Mandatory · 10-15 Digits)</small><input id="propPhone" type="tel" value="' + esc(sel.phone || '') + '" placeholder="+1 (555) 234-5678" style="width:100%;padding:6px 9px;font-size:12px"></div>' +
           '<div><small style="color:#94a3b8;display:block;margin-bottom:3px">Organization / Department</small><input id="propOrg" value="' + esc(sel.org || '') + '" style="width:100%;padding:6px 9px;font-size:12px"></div>' +
+          '<div style="padding:8px 9px;border-radius:8px;background:rgba(4,8,20,0.78);border:1px solid ' + (isInternalUser ? 'rgba(251,191,36,0.45)' : 'rgba(148,163,184,0.2)') + '">' +
+            '<div class="row" style="margin-bottom:5px"><small style="color:' + (isInternalUser ? '#fde047' : '#cbd5e1') + ';font-weight:700">Physical Address</small><span class="chip ' + (isInternalUser ? 'warn' : 'ok') + '" style="font-size:10px;padding:1px 6px">' + addrPolicyText + '</span></div>' +
+            '<input id="propStreet" value="' + esc(addr.streetAddress || '') + '" placeholder="Street Address' + (isInternalUser ? ' (Required)' : ' (Optional)') + '" style="width:100%;padding:5px 8px;font-size:11.5px;margin-bottom:5px">' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px">' +
+              '<input id="propCity" value="' + esc(addr.city || '') + '" placeholder="City" style="width:100%;padding:5px 7px;font-size:11.5px">' +
+              '<input id="propState" value="' + esc(addr.stateRegion || '') + '" placeholder="State" style="width:100%;padding:5px 7px;font-size:11.5px">' +
+              '<input id="propZip" value="' + esc(addr.postalCode || '') + '" placeholder="ZIP" style="width:100%;padding:5px 7px;font-size:11.5px">' +
+            '</div>' +
+          '</div>' +
           '<div><small style="color:#94a3b8;display:block;margin-bottom:3px">Account Status</small>' +
             '<select id="propStatus" style="width:100%;padding:6px 9px;font-size:12px">' +
               '<option value="active"' + (sel.status === 'active' ? ' selected' : '') + '>Active (Enabled)</option>' +
@@ -557,7 +587,7 @@
               '<option value="requested"' + (sel.status === 'requested' ? ' selected' : '') + '>Pending Approval</option>' +
             '</select>' +
           '</div>' +
-          '<button type="button" class="btn pri" id="btnSaveAccountProfile" style="justify-content:center;padding:7px 10px">Save Account Attributes</button>' +
+          '<button type="button" class="btn pri" id="btnSaveAccountProfile" style="justify-content:center;padding:7px 10px">Save Account, Recovery &amp; Address</button>' +
           '<div style="border-top:1px solid var(--line);padding-top:8px;margin-top:4px">' +
             '<small style="color:#34d399;font-weight:700;display:block;margin-bottom:4px">Otto Qualification &amp; Data-Sharing Consent</small>' +
             (op
@@ -569,9 +599,9 @@
               : '<div style="font-size:11.5px;color:#94a3b8">Otto guided setup not yet completed by user.</div>') +
           '</div>' +
           '<div style="border-top:1px solid var(--line);padding-top:8px;margin-top:4px">' +
-            '<small style="color:#94a3b8;display:block;margin-bottom:4px">Reset User Password</small>' +
+            '<small style="color:#94a3b8;display:block;margin-bottom:4px">Reset User Password (8+ Chars, Upper, Lower, Digit, Symbol)</small>' +
             '<div style="display:flex;gap:6px">' +
-              '<input id="propNewPass" type="password" placeholder="New password (min 4 chars)" style="flex:1;padding:6px 9px;font-size:12px">' +
+              '<input id="propNewPass" type="password" placeholder="New password (security standard)" style="flex:1;padding:6px 9px;font-size:12px">' +
               '<button type="button" class="btn" id="btnResetUserPass" style="padding:6px 10px;font-size:11.5px">Set Password</button>' +
             '</div>' +
           '</div>' +
@@ -859,7 +889,39 @@
     const cls = ['ad-console'];
     if (!inspectorHtml) cls.push('no-inspector');
     if (treeCollapsed) cls.push('tree-collapsed');
-    app.innerHTML = '<div class="' + cls.join(' ') + '">' + treeHtml + centerHtml + inspectorHtml + '</div>';
+
+    const selObj = ensureSelectedUser();
+    const minimalCommandBar =
+      '<div id="adMinimalNavStrip" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 12px;margin-bottom:10px;border-radius:10px;background:rgba(8,13,26,0.96);border:1px solid var(--line)">' +
+        '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">' +
+          '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'all' ? 'pri' : '') + '" data-tab="users" data-ou="all" style="padding:5px 11px;font-size:11.5px">All Directory (' + allM.length + ')</button>' +
+          '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'external' ? 'pri' : '') + '" data-tab="users" data-ou="external" style="padding:5px 11px;font-size:11.5px">Clients · OU=External (' + extCount + ')</button>' +
+          (isOwner
+            ? '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'internal' ? 'pri' : '') + '" data-tab="users" data-ou="internal" style="padding:5px 11px;font-size:11.5px">Employees · OU=Internal (' + intCount + ')</button>' +
+              '<button type="button" class="btn ' + (tab === 'groups' ? 'pri' : '') + '" data-tab="groups" style="padding:5px 11px;font-size:11.5px">Security Groups</button>' +
+              '<button type="button" class="btn ' + (tab === 'payments' ? 'pri' : '') + '" data-tab="payments" style="padding:5px 11px;font-size:11.5px">Accounting &amp; PCI (' + payCount + ')</button>' +
+              '<button type="button" class="btn ' + (tab === 'requests' ? 'pri' : '') + '" data-tab="requests" style="padding:5px 11px;font-size:11.5px">Consultations (' + reqTotal + ')</button>' +
+              '<button type="button" class="btn ' + (tab === 'admin_identity' ? 'pri' : '') + '" data-tab="admin_identity" style="padding:5px 11px;font-size:11.5px">Admin Identity</button>' +
+              '<button type="button" class="btn ' + (tab === 'audit' ? 'pri' : '') + '" data-tab="audit" style="padding:5px 11px;font-size:11.5px">Audit Log</button>'
+            : '<button type="button" class="btn ' + (tab === 'requests' ? 'pri' : '') + '" data-tab="requests" style="padding:5px 11px;font-size:11.5px">Consultations (' + reqTotal + ')</button>') +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
+          '<div class="wgw-dropdown">' +
+            '<button type="button" class="btn wgw-trigger" aria-expanded="false" aria-controls="adInspectorQuickMenu" style="padding:5px 11px;font-size:11.5px">Inspector Control <span class="wgw-caret" aria-hidden="true"></span></button>' +
+            '<div class="wgw-menu" id="adInspectorQuickMenu" role="region" aria-label="Inspector Quick Navigation" style="right:0;left:auto;min-width:225px">' +
+              '<div class="wgw-menu-hdr">Inspect Selected User' + (selObj ? ' (' + esc(selObj.username || selObj.name) + ')' : '') + '</div>' +
+              '<button type="button" class="wgw-item" data-jump-prop="account" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Account, Recovery &amp; Address</span><small>Username, Email, Phone, Address</small></button>' +
+              '<button type="button" class="wgw-item" data-jump-prop="rbac" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>RBAC &amp; Security Group</span><small>OU &amp; Workspace Views</small></button>' +
+              '<button type="button" class="wgw-item" data-jump-prop="apps" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>SaaS Apps &amp; LMS (8)</span><small>Toggle app entitlements</small></button>' +
+              '<button type="button" class="wgw-item" data-jump-prop="resources" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Qualified Resources</span><small>White Feather &amp; AI Tools</small></button>' +
+              (isOwner ? '<button type="button" class="wgw-item" data-jump-prop="billing" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>PCI &amp; Billing Profile</span><small>Verified payment tokens</small></button>' : '') +
+            '</div>' +
+          '</div>' +
+          '<button type="button" class="btn pri" id="btnTopNewUser" style="padding:5px 11px;font-size:11.5px">+ Guided User</button>' +
+        '</div>' +
+      '</div>';
+
+    app.innerHTML = minimalCommandBar + '<div class="' + cls.join(' ') + '">' + treeHtml + centerHtml + inspectorHtml + '</div>';
     W.header('access-admin.html');
     bind();
   }
@@ -952,8 +1014,31 @@
 
     const btnToggleNew = document.getElementById('btnToggleNewUser');
     if (btnToggleNew) btnToggleNew.onclick = () => { showNewUserDrawer = !showNewUserDrawer; render(); };
+    const btnTopNew = document.getElementById('btnTopNewUser');
+    if (btnTopNew) btnTopNew.onclick = () => { tab = 'users'; showNewUserDrawer = true; render(); };
     const btnCloseNew = document.getElementById('btnCloseNewUser');
     if (btnCloseNew) btnCloseNew.onclick = () => { showNewUserDrawer = false; render(); };
+
+    app.querySelectorAll('[data-jump-prop]').forEach(b => b.onclick = () => {
+      tab = 'users';
+      propTab = b.getAttribute('data-jump-prop') || 'account';
+      inspectorHidden = false;
+      render();
+    });
+
+    const admRegOuSel = document.getElementById('admRegOu');
+    if (admRegOuSel) {
+      admRegOuSel.onchange = () => {
+        const isInt = admRegOuSel.value === 'internal';
+        const addrLbl = document.getElementById('admRegAddressLabel');
+        if (addrLbl) {
+          addrLbl.textContent = isInt
+            ? 'Physical Address (Mandatory for Employees):'
+            : 'Physical Address (Optional for Clients):';
+          addrLbl.style.color = isInt ? '#fde047' : '#cbd5e1';
+        }
+      };
+    }
 
     app.querySelectorAll('[data-toggle-page]').forEach(b => b.onclick = (e) => {
       e.stopPropagation();
@@ -1021,11 +1106,37 @@
     const btnSaveAcct = document.getElementById('btnSaveAccountProfile');
     if (btnSaveAcct && selectedUserId) {
       btnSaveAcct.onclick = () => {
-        const username = document.getElementById('propUsername').value.trim();
-        const org = document.getElementById('propOrg').value.trim();
+        const targetObj = S().users[selectedUserId] || {};
+        const targetOu = getUserOu(targetObj);
+        const username = (document.getElementById('propUsername').value || '').trim().toLowerCase();
+        const recoveryEmail = (document.getElementById('propRecoveryEmail') && document.getElementById('propRecoveryEmail').value || '').trim().toLowerCase();
+        const phone = (document.getElementById('propPhone') && document.getElementById('propPhone').value || '').trim();
+        const org = (document.getElementById('propOrg').value || '').trim();
         const status = document.getElementById('propStatus').value;
-        W.setUserDirectoryProfile({ userId: selectedUserId, username, org, status });
-        W.toast('Saved Active Directory attributes for ' + name(selectedUserId));
+        const address = {
+          streetAddress: (document.getElementById('propStreet') && document.getElementById('propStreet').value || '').trim(),
+          city: (document.getElementById('propCity') && document.getElementById('propCity').value || '').trim(),
+          stateRegion: (document.getElementById('propState') && document.getElementById('propState').value || '').trim(),
+          postalCode: (document.getElementById('propZip') && document.getElementById('propZip').value || '').trim()
+        };
+        if (W.validateUsernameStandard) {
+          const unChk = W.validateUsernameStandard(username, selectedUserId);
+          if (!unChk.ok) { W.toast(unChk.error); return; }
+        } else if (!username) {
+          W.toast('Username is mandatory.'); return;
+        }
+        if (recoveryEmail && !/^\S+@\S+\.\S+$/.test(recoveryEmail)) {
+          W.toast('Enter a valid Recovery Email address.'); return;
+        }
+        if (phone && W.validatePhoneStandard && !W.validatePhoneStandard(phone).ok) {
+          W.toast('Enter a valid 10–15 digit phone number.'); return;
+        }
+        if (targetOu === 'internal' && (!address.streetAddress || !address.city || !address.stateRegion || !address.postalCode)) {
+          W.toast('Employee (OU=Internal) accounts require a complete physical address.'); return;
+        }
+        const res = W.setUserDirectoryProfile({ userId: selectedUserId, username, recoveryEmail, phone, address, org, status });
+        if (res && res.error) { W.toast(res.error); return; }
+        W.toast('Saved Account, Recovery, Phone & Address for ' + name(selectedUserId));
         render();
       };
     }
@@ -1033,8 +1144,14 @@
     const btnResetPass = document.getElementById('btnResetUserPass');
     if (btnResetPass && selectedUserId) {
       btnResetPass.onclick = () => {
-        const np = document.getElementById('propNewPass').value.trim();
-        if (!np || np.length < 4) { W.toast('Password must be at least 4 characters'); return; }
+        const targetObj = S().users[selectedUserId] || {};
+        const np = (document.getElementById('propNewPass').value || '').trim();
+        if (W.validatePasswordStandard) {
+          const pwChk = W.validatePasswordStandard(np, targetObj.username || '');
+          if (!pwChk.ok) { W.toast(pwChk.error); return; }
+        } else if (!np || np.length < 8) {
+          W.toast('Password must be 8+ characters with upper, lower, number, and symbol.'); return;
+        }
         W.setUserPassword(selectedUserId, np);
         W.toast('Password reset for ' + name(selectedUserId));
         document.getElementById('propNewPass').value = '';
@@ -1068,20 +1185,52 @@
     const admRegGo = document.getElementById('admRegGo');
     if (admRegGo) {
       admRegGo.onclick = () => {
+        const un = (document.getElementById('admRegUsername') && document.getElementById('admRegUsername').value || '').trim().toLowerCase();
+        const pw = (document.getElementById('admRegPass') && document.getElementById('admRegPass').value || '').trim();
         const n = document.getElementById('admRegName').value.trim();
         const em = document.getElementById('admRegEmail').value.trim().toLowerCase();
-        const pw = (document.getElementById('admRegPass') && document.getElementById('admRegPass').value || '').trim();
+        const recEm = (document.getElementById('admRegRecoveryEmail') && document.getElementById('admRegRecoveryEmail').value || '').trim().toLowerCase();
+        const ph = (document.getElementById('admRegPhone') && document.getElementById('admRegPhone').value || '').trim();
         const org = document.getElementById('admRegOrg').value.trim();
         const ou = isEmp ? 'external' : ((document.getElementById('admRegOu') && document.getElementById('admRegOu').value) || 'external');
         const prov = document.getElementById('admRegProvider').value;
         const intr = document.getElementById('admRegInterest').value;
+        const address = {
+          streetAddress: (document.getElementById('admRegStreet') && document.getElementById('admRegStreet').value || '').trim(),
+          city: (document.getElementById('admRegCity') && document.getElementById('admRegCity').value || '').trim(),
+          stateRegion: (document.getElementById('admRegState') && document.getElementById('admRegState').value || '').trim(),
+          postalCode: (document.getElementById('admRegZip') && document.getElementById('admRegZip').value || '').trim()
+        };
         const qualifiedResources = Array.from(app.querySelectorAll('[data-onboard-res]:checked')).map(cb => cb.getAttribute('data-onboard-res'));
-        if (!n || !/^\S+@\S+\.\S+$/.test(em)) { W.toast('Enter valid Name & Email'); return; }
+
+        if (W.validateUsernameStandard) {
+          const unChk = W.validateUsernameStandard(un);
+          if (!unChk.ok) { W.toast(unChk.error); return; }
+        } else if (!un) {
+          W.toast('Username is mandatory.'); return;
+        }
+        if (W.validatePasswordStandard) {
+          const pwChk = W.validatePasswordStandard(pw, un);
+          if (!pwChk.ok) { W.toast(pwChk.error); return; }
+        } else if (!pw || pw.length < 8) {
+          W.toast('Password must meet security standards (8+ chars, upper, lower, number, symbol).'); return;
+        }
+        if (!n || !/^\S+@\S+\.\S+$/.test(em)) { W.toast('Enter valid Full Name & Logon Email'); return; }
+        if (!recEm || !/^\S+@\S+\.\S+$/.test(recEm)) { W.toast('Recovery Email is mandatory.'); return; }
+        if (!ph || (W.validatePhoneStandard && !W.validatePhoneStandard(ph).ok)) { W.toast('Valid 10–15 digit Phone Number is mandatory.'); return; }
+        if (ou === 'internal' && (!address.streetAddress || !address.city || !address.stateRegion || !address.postalCode)) {
+          W.toast('Employee (OU=Internal) accounts require a complete physical address (Street, City, State, ZIP).'); return;
+        }
+
         const newId = W.submitRequest({
+          guidedRegistration: true,
           name: n,
           email: em,
-          username: em.split('@')[0],
+          username: un,
           password: pw,
+          recoveryEmail: recEm,
+          phone: ph,
+          address,
           org: org || (ou === 'internal' ? 'MGC Internal Operations' : 'External Partner'),
           ou,
           securityGroup: ou === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS',
@@ -1095,7 +1244,7 @@
         if (!newId) { W.toast((W.lastIntakeResult && W.lastIntakeResult.error) || 'Could not create object'); return; }
         selectedUserId = newId;
         showNewUserDrawer = false;
-        W.toast('Created ' + n + ' in OU=' + ou.toUpperCase() + (qualifiedResources.length ? ' (Qualified: ' + qualifiedResources.join(', ') + ')' : ''));
+        W.toast('Created ' + n + ' (' + un + ') in OU=' + ou.toUpperCase());
         render();
       };
     }

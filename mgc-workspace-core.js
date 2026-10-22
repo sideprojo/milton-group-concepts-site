@@ -600,6 +600,88 @@
       .slice(0, maxLen || 240);
   }
 
+  const RESERVED_USERNAMES = new Set(['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir', 'security', 'postmaster', 'support']);
+
+  function validateUsernameStandard(rawUsername, excludeUid) {
+    const clean = String(rawUsername || '').trim().toLowerCase();
+    const lenOk = clean.length >= 4 && clean.length <= 32;
+    const formatOk = /^[a-z0-9][a-z0-9._-]{3,31}$/.test(clean) && !/[._-]{2,}/.test(clean);
+    const notReserved = Boolean(clean) && !RESERVED_USERNAMES.has(clean);
+    const noInjection = !hasInjectionPayload(clean);
+    const collision = Boolean(clean) && Object.values((S && S.users) || {}).some(u =>
+      u && u.id !== excludeUid && String(u.username || '').toLowerCase() === clean
+    );
+    const ok = lenOk && formatOk && notReserved && noInjection && !collision;
+    let error = '';
+    if (!clean) error = 'Username is required for portal logon.';
+    else if (!lenOk) error = 'Username must be 4–32 characters.';
+    else if (!formatOk) error = 'Use letters, numbers, dots, underscores, or hyphens (start with letter/number).';
+    else if (!notReserved) error = 'Reserved directory identifier cannot be used.';
+    else if (!noInjection) error = 'Disallowed security characters in username.';
+    else if (collision) error = 'Username is already registered in the directory.';
+    return {
+      ok,
+      username: clean,
+      checks: { lenOk, formatOk, notReserved, noInjection, uniqueOk: !collision },
+      error
+    };
+  }
+
+  function validatePasswordStandard(rawPassword, rawUsername) {
+    const pw = String(rawPassword || '');
+    const un = String(rawUsername || '').trim().toLowerCase();
+    const lenOk = pw.length >= 8 && pw.length <= 128;
+    const upperOk = /[A-Z]/.test(pw);
+    const lowerOk = /[a-z]/.test(pw);
+    const digitOk = /\d/.test(pw);
+    const specialOk = /[^A-Za-z0-9\s]/.test(pw);
+    const notContainsUser = !un || un.length < 3 || !pw.toLowerCase().includes(un);
+    const notGeneric = !/^(password|12345678|qwertyui|admin123|letmein1|welcome1)/i.test(pw);
+    const ok = lenOk && upperOk && lowerOk && digitOk && specialOk && notContainsUser && notGeneric;
+    let error = '';
+    if (!pw) error = 'Password is required.';
+    else if (!lenOk) error = 'Password must be 8–128 characters.';
+    else if (!upperOk || !lowerOk) error = 'Password requires both uppercase and lowercase letters.';
+    else if (!digitOk) error = 'Password requires at least 1 number (0–9).';
+    else if (!specialOk) error = 'Password requires at least 1 special symbol (!@#$%^&*...).';
+    else if (!notContainsUser) error = 'Password cannot contain your username.';
+    else if (!notGeneric) error = 'Common or generic password patterns are prohibited.';
+    return {
+      ok,
+      checks: { lenOk, upperOk, lowerOk, digitOk, specialOk, notContainsUser, notGeneric },
+      error
+    };
+  }
+
+  function validatePhoneStandard(rawPhone) {
+    const clean = sanitizeField(rawPhone, 32);
+    const digits = clean.replace(/\D/g, '');
+    const ok = digits.length >= 10 && digits.length <= 15 && /^[0-9+()\-\s.]{10,24}$/.test(clean);
+    return {
+      ok,
+      phone: clean,
+      digits,
+      error: ok ? '' : 'Valid 10–15 digit phone number is required.'
+    };
+  }
+
+  function validateAddressStandard(addr, ou) {
+    const a = addr && typeof addr === 'object' ? addr : {};
+    const streetAddress = sanitizeField(a.streetAddress || a.street || '', 140);
+    const city = sanitizeField(a.city || '', 80);
+    const stateRegion = sanitizeField(a.stateRegion || a.state || '', 60);
+    const postalCode = sanitizeField(a.postalCode || a.zip || '', 24);
+    const isEmployeeOu = String(ou || 'external').toLowerCase() === 'internal';
+    const hasAll = Boolean(streetAddress && city && stateRegion && postalCode);
+    const ok = isEmployeeOu ? hasAll : true;
+    return {
+      ok,
+      required: isEmployeeOu,
+      address: { streetAddress, city, stateRegion, postalCode },
+      error: ok ? '' : 'Complete physical address (Street, City, State, ZIP) is mandatory for Employee (OU=Internal) accounts.'
+    };
+  }
+
   const ONBOARDING_CATEGORIES = [
     {
       id: 'cat_ai_saas',
@@ -783,13 +865,27 @@
     const qualifiedResources = Array.isArray(data && data.qualifiedResources)
       ? data.qualifiedResources.map(r => sanitizeField(r, 60)).filter(Boolean)
       : [];
+    const targetOu = (data && data.ou === 'internal') ? 'internal' : 'external';
+    const rawUsername = sanitizeField(data && data.username, 60).toLowerCase();
+    if (!rawUsername) {
+      lastIntakeResult = { ok: false, status: 400, error: 'Username is mandatory for portal registration and logon.' };
+      return null;
+    }
+    const addrCheck = validateAddressStandard(data && data.address, targetOu);
+    if (!addrCheck.ok) {
+      lastIntakeResult = { ok: false, status: 400, error: addrCheck.error };
+      return null;
+    }
     const payload = {
       name: cleanName,
       email: cleanEmail,
-      username: sanitizeField(data && data.username, 60).toLowerCase() || cleanEmail.split('@')[0],
+      username: rawUsername,
       password: String((data && data.password) || ''),
-      ou: (data && data.ou === 'internal') ? 'internal' : 'external',
-      securityGroup: sanitizeField(data && data.securityGroup, 48) || ((data && data.ou === 'internal') ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS'),
+      recoveryEmail: sanitizeField(data && data.recoveryEmail, 160).toLowerCase(),
+      phone: sanitizeField(data && data.phone, 32),
+      address: addrCheck.address,
+      ou: targetOu,
+      securityGroup: sanitizeField(data && data.securityGroup, 48) || (targetOu === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS'),
       ssoProvider,
       org: sanitizeField(data && data.org, 160) || 'External Organization',
       brand: (data && data.brand === 'FIX') ? 'FIX' : 'MGC',
@@ -827,6 +923,9 @@
       name: payload.name,
       username: payload.username,
       email: payload.email,
+      recoveryEmail: payload.recoveryEmail || ((existing && existing.recoveryEmail) || ''),
+      phone: payload.phone || ((existing && existing.phone) || ''),
+      address: payload.address || ((existing && existing.address) || { streetAddress: '', city: '', stateRegion: '', postalCode: '' }),
       org: payload.org,
       role: 'member',
       ou: payload.ou,
@@ -1085,6 +1184,11 @@
       if (payload.securityGroup && payload.securityGroup !== 'DOMAIN_ADMIN') target.securityGroup = payload.securityGroup;
       if (payload.username !== undefined) target.username = String(payload.username || '').trim().toLowerCase();
       if (payload.org !== undefined) target.org = String(payload.org || '').trim();
+      if (payload.recoveryEmail !== undefined) target.recoveryEmail = sanitizeField(payload.recoveryEmail, 160).toLowerCase();
+      if (payload.phone !== undefined) target.phone = sanitizeField(payload.phone, 32);
+      if (payload.address && typeof payload.address === 'object') {
+        target.address = validateAddressStandard(payload.address, target.ou || 'external').address;
+      }
       if (payload.status) target.status = payload.status;
       commit();
       return { ok: true, state: S };
@@ -1095,7 +1199,7 @@
     const res = postServerAction({ action: 'setUserPassword', userId, newPassword });
     if (res) { commit(); return res; }
     const target = S.users && S.users[userId];
-    if (target && target.id !== 'owner' && newPassword && String(newPassword).length >= 4) {
+    if (target && target.id !== 'owner' && newPassword && String(newPassword).length >= 8) {
       target.passwordDigest = mgcDigest(newPassword);
       target.hasPassword = true;
       commit();
@@ -1586,5 +1690,5 @@
     }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

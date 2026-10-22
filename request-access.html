@@ -341,6 +341,10 @@
           <span class="field-label">Authorized SSO Account Email (Required)</span>
           <input class="intake-input" id="email" type="email" value="" placeholder="jordan.vance@apexdefense.org" autocomplete="off" spellcheck="false">
         </label>
+        <label class="field-wrap">
+          <span class="field-label">Portal Username (Required)</span>
+          <input class="intake-input" id="username" type="text" maxlength="32" value="" placeholder="jordan.vance" autocomplete="off" spellcheck="false">
+        </label>
       </div>
     </div>
 
@@ -477,6 +481,8 @@
     document.getElementById('org').value = 'Apex Defense Logistics LLC';
     document.getElementById('ssoProvider').value = 'microsoft';
     document.getElementById('email').value = 'jordan.vance@apexdefense.org';
+    const unEl = document.getElementById('username');
+    if (unEl) unEl.value = 'jordan.vance';
     document.getElementById('brand').value = 'FIX';
     W.theme('FIX');
     sel.value = 'federal';
@@ -508,6 +514,7 @@
     const name = document.getElementById('name').value.trim();
     const org = document.getElementById('org').value.trim() || 'External Organization';
     const email = document.getElementById('email').value.trim().toLowerCase();
+    const rawUsername = (document.getElementById('username') && document.getElementById('username').value || '').trim().toLowerCase() || email.split('@')[0];
     const brand = document.getElementById('brand').value;
     const interest = sel.value;
     const note = document.getElementById('note').value.trim().slice(0, 500);
@@ -519,8 +526,8 @@
       errEl.textContent = 'SSO Policy Enforced: Only Google, Microsoft, or Apple SSO is permitted.';
       return;
     }
-    if (!name || !/^\S+@\S+\.\S+$/.test(email)) {
-      errEl.textContent = 'Please enter your full name and a valid Federated SSO email address.';
+    if (!name || !/^\S+@\S+\.\S+$/.test(email) || !rawUsername) {
+      errEl.textContent = 'Please enter your full name, a valid Federated SSO email address, and a portal username.';
       return;
     }
     if (email === 'malik.khabir@miltongroupsecurity.org' || email === 'owner@miltongroupsecurity.org') {
@@ -537,7 +544,7 @@
     }
 
     const mfaMethod = biometricVerified ? 'FIDO2_BIOMETRIC' : 'TOTP_6DIGIT';
-    const payload = { name, org, email, ssoProvider, brand, interest, note, ndaAccepted: true, mfaVerified: true, mfaMethod };
+    const payload = { name, org, email, username: rawUsername, ssoProvider, brand, interest, note, ndaAccepted: true, mfaVerified: true, mfaMethod };
 
     let receipt = null;
     if (location.protocol === 'http:' || location.protocol === 'https:') {

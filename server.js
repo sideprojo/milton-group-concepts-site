@@ -2529,14 +2529,21 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 403, { ok: false, error: 'Intake Denied: This account has been restricted by the platform Owner.' });
       }
 
-      let cleanUsername = sanitizeInput(d.username || cleanEmail.split('@')[0], 60).toLowerCase();
-      if (['malik.khabir', 'owner', 'admin', 'administrator'].includes(cleanUsername)) {
+      const rawUsernameInput = String(d.username || '').trim().toLowerCase();
+      if (d.guidedRegistration && !rawUsernameInput) {
+        return sendJson(res, 400, { ok: false, error: 'Username is mandatory for portal registration and logon (not optional).' });
+      }
+      let cleanUsername = sanitizeInput(rawUsernameInput || cleanEmail.split('@')[0], 60).toLowerCase();
+      if (['malik.khabir', 'owner', 'admin', 'administrator', 'root', 'system'].includes(cleanUsername)) {
         logAudit('system', 'security.intake_reserved_username_blocked', cleanUsername);
         return sendJson(res, 403, { ok: false, error: 'Security Policy Enforced: Reserved directory username cannot be registered.' });
       }
+      if (rawUsernameInput && (!/^[a-z0-9][a-z0-9._-]{3,31}$/.test(cleanUsername) || /[._-]{2,}/.test(cleanUsername))) {
+        return sendJson(res, 400, { ok: false, error: 'Username Security Standard Failed: Must be 4–32 characters (letters, numbers, ., _, -) starting with a letter or number.' });
+      }
       const usernameCollision = Object.values(S.users).find(x => x.id !== id && String(x.username || '').toLowerCase() === cleanUsername);
       if (usernameCollision) {
-        if (d.username) {
+        if (rawUsernameInput) {
           return sendJson(res, 409, { ok: false, error: 'That username (sAMAccountName) is already registered to another directory user.' });
         }
         cleanUsername = `${cleanUsername}.${id.slice(-4)}`;
@@ -2550,10 +2557,51 @@ const server = http.createServer(async (req, res) => {
           error: 'SECURITY ENFORCEMENT: Generic or default passwords are prohibited. Choose a unique case-sensitive password (8+ characters).'
         });
       }
+      if (d.guidedRegistration && (rawProv === 'password' || rawPassword)) {
+        const pwLenOk = rawPassword.length >= 8 && rawPassword.length <= 128;
+        const pwUpper = /[A-Z]/.test(rawPassword);
+        const pwLower = /[a-z]/.test(rawPassword);
+        const pwDigit = /\d/.test(rawPassword);
+        const pwSpec = /[^A-Za-z0-9\s]/.test(rawPassword);
+        const pwNoUser = !cleanUsername || !rawPassword.toLowerCase().includes(cleanUsername);
+        if (!pwLenOk || !pwUpper || !pwLower || !pwDigit || !pwSpec || !pwNoUser) {
+          return sendJson(res, 400, {
+            ok: false,
+            error: 'Password Security Standard Failed: Requires 8+ characters with uppercase, lowercase, number, special symbol, and must not contain your username.'
+          });
+        }
+      }
+      const cleanRecoveryEmail = sanitizeInput(d.recoveryEmail || '', 140).toLowerCase();
+      const cleanPhone = sanitizeInput(d.phone || '', 32);
+      const phoneDigits = cleanPhone.replace(/\D/g, '');
+      if (d.guidedRegistration) {
+        if (!cleanRecoveryEmail || !/^\S+@\S+\.\S+$/.test(cleanRecoveryEmail)) {
+          return sendJson(res, 400, { ok: false, error: 'A valid Recovery Email is required to complete registration.' });
+        }
+        if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+          return sendJson(res, 400, { ok: false, error: 'A valid 10–15 digit Phone Number is required to complete registration.' });
+        }
+      }
       const computedPasswordDigest = rawPassword ? mgcDigest(rawPassword) : ((existing && existing.passwordDigest) || null);
+      const requestedScopeOu = (d.ou === 'internal' || d.accountScope === 'internal') ? 'internal' : 'external';
       const userOu = (isAdminCaller && (d.ou === 'internal' || d.ou === 'external'))
         ? d.ou
-        : ((existing && existing.ou) || 'external');
+        : (d.guidedRegistration ? requestedScopeOu : ((existing && existing.ou) || 'external'));
+      const rawAddr = (d.address && typeof d.address === 'object') ? d.address : {};
+      const cleanAddress = {
+        streetAddress: sanitizeInput(rawAddr.streetAddress || rawAddr.street || d.streetAddress || '', 140),
+        city: sanitizeInput(rawAddr.city || d.city || '', 80),
+        stateRegion: sanitizeInput(rawAddr.stateRegion || rawAddr.state || d.stateRegion || '', 60),
+        postalCode: sanitizeInput(rawAddr.postalCode || rawAddr.zip || d.postalCode || '', 24)
+      };
+      if (userOu === 'internal' && (d.guidedRegistration || d.address !== undefined)) {
+        if (!cleanAddress.streetAddress || !cleanAddress.city || !cleanAddress.stateRegion || !cleanAddress.postalCode) {
+          return sendJson(res, 400, {
+            ok: false,
+            error: 'Employee Address Policy: Complete physical address (Street, City, State, Postal Code) is mandatory for Employee (OU=Internal) accounts.'
+          });
+        }
+      }
       const userGroup = (isAdminCaller && d.securityGroup && d.securityGroup !== 'DOMAIN_ADMIN')
         ? String(d.securityGroup)
         : ((existing && existing.securityGroup) || (userOu === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS'));
@@ -2587,6 +2635,11 @@ const server = http.createServer(async (req, res) => {
         username: cleanUsername,
         org: cleanOrg || (userOu === 'internal' ? 'MGC Internal Operations' : (d.brand === 'FIX' ? 'F.I.X Solutions Client Partner' : 'MGC Client Partner')),
         email: cleanEmail,
+        recoveryEmail: cleanRecoveryEmail || ((existing && existing.recoveryEmail) || ''),
+        phone: cleanPhone || ((existing && existing.phone) || ''),
+        address: (cleanAddress.streetAddress || cleanAddress.city || cleanAddress.stateRegion || cleanAddress.postalCode)
+          ? cleanAddress
+          : ((existing && existing.address) || { streetAddress: '', city: '', stateRegion: '', postalCode: '' }),
         role: 'member',
         ou: userOu,
         securityGroup: userGroup,
@@ -3711,12 +3764,47 @@ const server = http.createServer(async (req, res) => {
         }
         if (body.username !== undefined) {
           const cleanUn = sanitizeInput(body.username, 60).toLowerCase();
-          if (cleanUn && cleanUn !== 'malik.khabir' && cleanUn !== 'owner' && cleanUn !== 'admin') {
-            target.username = cleanUn;
+          if (!cleanUn || !/^[a-z0-9][a-z0-9._-]{3,31}$/.test(cleanUn) || ['malik.khabir', 'owner', 'admin', 'administrator', 'root', 'system'].includes(cleanUn)) {
+            return sendJson(res, 400, { ok: false, error: 'Username is mandatory (4–32 alphanumeric/._- chars, non-reserved).' });
           }
+          const collision = Object.values(S.users).find(x => x.id !== target.id && String(x.username || '').toLowerCase() === cleanUn);
+          if (collision) {
+            return sendJson(res, 409, { ok: false, error: 'That username is already assigned to another directory user.' });
+          }
+          target.username = cleanUn;
         }
         if (body.org !== undefined) {
           target.org = sanitizeInput(body.org, 120);
+        }
+        if (body.recoveryEmail !== undefined) {
+          const cleanRec = sanitizeInput(body.recoveryEmail, 140).toLowerCase();
+          if (cleanRec && !/^\S+@\S+\.\S+$/.test(cleanRec)) {
+            return sendJson(res, 400, { ok: false, error: 'Recovery email must be a valid email address.' });
+          }
+          target.recoveryEmail = cleanRec;
+        }
+        if (body.phone !== undefined) {
+          const cleanPh = sanitizeInput(body.phone, 32);
+          const phDigits = cleanPh.replace(/\D/g, '');
+          if (cleanPh && (phDigits.length < 10 || phDigits.length > 15)) {
+            return sendJson(res, 400, { ok: false, error: 'Phone number must contain 10–15 digits.' });
+          }
+          target.phone = cleanPh;
+        }
+        if (body.address && typeof body.address === 'object') {
+          const nextAddr = {
+            streetAddress: sanitizeInput(body.address.streetAddress || body.address.street || '', 140),
+            city: sanitizeInput(body.address.city || '', 80),
+            stateRegion: sanitizeInput(body.address.stateRegion || body.address.state || '', 60),
+            postalCode: sanitizeInput(body.address.postalCode || body.address.zip || '', 24)
+          };
+          if (target.ou === 'internal' && (!nextAddr.streetAddress || !nextAddr.city || !nextAddr.stateRegion || !nextAddr.postalCode)) {
+            return sendJson(res, 400, {
+              ok: false,
+              error: 'Employee Address Policy: Complete physical address (Street, City, State, Postal Code) is mandatory for Employee (OU=Internal) accounts.'
+            });
+          }
+          target.address = nextAddr;
         }
         if (body.status && ['active', 'suspended', 'requested', 'denied'].includes(body.status)) {
           target.status = body.status;
@@ -4171,7 +4259,8 @@ const server = http.createServer(async (req, res) => {
     /* ---------- HTML & Static Route Gate (Clean Route Masking + Encrypted Return Cookie) ---------- */
     const redirectToCleanAuth = (targetPathOrFile) => {
       const cleanDest = toCleanRoute(targetPathOrFile);
-      const headers = { 'Location': '/auth' };
+      const modeParam = parsedUrl.searchParams.get('mode') === 'register' ? '?mode=register' : '';
+      const headers = { 'Location': '/auth' + modeParam };
       if (cleanDest && cleanDest !== '/auth' && cleanDest !== '/login') {
         const retTok = signToken({ next: cleanDest }, 900);
         headers['Set-Cookie'] = `mgcw_return=${encodeURIComponent(retTok)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=900`;
