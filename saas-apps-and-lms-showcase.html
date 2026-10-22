@@ -205,16 +205,16 @@
       align-items: center;
     }
     .hero-title {
-      font-size: 30px;
-      font-weight: 900;
+      font-size: 26px;
+      font-weight: 600;
       letter-spacing: -0.02em;
       margin: 8px 0 10px;
-      line-height: 1.15;
+      line-height: 1.2;
     }
     .hero-sub {
       color: var(--text-muted);
       font-size: 13.5px;
-      line-height: 1.6;
+      line-height: 1.55;
       margin: 0 0 16px;
     }
     /* Main Workspace Tabs */
@@ -231,10 +231,10 @@
       background: rgba(11, 20, 38, 0.85);
       color: #cbd5e1;
       border: 1px solid rgba(197, 179, 88, 0.28);
-      border-radius: 12px;
-      padding: 10px 15px;
+      border-radius: 9px;
+      padding: 9px 14px;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
       display: inline-flex;
@@ -248,6 +248,7 @@
     .ws-tab.active {
       background: linear-gradient(135deg, #c5b358, #a38f36);
       color: #060B16;
+      font-weight: 600;
       border-color: #fde047;
       box-shadow: 0 8px 24px rgba(197, 179, 88, 0.35);
     }
@@ -288,22 +289,22 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 10px;
-      font-weight: 800;
+      font-size: 10.5px;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.05em;
       padding: 4px 10px;
-      border-radius: 999px;
+      border-radius: 6px;
       margin-bottom: 10px;
     }
     .btn-primary {
       background: linear-gradient(135deg, #059669, #10b981);
       color: #fff;
       border: 1px solid #34d399;
-      padding: 9px 14px;
-      border-radius: 10px;
-      font-size: 11.5px;
-      font-weight: 800;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
@@ -315,10 +316,10 @@
       background: rgba(15, 23, 42, 0.88);
       color: #e2e8f0;
       border: 1px solid rgba(197, 179, 88, 0.35);
-      padding: 9px 14px;
-      border-radius: 10px;
-      font-size: 11.5px;
-      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
@@ -334,10 +335,10 @@
       background: linear-gradient(135deg, #c5b358, #a38f36);
       color: #091024;
       border: none;
-      padding: 9px 14px;
-      border-radius: 10px;
-      font-size: 11.5px;
-      font-weight: 900;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
@@ -516,19 +517,19 @@
 
       <div class="metrics-row">
         <div class="metric-pill" title="SCORM 2004 Status">
-          <span style="color:#34d399;">● SCORM 2004:</span>
+          <span style="color:#34d399;">SCORM 2004:</span>
           <strong id="ui-scorm-status">7 SCO Apps Ready</strong>
         </div>
         <div class="metric-pill" title="Course & Lab XP">
-          <span style="color:#fbbf24;">★ XP:</span>
+          <span style="color:#fbbf24;">XP:</span>
           <strong id="ui-xp">18,450</strong>
         </div>
         <select id="cityscape-theme-selector" class="tier-select" onchange="switchShowcaseCityscape(this.value)" title="Switch between F.I.X. Cityscape, miltongroupsecurity.org Cityscape, and Color/Greyscale Filters">
-          <option value="mgc-sunset">🇺🇸 Cityscape: miltongroupsecurity.org + F.I.X. Gold</option>
-          <option value="fix-vanguard">🏙️ Cityscape: F.I.X. Solutions Navy &amp; Gold</option>
-          <option value="fix-greyscale">🎬 Cityscape: F.I.X. Tactical Noir Greyscale</option>
-          <option value="mgc-emerald">🌱 Cityscape: MGC Skyscraper + Emerald Matrix</option>
-          <option value="fix-platinum">🪙 Cityscape: F.I.X. Silver Monochrome</option>
+          <option value="mgc-sunset">Cityscape: miltongroupsecurity.org + F.I.X. Gold</option>
+          <option value="fix-vanguard">Cityscape: F.I.X. Solutions Navy &amp; Gold</option>
+          <option value="fix-greyscale">Cityscape: F.I.X. Tactical Noir Greyscale</option>
+          <option value="mgc-emerald">Cityscape: MGC Skyscraper + Emerald Matrix</option>
+          <option value="fix-platinum">Cityscape: F.I.X. Silver Monochrome</option>
         </select>
         <select id="tier-simulator" class="tier-select" style="display:none;" onchange="switchSimulatedTier(this.value)" title="Preview how different paying user tiers experience this platform">
           <option value="enterprise">View as: Enterprise / Owner ($499/mo)</option>
@@ -537,7 +538,7 @@
           <option value="customer_restricted">View as: Customer Login — Default Restricted (2/8 Apps)</option>
         </select>
         <button class="btn-pay" onclick="openSubscriptionCheckout()">
-          💳 Submit Payment &amp; Billing
+          Billing &amp; Payment
         </button>
       </div>
     </div>
@@ -545,43 +546,43 @@
     <!-- HERO SHOWCASE & MONETIZATION PROPOSITION -->
     <div class="hero-box">
       <div>
-        <div style="display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border-radius:999px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);color:#93c5fd;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;">
-          Monetized Decoupled Apps • Course LMS • Client Showcase
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border-radius:6px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);color:#93c5fd;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">
+          Monetized Decoupled Apps · Course LMS · Client Showcase
         </div>
         <h1 class="hero-title">
-          Build to Customer Satisfaction. Monetize User Views, Decoupled Apps & Tailored Intelligence.
+          Enterprise Applications, SCORM 2004 Course LMS &amp; Tailored Intelligence
         </h1>
         <p class="hero-sub">
-          Offer paying users and enterprise clients tiered access to standalone interactive apps, live EVE-NG network &amp; packet visualizations, tailored job/contract/traffic intelligence, course-style skill trackers, competitive leaderboards, and AI-guided custom builds.
+          Access standalone interactive applications, live EVE-NG network topologies, procurement matchmakers, skill trackers, and custom enterprise builds.
         </p>
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
-          <button class="btn-primary" onclick="activateMainTab('tab-apps')">🚀 Explore Decoupled Apps</button>
-          <button class="btn-gold" onclick="activateMainTab('tab-lms')">🎓 Open Course LMS &amp; Trackers</button>
-          <button class="btn-secondary" onclick="activateMainTab('tab-custom-build')">🛠 Commission a Custom Build</button>
-          <button class="btn-secondary" onclick="activateMainTab('tab-profile')">⚙ Profile &amp; Subscription Settings</button>
+          <button class="btn-primary" onclick="activateMainTab('tab-apps')">Explore Applications</button>
+          <button class="btn-gold" onclick="activateMainTab('tab-lms')">Open Course LMS</button>
+          <button class="btn-secondary" onclick="activateMainTab('tab-custom-build')">Custom Build Configurator</button>
+          <button class="btn-secondary" onclick="activateMainTab('tab-profile')">Profile &amp; Subscription</button>
         </div>
       </div>
 
-      <div style="background:rgba(2,6,23,0.85);border:1px solid var(--border-gold);border-radius:16px;padding:18px;">
-        <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:10px;">
+      <div style="background:rgba(2,6,23,0.85);border:1px solid var(--border-gold);border-radius:14px;padding:18px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold);margin-bottom:10px;">
           Live Monetization &amp; Traffic Telemetry
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid var(--border-subtle);">
-            <div style="font-size:10px;color:var(--text-muted);">Active App Subscriptions</div>
-            <div style="font-size:18px;font-weight:900;color:#34d399;font-family:'JetBrains Mono',monospace;">$14,850/mo</div>
+          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:10px;border:1px solid var(--border-subtle);">
+            <div style="font-size:10.5px;color:var(--text-muted);">Active App Subscriptions</div>
+            <div style="font-size:17px;font-weight:600;color:#34d399;font-family:'JetBrains Mono',monospace;">$14,850/mo</div>
           </div>
-          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid var(--border-subtle);">
-            <div style="font-size:10px;color:var(--text-muted);">Pay-Per-View &amp; Sandbox Passes</div>
-            <div style="font-size:18px;font-weight:900;color:#60a5fa;font-family:'JetBrains Mono',monospace;">184 Active</div>
+          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:10px;border:1px solid var(--border-subtle);">
+            <div style="font-size:10.5px;color:var(--text-muted);">Pay-Per-View &amp; Sandbox Passes</div>
+            <div style="font-size:17px;font-weight:600;color:#60a5fa;font-family:'JetBrains Mono',monospace;">184 Active</div>
           </div>
-          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid var(--border-subtle);">
-            <div style="font-size:10px;color:var(--text-muted);">Showcase Conversion Rate</div>
-            <div style="font-size:18px;font-weight:900;color:#fbbf24;font-family:'JetBrains Mono',monospace;">18.4%</div>
+          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:10px;border:1px solid var(--border-subtle);">
+            <div style="font-size:10.5px;color:var(--text-muted);">Showcase Conversion Rate</div>
+            <div style="font-size:17px;font-weight:600;color:#fbbf24;font-family:'JetBrains Mono',monospace;">18.4%</div>
           </div>
-          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:12px;border:1px solid var(--border-subtle);">
-            <div style="font-size:10px;color:var(--text-muted);">Customer Satisfaction (CSAT)</div>
-            <div style="font-size:18px;font-weight:900;color:#f8fafc;font-family:'JetBrains Mono',monospace;">99.4% ★</div>
+          <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:10px;border:1px solid var(--border-subtle);">
+            <div style="font-size:10.5px;color:var(--text-muted);">Customer Satisfaction (CSAT)</div>
+            <div style="font-size:17px;font-weight:600;color:#f8fafc;font-family:'JetBrains Mono',monospace;">99.4%</div>
           </div>
         </div>
       </div>
@@ -589,7 +590,7 @@
 
     <!-- MAIN WORKSPACE TABS + LEFT/RIGHT ARROW NAVIGATION -->
     <div class="workspace-tabs">
-      <button class="btn-secondary" onclick="prevShowcaseTab()" title="Previous Workspace Tab [Left Arrow]">← Prev [←]</button>
+      <button class="btn-secondary" onclick="prevShowcaseTab()" title="Previous Workspace Tab">Previous</button>
       <button class="ws-tab active" data-target="tab-apps" onclick="activateMainTab('tab-apps')">
         <span>1. SCORM 2004 Showcase Apps (7)</span>
       </button>
@@ -608,7 +609,7 @@
       <button class="ws-tab" data-target="tab-profile" onclick="activateMainTab('tab-profile')">
         <span>6. Profile &amp; Subscription</span>
       </button>
-      <button class="btn-gold" onclick="nextShowcaseTab()" title="Next Workspace Tab [Right Arrow]">Next [→] →</button>
+      <button class="btn-gold" onclick="nextShowcaseTab()" title="Next Workspace Tab">Next</button>
     </div>
 
     <!-- ================================================================= -->
@@ -620,17 +621,17 @@
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
-              App 01 • SCORM 2004 • 🏙️ F.I.X. Cityscape
+              App 01 · SCORM 2004 · F.I.X. Cityscape
             </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">EVE-NG &amp; NetPrism Topology + .cast Studio</h3>
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">EVE-NG &amp; NetPrism Topology + .cast Studio</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
               8-Page SCORM 2004 4th Ed. Network Studio ($0 cloud cost) with OSPF/BGP/ZTNA/EVPN topologies, 18 KB <code>.cast</code> CLI recordings, and F.I.X. Cityscape filters.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/eveng-netprism-studio/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <a href="projects/eveng-netprism-studio/index.html" class="btn-gold">Launch SCORM OS</a>
             <button class="btn-primary" onclick="selectAppWorkbench('eve'); switchShowcaseCityscape('fix-vanguard');">Inline Studio</button>
-            <a href="projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
+            <a href="projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
           </div>
         </div>
 
@@ -638,17 +639,17 @@
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
-              App 02 • SCORM 2004 • 🇺🇸 MGC Cityscape
+              App 02 · SCORM 2004 · MGC Cityscape
             </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">Tailored Job, Contract &amp; SAM.gov Matchmaker</h3>
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Tailored Job, Contract &amp; SAM.gov Matchmaker</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
               6-Page SCORM 2004 4th Ed. Procurement &amp; Career OS matching NAICS 541512/541519 SDVOSB set-asides and Principal AI roles over the <code>miltongroupsecurity.org</code> cityscape.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/samgov-contract-matchmaker/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <a href="projects/samgov-contract-matchmaker/index.html" class="btn-gold">Launch SCORM OS</a>
             <button class="btn-primary" onclick="selectAppWorkbench('contracts'); switchShowcaseCityscape('mgc-sunset');">Inline Matchmaker</button>
-            <a href="projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
+            <a href="projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
           </div>
         </div>
 
@@ -656,17 +657,17 @@
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
-              App 03 • SCORM 2004 • 🏙️ F.I.X. Cityscape
+              App 03 · SCORM 2004 · F.I.X. Cityscape
             </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">Site Traffic, Expected Traffic &amp; ROI Simulator</h3>
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Site Traffic, Expected Traffic &amp; ROI Simulator</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
               6-Page SCORM 2004 4th Ed. Growth &amp; Cloud Run Zero-Charge ($0.00 idle) simulator forecasting visitor funnels and multi-rail revenue over the F.I.X. Cityscape.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/traffic-roi-simulator/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <a href="projects/traffic-roi-simulator/index.html" class="btn-gold">Launch SCORM OS</a>
             <button class="btn-primary" onclick="selectAppWorkbench('traffic'); switchShowcaseCityscape('fix-vanguard');">Inline Simulator</button>
-            <a href="projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
+            <a href="projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
           </div>
         </div>
 
@@ -674,17 +675,17 @@
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
-              App 04 • SCORM 2004 • 🇺🇸 MGC Cityscape
+              App 04 · SCORM 2004 · MGC Cityscape
             </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">Ghost-CLI Trainer &amp; Netmiko Auto-Grader</h3>
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Ghost-CLI Trainer &amp; Netmiko Auto-Grader</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
               8-Page SCORM 2004 4th Ed. kinetic terminal for Cisco IOS-XE, Linux (CST200), 3NF SQL (SDC200), Sentinel KQL, and Ansible DevNet over the <code>miltongroupsecurity.org</code> cityscape.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/ghost-cli-trainer/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <a href="projects/ghost-cli-trainer/index.html" class="btn-gold">Launch SCORM OS</a>
             <button class="btn-primary" onclick="selectAppWorkbench('cli'); switchShowcaseCityscape('mgc-emerald');">Inline CLI Drill</button>
-            <a href="projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
+            <a href="projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
           </div>
         </div>
 
@@ -692,17 +693,17 @@
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
-              App 05 • SCORM 2004 • 🏙️ F.I.X. Cityscape
+              App 05 · SCORM 2004 · F.I.X. Cityscape
             </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">Chronos // Aetheria Geo-Historical AI OS</h3>
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Chronos // Aetheria Geo-Historical AI OS</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
               6-Page SCORM 2004 4th Ed. discovery engine combining DeepMind Ithaca/Aeneas Epigraphy, WGS-84 Geodesics, and Diachronic Latin-to-Spanish roots over the F.I.X. Cityscape.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/chronos-aetheria-scorm/index.html" class="btn-gold">🚀 Launch SCORM OS</a>
+            <a href="projects/chronos-aetheria-scorm/index.html" class="btn-gold">Launch SCORM OS</a>
             <a href="chronos-external-insight-webapp.html" class="btn-primary">3-Pane Map App</a>
-            <a href="projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
+            <a href="projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
           </div>
         </div>
 
@@ -710,16 +711,16 @@
         <div class="app-card">
           <div>
             <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
-              App 06 • SCORM 2004 • 🏙️ F.I.X. &amp; MGC Cityscape
+              App 06 · SCORM 2004 · F.I.X. &amp; MGC Cityscape
             </span>
-            <h3 style="margin:0 0 8px;font-size:17px;">Spanish Acquisition OS (10,000 Words &amp; 100 Roots)</h3>
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Spanish Acquisition OS (10,000 Words &amp; 100 Roots)</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              10-SCO SCORM 2004 4th Ed. language OS with 344 Azure Neural MP3s, 100 Latin/Spanish root families, universal <code>←/→</code> pagination, and F.I.X. &amp; MGC cityscape filters.
+              10-SCO SCORM 2004 4th Ed. language OS with 344 Azure Neural MP3s, 100 Latin/Spanish root families, universal pagination, and F.I.X. &amp; MGC cityscape filters.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/spanish-acquisition-os/index.html" class="btn-gold">🇪🇸 Launch Spanish OS</a>
-            <a href="projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP (8.6 MB)</a>
+            <a href="projects/spanish-acquisition-os/index.html" class="btn-gold">Launch Spanish OS</a>
+            <a href="projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP (8.6 MB)</a>
           </div>
         </div>
 
@@ -728,18 +729,18 @@
           <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;">
             <div style="max-width:780px;">
               <span class="app-tag" style="background:rgba(197,179,88,0.22);color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
-                App 07 • SCORM 2004 • 🇺🇸 miltongroupsecurity.org Cityscape + F.I.X. Colors
+                App 07 · SCORM 2004 · miltongroupsecurity.org Cityscape
               </span>
-              <h3 style="margin:0 0 6px;font-size:18px;">Client Turnkey Forge &amp; Custom Project Experience Builder (Includes Sterling Auto Repair OS)</h3>
+              <h3 style="margin:0 0 6px;font-size:17px;font-weight:600;">Client Turnkey Forge &amp; Custom Project Experience Builder (Includes Sterling Auto Repair OS)</h3>
               <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0;">
                 6-Page SCORM 2004 4th Ed. Turnkey Architecture Configurator showcasing Defense VAR (<code>fix.miltongroupsecurity.org</code>), Executive Command (<code>miltongroupsecurity.org</code>), SCORM LMS Academies, and Commercial Service Booking (<code>Sterling Auto Repair</code>) with instant Finance Command invoicing.
               </p>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <a href="projects/client-turnkey-forge/index.html" class="btn-gold">🚀 Launch Turnkey Forge SCORM OS</a>
-              <a href="projects/sterling-auto-repair/index.html" class="btn-primary">🔧 Sterling Auto Showcase</a>
-              <button class="btn-secondary" onclick="activateMainTab('tab-custom-build'); switchShowcaseCityscape('mgc-sunset');">Configure Pricing →</button>
-              <a href="projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip" download class="btn-secondary">📦 SCORM .ZIP</a>
+              <a href="projects/client-turnkey-forge/index.html" class="btn-gold">Launch Turnkey Forge</a>
+              <a href="projects/sterling-auto-repair/index.html" class="btn-primary">Sterling Auto Showcase</a>
+              <button class="btn-secondary" onclick="activateMainTab('tab-custom-build'); switchShowcaseCityscape('mgc-sunset');">Configure Pricing</button>
+              <a href="projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
             </div>
           </div>
         </div>

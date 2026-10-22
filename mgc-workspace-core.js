@@ -17,27 +17,27 @@
   // Strict Policy: New & standard users ONLY have view & access to SaaS Apps & LMS (saasapps) + Payment & Billing.
   // All other pages/features are locked unless explicitly granted by the sole Administrator (Malik A. Khabir).
   const CATALOG = [
-    { id: 'saasapps',  icon: '⚡', title: 'SaaS Apps & LMS',       brand: 'FIX', kind: 'app',  base: true,  price: 0,  href: 'saas-apps-and-lms-showcase.html', desc: 'Your default unlocked SaaS Apps, Turnkey Configurator, Sterling Auto Showcase & SCORM 2004 LMS.' },
-    { id: 'agile',     icon: '🗂️', title: 'Agile Board',           brand: 'ANY', kind: 'app',  base: false, price: 9,  href: 'agile-board.html',                desc: 'Backlog, sprint board and feature requests for shared projects (Admin Grant Required).' },
-    { id: 'radar',     icon: '🎯', title: 'Contract Radar',        brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'sdvosb-contract-radar.html',      desc: 'Federal opportunity feed filtered to your NAICS codes (Admin Grant Required).' },
-    { id: 'compliance',icon: '🔒', title: 'Compliance Tracker',    brand: 'MGC', kind: 'page', base: false, price: 7,  href: 'compliance-trust-center.html',    desc: 'CMMC / Zero-Trust checklist with evidence upload (Admin Grant Required).' },
-    { id: 'ailab',     icon: '🤖', title: 'AI Workflow Lab',       brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'agent-workflow-studio.html',      desc: 'Prompt, agent and automation templates for your business (Admin Grant Required).' },
-    { id: 'finance',   icon: '💳', title: 'Cashflow & Invoicing',  brand: 'FIX', kind: 'page', base: false, price: 8,  href: 'finance-command.html',            desc: 'Invoice tracker, WAWF/PIEE checklist, runway view (Admin Grant Required).' },
-    { id: 'training',  icon: '🎓', title: 'SCORM EVE-NG Academy',  brand: 'MGC', kind: 'page', base: false, price: 10, href: 'elearning-upskilling-hub.html',   desc: 'SCORM 2004 15-topology EVE-NG workbench, fault injector & auto-grader (Admin Grant Required).' },
-    { id: 'aistudio',  icon: '🧠', title: 'AI Studio & NotebookLM',brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'historical-archaeology-ai-hub.html', desc: 'Chronos Historical AI, Epigraphy & NotebookLM Research Lab (Admin Grant Required).' },
-    { id: 'home',      icon: '🏠', title: 'Full Overview Hub',     brand: 'ANY', kind: 'page', base: false, price: 5,  href: 'member-portal.html?view=overview', desc: 'Expanded project overview, tailored checklist & notifications (Admin Grant Required).' },
-    { id: 'resources', icon: '📚', title: 'Curated Resources',     brand: 'ANY', kind: 'page', base: false, price: 5,  href: 'member-portal.html?view=resources', desc: 'Links, templates and real-life workflows matched to your quote (Admin Grant Required).' }
+    { id: 'saasapps',  icon: '', title: 'SaaS Apps & LMS',       brand: 'FIX', kind: 'app',  base: true,  price: 0,  href: 'saas-apps-and-lms-showcase.html', desc: 'Interactive SaaS applications, Turnkey Configurator, Sterling Auto Showcase, and SCORM 2004 LMS.' },
+    { id: 'agile',     icon: '', title: 'Agile Board',           brand: 'ANY', kind: 'app',  base: false, price: 9,  href: 'agile-board.html',                desc: 'Backlog, sprint board, and project deliverables.' },
+    { id: 'radar',     icon: '', title: 'Contract Radar',        brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'sdvosb-contract-radar.html',      desc: 'Federal opportunity feed filtered by NAICS codes.' },
+    { id: 'compliance',icon: '', title: 'Compliance Tracker',    brand: 'MGC', kind: 'page', base: false, price: 7,  href: 'compliance-trust-center.html',    desc: 'CMMC 2.0 and Zero-Trust control checklist.' },
+    { id: 'ailab',     icon: '', title: 'AI Workflow Lab',       brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'agent-workflow-studio.html',      desc: 'Agent and automation workflow studio.' },
+    { id: 'finance',   icon: '', title: 'Cashflow & Invoicing',  brand: 'FIX', kind: 'page', base: false, price: 8,  href: 'finance-command.html',            desc: 'Invoice tracker, WAWF/PIEE settlement, and treasury.' },
+    { id: 'training',  icon: '', title: 'SCORM EVE-NG Academy',  brand: 'MGC', kind: 'page', base: false, price: 10, href: 'elearning-upskilling-hub.html',   desc: 'SCORM 2004 EVE-NG topology workbench and auto-grader.' },
+    { id: 'aistudio',  icon: '', title: 'AI Studio & NotebookLM',brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'historical-archaeology-ai-hub.html', desc: 'Chronos Historical AI and research workspace.' },
+    { id: 'home',      icon: '', title: 'Overview Hub',          brand: 'ANY', kind: 'page', base: false, price: 5,  href: 'member-portal.html?view=overview', desc: 'Project overview and action checklist.' },
+    { id: 'resources', icon: '', title: 'Curated Resources',     brand: 'ANY', kind: 'page', base: false, price: 5,  href: 'member-portal.html?view=resources', desc: 'Reference templates and operational workflows.' }
   ];
 
   const APPS_CATALOG = [
-    { id: 'client-turnkey-forge',       icon: '🛠️', title: 'Client Turnkey Forge SCORM OS',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Included by default on customer login: interactive custom build scope & pricing configurator.' },
-    { id: 'sterling-auto-repair',       icon: '🔧', title: 'Sterling Auto Repair Showcase',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Included by default on customer login: live commercial web & AI receptionist showcase.' },
-    { id: 'eveng-netprism-studio',      icon: '🖧', title: 'EVE-NG & NetPrism Topology Studio',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 8-page OSPF/BGP/ZTNA/EVPN network simulator & .cast studio.' },
-    { id: 'samgov-contract-matchmaker', icon: '🏛️', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Restricted by default on customer login: 6-page SDVOSB NAICS 541512/541519 & Principal AI role matchmaker.' },
-    { id: 'traffic-roi-simulator',      icon: '📈', title: 'Site Traffic & Conversion ROI OS',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Restricted by default on customer login: 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
-    { id: 'ghost-cli-trainer',          icon: '⌨️', title: 'Ghost-CLI & Netmiko Auto-Grader',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
-    { id: 'chronos-aetheria-scorm',     icon: '🏺', title: 'Chronos // Aetheria Geo-Historical OS',brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Restricted by default on customer login: 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
-    { id: 'spanish-acquisition-os',     icon: '🇪🇸', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
+    { id: 'client-turnkey-forge',       icon: '', title: 'Client Turnkey Forge SCORM OS',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Interactive custom build scope and pricing configurator.' },
+    { id: 'sterling-auto-repair',       icon: '', title: 'Sterling Auto Repair Showcase',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Commercial web and autonomous receptionist showcase.' },
+    { id: 'eveng-netprism-studio',      icon: '', title: 'EVE-NG & NetPrism Topology Studio',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'OSPF, BGP, ZTNA, and EVPN network topology simulator.' },
+    { id: 'samgov-contract-matchmaker', icon: '', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'SDVOSB NAICS 541512/541519 opportunity matchmaker.' },
+    { id: 'traffic-roi-simulator',      icon: '', title: 'Site Traffic & Conversion ROI OS',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator.' },
+    { id: 'ghost-cli-trainer',          icon: '', title: 'Ghost-CLI & Netmiko Auto-Grader',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'IOS-XE, Linux, SQL, KQL, and Ansible terminal lab.' },
+    { id: 'chronos-aetheria-scorm',     icon: '', title: 'Chronos Aetheria Geo-Historical OS',   brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Epigraphy and geodesic discovery engine.' },
+    { id: 'spanish-acquisition-os',     icon: '', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module language training system with neural audio.' }
   ];
 
   const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge'];
@@ -752,75 +752,92 @@
 
   /* ---------- SaaS Apps Standard Theme Shell + Thematic Cityscape Background ---------- */
   const CSS = `
-  :root{--r:18px;--bg-deep:#040814;--border-subtle:rgba(148,163,184,0.28);--border-gold:rgba(197,179,88,0.52);--gold:#c5b358;--blue:#3b82f6;--emerald:#10b981}
-  body.w-mgc{--bg:#040814;--card:rgba(9,16,32,0.96);--card2:rgba(12,21,42,0.95);--line:rgba(148,163,184,0.34);--tx:#F8FAFC;--mut:#CBD5E1;--ac:#3B82F6;--acx:#FFFFFF;--ok:#10B981;
-    background:radial-gradient(circle at 12% 15%,rgba(37,99,235,0.22),transparent 42%),radial-gradient(circle at 88% 12%,rgba(148,163,184,0.14),transparent 38%),radial-gradient(circle at 50% 85%,rgba(197,179,88,0.12),transparent 45%),#040814}
-  body.w-fix{--bg:#040814;--card:rgba(9,16,32,0.96);--card2:rgba(12,21,42,0.95);--line:rgba(197,179,88,0.46);--tx:#F8FAFC;--mut:#CBD5E1;--ac:#C5B358;--acx:#040814;--ok:#10B981;
-    background:radial-gradient(circle at 12% 15%,rgba(37,99,235,0.22),transparent 42%),radial-gradient(circle at 88% 12%,rgba(220,38,38,0.16),transparent 38%),radial-gradient(circle at 50% 85%,rgba(197,179,88,0.16),transparent 45%),#040814}
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{--r:12px;--bg-deep:#050811;--border-subtle:rgba(148,163,184,0.2);--border-gold:rgba(197,179,88,0.38);--gold:#c5b358;--blue:#3b82f6;--emerald:#10b981;--font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
+  body.w-mgc{--bg:#050811;--card:rgba(10,15,28,0.96);--card2:rgba(14,21,38,0.95);--line:rgba(148,163,184,0.22);--tx:#F8FAFC;--mut:#94A3B8;--ac:#3B82F6;--acx:#FFFFFF;--ok:#10B981;
+    background:radial-gradient(circle at 12% 15%,rgba(37,99,235,0.16),transparent 42%),radial-gradient(circle at 88% 12%,rgba(148,163,184,0.08),transparent 38%),#050811}
+  body.w-fix{--bg:#050811;--card:rgba(10,15,28,0.96);--card2:rgba(14,21,38,0.95);--line:rgba(197,179,88,0.28);--tx:#F8FAFC;--mut:#94A3B8;--ac:#C5B358;--acx:#050811;--ok:#10B981;
+    background:radial-gradient(circle at 12% 15%,rgba(37,99,235,0.16),transparent 42%),radial-gradient(circle at 50% 85%,rgba(197,179,88,0.12),transparent 45%),#050811}
   body.w-mgc::before,body.w-fix::before{content:'';position:fixed;inset:0;z-index:-10;pointer-events:none}
-  body.w-mgc::before{background:linear-gradient(180deg,rgba(4,8,20,0.72) 0%,rgba(11,19,37,0.85) 55%,rgba(4,8,20,0.95) 100%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23E4E4E7' stroke-width='3'/><path d='M26 76V42l24 22 24-22v34' fill='none' stroke='%23A1A1AA' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat 96% 94%/min(22vw,280px),linear-gradient(rgba(148,163,184,.035) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(148,163,184,.035) 1px,transparent 1px) 0 0/44px 44px,url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500") center 38%/cover no-repeat;opacity:.82}
-  body.w-fix::before{background:linear-gradient(180deg,rgba(4,8,20,0.70) 0%,rgba(11,20,38,0.85) 55%,rgba(4,8,20,0.95) 100%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'><path d='M50 4 92 20v36c0 30-19 50-42 60C27 106 8 86 8 56V20z' fill='none' stroke='%23C5B358' stroke-width='3'/><path d='M30 38h40M30 58h28M30 78h34' stroke='%23FDE047' stroke-width='5' stroke-linecap='round'/></svg>") no-repeat 96% 94%/min(22vw,280px),linear-gradient(rgba(197,179,88,.04) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(197,179,88,.04) 1px,transparent 1px) 0 0/44px 44px,url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500") center 38%/cover no-repeat;opacity:.82}
-  *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--tx);min-height:100vh;position:relative;isolation:isolate}
-  a{color:inherit}
-  .wrap{max-width:1440px;margin:0 auto;padding:14px 20px 80px;position:relative;z-index:5}
-  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:rgba(9,16,32,0.98);border:1px solid var(--border-gold);border-radius:12px;padding:10px 16px;margin-bottom:14px;position:relative;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,0.45)}
-  .brand{display:flex;gap:12px;align-items:center;font-weight:900;letter-spacing:.02em}
-  .brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-  .nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .btn,select,input,textarea{font:inherit;font-size:12.5px;border-radius:10px;border:1.5px solid var(--line);background:#060b17;color:var(--tx);padding:9px 13px;transition:all .18s}
-  .btn{cursor:pointer;font-weight:800;text-decoration:none;display:inline-flex;gap:6px;align-items:center;background:rgba(15,23,42,0.96)}
-  .btn.pri{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border-color:#60a5fa;box-shadow:0 6px 18px rgba(37,99,235,0.3)}
-  body.w-fix .btn.pri{background:linear-gradient(135deg,#c5b358,#a38f36);color:#091024;border-color:#fde047}
-  .btn:hover{border-color:#60a5fa;transform:translateY(-1px)}.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
-  .chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1.5px solid var(--line);background:rgba(4,8,20,0.92);color:var(--mut)}
-  .chip.ok{color:#34d399;background:rgba(16,185,129,0.2);border-color:rgba(16,185,129,0.52)}.chip.warn{color:#fbbf24;background:rgba(197,179,88,0.2);border-color:rgba(197,179,88,0.52)}
-  .card{background:var(--card);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1.5px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:0 18px 45px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.05);transition:border-color .2s;position:relative;z-index:5}
-  .card:hover{border-color:rgba(59,130,246,0.52)}
-  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
-  h1{font-size:24px;font-weight:900;letter-spacing:-.02em;margin:0 0 6px;color:#fff}h2{font-size:16px;font-weight:800;margin:0 0 8px;color:#fff}p{color:var(--mut);font-size:13px;line-height:1.55;margin:4px 0}
+  body.w-mgc::before{background:linear-gradient(180deg,rgba(5,8,17,0.82) 0%,rgba(10,16,30,0.9) 55%,rgba(5,8,17,0.97) 100%),linear-gradient(rgba(148,163,184,.025) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(148,163,184,.025) 1px,transparent 1px) 0 0/44px 44px,url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500") center 38%/cover no-repeat;opacity:.78}
+  body.w-fix::before{background:linear-gradient(180deg,rgba(5,8,17,0.82) 0%,rgba(10,16,30,0.9) 55%,rgba(5,8,17,0.97) 100%),linear-gradient(rgba(197,179,88,.025) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(197,179,88,.025) 1px,transparent 1px) 0 0/44px 44px,url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500") center 38%/cover no-repeat;opacity:.78}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font-sans);font-size:13.5px;line-height:1.5;color:var(--tx);min-height:100vh;position:relative;isolation:isolate;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-feature-settings:"cv02","cv03","cv04","cv11"}
+  code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1420px;margin:0 auto;padding:16px 24px 72px;position:relative;z-index:5}
+  .bar{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;background:rgba(10,15,28,0.96);border:1px solid var(--line);border-radius:10px;padding:10px 18px;margin-bottom:16px;position:relative;z-index:20;box-shadow:0 4px 20px rgba(0,0,0,0.35)}
+  .brand{display:flex;gap:10px;align-items:center;font-weight:600;font-size:13.5px;letter-spacing:-.01em;color:#fff}
+  .brand-mark{width:26px;height:26px;border-radius:6px;background:rgba(59,130,246,0.16);border:1px solid rgba(96,165,250,0.4);color:#93c5fd;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:.04em}
+  body.w-fix .brand-mark{background:rgba(197,179,88,0.16);border-color:rgba(197,179,88,0.45);color:#fde047}
+  .brand small{display:block;font-size:11px;color:var(--mut);font-weight:400;letter-spacing:0;text-transform:none;margin-top:1px}
+  .nav{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .bar > .nav:nth-child(2){justify-content:center}
+  .bar > .nav:nth-child(3){justify-content:flex-end}
+  .btn,select,input,textarea{font-family:var(--font-sans);font-size:13px;font-weight:500;border-radius:8px;border:1px solid var(--line);background:#070b16;color:var(--tx);padding:8px 12px;transition:border-color .15s ease,background .15s ease,color .15s ease;line-height:1.35}
+  input::placeholder,textarea::placeholder{color:#64748b;font-weight:400}
+  .btn{cursor:pointer;font-weight:500;text-decoration:none;display:inline-flex;gap:6px;align-items:center;justify-content:center;background:rgba(15,23,42,0.85);color:#e2e8f0}
+  .btn.pri{background:#2563eb;color:#fff;border-color:#3b82f6;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,0.25)}
+  body.w-fix .btn.pri{background:#c5b358;color:#050811;border-color:#d4c472;font-weight:600}
+  .btn:hover{border-color:#60a5fa;background:rgba(30,41,59,0.95);color:#fff}
+  .btn.pri:hover{background:#1d4ed8;border-color:#60a5fa}
+  body.w-fix .btn.pri:hover{background:#d4c472;color:#050811}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;letter-spacing:.02em;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:rgba(15,23,42,0.75);color:#cbd5e1;font-variant-numeric:tabular-nums}
+  .chip.ok{color:#34d399;background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.32)}
+  .chip.warn{color:#fbbf24;background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.32)}
+  .card{background:var(--card);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 8px 28px rgba(0,0,0,0.4);transition:border-color .18s}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  h1{font-size:20px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px;color:#fff;line-height:1.3}
+  h2{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:0 0 6px;color:#fff;line-height:1.35}
+  h3{font-size:13.5px;font-weight:600;letter-spacing:-.01em;margin:0;color:#f8fafc;line-height:1.4}
+  p{color:var(--mut);font-size:13px;line-height:1.55;margin:4px 0}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-  details{border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:8px;background:rgba(6,11,23,0.92)}summary{cursor:pointer;font-weight:800;font-size:12px}
+  details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:8px;background:rgba(7,11,22,0.85)}
+  summary{cursor:pointer;font-weight:500;font-size:12.5px;color:#cbd5e1}
   .skel{position:relative;overflow:hidden}.skel::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:sh 1.6s infinite}
   @keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
-  .steps{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.step{flex:1;min-width:130px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;font-size:11.5px;font-weight:800;color:var(--mut);background:rgba(9,16,32,0.95)}
-  .step.on{color:#fff;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-color:#60a5fa}.step.done{color:#34d399;border-color:rgba(16,185,129,0.52)}
-  table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mut);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em}
-  .demo{font-size:10px;color:#34d399;border:1px solid rgba(16,185,129,0.4);background:rgba(16,185,129,0.14);border-radius:999px;padding:4px 10px;font-weight:800}
+  .steps{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.step{flex:1;min-width:130px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:12px;font-weight:500;color:var(--mut);background:rgba(10,15,28,0.95)}
+  .step.on{color:#fff;background:#2563eb;border-color:#60a5fa}.step.done{color:#34d399;border-color:rgba(16,185,129,0.4)}
+  table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+  th,td{padding:10px 14px;border-bottom:1px solid rgba(148,163,184,0.14);text-align:left;vertical-align:middle}
+  th{color:#94a3b8;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;background:rgba(7,11,22,0.6)}
+  .demo{font-size:11px;color:#34d399;border:1px solid rgba(16,185,129,0.35);background:rgba(16,185,129,0.1);border-radius:6px;padding:3px 9px;font-weight:500}
   .lock{text-align:center;padding:44px 20px}
-  .toast{position:fixed;right:18px;bottom:18px;background:linear-gradient(135deg,#10b981,#059669);color:#022c22;padding:10px 16px;border-radius:12px;font-weight:900;font-size:12px;z-index:99}
+  .toast{position:fixed;right:20px;bottom:20px;background:#10b981;color:#022c22;padding:10px 16px;border-radius:8px;font-weight:600;font-size:12.5px;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
   @view-transition{navigation:auto}
-  ::view-transition-old(root){animation:mgcFadeOut .22s cubic-bezier(.4,0,.2,1) both}
-  ::view-transition-new(root){animation:mgcFadeIn .28s cubic-bezier(.16,1,.3,1) both}
-  @keyframes mgcFadeOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-6px)}}
-  @keyframes mgcFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  body{animation:mgcFadeIn .28s cubic-bezier(.16,1,.3,1)}
-  body.mgc-page-leave{opacity:0;transform:translateY(-6px);transition:opacity .18s ease,transform .18s ease}
-  :focus-visible{outline:2.5px solid #60a5fa;outline-offset:2px}
-  .skip-link{position:fixed;top:-100px;left:16px;z-index:9999;background:#3b82f6;color:#fff;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;transition:top .2s}
+  ::view-transition-old(root){animation:mgcFadeOut .2s cubic-bezier(.4,0,.2,1) both}
+  ::view-transition-new(root){animation:mgcFadeIn .24s cubic-bezier(.16,1,.3,1) both}
+  @keyframes mgcFadeOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-4px)}}
+  @keyframes mgcFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  body{animation:mgcFadeIn .24s cubic-bezier(.16,1,.3,1)}
+  body.mgc-page-leave{opacity:0;transform:translateY(-4px);transition:opacity .15s ease,transform .15s ease}
+  :focus-visible{outline:2px solid #60a5fa;outline-offset:1px}
+  .skip-link{position:fixed;top:-100px;left:16px;z-index:9999;background:#2563eb;color:#fff;padding:8px 14px;border-radius:8px;font-weight:600;text-decoration:none;transition:top .2s}
   .skip-link:focus{top:12px}
   #mgc-scorm-floating-dock{display:none!important}
-  .ws-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:20px;align-items:start}
-  .ws-side{background:rgba(9,16,32,0.95);border:1.5px solid var(--line);border-radius:var(--r);padding:16px;position:sticky;top:86px;display:flex;flex-direction:column;gap:6px}
-  .ws-side-title{font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);padding:4px 8px 6px}
-  .ws-nav-btn{width:100%;text-align:left;background:transparent;border:1px solid transparent;color:var(--mut);padding:10px 12px;border-radius:11px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:all .16s}
-  .ws-nav-btn:hover{background:rgba(59,130,246,0.12);color:#fff}
-  .ws-nav-btn.active{background:linear-gradient(135deg,rgba(37,99,235,0.28),rgba(15,23,42,0.95));border-color:rgba(96,165,250,0.48);color:#fff;font-weight:800}
-  body.w-fix .ws-nav-btn.active{background:linear-gradient(135deg,rgba(197,179,88,0.26),rgba(15,23,42,0.95));border-color:rgba(197,179,88,0.55);color:#fde047}
-  .ws-main{min-width:0;display:flex;flex-direction:column;gap:16px}
-  .kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px}
-  .kpi-tile{background:rgba(9,16,32,0.92);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
-  .kpi-tile small{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)}
-  .kpi-tile strong{font-size:20px;font-weight:900;color:#fff}
-  .bento-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-  .bento-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-  .compact-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px;transition:border-color .18s,transform .18s}
-  .compact-card:hover{border-color:rgba(96,165,250,0.5);transform:translateY(-1px)}
-  .compact-card h3{font-size:14.5px;font-weight:800;margin:0;color:#fff;display:flex;align-items:center;gap:8px}
-  .compact-card p{font-size:12.5px;color:var(--mut);margin:4px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  @media(max-width:960px){.ws-layout{grid-template-columns:1fr}.ws-side{position:static;flex-direction:row;flex-wrap:wrap}.ws-nav-btn{width:auto;flex:1 1 auto}.bento-2,.bento-3{grid-template-columns:1fr}}
-  @media(pointer:coarse){.btn,select,input,textarea{min-height:48px;font-size:16px}}
+  .ws-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px;align-items:start}
+  .ws-side{background:rgba(10,15,28,0.95);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:sticky;top:20px;display:flex;flex-direction:column;gap:4px}
+  .ws-side-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#64748b;padding:4px 10px 6px}
+  .ws-nav-btn{width:100%;text-align:left;background:transparent;border:1px solid transparent;color:#94a3b8;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:all .15s}
+  .ws-nav-btn:hover{background:rgba(255,255,255,0.04);color:#f8fafc}
+  .ws-nav-btn.active{background:rgba(37,99,235,0.16);border-color:rgba(96,165,250,0.35);color:#fff;font-weight:600}
+  body.w-fix .ws-nav-btn.active{background:rgba(197,179,88,0.14);border-color:rgba(197,179,88,0.4);color:#fde047}
+  .ws-main{min-width:0;display:flex;flex-direction:column;gap:14px}
+  .kpi-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .kpi-tile{background:rgba(10,15,28,0.94);border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:2px}
+  .kpi-tile small{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8}
+  .kpi-tile strong{font-size:16px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+  .bento-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .bento-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .compact-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;transition:border-color .15s}
+  .compact-card:hover{border-color:rgba(96,165,250,0.4)}
+  .compact-card h3{font-size:13.5px;font-weight:600;margin:0;color:#f8fafc;display:flex;align-items:center;gap:8px}
+  .compact-card p{font-size:12.5px;color:var(--mut);margin:2px 0 0;line-height:1.45}
+  @media(max-width:960px){.ws-layout{grid-template-columns:1fr}.ws-side{position:static;flex-direction:row;flex-wrap:wrap}.ws-nav-btn{width:auto;flex:1 1 auto}.bento-2,.bento-3,.kpi-strip{grid-template-columns:1fr}.bar{grid-template-columns:1fr}}
+  @media(pointer:coarse){.btn,select,input,textarea{min-height:44px;font-size:15px}}
   @media(prefers-reduced-motion:reduce){*,::before,::after,::view-transition-old(root),::view-transition-new(root){animation-duration:.01ms!important;transition-duration:.01ms!important}}
-  @media(max-width:640px){.wrap{padding:12px 12px 90px}.bar{position:static}}`;
+  @media(max-width:640px){.wrap{padding:12px 12px 80px}.bar{position:static}}`;
 
   const CLEAN_URL_MAP = {
     'login.html': '/auth',
@@ -935,22 +952,21 @@
     let links = [];
     if (isOwner) {
       links = [
-        ['access-admin.html', '🖧 Directory & RBAC'],
-        ['saas-apps-and-lms-showcase.html', '⚡ SaaS Apps & LMS'],
-        ['member-portal.html', '💼 Workspace'],
-        ['agile-board.html', '📋 Agile Board'],
-        ['admin-command-portal.html', '🏛️ Portals']
+        ['access-admin.html', 'Directory & RBAC'],
+        ['saas-apps-and-lms-showcase.html', 'Apps & LMS'],
+        ['member-portal.html', 'Workspace'],
+        ['agile-board.html', 'Agile Board'],
+        ['admin-command-portal.html', 'Portals']
       ];
     } else {
-      // Standard / New User: strictly SaaS Apps & LMS + Submit Payment & Billing, plus ONLY Admin-granted features
       links = [
-        ['saas-apps-and-lms-showcase.html', '⚡ SaaS Apps & LMS'],
-        ['member-portal.html?view=payment', '💳 Submit Payment & Billing']
+        ['saas-apps-and-lms-showcase.html', 'Apps & LMS'],
+        ['member-portal.html?view=payment', 'Billing & Payment']
       ];
       if (u) {
         CATALOG.forEach(c => {
           if (c.id !== 'saasapps' && can(u, 'page', c.id, 'view')) {
-            links.push([c.href, c.icon + ' ' + c.title]);
+            links.push([c.href, c.title]);
           }
         });
       }
@@ -958,23 +974,26 @@
 
     const nav = '<div class="nav">' + links.map(l => {
       const baseHref = l[0].split('?')[0].split('#')[0];
-      const isAct = l[0] === active || baseHref === active;
-      return '<a class="btn' + (isAct ? ' pri' : '') + '" href="' + l[0] + '" style="padding:7px 11px;font-size:12px">' + l[1] + '</a>';
+      const hasQueryOrHash = l[0].includes('?') || l[0].includes('#');
+      const isAct = l[0] === active || (!hasQueryOrHash && baseHref === active);
+      return '<a class="btn' + (isAct ? ' pri' : '') + '" href="' + l[0] + '" style="padding:7px 12px;font-size:12.5px">' + l[1] + '</a>';
     }).join('') + '</div>';
 
     const authBtn = u
-      ? '<button class="btn" id="w-signout" style="padding:7px 11px;font-size:12px">Sign out</button>'
-      : '<a class="btn pri" href="login.html" style="padding:7px 11px;font-size:12px">Sign in →</a>';
+      ? '<button class="btn" id="w-signout" style="padding:7px 12px;font-size:12.5px">Sign out</button>'
+      : '<a class="btn pri" href="login.html" style="padding:7px 12px;font-size:12.5px">Sign in</a>';
     const paymentVerified = Boolean(u && u.paymentProfile && u.paymentProfile.verified);
     const tierChip = u
       ? (isOwner
-          ? '<span class="chip ok">🖧 AD DOMAIN ADMIN</span>'
-          : '<span class="chip ' + (paymentVerified ? 'ok' : 'warn') + '">' + (paymentVerified ? '✅ PCI VERIFIED' : '🛡️ SAAS & LMS') + '</span>')
+          ? '<span class="chip ok">Domain Admin</span>'
+          : '<span class="chip ' + (paymentVerified ? 'ok' : 'warn') + '">' + (paymentVerified ? 'Billing Verified' : 'Standard Access') + '</span>')
       : '';
     const right = '<div class="nav">' + tierChip + authBtn + '</div>';
     const el = document.createElement('div');
     el.className = 'bar';
-    el.innerHTML = '<div class="brand"><span style="font-size:18px">' + (u && u.brand === 'FIX' ? '⚡' : '🛡️') + '</span><div>' + (u && u.brand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC DIRECTORY') + '<small>' + (u ? esc(u.name) : 'Signed Out') + '</small></div></div>' + nav + right;
+    const brandCode = (u && u.brand === 'FIX') ? 'FIX' : 'MGC';
+    const brandTitle = (u && u.brand === 'FIX') ? 'F.I.X Solutions' : 'Milton Group Concepts';
+    el.innerHTML = '<div class="brand"><span class="brand-mark">' + brandCode + '</span><div>' + brandTitle + '<small>' + (u ? esc(u.name) : 'Not signed in') + '</small></div></div>' + nav + right;
     const host = document.querySelector('.wrap');
     if (host) host.prepend(el);
     const soEl = el.querySelector('#w-signout');

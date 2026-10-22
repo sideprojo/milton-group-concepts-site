@@ -15,16 +15,16 @@
   }
   .ad-console {
     display: grid;
-    grid-template-columns: 235px minmax(0, 1fr) 390px;
-    gap: 14px;
+    grid-template-columns: 205px minmax(0, 1fr) 340px;
+    gap: 12px;
     align-items: start;
     transition: grid-template-columns .24s cubic-bezier(.16,1,.3,1);
   }
   .ad-console.no-inspector {
-    grid-template-columns: 235px minmax(0, 1fr);
+    grid-template-columns: 205px minmax(0, 1fr);
   }
   .ad-console.tree-collapsed {
-    grid-template-columns: 54px minmax(0, 1fr) 390px;
+    grid-template-columns: 54px minmax(0, 1fr) 340px;
   }
   .ad-console.tree-collapsed.no-inspector {
     grid-template-columns: 54px minmax(0, 1fr);
@@ -56,24 +56,24 @@
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
   }
   .ad-tree-root {
-    font-size: 11px;
-    font-weight: 900;
+    font-size: 11.5px;
+    font-weight: 600;
     color: #fde047;
-    letter-spacing: .04em;
+    letter-spacing: .01em;
     padding: 6px 8px 10px;
     border-bottom: 1px solid var(--line);
     margin-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   .ad-tree-section {
-    font-size: 10px;
-    font-weight: 800;
+    font-size: 10.5px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: .08em;
+    letter-spacing: .05em;
     color: #64748b;
-    padding: 8px 8px 4px;
+    padding: 10px 8px 4px;
   }
   .ad-tree-item {
     width: 100%;
@@ -82,14 +82,14 @@
     border: 1px solid transparent;
     color: #cbd5e1;
     padding: 7px 10px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
+    border-radius: 7px;
+    font-size: 12.5px;
+    font-weight: 500;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: 8px;
     transition: all .14s;
   }
   .ad-tree-item:hover {
@@ -97,17 +97,19 @@
     color: #fff;
   }
   .ad-tree-item.active {
-    background: rgba(37, 99, 235, 0.24);
-    border-color: rgba(96, 165, 250, 0.48);
+    background: rgba(37, 99, 235, 0.22);
+    border-color: rgba(96, 165, 250, 0.45);
     color: #fff;
-    font-weight: 800;
+    font-weight: 600;
   }
   .ad-tree-count {
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    padding: 1px 7px;
+    border-radius: 6px;
     background: rgba(15, 23, 42, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    border: 1px solid rgba(148, 163, 184, 0.22);
     color: #94a3b8;
   }
   .ad-center {
@@ -121,8 +123,8 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    padding: 10px 14px;
+    gap: 10px;
+    padding: 12px 16px;
     background: rgba(15, 23, 42, 0.92);
     border-bottom: 1px solid var(--line);
   }
@@ -132,21 +134,22 @@
   table.ad-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
   }
   table.ad-table th {
     background: rgba(4, 8, 20, 0.88);
-    padding: 8px 11px;
-    font-size: 10px;
-    font-weight: 800;
+    padding: 9px 12px;
+    font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: .07em;
+    letter-spacing: .04em;
     color: #94a3b8;
     border-bottom: 1px solid var(--line);
     white-space: nowrap;
   }
   table.ad-table td {
-    padding: 9px 11px;
+    padding: 10px 12px;
     border-bottom: 1px solid rgba(148, 163, 184, 0.14);
     vertical-align: middle;
   }
@@ -158,11 +161,11 @@
     background: rgba(59, 130, 246, 0.1);
   }
   table.ad-table tbody tr.selected {
-    background: rgba(37, 99, 235, 0.22);
+    background: rgba(37, 99, 235, 0.2);
   }
   .ad-inspector {
     background: rgba(8, 13, 26, 0.97);
-    border: 1px solid rgba(197, 179, 88, 0.45);
+    border: 1px solid rgba(197, 179, 88, 0.42);
     border-radius: 12px;
     overflow: hidden;
     position: sticky;
@@ -182,8 +185,8 @@
     flex: 1;
     text-align: center;
     padding: 8px 6px;
-    font-size: 11px;
-    font-weight: 800;
+    font-size: 11.5px;
+    font-weight: 600;
     color: #94a3b8;
     background: transparent;
     border: none;
@@ -249,7 +252,7 @@
   let inspectorHidden = false;
 
   if (!me || me.role !== 'owner' || me.id !== 'owner' || String(me.email || '').toLowerCase() !== 'malik.khabir@miltongroupsecurity.org') {
-    app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Active Directory Domain Controller</span><h1 style="margin-top:10px">Administrator authentication required</h1><p>This Active Directory &amp; RBAC console is restricted to the Domain Administrator account.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In →</a></div></div>';
+    app.innerHTML = '<div class="card lock"><span class="chip warn">Active Directory Domain Controller</span><h1 style="margin-top:10px">Administrator authentication required</h1><p>This Active Directory &amp; RBAC console is restricted to the Domain Administrator account.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In</a></div></div>';
     W.header('access-admin.html');
     return;
   }
@@ -277,8 +280,8 @@
 
   function renderNewUserModal() {
     if (!showNewUserDrawer) return '';
-    return '<div style="padding:12px 14px;background:rgba(4,8,20,0.92);border-bottom:1px solid rgba(197,179,88,0.4)">' +
-      '<div class="row" style="margin-bottom:8px"><strong>+ New Active Directory User Object</strong><button type="button" class="btn" id="btnCloseNewUser" style="padding:4px 8px;font-size:11px">✕ Close</button></div>' +
+    return '<div style="padding:12px 16px;background:rgba(4,8,20,0.92);border-bottom:1px solid rgba(197,179,88,0.4)">' +
+      '<div class="row" style="margin-bottom:8px"><strong>New Active Directory User Object</strong><button type="button" class="btn" id="btnCloseNewUser" style="padding:4px 10px;font-size:11.5px">Close</button></div>' +
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;align-items:center">' +
         '<input id="admRegName" placeholder="Display Name" style="padding:7px 10px;font-size:12px">' +
         '<input id="admRegEmail" placeholder="Logon Email (UPN)" style="padding:7px 10px;font-size:12px">' +
@@ -309,17 +312,17 @@
 
     return '<div class="ad-center">' +
       '<div class="ad-toolbar">' +
-        '<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:220px">' +
-          '<span style="font-size:12px;font-weight:800;color:#fff">' +
-            (ouFilter === 'internal' ? '🏢 OU=Internal Users' : ouFilter === 'external' ? '🌐 OU=External Users' : '📁 All Directory Users') +
+        '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:220px">' +
+          '<span style="font-size:13px;font-weight:600;color:#fff">' +
+            (ouFilter === 'internal' ? 'OU=Internal Users' : ouFilter === 'external' ? 'OU=External Users' : 'All Directory Users') +
             ' (' + filtered.length + ')' +
           '</span>' +
-          '<input id="adSearchInput" type="search" value="' + esc(searchQuery) + '" placeholder="Filter by name, UPN/email, username, org..." style="flex:1;max-width:290px;padding:6px 10px;font-size:12px">' +
+          '<input id="adSearchInput" type="search" value="' + esc(searchQuery) + '" placeholder="Filter by name, UPN/email, username, or org" style="flex:1;max-width:290px;padding:7px 11px;font-size:12.5px">' +
         '</div>' +
         '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
-          '<button type="button" class="btn pri" id="btnToggleNewUser" style="padding:6px 10px;font-size:11.5px">+ New User</button>' +
-          (sel ? '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|grant_all_features" style="padding:6px 10px;font-size:11.5px">🔓 Grant All</button>' : '') +
-          (sel ? '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|reset_saas_only" style="padding:6px 10px;font-size:11.5px">🔒 SaaS &amp; LMS Only</button>' : '') +
+          '<button type="button" class="btn pri" id="btnToggleNewUser" style="padding:6px 11px;font-size:12px">New User</button>' +
+          (sel ? '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|grant_all_features" style="padding:6px 11px;font-size:12px">Grant All</button>' : '') +
+          (sel ? '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|reset_saas_only" style="padding:6px 11px;font-size:12px">SaaS &amp; LMS Only</button>' : '') +
         '</div>' +
       '</div>' +
       renderNewUserModal() +
@@ -327,13 +330,11 @@
         '<table class="ad-table">' +
           '<thead><tr>' +
             '<th>Object Name</th>' +
-            '<th>Logon Name (UPN / Email)</th>' +
-            '<th>OU Scope</th>' +
-            '<th>Security Group</th>' +
+            '<th>Logon Name (UPN)</th>' +
+            '<th>Scope</th>' +
             '<th>Views</th>' +
             '<th>Apps</th>' +
-            '<th>PCI Billing</th>' +
-            '<th>Quick RBAC</th>' +
+            '<th>Billing</th>' +
           '</tr></thead>' +
           '<tbody>' +
             (filtered.length ? filtered.map(x => {
@@ -345,51 +346,26 @@
               const grantedApps = apps.filter(a => W.can(x, 'app', a.id, 'view')).length;
               return '<tr class="' + (isSel ? 'selected' : '') + '" data-select-user="' + esc(x.id) + '" data-user-card="' + esc(x.id) + '">' +
                 '<td>' +
-                  '<div style="font-weight:800;color:#fff">' + (ou === 'internal' ? '🧑‍💻 ' : '👤 ') + esc(x.name) + '</div>' +
-                  '<div style="font-size:10.5px;color:#94a3b8">' + esc(x.org || 'External Partner') + '</div>' +
+                  '<div style="font-weight:600;color:#fff">' + esc(x.name) + '</div>' +
+                  '<div style="font-size:11px;color:#94a3b8">' + esc(x.org || 'External Partner') + '</div>' +
                 '</td>' +
                 '<td>' +
-                  '<div style="font-family:monospace;font-size:11.5px;color:#e2e8f0">' + esc(x.email) + '</div>' +
-                  '<div style="font-size:10px;color:#64748b">SAM: ' + esc(x.username || x.email.split('@')[0]) + ' · ' + esc((x.ssoProvider || 'password').toUpperCase()) + '</div>' +
+                  '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11.5px;color:#e2e8f0">' + esc(x.email) + '</div>' +
+                  '<div style="font-size:10.5px;color:#64748b">SAM: ' + esc(x.username || x.email.split('@')[0]) + '</div>' +
                 '</td>' +
-                '<td><span class="chip ' + (ou === 'internal' ? 'ok' : '') + '">' + (ou === 'internal' ? 'OU=Internal' : 'OU=External') + '</span></td>' +
-                '<td><span style="font-size:11px;font-weight:700;color:#cbd5e1">' + esc(grp) + '</span></td>' +
+                '<td>' +
+                  '<span class="chip ' + (ou === 'internal' ? 'ok' : '') + '">' + (ou === 'internal' ? 'Internal' : 'External') + '</span>' +
+                  '<div style="font-size:10px;color:#64748b;margin-top:3px">' + esc(grp) + '</div>' +
+                '</td>' +
                 '<td><span class="chip ' + (grantedPages > 1 ? 'ok' : '') + '">' + grantedPages + '/' + cols.length + '</span></td>' +
                 '<td><span class="chip">' + grantedApps + '/' + apps.length + '</span></td>' +
                 '<td>' +
                   ((pay && pay.verified)
-                    ? '<span class="chip ok" title="' + esc(pay.receiptId) + '">✅ ' + esc(pay.cardBrand || pay.method) + ' ••' + esc(pay.last4) + '</span>'
-                    : '<span class="chip warn">⏳ Unverified</span>') +
-                '</td>' +
-                '<td onclick="event.stopPropagation()">' +
-                  '<details style="margin:0;padding:3px 7px;border-radius:7px;background:rgba(15,23,42,0.9)">' +
-                    '<summary style="font-size:11px;color:#93c5fd">🛡️ Edit (' + grantedPages + ')</summary>' +
-                    '<div style="padding-top:6px;min-width:240px;display:flex;flex-direction:column;gap:4px">' +
-                      '<div style="display:flex;gap:4px;margin-bottom:4px">' +
-                        '<button type="button" class="btn pri" data-preset="' + esc(x.id) + '|grant_all_features" style="font-size:10px;padding:4px 7px">🔓 Grant All</button>' +
-                        '<button type="button" class="btn" data-preset="' + esc(x.id) + '|reset_saas_only" style="font-size:10px;padding:4px 7px">🔒 SaaS Only</button>' +
-                      '</div>' +
-                      '<div style="display:flex;flex-wrap:wrap;gap:4px">' +
-                        cols.map(c => {
-                          const on = W.can(x, 'page', c.id, 'view');
-                          return '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-page="' + esc(x.id) + '|' + esc(c.id) + '|' + (!on) + '" style="font-size:10px;padding:3px 6px">' +
-                            c.icon + ' ' + esc(c.title) + (on ? ' ✓' : '') +
-                          '</button>';
-                        }).join('') +
-                      '</div>' +
-                      '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;padding-top:4px;border-top:1px solid var(--line)">' +
-                        apps.map(a => {
-                          const on = W.can(x, 'app', a.id, 'view');
-                          return '<button type="button" class="btn" data-toggle-app="' + esc(x.id) + '|' + esc(a.id) + '|' + (!on) + '" style="font-size:10px;padding:3px 6px">' +
-                            a.icon + ' ' + esc(a.title) + (on ? ' ✓' : '') +
-                          '</button>';
-                        }).join('') +
-                      '</div>' +
-                    '</div>' +
-                  '</details>' +
+                    ? '<span class="chip ok" title="' + esc(pay.receiptId) + '">Verified · ' + esc(pay.last4) + '</span>'
+                    : '<span class="chip warn">Pending</span>') +
                 '</td>' +
               '</tr>';
-            }).join('') : '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--mut)">No directory user objects match the current filter.</td></tr>') +
+            }).join('') : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--mut)">No directory user objects match the current filter.</td></tr>') +
           '</tbody>' +
         '</table>' +
       '</div>' +
@@ -410,44 +386,44 @@
     if (propTab === 'rbac') {
       bodyHtml =
         '<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--line)">' +
-          '<label style="display:block;font-size:10px;font-weight:800;text-transform:uppercase;color:#94a3b8;margin-bottom:4px">Organizational Unit (OU) &amp; Security Group</label>' +
+          '<label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:5px">Organizational Unit (OU) &amp; Security Group</label>' +
           '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">' +
-            '<select id="propUserOu" style="padding:6px 8px;font-size:11.5px">' +
-              '<option value="external"' + (ou === 'external' ? ' selected' : '') + '>🌐 OU=External (Client)</option>' +
-              '<option value="internal"' + (ou === 'internal' ? ' selected' : '') + '>🏢 OU=Internal (Staff)</option>' +
+            '<select id="propUserOu" style="padding:6px 8px;font-size:12px">' +
+              '<option value="external"' + (ou === 'external' ? ' selected' : '') + '>OU=External (Client)</option>' +
+              '<option value="internal"' + (ou === 'internal' ? ' selected' : '') + '>OU=Internal (Staff)</option>' +
             '</select>' +
-            '<select id="propUserGroup" style="padding:6px 8px;font-size:11.5px">' +
+            '<select id="propUserGroup" style="padding:6px 8px;font-size:12px">' +
               SECURITY_GROUPS.map(g => '<option value="' + g.id + '"' + (grp === g.id ? ' selected' : '') + '>' + esc(g.id) + '</option>').join('') +
             '</select>' +
           '</div>' +
-          '<button type="button" class="btn pri" id="btnApplyGroupPolicy" style="width:100%;justify-content:center;padding:6px 10px;font-size:11.5px">Apply OU &amp; Security Group Policy</button>' +
+          '<button type="button" class="btn pri" id="btnApplyGroupPolicy" style="width:100%;justify-content:center;padding:6px 10px;font-size:12px">Apply OU &amp; Group Policy</button>' +
         '</div>' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
-          '<span style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:#cbd5e1">Workspace Menu &amp; View Permissions</span>' +
+          '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#cbd5e1">Workspace View Permissions</span>' +
           '<div style="display:flex;gap:4px">' +
-            '<button type="button" class="btn pri" data-preset="' + esc(sel.id) + '|grant_all_features" style="padding:3px 7px;font-size:10px">All</button>' +
-            '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|reset_saas_only" style="padding:3px 7px;font-size:10px">SaaS Only</button>' +
+            '<button type="button" class="btn pri" data-preset="' + esc(sel.id) + '|grant_all_features" style="padding:3px 8px;font-size:10.5px">All</button>' +
+            '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|reset_saas_only" style="padding:3px 8px;font-size:10.5px">SaaS Only</button>' +
           '</div>' +
         '</div>' +
         cols.map(c => {
           const on = W.can(sel, 'page', c.id, 'view');
           const isDef = c.id === 'saasapps';
           return '<div class="ad-check-row ' + (on ? 'granted' : '') + '">' +
-            '<span>' + c.icon + ' <b>' + esc(c.title) + '</b>' + (isDef ? ' <small style="color:#34d399">(Base)</small>' : '') + '</span>' +
-            '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-page="' + esc(sel.id) + '|' + esc(c.id) + '|' + (!on) + '" style="padding:4px 9px;font-size:10.5px">' +
-              (on ? '✅ Granted' : '+ Grant') +
+            '<span><b>' + esc(c.title) + '</b>' + (isDef ? ' <small style="color:#34d399">(Base)</small>' : '') + '</span>' +
+            '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-page="' + esc(sel.id) + '|' + esc(c.id) + '|' + (!on) + '" style="padding:4px 9px;font-size:11px">' +
+              (on ? 'Granted' : 'Grant') +
             '</button>' +
           '</div>';
         }).join('');
     } else if (propTab === 'apps') {
       bodyHtml =
-        '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:6px">SCORM 2004 &amp; SaaS Application Entitlements (8)</div>' +
+        '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#cbd5e1;margin-bottom:6px">Application Entitlements (8)</div>' +
         apps.map(a => {
           const on = W.can(sel, 'app', a.id, 'view');
           return '<div class="ad-check-row ' + (on ? 'granted' : '') + '">' +
-            '<span>' + a.icon + ' <b>' + esc(a.title) + '</b></span>' +
-            '<button type="button" class="btn" data-toggle-app="' + esc(sel.id) + '|' + esc(a.id) + '|' + (!on) + '" style="padding:4px 9px;font-size:10.5px">' +
-              (on ? '✅ Unlocked' : '+ Unlock') +
+            '<span><b>' + esc(a.title) + '</b></span>' +
+            '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-app="' + esc(sel.id) + '|' + esc(a.id) + '|' + (!on) + '" style="padding:4px 9px;font-size:11px">' +
+              (on ? 'Unlocked' : 'Unlock') +
             '</button>' +
           '</div>';
         }).join('');
@@ -466,7 +442,7 @@
           '</div>' +
           '<button type="button" class="btn pri" id="btnSaveAccountProfile" style="justify-content:center;padding:7px 10px">Save Account Attributes</button>' +
           '<div style="border-top:1px solid var(--line);padding-top:8px;margin-top:4px">' +
-            '<small style="color:#94a3b8;display:block;margin-bottom:4px">🔑 Reset User Password</small>' +
+            '<small style="color:#94a3b8;display:block;margin-bottom:4px">Reset User Password</small>' +
             '<div style="display:flex;gap:6px">' +
               '<input id="propNewPass" type="password" placeholder="New password (min 4 chars)" style="flex:1;padding:6px 9px;font-size:12px">' +
               '<button type="button" class="btn" id="btnResetUserPass" style="padding:6px 10px;font-size:11.5px">Set Password</button>' +
@@ -476,23 +452,23 @@
     } else if (propTab === 'billing') {
       bodyHtml = (pay && pay.verified)
         ? '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px">' +
-            '<span class="chip ok" style="align-self:flex-start">✅ PCI-DSS Tokenized &amp; Verified</span>' +
+            '<span class="chip ok" style="align-self:flex-start">PCI-DSS Tokenized &amp; Verified</span>' +
             '<div><small style="color:#94a3b8">Receipt ID:</small> <b>' + esc(pay.receiptId) + '</b></div>' +
-            '<div><small style="color:#94a3b8">Instrument:</small> <b>' + esc(pay.cardBrand || pay.method) + ' •••• ' + esc(pay.last4) + '</b></div>' +
+            '<div><small style="color:#94a3b8">Instrument:</small> <b>' + esc(pay.cardBrand || pay.method) + ' · ' + esc(pay.last4) + '</b></div>' +
             '<div><small style="color:#94a3b8">Token:</small> <code style="font-size:11px;color:#38bdf8">' + esc(pay.paymentToken) + '</code></div>' +
             '<div><small style="color:#94a3b8">Verified At:</small> ' + new Date(pay.verifiedAt || Date.now()).toLocaleString() + '</div>' +
           '</div>'
-        : '<p style="font-size:12px">No verified payment submission on file for this user yet. User can submit payment via <b>💳 Submit Payment &amp; Billing</b> in their workspace.</p>';
+        : '<p style="font-size:12px">No verified payment submission on file for this user yet. User can submit payment via <b>Billing &amp; Payment</b> in their workspace.</p>';
     }
 
     return '<aside class="ad-inspector">' +
       '<div class="ad-inspector-hdr">' +
         '<div class="row">' +
-          '<span class="chip ' + (ou === 'internal' ? 'ok' : '') + '">' + (ou === 'internal' ? '🏢 OU=Internal' : '🌐 OU=External') + '</span>' +
-          '<button type="button" class="btn" id="btnHideInspector" title="Auto-hide Object Properties (Esc)" style="padding:3px 8px;font-size:10.5px">✕ Hide</button>' +
+          '<span class="chip ' + (ou === 'internal' ? 'ok' : '') + '">' + (ou === 'internal' ? 'OU=Internal' : 'OU=External') + '</span>' +
+          '<button type="button" class="btn" id="btnHideInspector" title="Auto-hide Object Properties (Esc)" style="padding:3px 9px;font-size:11px">Close</button>' +
         '</div>' +
-        '<h3 style="margin:6px 0 2px;font-size:14.5px;color:#fff">' + esc(sel.name) + '</h3>' +
-        '<div style="font-size:11px;color:#94a3b8;font-family:monospace">' + esc(sel.email) + '</div>' +
+        '<h3 style="margin:6px 0 2px;font-size:14.5px;font-weight:600;color:#fff">' + esc(sel.name) + '</h3>' +
+        '<div style="font-size:11.5px;color:#94a3b8;font-family:\'JetBrains Mono\',monospace">' + esc(sel.email) + '</div>' +
       '</div>' +
       '<div class="ad-prop-tabs">' +
         [['rbac', 'Member Of / RBAC'], ['apps', 'Apps (8)'], ['account', 'Account'], ['billing', 'PCI Billing']].map(t =>
@@ -505,14 +481,14 @@
 
   function renderAdminIdentityView() {
     const ownerObj = (S().users && S().users.owner) || {};
-    return '<div class="ad-center" style="padding:16px">' +
-      '<div class="row" style="margin-bottom:12px"><h2 style="margin:0;font-size:15px">🛡️ malik.khabir@Miltongroupsecurity.org</h2><span class="chip ok">Builtin\\Administrator</span></div>' +
-      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;max-width:640px;margin-bottom:12px">' +
-        '<div><label style="display:block;font-size:10.5px;font-weight:800;color:#94a3b8;margin-bottom:4px">Username (sAMAccountName)</label>' +
-          '<input id="admUsernameInput" value="' + esc(ownerObj.username || 'malik.khabir') + '" placeholder="malik.khabir" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+    return '<div class="ad-center" style="padding:18px 20px">' +
+      '<div class="row" style="margin-bottom:14px"><h2 style="margin:0;font-size:15px;font-weight:600">malik.khabir@Miltongroupsecurity.org</h2><span class="chip ok">Builtin\\Administrator</span></div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;max-width:640px;margin-bottom:14px">' +
+        '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">Username (sAMAccountName)</label>' +
+          '<input id="admUsernameInput" value="' + esc(ownerObj.username || 'malik.khabir') + '" placeholder="malik.khabir" style="width:100%;padding:8px 11px;font-size:13px">' +
         '</div>' +
-        '<div><label style="display:block;font-size:10.5px;font-weight:800;color:#94a3b8;margin-bottom:4px">New Password (Case-Sensitive)</label>' +
-          '<input id="admNewPassInput" type="password" placeholder="••••••••" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+        '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">New Password (Case-Sensitive)</label>' +
+          '<input id="admNewPassInput" type="password" placeholder="Enter new password" style="width:100%;padding:8px 11px;font-size:13px">' +
         '</div>' +
       '</div>' +
       '<button class="btn pri" id="admSavePassBtn" type="button">Save Credentials</button>' +
@@ -520,8 +496,8 @@
   }
 
   function renderSecurityGroupsView() {
-    return '<div class="ad-center" style="padding:16px">' +
-      '<h2 style="margin:0 0 10px;font-size:15px">🔑 Security Groups</h2>' +
+    return '<div class="ad-center" style="padding:18px 20px">' +
+      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Security Groups</h2>' +
       '<table class="ad-table"><thead><tr><th>Group CN</th><th>Scope</th><th>Entitlements</th><th>Members</th></tr></thead><tbody>' +
         '<tr style="cursor:default"><td><b>DOMAIN_ADMIN</b></td><td><span class="chip ok">Builtin</span></td><td>All Portals, Directory &amp; PCI Gateway</td><td>1</td></tr>' +
         SECURITY_GROUPS.map(g => {
@@ -535,44 +511,44 @@
   function renderPaymentsAndPciView() {
     const list = S().payments || [];
     const gw = S().pciGatewayConfig || { activeProcessor: 'stripe_saq_a', mgcOption: 'stripe_saq_a', fixOptions: ['stripe_saq_a', 'wawf_piee_eft'], mercuryAchEnabled: true, wawfPieeEnabled: true };
-    return '<div class="ad-center" style="padding:16px">' +
-      '<div style="margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)">' +
-        '<div class="row" style="margin-bottom:10px">' +
-          '<h2 style="margin:0;font-size:15px">💳 Payment Gateways (MGC &amp; F.I.X)</h2>' +
+    return '<div class="ad-center" style="padding:18px 20px">' +
+      '<div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)">' +
+        '<div class="row" style="margin-bottom:12px">' +
+          '<h2 style="margin:0;font-size:15px;font-weight:600">Payment Gateways (MGC &amp; F.I.X)</h2>' +
           '<div style="display:flex;gap:6px"><span class="chip ok">MGC: Option 1 (Stripe)</span><span class="chip ok">FIX: Options 1 &amp; 4 (Stripe + WAWF)</span></div>' +
         '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:10px">' +
-          '<div><label style="display:block;font-size:10px;font-weight:800;color:#94a3b8;margin-bottom:4px">Default Rail</label>' +
-            '<select id="pciActiveProcessor" style="width:100%;padding:7px 10px;font-size:12px">' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px">' +
+          '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">Default Rail</label>' +
+            '<select id="pciActiveProcessor" style="width:100%;padding:8px 10px;font-size:12.5px">' +
               '<option value="stripe_saq_a"' + (gw.activeProcessor === 'stripe_saq_a' ? ' selected' : '') + '>Option 1: Stripe SAQ-A (MGC &amp; FIX)</option>' +
               '<option value="wawf_piee_eft"' + (gw.activeProcessor === 'wawf_piee_eft' ? ' selected' : '') + '>Option 4: DoD WAWF / PIEE EFT (FIX)</option>' +
               '<option value="mercury_plaid_ach"' + (gw.activeProcessor === 'mercury_plaid_ach' ? ' selected' : '') + '>Option 3: Mercury + Plaid ACH</option>' +
               '<option value="authorizenet_accept_js"' + (gw.activeProcessor === 'authorizenet_accept_js' ? ' selected' : '') + '>Option 2: Authorize.Net Accept.js</option>' +
             '</select>' +
           '</div>' +
-          '<div><label style="display:block;font-size:10px;font-weight:800;color:#94a3b8;margin-bottom:4px">MGC Stripe Key</label>' +
-            '<input id="pciStripePk" value="' + esc(gw.stripePublishableKey || '') + '" placeholder="pk_live_mgc_..." style="width:100%;padding:7px 10px;font-size:12px">' +
+          '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">MGC Stripe Key</label>' +
+            '<input id="pciStripePk" value="' + esc(gw.stripePublishableKey || '') + '" placeholder="pk_live_mgc_..." style="width:100%;padding:8px 10px;font-size:12.5px">' +
           '</div>' +
-          '<div><label style="display:block;font-size:10px;font-weight:800;color:#94a3b8;margin-bottom:4px">FIX Key / CAGE</label>' +
-            '<input id="pciAuthNetKey" value="' + esc(gw.authorizeNetClientKey || '') + '" placeholder="pk_live_fix_... / CAGE" style="width:100%;padding:7px 10px;font-size:12px">' +
+          '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">FIX Key / CAGE</label>' +
+            '<input id="pciAuthNetKey" value="' + esc(gw.authorizeNetClientKey || '') + '" placeholder="pk_live_fix_... / CAGE" style="width:100%;padding:8px 10px;font-size:12.5px">' +
           '</div>' +
         '</div>' +
-        '<button type="button" class="btn pri" id="btnSavePciGateway" style="padding:7px 14px;font-size:12px">Save Gateways</button>' +
+        '<button type="button" class="btn pri" id="btnSavePciGateway" style="padding:8px 16px;font-size:12.5px">Save Gateways</button>' +
       '</div>' +
-      '<h2 style="margin:0 0 10px;font-size:15px">Ledger (' + list.length + ')</h2>' +
+      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Ledger (' + list.length + ')</h2>' +
       (list.length
         ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Entity</th><th>Customer</th><th>Plan</th><th>Instrument</th><th>Status</th><th>Date</th></tr></thead><tbody>' +
-          list.map(p => '<tr style="cursor:default"><td><span class="chip ok">' + esc(p.receiptId) + '</span></td><td><span class="chip ' + (p.merchantEntity === 'FIX' ? '' : 'ok') + '">' + esc(p.merchantEntity || 'MGC') + '</span></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b></td><td>$' + Number(p.amountUsd || 0).toLocaleString() + '</td><td><b>' + esc(p.cardBrand || p.method) + ' •••• ' + esc(p.last4) + '</b></td><td><span class="chip ok">Verified</span></td><td style="font-size:11px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleDateString() + '</td></tr>').join('') +
+          list.map(p => '<tr style="cursor:default"><td><span class="chip ok">' + esc(p.receiptId) + '</span></td><td><span class="chip ' + (p.merchantEntity === 'FIX' ? '' : 'ok') + '">' + esc(p.merchantEntity || 'MGC') + '</span></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b></td><td>$' + Number(p.amountUsd || 0).toLocaleString() + '</td><td><b>' + esc(p.cardBrand || p.method) + ' · ' + esc(p.last4) + '</b></td><td><span class="chip ok">Verified</span></td><td style="font-size:11.5px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleDateString() + '</td></tr>').join('') +
           '</tbody></table>'
-        : '<p style="font-size:12px">No payments recorded yet.</p>') +
+        : '<p style="font-size:12.5px">No payments recorded yet.</p>') +
     '</div>';
   }
 
   function renderRequestsView() {
     const list = members().filter(x => x.status === 'requested');
     const reqLog = (S().requests || []).slice(0, 20);
-    return '<div class="ad-center" style="padding:16px">' +
-      '<h2 style="margin:0 0 10px;font-size:15px">📥 Pending Requests (' + list.length + ')</h2>' +
+    return '<div class="ad-center" style="padding:18px 20px">' +
+      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Pending Requests (' + list.length + ')</h2>' +
       (list.length
         ? list.map(x => '<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><div><b>' + esc(x.name) + '</b> (' + esc(x.email) + ')</div><div style="display:flex;gap:6px"><button class="btn pri" data-ap="' + x.id + '">Approve</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div>').join('')
         : '') +
@@ -580,13 +556,13 @@
         ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Name</th><th>Email</th><th>Status</th></tr></thead><tbody>' +
           reqLog.map(r => '<tr style="cursor:default"><td><span class="chip">' + esc(r.receipt || r.id) + '</span></td><td>' + esc(r.name || name(r.uid)) + '</td><td>' + esc(r.email || '') + '</td><td><span class="chip ok">' + esc(r.status || 'active') + '</span></td></tr>').join('') +
           '</tbody></table>'
-        : '<p style="font-size:12px">Queue empty.</p>') +
+        : '<p style="font-size:12.5px">Queue empty.</p>') +
     '</div>';
   }
 
   function renderAuditView() {
-    return '<div class="ad-center" style="padding:16px"><h2 style="margin:0 0 10px;font-size:15px">📜 Event Log</h2><table class="ad-table"><thead><tr><th>Time</th><th>Actor</th><th>Event</th><th>Detail</th></tr></thead><tbody>' +
-      S().audit.slice(0, 50).map(a => '<tr style="cursor:default"><td style="font-size:11px;color:var(--mut)">' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') +
+    return '<div class="ad-center" style="padding:18px 20px"><h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Event Log</h2><table class="ad-table"><thead><tr><th>Time</th><th>Actor</th><th>Event</th><th>Detail</th></tr></thead><tbody>' +
+      S().audit.slice(0, 50).map(a => '<tr style="cursor:default"><td style="font-size:11.5px;color:var(--mut)">' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') +
       '</tbody></table></div>';
   }
 
@@ -599,19 +575,19 @@
     const treeHtml =
       '<aside class="ad-tree">' +
         '<div class="ad-tree-root" style="justify-content:space-between">' +
-          '<span>🖧 <span class="ad-tree-label">miltongroupsecurity.org</span></span>' +
-          '<button type="button" class="btn" id="btnToggleTreeCollapse" title="Auto-hide / Pin Directory Tree" style="padding:2px 6px;font-size:10px">' + (treeCollapsed ? '⇥' : '⇤') + '</button>' +
+          '<span class="ad-tree-label">miltongroupsecurity.org</span>' +
+          '<button type="button" class="btn" id="btnToggleTreeCollapse" title="Auto-hide / Pin Directory Tree" style="padding:2px 7px;font-size:10.5px">' + (treeCollapsed ? 'Expand' : 'Hide') + '</button>' +
         '</div>' +
         '<div class="ad-tree-section">Organizational Units</div>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'all' ? 'active' : '') + '" data-ou="all" data-tab="users"><span>📁 <span class="ad-tree-label">All Directory Users</span></span><span class="ad-tree-count">' + allM.length + '</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'internal' ? 'active' : '') + '" data-ou="internal" data-tab="users"><span>🏢 <span class="ad-tree-label">OU=Internal (Staff)</span></span><span class="ad-tree-count">' + intCount + '</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'external' ? 'active' : '') + '" data-ou="external" data-tab="users"><span>🌐 <span class="ad-tree-label">OU=External (Clients)</span></span><span class="ad-tree-count">' + extCount + '</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'admin_identity' ? 'active' : '') + '" data-tab="admin_identity"><span>🛡️ <span class="ad-tree-label">Builtin Administrator</span></span><span class="ad-tree-count">1</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'all' ? 'active' : '') + '" data-ou="all" data-tab="users"><span class="ad-tree-label">All Directory Users</span><span class="ad-tree-count">' + allM.length + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'internal' ? 'active' : '') + '" data-ou="internal" data-tab="users"><span class="ad-tree-label">OU=Internal (Staff)</span><span class="ad-tree-count">' + intCount + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'external' ? 'active' : '') + '" data-ou="external" data-tab="users"><span class="ad-tree-label">OU=External (Clients)</span><span class="ad-tree-count">' + extCount + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'admin_identity' ? 'active' : '') + '" data-tab="admin_identity"><span class="ad-tree-label">Builtin Administrator</span><span class="ad-tree-count">1</span></button>' +
         '<div class="ad-tree-section">RBAC &amp; Policy</div>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span>🔑 <span class="ad-tree-label">Security Groups</span></span><span class="ad-tree-count">5</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'payments' ? 'active' : '') + '" data-tab="payments"><span>💳 <span class="ad-tree-label">PCI-DSS &amp; Billing</span></span><span class="ad-tree-count">' + payCount + '</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span>📥 <span class="ad-tree-label">Intake Queue</span></span><span class="ad-tree-count">' + (S().requests || []).length + '</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'audit' ? 'active' : '') + '" data-tab="audit"><span>📜 <span class="ad-tree-label">Event Viewer</span></span><span class="ad-tree-count">' + (S().audit || []).length + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span class="ad-tree-label">Security Groups</span><span class="ad-tree-count">5</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'payments' ? 'active' : '') + '" data-tab="payments"><span class="ad-tree-label">PCI-DSS &amp; Billing</span><span class="ad-tree-count">' + payCount + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span class="ad-tree-label">Intake Queue</span><span class="ad-tree-count">' + (S().requests || []).length + '</span></button>' +
+        '<button type="button" class="ad-tree-item ' + (tab === 'audit' ? 'active' : '') + '" data-tab="audit"><span class="ad-tree-label">Event Viewer</span><span class="ad-tree-count">' + (S().audit || []).length + '</span></button>' +
       '</aside>';
 
     let centerHtml = '';
@@ -684,7 +660,7 @@
       const en = enStr === 'true';
       selectedUserId = uidVal;
       W.toggleUserFeature(uidVal, 'page', pageId, en);
-      W.toast((en ? '✓ Granted ' : '🔒 Revoked ') + pageId + ' for ' + name(uidVal));
+      W.toast((en ? 'Granted ' : 'Revoked ') + pageId + ' for ' + name(uidVal));
       render();
     });
     app.querySelectorAll('[data-toggle-app]').forEach(b => b.onclick = (e) => {
@@ -693,7 +669,7 @@
       const en = enStr === 'true';
       selectedUserId = uidVal;
       W.toggleUserFeature(uidVal, 'app', appId, en);
-      W.toast((en ? '✓ Unlocked ' : '🔒 Locked ') + appId + ' for ' + name(uidVal));
+      W.toast((en ? 'Unlocked ' : 'Locked ') + appId + ' for ' + name(uidVal));
       render();
     });
     app.querySelectorAll('[data-preset]').forEach(b => b.onclick = (e) => {
@@ -701,7 +677,7 @@
       const [uidVal, presetId] = b.dataset.preset.split('|');
       selectedUserId = uidVal;
       W.toggleUserFeature(uidVal, 'preset', presetId, true);
-      W.toast((presetId === 'grant_all_features' ? '🔓 Granted all features to ' : '🔒 Reset to SaaS & LMS Only for ') + name(uidVal));
+      W.toast((presetId === 'grant_all_features' ? 'Granted all features to ' : 'Reset to SaaS & LMS Only for ') + name(uidVal));
       render();
     });
 
@@ -711,7 +687,7 @@
         const ouVal = document.getElementById('propUserOu').value;
         const grpVal = document.getElementById('propUserGroup').value;
         W.setUserDirectoryProfile({ userId: selectedUserId, ou: ouVal, securityGroup: grpVal, applyGroupPolicy: true });
-        W.toast('✓ Applied ' + grpVal + ' (' + ouVal.toUpperCase() + ') to ' + name(selectedUserId));
+        W.toast('Applied ' + grpVal + ' (' + ouVal.toUpperCase() + ') to ' + name(selectedUserId));
         render();
       };
     }
@@ -723,7 +699,7 @@
         const org = document.getElementById('propOrg').value.trim();
         const status = document.getElementById('propStatus').value;
         W.setUserDirectoryProfile({ userId: selectedUserId, username, org, status });
-        W.toast('✓ Saved Active Directory attributes for ' + name(selectedUserId));
+        W.toast('Saved Active Directory attributes for ' + name(selectedUserId));
         render();
       };
     }
@@ -734,7 +710,7 @@
         const np = document.getElementById('propNewPass').value.trim();
         if (!np || np.length < 4) { W.toast('Password must be at least 4 characters'); return; }
         W.setUserPassword(selectedUserId, np);
-        W.toast('✓ Password reset for ' + name(selectedUserId));
+        W.toast('Password reset for ' + name(selectedUserId));
         document.getElementById('propNewPass').value = '';
       };
     }
@@ -746,7 +722,7 @@
         const np = (document.getElementById('admNewPassInput').value || '').trim();
         if (!np || np.length < 8) { W.toast('Administrator password must be at least 8 characters and non-generic'); return; }
         W.postServerAction({ action: 'updateAdminPassword', username: un, newPassword: np });
-        W.toast('✓ Administrator username & case-sensitive password updated');
+        W.toast('Administrator username & case-sensitive password updated');
         document.getElementById('admNewPassInput').value = '';
       };
     }
@@ -758,7 +734,7 @@
         const stripePublishableKey = document.getElementById('pciStripePk').value.trim();
         const authorizeNetClientKey = document.getElementById('pciAuthNetKey').value.trim();
         W.savePciGatewayConfig({ activeProcessor, stripePublishableKey, authorizeNetClientKey });
-        W.toast('✓ Saved PCI-DSS Gateway Configuration (' + activeProcessor + ')');
+        W.toast('Saved PCI-DSS Gateway Configuration (' + activeProcessor + ')');
         render();
       };
     }
@@ -791,7 +767,7 @@
         if (!newId) { W.toast((W.lastIntakeResult && W.lastIntakeResult.error) || 'Could not create object'); return; }
         selectedUserId = newId;
         showNewUserDrawer = false;
-        W.toast('✓ Created ' + n + ' in OU=' + ou.toUpperCase());
+        W.toast('Created ' + n + ' in OU=' + ou.toUpperCase());
         render();
       };
     }

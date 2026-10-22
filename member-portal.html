@@ -33,28 +33,28 @@
         ? '<span class="chip ok">' + (isSoleAdmin() ? 'Admin' : 'Active') + '</span>'
         : '<span class="chip warn">Locked</span>';
       const act = allowed
-        ? '<a class="btn pri" href="' + esc(a.href) + '">Launch →</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>SCORM</a>' : '')
+        ? '<a class="btn pri" href="' + esc(a.href) + '">Launch</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>SCORM</a>' : '')
         : '<button class="btn" data-go-payment="1">Unlock</button>';
-      return '<div class="compact-card" style="border-color:' + (allowed ? 'rgba(16,185,129,0.42)' : 'rgba(148,163,184,0.2)') + ';padding:14px 16px">' +
-        '<div class="row" style="margin-bottom:8px"><h3>' + a.icon + ' ' + esc(a.title) + '</h3>' + badge + '</div>' +
+      return '<div class="compact-card" style="border-color:' + (allowed ? 'rgba(16,185,129,0.38)' : 'rgba(148,163,184,0.18)') + ';padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px">' +
+        '<div class="row"><h3>' + esc(a.title) + '</h3>' + badge + '</div>' +
         '<div class="row" style="justify-content:flex-start;gap:8px">' + act + '</div></div>';
     };
 
     const grantedPagesHtml = grantedPages.length
-      ? '<div class="card" style="padding:16px 18px;margin-top:12px">' +
-          '<div class="row" style="margin-bottom:10px"><h2 style="margin:0;font-size:15px">🔓 Granted Modules (' + grantedPages.length + ')</h2></div>' +
+      ? '<div class="card" style="padding:18px 20px;margin-top:12px">' +
+          '<div class="row" style="margin-bottom:12px"><h2 style="margin:0;font-size:15px;font-weight:600">Granted Modules (' + grantedPages.length + ')</h2></div>' +
           '<div class="bento-2">' + grantedPages.map(c =>
-            '<div class="compact-card" style="border-color:rgba(59,130,246,0.45);padding:12px 14px"><div class="row"><h3>' + c.icon + ' ' + esc(c.title) + '</h3><a class="btn pri" href="' + esc(c.href) + '">Open →</a></div></div>'
+            '<div class="compact-card" style="border-color:rgba(59,130,246,0.38);padding:14px 16px"><div class="row"><h3>' + esc(c.title) + '</h3><a class="btn pri" href="' + esc(c.href) + '">Open</a></div></div>'
           ).join('') + '</div></div>'
       : '';
 
-    return '<div class="card" style="padding:16px 18px;margin-top:0">' +
-        '<div class="row" style="margin-bottom:12px">' +
-          '<h2 style="margin:0;font-size:16px">⚡ Active Applications (' + unlockedApps.length + '/' + apps.length + ')</h2>' +
-          '<div style="display:flex;gap:8px"><a class="btn" href="saas-apps-and-lms-showcase.html">Catalog →</a><button class="btn pri" data-go-payment="1">💳 Billing</button></div>' +
+    return '<div class="card" style="padding:18px 20px;margin-top:0">' +
+        '<div class="row" style="margin-bottom:14px">' +
+          '<h2 style="margin:0;font-size:15px;font-weight:600">Active Applications (' + unlockedApps.length + ' of ' + apps.length + ')</h2>' +
+          '<div style="display:flex;gap:8px"><a class="btn" href="saas-apps-and-lms-showcase.html">Catalog</a><button class="btn pri" data-go-payment="1">Billing</button></div>' +
         '</div>' +
         '<div class="bento-2">' + unlockedApps.map(renderAppCard).join('') + '</div>' +
-        (lockedApps.length ? '<details style="margin-top:12px"><summary style="font-size:12px">🔒 Additional Modules (' + lockedApps.length + ')</summary><div class="bento-2" style="margin-top:10px">' + lockedApps.map(renderAppCard).join('') + '</div></details>' : '') +
+        (lockedApps.length ? '<details style="margin-top:14px"><summary style="font-size:12.5px">Additional Modules (' + lockedApps.length + ')</summary><div class="bento-2" style="margin-top:10px">' + lockedApps.map(renderAppCard).join('') + '</div></details>' : '') +
       '</div>' +
       grantedPagesHtml;
   }
@@ -65,95 +65,95 @@
     const latestReceipt = (lastPaymentReceipt && lastPaymentReceipt.receipt) || receipts[0] || null;
 
     const statusBanner = prof && prof.verified
-      ? '<div class="card" id="paymentVerifiedBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.58);background:linear-gradient(135deg,rgba(6,78,59,0.38),rgba(9,16,32,0.96))">' +
+      ? '<div class="card" id="paymentVerifiedBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.52);background:linear-gradient(135deg,rgba(6,78,59,0.34),rgba(9,16,32,0.96))">' +
           '<div class="row">' +
-            '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
-              '<span class="chip ok">✓ Active Method</span>' +
-              '<strong style="font-size:14px;color:#fff">' + esc(prof.instrumentBrand) + ' •••• ' + esc(prof.last4) + '</strong>' +
-              '<span style="font-size:12px;color:#a7f3d0">' + esc(prof.planLabel) + '</span>' +
+            '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
+              '<span class="chip ok">Verified Method</span>' +
+              '<strong style="font-size:13.5px;font-weight:600;color:#fff">' + esc(prof.instrumentBrand) + ' · ' + esc(prof.last4) + '</strong>' +
+              '<span style="font-size:12.5px;color:#a7f3d0">' + esc(prof.planLabel) + '</span>' +
             '</div>' +
-            (latestReceipt ? '<code style="font-size:11px;color:#34d399">' + esc(latestReceipt.receiptId) + '</code>' : '') +
+            (latestReceipt ? '<code style="font-size:11.5px;color:#34d399">' + esc(latestReceipt.receiptId) + '</code>' : '') +
           '</div>' +
         '</div>'
       : '';
 
     const errorBanner = lastPaymentError
-      ? '<div class="card" id="paymentErrorBanner" style="padding:12px 16px;margin-bottom:12px;border-color:rgba(239,68,68,0.6);background:rgba(127,29,29,0.28);color:#fecaca;font-size:12.5px;font-weight:700">' + esc(lastPaymentError) + '</div>'
+      ? '<div class="card" id="paymentErrorBanner" style="padding:12px 16px;margin-bottom:12px;border-color:rgba(239,68,68,0.55);background:rgba(127,29,29,0.28);color:#fecaca;font-size:12.5px;font-weight:500">' + esc(lastPaymentError) + '</div>'
       : '';
 
     return statusBanner + errorBanner +
-      '<form id="legalPaymentForm" onsubmit="return false;" style="display:grid;grid-template-columns:minmax(250px,310px) minmax(0,1fr);gap:14px;align-items:start">' +
+      '<form id="legalPaymentForm" onsubmit="return false;" style="display:grid;grid-template-columns:minmax(260px,315px) minmax(0,1fr);gap:14px;align-items:start">' +
         '<!-- LEFT COLUMN: Stripe/Linear Minimalist Plan & Entity Summary -->' +
-        '<div class="card" style="padding:18px;margin:0">' +
-          '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:8px">Entity &amp; Plan</div>' +
-          '<select id="payMerchantEntity" style="width:100%;margin-bottom:10px;padding:9px 11px;font-size:12.5px">' +
-            '<option value="MGC"' + ((prof && prof.merchantEntity === 'MGC') ? ' selected' : '') + '>🏛️ Milton Group Concepts LLC</option>' +
-            '<option value="FIX"' + ((!prof || prof.merchantEntity === 'FIX') ? ' selected' : '') + '>⚡ F.I.X Solutions LLC</option>' +
+        '<div class="card" style="padding:18px 20px;margin:0">' +
+          '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px">Entity &amp; Plan</div>' +
+          '<select id="payMerchantEntity" style="width:100%;margin-bottom:10px;padding:9px 11px;font-size:13px">' +
+            '<option value="MGC"' + ((prof && prof.merchantEntity === 'MGC') ? ' selected' : '') + '>Milton Group Concepts LLC</option>' +
+            '<option value="FIX"' + ((!prof || prof.merchantEntity === 'FIX') ? ' selected' : '') + '>F.I.X Solutions LLC</option>' +
           '</select>' +
-          '<select id="payPlanTier" style="width:100%;margin-bottom:12px;padding:9px 11px;font-size:12.5px">' +
-            '<option value="saas_lms_base"' + (prof && prof.planTier === 'saas_lms_base' ? ' selected' : '') + '>Starter SaaS &amp; LMS — $5 / mo</option>' +
-            '<option value="pro_enterprise"' + (prof && prof.planTier === 'pro_enterprise' ? ' selected' : '') + '>Pro Suite — $49 / mo</option>' +
-            '<option value="sdvosb_contract_retainer"' + (prof && prof.planTier === 'sdvosb_contract_retainer' ? ' selected' : '') + '>Enterprise Retainer — $250 / mo</option>' +
+          '<select id="payPlanTier" style="width:100%;margin-bottom:14px;padding:9px 11px;font-size:13px">' +
+            '<option value="saas_lms_base"' + (prof && prof.planTier === 'saas_lms_base' ? ' selected' : '') + '>Starter SaaS &amp; LMS ($5 / mo)</option>' +
+            '<option value="pro_enterprise"' + (prof && prof.planTier === 'pro_enterprise' ? ' selected' : '') + '>Pro Suite ($49 / mo)</option>' +
+            '<option value="sdvosb_contract_retainer"' + (prof && prof.planTier === 'sdvosb_contract_retainer' ? ' selected' : '') + '>Enterprise Retainer ($250 / mo)</option>' +
           '</select>' +
-          '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:6px">Payment Method</div>' +
-          '<select id="payMethod" style="width:100%;padding:9px 11px;font-size:12.5px">' +
-            '<option value="card_tokenized"' + (prof && prof.method === 'card_tokenized' ? ' selected' : '') + '>💳 Card (Stripe SAQ-A)</option>' +
-            '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>🏛️ WAWF / PIEE Federal EFT</option>' +
-            '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>🏦 ACH Direct Debit</option>' +
+          '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px">Payment Method</div>' +
+          '<select id="payMethod" style="width:100%;padding:9px 11px;font-size:13px">' +
+            '<option value="card_tokenized"' + (prof && prof.method === 'card_tokenized' ? ' selected' : '') + '>Card (Stripe SAQ-A)</option>' +
+            '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>WAWF / PIEE Federal EFT</option>' +
+            '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>ACH Direct Debit</option>' +
           '</select>' +
-          '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">' +
-            '<span style="font-size:11px;color:#94a3b8">Security</span>' +
-            '<span class="chip ok" id="valBadgeToken" style="font-size:10px">PCI SAQ-A</span>' +
+          '<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">' +
+            '<span style="font-size:12px;color:#94a3b8;font-weight:500">Compliance</span>' +
+            '<span class="chip ok" id="valBadgeToken" style="font-size:10.5px">PCI SAQ-A</span>' +
           '</div>' +
         '</div>' +
 
         '<!-- RIGHT COLUMN: Stripe Elements Single-Canvas Payment Box -->' +
-        '<div class="card" style="padding:18px;margin:0">' +
-          '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:8px">Billing Details</div>' +
-          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:10px">' +
-            '<input id="payBillingName" required maxlength="100" value="' + esc((prof && prof.billingName) || u.name || '') + '" placeholder="Full Name *" style="padding:9px 11px;font-size:12.5px">' +
-            '<input id="payBillingEmail" type="email" required maxlength="120" value="' + esc((prof && prof.billingEmail) || u.email || '') + '" placeholder="Email *" style="padding:9px 11px;font-size:12.5px">' +
-            '<input id="payBillingOrg" maxlength="120" value="' + esc((prof && prof.billingOrg) || u.org || '') + '" placeholder="Organization" style="padding:9px 11px;font-size:12.5px">' +
+        '<div class="card" style="padding:18px 20px;margin:0">' +
+          '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px">Billing Details</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:10px">' +
+            '<input id="payBillingName" required maxlength="100" value="' + esc((prof && prof.billingName) || u.name || '') + '" placeholder="Full Name" style="padding:9px 12px;font-size:13px">' +
+            '<input id="payBillingEmail" type="email" required maxlength="120" value="' + esc((prof && prof.billingEmail) || u.email || '') + '" placeholder="Email Address" style="padding:9px 12px;font-size:13px">' +
+            '<input id="payBillingOrg" maxlength="120" value="' + esc((prof && prof.billingOrg) || u.org || '') + '" placeholder="Organization" style="padding:9px 12px;font-size:13px">' +
           '</div>' +
 
-          '<div style="display:grid;grid-template-columns:2fr 1fr 80px 100px;gap:8px;margin-bottom:12px">' +
-            '<input id="payAddress" required maxlength="140" value="' + esc((prof && prof.addressLine1) || '') + '" placeholder="Street Address *" style="padding:9px 11px;font-size:12.5px">' +
-            '<input id="payCity" required maxlength="80" value="' + esc((prof && prof.city) || '') + '" placeholder="City *" style="padding:9px 11px;font-size:12.5px">' +
-            '<input id="payState" required maxlength="40" value="' + esc((prof && prof.stateRegion) || '') + '" placeholder="State *" style="padding:9px 11px;font-size:12.5px">' +
-            '<input id="payZip" required maxlength="10" pattern="^\\d{5}(-\\d{4})?$" value="' + esc((prof && prof.postalCode) || '') + '" placeholder="ZIP *" style="padding:9px 11px;font-size:12.5px">' +
+          '<div style="display:grid;grid-template-columns:2fr 1fr 84px 104px;gap:10px;margin-bottom:14px">' +
+            '<input id="payAddress" required maxlength="140" value="' + esc((prof && prof.addressLine1) || '') + '" placeholder="Street Address" style="padding:9px 12px;font-size:13px">' +
+            '<input id="payCity" required maxlength="80" value="' + esc((prof && prof.city) || '') + '" placeholder="City" style="padding:9px 12px;font-size:13px">' +
+            '<input id="payState" required maxlength="40" value="' + esc((prof && prof.stateRegion) || '') + '" placeholder="State" style="padding:9px 12px;font-size:13px">' +
+            '<input id="payZip" required maxlength="10" pattern="^\\d{5}(-\\d{4})?$" value="' + esc((prof && prof.postalCode) || '') + '" placeholder="ZIP Code" style="padding:9px 12px;font-size:13px">' +
           '</div>' +
 
           '<!-- Unified Single-Bar Card / Token Input (Stripe Elements Style) -->' +
-          '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:6px;display:flex;justify-content:space-between">' +
-            '<span id="lblPayLast4">Card / Instrument Token</span>' +
-            '<span id="valBadgeZip" style="color:#34d399;font-size:10px"></span>' +
+          '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">' +
+            '<span id="lblPayLast4">Card or Instrument Token</span>' +
+            '<span id="valBadgeZip" style="color:#34d399;font-size:11px;font-weight:500"></span>' +
           '</div>' +
-          '<div id="pciInstrumentVaultCard" style="display:grid;grid-template-columns:1.2fr 1fr 130px;gap:8px;padding:8px;border-radius:11px;background:rgba(4,8,20,0.92);border:1.5px solid rgba(59,130,246,0.45);margin-bottom:12px;align-items:center">' +
-            '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa') + '" placeholder="Brand / DoDAAC" style="border:none;background:transparent;padding:6px 8px;font-size:12.5px">' +
-            '<input id="payCardOrLast4" required maxlength="4" inputmode="numeric" pattern="^\\d{4}$" value="' + esc((prof && prof.last4) || '') + '" placeholder="•••• 4242 (Last 4)" autocomplete="off" style="border:none;border-left:1px solid rgba(148,163,184,0.2);border-radius:0;background:transparent;padding:6px 10px;font-size:13px;font-family:monospace;font-weight:800;letter-spacing:.12em">' +
-            '<div id="expFieldsWrap" style="display:flex;gap:4px;border-left:1px solid rgba(148,163,184,0.2);padding-left:8px;transition:opacity .2s ease">' +
-              '<input id="payExpMonth" type="number" min="1" max="12" value="' + esc((prof && prof.expMonth) || 12) + '" placeholder="MM" style="border:none;background:transparent;padding:6px 4px;font-size:12px;width:48px;text-align:center">' +
-              '<span style="color:#64748b;align-self:center">/</span>' +
-              '<input id="payExpYear" type="number" min="2026" max="2040" value="' + esc((prof && prof.expYear) || 2029) + '" placeholder="YYYY" style="border:none;background:transparent;padding:6px 4px;font-size:12px;width:62px;text-align:center">' +
+          '<div id="pciInstrumentVaultCard" style="display:grid;grid-template-columns:1.2fr 1fr 136px;gap:8px;padding:7px 10px;border-radius:10px;background:rgba(4,8,20,0.92);border:1px solid rgba(59,130,246,0.42);margin-bottom:14px;align-items:center">' +
+            '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa') + '" placeholder="Brand or DoDAAC" style="border:none;background:transparent;padding:6px 8px;font-size:13px">' +
+            '<input id="payCardOrLast4" required maxlength="4" inputmode="numeric" pattern="^\\d{4}$" value="' + esc((prof && prof.last4) || '') + '" placeholder="Last 4 digits" autocomplete="off" style="border:none;border-left:1px solid rgba(148,163,184,0.2);border-radius:0;background:transparent;padding:6px 10px;font-size:13px;font-family:\'JetBrains Mono\',monospace;font-weight:600;letter-spacing:.08em">' +
+            '<div id="expFieldsWrap" style="display:flex;gap:4px;border-left:1px solid rgba(148,163,184,0.2);padding-left:8px;transition:opacity .2s ease;align-items:center">' +
+              '<input id="payExpMonth" type="number" min="1" max="12" value="' + esc((prof && prof.expMonth) || 12) + '" placeholder="MM" style="border:none;background:transparent;padding:6px 4px;font-size:12.5px;width:48px;text-align:center">' +
+              '<span style="color:#64748b">/</span>' +
+              '<input id="payExpYear" type="number" min="2026" max="2040" value="' + esc((prof && prof.expYear) || 2029) + '" placeholder="YYYY" style="border:none;background:transparent;padding:6px 4px;font-size:12.5px;width:64px;text-align:center">' +
             '</div>' +
           '</div>' +
 
           '<!-- Minimalist 1-Line Authorization + Auto-Synced Checkboxes -->' +
-          '<div class="row" style="padding-top:6px;border-top:1px solid var(--line);gap:12px">' +
-            '<label style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:#cbd5e1;cursor:pointer">' +
+          '<div class="row" style="padding-top:10px;border-top:1px solid var(--line);gap:12px">' +
+            '<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#cbd5e1;cursor:pointer;font-weight:400">' +
               '<input type="checkbox" id="payEftaNacha" checked onchange="document.getElementById(\'payPciTerms\').checked=this.checked;document.getElementById(\'payMsaTerms\').checked=this.checked">' +
               '<input type="checkbox" id="payPciTerms" checked style="display:none">' +
               '<input type="checkbox" id="payMsaTerms" checked style="display:none">' +
-              '<span>Authorize payment under EFTA/NACHA, PCI SAQ-A &amp; MSA terms</span>' +
+              '<span>Authorize payment under EFTA/NACHA, PCI SAQ-A, and MSA terms</span>' +
             '</label>' +
-            '<button type="submit" class="btn pri" id="btnSubmitLegalPayment" style="padding:10px 20px;font-size:12.5px">Save &amp; Verify →</button>' +
+            '<button type="submit" class="btn pri" id="btnSubmitLegalPayment" style="padding:9px 20px;font-size:13px">Save &amp; Verify</button>' +
           '</div>' +
         '</div>' +
       '</form>' +
 
-      (receipts.length ? '<div class="card" style="padding:14px 18px;margin-top:12px"><div class="row" style="margin-bottom:8px"><h3 style="margin:0;font-size:13.5px">Receipts (' + receipts.length + ')</h3></div>' +
+      (receipts.length ? '<div class="card" style="padding:16px 20px;margin-top:12px"><div class="row" style="margin-bottom:10px"><h3 style="margin:0;font-size:14px;font-weight:600">Receipts (' + receipts.length + ')</h3></div>' +
         '<table><thead><tr><th>Receipt</th><th>Method</th><th>Tier</th><th>Amount</th><th>Token</th><th>Date</th></tr></thead><tbody>' +
-        receipts.map(r => '<tr><td><code>' + esc(r.receiptId) + '</code></td><td>' + esc(r.instrumentBrand) + ' •••• ' + esc(r.last4) + '</td><td>' + esc(r.planLabel) + '</td><td><b>$' + Number(r.amountUsd || 0).toFixed(2) + '</b></td><td><code>' + esc(r.vaultToken) + '</code></td><td>' + esc((r.createdAt || '').slice(0, 10)) + '</td></tr>').join('') +
+        receipts.map(r => '<tr><td><code>' + esc(r.receiptId) + '</code></td><td>' + esc(r.instrumentBrand) + ' · ' + esc(r.last4) + '</td><td>' + esc(r.planLabel) + '</td><td><b>$' + Number(r.amountUsd || 0).toFixed(2) + '</b></td><td><code>' + esc(r.vaultToken) + '</code></td><td>' + esc((r.createdAt || '').slice(0, 10)) + '</td></tr>').join('') +
         '</tbody></table></div>' : '');
   }
 
@@ -161,29 +161,29 @@
     const t = W.TAILOR[(u.quote && u.quote.interest) || 'ai-web'] || W.TAILOR.federal;
     const k = 'mgcw.chk.' + u.id;
     const st = JSON.parse(localStorage.getItem(k) || '{}');
-    return '<div class="card"><h2>🏠 Full Overview &amp; Action Checklist — ' + esc(t.label) + '</h2>' +
-      t.actions.map((a, i) => '<label class="row" style="justify-content:flex-start;padding:7px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" data-chk="' + i + '"' + (st[i] ? ' checked' : '') + '> <span>' + esc(a) + '</span></label>').join('') +
+    return '<div class="card"><h2>Overview &amp; Action Checklist — ' + esc(t.label) + '</h2>' +
+      t.actions.map((a, i) => '<label class="row" style="justify-content:flex-start;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" data-chk="' + i + '"' + (st[i] ? ' checked' : '') + '> <span>' + esc(a) + '</span></label>').join('') +
       '</div>';
   }
 
   function resourcesPanel() {
     const t = W.TAILOR[(u.quote && u.quote.interest) || 'ai-web'] || W.TAILOR.federal;
-    return '<div class="card"><h2>📚 Curated Resources</h2>' +
-      t.resources.map(r => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>' + esc(r[0]) + '</span><a class="btn" target="_blank" rel="noopener" href="' + esc(r[1]) + '">Open ↗</a></div>').join('') +
+    return '<div class="card"><h2>Curated Resources</h2>' +
+      t.resources.map(r => '<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><span>' + esc(r[0]) + '</span><a class="btn" target="_blank" rel="noopener" href="' + esc(r[1]) + '">Open</a></div>').join('') +
       '</div>';
   }
 
   function getAvailableTabsForUser() {
     // Base tabs for all authenticated users: Strictly SaaS Apps & LMS + Submit Payment & Billing
     const list = [
-      ['apps', '⚡ SaaS Apps & LMS', saasAppsAndLmsPanel],
-      ['payment', '💳 Submit Payment & Billing', paymentPanel]
+      ['apps', 'Applications & LMS', saasAppsAndLmsPanel],
+      ['payment', 'Billing & Payment', paymentPanel]
     ];
     if (isSoleAdmin() || W.can(u, 'page', 'home', 'view')) {
-      list.push(['overview', '🏠 Full Overview Hub', overviewPanel]);
+      list.push(['overview', 'Overview Hub', overviewPanel]);
     }
     if (isSoleAdmin() || W.can(u, 'page', 'resources', 'view')) {
-      list.push(['resources', '📚 Curated Resources', resourcesPanel]);
+      list.push(['resources', 'Curated Resources', resourcesPanel]);
     }
     return list;
   }
@@ -191,7 +191,7 @@
   function render() {
     u = W.me();
     if (!u) {
-      app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Federated SSO Enforced</span><h1 style="margin-top:10px">Single Sign-On Required</h1><p>Authenticate with <b>Google</b>, <b>Microsoft</b>, or <b>Apple</b> SSO to open your SaaS Apps &amp; LMS and Secure Payment Center.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In with SSO →</a></div></div>';
+      app.innerHTML = '<div class="card lock"><span class="chip warn">Authentication Required</span><h1 style="margin-top:10px">Sign In Required</h1><p>Sign in with your account credentials or Federated SSO to access your workspace and billing settings.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In</a></div></div>';
       W.header('member-portal.html');
       return;
     }
@@ -209,17 +209,17 @@
     const paymentOk = Boolean(u.paymentProfile && u.paymentProfile.verified);
 
     const kpiHtml = '<div class="kpi-strip">' +
-      '<div class="kpi-tile"><small>Account Scope</small><strong>' + (isSoleAdmin() ? 'Sole Administrator' : 'SaaS & LMS User') + '</strong></div>' +
-      '<div class="kpi-tile"><small>SaaS &amp; LMS Apps</small><strong>' + unlockedCount + ' / ' + apps.length + ' Ready</strong></div>' +
-      '<div class="kpi-tile"><small>Payment Status</small><strong style="color:' + (paymentOk ? '#34d399' : '#fbbf24') + '">' + (paymentOk ? 'Verified (' + esc(u.paymentProfile.last4) + ')' : 'Ready to Submit') + '</strong></div>' +
+      '<div class="kpi-tile"><small>Account Scope</small><strong>' + (isSoleAdmin() ? 'Domain Administrator' : 'Standard Member') + '</strong></div>' +
+      '<div class="kpi-tile"><small>Applications</small><strong>' + unlockedCount + ' of ' + apps.length + ' Active</strong></div>' +
+      '<div class="kpi-tile"><small>Billing Status</small><strong style="color:' + (paymentOk ? '#34d399' : '#fbbf24') + '">' + (paymentOk ? 'Verified (' + esc(u.paymentProfile.last4) + ')' : 'Pending Setup') + '</strong></div>' +
       '</div>';
 
     const sideNav = '<aside class="ws-side" aria-label="Authorized User Navigation">' +
-      '<div class="ws-side-title">Menu</div>' +
+      '<div class="ws-side-title">Workspace</div>' +
       availableTabs.map(t => '<button type="button" class="ws-nav-btn' + (t[0] === tab ? ' active' : '') + '" data-tab="' + t[0] + '"><span>' + t[1] + '</span></button>').join('') +
-      '<a class="ws-nav-btn" href="saas-apps-and-lms-showcase.html" style="text-decoration:none"><span>🚀 App Catalog →</span></a>' +
-      grantedFeatureLinks.map(c => '<a class="ws-nav-btn" href="' + esc(c.href) + '" style="text-decoration:none"><span>' + c.icon + ' ' + esc(c.title) + ' →</span></a>').join('') +
-      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.45);color:#fde047"><span>👑 Directory &amp; RBAC →</span></a>' : '') +
+      '<a class="ws-nav-btn" href="saas-apps-and-lms-showcase.html" style="text-decoration:none"><span>App Catalog</span></a>' +
+      grantedFeatureLinks.map(c => '<a class="ws-nav-btn" href="' + esc(c.href) + '" style="text-decoration:none"><span>' + esc(c.title) + '</span></a>').join('') +
+      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.42);color:#fde047"><span>Directory &amp; RBAC</span></a>' : '') +
       '</aside>';
 
     app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + kpiHtml + body + '</div></div>';
@@ -264,7 +264,7 @@
           expWrapEl.style.opacity = isWawf ? '0.35' : '1';
         }
         if (lblBrand) lblBrand.textContent = isWawf ? 'WAWF DoDAAC / Contracting Office' : 'Card Network / Bank';
-        if (lblLast4) lblLast4.textContent = isWawf ? 'Contract / CLIN Last 4 Digits *' : 'Tokenized Card/Account Last 4 *';
+        if (lblLast4) lblLast4.textContent = isWawf ? 'Contract or CLIN Last 4 Digits' : 'Card or Account Last 4 Digits';
       }
       if (payMethodEl) payMethodEl.onchange = syncPaymentFieldFade;
       if (payMerchantEl) {
@@ -280,7 +280,7 @@
           const digits = last4Input.value.replace(/\D/g, '').slice(-4);
           if (last4Input.value !== digits) last4Input.value = digits;
           if (badgeToken) {
-            badgeToken.textContent = digits.length === 4 ? '✓ 4-Digit Token Ready' : 'Enter 4 Digits';
+            badgeToken.textContent = digits.length === 4 ? '4-Digit Token Ready' : 'Enter 4 Digits';
             badgeToken.className = 'chip ' + (digits.length === 4 ? 'ok' : 'warn');
           }
         };
@@ -289,7 +289,7 @@
         zipInput.oninput = () => {
           const ok = /^\d{5}(-\d{4})?$/.test(zipInput.value.trim());
           if (badgeZip) {
-            badgeZip.textContent = ok ? '✓ Valid ZIP' : '5 digits required';
+            badgeZip.textContent = ok ? 'Valid ZIP' : '5 digits required';
             badgeZip.style.color = ok ? '#34d399' : '#fbbf24';
           }
         };
