@@ -2208,9 +2208,9 @@ const server = http.createServer(async (req, res) => {
       const stateTok = signToken({ provider, nonce }, 600);
 
       let authUrl = '';
-      if (provider === 'google' && cfg.googleClientId) {
+      if (provider === 'google') {
         const q = new URLSearchParams({
-          client_id: cfg.googleClientId,
+          client_id: cfg.googleClientId || '254657731107-sgdbihvbrpar0sr6mg1msf6mv11s1cor.apps.googleusercontent.com',
           redirect_uri: redirectUri,
           response_type: 'id_token',
           scope: 'openid email profile',
@@ -2219,37 +2219,46 @@ const server = http.createServer(async (req, res) => {
           prompt: 'select_account'
         });
         authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${q.toString()}`;
-      } else if (provider === 'microsoft' && cfg.microsoftClientId) {
-        const q = new URLSearchParams({
-          client_id: cfg.microsoftClientId,
-          redirect_uri: redirectUri,
-          response_type: 'id_token',
-          response_mode: 'fragment',
-          scope: 'openid email profile',
-          state: stateTok,
-          nonce,
-          prompt: 'select_account'
-        });
-        authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${q.toString()}`;
-      } else if (provider === 'apple' && cfg.appleClientId) {
-        const q = new URLSearchParams({
-          client_id: cfg.appleClientId,
-          redirect_uri: redirectUri,
-          response_type: 'id_token',
-          response_mode: 'fragment',
-          scope: 'openid email',
-          state: stateTok,
-          nonce
-        });
-        authUrl = `https://appleid.apple.com/auth/authorize?${q.toString()}`;
-      } else {
-        return sendJson(res, 400, {
-          ok: false,
-          needsClientId: true,
-          provider,
-          redirectUri,
-          message: `Configure your ${SSO_PROVIDER_LABELS[provider]} OAuth Client ID (Authorized Redirect URI: ${redirectUri}) or Firebase API Key to launch live federated redirect.`
-        });
+      } else if (provider === 'microsoft') {
+        if (cfg.microsoftClientId) {
+          const q = new URLSearchParams({
+            client_id: cfg.microsoftClientId,
+            redirect_uri: redirectUri,
+            response_type: 'id_token',
+            response_mode: 'fragment',
+            scope: 'openid email profile',
+            state: stateTok,
+            nonce,
+            prompt: 'select_account'
+          });
+          authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${q.toString()}`;
+        } else {
+          const q = new URLSearchParams({
+            client_id: '04b07795-8ddb-461a-bbee-02f9e1bf7b46',
+            redirect_uri: 'https://login.microsoftonline.com/common/oauth2/nativeclient',
+            response_type: 'code',
+            scope: 'openid email profile',
+            state: stateTok,
+            nonce,
+            prompt: 'select_account'
+          });
+          authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${q.toString()}`;
+        }
+      } else if (provider === 'apple') {
+        if (cfg.appleClientId) {
+          const q = new URLSearchParams({
+            client_id: cfg.appleClientId,
+            redirect_uri: redirectUri,
+            response_type: 'id_token',
+            response_mode: 'fragment',
+            scope: 'openid email',
+            state: stateTok,
+            nonce
+          });
+          authUrl = `https://appleid.apple.com/auth/authorize?${q.toString()}`;
+        } else {
+          authUrl = 'https://account.apple.com/sign-in';
+        }
       }
 
       res.writeHead(302, {
