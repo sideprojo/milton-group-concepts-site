@@ -183,66 +183,52 @@
 <main class="login-shell">
   <div class="card login-card">
     <!-- Clean Segmented Mode Switcher: Sign In vs Register New Account -->
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(148,163,184,0.18)">
-      <button type="button" class="btn" id="btnOpenAdminBootstrap" style="padding:7px 12px;font-size:11px;border-color:rgba(245,158,11,0.5);color:#fde047;background:rgba(245,158,11,0.1)">🛡️ Set Administrator Username &amp; Password</button>
+    <div style="display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(148,163,184,0.18)">
       <div style="display:inline-flex;background:rgba(4,8,20,0.85);padding:4px;border-radius:12px;border:1px solid rgba(148,163,184,0.24)" role="tablist" aria-label="Authentication Mode">
         <button type="button" class="btn pri" id="modeTabSignIn" role="tab" aria-selected="true" style="padding:8px 14px;border-radius:9px;font-size:12px">🔑 Sign In</button>
-        <button type="button" class="btn" id="modeTabRegister" role="tab" aria-selected="false" style="padding:8px 14px;border-radius:9px;font-size:12px;border-color:transparent;background:transparent">✨ Register Account</button>
+        <button type="button" class="btn" id="modeTabRegister" role="tab" aria-selected="false" style="padding:8px 14px;border-radius:9px;font-size:12px;border-color:transparent;background:transparent">✨ Register</button>
       </div>
-    </div>
-
-    <!-- Immediate Administrator Credential Setup Alert Banner -->
-    <div id="adminBootstrapBanner" style="display:none;margin-bottom:16px;padding:12px 16px;border-radius:14px;background:rgba(245,158,11,0.14);border:1.5px solid rgba(245,158,11,0.55);color:#fef08a;font-size:12px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div>
-        <strong style="color:#fde047;display:block;margin-bottom:2px">⚠️ IMMEDIATE SECURITY NOTICE: Set Administrator Username &amp; Case-Sensitive Password</strong>
-        <span>All generic/default passwords have been permanently revoked. Configure your custom Administrator username (<code>sAMAccountName</code>) and case-sensitive password for <code>malik.khabir@Miltongroupsecurity.org</code>.</span>
-      </div>
-      <button type="button" class="btn pri" id="btnBannerAdminBootstrap" style="padding:8px 14px;font-size:11.5px">Configure Now →</button>
     </div>
 
     <!-- SIGN IN VIEW: Email / Username + Password Logon Screen + Federated SSO -->
     <div id="signInPane">
-      <form id="emailPasswordForm" onsubmit="return false" style="background:rgba(4,8,20,0.78);border:1.5px solid rgba(197,179,88,0.42);border-radius:16px;padding:18px 20px;margin-bottom:18px">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;align-items:end">
+      <form id="emailPasswordForm" onsubmit="return false" style="background:rgba(4,8,20,0.78);border:1.5px solid rgba(197,179,88,0.42);border-radius:16px;padding:16px 18px;margin-bottom:16px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;align-items:end">
           <div>
-            <label for="loginIdentifier" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Email or Username</label>
+            <label for="loginIdentifier" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Email or Username</label>
             <input id="loginIdentifier" type="text" placeholder="name@domain.com or username" autocomplete="username" spellcheck="false" required style="width:100%;padding:11px 13px;font-size:13px">
           </div>
           <div>
-            <label for="loginPassword" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Password</label>
+            <label for="loginPassword" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Password</label>
             <div style="display:flex;gap:6px">
-              <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" required style="flex:1;width:100%;padding:11px 13px;font-size:13px">
+              <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" required style="flex:1;width:100%;padding:11px 13px;font-size:13px">
               <button type="button" class="btn" id="btnTogglePassVis" title="Show / Hide Password" style="padding:0 12px;font-size:12px">👁️</button>
             </div>
           </div>
         </div>
-        <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
-          <span id="loginIdentityHint" style="font-size:11.5px;color:#94a3b8">Enter your email or username and password to sign in.</span>
-          <button type="submit" class="btn pri" id="btnPasswordLogin" style="padding:11px 22px;font-size:13px">🔑 Sign In →</button>
+        <div class="row" style="margin-top:12px;justify-content:flex-end;gap:10px">
+          <span id="loginIdentityHint" style="display:none"></span>
+          <button type="submit" class="btn pri" id="btnPasswordLogin" style="padding:10px 22px;font-size:13px">Sign In →</button>
         </div>
       </form>
 
-      <div style="display:flex;align-items:center;gap:12px;margin:14px 0">
+      <div style="display:flex;align-items:center;gap:12px;margin:12px 0">
         <div style="flex:1;height:1px;background:rgba(148,163,184,0.2)"></div>
-        <span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:#94a3b8">Or Continue with Federated SSO</span>
+        <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:#94a3b8">Federated SSO</span>
         <div style="flex:1;height:1px;background:rgba(148,163,184,0.2)"></div>
       </div>
 
       <div class="sso-grid" role="group" aria-label="Single Sign-On Providers">
         <!-- 1. Google SSO -->
         <div class="sso-provider-card active" data-provider="google" id="card-google">
-          <div>
-            <div class="row" style="margin-bottom:10px">
-              <span class="chip ok">OIDC · Google</span>
-              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.6H12z"/>
-                <path fill="#34A853" d="M3.6 7.4l3.2 2.4c.9-2.1 2.9-3.6 5.2-3.6 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/>
-                <path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.5 3 4.7 5 8.7 5z"/>
-                <path fill="#4285F4" d="M21.1 12.2c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.2 2.6-2.2 3.3l2.9 2.4c1.7-1.6 2.9-4.1 2.9-8z"/>
-              </svg>
-            </div>
-            <h2>Google SSO</h2>
-            <p>Google Workspace &amp; Google Cloud Identity OIDC federation.</p>
+          <div class="row" style="margin-bottom:6px">
+            <h2 style="margin:0;font-size:15px">Google</h2>
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.6H12z"/>
+              <path fill="#34A853" d="M3.6 7.4l3.2 2.4c.9-2.1 2.9-3.6 5.2-3.6 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/>
+              <path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.5 3 4.7 5 8.7 5z"/>
+              <path fill="#4285F4" d="M21.1 12.2c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.2 2.6-2.2 3.3l2.9 2.4c1.7-1.6 2.9-4.1 2.9-8z"/>
+            </svg>
           </div>
           <button type="button" class="sso-btn" data-sso-trigger="google" id="btnSsoGoogle">
             <span>Continue with Google</span>
@@ -251,18 +237,14 @@
 
         <!-- 2. Microsoft SSO -->
         <div class="sso-provider-card" data-provider="microsoft" id="card-microsoft">
-          <div>
-            <div class="row" style="margin-bottom:10px">
-              <span class="chip ok">Entra ID · Microsoft</span>
-              <svg width="20" height="20" viewBox="0 0 23 23" aria-hidden="true">
-                <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
-                <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
-                <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
-                <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
-              </svg>
-            </div>
-            <h2>Microsoft SSO</h2>
-            <p>Microsoft Entra ID (Azure AD) &amp; Microsoft 365 OIDC federation.</p>
+          <div class="row" style="margin-bottom:6px">
+            <h2 style="margin:0;font-size:15px">Microsoft</h2>
+            <svg width="18" height="18" viewBox="0 0 23 23" aria-hidden="true">
+              <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+              <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+              <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+              <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+            </svg>
           </div>
           <button type="button" class="sso-btn" data-sso-trigger="microsoft" id="btnSsoMicrosoft">
             <span>Continue with Microsoft</span>
@@ -271,15 +253,11 @@
 
         <!-- 3. Apple SSO -->
         <div class="sso-provider-card" data-provider="apple" id="card-apple">
-          <div>
-            <div class="row" style="margin-bottom:10px">
-              <span class="chip ok">OIDC · Apple</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true">
-                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-              </svg>
-            </div>
-            <h2>Apple SSO</h2>
-            <p>Sign in with Apple OIDC &amp; Passkey hardware attestation.</p>
+          <div class="row" style="margin-bottom:6px">
+            <h2 style="margin:0;font-size:15px">Apple</h2>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true">
+              <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
           </div>
           <button type="button" class="sso-btn" data-sso-trigger="apple" id="btnSsoApple">
             <span>Continue with Apple</span>
@@ -390,41 +368,13 @@
     <p id="modalAuthMsg" style="color:#f87171;margin-top:10px;font-weight:700;font-size:12px;min-height:16px"></p>
 
     <details style="margin-top:12px;background:rgba(4,8,20,0.75);border-color:rgba(148,163,184,0.2)">
-      <summary style="font-size:11px;color:#94a3b8">⚙️ Bind OAuth 2.0 / OIDC Client ID (API Federation)</summary>
+      <summary style="font-size:11px;color:#94a3b8">⚙️ OAuth 2.0 Client ID</summary>
       <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
-        <p style="font-size:11px;margin:0">Authorized Redirect URI:<br><code id="oidcRedirectUriDisplay" style="color:#fde047;word-break:break-all">/api/auth/oauth/callback</code></p>
-        <input id="oidcClientIdInput" type="text" value="" placeholder="Paste OAuth 2.0 Client ID for this provider" autocomplete="off" spellcheck="false" style="width:100%;padding:9px 11px;font-size:11.5px">
-        <button type="button" class="btn" id="btnSaveOidcClient" style="justify-content:center;font-size:11.5px">Save OAuth Client ID &amp; Launch OIDC Redirect →</button>
+        <p style="font-size:11px;margin:0">Redirect URI:<br><code id="oidcRedirectUriDisplay" style="color:#fde047;word-break:break-all">/api/auth/oauth/callback</code></p>
+        <input id="oidcClientIdInput" type="text" value="" placeholder="OAuth 2.0 Client ID" autocomplete="off" spellcheck="false" style="width:100%;padding:9px 11px;font-size:11.5px">
+        <button type="button" class="btn" id="btnSaveOidcClient" style="justify-content:center;font-size:11.5px">Save &amp; Redirect →</button>
       </div>
     </details>
-  </div>
-</div>
-
-<!-- Sole Administrator Username & Case-Sensitive Password Bootstrap Modal -->
-<div class="sso-modal-backdrop" id="adminBootstrapModal" role="dialog" aria-modal="true" aria-labelledby="adminBootstrapTitle">
-  <div class="sso-modal" style="max-width:480px">
-    <div class="row" style="margin-bottom:12px">
-      <span class="chip warn">Sole Domain Administrator · Builtin\Administrator</span>
-      <button type="button" class="btn" id="adminBootstrapClose" style="padding:4px 10px;font-size:11px">✕ Close</button>
-    </div>
-    <h2 id="adminBootstrapTitle" style="margin-bottom:6px">Set Administrator Username &amp; Password</h2>
-    <p style="margin-bottom:14px;font-size:12px;color:#cbd5e1">Tied to <code>malik.khabir@Miltongroupsecurity.org</code> (case-insensitive UPN / username logon). Passwords are strictly case-sensitive and generic passwords are permanently blocked.</p>
-    <form id="adminBootstrapForm" onsubmit="return false" style="display:flex;flex-direction:column;gap:12px">
-      <div>
-        <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;margin-bottom:5px">Administrator Username (sAMAccountName — Case-Insensitive)</label>
-        <input id="admBootUsername" type="text" value="malik.khabir" placeholder="malik.khabir" autocomplete="username" required style="width:100%;padding:11px 13px;font-size:13px">
-      </div>
-      <div>
-        <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;margin-bottom:5px">New Case-Sensitive Administrator Password (8+ Characters)</label>
-        <input id="admBootPassword" type="password" placeholder="Enter strong case-sensitive password" autocomplete="new-password" required style="width:100%;padding:11px 13px;font-size:13px">
-      </div>
-      <div>
-        <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;margin-bottom:5px">Current Password (Required Only If Updating Existing Password)</label>
-        <input id="admBootCurrentPassword" type="password" placeholder="Leave blank on initial setup" autocomplete="current-password" style="width:100%;padding:10px 13px;font-size:12.5px">
-      </div>
-      <button type="submit" class="btn pri" id="btnSaveAdminBootstrap" style="width:100%;justify-content:center;padding:12px 18px;font-size:13px">🛡️ Save Administrator Credentials &amp; Open Console →</button>
-    </form>
-    <p id="adminBootstrapMsg" style="color:#f87171;margin-top:10px;font-weight:700;font-size:12px;min-height:16px"></p>
   </div>
 </div>
 
@@ -494,74 +444,8 @@
       .then(cfg => {
         serverOidcConfig = cfg;
         initFirebaseIfConfigured(cfg);
-        const bootBanner = document.getElementById('adminBootstrapBanner');
-        if (bootBanner && cfg && cfg.adminCredentialSetupRequired) {
-          bootBanner.style.display = 'flex';
-        }
       })
       .catch(() => {});
-  }
-
-  const adminBootstrapModal = document.getElementById('adminBootstrapModal');
-  const adminBootstrapForm = document.getElementById('adminBootstrapForm');
-  const adminBootstrapMsg = document.getElementById('adminBootstrapMsg');
-  function openAdminBootstrapModal() {
-    if (!adminBootstrapModal) return;
-    if (adminBootstrapMsg) adminBootstrapMsg.textContent = '';
-    adminBootstrapModal.classList.add('open');
-  }
-  function closeAdminBootstrapModal() {
-    if (adminBootstrapModal) adminBootstrapModal.classList.remove('open');
-  }
-  const btnOpenAdminBoot = document.getElementById('btnOpenAdminBootstrap');
-  const btnBannerAdminBoot = document.getElementById('btnBannerAdminBootstrap');
-  const btnCloseAdminBoot = document.getElementById('adminBootstrapClose');
-  if (btnOpenAdminBoot) btnOpenAdminBoot.onclick = openAdminBootstrapModal;
-  if (btnBannerAdminBoot) btnBannerAdminBoot.onclick = openAdminBootstrapModal;
-  if (btnCloseAdminBoot) btnCloseAdminBoot.onclick = closeAdminBootstrapModal;
-  if (adminBootstrapModal) {
-    adminBootstrapModal.addEventListener('click', (e) => {
-      if (e.target === adminBootstrapModal) closeAdminBootstrapModal();
-    });
-  }
-  if (adminBootstrapForm) {
-    adminBootstrapForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = (document.getElementById('admBootUsername').value || 'malik.khabir').trim();
-      const newPassword = (document.getElementById('admBootPassword').value || '');
-      const currentPassword = (document.getElementById('admBootCurrentPassword').value || '');
-      if (!newPassword || newPassword.length < 8) {
-        adminBootstrapMsg.style.color = '#f87171';
-        adminBootstrapMsg.textContent = 'Administrator password must be at least 8 characters and case-sensitive.';
-        return;
-      }
-      adminBootstrapMsg.style.color = '#34d399';
-      adminBootstrapMsg.textContent = 'Provisioning Sole Administrator credentials...';
-      try {
-        const res = await fetch('/api/auth/admin-bootstrap', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, newPassword, currentPassword })
-        });
-        const data = await res.json();
-        if (!res.ok || !data || !data.ok) {
-          adminBootstrapMsg.style.color = '#f87171';
-          adminBootstrapMsg.textContent = (data && data.error) || 'Unable to configure Administrator credentials.';
-          return;
-        }
-        try {
-          sessionStorage.setItem('mgcw.uid', 'owner');
-          sessionStorage.setItem('mgcw.sso_provider', 'password');
-        } catch (_) {}
-        persistOnboardingBridge('malik.khabir@miltongroupsecurity.org', 'Malik A. Khabir', 'owner', 'password', ['*'], ['*']);
-        adminBootstrapMsg.style.color = '#34d399';
-        adminBootstrapMsg.textContent = '✓ Administrator credentials configured! Redirecting to Active Directory Console...';
-        location.href = data.redirect || '/access-admin';
-      } catch (_) {
-        adminBootstrapMsg.style.color = '#f87171';
-        adminBootstrapMsg.textContent = 'Network error configuring Administrator credentials.';
-      }
-    });
   }
 
   function hasLiveClientId(prov) {

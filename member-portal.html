@@ -30,33 +30,31 @@
     const renderAppCard = (a) => {
       const allowed = W.can(u, 'app', a.id, 'view');
       const badge = allowed
-        ? '<span class="chip ok">' + (isSoleAdmin() ? '👑 Admin' : a.defaultCustomer ? '✅ Default Included' : '✅ Admin Granted') + '</span>'
-        : '<span class="chip warn">🔒 Admin Grant Required</span>';
+        ? '<span class="chip ok">' + (isSoleAdmin() ? 'Admin' : 'Active') + '</span>'
+        : '<span class="chip warn">Locked</span>';
       const act = allowed
-        ? '<a class="btn pri" href="' + esc(a.href) + '">Launch App →</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>⬇ SCORM ZIP</a>' : '')
-        : '<button class="btn" data-go-payment="1">💳 Submit Payment Info</button>';
-      return '<div class="compact-card" style="border-color:' + (allowed ? 'rgba(16,185,129,0.42)' : 'rgba(148,163,184,0.2)') + '">' +
-        '<div><div class="row"><h3>' + a.icon + ' ' + esc(a.title) + '</h3>' + badge + '</div>' +
-        '<p>' + esc(a.desc) + '</p></div>' +
+        ? '<a class="btn pri" href="' + esc(a.href) + '">Launch →</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>SCORM</a>' : '')
+        : '<button class="btn" data-go-payment="1">Unlock</button>';
+      return '<div class="compact-card" style="border-color:' + (allowed ? 'rgba(16,185,129,0.42)' : 'rgba(148,163,184,0.2)') + ';padding:14px 16px">' +
+        '<div class="row" style="margin-bottom:8px"><h3>' + a.icon + ' ' + esc(a.title) + '</h3>' + badge + '</div>' +
         '<div class="row" style="justify-content:flex-start;gap:8px">' + act + '</div></div>';
     };
 
     const grantedPagesHtml = grantedPages.length
-      ? '<div class="card" style="padding:18px 20px;margin-top:14px">' +
-          '<div class="row" style="margin-bottom:12px"><div><h2 style="margin:0">🔓 Additional Features Granted by Administrator (' + grantedPages.length + ')</h2><p style="margin:2px 0 0">These modules were explicitly unlocked for your account by the Administrator.</p></div><span class="chip ok">ADMIN VERIFIED</span></div>' +
+      ? '<div class="card" style="padding:16px 18px;margin-top:12px">' +
+          '<div class="row" style="margin-bottom:10px"><h2 style="margin:0;font-size:15px">🔓 Granted Modules (' + grantedPages.length + ')</h2></div>' +
           '<div class="bento-2">' + grantedPages.map(c =>
-            '<div class="compact-card" style="border-color:rgba(59,130,246,0.45)"><div><div class="row"><h3>' + c.icon + ' ' + esc(c.title) + '</h3><span class="chip ok">Granted</span></div><p>' + esc(c.desc) + '</p></div><div><a class="btn pri" href="' + esc(c.href) + '">Open ' + esc(c.title) + ' →</a></div></div>'
+            '<div class="compact-card" style="border-color:rgba(59,130,246,0.45);padding:12px 14px"><div class="row"><h3>' + c.icon + ' ' + esc(c.title) + '</h3><a class="btn pri" href="' + esc(c.href) + '">Open →</a></div></div>'
           ).join('') + '</div></div>'
       : '';
 
-    return '<div class="card" style="padding:18px 20px;border-color:rgba(197,179,88,0.48)">' +
-        '<div class="row"><div><span class="chip ok">⚡ SAAS APPS &amp; LMS HUB</span><h2 style="margin:6px 0 2px">SaaS Applications &amp; SCORM 2004 LMS Suite</h2><p style="margin:0">Launch your interactive SaaS applications, Turnkey Configurator, Sterling Auto Repair Showcase, and SCORM 2004 LMS packages.</p></div>' +
-        '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn pri" href="saas-apps-and-lms-showcase.html">⚡ Open Full SaaS Apps &amp; LMS Showcase →</a><button class="btn" data-go-payment="1">💳 Submit Payment &amp; Billing →</button></div></div>' +
-      '</div>' +
-      '<div class="card" style="padding:18px 20px;margin-top:14px">' +
-        '<div class="row" style="margin-bottom:12px"><div><h2 style="margin:0">🚀 Your Active SaaS &amp; LMS Applications (' + unlockedApps.length + '/' + apps.length + ')</h2><p style="margin:2px 0 0">Ready to launch in your browser session.</p></div></div>' +
+    return '<div class="card" style="padding:16px 18px;margin-top:0">' +
+        '<div class="row" style="margin-bottom:12px">' +
+          '<h2 style="margin:0;font-size:16px">⚡ Active Applications (' + unlockedApps.length + '/' + apps.length + ')</h2>' +
+          '<div style="display:flex;gap:8px"><a class="btn" href="saas-apps-and-lms-showcase.html">Catalog →</a><button class="btn pri" data-go-payment="1">💳 Billing</button></div>' +
+        '</div>' +
         '<div class="bento-2">' + unlockedApps.map(renderAppCard).join('') + '</div>' +
-        (lockedApps.length ? '<details style="margin-top:14px"><summary>🔒 Additional SCORM 2004 Simulators (' + lockedApps.length + ' — Unlocked by Administrator after Payment Verification)</summary><div class="bento-2" style="margin-top:12px">' + lockedApps.map(renderAppCard).join('') + '</div></details>' : '') +
+        (lockedApps.length ? '<details style="margin-top:12px"><summary style="font-size:12px">🔒 Additional Modules (' + lockedApps.length + ')</summary><div class="bento-2" style="margin-top:10px">' + lockedApps.map(renderAppCard).join('') + '</div></details>' : '') +
       '</div>' +
       grantedPagesHtml;
   }
@@ -67,112 +65,95 @@
     const latestReceipt = (lastPaymentReceipt && lastPaymentReceipt.receipt) || receipts[0] || null;
 
     const statusBanner = prof && prof.verified
-      ? '<div class="card" id="paymentVerifiedBanner" style="padding:18px 20px;border-color:rgba(16,185,129,0.58);background:linear-gradient(135deg,rgba(6,78,59,0.38),rgba(9,16,32,0.96))">' +
-          '<div class="row"><div><span class="chip ok">✅ LEGAL &amp; SECURE PAYMENT VERIFIED</span><h2 style="margin:6px 0 2px">' + esc(prof.instrumentBrand) + ' •••• ' + esc(prof.last4) + ' — ' + esc(prof.planLabel) + '</h2>' +
-          '<p style="margin:0;color:#a7f3d0">Vault Token: <code>' + esc(prof.vaultToken) + '</code> · ' + esc(prof.pciDssLevel) + ' · Attested ' + esc((prof.updatedAt || '').slice(0, 19).replace('T', ' ')) + ' UTC</p></div>' +
-          (latestReceipt ? '<span class="chip ok">Receipt: ' + esc(latestReceipt.receiptId) + '</span>' : '') + '</div>' +
-          (latestReceipt ? '<div style="margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(4,8,20,0.85);border:1px solid rgba(16,185,129,0.35);font-size:12px;color:#cbd5e1"><b>Cryptographic Compliance Signature:</b> <code>' + esc(latestReceipt.complianceSignature) + '</code> · <b>Merchant:</b> Milton Group Concepts LLC (EIN 92-1370285 · CAGE 17GC6 · UEI XN89KKM6JT89) &amp; F.I.X Solutions LLC</div>' : '') +
+      ? '<div class="card" id="paymentVerifiedBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.58);background:linear-gradient(135deg,rgba(6,78,59,0.38),rgba(9,16,32,0.96))">' +
+          '<div class="row">' +
+            '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+              '<span class="chip ok">✓ Active Method</span>' +
+              '<strong style="font-size:14px;color:#fff">' + esc(prof.instrumentBrand) + ' •••• ' + esc(prof.last4) + '</strong>' +
+              '<span style="font-size:12px;color:#a7f3d0">' + esc(prof.planLabel) + '</span>' +
+            '</div>' +
+            (latestReceipt ? '<code style="font-size:11px;color:#34d399">' + esc(latestReceipt.receiptId) + '</code>' : '') +
+          '</div>' +
         '</div>'
       : '';
 
     const errorBanner = lastPaymentError
-      ? '<div class="card" id="paymentErrorBanner" style="padding:14px 18px;border-color:rgba(239,68,68,0.6);background:rgba(127,29,29,0.28);color:#fecaca;font-weight:700">' + esc(lastPaymentError) + '</div>'
+      ? '<div class="card" id="paymentErrorBanner" style="padding:12px 16px;margin-bottom:12px;border-color:rgba(239,68,68,0.6);background:rgba(127,29,29,0.28);color:#fecaca;font-size:12.5px;font-weight:700">' + esc(lastPaymentError) + '</div>'
       : '';
 
     return statusBanner + errorBanner +
-      '<div class="card" style="padding:22px">' +
-        '<div class="row" style="margin-bottom:14px">' +
-          '<div><span class="chip warn">🔒 PCI-DSS v4.0 SAQ-A · EFTA / REG E · NACHA COMPLIANT</span>' +
-          '<h2 style="margin:6px 0 2px">💳 Legal &amp; Secure Payment &amp; Billing Submission</h2>' +
-          '<p style="margin:0">Submit or update your payment &amp; billing information. Raw card/account numbers are scrubbed client-side and tokenized via HMAC-SHA256 vaulting so full PAN/CVV never touch disk.</p></div>' +
+      '<form id="legalPaymentForm" onsubmit="return false;" style="display:grid;grid-template-columns:minmax(250px,310px) minmax(0,1fr);gap:14px;align-items:start">' +
+        '<!-- LEFT COLUMN: Stripe/Linear Minimalist Plan & Entity Summary -->' +
+        '<div class="card" style="padding:18px;margin:0">' +
+          '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:8px">Entity &amp; Plan</div>' +
+          '<select id="payMerchantEntity" style="width:100%;margin-bottom:10px;padding:9px 11px;font-size:12.5px">' +
+            '<option value="MGC"' + ((prof && prof.merchantEntity === 'MGC') ? ' selected' : '') + '>🏛️ Milton Group Concepts LLC</option>' +
+            '<option value="FIX"' + ((!prof || prof.merchantEntity === 'FIX') ? ' selected' : '') + '>⚡ F.I.X Solutions LLC</option>' +
+          '</select>' +
+          '<select id="payPlanTier" style="width:100%;margin-bottom:12px;padding:9px 11px;font-size:12.5px">' +
+            '<option value="saas_lms_base"' + (prof && prof.planTier === 'saas_lms_base' ? ' selected' : '') + '>Starter SaaS &amp; LMS — $5 / mo</option>' +
+            '<option value="pro_enterprise"' + (prof && prof.planTier === 'pro_enterprise' ? ' selected' : '') + '>Pro Suite — $49 / mo</option>' +
+            '<option value="sdvosb_contract_retainer"' + (prof && prof.planTier === 'sdvosb_contract_retainer' ? ' selected' : '') + '>Enterprise Retainer — $250 / mo</option>' +
+          '</select>' +
+          '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:6px">Payment Method</div>' +
+          '<select id="payMethod" style="width:100%;padding:9px 11px;font-size:12.5px">' +
+            '<option value="card_tokenized"' + (prof && prof.method === 'card_tokenized' ? ' selected' : '') + '>💳 Card (Stripe SAQ-A)</option>' +
+            '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>🏛️ WAWF / PIEE Federal EFT</option>' +
+            '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>🏦 ACH Direct Debit</option>' +
+          '</select>' +
+          '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">' +
+            '<span style="font-size:11px;color:#94a3b8">Security</span>' +
+            '<span class="chip ok" id="valBadgeToken" style="font-size:10px">PCI SAQ-A</span>' +
+          '</div>' +
         '</div>' +
 
-        '<form id="legalPaymentForm" onsubmit="return false;" style="display:flex;flex-direction:column;gap:14px">' +
-          '<div class="bento-3">' +
-            '<div>' +
-              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">1. Merchant Entity (LLC)</label>' +
-              '<select id="payMerchantEntity" style="width:100%">' +
-                '<option value="MGC"' + ((prof && prof.merchantEntity === 'MGC') ? ' selected' : '') + '>🏛️ Milton Group Concepts LLC (Option 1: Stripe SAQ-A)</option>' +
-                '<option value="FIX"' + ((!prof || prof.merchantEntity === 'FIX') ? ' selected' : '') + '>⚡ F.I.X Solutions LLC (Option 1: Stripe SAQ-A &amp; Option 4: WAWF/PIEE)</option>' +
-              '</select>' +
-            '</div>' +
-            '<div>' +
-              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">2. Subscription / Invoice Tier</label>' +
-              '<select id="payPlanTier" style="width:100%">' +
-                '<option value="saas_lms_base"' + (prof && prof.planTier === 'saas_lms_base' ? ' selected' : '') + '>SaaS Apps &amp; LMS Base Subscription — $5.00 / month</option>' +
-                '<option value="pro_enterprise"' + (prof && prof.planTier === 'pro_enterprise' ? ' selected' : '') + '>MGC &amp; F.I.X Pro SaaS + Enterprise LMS Suite — $49.00 / month</option>' +
-                '<option value="sdvosb_contract_retainer"' + (prof && prof.planTier === 'sdvosb_contract_retainer' ? ' selected' : '') + '>SDVOSB Federal / Commercial Retainer — $250.00 / month</option>' +
-              '</select>' +
-            '</div>' +
-            '<div>' +
-              '<label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#fde047;margin-bottom:5px">3. Official PCI-DSS / Federal Rail</label>' +
-              '<select id="payMethod" style="width:100%">' +
-                '<option value="card_tokenized"' + (prof && prof.method === 'card_tokenized' ? ' selected' : '') + '>💳 Option 1: Stripe Checkout &amp; Elements (PCI SAQ-A Tokenized)</option>' +
-                '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>🏛️ Option 4: DoD WAWF / PIEE &amp; SAM.gov Federal EFT (FIX / MGC)</option>' +
-                '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>🏦 Commercial ACH Direct Debit (NACHA)</option>' +
-              '</select>' +
+        '<!-- RIGHT COLUMN: Stripe Elements Single-Canvas Payment Box -->' +
+        '<div class="card" style="padding:18px;margin:0">' +
+          '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:8px">Billing Details</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:10px">' +
+            '<input id="payBillingName" required maxlength="100" value="' + esc((prof && prof.billingName) || u.name || '') + '" placeholder="Full Name *" style="padding:9px 11px;font-size:12.5px">' +
+            '<input id="payBillingEmail" type="email" required maxlength="120" value="' + esc((prof && prof.billingEmail) || u.email || '') + '" placeholder="Email *" style="padding:9px 11px;font-size:12.5px">' +
+            '<input id="payBillingOrg" maxlength="120" value="' + esc((prof && prof.billingOrg) || u.org || '') + '" placeholder="Organization" style="padding:9px 11px;font-size:12.5px">' +
+          '</div>' +
+
+          '<div style="display:grid;grid-template-columns:2fr 1fr 80px 100px;gap:8px;margin-bottom:12px">' +
+            '<input id="payAddress" required maxlength="140" value="' + esc((prof && prof.addressLine1) || '') + '" placeholder="Street Address *" style="padding:9px 11px;font-size:12.5px">' +
+            '<input id="payCity" required maxlength="80" value="' + esc((prof && prof.city) || '') + '" placeholder="City *" style="padding:9px 11px;font-size:12.5px">' +
+            '<input id="payState" required maxlength="40" value="' + esc((prof && prof.stateRegion) || '') + '" placeholder="State *" style="padding:9px 11px;font-size:12.5px">' +
+            '<input id="payZip" required maxlength="10" pattern="^\\d{5}(-\\d{4})?$" value="' + esc((prof && prof.postalCode) || '') + '" placeholder="ZIP *" style="padding:9px 11px;font-size:12.5px">' +
+          '</div>' +
+
+          '<!-- Unified Single-Bar Card / Token Input (Stripe Elements Style) -->' +
+          '<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:6px;display:flex;justify-content:space-between">' +
+            '<span id="lblPayLast4">Card / Instrument Token</span>' +
+            '<span id="valBadgeZip" style="color:#34d399;font-size:10px"></span>' +
+          '</div>' +
+          '<div id="pciInstrumentVaultCard" style="display:grid;grid-template-columns:1.2fr 1fr 130px;gap:8px;padding:8px;border-radius:11px;background:rgba(4,8,20,0.92);border:1.5px solid rgba(59,130,246,0.45);margin-bottom:12px;align-items:center">' +
+            '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa') + '" placeholder="Brand / DoDAAC" style="border:none;background:transparent;padding:6px 8px;font-size:12.5px">' +
+            '<input id="payCardOrLast4" required maxlength="4" inputmode="numeric" pattern="^\\d{4}$" value="' + esc((prof && prof.last4) || '') + '" placeholder="•••• 4242 (Last 4)" autocomplete="off" style="border:none;border-left:1px solid rgba(148,163,184,0.2);border-radius:0;background:transparent;padding:6px 10px;font-size:13px;font-family:monospace;font-weight:800;letter-spacing:.12em">' +
+            '<div id="expFieldsWrap" style="display:flex;gap:4px;border-left:1px solid rgba(148,163,184,0.2);padding-left:8px;transition:opacity .2s ease">' +
+              '<input id="payExpMonth" type="number" min="1" max="12" value="' + esc((prof && prof.expMonth) || 12) + '" placeholder="MM" style="border:none;background:transparent;padding:6px 4px;font-size:12px;width:48px;text-align:center">' +
+              '<span style="color:#64748b;align-self:center">/</span>' +
+              '<input id="payExpYear" type="number" min="2026" max="2040" value="' + esc((prof && prof.expYear) || 2029) + '" placeholder="YYYY" style="border:none;background:transparent;padding:6px 4px;font-size:12px;width:62px;text-align:center">' +
             '</div>' +
           '</div>' +
 
-          '<div class="bento-3">' +
-            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Cardholder / Signer Legal Name *</label>' +
-              '<input id="payBillingName" required maxlength="100" value="' + esc((prof && prof.billingName) || u.name || '') + '" placeholder="Full Legal Name" style="width:100%"></div>' +
-            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Billing Receipt Email * <span id="valBadgeEmail" style="color:#34d399;font-size:10px">✓ Valid</span></label>' +
-              '<input id="payBillingEmail" type="email" required maxlength="120" value="' + esc((prof && prof.billingEmail) || u.email || '') + '" placeholder="billing@company.com" style="width:100%"></div>' +
-            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Organization / Agency</label>' +
-              '<input id="payBillingOrg" maxlength="120" value="' + esc((prof && prof.billingOrg) || u.org || '') + '" placeholder="Company or Agency Name" style="width:100%"></div>' +
-          '</div>' +
-
-          '<div class="bento-3">' +
-            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Billing Street Address *</label>' +
-              '<input id="payAddress" required maxlength="140" value="' + esc((prof && prof.addressLine1) || '') + '" placeholder="100 Enterprise Pkwy Suite 200" style="width:100%"></div>' +
-            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">City &amp; State *</label>' +
-              '<div style="display:flex;gap:8px"><input id="payCity" required maxlength="80" value="' + esc((prof && prof.city) || '') + '" placeholder="Raleigh" style="flex:2"><input id="payState" required maxlength="40" value="' + esc((prof && prof.stateRegion) || '') + '" placeholder="NC" style="flex:1"></div></div>' +
-            '<div><label style="display:block;font-size:11px;font-weight:800;text-transform:uppercase;color:#cbd5e1;margin-bottom:4px">Postal / ZIP Code (5-Digit) * <span id="valBadgeZip" style="color:#34d399;font-size:10px"></span></label>' +
-              '<input id="payZip" required maxlength="10" pattern="^\\d{5}(-\\d{4})?$" value="' + esc((prof && prof.postalCode) || '') + '" placeholder="27601" style="width:100%"></div>' +
-          '</div>' +
-
-          '<div class="card" id="pciInstrumentVaultCard" style="padding:14px 16px;background:rgba(4,8,20,0.9);border-color:rgba(59,130,246,0.4);transition:opacity .22s ease,transform .22s ease">' +
-            '<div class="row" style="margin-bottom:8px">' +
-              '<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#60a5fa">🔐 Attack-Hardened PCI-DSS v4.0 SAQ-A Tokenized Instrument Fields (Zero Raw PAN Storage)</div>' +
-              '<span class="chip ok" id="valBadgeToken" style="font-size:10px">SAQ-A Isolated</span>' +
-            '</div>' +
-            '<div class="bento-3">' +
-              '<div><label id="lblPayBrand" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Card Network / WAWF DoDAAC</label>' +
-                '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa Commercial') + '" placeholder="Visa / Mastercard / WAWF DoDAAC" style="width:100%"></div>' +
-              '<div><label id="lblPayLast4" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Tokenized Last 4 Digits (or CLIN Last 4) *</label>' +
-                '<input id="payCardOrLast4" required maxlength="4" inputmode="numeric" pattern="^\\d{4}$" value="' + esc((prof && prof.last4) || '') + '" placeholder="4242 (4 digits only)" autocomplete="off" style="width:100%;letter-spacing:.12em;font-weight:800"></div>' +
-              '<div id="expFieldsWrap" style="transition:opacity .2s ease"><label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;margin-bottom:4px">Expiration (MM / YYYY)</label>' +
-                '<div style="display:flex;gap:8px"><input id="payExpMonth" type="number" min="1" max="12" value="' + esc((prof && prof.expMonth) || 12) + '" placeholder="MM" style="flex:1"><input id="payExpYear" type="number" min="2026" max="2040" value="' + esc((prof && prof.expYear) || 2029) + '" placeholder="YYYY" style="flex:1"></div></div>' +
-            '</div>' +
-          '</div>' +
-
-          '<div class="card" style="padding:14px 16px;background:rgba(4,8,20,0.92);border-color:rgba(197,179,88,0.42)">' +
-            '<div style="font-size:11px;font-weight:900;text-transform:uppercase;color:#fde047;margin-bottom:8px">⚖️ Mandatory Legal, Regulatory &amp; Security Attestations</div>' +
-            '<label style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#e2e8f0;padding:6px 0;cursor:pointer">' +
-              '<input type="checkbox" id="payEftaNacha" checked style="margin-top:3px">' +
-              '<span><b>EFTA (15 U.S.C. § 1693 / Regulation E) &amp; NACHA Operating Rules Authorization:</b> I authorize Milton Group Concepts LLC (EIN 92-1370285) &amp; F.I.X Solutions LLC to debit the designated payment instrument for the selected subscription or invoice amount, and I acknowledge my right to revoke recurring authorization at any time with 3 business days notice.</span>' +
+          '<!-- Minimalist 1-Line Authorization + Auto-Synced Checkboxes -->' +
+          '<div class="row" style="padding-top:6px;border-top:1px solid var(--line);gap:12px">' +
+            '<label style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:#cbd5e1;cursor:pointer">' +
+              '<input type="checkbox" id="payEftaNacha" checked onchange="document.getElementById(\'payPciTerms\').checked=this.checked;document.getElementById(\'payMsaTerms\').checked=this.checked">' +
+              '<input type="checkbox" id="payPciTerms" checked style="display:none">' +
+              '<input type="checkbox" id="payMsaTerms" checked style="display:none">' +
+              '<span>Authorize payment under EFTA/NACHA, PCI SAQ-A &amp; MSA terms</span>' +
             '</label>' +
-            '<label style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#e2e8f0;padding:6px 0;cursor:pointer">' +
-              '<input type="checkbox" id="payPciTerms" checked style="margin-top:3px">' +
-              '<span><b>PCI-DSS v4.0 SAQ-A Cryptographic Tokenization Notice:</b> I understand that raw primary account numbers (PAN) and CVV codes are scrubbed immediately upon submission and replaced with an HMAC-SHA256 cryptographic vault token (<code>tok_mgc_...</code>).</span>' +
-            '</label>' +
-            '<label style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#e2e8f0;padding:6px 0;cursor:pointer">' +
-              '<input type="checkbox" id="payMsaTerms" checked style="margin-top:3px">' +
-              '<span><b>Master Services Agreement (MSA) &amp; Feature Provisioning Policy:</b> I agree to the MGC &amp; F.I.X Commercial Terms. Upon payment verification, the Administrator is notified to provision any additional requested workspace features.</span>' +
-            '</label>' +
+            '<button type="submit" class="btn pri" id="btnSubmitLegalPayment" style="padding:10px 20px;font-size:12.5px">Save &amp; Verify →</button>' +
           '</div>' +
+        '</div>' +
+      '</form>' +
 
-          '<div class="row" style="justify-content:space-between">' +
-            '<span style="font-size:12px;color:#94a3b8">Merchant of Record: <b>Milton Group Concepts LLC</b> (CAGE <code>17GC6</code> · UEI <code>XN89KKM6JT89</code>)</span>' +
-            '<button type="submit" class="btn pri" id="btnSubmitLegalPayment">🔒 Verify &amp; Submit Secure Payment Information →</button>' +
-          '</div>' +
-        '</form>' +
-      '</div>' +
-
-      (receipts.length ? '<div class="card" style="padding:18px 20px;margin-top:14px"><h2 style="margin:0 0 10px">🧾 Verified Payment &amp; Tokenization Receipts (' + receipts.length + ')</h2>' +
-        '<table><thead><tr><th>Receipt ID</th><th>Instrument</th><th>Plan / Tier</th><th>Amount</th><th>Vault Token &amp; Signature</th><th>Timestamp</th></tr></thead><tbody>' +
-        receipts.map(r => '<tr><td><code>' + esc(r.receiptId) + '</code></td><td>' + esc(r.instrumentBrand) + ' •••• ' + esc(r.last4) + '</td><td>' + esc(r.planLabel) + '</td><td><b>$' + Number(r.amountUsd || 0).toFixed(2) + ' USD</b></td><td><code>' + esc(r.vaultToken) + '</code><br><small style="color:#34d399">' + esc(r.complianceSignature) + '</small></td><td>' + esc((r.createdAt || '').slice(0, 19).replace('T', ' ')) + '</td></tr>').join('') +
+      (receipts.length ? '<div class="card" style="padding:14px 18px;margin-top:12px"><div class="row" style="margin-bottom:8px"><h3 style="margin:0;font-size:13.5px">Receipts (' + receipts.length + ')</h3></div>' +
+        '<table><thead><tr><th>Receipt</th><th>Method</th><th>Tier</th><th>Amount</th><th>Token</th><th>Date</th></tr></thead><tbody>' +
+        receipts.map(r => '<tr><td><code>' + esc(r.receiptId) + '</code></td><td>' + esc(r.instrumentBrand) + ' •••• ' + esc(r.last4) + '</td><td>' + esc(r.planLabel) + '</td><td><b>$' + Number(r.amountUsd || 0).toFixed(2) + '</b></td><td><code>' + esc(r.vaultToken) + '</code></td><td>' + esc((r.createdAt || '').slice(0, 10)) + '</td></tr>').join('') +
         '</tbody></table></div>' : '');
   }
 
@@ -234,15 +215,14 @@
       '</div>';
 
     const sideNav = '<aside class="ws-side" aria-label="Authorized User Navigation">' +
-      '<div class="ws-side-title">Authorized Menu</div>' +
+      '<div class="ws-side-title">Menu</div>' +
       availableTabs.map(t => '<button type="button" class="ws-nav-btn' + (t[0] === tab ? ' active' : '') + '" data-tab="' + t[0] + '"><span>' + t[1] + '</span></button>').join('') +
-      '<a class="ws-nav-btn" href="saas-apps-and-lms-showcase.html" style="text-decoration:none"><span>🚀 Launch Full SaaS &amp; LMS Catalog →</span></a>' +
+      '<a class="ws-nav-btn" href="saas-apps-and-lms-showcase.html" style="text-decoration:none"><span>🚀 App Catalog →</span></a>' +
       grantedFeatureLinks.map(c => '<a class="ws-nav-btn" href="' + esc(c.href) + '" style="text-decoration:none"><span>' + c.icon + ' ' + esc(c.title) + ' →</span></a>').join('') +
-      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.45);color:#fde047"><span>👑 Access Admin (Grant Features) →</span></a>' : '') +
+      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.45);color:#fde047"><span>👑 Directory &amp; RBAC →</span></a>' : '') +
       '</aside>';
 
-    app.innerHTML = '<div style="margin-bottom:14px"><div class="row"><div><h1 style="margin:0">Welcome, ' + esc(u.name.split(' (')[0]) + '</h1><p style="margin:2px 0 0">' + (u.brand === 'FIX' ? 'F.I.X Solutions' : 'Milton Group Concepts') + ' · <b>' + (isSoleAdmin() ? 'Sole Administrator (Malik A. Khabir)' : 'SaaS Apps & LMS + Verified Payment Center') + '</b></p></div></div></div>' +
-      '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + kpiHtml + body + '</div></div>';
+    app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + kpiHtml + body + '</div></div>';
     W.header(tab === 'payment' ? 'member-portal.html?view=payment' : 'member-portal.html');
     bind();
   }
