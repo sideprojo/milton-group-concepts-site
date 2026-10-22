@@ -190,8 +190,34 @@
       </div>
     </div>
 
-    <!-- SIGN IN VIEW -->
+    <!-- SIGN IN VIEW: Email / Username + Password Logon Screen + Federated SSO -->
     <div id="signInPane">
+      <form id="emailPasswordForm" onsubmit="return false" style="background:rgba(4,8,20,0.78);border:1.5px solid rgba(197,179,88,0.42);border-radius:16px;padding:18px 20px;margin-bottom:18px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;align-items:end">
+          <div>
+            <label for="loginIdentifier" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Email or Username (Not Case Sensitive)</label>
+            <input id="loginIdentifier" type="text" placeholder="malik.khabir@Miltongroupsecurity.org or username" autocomplete="username" spellcheck="false" required style="width:100%;padding:11px 13px;font-size:13px">
+          </div>
+          <div>
+            <label for="loginPassword" style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Password</label>
+            <div style="display:flex;gap:6px">
+              <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" required style="flex:1;width:100%;padding:11px 13px;font-size:13px">
+              <button type="button" class="btn" id="btnTogglePassVis" title="Show / Hide Password" style="padding:0 12px;font-size:12px">👁️</button>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
+          <span id="loginIdentityHint" style="font-size:11.5px;color:#94a3b8">Enter your email or username and password to sign in.</span>
+          <button type="submit" class="btn pri" id="btnPasswordLogin" style="padding:11px 22px;font-size:13px">🔑 Sign In →</button>
+        </div>
+      </form>
+
+      <div style="display:flex;align-items:center;gap:12px;margin:14px 0">
+        <div style="flex:1;height:1px;background:rgba(148,163,184,0.2)"></div>
+        <span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:#94a3b8">Or Continue with Federated SSO</span>
+        <div style="flex:1;height:1px;background:rgba(148,163,184,0.2)"></div>
+      </div>
+
       <div class="sso-grid" role="group" aria-label="Single Sign-On Providers">
         <!-- 1. Google SSO -->
         <div class="sso-provider-card active" data-provider="google" id="card-google">
@@ -264,16 +290,25 @@
           <input id="regOrg" type="text" placeholder="Vance Defense &amp; Logistics LLC" style="width:100%;padding:11px 13px">
         </div>
         <div>
-          <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Federated SSO Provider *</label>
+          <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Authentication Method *</label>
           <select id="regProvider" style="width:100%;padding:11px 13px">
+            <option value="password">Email / Username &amp; Password</option>
             <option value="google">Google SSO (Google Workspace / Cloud Identity)</option>
             <option value="microsoft">Microsoft SSO (Entra ID / Microsoft 365)</option>
             <option value="apple">Apple SSO (Apple ID &amp; Passkey)</option>
           </select>
         </div>
         <div>
-          <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Authorized SSO Email *</label>
+          <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Email Address *</label>
           <input id="regEmail" type="email" placeholder="jordan@vancedefense.com" required spellcheck="false" style="width:100%;padding:11px 13px">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Username (Optional)</label>
+          <input id="regUsername" type="text" placeholder="jordan.vance" spellcheck="false" style="width:100%;padding:11px 13px">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Account Password *</label>
+          <input id="regPassword" type="password" placeholder="Create password (min 6 characters)" style="width:100%;padding:11px 13px">
         </div>
         <div>
           <label style="display:block;font-size:11px;font-weight:800;color:#cbd5e1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Primary Workspace Track</label>
@@ -581,10 +616,125 @@
 
   function syncAdminMfaVisibility() {
     const em = (emailInput.value || '').trim().toLowerCase();
-    const isAdmin = em === 'malik.khabir@miltongroupsecurity.org';
+    const isAdmin = em === 'malik.khabir@miltongroupsecurity.org' || em === 'malik.khabir';
     if (adminMfaWrap) adminMfaWrap.style.display = isAdmin ? 'block' : 'none';
   }
   emailInput.addEventListener('input', syncAdminMfaVisibility);
+
+  // Wire Direct Email / Username + Password Logon Form (Case-Insensitive)
+  const loginIdentifierInput = document.getElementById('loginIdentifier');
+  const loginPasswordInput = document.getElementById('loginPassword');
+  const loginIdentityHint = document.getElementById('loginIdentityHint');
+  const btnTogglePassVis = document.getElementById('btnTogglePassVis');
+  const emailPasswordForm = document.getElementById('emailPasswordForm');
+
+  if (btnTogglePassVis && loginPasswordInput) {
+    btnTogglePassVis.onclick = () => {
+      loginPasswordInput.type = loginPasswordInput.type === 'password' ? 'text' : 'password';
+    };
+  }
+
+  if (loginIdentifierInput && loginIdentityHint) {
+    loginIdentifierInput.addEventListener('input', () => {
+      const clean = (loginIdentifierInput.value || '').trim().toLowerCase();
+      if (clean === 'malik.khabir@miltongroupsecurity.org' || clean === 'malik.khabir') {
+        loginIdentityHint.style.color = '#fde047';
+        loginIdentityHint.textContent = '👑 Sole Administrator identity recognized (malik.khabir@Miltongroupsecurity.org). Enter Administrator password.';
+      } else {
+        loginIdentityHint.style.color = '#94a3b8';
+        loginIdentityHint.textContent = 'Enter your email or username and password to sign in.';
+      }
+    });
+  }
+
+  async function submitEmailPasswordLogin() {
+    const rawId = (loginIdentifierInput && loginIdentifierInput.value || '').trim();
+    const password = (loginPasswordInput && loginPasswordInput.value || '').trim();
+    const normalizedEmail = W.resolveCaseInsensitiveIdentifier ? W.resolveCaseInsensitiveIdentifier(rawId) : rawId.toLowerCase();
+
+    if (!rawId || !password) {
+      msg.style.color = '#f87171';
+      msg.textContent = 'Please enter both your Email/Username and Password.';
+      return;
+    }
+
+    msg.style.color = '#34d399';
+    msg.textContent = 'Authenticating credentials...';
+
+    if (location.protocol === 'file:') {
+      if (normalizedEmail === 'malik.khabir@miltongroupsecurity.org') {
+        if (!W.isValidAdminSecret || !W.isValidAdminSecret(password)) {
+          msg.style.color = '#f87171';
+          msg.textContent = 'Administrator Authentication Failed: Invalid password for malik.khabir@Miltongroupsecurity.org.';
+          return;
+        }
+        W.signInAs('owner', 'password', password);
+        persistOnboardingBridge('malik.khabir@miltongroupsecurity.org', 'Malik A. Khabir', 'owner', 'password', ['*'], ['*']);
+        location.href = nextUrl ? nextUrl.replace(/^\/+/, '') : 'access-admin.html';
+        return;
+      }
+      if ((normalizedEmail.endsWith('@miltongroupsecurity.org') && normalizedEmail !== 'malik.khabir@miltongroupsecurity.org') || normalizedEmail.startsWith('owner@') || normalizedEmail.startsWith('admin@')) {
+        msg.style.color = '#f87171';
+        msg.textContent = 'Security Policy Enforced: Only 1 Administrator account exists (malik.khabir@Miltongroupsecurity.org).';
+        return;
+      }
+      const existing = Object.values(W.S.users || {}).find(u => u.id !== 'owner' && (String(u.email || '').toLowerCase() === normalizedEmail || String(u.username || '').toLowerCase() === rawId.toLowerCase()));
+      if (!existing) {
+        msg.style.color = '#f87171';
+        msg.textContent = 'Account not found. Click "Register Account" to create your account first.';
+        return;
+      }
+      if (existing.passwordDigest && W.mgcDigest && W.mgcDigest(password) !== existing.passwordDigest) {
+        msg.style.color = '#f87171';
+        msg.textContent = 'Invalid email/username or password.';
+        return;
+      }
+      W.signInAs(existing.id, 'password');
+      persistOnboardingBridge(existing.email, existing.name, 'member', 'password', existing.allowedApps, undefined);
+      location.href = nextUrl ? nextUrl.replace(/^\/+/, '') : 'member-portal.html';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: 'password',
+          identifier: rawId,
+          email: normalizedEmail,
+          password,
+          next: nextUrl
+        })
+      });
+      const data = await res.json();
+      if (!data || !data.ok) {
+        msg.style.color = '#f87171';
+        msg.textContent = (data && data.error) || 'Invalid email/username or password.';
+        return;
+      }
+      try {
+        sessionStorage.setItem('mgcw.uid', data.uid);
+        sessionStorage.setItem('mgcw.sso_provider', data.provider || 'password');
+      } catch (_) {}
+      persistOnboardingBridge(data.email || normalizedEmail, data.name, data.role, data.provider || 'password', data.allowedApps, data.allowedPortals);
+      msg.style.color = '#34d399';
+      msg.textContent = data.role === 'owner'
+        ? '✓ Sole Administrator Verified (malik.khabir@Miltongroupsecurity.org)! Opening Access Admin...'
+        : '✓ Signed in! Redirecting to SaaS Apps & LMS Workspace...';
+      location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
+    } catch (err) {
+      msg.style.color = '#f87171';
+      msg.textContent = 'Could not reach authentication service.';
+    }
+  }
+
+  if (emailPasswordForm) {
+    emailPasswordForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitEmailPasswordLogin();
+    });
+  }
 
   const btnQuickCustomer = document.getElementById('btnQuickCustomer');
   if (btnQuickCustomer) {
@@ -738,8 +888,10 @@
     btnSubmitRegister.onclick = async () => {
       const name = (document.getElementById('regName').value || '').trim();
       const org = (document.getElementById('regOrg').value || '').trim();
-      const ssoProvider = document.getElementById('regProvider').value || 'google';
+      const ssoProvider = document.getElementById('regProvider').value || 'password';
       const email = (document.getElementById('regEmail').value || '').trim().toLowerCase();
+      const username = (document.getElementById('regUsername') && document.getElementById('regUsername').value || '').trim().toLowerCase();
+      const password = (document.getElementById('regPassword') && document.getElementById('regPassword').value || '').trim();
       const interest = document.getElementById('regTrack').value || 'ai-web';
       const brand = document.getElementById('regBrand').value || 'MGC';
       const ndaAccepted = document.getElementById('regNda').checked;
@@ -747,7 +899,12 @@
 
       if (!name || !/^\S+@\S+\.\S+$/.test(email)) {
         msg.style.color = '#f87171';
-        msg.textContent = 'Please enter your Full Name and a valid Federated SSO email address.';
+        msg.textContent = 'Please enter your Full Name and a valid email address.';
+        return;
+      }
+      if (ssoProvider === 'password' && password.length < 4) {
+        msg.style.color = '#f87171';
+        msg.textContent = 'Please enter a password (at least 4 characters) for your account.';
         return;
       }
       if (!ndaAccepted) {
@@ -760,7 +917,7 @@
       msg.textContent = 'Registering account & provisioning workspace...';
 
       if (location.protocol === 'file:') {
-        const uidVal = W.submitRequest({ name, org, email, ssoProvider, interest, brand, ndaAccepted, mfaVerified: true });
+        const uidVal = W.submitRequest({ name, org, email, username, password, ssoProvider, interest, brand, ndaAccepted, mfaVerified: true });
         if (!uidVal) {
           msg.style.color = '#f87171';
           msg.textContent = (W.lastIntakeResult && W.lastIntakeResult.error) || 'Registration failed.';
@@ -780,6 +937,8 @@
             name,
             org,
             email,
+            username,
+            password,
             ssoProvider,
             interest,
             brand,

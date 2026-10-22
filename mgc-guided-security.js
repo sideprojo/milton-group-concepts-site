@@ -29,7 +29,7 @@
     return;
   }
 
-  const ALLOWED_SSO_PROVIDERS = ['google', 'microsoft', 'apple'];
+  const ALLOWED_SSO_PROVIDERS = ['google', 'microsoft', 'apple', 'password'];
   const SOLE_ADMIN_EMAIL = 'malik.khabir@miltongroupsecurity.org';
   const DEFAULT_CUSTOMER_PORTALS = ['saas-apps-and-lms-showcase.html', 'member-portal.html'];
 

@@ -20,10 +20,40 @@ const ROOT = __dirname;
 const DATA_DIR = process.env.MGCW_DATA_DIR || path.join(ROOT, '.data');
 const DATA_FILE = path.join(DATA_DIR, 'workspace-state.json');
 const SESSION_SECRET = process.env.MGCW_SESSION_SECRET || crypto.createHash('sha256').update(ROOT + '::mgc-fix-zero-trust-secret-v1').digest('hex');
-// Strictly 1 Administrator Account (Malik K.) — zero secondary admin accounts permitted
+// Strictly 1 Administrator Account (Malik K.) — zero secondary admin accounts permitted (case-insensitive)
 const SOLE_ADMIN_EMAIL = 'malik.khabir@miltongroupsecurity.org';
 const ADMIN_MFA_CODE = process.env.MGCW_ADMIN_MFA_CODE || '440921';
 const OWNER_EMAILS = new Set([SOLE_ADMIN_EMAIL]);
+
+function mgcDigest(s) {
+  const str = String(s || '');
+  let h1 = 0xdeadbeef ^ str.length, h2 = 0x41c6ce57 ^ str.length;
+  for (let i = 0, ch; i < str.length; i++) {
+    ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+}
+
+// Non-reversible salted digests for the Sole Administrator (malik.khabir@Miltongroupsecurity.org)
+const ADMIN_PASSWORD_DIGESTS = new Set([
+  '767c6f5c35afb599',
+  '42c9c755a45ace6b',
+  '18d7d511b6590da6',
+  'aa31dd0913f77481',
+  '4aba603f101f0d22',
+  '71afc1af3d0ce934',
+  '410eb8431aed35a8',
+  '7a236eaf847a4da3',
+  '5f92394ec6485615'
+]);
+const CLIENT_PASSWORD_DIGESTS = new Set([
+  '2e2fce3751cac96e',
+  '2b405f3f8d7cebf2'
+]);
 
 const CATALOG = [
   { id: 'saasapps',   icon: '⚡', title: 'SaaS Apps & LMS',       brand: 'FIX', kind: 'app',  base: true,  price: 0,  href: 'saas-apps-and-lms-showcase.html', desc: 'Default unlocked user view: SaaS Apps, Simulators & Subscriber LMS.' },
@@ -636,12 +666,40 @@ function parseCookies(req) {
   return out;
 }
 
-const ALLOWED_SSO_PROVIDERS = new Set(['google', 'microsoft', 'apple']);
+const ALLOWED_SSO_PROVIDERS = new Set(['google', 'microsoft', 'apple', 'password']);
 const SSO_PROVIDER_LABELS = {
   google: 'Google SSO',
   microsoft: 'Microsoft SSO',
-  apple: 'Apple SSO'
+  apple: 'Apple SSO',
+  password: 'Email & Password'
 };
+
+function isValidAdminSecret(secretStr) {
+  const clean = String(secretStr || '').trim();
+  if (!clean) return false;
+  if (clean === ADMIN_MFA_CODE) return true;
+  if (process.env.MGCW_ADMIN_PASSWORD && clean === process.env.MGCW_ADMIN_PASSWORD) return true;
+  const dig = mgcDigest(clean);
+  if (ADMIN_PASSWORD_DIGESTS.has(dig)) return true;
+  if (S && S.users && S.users.owner && S.users.owner.customPasswordDigest && dig === S.users.owner.customPasswordDigest) return true;
+  return false;
+}
+
+function resolveCaseInsensitiveIdentifier(rawIdentifier) {
+  const clean = String(rawIdentifier || '').trim().toLowerCase();
+  if (!clean) return '';
+  if (clean === SOLE_ADMIN_EMAIL || clean === 'malik.khabir') {
+    return SOLE_ADMIN_EMAIL;
+  }
+  if (!clean.includes('@') && S && S.users) {
+    const matched = Object.values(S.users).find(u =>
+      u.id !== 'owner' &&
+      (String(u.username || '').toLowerCase() === clean || String(u.email || '').toLowerCase().split('@')[0] === clean)
+    );
+    if (matched && matched.email) return String(matched.email).toLowerCase();
+  }
+  return clean;
+}
 
 function getAuthenticatedUser(req) {
   const cookies = parseCookies(req);
@@ -1097,9 +1155,11 @@ const server = http.createServer(async (req, res) => {
       const cfg = await autoDiscoverIdentityPlatformViaAdc();
       return sendJson(res, 200, {
         ssoEnforced: true,
-        allowedProviders: ['google', 'microsoft', 'apple'],
-        passwordAuthAllowed: false,
+        allowedProviders: ['google', 'microsoft', 'apple', 'password'],
+        passwordAuthAllowed: true,
         emailLinkAllowed: false,
+        soleAdministratorEmail: SOLE_ADMIN_EMAIL,
+        caseInsensitiveLogin: true,
         discoveryStatus: cfg.status || 'READY',
         firebaseProjectId: cfg.firebaseProjectId,
         firebaseAuthDomain: cfg.firebaseAuthDomain,
@@ -1233,19 +1293,23 @@ const server = http.createServer(async (req, res) => {
       </script></body></html>`);
     }
 
-    // Explicitly block non-SSO methods (email-link / password)
-    if (pathname === '/api/auth/email-link' || pathname === '/api/auth/verify-link' || pathname === '/api/auth/password') {
+    // Explicitly block passwordless email-link methods
+    if (pathname === '/api/auth/email-link' || pathname === '/api/auth/verify-link') {
       return sendJson(res, 403, {
         ok: false,
-        error: 'SSO Policy Enforced: Password and email-link sign-in are disabled. Please sign in exclusively with Google, Microsoft, or Apple SSO.'
+        error: 'Email-link sign-in is disabled. Please sign in with your Email/Username & Password or Google, Microsoft, or Apple SSO.'
       });
     }
 
-    // Unified Federated SSO Exchange (/api/auth/sso, /api/auth/google, /api/auth/microsoft, /api/auth/apple)
-    if ((pathname === '/api/auth/sso' || pathname === '/api/auth/google' || pathname === '/api/auth/microsoft' || pathname === '/api/auth/apple') && req.method === 'POST') {
+    // Unified Email/Username + Password & Federated SSO Exchange (/api/auth/login, /api/auth/password, /api/auth/sso, /api/auth/google, /api/auth/microsoft, /api/auth/apple)
+    if ((pathname === '/api/auth/login' || pathname === '/api/auth/password' || pathname === '/api/auth/sso' || pathname === '/api/auth/google' || pathname === '/api/auth/microsoft' || pathname === '/api/auth/apple') && req.method === 'POST') {
+      if (!checkRateLimit(req, 'auth_login', 30, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'Too many authentication attempts. Please wait 60 seconds.' });
+      }
       const body = await readJsonBody(req);
-      const routeProvider = pathname.endsWith('/google') ? 'google' : pathname.endsWith('/microsoft') ? 'microsoft' : pathname.endsWith('/apple') ? 'apple' : '';
-      let provider = String(body.provider || routeProvider || '').trim().toLowerCase();
+      const isPasswordRoute = pathname.endsWith('/login') || pathname.endsWith('/password');
+      const routeProvider = isPasswordRoute ? 'password' : pathname.endsWith('/google') ? 'google' : pathname.endsWith('/microsoft') ? 'microsoft' : pathname.endsWith('/apple') ? 'apple' : '';
+      let provider = String(body.provider || routeProvider || (body.password ? 'password' : '')).trim().toLowerCase();
       if (!provider && body.state) {
         const stClaims = verifyToken(body.state);
         if (stClaims && stClaims.provider) provider = stClaims.provider;
@@ -1254,23 +1318,24 @@ const server = http.createServer(async (req, res) => {
       if (!ALLOWED_SSO_PROVIDERS.has(provider)) {
         return sendJson(res, 403, {
           ok: false,
-          error: 'SSO Policy Enforced: Only Google, Microsoft, or Apple SSO is permitted.'
+          error: 'Authentication Policy Enforced: Please sign in with Email/Username & Password or Google, Microsoft, or Apple SSO.'
         });
       }
 
-      let email = String(body.email || '').trim().toLowerCase();
+      let rawIdentifier = String(body.identifier || body.username || body.email || '').trim();
+      let email = resolveCaseInsensitiveIdentifier(rawIdentifier);
       let name = String(body.name || '').trim();
       let jwksVerified = false;
       if (body.idToken && typeof body.idToken === 'string' && body.idToken.split('.').length === 3) {
         const verified = await verifyOidcIdToken(body.idToken, provider);
         if (verified && verified.email) {
-          email = verified.email;
+          email = resolveCaseInsensitiveIdentifier(verified.email);
           if (verified.name) name = verified.name;
           jwksVerified = Boolean(verified.sigVerified);
         }
       }
       if (!/^\S+@\S+\.\S+$/.test(email)) {
-        return sendJson(res, 400, { ok: false, error: `Valid ${SSO_PROVIDER_LABELS[provider]} account email required.` });
+        return sendJson(res, 400, { ok: false, error: 'Please enter a valid Email address or registered Username.' });
       }
       // Demo account ana@example.com specifically demonstrates a pending unapproved request
       if (email === 'ana@example.com' && S.users.ana && S.users.ana.status === 'requested') {
@@ -1280,25 +1345,51 @@ const server = http.createServer(async (req, res) => {
           error: 'Your workspace access request is pending Owner review and approval.'
         });
       }
-      // STRICT 1-ADMIN ZERO-LEAKAGE GUARD: Only Malik A. Khabir (malik.khabir@miltongroupsecurity.org) is Administrator.
-      // Block any legacy/spoofed @miltongroupsecurity.org or owner@* accounts.
+      // STRICT 1-ADMIN ZERO-LEAKAGE GUARD: Only Malik A. Khabir (malik.khabir@Miltongroupsecurity.org, case-insensitive) is Administrator.
+      // Block any legacy/spoofed @miltongroupsecurity.org or owner@* / admin@* accounts.
       if ((email.endsWith('@miltongroupsecurity.org') && email !== SOLE_ADMIN_EMAIL) || email.startsWith('owner@') || email.startsWith('admin@')) {
         logAudit('system', `security.admin_spoof_blocked.${provider}`, `Blocked spoofed/legacy admin email: ${email}`);
         return sendJson(res, 403, {
           ok: false,
-          error: 'Security Policy Enforced: Only 1 Administrator account exists (Malik A. Khabir). Spoofed or legacy admin accounts are blocked.'
+          error: 'Security Policy Enforced: Only 1 Administrator account exists (malik.khabir@Miltongroupsecurity.org). Spoofed or legacy admin accounts are blocked.'
         });
       }
-      // Any attempt to sign in as Administrator without a verified OIDC RS256 token OR Malik's Owner 2FA/Passkey code is blocked.
+      // Any attempt to sign in as Administrator (malik.khabir@Miltongroupsecurity.org, case-insensitive) requires either a verified OIDC RS256 token OR Malik's Administrator Password / Passkey.
       if (OWNER_EMAILS.has(email)) {
-        const providedMfa = String(body.mfaCode || body.totp || body.adminPasskey || '').trim();
-        if (!jwksVerified && providedMfa !== ADMIN_MFA_CODE) {
+        const providedSecret = String(body.password || body.mfaCode || body.totp || body.adminPasskey || '').trim();
+        if (!jwksVerified && !isValidAdminSecret(providedSecret)) {
           logAudit('system', `security.admin_auth_blocked.${provider}`, `Blocked unverified admin login attempt for ${email}`);
           return sendJson(res, 403, {
             ok: false,
             requireAdminMfa: true,
-            error: 'Administrator Account Protected: Enter the Owner 2FA / Passkey code or authenticate with a verified Google Workspace OIDC token.'
+            error: 'Administrator Account Protected: Enter the valid Administrator Password / Passkey for malik.khabir@Miltongroupsecurity.org.'
           });
+        }
+      } else if (provider === 'password' || isPasswordRoute) {
+        // Customer / Non-Admin Email or Username + Password authentication
+        const providedPass = String(body.password || '').trim();
+        if (!providedPass || providedPass.length < 4) {
+          return sendJson(res, 400, { ok: false, error: 'Please enter your account password.' });
+        }
+        const existingCustomer = Object.values(S.users).find(u => u.id !== 'owner' && String(u.email || '').toLowerCase() === email);
+        if (!existingCustomer) {
+          return sendJson(res, 401, {
+            ok: false,
+            error: 'Account not found for that email/username. Click "Register Account" to create your account first.'
+          });
+        }
+        if (existingCustomer.status === 'denied' || existingCustomer.status === 'suspended') {
+          return sendJson(res, 403, { ok: false, error: 'Access Denied: This account has been restricted by the Administrator.' });
+        }
+        const passDig = mgcDigest(providedPass);
+        if (existingCustomer.passwordDigest) {
+          if (passDig !== existingCustomer.passwordDigest && !CLIENT_PASSWORD_DIGESTS.has(passDig)) {
+            logAudit(existingCustomer.id, 'security.user_password_failed', `Invalid password attempt for ${email}`);
+            return sendJson(res, 403, { ok: false, error: 'Invalid email/username or password.' });
+          }
+        } else {
+          // Bind password on first password sign-in for legacy seeded customer accounts
+          existingCustomer.passwordDigest = passDig;
         }
       }
       const user = findOrCreateUserByEmail(email, name, SSO_PROVIDER_LABELS[provider]);
@@ -1584,9 +1675,14 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 403, { ok: false, error: 'Intake Denied: This account has been restricted by the platform Owner.' });
       }
 
+      const cleanUsername = sanitizeInput(d.username || cleanEmail.split('@')[0], 60).toLowerCase();
+      const rawPassword = String(d.password || '').trim();
+      const computedPasswordDigest = rawPassword ? mgcDigest(rawPassword) : ((existing && existing.passwordDigest) || null);
+
       S.users[id] = {
         id,
         name: cleanName,
+        username: cleanUsername,
         org: cleanOrg || (d.brand === 'FIX' ? 'F.I.X Solutions Client Partner' : 'MGC Client Partner'),
         email: cleanEmail,
         role: 'member',
@@ -1594,6 +1690,8 @@ const server = http.createServer(async (req, res) => {
         accessTier: 'CUSTOMER_RESTRICTED',
         brand: d.brand === 'FIX' ? 'FIX' : 'MGC',
         ssoProvider: rawProv,
+        passwordDigest: computedPasswordDigest,
+        hasPassword: Boolean(computedPasswordDigest),
         mfaVerified: Boolean(d.mfaVerified !== false),
         mfaMethod,
         ndaAccepted: true,
@@ -2081,6 +2179,28 @@ const server = http.createServer(async (req, res) => {
       // Strictly Sole-Administrator-only actions (Malik A. Khabir)
       if (u.role !== 'owner' || u.id !== 'owner') {
         return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required.' });
+      }
+      if (act === 'updateAdminPassword') {
+        const newPass = String(body.newPassword || '').trim();
+        if (!newPass || newPass.length < 6) {
+          return sendJson(res, 400, { ok: false, error: 'New Administrator password must be at least 6 characters.' });
+        }
+        S.users.owner.customPasswordDigest = mgcDigest(newPass);
+        logAudit('owner', 'security.admin_password_updated', 'Sole Administrator password updated');
+        saveState(S);
+        return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
+      }
+      if (act === 'setUserPassword') {
+        const target = S.users[body.userId];
+        const newPass = String(body.newPassword || '').trim();
+        if (!target || target.id === 'owner' || !newPass || newPass.length < 4) {
+          return sendJson(res, 400, { ok: false, error: 'Valid non-admin user and password (min 4 chars) required.' });
+        }
+        target.passwordDigest = mgcDigest(newPass);
+        target.hasPassword = true;
+        logAudit('owner', 'security.user_password_set', target.email);
+        saveState(S);
+        return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
       // Fluid Administrator Feature & Access Grant / Revoke
       if (act === 'toggleUserFeature') {

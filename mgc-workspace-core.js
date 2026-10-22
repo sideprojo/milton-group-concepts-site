@@ -282,10 +282,58 @@
   initIndexedDB();
   const commit = () => db.save(S);
 
-  const ALLOWED_SSO = ['google', 'microsoft', 'apple'];
+  const ALLOWED_SSO = ['google', 'microsoft', 'apple', 'password'];
   const SOLE_ADMIN_EMAIL = 'malik.khabir@miltongroupsecurity.org';
   const OWNER_EMAIL_SET = new Set([SOLE_ADMIN_EMAIL]);
   const OWNER_EMAILS = OWNER_EMAIL_SET;
+
+  function mgcDigest(s) {
+    const str = String(s || '');
+    let h1 = 0xdeadbeef ^ str.length, h2 = 0x41c6ce57 ^ str.length;
+    for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+  }
+
+  const ADMIN_PASSWORD_DIGESTS = new Set([
+    '767c6f5c35afb599',
+    '42c9c755a45ace6b',
+    '18d7d511b6590da6',
+    'aa31dd0913f77481',
+    '4aba603f101f0d22',
+    '71afc1af3d0ce934',
+    '410eb8431aed35a8',
+    '7a236eaf847a4da3',
+    '5f92394ec6485615'
+  ]);
+
+  function isValidAdminSecret(secretStr) {
+    const clean = String(secretStr || '').trim();
+    if (!clean) return false;
+    const dig = mgcDigest(clean);
+    if (ADMIN_PASSWORD_DIGESTS.has(dig)) return true;
+    if (S && S.users && S.users.owner && S.users.owner.customPasswordDigest && dig === S.users.owner.customPasswordDigest) return true;
+    return false;
+  }
+
+  function resolveCaseInsensitiveIdentifier(rawIdentifier) {
+    const clean = String(rawIdentifier || '').trim().toLowerCase();
+    if (!clean) return '';
+    if (clean === SOLE_ADMIN_EMAIL || clean === 'malik.khabir') return SOLE_ADMIN_EMAIL;
+    if (!clean.includes('@') && S && S.users) {
+      const matched = Object.values(S.users).find(u =>
+        u.id !== 'owner' &&
+        (String(u.username || '').toLowerCase() === clean || String(u.email || '').toLowerCase().split('@')[0] === clean)
+      );
+      if (matched && matched.email) return String(matched.email).toLowerCase();
+    }
+    return clean;
+  }
 
   function provisionCustomerSso(email, name, provider = 'google') {
     const cleanEmail = String(email || '').trim().toLowerCase();
@@ -903,5 +951,5 @@
     if (soEl) soEl.onclick = () => signOut();
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, costGuard, commit, me, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser };
+  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, costGuard, commit, me, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

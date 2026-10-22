@@ -57,7 +57,8 @@
   function users() {
     const cols = W.CATALOG;
     const apps = W.APPS_CATALOG || [];
-    return '<div class="card" style="margin-bottom:12px"><h2>+ Provision &amp; Register New Account (Defaults to SaaS Apps &amp; LMS Only)</h2><div class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><input id="admRegName" placeholder="Full Name" style="flex:1;min-width:150px"><input id="admRegEmail" placeholder="work@organization.org" style="flex:1;min-width:180px"><input id="admRegOrg" placeholder="Organization" style="flex:1;min-width:140px"><select id="admRegProvider"><option value="google">Google SSO</option><option value="microsoft">Microsoft Entra</option><option value="apple">Apple ID</option></select><select id="admRegInterest"><option value="saas">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="ai">Agentic AI</option><option value="cyber">Zero-Trust Cyber</option></select><button class="btn pri" id="admRegGo">Register User</button></div></div>' +
+    return '<div class="card" style="margin-bottom:12px;border-color:rgba(197,179,88,0.45)"><div class="row"><div><span class="chip ok">👑 Sole Administrator Identity</span><h2 style="margin:6px 0 2px">malik.khabir@Miltongroupsecurity.org (Case-Insensitive)</h2><p style="margin:0">Tied exclusively to your Administrator account via Email/Username &amp; Password logon or Federated SSO.</p></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input id="admNewPassInput" type="password" placeholder="Update Admin Password (min 6 chars)" style="min-width:230px"><button class="btn pri" id="admSavePassBtn" type="button">Update Admin Password</button></div></div></div>' +
+      '<div class="card" style="margin-bottom:12px"><h2>+ Provision &amp; Register New Account (Defaults to SaaS Apps &amp; LMS Only)</h2><div class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><input id="admRegName" placeholder="Full Name" style="flex:1;min-width:140px"><input id="admRegEmail" placeholder="work@organization.org" style="flex:1;min-width:170px"><input id="admRegPass" type="password" placeholder="Password" style="flex:1;min-width:130px"><input id="admRegOrg" placeholder="Organization" style="flex:1;min-width:130px"><select id="admRegProvider"><option value="password">Email &amp; Password</option><option value="google">Google SSO</option><option value="microsoft">Microsoft Entra</option><option value="apple">Apple ID</option></select><select id="admRegInterest"><option value="saas">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="ai">Agentic AI</option><option value="cyber">Zero-Trust Cyber</option></select><button class="btn pri" id="admRegGo">Register User</button></div></div>' +
       '<div class="card" style="margin-bottom:12px"><h2>Fluid User Access &amp; Feature Control (' + members().length + ' Non-Admin Users)</h2><p style="margin-bottom:12px">New users only see <b>⚡ SaaS Apps &amp; LMS</b> and <b>💳 Submit Payment &amp; Billing</b> in their Left Side Pane and Top Menu. Click any feature pill below to fluidly grant or revoke access for that user in real time.</p>' +
       members().map(x => {
         const pay = x.paymentProfile;
@@ -189,18 +190,27 @@
       W.toast(presetId === 'grant_all_features' ? '✓ All features & apps granted for ' + name(uidVal) : '🛡️ Reset ' + name(uidVal) + ' to SaaS & LMS Only');
       render();
     });
+    const savePassBtn = document.getElementById('admSavePassBtn');
+    if (savePassBtn) savePassBtn.onclick = async () => {
+      const np = (document.getElementById('admNewPassInput') && document.getElementById('admNewPassInput').value || '').trim();
+      if (np.length < 6) { W.toast('Enter at least 6 characters for new Admin password'); return; }
+      W.postServerAction({ action: 'updateAdminPassword', newPassword: np });
+      document.getElementById('admNewPassInput').value = '';
+      W.toast('✓ Sole Administrator password updated');
+    };
     const regBtn = document.getElementById('admRegGo');
     if (regBtn) regBtn.onclick = async () => {
       const nm = document.getElementById('admRegName').value.trim();
       const em = document.getElementById('admRegEmail').value.trim().toLowerCase();
+      const pw = (document.getElementById('admRegPass') && document.getElementById('admRegPass').value || '').trim();
       const og = document.getElementById('admRegOrg').value.trim() || 'Client Organization';
       const pv = document.getElementById('admRegProvider').value;
       const tr = document.getElementById('admRegInterest').value;
       if (!nm || !/^\S+@\S+\.\S+$/.test(em)) { W.toast('Enter valid name and email'); return; }
       try {
-        await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: nm, email: em, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true }) });
+        await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: nm, email: em, password: pw, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true }) });
       } catch (_) {}
-      W.submitRequest({ name: nm, email: em, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true, mfaVerified: true });
+      W.submitRequest({ name: nm, email: em, password: pw, org: og, ssoProvider: pv, interest: tr, brand: 'MGC', ndaAccepted: true, mfaVerified: true });
       W.toast('Registered ' + nm + ' (' + em + ') — Restricted to SaaS Apps & LMS');
       render();
     };
