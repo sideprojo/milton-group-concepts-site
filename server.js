@@ -1553,6 +1553,8 @@ const ONBOARDING_CATEGORIES = [
   }
 ];
 
+const OPTION_A3_APP_THRESHOLD = 50;
+
 const DIVERGENT_BRIDGES = {
   en_arabic_heritage: {
     id: 'en_arabic_heritage',
@@ -1560,9 +1562,9 @@ const DIVERGENT_BRIDGES = {
     label: 'Languages · English + Arabic → Spanish, Farsi & French',
     familiarAnchors: ['English', 'Arabic Roots & Script'],
     sequence: [
-      { step: 1, domain: 'Spanish', transferPct: '86% Match', rationale: 'Connects 4,000+ Arabic-origin Spanish words with everyday English familiarity.' },
-      { step: 2, domain: 'Farsi (Persian)', transferPct: '88% Match', rationale: 'Pairs familiar script and vocabulary with English-style sentence structure.' },
-      { step: 3, domain: 'French', transferPct: '90% Match', rationale: 'Builds on Spanish grammar and shared Mediterranean vocabulary.' }
+      { step: 1, stageId: 'lang_ar_1', domain: 'Spanish', baseWeight: 86, transferPct: '86% Match', checkpointLabel: 'Complete Spanish Cognate & Audio Drill', unlockedBridge: 'Farsi (Persian) Script & Lexicon Bridge', rationale: 'Connects 4,000+ Arabic-origin Spanish words with everyday English familiarity.' },
+      { step: 2, stageId: 'lang_ar_2', domain: 'Farsi (Persian)', baseWeight: 88, transferPct: '88% Match', checkpointLabel: 'Complete Farsi Script & Verb Bridge Quiz', unlockedBridge: 'French Mediterranean Grammar Bridge', rationale: 'Pairs familiar script and vocabulary with English-style sentence structure.' },
+      { step: 3, stageId: 'lang_ar_3', domain: 'French', baseWeight: 90, transferPct: '90% Match', checkpointLabel: 'Complete Romance Cross-Domain Verification', unlockedBridge: 'Full Trilingual Executive Fluency Badge', rationale: 'Builds on Spanish grammar and shared Mediterranean vocabulary.' }
     ]
   },
   en_us_native: {
@@ -1571,9 +1573,9 @@ const DIVERGENT_BRIDGES = {
     label: 'Languages · English → Spanish → French & Portuguese',
     familiarAnchors: ['English', 'Everyday U.S. Spanish'],
     sequence: [
-      { step: 1, domain: 'Spanish Foundation', transferPct: '82% Match', rationale: 'Uses familiar U.S. Spanish vocabulary to build rapid conversational confidence.' },
-      { step: 2, domain: 'French & Italian', transferPct: '89% Match', rationale: 'Connects Spanish grammar with shared English-French roots for faster reading.' },
-      { step: 3, domain: 'Portuguese & Classical Texts', transferPct: '91% Match', rationale: 'Completes full Romance language fluency across modern and historical sources.' }
+      { step: 1, stageId: 'lang_us_1', domain: 'Spanish Foundation', baseWeight: 82, transferPct: '82% Match', checkpointLabel: 'Complete 100-Root Spanish Cognate Sprint', unlockedBridge: 'French & Italian Lexical Transfer Bridge', rationale: 'Uses familiar U.S. Spanish vocabulary to build rapid conversational confidence.' },
+      { step: 2, stageId: 'lang_us_2', domain: 'French & Italian', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'Complete Shared Romance Syntax Checkpoint', unlockedBridge: 'Portuguese & Epigraphy Reading Bridge', rationale: 'Connects Spanish grammar with shared English-French roots for faster reading.' },
+      { step: 3, stageId: 'lang_us_3', domain: 'Portuguese & Classical Texts', baseWeight: 91, transferPct: '91% Match', checkpointLabel: 'Complete Multi-Romance Applied Assessment', unlockedBridge: 'Pan-Romance Mastery Verification', rationale: 'Completes full Romance language fluency across modern and historical sources.' }
     ]
   },
   east_asian_hangul: {
@@ -1582,9 +1584,9 @@ const DIVERGENT_BRIDGES = {
     label: 'Languages · Korean (Hangul) → Chinese & Japanese',
     familiarAnchors: ['English', 'Phonetic Hangul Alphabet'],
     sequence: [
-      { step: 1, domain: 'Korean (Hangul)', transferPct: '94% Match', rationale: 'Learn the phonetic alphabet in hours while picking up core root words.' },
-      { step: 2, domain: 'Mandarin Chinese', transferPct: '78% Match', rationale: 'Uses shared word roots from Korean to make Chinese characters intuitive.' },
-      { step: 3, domain: 'Japanese', transferPct: '85% Match', rationale: 'Applies Korean sentence structure directly to Japanese grammar.' }
+      { step: 1, stageId: 'lang_ea_1', domain: 'Korean (Hangul)', baseWeight: 94, transferPct: '94% Match', checkpointLabel: 'Complete 24-Letter Hangul Phonetic Drill', unlockedBridge: 'Sino-Korean Root Character Bridge', rationale: 'Learn the phonetic alphabet in hours while picking up core root words.' },
+      { step: 2, stageId: 'lang_ea_2', domain: 'Mandarin Chinese', baseWeight: 78, transferPct: '78% Match', checkpointLabel: 'Complete Shared Hanja/Hanzi Compound Quiz', unlockedBridge: 'Japanese SOV Grammar & Kanji Bridge', rationale: 'Uses shared word roots from Korean to make Chinese characters intuitive.' },
+      { step: 3, stageId: 'lang_ea_3', domain: 'Japanese', baseWeight: 85, transferPct: '85% Match', checkpointLabel: 'Complete East Asian Particle & Syntax Lab', unlockedBridge: 'East Asian Tri-Script Mastery Badge', rationale: 'Applies Korean sentence structure directly to Japanese grammar.' }
     ]
   },
   business_endeavor_scale: {
@@ -1593,9 +1595,9 @@ const DIVERGENT_BRIDGES = {
     label: 'Business · Service Operations → Turnkey Intake → Multi-Rail Scaling',
     familiarAnchors: ['Service Delivery', 'Client Operations'],
     sequence: [
-      { step: 1, domain: 'Service & Offer Standardization', transferPct: '90% Match', rationale: 'Translates existing service delivery into structured digital packages and clear SLAs.' },
-      { step: 2, domain: 'Automated Client Intake & Booking', transferPct: '93% Match', rationale: 'Connects standardized packages directly to 24/7 guided intake and scheduling templates.' },
-      { step: 3, domain: 'Multi-Rail Settlement & Retainers', transferPct: '89% Match', rationale: 'Links recurring engagements to automated ACH/Card billing and double-entry ledger tracking.' }
+      { step: 1, stageId: 'biz_scale_1', domain: 'Service & Offer Standardization', baseWeight: 90, transferPct: '90% Match', checkpointLabel: 'Complete Service Tier & SLA Standardization', unlockedBridge: 'Automated 24/7 Client Intake Bridge', rationale: 'Translates existing service delivery into structured digital packages and clear SLAs.' },
+      { step: 2, stageId: 'biz_scale_2', domain: 'Automated Client Intake & Booking', baseWeight: 93, transferPct: '93% Match', checkpointLabel: 'Verify Turnkey Intake & Routing Blueprint', unlockedBridge: 'Multi-Rail ACH/WAWF Treasury Bridge', rationale: 'Connects standardized packages directly to 24/7 guided intake and scheduling templates.' },
+      { step: 3, stageId: 'biz_scale_3', domain: 'Multi-Rail Settlement & Retainers', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'Complete Retainer & GAAP Ledger Verification', unlockedBridge: 'Autonomous Enterprise Scaling Badge', rationale: 'Links recurring engagements to automated ACH/Card billing and double-entry ledger tracking.' }
     ]
   },
   schooling_academic_bridge: {
@@ -1604,9 +1606,9 @@ const DIVERGENT_BRIDGES = {
     label: 'Schooling · Structured Logic → SQL & Data Systems → Applied Research',
     familiarAnchors: ['Analytical Writing', 'Structured Problem Solving'],
     sequence: [
-      { step: 1, domain: 'Structured Logic & Technical Writing', transferPct: '92% Match', rationale: 'Uses familiar outline logic to master technical specifications and lab documentation.' },
-      { step: 2, domain: 'Relational Data & 3NF SQL Modeling', transferPct: '88% Match', rationale: 'Maps structured outlines directly into relational database tables, keys, and queries.' },
-      { step: 3, domain: 'Systems Architecture & Verification', transferPct: '86% Match', rationale: 'Bridges data schemas into full-stack application architecture and empirical verification.' }
+      { step: 1, stageId: 'sch_acad_1', domain: 'Structured Logic & Technical Writing', baseWeight: 92, transferPct: '92% Match', checkpointLabel: 'Complete APA / Technical Specification Checkpoint', unlockedBridge: 'Relational 3NF Database Schema Bridge', rationale: 'Uses familiar outline logic to master technical specifications and lab documentation.' },
+      { step: 2, stageId: 'sch_acad_2', domain: 'Relational Data & 3NF SQL Modeling', baseWeight: 88, transferPct: '88% Match', checkpointLabel: 'Complete Crow\'s Foot ERD & 3NF SQL Lab', unlockedBridge: 'Full-Stack Architecture & Empirical Lab Bridge', rationale: 'Maps structured outlines directly into relational database tables, keys, and queries.' },
+      { step: 3, stageId: 'sch_acad_3', domain: 'Systems Architecture & Verification', baseWeight: 86, transferPct: '86% Match', checkpointLabel: 'Complete End-to-End Capstone Verification', unlockedBridge: 'Academic & Systems Research Mastery Badge', rationale: 'Bridges data schemas into full-stack application architecture and empirical verification.' }
     ]
   },
   cli_netops_ai: {
@@ -1615,12 +1617,79 @@ const DIVERGENT_BRIDGES = {
     label: 'Upskilling · CLI & Networking → Zero-Trust Security → AI Workflows',
     familiarAnchors: ['Command Line', 'SQL & Logic'],
     sequence: [
-      { step: 1, domain: 'Routing, Linux & SQL Foundations', transferPct: '91% Match', rationale: 'Builds command-line muscle memory using guided terminal and database templates.' },
-      { step: 2, domain: 'Zero-Trust Cloud & Compliance', transferPct: '89% Match', rationale: 'Applies network segmentation directly to identity governance and CMMC / NIST controls.' },
-      { step: 3, domain: 'Guided AI Workflow Templates', transferPct: '87% Match', rationale: 'Connects security policy enforcement to deterministic workflow orchestration.' }
+      { step: 1, stageId: 'tech_up_1', domain: 'Routing, Linux & SQL Foundations', baseWeight: 91, transferPct: '91% Match', checkpointLabel: 'Complete Ghost-CLI & OSPF/BGP Topology Drill', unlockedBridge: 'Zero-Trust CMMC 2.0 & IAM Hardening Bridge', rationale: 'Builds command-line muscle memory using guided terminal and database templates.' },
+      { step: 2, stageId: 'tech_up_2', domain: 'Zero-Trust Cloud & Compliance', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'Complete NIST 800-171 / Zero-Trust Control Audit', unlockedBridge: 'Deterministic Agentic Workflow Bridge', rationale: 'Applies network segmentation directly to identity governance and CMMC / NIST controls.' },
+      { step: 3, stageId: 'tech_up_3', domain: 'Guided AI Workflow Templates', baseWeight: 87, transferPct: '87% Match', checkpointLabel: 'Verify Locked-Template Orchestration Pipeline', unlockedBridge: 'Principal Systems & Cyber Architect Badge', rationale: 'Connects security policy enforcement to deterministic workflow orchestration.' }
     ]
   }
 };
+
+function getCatalogThresholdStatus() {
+  const customResCount = Array.isArray(S && S.customResources) ? S.customResources.length : 0;
+  const customAppsCount = Array.isArray(S && S.customApps) ? S.customApps.length : 0;
+  const totalCount = CATALOG.length + APPS_CATALOG.length + RESOURCES_CATALOG.length + customResCount + customAppsCount;
+  const remaining = Math.max(0, OPTION_A3_APP_THRESHOLD - totalCount);
+  const reached = totalCount >= OPTION_A3_APP_THRESHOLD;
+  if (reached && S && !S.optionA3ThresholdNotified) {
+    S.optionA3ThresholdNotified = true;
+    notifyUser('owner', 'Option A3 Threshold Reached (50+ Apps)', `Catalog reached ${totalCount}/${OPTION_A3_APP_THRESHOLD} modules. Option A3 (Vertex AI / AI Studio Batch Embedding Re-Ranker) is ready for activation.`, 'in-app + email + push');
+    logAudit('owner', 'associative.option_a3_threshold_reached', `Catalog reached ${totalCount}/${OPTION_A3_APP_THRESHOLD} items`);
+  }
+  return {
+    option: 'OPTION_A3_EMBEDDING_RERANKER_MONITOR',
+    currentCount: totalCount,
+    threshold: OPTION_A3_APP_THRESHOLD,
+    remainingToThreshold: remaining,
+    reached,
+    statusLabel: reached
+      ? `Threshold Reached (${totalCount}/${OPTION_A3_APP_THRESHOLD}) — Ready to Activate Option A3`
+      : `Monitoring (${totalCount}/${OPTION_A3_APP_THRESHOLD} Catalog Modules — Auto-Notify Armed at 50)`
+  };
+}
+
+function recordAssociativeMasteryForUser(u, payload) {
+  if (!u) return { ok: false, error: 'Authentication required.' };
+  const d = payload || {};
+  const baselineKey = (d.baselineKey && DIVERGENT_BRIDGES[d.baselineKey])
+    ? d.baselineKey
+    : ((u.divergentBaseline && DIVERGENT_BRIDGES[u.divergentBaseline]) ? u.divergentBaseline : 'en_arabic_heritage');
+  const bridge = DIVERGENT_BRIDGES[baselineKey];
+  const stepNum = Math.max(1, Math.min(3, Number(d.step) || 1));
+  const stageObj = (bridge.sequence || []).find(s => s.step === stepNum) || bridge.sequence[0];
+  if (!u.associativeTelemetry || typeof u.associativeTelemetry !== 'object') {
+    u.associativeTelemetry = { completedStages: {}, weightBoosts: {}, scenarioSelections: {}, events: [] };
+  }
+  const stageKey = `${baselineKey}:step_${stepNum}`;
+  const boostDelta = d.source === 'scenario_branch' ? 4 : 7;
+  const prevBoost = Number(u.associativeTelemetry.weightBoosts[stageKey] || 0);
+  const nextBoost = Math.min(11, prevBoost + boostDelta);
+  u.associativeTelemetry.completedStages[stageKey] = true;
+  u.associativeTelemetry.weightBoosts[stageKey] = nextBoost;
+
+  const nextStepKey = `${baselineKey}:step_${Math.min(3, stepNum + 1)}`;
+  u.associativeTelemetry.weightBoosts[nextStepKey] = Math.min(11, Number(u.associativeTelemetry.weightBoosts[nextStepKey] || 0) + 5);
+
+  if (d.templateId && d.branchId) {
+    u.associativeTelemetry.scenarioSelections[String(d.templateId)] = String(d.branchId);
+  }
+  const newAffinity = Math.min(99, (stageObj.baseWeight || 88) + nextBoost);
+  const evt = {
+    id: uid('ast'),
+    ts: now(),
+    baselineKey,
+    step: stepNum,
+    stageDomain: stageObj.domain,
+    unlockedBridge: stageObj.unlockedBridge,
+    newAffinityPct: `${newAffinity}% Match`,
+    branchId: d.branchId ? sanitizeInput(d.branchId, 60) : null,
+    branchLabel: d.branchLabel ? sanitizeInput(d.branchLabel, 120) : null
+  };
+  u.associativeTelemetry.events = [evt].concat(u.associativeTelemetry.events || []).slice(0, 25);
+  const thresholdStatus = getCatalogThresholdStatus();
+  logAudit(u.id, 'associative.telemetry_mastery', `${stageKey} -> ${newAffinity}% Match (Unlocked: ${stageObj.unlockedBridge})`);
+  saveState(S);
+  return { ok: true, event: evt, telemetry: u.associativeTelemetry, thresholdStatus };
+}
 
 function computeDivergentRecommendations(user) {
   const cats = Array.isArray(user && user.selectedCategories) && user.selectedCategories.length
@@ -1643,6 +1712,8 @@ function computeDivergentRecommendations(user) {
     selectedCategories: cats,
     divergentBaseline: baselineKey,
     bridge,
+    associativeTelemetry: (user && user.associativeTelemetry) || { completedStages: {}, weightBoosts: {}, scenarioSelections: {}, events: [] },
+    catalogThreshold: getCatalogThresholdStatus(),
     ottoProfile: (user && user.ottoProfile) || null,
     recommendedApps: Array.from(recommendedAppIds),
     recommendedResources: Array.from(recommendedResourceIds),
@@ -3898,8 +3969,24 @@ const server = http.createServer(async (req, res) => {
         ok: true,
         categories: ONBOARDING_CATEGORIES,
         divergentBridges: DIVERGENT_BRIDGES,
+        catalogThreshold: getCatalogThresholdStatus(),
         profile: u ? computeDivergentRecommendations(u) : null
       });
+    }
+
+    if (pathname === '/api/associative/catalog-threshold' && req.method === 'GET') {
+      return sendJson(res, 200, Object.assign({ ok: true }, getCatalogThresholdStatus()));
+    }
+
+    if (pathname === '/api/associative/mastery' && req.method === 'POST') {
+      const u = getAuthenticatedUser(req);
+      if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required.' });
+      const body = await readJsonBody(req);
+      if (hasInjectionPayload(body)) {
+        return sendJson(res, 400, { ok: false, code: 'INJECTION_PAYLOAD_REJECTED', error: 'Security Validation Failed: Disallowed input characters detected.' });
+      }
+      const result = recordAssociativeMasteryForUser(u, body.data || body || {});
+      return sendJson(res, result.ok ? 200 : 400, Object.assign({}, result, { state: scopeStateForUser(u) }));
     }
 
     if (pathname === '/api/onboarding/complete' && req.method === 'POST') {
@@ -4033,6 +4120,10 @@ const server = http.createServer(async (req, res) => {
       }
 
       // Member / Self actions
+      if (act === 'recordAssociativeMastery') {
+        const result = recordAssociativeMasteryForUser(u, body.data || body || {});
+        return sendJson(res, result.ok ? 200 : 400, Object.assign({}, result, { state: scopeStateForUser(u) }));
+      }
       if (act === 'submitConsultation') {
         const result = handleConsultationSubmission(u, body.data || body || {});
         return sendJson(res, result.status, result.payload);
@@ -4338,9 +4429,10 @@ const server = http.createServer(async (req, res) => {
         };
         S.customResources = S.customResources.filter(r => r.id !== cleanId);
         S.customResources.push(newRes);
-        logAudit('owner', 'resource.catalog_added', `${cleanId} (${cleanTitle})`);
+        const thresholdStatus = getCatalogThresholdStatus();
+        logAudit('owner', 'resource.catalog_added', `${cleanId} (${cleanTitle}) [Catalog: ${thresholdStatus.currentCount}/${thresholdStatus.threshold}]`);
         saveState(S);
-        return sendJson(res, 200, { ok: true, resource: newRes, resourcesCatalog: getResourcesCatalog(), state: scopeStateForUser(u) });
+        return sendJson(res, 200, { ok: true, resource: newRes, thresholdStatus, resourcesCatalog: getResourcesCatalog(), state: scopeStateForUser(u) });
       }
       if (act === 'postAccountingEntry') {
         if (!isOwnerUser(u)) {

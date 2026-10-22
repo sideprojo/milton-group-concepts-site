@@ -859,7 +859,9 @@
     }
   ];
 
-  // Multi-Domain Associative Learning Sequences (Languages, Business Endeavors, Schooling, Upskilling)
+  // Multi-Domain Associative Learning Sequences (Option A1 Deterministic Matrix + Option A2 Weighted SCORM/Quiz Telemetry Graph)
+  const OPTION_A3_APP_THRESHOLD = 50;
+
   const DIVERGENT_BRIDGES = {
     en_arabic_heritage: {
       id: 'en_arabic_heritage',
@@ -867,9 +869,9 @@
       label: 'Languages · English + Arabic → Spanish, Farsi & French',
       familiarAnchors: ['English', 'Arabic Roots & Script'],
       sequence: [
-        { step: 1, domain: 'Spanish', transferPct: '86% Match', rationale: 'Connects 4,000+ Arabic-origin Spanish words with everyday English familiarity.' },
-        { step: 2, domain: 'Farsi (Persian)', transferPct: '88% Match', rationale: 'Pairs familiar script and vocabulary with English-style sentence structure.' },
-        { step: 3, domain: 'French', transferPct: '90% Match', rationale: 'Builds on Spanish grammar and shared Mediterranean vocabulary.' }
+        { step: 1, stageId: 'lang_ar_1', domain: 'Spanish', baseWeight: 86, transferPct: '86% Match', checkpointLabel: 'SCORM Cognate & Root Drill', unlockedBridge: 'Farsi (Persian) Script & Lexicon Bridge', rationale: 'Connects 4,000+ Arabic-origin Spanish words with everyday English familiarity.' },
+        { step: 2, stageId: 'lang_ar_2', domain: 'Farsi (Persian)', baseWeight: 88, transferPct: '88% Match', checkpointLabel: 'Syntactic & Script Mastery Quiz', unlockedBridge: 'French & Mediterranean Grammar Bridge', rationale: 'Pairs familiar script and vocabulary with English-style sentence structure.' },
+        { step: 3, stageId: 'lang_ar_3', domain: 'French', baseWeight: 90, transferPct: '90% Match', checkpointLabel: 'Applied Trilingual Comprehension Check', unlockedBridge: 'Full Mediterranean & Diplomatic Fluency', rationale: 'Builds on Spanish grammar and shared Mediterranean vocabulary.' }
       ]
     },
     en_us_native: {
@@ -878,9 +880,9 @@
       label: 'Languages · English → Spanish → French & Portuguese',
       familiarAnchors: ['English', 'Everyday U.S. Spanish'],
       sequence: [
-        { step: 1, domain: 'Spanish Foundation', transferPct: '82% Match', rationale: 'Uses familiar U.S. Spanish vocabulary to build rapid conversational confidence.' },
-        { step: 2, domain: 'French & Italian', transferPct: '89% Match', rationale: 'Connects Spanish grammar with shared English-French roots for faster reading.' },
-        { step: 3, domain: 'Portuguese & Classical Texts', transferPct: '91% Match', rationale: 'Completes full Romance language fluency across modern and historical sources.' }
+        { step: 1, stageId: 'lang_us_1', domain: 'Spanish Foundation', baseWeight: 82, transferPct: '82% Match', checkpointLabel: 'High-Frequency Cognate SCORM Check', unlockedBridge: 'French & Italian Lexical Bridge', rationale: 'Uses familiar U.S. Spanish vocabulary to build rapid conversational confidence.' },
+        { step: 2, stageId: 'lang_us_2', domain: 'French & Italian', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'Romance Verb & Pattern Quiz', unlockedBridge: 'Portuguese & Classical Epigraphy Bridge', rationale: 'Connects Spanish grammar with shared English-French roots for faster reading.' },
+        { step: 3, stageId: 'lang_us_3', domain: 'Portuguese & Classical Texts', baseWeight: 91, transferPct: '91% Match', checkpointLabel: 'Applied Reading & Audio Mastery', unlockedBridge: 'Complete Romance Language Mastery', rationale: 'Completes full Romance language fluency across modern and historical sources.' }
       ]
     },
     east_asian_hangul: {
@@ -889,9 +891,9 @@
       label: 'Languages · Korean (Hangul) → Chinese & Japanese',
       familiarAnchors: ['English', 'Phonetic Hangul Alphabet'],
       sequence: [
-        { step: 1, domain: 'Korean (Hangul)', transferPct: '94% Match', rationale: 'Learn the phonetic alphabet in hours while picking up core root words.' },
-        { step: 2, domain: 'Mandarin Chinese', transferPct: '78% Match', rationale: 'Uses shared word roots from Korean to make Chinese characters intuitive.' },
-        { step: 3, domain: 'Japanese', transferPct: '85% Match', rationale: 'Applies Korean sentence structure directly to Japanese grammar.' }
+        { step: 1, stageId: 'lang_ea_1', domain: 'Korean (Hangul)', baseWeight: 94, transferPct: '94% Match', checkpointLabel: 'Hangul Phonetic & Sino-Root Drill', unlockedBridge: 'Mandarin Hanzi Semantic Bridge', rationale: 'Learn the phonetic alphabet in hours while picking up core root words.' },
+        { step: 2, stageId: 'lang_ea_2', domain: 'Mandarin Chinese', baseWeight: 78, transferPct: '78% Match', checkpointLabel: 'Sino-Root Character Recognition Quiz', unlockedBridge: 'Japanese Syntax & Kanji Bridge', rationale: 'Uses shared word roots from Korean to make Chinese characters intuitive.' },
+        { step: 3, stageId: 'lang_ea_3', domain: 'Japanese', baseWeight: 85, transferPct: '85% Match', checkpointLabel: 'SOV Grammar & Particle Checkpoint', unlockedBridge: 'East Asian Tri-System Fluency', rationale: 'Applies Korean sentence structure directly to Japanese grammar.' }
       ]
     },
     business_endeavor_scale: {
@@ -900,9 +902,9 @@
       label: 'Business · Service Operations → Turnkey Intake → Multi-Rail Scaling',
       familiarAnchors: ['Service Delivery', 'Client Operations'],
       sequence: [
-        { step: 1, domain: 'Service & Offer Standardization', transferPct: '90% Match', rationale: 'Translates existing service delivery into structured digital packages and clear SLAs.' },
-        { step: 2, domain: 'Automated Client Intake & Booking', transferPct: '93% Match', rationale: 'Connects standardized packages directly to 24/7 guided intake and scheduling templates.' },
-        { step: 3, domain: 'Multi-Rail Settlement & Retainers', transferPct: '89% Match', rationale: 'Links recurring engagements to automated ACH/Card billing and double-entry ledger tracking.' }
+        { step: 1, stageId: 'biz_scale_1', domain: 'Service & Offer Standardization', baseWeight: 90, transferPct: '90% Match', checkpointLabel: '3-Tier SLA & Scope Verification', unlockedBridge: 'Automated 24/7 Client Intake Bridge', rationale: 'Translates existing service delivery into structured digital packages and clear SLAs.' },
+        { step: 2, stageId: 'biz_scale_2', domain: 'Automated Client Intake & Booking', baseWeight: 93, transferPct: '93% Match', checkpointLabel: 'Turnkey Intake & Conversion Checkpoint', unlockedBridge: 'Multi-Rail ACH / WAWF / Card Settlement', rationale: 'Connects standardized packages directly to 24/7 guided intake and scheduling templates.' },
+        { step: 3, stageId: 'biz_scale_3', domain: 'Multi-Rail Settlement & Retainers', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'GAAP Double-Entry & Tax Reserve Audit', unlockedBridge: 'Enterprise Multi-Entity Scaling', rationale: 'Links recurring engagements to automated ACH/Card billing and double-entry ledger tracking.' }
       ]
     },
     schooling_academic_bridge: {
@@ -911,9 +913,9 @@
       label: 'Schooling · Structured Logic → SQL & Data Systems → Applied Research',
       familiarAnchors: ['Analytical Writing', 'Structured Problem Solving'],
       sequence: [
-        { step: 1, domain: 'Structured Logic & Technical Writing', transferPct: '92% Match', rationale: 'Uses familiar outline logic to master technical specifications and lab documentation.' },
-        { step: 2, domain: 'Relational Data & 3NF SQL Modeling', transferPct: '88% Match', rationale: 'Maps structured outlines directly into relational database tables, keys, and queries.' },
-        { step: 3, domain: 'Systems Architecture & Verification', transferPct: '86% Match', rationale: 'Bridges data schemas into full-stack application architecture and empirical verification.' }
+        { step: 1, stageId: 'sch_acad_1', domain: 'Structured Logic & Technical Writing', baseWeight: 92, transferPct: '92% Match', checkpointLabel: 'Outline & Logic Decomposition Quiz', unlockedBridge: '3NF Relational SQL & ERD Bridge', rationale: 'Uses familiar outline logic to master technical specifications and lab documentation.' },
+        { step: 2, stageId: 'sch_acad_2', domain: 'Relational Data & 3NF SQL Modeling', baseWeight: 88, transferPct: '88% Match', checkpointLabel: 'Crow\'s Foot ERD & SQL Normalization Lab', unlockedBridge: 'Full-Stack Systems & Empirical Verification', rationale: 'Maps structured outlines directly into relational database tables, keys, and queries.' },
+        { step: 3, stageId: 'sch_acad_3', domain: 'Systems Architecture & Verification', baseWeight: 86, transferPct: '86% Match', checkpointLabel: 'Applied Systems & Rubric Checkpoint', unlockedBridge: 'Honors Capstone & Research Readiness', rationale: 'Bridges data schemas into full-stack application architecture and empirical verification.' }
       ]
     },
     cli_netops_ai: {
@@ -922,13 +924,14 @@
       label: 'Upskilling · CLI & Networking → Zero-Trust Security → AI Workflows',
       familiarAnchors: ['Command Line', 'SQL & Logic'],
       sequence: [
-        { step: 1, domain: 'Routing, Linux & SQL Foundations', transferPct: '91% Match', rationale: 'Builds command-line muscle memory using guided terminal and database templates.' },
-        { step: 2, domain: 'Zero-Trust Cloud & Compliance', transferPct: '89% Match', rationale: 'Applies network segmentation directly to identity governance and CMMC / NIST controls.' },
-        { step: 3, domain: 'Guided AI Workflow Templates', transferPct: '87% Match', rationale: 'Connects security policy enforcement to deterministic workflow orchestration.' }
+        { step: 1, stageId: 'upsk_cli_1', domain: 'Routing, Linux & SQL Foundations', baseWeight: 91, transferPct: '91% Match', checkpointLabel: 'Ghost-CLI & Netmiko Verification Lab', unlockedBridge: 'Zero-Trust IAM & CMMC 2.0 Bridge', rationale: 'Builds command-line muscle memory using guided terminal and database templates.' },
+        { step: 2, stageId: 'upsk_cli_2', domain: 'Zero-Trust Cloud & Compliance', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'NIST 800-171 & SC-100 Control Quiz', unlockedBridge: 'Deterministic Workflow Orchestration', rationale: 'Applies network segmentation directly to identity governance and CMMC / NIST controls.' },
+        { step: 3, stageId: 'upsk_cli_3', domain: 'Guided AI Workflow Templates', baseWeight: 87, transferPct: '87% Match', checkpointLabel: 'ModelOps & Policy Automation Check', unlockedBridge: 'Principal Security & Automation Architect', rationale: 'Connects security policy enforcement to deterministic workflow orchestration.' }
       ]
     }
   };
 
+  // Option T1 (Locked Slot-Fill & Decision-Tree Templates) + Option T2 (Interactive Scenario Branching Cards)
   // Strictly Defined & Decided Interactive AI Templates (Zero Free-Text LLM Prompting)
   const DEFINED_AI_TEMPLATES = [
     {
@@ -937,7 +940,38 @@
       title: 'Associative Language Acceleration Template',
       pacing: '30-Day Guided Sequence',
       summary: 'Structured bridge connecting your existing language roots to high-transfer vocabulary, phonetic drills, and SCORM checkpoints.',
-      steps: ['Stage 1: Shared Root & Cognate Activation (Top 500 High-Frequency Anchors)', 'Stage 2: Sentence Structure & Verb Pattern Transfer', 'Stage 3: Applied Conversational & Reading Verification']
+      steps: [
+        'Stage 1: Shared Root & Cognate Activation (Top 500 High-Frequency Anchors)',
+        'Stage 2: Sentence Structure & Verb Pattern Transfer',
+        'Stage 3: Applied Conversational & Reading Verification'
+      ],
+      scenarioPrompt: 'Option T2 · Select Your Language Immersion Scenario Branch:',
+      scenarioBranches: [
+        {
+          id: 'branch_lang_audio',
+          badge: 'Scenario Branch A · +5% Weight',
+          title: 'Conversational Audio & Phonetics',
+          desc: 'Prioritizes spoken cadence, neural audio shadowing, and high-frequency conversational cognate drills.',
+          unlockedFocus: 'Unlocked Stage Focus: Neural Audio Cadence + 300 Spoken Cognate Loops',
+          boostPct: 5
+        },
+        {
+          id: 'branch_lang_script',
+          badge: 'Scenario Branch B · +6% Weight',
+          title: 'Script Decoding & Cognate Reading',
+          desc: 'Connects shared Arabic/Latin/Hangul script roots to rapid headline, document, and epigraphic reading.',
+          unlockedFocus: 'Unlocked Stage Focus: Parallel Script Morphology + Primary Source Reader',
+          boostPct: 6
+        },
+        {
+          id: 'branch_lang_exec',
+          badge: 'Scenario Branch C · +5% Weight',
+          title: 'Executive & Diplomatic Vocabulary',
+          desc: 'Focuses on contract terminology, briefing structures, and professional cross-regional communication.',
+          unlockedFocus: 'Unlocked Stage Focus: Executive Briefing Lexicon + Protocol Scenarios',
+          boostPct: 5
+        }
+      ]
     },
     {
       id: 'tpl_biz_turnkey',
@@ -945,7 +979,38 @@
       title: 'Turnkey Business Intake & Scaling Template',
       pacing: '14-Day Launch Blueprint',
       summary: 'Pre-decided operational template mapping your service tiers to 24/7 guided client intake, SLA milestones, and multi-rail settlement.',
-      steps: ['Stage 1: Standardized 3-Tier Service Scope & Pricing Matrix', 'Stage 2: Guided Client Intake & Calendar Slot Lock', 'Stage 3: Automated ACH / Card Settlement & GAAP Ledger Posting']
+      steps: [
+        'Stage 1: Standardized 3-Tier Service Scope & Pricing Matrix',
+        'Stage 2: Guided Client Intake & Calendar Slot Lock',
+        'Stage 3: Automated ACH / Card Settlement & GAAP Ledger Posting'
+      ],
+      scenarioPrompt: 'Option T2 · Select Your Target Market & Operating Scenario Branch:',
+      scenarioBranches: [
+        {
+          id: 'branch_biz_b2b',
+          badge: 'Scenario Branch A · +6% Weight',
+          title: 'Commercial B2B Retainer Model',
+          desc: 'Structures recurring monthly B2B service packages with $0-fee NACHA ACH settlement and SLA tracking.',
+          unlockedFocus: 'Unlocked Stage Focus: B2B Retainer Schedule + Automated ACH Ledger Rule',
+          boostPct: 6
+        },
+        {
+          id: 'branch_biz_sdvosb',
+          badge: 'Scenario Branch B · +7% Weight',
+          title: 'Federal SDVOSB & WAWF Teaming',
+          desc: 'Aligns capability statements to NAICS 541512/541519 primes with PIEE/WAWF electronic invoicing.',
+          unlockedFocus: 'Unlocked Stage Focus: SAM.gov Capability Matrix + WAWF/PIEE EFT Gate',
+          boostPct: 7
+        },
+        {
+          id: 'branch_biz_direct',
+          badge: 'Scenario Branch C · +5% Weight',
+          title: 'High-Volume Direct Client Portal',
+          desc: 'Optimizes instant self-serve appointment booking, automated estimate cards, and Stripe SAQ-A checkout.',
+          unlockedFocus: 'Unlocked Stage Focus: 60-Second Lead Intake + Instant Card Checkout',
+          boostPct: 5
+        }
+      ]
     },
     {
       id: 'tpl_school_curriculum',
@@ -953,7 +1018,38 @@
       title: 'Academic & Systems Mastery Template',
       pacing: 'Weekly Lab Checkpoints',
       summary: 'Guided academic progression bridging structured analytical writing into 3NF database design, C++ / Python logic, and lab verification.',
-      steps: ['Stage 1: Concept Mapping & Requirement Decomposition', 'Stage 2: Guided Lab Execution (SQL / CLI / Systems Modeling)', 'Stage 3: Rubric Verification & Artifact Packaging']
+      steps: [
+        'Stage 1: Concept Mapping & Requirement Decomposition',
+        'Stage 2: Guided Lab Execution (SQL / CLI / Systems Modeling)',
+        'Stage 3: Rubric Verification & Artifact Packaging'
+      ],
+      scenarioPrompt: 'Option T2 · Select Your Academic Lab & Verification Scenario Branch:',
+      scenarioBranches: [
+        {
+          id: 'branch_school_sql',
+          badge: 'Scenario Branch A · +6% Weight',
+          title: 'Relational SQL & 3NF ER Modeling',
+          desc: 'Maps business rules into Crow\'s Foot ER diagrams, primary/foreign keys, and verified SQL DDL/DML scripts.',
+          unlockedFocus: 'Unlocked Stage Focus: 3NF Schema Validator + Crow\'s Foot ERD Checklist',
+          boostPct: 6
+        },
+        {
+          id: 'branch_school_code',
+          badge: 'Scenario Branch B · +5% Weight',
+          title: 'Guided Console & Algorithmic Logic',
+          desc: 'Steps through control flow, data structures, and deterministic input/output verification checkpoints.',
+          unlockedFocus: 'Unlocked Stage Focus: Modular Code Architecture + Console Output Verifier',
+          boostPct: 5
+        },
+        {
+          id: 'branch_school_apa',
+          badge: 'Scenario Branch C · +5% Weight',
+          title: 'Structured Analytical & Lab Synthesis',
+          desc: 'Transforms technical lab observations and metrics into rubric-aligned documentation and visual tables.',
+          unlockedFocus: 'Unlocked Stage Focus: Empirical Evidence Matrix + Rubric Audit Gate',
+          boostPct: 5
+        }
+      ]
     },
     {
       id: 'tpl_upskill_cert',
@@ -961,9 +1057,128 @@
       title: 'Certification & Cyber Readiness Template',
       pacing: 'Sprint Readiness Track',
       summary: 'Deterministic certification accelerator across CCNA/NetOps, Zero-Trust Security (SC-100/CMMC), and ModelOps governance.',
-      steps: ['Stage 1: Domain Diagnostic & High-Weight Topic Lock', 'Stage 2: EVE-NG / Terminal Topology Verification Drills', 'Stage 3: Timed Readiness Check & Evidence Checklist']
+      steps: [
+        'Stage 1: Domain Diagnostic & High-Weight Topic Lock',
+        'Stage 2: EVE-NG / Terminal Topology Verification Drills',
+        'Stage 3: Timed Readiness Check & Evidence Checklist'
+      ],
+      scenarioPrompt: 'Option T2 · Select Your Technical Architecture Scenario Branch:',
+      scenarioBranches: [
+        {
+          id: 'branch_upskill_ztna',
+          badge: 'Scenario Branch A · +7% Weight',
+          title: 'Zero-Trust IAM & CMMC 2.0 Level 2',
+          desc: 'Focuses on OIDC federation, conditional access policy hardening, and NIST SP 800-171 Rev 3 evidence.',
+          unlockedFocus: 'Unlocked Stage Focus: SC-100 / CMMC L2 Control Matrix + JWKS Audit',
+          boostPct: 7
+        },
+        {
+          id: 'branch_upskill_netops',
+          badge: 'Scenario Branch B · +6% Weight',
+          title: 'EVE-NG Routing & CLI Automation',
+          desc: 'Runs hands-on OSPF, BGP, VLAN trunking, and declarative Ansible playbook verification labs.',
+          unlockedFocus: 'Unlocked Stage Focus: Multi-Area OSPF/BGP Topology + Ansible Validator',
+          boostPct: 6
+        },
+        {
+          id: 'branch_upskill_modelops',
+          badge: 'Scenario Branch C · +6% Weight',
+          title: 'ModelOps & Deterministic AI Governance',
+          desc: 'Covers champion/challenger validation, drift telemetry, and allowlist-bound enterprise AI deployment.',
+          unlockedFocus: 'Unlocked Stage Focus: Champion/Challenger Telemetry + A00-440 Readiness',
+          boostPct: 6
+        }
+      ]
     }
   ];
+
+  function getCatalogThresholdStatus() {
+    const appsCount = APPS_CATALOG.length;
+    const pagesCount = CATALOG.length;
+    const resourcesCount = getResourcesCatalog().length;
+    const templatesCount = DEFINED_AI_TEMPLATES.length;
+    const bridgesCount = Object.keys(DIVERGENT_BRIDGES).length;
+    const totalCatalogCount = appsCount + pagesCount + resourcesCount + templatesCount + bridgesCount;
+    const reachedThreshold = totalCatalogCount >= OPTION_A3_APP_THRESHOLD;
+    return {
+      currentCount: totalCatalogCount,
+      appsCount,
+      pagesCount,
+      resourcesCount,
+      templatesCount,
+      bridgesCount,
+      threshold: OPTION_A3_APP_THRESHOLD,
+      remainingToThreshold: Math.max(0, OPTION_A3_APP_THRESHOLD - totalCatalogCount),
+      reachedThreshold,
+      activeEngine: 'Option A1 (Deterministic Matrix) + Option A2 (Weighted SCORM/Quiz Telemetry Graph)',
+      phase3Status: reachedThreshold
+        ? 'THRESHOLD REACHED (50+): Ready to activate Option A3 (Vertex AI / AI Studio Batch Embedding Re-Ranker)'
+        : 'Armed · Will auto-notify Owner at 50 catalog modules (' + totalCatalogCount + ' / ' + OPTION_A3_APP_THRESHOLD + ' active)'
+    };
+  }
+
+  function recordAssociativeMastery(payload) {
+    if (hasInjectionPayload(payload)) {
+      return { ok: false, error: 'Invalid input payload.' };
+    }
+    const res = postServerAction({ action: 'recordAssociativeMastery', data: payload });
+    if (res && res.ok) {
+      commit();
+      return res;
+    }
+    const u = me();
+    if (!u) return { ok: false, error: 'Authentication required.' };
+    if (!u.associativeTelemetry || typeof u.associativeTelemetry !== 'object') {
+      u.associativeTelemetry = {
+        completedStages: [],
+        selectedScenarioBranches: {},
+        domainWeightBoosts: {},
+        masteryEvents: []
+      };
+    }
+    const tel = u.associativeTelemetry;
+    if (!Array.isArray(tel.completedStages)) tel.completedStages = [];
+    if (!tel.selectedScenarioBranches) tel.selectedScenarioBranches = {};
+    if (!tel.domainWeightBoosts) tel.domainWeightBoosts = {};
+    if (!Array.isArray(tel.masteryEvents)) tel.masteryEvents = [];
+
+    const stageId = sanitizeField(payload && payload.stageId, 64);
+    const bridgeId = sanitizeField(payload && payload.bridgeId, 64) || u.divergentBaseline || 'en_arabic_heritage';
+    const templateId = sanitizeField(payload && payload.templateId, 64);
+    const branchId = sanitizeField(payload && payload.branchId, 64);
+    const boostPct = Math.min(12, Math.max(2, Number((payload && payload.boostPct) || 5)));
+
+    if (stageId && !tel.completedStages.includes(stageId)) {
+      tel.completedStages.push(stageId);
+    }
+    if (templateId && branchId) {
+      tel.selectedScenarioBranches[templateId] = branchId;
+    }
+    const curBoost = Number(tel.domainWeightBoosts[bridgeId] || 0);
+    tel.domainWeightBoosts[bridgeId] = Math.min(11, curBoost + boostPct);
+    tel.masteryEvents.unshift({
+      id: 'MST-' + Math.random().toString(36).slice(2, 7).toUpperCase(),
+      bridgeId,
+      stageId: stageId || null,
+      templateId: templateId || null,
+      branchId: branchId || null,
+      boostPct,
+      recordedAt: now()
+    });
+    tel.masteryEvents = tel.masteryEvents.slice(0, 30);
+    const thresholdInfo = getCatalogThresholdStatus();
+    if (thresholdInfo.reachedThreshold && !S.optionA3ThresholdNotified) {
+      S.optionA3ThresholdNotified = true;
+      notify('owner', 'Option A3 Threshold Reached (50+ Catalog Modules)', 'Catalog size reached ' + thresholdInfo.currentCount + ' modules. Option A3 (Vertex AI / AI Studio Batch Embedding Re-Ranker) is ready for evaluation.');
+    }
+    commit();
+    return {
+      ok: true,
+      associativeTelemetry: u.associativeTelemetry,
+      catalogThreshold: thresholdInfo,
+      state: S
+    };
+  }
 
   function completeNetflixOnboarding(payload) {
     if (hasInjectionPayload(payload)) {
@@ -1867,5 +2082,5 @@
     }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

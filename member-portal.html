@@ -40,6 +40,7 @@
   let onboardingError = '';
   let selectedAiTemplateId = 'tpl_lang_associative';
   let selectedAiPacing = '30-Day Guided Sequence';
+  let selectedScenarioBranches = {};
 
   const isSoleAdmin = () => Boolean(W.isOwner ? W.isOwner(u) : (u && u.role === 'owner' && u.id === 'owner'));
   const isEmp = () => Boolean(W.isEmployee ? W.isEmployee(u) : (u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active'));
@@ -140,28 +141,51 @@
       : (selectedCategories.length ? selectedCategories : ['cat_ai_saas', 'cat_divergent_lang']);
     const userCatObjs = catsCatalog.filter(c => activeCatIds.includes(c.id));
     const ottoProf = (u && u.ottoProfile) || null;
+    const assocTelem = (u && u.associativeTelemetry) || { completedStages: {}, weightBoosts: {}, scenarioSelections: {}, events: [] };
+    const thresholdInfo = W.getCatalogThresholdStatus ? W.getCatalogThresholdStatus() : { currentCount: 18, threshold: 50, reached: false };
 
     const divergentSummaryStrip = activeBridge
       ? '<div class="card" id="divergentLearningSummaryBanner" style="padding:16px 20px;margin-bottom:14px;border-color:rgba(16,185,129,0.42);background:linear-gradient(135deg,rgba(6,78,59,0.26),rgba(10,15,28,0.96))">' +
           '<div class="row" style="margin-bottom:10px">' +
             '<div>' +
-              '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Otto · Personalized Path</span>' +
+              '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Otto · Option A1 + A2 Weighted Telemetry &amp; Completion Graph</span>' +
               '<h3 style="margin:2px 0 0;font-size:14.5px;font-weight:600;color:#fff">' + esc(activeBridge.label) + '</h3>' +
             '</div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
               userCatObjs.map(c => '<span class="chip ok" style="font-size:10.5px">' + esc(c.tag) + '</span>').join('') +
+              '<span class="chip" id="optionA3ThresholdBadge" style="font-size:10.5px;border-color:rgba(59,130,246,0.52);color:#93c5fd">' +
+                (thresholdInfo.reached
+                  ? ('Option A3 Ready · ' + thresholdInfo.currentCount + '/' + thresholdInfo.threshold + ' Apps')
+                  : ('Option A3 Monitor · ' + thresholdInfo.currentCount + '/' + thresholdInfo.threshold + ' Modules (Auto-Notify at 50)')) +
+              '</span>' +
               (ottoProf && ottoProf.dataSharingOptIn ? '<span class="chip" style="font-size:10.5px;border-color:rgba(197,179,88,0.55);color:#fde047">Partner Program Active</span>' : '') +
               '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 10px;font-size:11.5px">Edit Otto</button>' +
             '</div>' +
           '</div>' +
           '<div class="bento-3">' +
-            (activeBridge.sequence || []).map(st =>
-              '<div class="compact-card" style="padding:12px 14px;border-color:rgba(59,130,246,0.32);background:rgba(4,8,20,0.72)">' +
-                '<div class="row"><span class="chip ok" style="font-size:10px">Step ' + esc(st.step) + '</span><small style="font-size:10.5px;color:#93c5fd;font-weight:600">' + esc(st.transferPct) + '</small></div>' +
-                '<h3 style="font-size:12.5px;margin-top:4px;color:#f8fafc">' + esc(st.domain) + '</h3>' +
-                '<p style="font-size:11.5px;color:#94a3b8;margin-top:2px">' + esc(st.rationale) + '</p>' +
-              '</div>'
-            ).join('') +
+            (activeBridge.sequence || []).map((st, idx) => {
+              const stageKey = activeBaselineKey + ':step_' + st.step;
+              const prevKey = activeBaselineKey + ':step_' + (st.step - 1);
+              const isMastered = Boolean(assocTelem.completedStages && assocTelem.completedStages[stageKey]);
+              const isUnlocked = st.step === 1 || isMastered || Boolean(assocTelem.completedStages && assocTelem.completedStages[prevKey]);
+              const boostVal = Number((assocTelem.weightBoosts && assocTelem.weightBoosts[stageKey]) || 0);
+              const dynamicPct = Math.min(99, (st.baseWeight || 88) + boostVal);
+              const matchLabel = dynamicPct + '% Match' + (boostVal > 0 ? ' (+' + boostVal + '% Boost)' : '');
+              return '<div class="compact-card" data-assoc-stage-card="' + esc(st.step) + '" style="padding:12px 14px;border-color:' + (isMastered ? 'rgba(16,185,129,0.58)' : (isUnlocked ? 'rgba(59,130,246,0.42)' : 'rgba(148,163,184,0.22)')) + ';background:rgba(4,8,20,0.78);display:flex;flex-direction:column;justify-content:space-between;gap:8px">' +
+                '<div>' +
+                  '<div class="row">' +
+                    '<span class="chip ' + (isMastered ? 'ok' : (isUnlocked ? '' : 'warn')) + '" style="font-size:10px">' + (isMastered ? ('Step ' + st.step + ' · Mastered') : (isUnlocked ? ('Step ' + st.step + ' · Active') : ('Step ' + st.step + ' · Bridge Ready'))) + '</span>' +
+                    '<small style="font-size:10.5px;color:' + (boostVal > 0 ? '#34d399' : '#93c5fd') + ';font-weight:700">' + esc(matchLabel) + '</small>' +
+                  '</div>' +
+                  '<h3 style="font-size:12.5px;margin-top:5px;color:#f8fafc">' + esc(st.domain) + '</h3>' +
+                  '<p style="font-size:11.5px;color:#94a3b8;margin-top:2px">' + esc(st.rationale) + '</p>' +
+                  (st.unlockedBridge ? '<div style="margin-top:6px;font-size:10.5px;color:' + (isMastered ? '#6ee7b7' : '#cbd5e1') + '"><strong>Unlocks:</strong> ' + esc(st.unlockedBridge) + '</div>' : '') +
+                '</div>' +
+                '<button type="button" class="btn ' + (isMastered ? '' : 'pri') + '" data-complete-assoc-stage="' + esc(st.step) + '" data-baseline-key="' + esc(activeBaselineKey) + '" style="width:100%;justify-content:center;padding:6px 10px;font-size:11px">' +
+                  (isMastered ? '✓ SCORM / Quiz Mastery Verified (+Boost Active)' : ('Verify SCORM / Quiz: ' + esc(st.checkpointLabel || ('Complete Step ' + st.step)))) +
+                '</button>' +
+              '</div>';
+            }).join('') +
           '</div>' +
         '</div>'
       : '';
@@ -413,18 +437,29 @@
         '</div>'
       : '';
 
+    const assocTelemRes = (u && u.associativeTelemetry) || { completedStages: {}, weightBoosts: {}, scenarioSelections: {}, events: [] };
+    const scenarioBranches = Array.isArray(activeTpl.scenarioBranches) ? activeTpl.scenarioBranches : [];
+    const activeBranchId = selectedScenarioBranches[activeTpl.id]
+      || (assocTelemRes.scenarioSelections && assocTelemRes.scenarioSelections[activeTpl.id])
+      || (scenarioBranches[0] && scenarioBranches[0].id)
+      || '';
+    const activeBranchObj = scenarioBranches.find(b => b.id === activeBranchId) || scenarioBranches[0] || null;
+
     const definedTemplateSelectorCard =
       '<div class="card" id="definedTemplateInteractiveCard" style="padding:16px 20px;margin-bottom:12px;border-color:rgba(16,185,129,0.45);background:linear-gradient(135deg,rgba(6,48,44,0.35),rgba(9,16,32,0.96))">' +
         '<div class="row" style="margin-bottom:10px">' +
           '<div>' +
-            '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Resource Fast-Track · Defined Interactive AI Templates</span>' +
-            '<h2 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">Select Your Guided Execution Template (Zero Free-Text Prompting)</h2>' +
+            '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Resource Fast-Track · Option T1 + T2 Defined Interactive AI Templates</span>' +
+            '<h2 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">Select Your Guided Execution Template &amp; Scenario Branch (Zero Free-Text Prompting)</h2>' +
           '</div>' +
-          '<span class="chip ok" style="font-size:10.5px">Deterministic Template Mode</span>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+            '<span class="chip ok" style="font-size:10.5px">Option T1 · Locked Slot-Fill</span>' +
+            '<span class="chip" style="font-size:10.5px;border-color:rgba(59,130,246,0.52);color:#93c5fd">Option T2 · Scenario Branching</span>' +
+          '</div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:1.3fr 1fr auto;gap:10px;align-items:end;margin-bottom:12px">' +
           '<div>' +
-            '<label for="rftTemplateSelect" style="display:block;font-size:11px;font-weight:600;color:#cbd5e1;margin-bottom:4px">Defined Domain &amp; Sequence Template</label>' +
+            '<label for="rftTemplateSelect" style="display:block;font-size:11px;font-weight:600;color:#cbd5e1;margin-bottom:4px">Option T1 · Defined Domain &amp; Sequence Template</label>' +
             '<select id="rftTemplateSelect" style="width:100%;padding:8px 10px;font-size:12.5px">' +
               templates.map(tpl => '<option value="' + esc(tpl.id) + '"' + (tpl.id === activeTpl.id ? ' selected' : '') + '>' + esc(tpl.domain + ' · ' + tpl.title) + '</option>').join('') +
             '</select>' +
@@ -437,6 +472,31 @@
           '</div>' +
           '<button type="button" class="btn pri" id="btnRunDefinedTemplate" style="padding:9px 18px;font-size:12.5px;white-space:nowrap">Apply Defined Template</button>' +
         '</div>' +
+        (scenarioBranches.length
+          ? '<div style="margin-bottom:12px">' +
+              '<div class="row" style="margin-bottom:6px">' +
+                '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd">' + esc(activeTpl.scenarioPrompt || 'Option T2 · Select Interactive Scenario Branch') + '</span>' +
+                (activeBranchObj ? '<span class="chip ok" style="font-size:10px">' + esc(activeBranchObj.unlockedFocus || activeBranchObj.unlockedStage || 'Stage Unlocked') + ' (+' + esc(activeBranchObj.boostPct || 6) + '% Telemetry Boost)</span>' : '') +
+              '</div>' +
+              '<div class="bento-3" style="gap:8px">' +
+                scenarioBranches.map((br, bIdx) => {
+                  const isSel = br.id === activeBranchId;
+                  const bTitle = br.title || br.label || ('Scenario ' + (bIdx + 1));
+                  const bDesc = br.desc || br.focus || '';
+                  const bUnlocks = br.unlockedFocus || br.unlockedStage || '';
+                  return '<div class="compact-card" data-select-scenario-branch="' + esc(br.id) + '" data-template-id="' + esc(activeTpl.id) + '" data-branch-step="' + (bIdx + 1) + '" data-branch-label="' + esc(bTitle) + '" data-branch-unlocked="' + esc(bUnlocks) + '" style="cursor:pointer;padding:11px 13px;border:2px solid ' + (isSel ? '#10b981' : 'rgba(59,130,246,0.34)') + ';background:' + (isSel ? 'rgba(6,78,59,0.38)' : 'rgba(4,8,20,0.78)') + ';transition:all .16s ease">' +
+                    '<div class="row" style="margin-bottom:3px">' +
+                      '<span class="chip ' + (isSel ? 'ok' : '') + '" style="font-size:9.5px">' + (isSel ? '✓ Selected Scenario' : esc(br.badge || ('Option ' + (bIdx + 1)))) + '</span>' +
+                      '<small style="font-size:10px;color:#34d399;font-weight:700">+' + esc(br.boostPct || 6) + '% Match</small>' +
+                    '</div>' +
+                    '<div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">' + esc(bTitle) + '</div>' +
+                    '<p style="margin:0 0 5px;font-size:11px;color:#cbd5e1;line-height:1.35">' + esc(bDesc) + '</p>' +
+                    '<div style="font-size:10.5px;color:#93c5fd"><strong>' + esc(bUnlocks) + '</strong></div>' +
+                  '</div>';
+                }).join('') +
+              '</div>' +
+            '</div>'
+          : '') +
         '<div class="bento-3" style="gap:8px">' +
           (activeTpl.steps || []).map((st, idx) =>
             '<div class="compact-card" style="padding:10px 12px;border-color:rgba(59,130,246,0.34);background:rgba(4,8,20,0.78)">' +
@@ -945,6 +1005,66 @@
         }
       };
     }
+    app.querySelectorAll('[data-complete-assoc-stage]').forEach(btn => btn.onclick = async () => {
+      const stepNum = Number(btn.dataset.completeAssocStage) || 1;
+      const baselineKey = btn.dataset.baselineKey || selectedDivergentBaseline;
+      const payload = { baselineKey, step: stepNum, source: 'scorm_quiz_checkpoint' };
+      try {
+        const resp = await fetch('/api/associative/mastery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if (data && data.ok && data.telemetry && u) {
+          u.associativeTelemetry = data.telemetry;
+        }
+      } catch (_) {}
+      const localRes = W.recordAssociativeMastery ? W.recordAssociativeMastery(payload) : null;
+      if (localRes && localRes.ok && u) {
+        u.associativeTelemetry = localRes.telemetry;
+      }
+      render();
+    });
+    app.querySelectorAll('[data-select-scenario-branch]').forEach(card => card.onclick = async () => {
+      const branchId = card.dataset.selectScenarioBranch;
+      const tplId = card.dataset.templateId || selectedAiTemplateId;
+      const branchStep = Number(card.dataset.branchStep) || 1;
+      const branchLabel = card.dataset.branchLabel || 'Scenario Branch';
+      const unlockedStage = card.dataset.branchUnlocked || 'Next Stage Unlocked';
+      selectedScenarioBranches[tplId] = branchId;
+      const payload = {
+        baselineKey: (u && u.divergentBaseline) || selectedDivergentBaseline,
+        step: branchStep,
+        source: 'scenario_branch',
+        templateId: tplId,
+        branchId,
+        branchLabel
+      };
+      try {
+        const resp = await fetch('/api/associative/mastery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if (data && data.ok && data.telemetry && u) {
+          u.associativeTelemetry = data.telemetry;
+        }
+      } catch (_) {}
+      if (W.recordAssociativeMastery) W.recordAssociativeMastery(payload);
+      const templates = W.DEFINED_AI_TEMPLATES || [];
+      const tpl = templates.find(t => t.id === tplId) || templates[0];
+      const runId = 'RFT-SCN-' + Date.now().toString(36).toUpperCase().slice(-5);
+      activeAiToolOutput = {
+        runId,
+        resourceId: 'resource-fast-track',
+        resourceTitle: 'Option T2 Scenario Branch (' + (tpl ? tpl.domain : 'Guided') + ')',
+        toolTitle: branchLabel + ' [' + selectedAiPacing + ']',
+        summary: 'Scenario Branch Activated: "' + branchLabel + '" unlocked "' + unlockedStage + '" and updated Option A2 associative telemetry weights for ' + (u.name || u.email) + '.'
+      };
+      render();
+    });
     app.querySelectorAll('[data-go-resources]').forEach(b => b.onclick = () => {
       tab = 'resources';
       render();
