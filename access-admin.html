@@ -257,6 +257,8 @@
   let showNewUserDrawer = false;
   let treeCollapsed = false;
   let inspectorHidden = false;
+  let showAdvancedFilters = false;
+  let selectedMatrixCell = 'EXTERNAL_SAAS_LMS|turnkey';
   let accEntityFilter = 'ALL';
 
   const getResourcesList = () => W.getResourcesCatalog ? W.getResourcesCatalog() : (W.RESOURCES_CATALOG || []);
@@ -368,6 +370,7 @@
     });
     const sel = ensureSelectedUser(filtered);
     const colSpan = isOwner ? 7 : 6;
+    const activeAdvFilterCount = [ouFilter !== 'all' && !isEmp, groupFilter !== 'all', statusFilter !== 'all', appFilter !== 'all', resourceFilter !== 'all'].filter(Boolean).length;
 
     return '<div class="ad-center">' +
       '<div class="ad-toolbar" style="flex-direction:column;align-items:stretch;gap:10px">' +
@@ -377,9 +380,11 @@
               (isEmp ? 'Client Directory (OU=External)' : (ouFilter === 'internal' ? 'OU=Internal Users' : ouFilter === 'external' ? 'OU=External Users' : 'All Directory Users')) +
               ' (' + filtered.length + ')' +
             '</span>' +
-            '<input id="adSearchInput" type="search" value="' + esc(searchQuery) + '" placeholder="Filter by name, UPN/email, username, or org" style="flex:1;max-width:280px;padding:7px 11px;font-size:12.5px">' +
+            '<input id="adSearchInput" type="search" value="' + esc(searchQuery) + '" placeholder="Search name, email, username, group, or org..." style="flex:1;max-width:310px;padding:7px 11px;font-size:12.5px">' +
           '</div>' +
           '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
+            '<button type="button" class="btn ' + ((showAdvancedFilters || activeAdvFilterCount > 0) ? 'pri' : '') + '" id="btnToggleAdvFilters" style="padding:6px 11px;font-size:12px">Filters' + (activeAdvFilterCount > 0 ? ' (' + activeAdvFilterCount + ')' : '') + '</button>' +
+            (isOwner ? '<button type="button" class="btn" id="btnOpenTrustSecMatrix" style="padding:6px 11px;font-size:12px;border-color:rgba(197,179,88,0.45);color:#fde047">Access Matrix</button>' : '') +
             '<button type="button" class="btn pri" id="btnToggleNewUser" style="padding:6px 11px;font-size:12px">' + (isEmp ? 'New Client' : 'New User') + '</button>' +
             '<div class="wgw-dropdown">' +
               '<button type="button" class="btn wgw-trigger" aria-expanded="false" aria-controls="adBulkMenu" style="padding:6px 11px;font-size:12px">Quick Actions <span class="wgw-caret" aria-hidden="true"></span></button>' +
@@ -394,7 +399,7 @@
             '</div>' +
           '</div>' +
         '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;align-items:center">' +
+        '<div id="adProgressiveFilterBar" style="display:' + ((showAdvancedFilters || activeAdvFilterCount > 0) ? 'grid' : 'none') + ';grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;align-items:center;padding-top:8px;border-top:1px solid rgba(148,163,184,0.16)">' +
           (isOwner
             ? '<select id="adOuDropdown" aria-label="Filter by Organizational Unit" style="padding:6px 9px;font-size:12px">' +
                 '<option value="all"' + (ouFilter === 'all' ? ' selected' : '') + '>All Organizational Units</option>' +
@@ -622,6 +627,12 @@
       ? [['rbac', 'RBAC'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account'], ['billing', 'PCI']]
       : [['rbac', 'RBAC'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account']];
 
+    const grantedPagesCnt = cols.filter(c => W.can(sel, 'page', c.id, 'view')).length;
+    const grantedAppsCnt = apps.filter(a => W.can(sel, 'app', a.id, 'view')).length;
+    const matchedPolicySet = ou === 'internal'
+      ? 'Internal Staff Access'
+      : ((pay && pay.verified) ? 'Verified Subscriber' : 'Standard Client');
+
     return '<aside class="ad-inspector">' +
       '<div class="ad-inspector-hdr">' +
         '<div class="row">' +
@@ -630,6 +641,14 @@
         '</div>' +
         '<h3 style="margin:6px 0 2px;font-size:14.5px;font-weight:600;color:#fff">' + esc(sel.name) + '</h3>' +
         '<div style="font-size:11.5px;color:#94a3b8;font-family:\'JetBrains Mono\',monospace">' + esc(sel.email) + '</div>' +
+        '<div id="iseCorrelationChainBox" style="margin-top:8px;padding:7px 9px;border-radius:8px;background:rgba(4,8,20,0.88);border:1px solid rgba(59,130,246,0.34);font-size:10.5px;line-height:1.5">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">' +
+            '<span style="color:#93c5fd;font-weight:700;text-transform:uppercase;letter-spacing:.04em">Access Summary</span>' +
+            (isOwner ? '<button type="button" class="btn" data-jump-sgt="' + esc(grp) + '" style="padding:1px 6px;font-size:10px;border-color:rgba(197,179,88,0.45);color:#fde047">Matrix ↗</button>' : '') +
+          '</div>' +
+          '<div style="color:#e2e8f0"><b>Group:</b> <code>' + esc(grp) + '</code> → <b>' + grantedPagesCnt + '</b> Views · <b>' + grantedAppsCnt + '</b> Apps</div>' +
+          '<div style="color:#a7f3d0"><b>Policy:</b> ' + esc(matchedPolicySet) + '</div>' +
+        '</div>' +
       '</div>' +
       '<div class="ad-prop-tabs">' +
         propTabsList.map(t =>
@@ -659,15 +678,161 @@
 
   function renderSecurityGroupsView() {
     if (!isOwner) return '';
+    const sgtRows = [
+      { id: 'DOMAIN_ADMIN',        tag: 'Admin',      ou: 'Builtin',     label: 'Sole Domain Administrator',             members: [{ id: 'owner', name: 'Malik A. Khabir', email: 'malik.khabir@miltongroupsecurity.org' }] },
+      { id: 'INTERNAL_OPERATIONS', tag: 'Operations', ou: 'OU=Internal', label: 'Internal · Full Operations Officer',    members: members().filter(u => getUserGroup(u) === 'INTERNAL_OPERATIONS') },
+      { id: 'INTERNAL_ANALYST',    tag: 'Analyst',    ou: 'OU=Internal', label: 'Internal · Operations & Cyber Analyst', members: members().filter(u => getUserGroup(u) === 'INTERNAL_ANALYST') },
+      { id: 'EXTERNAL_FULL_CLIENT',tag: 'Enterprise', ou: 'OU=External', label: 'External · Turnkey Enterprise Client',  members: members().filter(u => getUserGroup(u) === 'EXTERNAL_FULL_CLIENT') },
+      { id: 'EXTERNAL_SAAS_LMS',   tag: 'Standard',   ou: 'OU=External', label: 'External · SaaS & LMS Subscribers',     members: members().filter(u => getUserGroup(u) === 'EXTERNAL_SAAS_LMS') }
+    ];
+    const destCols = [
+      { id: 'turnkey',   label: 'Turnkey & Sterling (Base)', type: 'App Suite' },
+      { id: 'scorm_lms', label: 'Chronos & Spanish SCORM',   type: 'LMS Apps' },
+      { id: 'fasttrack', label: 'Resource Fast-Track + AI',  type: 'Resource' },
+      { id: 'agile_ops', label: 'Agile & Contract Radar',    type: 'Workspace' },
+      { id: 'ext_dir',   label: 'Client Directory (Ext)',    type: 'Admin Scope' },
+      { id: 'pci_acct',  label: 'GAAP Ledger & PCI Vault',   type: 'Treasury' }
+    ];
+    const matrixRules = {
+      'DOMAIN_ADMIN|turnkey':          { state: 'PERMIT', sgacl: 'Full Access',      desc: 'Unrestricted administrative and launch access.' },
+      'DOMAIN_ADMIN|scorm_lms':        { state: 'PERMIT', sgacl: 'Full Access',      desc: 'Full SCORM 2004 authoring and telemetry access.' },
+      'DOMAIN_ADMIN|fasttrack':        { state: 'PERMIT', sgacl: 'Full Access',      desc: 'Full Resource Fast-Track and template governance.' },
+      'DOMAIN_ADMIN|agile_ops':        { state: 'PERMIT', sgacl: 'Full Access',      desc: 'Full Agile Sprint and SAM.gov Contract Radar control.' },
+      'DOMAIN_ADMIN|ext_dir':          { state: 'PERMIT', sgacl: 'Full Access',      desc: 'Full Internal + External Directory and RBAC control.' },
+      'DOMAIN_ADMIN|pci_acct':         { state: 'PERMIT', sgacl: 'Owner Only',       desc: 'Locked exclusively to Malik A. Khabir (Sole Admin).' },
+
+      'INTERNAL_OPERATIONS|turnkey':   { state: 'PERMIT', sgacl: 'Staff Scope',      desc: 'Permitted to launch and support client showcase apps.' },
+      'INTERNAL_OPERATIONS|scorm_lms': { state: 'PERMIT', sgacl: 'Staff Scope',      desc: 'Permitted to launch all 8 SCORM and SaaS modules.' },
+      'INTERNAL_OPERATIONS|fasttrack': { state: 'PERMIT', sgacl: 'Staff Scope',      desc: 'Permitted to execute defined AI templates for operations.' },
+      'INTERNAL_OPERATIONS|agile_ops': { state: 'PERMIT', sgacl: 'Staff Scope',      desc: 'Permitted across Agile Board, Compliance, and Contract Radar.' },
+      'INTERNAL_OPERATIONS|ext_dir':   { state: 'SCOPED', sgacl: 'Clients Only',     desc: 'Scoped strictly to OU=External Client accounts and consultations.' },
+      'INTERNAL_OPERATIONS|pci_acct':  { state: 'DENY',   sgacl: 'Restricted',       desc: 'Zero employee access to GAAP ledger or PCI gateway settings.' },
+
+      'INTERNAL_ANALYST|turnkey':      { state: 'PERMIT', sgacl: 'Staff Scope',      desc: 'Permitted to launch and support client showcase apps.' },
+      'INTERNAL_ANALYST|scorm_lms':    { state: 'PERMIT', sgacl: 'Analyst LMS',      desc: 'Permitted to run cyber and SCORM training modules.' },
+      'INTERNAL_ANALYST|fasttrack':    { state: 'SCOPED', sgacl: 'Grant Required',   desc: 'Requires explicit qualification or Admin assignment.' },
+      'INTERNAL_ANALYST|agile_ops':    { state: 'PERMIT', sgacl: 'Analyst Ops',      desc: 'Permitted on Agile Board, Compliance, and Academy.' },
+      'INTERNAL_ANALYST|ext_dir':      { state: 'SCOPED', sgacl: 'Clients Only',     desc: 'Scoped strictly to OU=External Client accounts and consultations.' },
+      'INTERNAL_ANALYST|pci_acct':     { state: 'DENY',   sgacl: 'Restricted',       desc: 'Zero employee access to GAAP ledger or PCI gateway settings.' },
+
+      'EXTERNAL_FULL_CLIENT|turnkey':  { state: 'PERMIT', sgacl: 'Client Base',      desc: 'Included in base and enterprise client entitlements.' },
+      'EXTERNAL_FULL_CLIENT|scorm_lms':{ state: 'PERMIT', sgacl: 'Pro / Enterprise', desc: 'Auto-unlocked via Verified Pro ($49) / Enterprise ($250) tier.' },
+      'EXTERNAL_FULL_CLIENT|fasttrack':{ state: 'PERMIT', sgacl: 'Pro / Enterprise', desc: 'Auto-qualified for Resource Fast-Track and Guided Templates.' },
+      'EXTERNAL_FULL_CLIENT|agile_ops':{ state: 'SCOPED', sgacl: 'Client Project',   desc: 'Scoped to the client’s own Agile sprint and contract deliverables.' },
+      'EXTERNAL_FULL_CLIENT|ext_dir':  { state: 'DENY',   sgacl: 'Isolated',         desc: 'Clients are strictly blocked from Directory and other tenants.' },
+      'EXTERNAL_FULL_CLIENT|pci_acct': { state: 'SCOPED', sgacl: 'Self Billing',     desc: 'Client can submit own tokenized payment; zero ledger visibility.' },
+
+      'EXTERNAL_SAAS_LMS|turnkey':     { state: 'PERMIT', sgacl: 'Client Base',      desc: 'Default 2 showcase apps (Client Turnkey Forge and Sterling Auto).' },
+      'EXTERNAL_SAAS_LMS|scorm_lms':   { state: 'TIER',   sgacl: 'Upgrade / Grant',  desc: 'Unlocks automatically on Tier 2/3 payment or Admin grant.' },
+      'EXTERNAL_SAAS_LMS|fasttrack':   { state: 'TIER',   sgacl: 'Upgrade / Grant',  desc: 'Hidden until qualified via Tier 2/3 upgrade or Admin grant.' },
+      'EXTERNAL_SAAS_LMS|agile_ops':   { state: 'DENY',   sgacl: 'Upgrade Required', desc: 'Locked by default least-privilege policy.' },
+      'EXTERNAL_SAAS_LMS|ext_dir':     { state: 'DENY',   sgacl: 'Isolated',         desc: 'Zero cross-tenant or directory traversal permitted.' },
+      'EXTERNAL_SAAS_LMS|pci_acct':    { state: 'SCOPED', sgacl: 'Self Billing',     desc: 'Client can submit own tokenized payment to upgrade tier.' }
+    };
+
+    const [selSgtId, selDestId] = (selectedMatrixCell || 'EXTERNAL_SAAS_LMS|turnkey').split('|');
+    const activeSgtObj = sgtRows.find(r => r.id === selSgtId) || sgtRows[4];
+    const activeDestObj = destCols.find(c => c.id === selDestId) || destCols[0];
+    const activeCellRule = matrixRules[activeSgtObj.id + '|' + activeDestObj.id] || { state: 'SCOPED', sgacl: 'Default Scope', desc: 'Policy-governed relationship.' };
+
     return '<div class="ad-center" style="padding:18px 20px">' +
-      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Security Groups</h2>' +
-      '<table class="ad-table"><thead><tr><th>Group CN</th><th>Scope</th><th>Entitlements</th><th>Members</th></tr></thead><tbody>' +
-        '<tr style="cursor:default"><td><b>DOMAIN_ADMIN</b></td><td><span class="chip ok">Builtin</span></td><td>All Portals, Directory &amp; PCI Gateway</td><td>1</td></tr>' +
-        SECURITY_GROUPS.map(g => {
-          const count = members().filter(u => getUserGroup(u) === g.id).length;
-          return '<tr style="cursor:default"><td><b>' + esc(g.id) + '</b></td><td><span class="chip">' + (g.ou === 'internal' ? 'OU=Internal' : 'OU=External') + '</span></td><td>' + esc(g.label) + '</td><td><b>' + count + '</b></td></tr>';
-        }).join('') +
-      '</tbody></table>' +
+      '<div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:10px">' +
+        '<h2 style="margin:0;font-size:16px;font-weight:700;color:#fff">Security Groups &amp; Access Matrix</h2>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px">' +
+          '<span class="chip ok">PERMIT · Full Access</span>' +
+          '<span class="chip" style="border-color:rgba(59,130,246,0.55);color:#93c5fd">SCOPED · Role-Bound</span>' +
+          '<span class="chip warn">TIER · Upgrade / Grant</span>' +
+          '<span class="chip" style="border-color:rgba(248,113,113,0.5);color:#fca5a5">DENY · Restricted</span>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="ad-table-wrap" style="margin-bottom:14px;border:1px solid var(--line);border-radius:10px">' +
+        '<table class="ad-table" id="iseTrustSecMatrixTable">' +
+          '<thead><tr>' +
+            '<th>Security Group</th>' +
+            '<th>Members</th>' +
+            destCols.map(c => '<th style="text-align:center">' + esc(c.label) + '</th>').join('') +
+          '</tr></thead>' +
+          '<tbody>' +
+            sgtRows.map(r => {
+              return '<tr>' +
+                '<td>' +
+                  '<div style="display:flex;align-items:center;gap:6px"><span class="chip ' + (r.ou === 'Builtin' || r.ou === 'OU=Internal' ? 'ok' : '') + '" style="font-size:10px">' + esc(r.tag) + '</span><b>' + esc(r.id) + '</b></div>' +
+                  '<div style="font-size:11px;color:#94a3b8;margin-top:2px">' + esc(r.label) + ' (' + esc(r.ou) + ')</div>' +
+                '</td>' +
+                '<td><b>' + r.members.length + '</b></td>' +
+                destCols.map(c => {
+                  const key = r.id + '|' + c.id;
+                  const rule = matrixRules[key] || { state: 'DENY', sgacl: 'Restricted' };
+                  const isCellSel = selectedMatrixCell === key;
+                  const badgeStyle = rule.state === 'PERMIT'
+                    ? 'background:rgba(16,185,129,0.18);border-color:rgba(16,185,129,0.55);color:#6ee7b7'
+                    : rule.state === 'SCOPED'
+                      ? 'background:rgba(59,130,246,0.18);border-color:rgba(59,130,246,0.55);color:#93c5fd'
+                      : rule.state === 'TIER'
+                        ? 'background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.55);color:#fde047'
+                        : 'background:rgba(127,29,29,0.28);border-color:rgba(248,113,113,0.45);color:#fca5a5';
+                  return '<td data-matrix-cell="' + esc(key) + '" style="text-align:center;cursor:pointer;background:' + (isCellSel ? 'rgba(197,179,88,0.18)' : 'transparent') + ';outline:' + (isCellSel ? '1.5px solid #fde047' : 'none') + '">' +
+                    '<span class="chip" style="font-size:10px;padding:2px 8px;' + badgeStyle + '">' + esc(rule.state) + '</span>' +
+                    '<div style="font-size:9.5px;color:#94a3b8;margin-top:2px;font-family:\'JetBrains Mono\',monospace">' + esc(rule.sgacl) + '</div>' +
+                  '</td>';
+                }).join('') +
+              '</tr>';
+            }).join('') +
+          '</tbody>' +
+        '</table>' +
+      '</div>' +
+
+      '<!-- Selected Cell Relationship Inspector -->' +
+      '<div id="iseCellCorrelationInspector" style="padding:14px 16px;border-radius:12px;background:rgba(4,8,20,0.88);border:1.5px solid rgba(197,179,88,0.5);margin-bottom:18px">' +
+        '<div class="row" style="margin-bottom:8px;flex-wrap:wrap;gap:8px">' +
+          '<div>' +
+            '<span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fde047">Selected Group &amp; Resource</span>' +
+            '<h3 style="margin:2px 0 0;font-size:14px;color:#fff"><code>' + esc(activeSgtObj.id) + '</code> → <code>' + esc(activeDestObj.label) + '</code></h3>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;align-items:center">' +
+            '<span class="chip ok">Scope: ' + esc(activeCellRule.sgacl) + '</span>' +
+            '<span class="chip">Status: ' + esc(activeCellRule.state) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<p style="margin:0 0 10px;font-size:12px;color:#cbd5e1">' + esc(activeCellRule.desc) + '</p>' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+          '<span style="font-size:11px;font-weight:600;color:#94a3b8">Members in ' + esc(activeSgtObj.id) + ' (' + activeSgtObj.members.length + '):</span>' +
+          (activeSgtObj.members.length
+            ? activeSgtObj.members.map(m =>
+                m.id === 'owner'
+                  ? '<span class="chip ok" style="font-size:11px">👑 ' + esc(m.name) + ' (' + esc(m.email) + ')</span>'
+                  : '<button type="button" class="btn" data-inspect-correlated-user="' + esc(m.id) + '" style="padding:4px 10px;font-size:11px">' + esc(m.name) + ' (' + esc(m.username || m.email) + ') → Inspect</button>'
+              ).join('')
+            : '<span style="font-size:11.5px;color:#64748b">No directory users currently assigned to this group.</span>') +
+        '</div>' +
+      '</div>' +
+
+      '<!-- Collapsible Access Policies -->' +
+      '<div>' +
+        '<div class="row" style="margin-bottom:8px">' +
+          '<h3 style="margin:0;font-size:14px;font-weight:700;color:#fff">Access Policies</h3>' +
+          '<span class="chip" style="font-size:10.5px">Click to Expand</span>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px">' +
+          '<details open style="padding:10px 14px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(16,185,129,0.4)">' +
+            '<summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:#6ee7b7">Administrator Access — malik.khabir@miltongroupsecurity.org + 2FA → DOMAIN_ADMIN</summary>' +
+            '<div style="margin-top:8px;font-size:12px;color:#cbd5e1;padding-left:10px;border-left:2px solid #10b981">Grants Sole Administrator access across all internal portals, Directory &amp; RBAC Console, Access Matrix, and Accounting Ledger.</div>' +
+          '</details>' +
+          '<details style="padding:10px 14px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(59,130,246,0.4)">' +
+            '<summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:#93c5fd">Internal Staff Policy — /employee-login &amp; OU=Internal → INTERNAL_OPERATIONS / INTERNAL_ANALYST</summary>' +
+            '<div style="margin-top:8px;font-size:12px;color:#cbd5e1;padding-left:10px;border-left:2px solid #3b82f6">Enforces isolated Employee Logon (<code>/employee-login</code>), password setup on assigned usernames, email verification, mandatory physical address, and Client-only Directory scope.</div>' +
+          '</details>' +
+          '<details style="padding:10px 14px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.45)">' +
+            '<summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:#fde047">Verified Subscriber Policy — OU=External &amp; Verified Payment ($49 Pro / $250 Enterprise) → EXTERNAL_FULL_CLIENT</summary>' +
+            '<div style="margin-top:8px;font-size:12px;color:#cbd5e1;padding-left:10px;border-left:2px solid #eab308">Automatically unlocks Pro/Enterprise SCORM &amp; SaaS applications, Resource Fast-Track, and guided scenario templates.</div>' +
+          '</details>' +
+          '<details style="padding:10px 14px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(148,163,184,0.3)">' +
+            '<summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:#e2e8f0">Standard Client Policy — /auth &amp; OU=External → EXTERNAL_SAAS_LMS</summary>' +
+            '<div style="margin-top:8px;font-size:12px;color:#cbd5e1;padding-left:10px;border-left:2px solid #94a3b8">Default client onboarding policy: grants 2 showcase apps (Client Turnkey Forge &amp; Sterling Auto Repair) + Consultation Form &amp; Payment Upgrade while isolating ungranted modules.</div>' +
+          '</details>' +
+        '</div>' +
+      '</div>' +
     '</div>';
   }
 
@@ -868,7 +1033,7 @@
         (isOwner
           ? '<button type="button" class="ad-tree-item ' + (tab === 'admin_identity' ? 'active' : '') + '" data-tab="admin_identity"><span class="ad-tree-label">Builtin Administrator</span><span class="ad-tree-count">1</span></button>' +
             '<div class="ad-tree-section">RBAC &amp; Policy</div>' +
-            '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span class="ad-tree-label">Security Groups</span><span class="ad-tree-count">5</span></button>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span class="ad-tree-label">Access Matrix</span><span class="ad-tree-count">5×6</span></button>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'payments' ? 'active' : '') + '" data-tab="payments"><span class="ad-tree-label">PCI-DSS &amp; Billing</span><span class="ad-tree-count">' + payCount + '</span></button>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span class="ad-tree-label">Consultations &amp; Intake</span><span class="ad-tree-count">' + reqTotal + '</span></button>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'audit' ? 'active' : '') + '" data-tab="audit"><span class="ad-tree-label">Event Viewer</span><span class="ad-tree-count">' + (S().audit || []).length + '</span></button>'
@@ -898,7 +1063,7 @@
           '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'external' ? 'pri' : '') + '" data-tab="users" data-ou="external" style="padding:5px 11px;font-size:11.5px">Clients · OU=External (' + extCount + ')</button>' +
           (isOwner
             ? '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'internal' ? 'pri' : '') + '" data-tab="users" data-ou="internal" style="padding:5px 11px;font-size:11.5px">Employees · OU=Internal (' + intCount + ')</button>' +
-              '<button type="button" class="btn ' + (tab === 'groups' ? 'pri' : '') + '" data-tab="groups" style="padding:5px 11px;font-size:11.5px">Security Groups</button>' +
+              '<button type="button" class="btn ' + (tab === 'groups' ? 'pri' : '') + '" data-tab="groups" style="padding:5px 11px;font-size:11.5px">Access Matrix</button>' +
               '<button type="button" class="btn ' + (tab === 'payments' ? 'pri' : '') + '" data-tab="payments" style="padding:5px 11px;font-size:11.5px">Accounting &amp; PCI (' + payCount + ')</button>' +
               '<button type="button" class="btn ' + (tab === 'requests' ? 'pri' : '') + '" data-tab="requests" style="padding:5px 11px;font-size:11.5px">Consultations (' + reqTotal + ')</button>' +
               '<button type="button" class="btn ' + (tab === 'admin_identity' ? 'pri' : '') + '" data-tab="admin_identity" style="padding:5px 11px;font-size:11.5px">Admin Identity</button>' +
@@ -927,6 +1092,44 @@
   }
 
   function bind() {
+    const btnAdvFilters = document.getElementById('btnToggleAdvFilters');
+    if (btnAdvFilters) {
+      btnAdvFilters.onclick = () => {
+        showAdvancedFilters = !showAdvancedFilters;
+        render();
+      };
+    }
+    const btnOpenMatrix = document.getElementById('btnOpenTrustSecMatrix');
+    if (btnOpenMatrix) {
+      btnOpenMatrix.onclick = () => {
+        tab = 'groups';
+        render();
+      };
+    }
+    app.querySelectorAll('[data-jump-sgt]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const sgtId = btn.getAttribute('data-jump-sgt') || 'EXTERNAL_SAAS_LMS';
+        selectedMatrixCell = sgtId + '|turnkey';
+        tab = 'groups';
+        render();
+      };
+    });
+    app.querySelectorAll('[data-matrix-cell]').forEach(cell => {
+      cell.onclick = () => {
+        selectedMatrixCell = cell.getAttribute('data-matrix-cell') || 'EXTERNAL_SAAS_LMS|turnkey';
+        render();
+      };
+    });
+    app.querySelectorAll('[data-inspect-correlated-user]').forEach(btn => {
+      btn.onclick = () => {
+        selectedUserId = btn.getAttribute('data-inspect-correlated-user') || '';
+        tab = 'users';
+        inspectorHidden = false;
+        propTab = 'rbac';
+        render();
+      };
+    });
     const btnTreeCollapse = document.getElementById('btnToggleTreeCollapse');
     if (btnTreeCollapse) {
       btnTreeCollapse.onclick = (e) => {
