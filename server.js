@@ -139,7 +139,10 @@ const CLEAN_ROUTE_TO_FILE = {
   '/vr-deck':           'vr-command.html',
   '/integrations':      'integrations-connections-hub.html',
   '/sam-radar':         'sdvosb-contract-radar.html',
-  '/trust-center':      'compliance-trust-center.html'
+  '/trust-center':      'compliance-trust-center.html',
+  '/newsletter':        'newsletter.html',
+  '/mobile':            'mobile-control.html',
+  '/mobile-control':    'mobile-control.html'
 };
 
 const FILE_TO_CLEAN_ROUTE = {
@@ -162,8 +165,21 @@ const FILE_TO_CLEAN_ROUTE = {
   'vr-command.html':                     '/vr-deck',
   'integrations-connections-hub.html':   '/integrations',
   'sdvosb-contract-radar.html':          '/sam-radar',
-  'compliance-trust-center.html':        '/trust-center'
+  'compliance-trust-center.html':        '/trust-center',
+  'newsletter.html':                     '/newsletter',
+  'mobile-control.html':                 '/mobile'
 };
+
+function isMobileRequest(req, parsedUrl) {
+  if (parsedUrl && parsedUrl.searchParams) {
+    if (parsedUrl.searchParams.get('desktop') === '1') return false;
+    if (parsedUrl.searchParams.get('mobile') === '1') return true;
+  }
+  const chMobile = String(req.headers['sec-ch-ua-mobile'] || '').trim();
+  if (chMobile === '?1') return true;
+  const ua = String(req.headers['user-agent'] || '');
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|CriOS|FxiOS/i.test(ua);
+}
 
 function toCleanRoute(rawTarget) {
   if (!rawTarget || typeof rawTarget !== 'string') return '';
@@ -254,7 +270,57 @@ function seedState() {
     requests: [
       { id: 'r1', uid: 'ana', status: 'requested', created: t },
       { id: 'r2', uid: 'ben', status: 'approved', created: t }
-    ]
+    ],
+    newsletter: {
+      subscribers: [
+        { email: 'malik.khabir@miltongroupsecurity.org', name: 'Malik K. (Owner)', track: 'ALL', frequency: 'weekly', subscribedAt: t, verified: true },
+        { email: 'client@miltongroupsecurity.org', name: 'Customer Account', track: 'AI_AUTOMATION', frequency: 'weekly', subscribedAt: t, verified: true }
+      ],
+      issues: [
+        {
+          id: 'iss_2026_04',
+          issueNumber: 'Issue #04',
+          track: 'ZERO-TRUST & AI OPS',
+          date: 'October 2026',
+          readTime: '3 min read',
+          title: 'Zero-Trust Federated OIDC & Mobile-First Workflow Command',
+          summary: 'Why modern SDVOSB and commercial operations are replacing bloated mobile dashboards with dedicated, minimalist workflow control surfaces and RS256 JWKS federated identity.',
+          highlights: [
+            'Enforced Google, Microsoft, and Apple Federated OIDC with zero password attack surface',
+            'Minimalist Mobile Control Deck: 1-tap approvals, entitlement grants, and sprint progression',
+            'Zero-Charge Cloud Run architecture (min-instances=0) with Firestore free-tier cost guard'
+          ]
+        },
+        {
+          id: 'iss_2026_03',
+          issueNumber: 'Issue #03',
+          track: 'SDVOSB FEDERAL RADAR',
+          date: 'October 2026',
+          readTime: '4 min read',
+          title: 'FY27 Federal Cyber & AI Contracting: CMMC 2.0 Level 2 Readiness',
+          summary: 'Actionable playbook for aligning NAICS 541512/541519 capabilities with DoD Zero-Trust Reference Architecture and automated POA&M evidence collection.',
+          highlights: [
+            'Automated NIST SP 800-171 Rev 3 control family mapping and artifact tracking',
+            'Rapid capability brief dispatch workflow for Sources Sought notices',
+            'WAWF / PIEE milestone invoicing integration for sub-15-day net settlement'
+          ]
+        },
+        {
+          id: 'iss_2026_02',
+          issueNumber: 'Issue #02',
+          track: 'COMMERCIAL AI TURNKEY',
+          date: 'September 2026',
+          readTime: '3 min read',
+          title: '60-Second Lead Response: Autonomous Receptionist & Bay Status Workflows',
+          summary: 'Case study from the Sterling Auto Repair deployment showing how 24/7 AI lead intake + live repair order status tracking eliminates missed calls.',
+          highlights: [
+            'Sub-60-second SMS/Voice AI triage connected directly to Google Calendar slots',
+            'Scoped customer Agile board transparency from intake through production launch',
+            'Turnkey SCORM 2004 4th Edition operator training modules included out of the box'
+          ]
+        }
+      ]
+    }
   };
 }
 
@@ -415,6 +481,9 @@ function loadState() {
         parsed.projects = Object.assign({}, def.projects, parsed.projects || {});
         if (!parsed.items.some(i => i.project === 'p_sterling')) {
           parsed.items = def.items.filter(i => i.project === 'p_sterling').concat(parsed.items || []);
+        }
+        if (!parsed.newsletter || !Array.isArray(parsed.newsletter.issues)) {
+          parsed.newsletter = def.newsletter;
         }
         return parsed;
       }
@@ -615,7 +684,11 @@ function scopeStateForUser(u) {
       projects: {},
       items: [],
       features: [],
-      requests: []
+      requests: [],
+      newsletter: {
+        subscriberCount: ((S.newsletter && S.newsletter.subscribers) || []).length,
+        issues: (S.newsletter && S.newsletter.issues) || []
+      }
     };
   }
   if (u.role === 'owner') {
@@ -644,7 +717,12 @@ function scopeStateForUser(u) {
     projects: allowedProjects,
     items: allowedItems,
     features: myFeatures,
-    requests: myRequests
+    requests: myRequests,
+    newsletter: {
+      subscriberCount: ((S.newsletter && S.newsletter.subscribers) || []).length,
+      subscribed: Boolean(u && ((S.newsletter && S.newsletter.subscribers) || []).some(s => s.email === String(u.email || '').toLowerCase())),
+      issues: (S.newsletter && S.newsletter.issues) || []
+    }
   };
 }
 
@@ -1180,8 +1258,9 @@ const server = http.createServer(async (req, res) => {
       const returnClaims = verifyToken(reqCookies.mgcw_return);
       const requestedNext = (body.next && String(body.next).trim()) || (returnClaims && returnClaims.next) || '';
       const cleanNext = toCleanRoute(requestedNext);
-      const defaultClean = user.role === 'owner' ? '/access-admin' : '/workspace';
-      const target = (cleanNext && cleanNext !== '/auth' && cleanNext !== '/login') ? cleanNext : defaultClean;
+      const mobileClient = isMobileRequest(req, parsedUrl);
+      const defaultClean = mobileClient ? '/mobile' : (user.role === 'owner' ? '/access-admin' : '/workspace');
+      const target = mobileClient ? '/mobile' : ((cleanNext && cleanNext !== '/auth' && cleanNext !== '/login') ? cleanNext : defaultClean);
       const effectiveAllowedApps = user.role === 'owner'
         ? APPS_CATALOG.map(a => a.id)
         : APPS_CATALOG.filter(a => can(user, 'app', a.id, 'view')).map(a => a.id);
@@ -1217,6 +1296,122 @@ const server = http.createServer(async (req, res) => {
         'Location': '/auth'
       });
       return res.end();
+    }
+
+    /* ---------- Executive Intelligence Newsletter API ---------- */
+    if (pathname === '/api/newsletter' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      const nl = S.newsletter || seedState().newsletter;
+      const uEmail = u ? String(u.email || '').toLowerCase() : '';
+      const subRecord = uEmail ? (nl.subscribers || []).find(s => s.email === uEmail) : null;
+      return sendJson(res, 200, {
+        ok: true,
+        subscriberCount: (nl.subscribers || []).length,
+        subscribersCount: 140 + (nl.subscribers || []).length,
+        subscribed: Boolean(subRecord),
+        subscriberTrack: subRecord ? subRecord.track : null,
+        subscribers: (u && u.role === 'owner') ? (nl.subscribers || []) : undefined,
+        issues: nl.issues || []
+      });
+    }
+
+    if (pathname === '/api/newsletter/subscribe' && req.method === 'POST') {
+      if (!checkRateLimit(req, 'newsletter_sub', 20, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'Too many requests. Please wait a moment.' });
+      }
+      const body = await readJsonBody(req);
+      const u = getAuthenticatedUser(req);
+      const email = sanitizeInput(body.email || (u && u.email) || '', 140).toLowerCase();
+      const name = sanitizeInput(body.name || (u && u.name) || email.split('@')[0] || 'Subscriber', 90);
+      const track = ['ALL', 'ZERO_TRUST_CYBER', 'SDVOSB_FEDERAL', 'AI_AUTOMATION'].includes(body.track) ? body.track : 'ALL';
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        return sendJson(res, 400, { ok: false, error: 'Please enter a valid email address.' });
+      }
+      if (!S.newsletter) S.newsletter = seedState().newsletter;
+      const existing = S.newsletter.subscribers.find(s => s.email === email);
+      if (existing) {
+        existing.track = track;
+        existing.name = name || existing.name;
+        existing.updatedAt = now();
+      } else {
+        S.newsletter.subscribers.unshift({
+          email,
+          name,
+          track,
+          frequency: 'weekly',
+          subscribedAt: now(),
+          verified: true
+        });
+      }
+      notifyUser('owner', 'Newsletter Subscriber Added', `${name} (${email}) subscribed to [${track}] Executive Briefings.`);
+      logAudit(u ? u.id : 'public', 'newsletter.subscribe', `${email} (${track})`);
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        email,
+        track,
+        subscriberCount: S.newsletter.subscribers.length,
+        subscribersCount: 140 + S.newsletter.subscribers.length,
+        message: 'Subscribed to MGC & F.I.X Executive Intelligence Briefings.'
+      });
+    }
+
+    if (pathname === '/api/newsletter/unsubscribe' && req.method === 'POST') {
+      const body = await readJsonBody(req);
+      const u = getAuthenticatedUser(req);
+      const email = sanitizeInput(body.email || (u && u.email) || '', 140).toLowerCase();
+      if (S.newsletter && Array.isArray(S.newsletter.subscribers)) {
+        S.newsletter.subscribers = S.newsletter.subscribers.filter(s => s.email !== email);
+        logAudit(u ? u.id : 'public', 'newsletter.unsubscribe', email);
+        saveState(S);
+      }
+      return sendJson(res, 200, { ok: true, email });
+    }
+
+    if (pathname === '/api/newsletter/publish' && req.method === 'POST') {
+      const u = getAuthenticatedUser(req);
+      if (!u || u.role !== 'owner') {
+        return sendJson(res, 403, { ok: false, error: 'Owner authorization required to publish newsletter issues.' });
+      }
+      const body = await readJsonBody(req);
+      const title = sanitizeInput(body.title, 160);
+      const summary = sanitizeInput(body.summary, 600);
+      const track = sanitizeInput(body.track || 'EXECUTIVE BRIEFING', 48).toUpperCase();
+      const highlights = Array.isArray(body.highlights)
+        ? body.highlights.map(h => sanitizeInput(h, 220)).filter(Boolean).slice(0, 5)
+        : String(body.highlights || '').split('\n').map(h => sanitizeInput(h, 220)).filter(Boolean).slice(0, 5);
+      if (!title || !summary) {
+        return sendJson(res, 400, { ok: false, error: 'Title and summary are required.' });
+      }
+      if (!S.newsletter) S.newsletter = seedState().newsletter;
+      const nextNum = (S.newsletter.issues || []).length + 2;
+      const issue = {
+        id: uid('iss'),
+        issueNumber: `Issue #${String(nextNum).padStart(2, '0')}`,
+        track,
+        date: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+        readTime: '3 min read',
+        title,
+        summary,
+        highlights: highlights.length ? highlights : ['Published via MGC Owner Command Deck']
+      };
+      S.newsletter.issues.unshift(issue);
+      Object.values(S.users || {}).forEach(usr => {
+        notifyUser(usr.id, `New Briefing: ${issue.issueNumber} — ${issue.title}`, issue.summary);
+      });
+      logAudit('owner', 'newsletter.publish', `${issue.issueNumber}: ${issue.title}`);
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        issue,
+        issues: S.newsletter.issues,
+        subscriberCount: S.newsletter.subscribers.length,
+        subscribersCount: 140 + S.newsletter.subscribers.length,
+        newsletter: {
+          subscribersCount: 140 + S.newsletter.subscribers.length,
+          issues: S.newsletter.issues
+        }
+      });
     }
 
     /* ---------- Scoped State & Action API ---------- */
@@ -1663,6 +1858,13 @@ const server = http.createServer(async (req, res) => {
         cleanRel = stripped;
       }
     }
+    // Enforce Mobile-Only Minimalist Control & Workflow Experience when accessed from a mobile device
+    const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
+    const isExplicitAuthRoute = pathname === '/auth' || pathname === '/login' || pathname === '/login.html';
+    if (isHtmlRoute && !isExplicitAuthRoute && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
+      cleanRel = 'mobile-control.html';
+    }
+
     const baseName = path.basename(cleanRel);
 
     if (BLOCKED_FILES.has(baseName) || cleanRel.startsWith('.')) {

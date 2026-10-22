@@ -633,6 +633,18 @@
   .demo{font-size:10px;color:#34d399;border:1px solid rgba(16,185,129,0.4);background:rgba(16,185,129,0.14);border-radius:999px;padding:4px 10px;font-weight:800}
   .lock{text-align:center;padding:44px 20px}
   .toast{position:fixed;right:18px;bottom:18px;background:linear-gradient(135deg,#10b981,#059669);color:#022c22;padding:10px 16px;border-radius:12px;font-weight:900;font-size:12px;z-index:99}
+  @view-transition{navigation:auto}
+  ::view-transition-old(root){animation:mgcFadeOut .22s cubic-bezier(.4,0,.2,1) both}
+  ::view-transition-new(root){animation:mgcFadeIn .28s cubic-bezier(.16,1,.3,1) both}
+  @keyframes mgcFadeOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-6px)}}
+  @keyframes mgcFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  body{animation:mgcFadeIn .28s cubic-bezier(.16,1,.3,1)}
+  body.mgc-page-leave{opacity:0;transform:translateY(-6px);transition:opacity .18s ease,transform .18s ease}
+  :focus-visible{outline:2.5px solid #60a5fa;outline-offset:2px}
+  .skip-link{position:fixed;top:-100px;left:16px;z-index:9999;background:#3b82f6;color:#fff;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;transition:top .2s}
+  .skip-link:focus{top:12px}
+  @media(pointer:coarse){.btn,select,input,textarea{min-height:48px;font-size:16px}}
+  @media(prefers-reduced-motion:reduce){*,::before,::after,::view-transition-old(root),::view-transition-new(root){animation-duration:.01ms!important;transition-duration:.01ms!important}}
   @media(max-width:640px){.wrap{padding:12px 12px 90px}.bar{position:static}}`;
 
   const CLEAN_URL_MAP = {
@@ -655,13 +667,32 @@
     'vr-command.html': '/vr-deck',
     'integrations-connections-hub.html': '/integrations',
     'sdvosb-contract-radar.html': '/sam-radar',
-    'compliance-trust-center.html': '/trust-center'
+    'compliance-trust-center.html': '/trust-center',
+    'newsletter.html': '/newsletter',
+    'mobile-control.html': '/mobile'
   };
+
+  function isMobileClientDevice() {
+    try {
+      const qs = new URLSearchParams(location.search);
+      if (qs.get('desktop') === '1') return false;
+      if (qs.get('mobile') === '1') return true;
+      const ua = navigator.userAgent || '';
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|CriOS|FxiOS/i.test(ua)) return true;
+      if (window.innerWidth > 0 && window.innerWidth < 768 && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) return true;
+    } catch (_) {}
+    return false;
+  }
 
   function maskExposedUrl() {
     if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
     try {
-      const file = (location.pathname.split('/').pop() || '').toLowerCase();
+      const pathLower = location.pathname.toLowerCase();
+      const file = (pathLower.split('/').pop() || '').toLowerCase();
+      if (isMobileClientDevice() && !pathLower.includes('mobile') && !pathLower.includes('auth') && !pathLower.includes('login') && !pathLower.includes('/projects/')) {
+        location.replace('/mobile' + (location.hash || ''));
+        return;
+      }
       const clean = CLEAN_URL_MAP[file];
       if (clean && (location.pathname !== clean || location.search.includes('next='))) {
         history.replaceState(null, '', clean + (location.hash || ''));
@@ -669,7 +700,48 @@
     } catch (_) {}
   }
 
-  function injectCss() { maskExposedUrl(); if (document.getElementById('w-css')) return; const s = document.createElement('style'); s.id = 'w-css'; s.textContent = CSS; document.head.appendChild(s); }
+  function wireSmoothTransitions() {
+    if (document.body && !document.querySelector('.skip-link')) {
+      const skip = document.createElement('a');
+      skip.href = '#main-content';
+      skip.className = 'skip-link';
+      skip.textContent = 'Skip to main content';
+      document.body.prepend(skip);
+      const wrap = document.querySelector('.wrap') || document.querySelector('main');
+      if (wrap && !wrap.id) wrap.id = 'main-content';
+    }
+    document.addEventListener('mouseover', (e) => {
+      const a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a || a.dataset.prefetched) return;
+      const href = a.getAttribute('href') || '';
+      if (href.startsWith('/') || href.endsWith('.html')) {
+        a.dataset.prefetched = '1';
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = href;
+        document.head.appendChild(link);
+      }
+    }, { passive: true });
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a || a.target || a.hasAttribute('download')) return;
+      const href = a.getAttribute('href') || '';
+      if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      try {
+        const dest = new URL(href, location.href);
+        if (dest.origin !== location.origin) return;
+        if (dest.pathname === location.pathname && dest.search === location.search && dest.hash) return;
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          e.preventDefault();
+          document.body.classList.add('mgc-page-leave');
+          setTimeout(() => { location.href = dest.href; }, 150);
+        }
+      } catch (_) {}
+    });
+  }
+
+  function injectCss() { maskExposedUrl(); if (!document.getElementById('w-css')) { const s = document.createElement('style'); s.id = 'w-css'; s.textContent = CSS; document.head.appendChild(s); } if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wireSmoothTransitions, { once: true }); else wireSmoothTransitions(); }
   function theme(brand) { document.body.classList.remove('w-mgc', 'w-fix'); document.body.classList.add(brand === 'FIX' ? 'w-fix' : 'w-mgc'); }
   function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2400); }
   function unread(uidv) { return S.notifications.filter(n => n.toUid === uidv && !n.read).length; }
@@ -677,7 +749,7 @@
   /** Renders the top bar with SaaS Apps styling and zero unrequested tracker clutter. */
   function header(active) {
     injectCss(); const u = me(); theme(u ? u.brand : 'MGC');
-    const links = [['member-portal.html', 'My Workspace'], ['agile-board.html', 'Agile Projects'], ['saas-apps-and-lms-showcase.html', '⚡ SaaS Apps']]
+    const links = [['member-portal.html', 'My Workspace'], ['agile-board.html', 'Agile Projects'], ['saas-apps-and-lms-showcase.html', '⚡ SaaS Apps'], ['newsletter.html', '📰 Newsletter']]
       .concat(u && u.role === 'owner' ? [['access-admin.html', 'Access Admin'], ['admin-command-portal.html', '16 Portals Hub']] : []);
     const nav = '<div class="nav">' + links.map(l => '<a class="btn' + (l[0] === active ? ' pri' : '') + '" href="' + l[0] + '">' + l[1] + '</a>').join('') + '</div>';
     const opts = Object.values(S.users).map(x => '<option value="' + x.id + '"' + (u && u.id === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>').join('');

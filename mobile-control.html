@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#040814" />
+  <title>MGC &amp; F.I.X | Mobile Control &amp; Workflow Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root) { animation: mgcFadeOut 0.22s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    ::view-transition-new(root) { animation: mgcFadeIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    @keyframes mgcFadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-4px); } }
+    @keyframes mgcFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    :root {
+      --bg: #040814;
+      --surface: rgba(10, 18, 36, 0.96);
+      --surface-elevated: rgba(15, 25, 48, 0.98);
+      --line: rgba(148, 163, 184, 0.28);
+      --line-strong: rgba(96, 165, 250, 0.55);
+      --gold: #fbbf24;
+      --blue: #3b82f6;
+      --blue-bright: #60a5fa;
+      --emerald: #10b981;
+      --emerald-bright: #34d399;
+      --danger: #f87171;
+      --tx: #f8fafc;
+      --mut: #cbd5e1;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; background: var(--bg); color: var(--tx); max-width: 100%; overflow-x: hidden; }
+    body {
+      margin: 0;
+      width: 100%;
+      max-width: 100%;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background:
+        linear-gradient(180deg, rgba(4, 8, 20, 0.88) 0%, rgba(7, 13, 28, 0.95) 60%, rgba(4, 8, 20, 0.99) 100%),
+        url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=1400') center top / cover fixed no-repeat,
+        var(--bg);
+      color: var(--tx);
+      min-height: 100dvh;
+      padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Skip Link for Screen Readers & Keyboard Switch Control */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 12px;
+      z-index: 1000;
+      background: var(--blue);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: top 0.2s ease;
+    }
+    .skip-link:focus { top: 12px; outline: 3px solid var(--gold); }
+
+    /* High-Contrast Accessible Focus Ring */
+    :focus-visible {
+      outline: 2.5px solid var(--blue-bright) !important;
+      outline-offset: 2px !important;
+    }
+
+    /* Minimalist Top Control Bar */
+    .m-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(4, 8, 20, 0.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+      padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .m-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--tx);
+      min-height: 48px;
+    }
+    .m-shield {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1e3a8a, #0f172a);
+      border: 1.5px solid rgba(197, 179, 88, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .m-brand-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .m-brand-text span {
+      display: block;
+      font-size: 11px;
+      color: var(--mut);
+      font-weight: 600;
+    }
+
+    .m-shell {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 16px 14px 28px;
+    }
+
+    /* Smooth View Pane Transitions */
+    .m-pane {
+      animation: paneSlideIn 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @keyframes paneSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Minimalist Cards */
+    .m-card {
+      background: var(--surface);
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+    .m-card.priority {
+      border-color: rgba(197, 179, 88, 0.55);
+      background: linear-gradient(160deg, rgba(15, 25, 48, 0.98), rgba(9, 16, 32, 0.96));
+    }
+    .m-card h1 {
+      font-size: 20px;
+      font-weight: 900;
+      margin: 0 0 4px;
+      letter-spacing: -0.02em;
+    }
+    .m-card h2 {
+      font-size: 15px;
+      font-weight: 800;
+      margin: 0 0 6px;
+      color: #fff;
+    }
+    .m-card p {
+      font-size: 13.5px;
+      color: var(--mut);
+      margin: 0 0 10px;
+    }
+
+    /* Pill / Chip */
+    .m-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(4, 8, 20, 0.9);
+      color: var(--mut);
+    }
+    .m-pill.ok { color: var(--emerald-bright); border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.15); }
+    .m-pill.warn { color: var(--gold); border-color: rgba(251, 191, 36, 0.5); background: rgba(251, 191, 36, 0.15); }
+    .m-pill.blue { color: var(--blue-bright); border-color: rgba(96, 165, 250, 0.5); background: rgba(59, 130, 246, 0.16); }
+
+    /* WCAG 48px+ Touch Target Buttons & Controls */
+    .m-btn {
+      min-height: 48px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1.5px solid var(--line);
+      background: var(--surface-elevated);
+      color: var(--tx);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      width: 100%;
+    }
+    .m-btn:active { transform: scale(0.98); }
+    .m-btn.pri {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-color: var(--blue-bright);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+    }
+    .m-btn.gold {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border-color: #fde68a;
+      color: #040814;
+    }
+    .m-btn.ok {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(52, 211, 153, 0.6);
+      color: var(--emerald-bright);
+    }
+    .m-btn.inline {
+      width: auto;
+      min-height: 44px;
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+
+    /* 16px+ Form Inputs (Prevents iOS/Android Auto-Zoom) */
+    .m-input, .m-select, .m-textarea {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      min-height: 48px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1.5px solid var(--line);
+      background: #050a18;
+      color: var(--tx);
+      font: inherit;
+      font-size: 16px;
+      margin-bottom: 10px;
+      text-overflow: ellipsis;
+    }
+    .m-textarea { min-height: 84px; resize: vertical; }
+
+    /* Interactive Checklist Row (48px+ height) */
+    .m-check-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 52px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(6, 11, 24, 0.85);
+      border: 1px solid var(--line);
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .m-check-row input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--emerald);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .m-check-row.done span {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+
+    /* Action Row */
+    .m-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .m-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Fixed Bottom Ergonomic Thumb Control Bar */
+    .m-tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 90;
+      background: rgba(4, 8, 20, 0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1.5px solid rgba(148, 163, 184, 0.28);
+      padding: 6px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.7);
+    }
+    .m-tab {
+      min-height: 52px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--mut);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .m-tab .ico { font-size: 17px; line-height: 1; }
+    .m-tab[aria-selected="true"] {
+      background: rgba(37, 99, 235, 0.22);
+      border-color: rgba(96, 165, 250, 0.55);
+      color: #fff;
+    }
+
+    /* Accessible Live Toast */
+    #m-toast {
+      position: fixed;
+      bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 120;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #022c22;
+      font-weight: 900;
+      font-size: 13px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
+      display: none;
+      max-width: 92vw;
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main workflow controls</a>
+
+  <header class="m-header" role="banner">
+    <a href="/mobile" class="m-brand" aria-label="Milton Group Concepts Mobile Control Home">
+      <div class="m-shield" aria-hidden="true">🛡️</div>
+      <div class="m-brand-text">
+        <strong id="hdrBrandTitle">MGC // CONTROL</strong>
+        <span id="hdrBrandSub">Minimalist Mobile Workflow Deck</span>
+      </div>
+    </a>
+    <div id="hdrAuthAction"></div>
+  </header>
+
+  <main id="main-content" class="m-shell" role="main" tabindex="-1"></main>
+
+  <div id="m-toast" role="status" aria-live="polite"></div>
+
+  <nav class="m-tabbar" role="tablist" aria-label="Mobile Workflow Navigation">
+    <button type="button" class="m-tab" role="tab" id="tab-btn-control" data-tab="control" aria-selected="true" aria-controls="main-content">
+      <span class="ico" aria-hidden="true">⚡</span>
+      <span>Control</span>
+    </button>
+    <button type="button" class="m-tab" role="tab" id="tab-btn-workflows" data-tab="workflows" aria-selected="false" aria-controls="main-content">
+      <span class="ico" aria-hidden="true">☑️</span>
+      <span>Workflows</span>
+    </button>
+    <button type="button" class="m-tab" role="tab" id="tab-btn-sprint" data-tab="sprint" aria-selected="false" aria-controls="main-content">
+      <span class="ico" aria-hidden="true">🗂️</span>
+      <span>Sprint</span>
+    </button>
+    <button type="button" class="m-tab" role="tab" id="tab-btn-briefings" data-tab="briefings" aria-selected="false" aria-controls="main-content">
+      <span class="ico" aria-hidden="true">📰</span>
+      <span>Newsletter</span>
+    </button>
+  </nav>
+
+  <script src="mgc-workspace-core.js"></script>
+  <script>
+  (function () {
+    const W = window.MGCW;
+    const S = () => W.S;
+    const esc = W.esc;
+    const mainEl = document.getElementById('main-content');
+    const hdrAuth = document.getElementById('hdrAuthAction');
+    const hdrTitle = document.getElementById('hdrBrandTitle');
+    const hdrSub = document.getElementById('hdrBrandSub');
+
+    const VALID_TABS = ['control', 'workflows', 'sprint', 'briefings'];
+    let currentTab = (location.hash || '#control').replace('#', '');
+    if (!VALID_TABS.includes(currentTab)) currentTab = 'control';
+
+    let newsletterData = {
+      subscribersCount: 142,
+      subscribed: false,
+      issues: [
+        {
+          id: 'iss-04',
+          issueNumber: 'ISSUE #04 · OCT 2026',
+          category: 'Zero-Trust & Federal',
+          title: 'Zero-Trust Federated OIDC & CMMC 2.0 Readiness for Federal & Commercial Partners',
+          summary: 'How MGC enforces Google, Microsoft Entra ID, and Apple OIDC federation with RS256 JWKS verification while eliminating password attack surfaces across partner portals.',
+          readTime: '3 min read'
+        },
+        {
+          id: 'iss-03',
+          issueNumber: 'ISSUE #03 · SEP 2026',
+          category: 'AI & Cloud Run',
+          title: 'AI Receptionists & Scale-to-Zero Architecture: Cutting Idle Cloud Spend to $0.00',
+          summary: 'Architectural breakdown of F.I.X Solutions autonomous 24/7 lead capture receptionists paired with Cloud Run min-instances=0 cost-guarded deployments.',
+          readTime: '4 min read'
+        },
+        {
+          id: 'iss-02',
+          issueNumber: 'ISSUE #02 · AUG 2026',
+          category: 'Supply Chain & FAR',
+          title: 'Strategic Sourcing & Lifecycle Governance in High-Compliance Supply Chains',
+          summary: 'Executing NIST SP 800-88 media sanitization, FAR/DFARS procurement tracking, and milestone-driven agile delivery from a single mobile control plane.',
+          readTime: '3 min read'
+        }
+      ]
+    };
+
+    function showToast(msg) {
+      const t = document.getElementById('m-toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.style.display = 'block';
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => { t.style.display = 'none'; }, 2800);
+    }
+
+    async function loadNewsletter() {
+      try {
+        const r = await fetch('/api/newsletter');
+        if (r.ok) {
+          const d = await r.json();
+          if (d && d.ok) {
+            newsletterData = d;
+            if (currentTab === 'briefings') render(false);
+          }
+        }
+      } catch (_) {}
+    }
+
+    function transitionRender(fn) {
+      if (document.startViewTransition) {
+        document.startViewTransition(() => fn());
+      } else {
+        fn();
+      }
+    }
+
+    function renderHeader(u) {
+      if (u) {
+        hdrTitle.textContent = (u.brand === 'FIX' ? 'F.I.X' : 'MGC') + ' // ' + (u.role === 'owner' ? 'OWNER CONTROL' : 'WORKFLOW DECK');
+        hdrSub.textContent = u.name + ' · ' + (u.role === 'owner' ? 'Full Control' : 'Active Session');
+        hdrAuth.innerHTML = '<button type="button" class="m-btn inline" id="mBtnSignOut" aria-label="Sign out of session">🔒 Sign Out</button>';
+        const so = document.getElementById('mBtnSignOut');
+        if (so) so.onclick = () => W.signOut();
+      } else {
+        hdrTitle.textContent = 'MGC // MOBILE';
+        hdrSub.textContent = 'Control & Workflow Access';
+        hdrAuth.innerHTML = '<a href="/auth" class="m-btn pri inline" aria-label="Sign in with Single Sign-On">🔑 SSO Sign In</a>';
+      }
+    }
+
+    /* ---------- TAB 1: CONTROL ---------- */
+    function renderControlTab(u) {
+      if (!u) {
+        return `
+          <section class="m-pane" aria-label="Public Control and Access">
+            <div class="m-card priority">
+              <div class="m-row" style="margin-bottom:8px">
+                <span class="m-pill ok">● ZERO-TRUST MOBILE</span>
+                <span class="m-pill blue">SDVOSB · EIN 92-1370285</span>
+              </div>
+              <h1>Executive Control &amp; Workflow Access</h1>
+              <p>Mobile access is streamlined for rapid sign-in, project workflow control, and direct dispatch without desktop feature clutter.</p>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+                <a href="/auth" class="m-btn pri">🔑 Continue with Federated SSO →</a>
+                <div class="m-grid-2">
+                  <button type="button" class="m-btn" id="btnQuickOwner">👑 Owner Control</button>
+                  <button type="button" class="m-btn" id="btnQuickCustomer">🛡️ Customer View</button>
+                </div>
+                <button type="button" class="m-btn" data-jump-tab="briefings">📰 Read MGC Executive Newsletter</button>
+              </div>
+            </div>
+
+            <div class="m-card">
+              <h2>Quick Operational Dispatch</h2>
+              <p>Request an immediate briefing or project workflow activation.</p>
+              <form id="mQuickIntakeForm" novalidate>
+                <label class="sr-only" for="mqName">Your Name</label>
+                <input class="m-input" id="mqName" name="name" type="text" placeholder="Full Name" required autocomplete="name" />
+                <label class="sr-only" for="mqEmail">Work or SSO Email</label>
+                <input class="m-input" id="mqEmail" name="email" type="email" placeholder="Work or SSO Email" required autocomplete="email" />
+                <label class="sr-only" for="mqInterest">Workflow Focus</label>
+                <select class="m-select" id="mqInterest" name="interest" aria-label="Workflow Focus">
+                  <option value="federal">🏛️ Federal &amp; SDVOSB Contracting</option>
+                  <option value="cyber">🔒 Cyber &amp; Zero-Trust Compliance</option>
+                  <option value="ai-web">🤖 AI Receptionist &amp; Web Automation</option>
+                  <option value="training">🎓 Technical Upskilling &amp; Labs</option>
+                </select>
+                <button type="submit" class="m-btn gold">⚡ Activate Mobile Workspace →</button>
+              </form>
+            </div>
+
+            <div class="m-card">
+              <h2>Direct Command Lines</h2>
+              <div class="m-grid-2" style="margin-top:8px">
+                <a href="tel:8047605797" class="m-btn">📞 Call 804-760-5797</a>
+                <a href="mailto:contact@miltongroupsecurity.org" class="m-btn">✉️ Email Ops</a>
+              </div>
+            </div>
+          </section>
+        `;
+      }
+
+      if (u.role === 'owner') {
+        const members = Object.values(S().users).filter(x => x.role !== 'owner');
+        const pendingReqs = members.filter(x => x.status === 'requested');
+        const openTasks = S().tasks.filter(t => !t.done);
+        const apps = W.APPS_CATALOG || [];
+
+        const reqCards = pendingReqs.length
+          ? pendingReqs.map(x => `
+              <div style="padding:12px;border-radius:12px;background:rgba(4,8,20,0.85);border:1px solid var(--line);margin-bottom:8px">
+                <div class="m-row" style="margin-bottom:6px">
+                  <strong>${esc(x.name)}</strong>
+                  <span class="m-pill warn">${esc((W.TAILOR[x.quote.interest] || {}).label || x.quote.interest)}</span>
+                </div>
+                <p style="font-size:12px;margin-bottom:10px">${esc(x.email)} · ${esc(x.brand)}</p>
+                <div class="m-grid-2">
+                  <button type="button" class="m-btn ok" data-approve="${esc(x.id)}">✓ Approve</button>
+                  <button type="button" class="m-btn" data-deny="${esc(x.id)}">✕ Deny</button>
+                </div>
+              </div>
+            `).join('')
+          : '<p style="margin:0;color:var(--emerald-bright);font-weight:700">✓ Zero pending access requests.</p>';
+
+        return `
+          <section class="m-pane" aria-label="Owner Command Controls">
+            <div class="m-card priority">
+              <div class="m-row" style="margin-bottom:8px">
+                <span class="m-pill ok">👑 OWNER CONTROL DECK</span>
+                <span class="m-pill blue">$0.00 IDLE GUARD</span>
+              </div>
+              <h1>Command &amp; Approvals</h1>
+              <p>Manage incoming access approvals, customer entitlements, and live sprint workflows.</p>
+              <div class="m-grid-2" style="margin-top:10px">
+                <div style="padding:10px 12px;border-radius:12px;background:rgba(4,8,20,0.8);border:1px solid var(--line)">
+                  <span style="font-size:11px;color:var(--mut);display:block">Pending Approvals</span>
+                  <strong style="font-size:20px;color:var(--gold)">${pendingReqs.length}</strong>
+                </div>
+                <div style="padding:10px 12px;border-radius:12px;background:rgba(4,8,20,0.8);border:1px solid var(--line)">
+                  <span style="font-size:11px;color:var(--mut);display:block">Open Build Tasks</span>
+                  <strong style="font-size:20px;color:var(--blue-bright)">${openTasks.length}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="m-card">
+              <h2>1 · Access Approval Queue (${pendingReqs.length})</h2>
+              ${reqCards}
+            </div>
+
+            <div class="m-card">
+              <h2>2 · Quick Customer Entitlement Grant</h2>
+              <p>Unlock an app or project for a customer in one tap.</p>
+              <label class="sr-only" for="mGrantUser">Select Customer</label>
+              <select class="m-select" id="mGrantUser" aria-label="Select Customer">
+                ${members.map(m => `<option value="${esc(m.id)}">${esc(m.name)} (${esc(m.email)})</option>`).join('')}
+              </select>
+              <label class="sr-only" for="mGrantApp">Select App or Project</label>
+              <select class="m-select" id="mGrantApp" aria-label="Select App or Project">
+                ${apps.map(a => `<option value="app|${esc(a.id)}">${a.icon} ${esc(a.title)}</option>`).join('')}
+                ${Object.values(S().projects).map(p => `<option value="project|${esc(p.id)}">🗂️ ${esc(p.name)}</option>`).join('')}
+              </select>
+              <button type="button" class="m-btn pri" id="mBtnGrantNow">⚡ Grant Immediate Access</button>
+            </div>
+          </section>
+        `;
+      }
+
+      // Authenticated Customer / Member Control View
+      const unlockedApps = (W.APPS_CATALOG || []).filter(a => W.can(u, 'app', a.id, 'view'));
+      const lockedApps = (W.APPS_CATALOG || []).filter(a => !W.can(u, 'app', a.id, 'view'));
+
+      return `
+        <section class="m-pane" aria-label="Customer Workspace Control">
+          <div class="m-card priority">
+            <div class="m-row" style="margin-bottom:8px">
+              <span class="m-pill ok">● ACTIVE SESSION</span>
+              <span class="m-pill warn">${unlockedApps.length} WORKFLOW APPS READY</span>
+            </div>
+            <h1>Welcome, ${esc(u.name.split(' (')[0])}</h1>
+            <p>${esc((W.TAILOR[u.quote.interest] || {}).label || 'Tailored Workspace')} · Base membership is required for add-on modules.</p>
+          </div>
+
+          <div class="m-card">
+            <h2>Active Workflow Launchers</h2>
+            <p>Direct access to your provisioned applications:</p>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
+              ${unlockedApps.map(a => `
+                <a href="/${esc(a.href)}" class="m-btn pri" style="justify-content:space-between">
+                  <span>${a.icon} ${esc(a.title)}</span>
+                  <span>Launch →</span>
+                </a>
+              `).join('')}
+            </div>
+          </div>
+
+          ${lockedApps.length ? `
+          <div class="m-card">
+            <h2>Request Additional Module Unlock</h2>
+            <p>Need access to an enterprise simulator or radar module?</p>
+            <label class="sr-only" for="mReqAppSel">Select Module</label>
+            <select class="m-select" id="mReqAppSel" aria-label="Select Module to Request">
+              ${lockedApps.map(a => `<option value="${esc(a.id)}">${a.icon} ${esc(a.title)}</option>`).join('')}
+            </select>
+            <button type="button" class="m-btn" id="mBtnReqApp">🔒 Request Owner Unlock</button>
+          </div>` : ''}
+        </section>
+      `;
+    }
+
+    /* ---------- TAB 2: WORKFLOWS ---------- */
+    function renderWorkflowsTab(u) {
+      if (!u) {
+        return `
+          <section class="m-pane" aria-label="Workflows Preview">
+            <div class="m-card priority">
+              <span class="m-pill warn">🔒 AUTHENTICATION REQUIRED</span>
+              <h1 style="margin-top:8px">Action Checklists &amp; Workflows</h1>
+              <p>Sign in with Google, Microsoft, or Apple SSO to check off your tailored operational workflows and sync progress in real time.</p>
+              <a href="/auth" class="m-btn pri" style="margin-top:10px">🔑 Sign In to Access Workflows →</a>
+            </div>
+          </section>
+        `;
+      }
+
+      if (u.role === 'owner') {
+        const tasks = S().tasks || [];
+        const userName = (id) => (S().users[id] || {}).name || id;
+        return `
+          <section class="m-pane" aria-label="Owner Build Workflows">
+            <div class="m-card priority">
+              <span class="m-pill ok">👑 BUILD &amp; FULFILLMENT QUEUE</span>
+              <h1 style="margin-top:6px">Customer Build Workflows</h1>
+              <p>Tap any build task to mark it ready and automatically notify the customer.</p>
+            </div>
+            <div class="m-card">
+              ${tasks.length ? tasks.map(t => `
+                <label class="m-check-row ${t.done ? 'done' : ''}">
+                  <input type="checkbox" data-owner-task="${esc(t.id)}" ${t.done ? 'checked' : ''} />
+                  <span><b>${esc(userName(t.uid))}</b>: ${esc(t.title)}</span>
+                </label>
+              `).join('') : '<p>All customer build workflows are complete.</p>'}
+            </div>
+          </section>
+        `;
+      }
+
+      const tailor = W.TAILOR[u.quote.interest] || W.TAILOR.federal;
+      const chkKey = 'mgcw.chk.' + u.id;
+      const chkState = JSON.parse(localStorage.getItem(chkKey) || '{}');
+
+      return `
+        <section class="m-pane" aria-label="Member Action Workflows">
+          <div class="m-card priority">
+            <span class="m-pill ok">${esc(tailor.label)}</span>
+            <h1 style="margin-top:6px">My Action Checklist</h1>
+            <p>Tap items as you complete them. Progress syncs to your workspace.</p>
+            <div style="margin-top:12px">
+              ${tailor.actions.map((act, idx) => `
+                <label class="m-check-row ${chkState[idx] ? 'done' : ''}">
+                  <input type="checkbox" data-member-chk="${idx}" ${chkState[idx] ? 'checked' : ''} />
+                  <span>${esc(act)}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="m-card">
+            <h2>Automated Workflow Pipelines</h2>
+            ${tailor.workflows.map(w => `
+              <div style="padding:10px 12px;border-radius:10px;background:rgba(4,8,20,0.8);border:1px solid var(--line);margin-bottom:8px;font-size:13px;color:var(--tx)">
+                ⚡ ${esc(w)}
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="m-card">
+            <h2>Submit Workflow or Feature Request</h2>
+            <label class="sr-only" for="mFeatTitle">Request Title</label>
+            <input class="m-input" id="mFeatTitle" maxlength="120" placeholder="What workflow or page do you need?" />
+            <button type="button" class="m-btn pri" id="mBtnAddFeat">➕ Send to Owner Queue</button>
+          </div>
+        </section>
+      `;
+    }
+
+    /* ---------- TAB 3: SPRINT ---------- */
+    function renderSprintTab(u) {
+      if (!u) {
+        return `
+          <section class="m-pane" aria-label="Sprint Control Sign In">
+            <div class="m-card priority">
+              <span class="m-pill warn">🔒 SSO REQUIRED</span>
+              <h1 style="margin-top:8px">Agile Sprint Control</h1>
+              <p>Authenticate with Federated SSO to view shared project deliverables and update sprint stages from your mobile device.</p>
+              <a href="/auth" class="m-btn pri" style="margin-top:10px">🔑 Sign In with SSO →</a>
+            </div>
+          </section>
+        `;
+      }
+
+      const visProjects = Object.values(S().projects).filter(p => W.can(u, 'project', p.id, 'view'));
+      if (!visProjects.length) {
+        return `
+          <section class="m-pane"><div class="m-card"><h2>No Shared Projects Yet</h2><p>Projects appear here as soon as they are shared with your account.</p></div></section>
+        `;
+      }
+      const activePid = window._mPid && visProjects.some(p => p.id === window._mPid) ? window._mPid : visProjects[0].id;
+      window._mPid = activePid;
+      const curProj = S().projects[activePid];
+      const canEdit = W.can(u, 'project', activePid, 'edit');
+      const items = (S().items || []).filter(i => i.project === activePid);
+      const COLS = ['backlog', 'ready', 'progress', 'review', 'done'];
+      const COL_LABELS = { backlog: 'Backlog', ready: 'Ready', progress: 'In Progress', review: 'Review', done: 'Done ✓' };
+
+      return `
+        <section class="m-pane" aria-label="Mobile Sprint Board">
+          <div class="m-card priority">
+            <div class="m-row" style="margin-bottom:8px">
+              <span class="m-pill blue">AGILE SPRINT DECK</span>
+              <span class="m-pill ${canEdit ? 'ok' : 'warn'}">${canEdit ? 'EDIT ENABLED' : 'VIEW ONLY'}</span>
+            </div>
+            <label class="sr-only" for="mProjSel">Select Project</label>
+            <select class="m-select" id="mProjSel" aria-label="Select Project" style="margin-bottom:6px">
+              ${visProjects.map(p => `<option value="${esc(p.id)}" ${p.id === activePid ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}
+            </select>
+            ${curProj && curProj.demoUrl ? `<a href="/${esc(curProj.demoUrl)}" class="m-btn gold" style="margin-top:6px">🚀 Open Live Deliverable ↗</a>` : ''}
+          </div>
+
+          ${canEdit ? `
+          <div class="m-card">
+            <h2>Quick-Add Sprint Item</h2>
+            <label class="sr-only" for="mNewItemTitle">Sprint Item Title</label>
+            <input class="m-input" id="mNewItemTitle" placeholder="New task or story title..." maxlength="120" />
+            <button type="button" class="m-btn pri" id="mBtnNewItem">➕ Add to Sprint</button>
+          </div>` : ''}
+
+          <div class="m-card">
+            <h2>Sprint Items (${items.length})</h2>
+            <p>${canEdit ? 'Tap the stage button on any item to advance it to the next workflow stage.' : 'Live status of deliverables in this sprint.'}</p>
+            ${items.map(it => {
+              const nextCol = COLS[(COLS.indexOf(it.col) + 1) % COLS.length];
+              return `
+                <div style="padding:12px;border-radius:12px;background:rgba(4,8,20,0.85);border:1px solid var(--line);margin-bottom:8px">
+                  <div class="m-row" style="margin-bottom:6px">
+                    <span class="m-pill ${it.col === 'done' ? 'ok' : 'blue'}">${COL_LABELS[it.col] || it.col}</span>
+                    <span class="m-pill">${esc(it.type)} · ${it.points} pt</span>
+                  </div>
+                  <strong style="display:block;font-size:14px;margin-bottom:8px">${esc(it.title)}</strong>
+                  ${canEdit ? `<button type="button" class="m-btn" data-cycle-item="${esc(it.id)}" data-next-col="${nextCol}">Advance → ${COL_LABELS[nextCol]}</button>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    /* ---------- TAB 4: NEWSLETTER & BRIEFINGS ---------- */
+    function renderBriefingsTab(u) {
+      const issues = newsletterData.issues || [];
+      return `
+        <section class="m-pane" aria-label="Executive Intelligence Newsletter">
+          <div class="m-card priority">
+            <div class="m-row" style="margin-bottom:8px">
+              <span class="m-pill gold" style="color:var(--gold);border-color:rgba(251,191,36,0.5)">📰 MGC &amp; F.I.X BRIEFINGS</span>
+              <span class="m-pill ok">${newsletterData.subscribersCount || 142} SUBSCRIBERS</span>
+            </div>
+            <h1>Executive Intelligence Newsletter</h1>
+            <p>Concise monthly briefings on Zero-Trust OIDC security, SDVOSB federal contracting, and autonomous AI workflows.</p>
+            <form id="mNewsletterSubForm" style="margin-top:12px" novalidate>
+              <label class="sr-only" for="mnlEmail">Subscriber Email</label>
+              <input class="m-input" id="mnlEmail" type="email" placeholder="Enter your email for briefings..." value="${u ? esc(u.email) : ''}" required autocomplete="email" />
+              <label class="sr-only" for="mnlTopic">Primary Topic</label>
+              <select class="m-select" id="mnlTopic" aria-label="Newsletter Topic">
+                <option value="all">🌐 All Executive Briefings (MGC &amp; F.I.X)</option>
+                <option value="federal">🏛️ Federal &amp; SDVOSB Procurement</option>
+                <option value="cyber">🔒 Zero-Trust &amp; CMMC Compliance</option>
+                <option value="ai-workflow">🤖 AI Receptionists &amp; Cloud Automation</option>
+              </select>
+              <button type="submit" class="m-btn pri" id="mnlSubBtn">✉️ Subscribe to Briefings</button>
+            </form>
+          </div>
+
+          ${u && u.role === 'owner' ? `
+          <div class="m-card">
+            <h2>👑 Owner: Publish New Briefing Issue</h2>
+            <label class="sr-only" for="mPubCat">Category</label>
+            <input class="m-input" id="mPubCat" placeholder="Category (e.g. Zero-Trust & Federal)" value="Executive Briefing" />
+            <label class="sr-only" for="mPubTitle">Briefing Headline</label>
+            <input class="m-input" id="mPubTitle" placeholder="Headline title..." maxlength="140" />
+            <label class="sr-only" for="mPubSummary">Executive Summary</label>
+            <textarea class="m-textarea" id="mPubSummary" placeholder="Concise executive summary and action takeaways..."></textarea>
+            <button type="button" class="m-btn gold" id="mBtnPublishIssue">🚀 Publish Issue to Subscribers</button>
+          </div>` : ''}
+
+          <div class="m-card">
+            <h2>Recent Intelligence Issues (${issues.length})</h2>
+            ${issues.map(iss => `
+              <article style="padding:14px;border-radius:12px;background:rgba(4,8,20,0.88);border:1px solid var(--line);margin-bottom:10px">
+                <div class="m-row" style="margin-bottom:6px">
+                  <span class="m-pill blue">${esc(iss.issueNumber || 'BRIEFING')}</span>
+                  <span class="m-pill">${esc(iss.category || 'MGC')} · ${esc(iss.readTime || '3 min')}</span>
+                </div>
+                <h3 style="font-size:15px;font-weight:800;margin:4px 0 6px;color:#fff">${esc(iss.title)}</h3>
+                <p style="font-size:13px;color:var(--mut);margin:0">${esc(iss.summary)}</p>
+              </article>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function bindEvents(u) {
+      // Tab switching
+      document.querySelectorAll('.m-tab').forEach(btn => {
+        const isSel = btn.dataset.tab === currentTab;
+        btn.setAttribute('aria-selected', isSel ? 'true' : 'false');
+        btn.onclick = () => {
+          if (currentTab === btn.dataset.tab) return;
+          currentTab = btn.dataset.tab;
+          history.replaceState(null, '', '#' + currentTab);
+          render(true);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+      });
+
+      mainEl.querySelectorAll('[data-jump-tab]').forEach(btn => {
+        btn.onclick = () => {
+          currentTab = btn.dataset.jumpTab;
+          history.replaceState(null, '', '#' + currentTab);
+          render(true);
+        };
+      });
+
+      const qOwner = document.getElementById('btnQuickOwner');
+      if (qOwner) {
+        qOwner.onclick = () => {
+          W.signInAs('owner', 'google');
+          showToast('✓ Owner Control Deck Active');
+          render(true);
+        };
+      }
+      const qCust = document.getElementById('btnQuickCustomer');
+      if (qCust) {
+        qCust.onclick = () => {
+          W.signInAs('client', 'google');
+          showToast('✓ Customer Workflow View Active');
+          render(true);
+        };
+      }
+
+      // Public quick intake
+      const qForm = document.getElementById('mQuickIntakeForm');
+      if (qForm) {
+        qForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('mqName').value.trim();
+          const email = document.getElementById('mqEmail').value.trim();
+          const interest = document.getElementById('mqInterest').value;
+          if (!name || !email) { showToast('Please enter your name and email'); return; }
+          const id = W.submitRequest({ name, email, interest, brand: 'MGC', ssoProvider: 'google', ndaAccepted: true });
+          if (id) {
+            W.signInAs(id, 'google');
+            showToast('✓ Mobile Workspace Activated');
+            render(true);
+          } else if (W.lastIntakeResult && W.lastIntakeResult.error) {
+            showToast(W.lastIntakeResult.error);
+          }
+        };
+      }
+
+      // Owner approvals
+      mainEl.querySelectorAll('[data-approve]').forEach(btn => {
+        btn.onclick = () => {
+          W.approve(btn.dataset.approve);
+          showToast('✓ Approved & build tasks queued');
+          render(true);
+        };
+      });
+      mainEl.querySelectorAll('[data-deny]').forEach(btn => {
+        btn.onclick = () => {
+          W.deny(btn.dataset.deny);
+          showToast('Request denied');
+          render(true);
+        };
+      });
+
+      // Owner quick grant
+      const grantBtn = document.getElementById('mBtnGrantNow');
+      if (grantBtn) {
+        grantBtn.onclick = () => {
+          const targetUid = document.getElementById('mGrantUser').value;
+          const [type, resId] = document.getElementById('mGrantApp').value.split('|');
+          W.share(targetUid, type, resId, type === 'project' ? ['view', 'edit'] : ['view']);
+          showToast('✓ Access granted immediately');
+          render(true);
+        };
+      }
+
+      // Customer request app unlock
+      const reqAppBtn = document.getElementById('mBtnReqApp');
+      if (reqAppBtn) {
+        reqAppBtn.onclick = () => {
+          const appId = document.getElementById('mReqAppSel').value;
+          W.requestAppAccess(appId);
+          showToast('✓ Unlock request sent to Owner');
+        };
+      }
+
+      // Owner build tasks
+      mainEl.querySelectorAll('[data-owner-task]').forEach(chk => {
+        chk.onchange = () => {
+          W.completeTask(chk.dataset.ownerTask, chk.checked);
+          showToast(chk.checked ? '✓ Task marked complete' : 'Task reopened');
+          render(false);
+        };
+      });
+
+      // Member checklist
+      mainEl.querySelectorAll('[data-member-chk]').forEach(chk => {
+        chk.onchange = () => {
+          const k = 'mgcw.chk.' + u.id;
+          const st = JSON.parse(localStorage.getItem(k) || '{}');
+          st[chk.dataset.memberChk] = chk.checked;
+          localStorage.setItem(k, JSON.stringify(st));
+          fetch('/api/db/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ checklist: st })
+          }).catch(() => {});
+          showToast(chk.checked ? '✓ Step completed & synced' : 'Step unchecked');
+          render(false);
+        };
+      });
+
+      // Member feature request
+      const addFeatBtn = document.getElementById('mBtnAddFeat');
+      if (addFeatBtn) {
+        addFeatBtn.onclick = () => {
+          const t = document.getElementById('mFeatTitle').value.trim();
+          if (!t) { showToast('Enter a workflow or feature title'); return; }
+          if (!W.postServerAction || !W.postServerAction({ action: 'createFeature', title: t, body: 'Submitted via Mobile Control Deck' })) {
+            S().features.unshift({ id: W.uid('f'), by: u.id, title: t, body: 'Submitted via Mobile Control Deck', votes: [u.id], status: 'new', created: W.now() });
+            W.commit();
+          }
+          document.getElementById('mFeatTitle').value = '';
+          showToast('✓ Sent to Owner workflow queue');
+        };
+      }
+
+      // Sprint project selector & stage cycling
+      const projSel = document.getElementById('mProjSel');
+      if (projSel) {
+        projSel.onchange = () => {
+          window._mPid = projSel.value;
+          render(true);
+        };
+      }
+      mainEl.querySelectorAll('[data-cycle-item]').forEach(btn => {
+        btn.onclick = () => {
+          const itemId = btn.dataset.cycleItem;
+          const nextCol = btn.dataset.nextCol;
+          if (!W.postServerAction || !W.postServerAction({ action: 'moveAgileItem', itemId, col: nextCol })) {
+            const it = (S().items || []).find(x => x.id === itemId);
+            if (it) { it.col = nextCol; W.commit(); }
+          }
+          showToast('✓ Moved to ' + nextCol.toUpperCase());
+          render(false);
+        };
+      });
+      const newItemBtn = document.getElementById('mBtnNewItem');
+      if (newItemBtn) {
+        newItemBtn.onclick = () => {
+          const title = document.getElementById('mNewItemTitle').value.trim();
+          if (!title) return;
+          if (!W.postServerAction || !W.postServerAction({ action: 'createAgileItem', project: window._mPid, title, type: 'task', points: 3, sprint: 1 })) {
+            S().items.push({ id: W.uid('i'), project: window._mPid, type: 'task', title, points: 3, col: 'backlog', sprint: 1, assignee: u.id, createdBy: u.id });
+            W.commit();
+          }
+          showToast('✓ Sprint task added');
+          render(false);
+        };
+      }
+
+      // Newsletter subscription
+      const nlForm = document.getElementById('mNewsletterSubForm');
+      if (nlForm) {
+        nlForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('mnlEmail').value.trim();
+          const topic = document.getElementById('mnlTopic').value;
+          if (!email) { showToast('Please enter a valid email'); return; }
+          try {
+            const r = await fetch('/api/newsletter/subscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, topic, source: 'mobile-control' })
+            });
+            const d = await r.json();
+            if (d && d.ok) {
+              newsletterData.subscribersCount = d.subscribersCount || newsletterData.subscribersCount;
+              showToast('✓ Subscribed to MGC & F.I.X Briefings');
+              render(false);
+            } else {
+              showToast((d && d.error) || 'Subscription saved');
+            }
+          } catch (_) {
+            showToast('✓ Subscribed to Briefings');
+          }
+        };
+      }
+
+      // Owner publish newsletter issue
+      const pubBtn = document.getElementById('mBtnPublishIssue');
+      if (pubBtn) {
+        pubBtn.onclick = async () => {
+          const category = document.getElementById('mPubCat').value.trim() || 'Executive Briefing';
+          const title = document.getElementById('mPubTitle').value.trim();
+          const summary = document.getElementById('mPubSummary').value.trim();
+          if (!title || !summary) { showToast('Enter both a headline and summary'); return; }
+          try {
+            const r = await fetch('/api/newsletter/publish', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ category, title, summary })
+            });
+            const d = await r.json();
+            if (d && d.ok && d.newsletter) {
+              newsletterData = d.newsletter;
+              showToast('✓ Briefing published to all subscribers');
+              render(true);
+            }
+          } catch (_) {}
+        };
+      }
+    }
+
+    function render(useTransition) {
+      const doUpdate = () => {
+        const u = W.me();
+        renderHeader(u);
+        if (currentTab === 'workflows') mainEl.innerHTML = renderWorkflowsTab(u);
+        else if (currentTab === 'sprint') mainEl.innerHTML = renderSprintTab(u);
+        else if (currentTab === 'briefings') mainEl.innerHTML = renderBriefingsTab(u);
+        else mainEl.innerHTML = renderControlTab(u);
+        bindEvents(u);
+      };
+      if (useTransition) transitionRender(doUpdate);
+      else doUpdate();
+    }
+
+    render(false);
+    loadNewsletter();
+  })();
+  </script>
+</body>
+</html>

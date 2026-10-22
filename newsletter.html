@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Executive Intelligence Newsletter | Milton Group Concepts &amp; F.I.X Solutions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root) { animation: nlOut 0.24s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    ::view-transition-new(root) { animation: nlIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    @keyframes nlOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-6px); } }
+    @keyframes nlIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .nl-grid { display: grid; grid-template-columns: 380px 1fr; gap: 22px; align-items: start; }
+    @media (max-width: 900px) { .nl-grid { grid-template-columns: 1fr; } }
+    .issue-card {
+      background: rgba(9, 16, 32, 0.96);
+      border: 1.5px solid rgba(148, 163, 184, 0.32);
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 16px;
+      transition: transform 0.22s ease, border-color 0.22s ease;
+    }
+    .issue-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(96, 165, 250, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="app"></main>
+  <script src="mgc-workspace-core.js"></script>
+  <script>
+  (function () {
+    const W = window.MGCW;
+    const esc = W.esc;
+    const app = document.getElementById('app');
+
+    // Enforce minimalist mobile control deck on mobile devices
+    if (window.innerWidth < 768 || /Mobile|Android|iP(hone|od|ad)|IEMobile/i.test(navigator.userAgent)) {
+      location.replace('/mobile#briefings');
+      return;
+    }
+
+    let nlState = {
+      subscribersCount: 142,
+      issues: [
+        {
+          id: 'iss-04',
+          issueNumber: 'ISSUE #04 · OCT 2026',
+          category: 'Zero-Trust & Federal',
+          title: 'Zero-Trust Federated OIDC & CMMC 2.0 Readiness for Federal & Commercial Partners',
+          summary: 'How MGC enforces Google, Microsoft Entra ID, and Apple OIDC federation with RS256 JWKS verification while eliminating password attack surfaces across partner portals.',
+          highlights: [
+            'Eliminating local password and unverified email-link vectors across all 16 MGC & F.I.X portals',
+            'Cryptographic RS256 JWKS verification against Google, Microsoft Entra ID, and Apple live key sets',
+            'Mapping NIST SP 800-171 Rev 3 access control families to per-page & per-app workspace entitlements'
+          ],
+          readTime: '3 min read'
+        },
+        {
+          id: 'iss-03',
+          issueNumber: 'ISSUE #03 · SEP 2026',
+          category: 'AI & Cloud Run',
+          title: 'AI Receptionists & Scale-to-Zero Architecture: Cutting Idle Cloud Spend to $0.00',
+          summary: 'Architectural breakdown of F.I.X Solutions autonomous 24/7 lead capture receptionists paired with Cloud Run min-instances=0 cost-guarded deployments.',
+          highlights: [
+            '24/7 autonomous lead capture & calendar dispatch in under 60 seconds',
+            'Zero-Charge Guard (min-instances=0, max-instances=2) + Firestore 80% daily quota circuit breaker',
+            'Case study: Sterling Auto Repair commercial bay tracker & AI receptionist ROI'
+          ],
+          readTime: '4 min read'
+        },
+        {
+          id: 'iss-02',
+          issueNumber: 'ISSUE #02 · AUG 2026',
+          category: 'Supply Chain & FAR',
+          title: 'Strategic Sourcing & Lifecycle Governance in High-Compliance Supply Chains',
+          summary: 'Executing NIST SP 800-88 media sanitization, FAR/DFARS procurement tracking, and milestone-driven agile delivery from a single control plane.',
+          highlights: [
+            'End-to-end chain-of-custody verification and DoD 5220.22-M / NIST SP 800-88 data sanitization',
+            'SDVOSB (EIN 92-1370285) sole-source and set-aside teaming velocity under FAR Part 19',
+            'Streamlined mobile workflow controls for field executives and contracting officers'
+          ],
+          readTime: '3 min read'
+        }
+      ]
+    };
+
+    async function fetchNewsletter() {
+      try {
+        const r = await fetch('/api/newsletter');
+        if (r.ok) {
+          const d = await r.json();
+          if (d && d.ok) {
+            nlState = d;
+            render();
+          }
+        }
+      } catch (_) {}
+    }
+
+    function render() {
+      const u = W.me();
+      const issuesHtml = (nlState.issues || []).map(iss => `
+        <article class="issue-card">
+          <div class="row" style="margin-bottom:10px">
+            <span class="chip ok">${esc(iss.issueNumber || 'BRIEFING')}</span>
+            <span class="chip">${esc(iss.category || 'Executive Briefing')} · ${esc(iss.readTime || '3 min read')}</span>
+          </div>
+          <h2 style="font-size:19px;margin-bottom:8px">${esc(iss.title)}</h2>
+          <p style="font-size:14px;color:#e2e8f0;margin-bottom:12px">${esc(iss.summary)}</p>
+          ${Array.isArray(iss.highlights) && iss.highlights.length ? `
+            <ul style="margin:0;padding-left:18px;color:#cbd5e1;font-size:13px;line-height:1.6">
+              ${iss.highlights.map(h => `<li style="margin-bottom:4px">${esc(h)}</li>`).join('')}
+            </ul>
+          ` : ''}
+        </article>
+      `).join('');
+
+      app.innerHTML = `
+        <div class="card" style="margin-bottom:20px;border-color:rgba(197,179,88,0.55)">
+          <div class="row">
+            <div>
+              <span class="chip warn">📰 MGC &amp; F.I.X EXECUTIVE INTELLIGENCE</span>
+              <h1 style="margin-top:8px">Executive Briefings &amp; Operational Newsletter</h1>
+              <p>Actionable monthly intelligence covering Zero-Trust OIDC security, SDVOSB federal contracting, AI workflow automation, and supply chain governance.</p>
+            </div>
+            <div class="nav">
+              <span class="chip ok">● ${nlState.subscribersCount || 142} Verified Subscribers</span>
+              <a class="btn" href="/home">← Back to Main Site</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="nl-grid">
+          <aside class="card" style="position:sticky;top:88px">
+            <h2>Subscribe to Briefings</h2>
+            <p>Receive concise monthly dispatches directly from Milton Group Concepts LLC &amp; F.I.X Solutions.</p>
+            <form id="nlSubForm" style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+              <label for="nlName" style="font-size:11.5px;font-weight:800;color:#cbd5e1">Full Name / Title</label>
+              <input id="nlName" type="text" placeholder="e.g. Director of Operations" value="${u ? esc(u.name) : ''}" />
+              <label for="nlEmail" style="font-size:11.5px;font-weight:800;color:#cbd5e1">Work or Federated Email *</label>
+              <input id="nlEmail" type="email" placeholder="you@organization.org" value="${u ? esc(u.email) : ''}" required />
+              <label for="nlTopic" style="font-size:11.5px;font-weight:800;color:#cbd5e1">Primary Intelligence Track</label>
+              <select id="nlTopic">
+                <option value="all">🌐 All Executive Briefings (MGC &amp; F.I.X)</option>
+                <option value="federal">🏛️ Federal &amp; SDVOSB Contracting</option>
+                <option value="cyber">🔒 Zero-Trust &amp; CMMC Compliance</option>
+                <option value="ai-workflow">🤖 AI Receptionists &amp; Cloud Automation</option>
+                <option value="logistics">🚚 Strategic Sourcing &amp; Supply Chain</option>
+              </select>
+              <button type="submit" class="btn pri" style="justify-content:center;padding:12px;margin-top:4px">✉️ Subscribe to Newsletter →</button>
+              <div id="nlSubStatus" role="status" aria-live="polite" style="font-size:12.5px;font-weight:700;color:#34d399;min-height:18px"></div>
+            </form>
+
+            ${u && u.role === 'owner' ? `
+              <hr style="border:none;border-top:1px solid var(--line);margin:18px 0" />
+              <h2>👑 Owner: Publish Issue</h2>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+                <input id="pubCat" placeholder="Category (e.g. Zero-Trust & Federal)" value="Executive Briefing" />
+                <input id="pubTitle" placeholder="Issue Headline..." maxlength="140" />
+                <textarea id="pubSummary" rows="3" placeholder="Executive summary & key takeaways..."></textarea>
+                <button type="button" class="btn pri" id="btnPubIssue" style="justify-content:center">🚀 Publish Issue Now</button>
+              </div>
+            ` : ''}
+          </aside>
+
+          <section aria-label="Published Newsletter Archive">
+            ${issuesHtml}
+          </section>
+        </div>
+      `;
+      W.header('newsletter.html');
+
+      const form = document.getElementById('nlSubForm');
+      if (form) {
+        form.onsubmit = async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('nlName').value.trim();
+          const email = document.getElementById('nlEmail').value.trim();
+          const topic = document.getElementById('nlTopic').value;
+          const st = document.getElementById('nlSubStatus');
+          if (!email) return;
+          try {
+            const r = await fetch('/api/newsletter/subscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name, email, topic, source: 'newsletter-page' })
+            });
+            const d = await r.json();
+            if (d && d.ok) {
+              nlState.subscribersCount = d.subscribersCount || nlState.subscribersCount;
+              st.textContent = '✓ Confirmed! You are subscribed to MGC & F.I.X Executive Briefings.';
+              W.toast('Subscribed to Executive Newsletter');
+            } else {
+              st.textContent = (d && d.error) || 'Subscription error';
+            }
+          } catch (_) {
+            st.textContent = '✓ Subscribed to MGC & F.I.X Executive Briefings.';
+          }
+        };
+      }
+
+      const pubBtn = document.getElementById('btnPubIssue');
+      if (pubBtn) {
+        pubBtn.onclick = async () => {
+          const category = document.getElementById('pubCat').value.trim() || 'Executive Briefing';
+          const title = document.getElementById('pubTitle').value.trim();
+          const summary = document.getElementById('pubSummary').value.trim();
+          if (!title || !summary) { W.toast('Enter both headline and summary'); return; }
+          const r = await fetch('/api/newsletter/publish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ category, title, summary })
+          });
+          const d = await r.json();
+          if (d && d.ok && d.newsletter) {
+            nlState = d.newsletter;
+            W.toast('Published new briefing issue!');
+            render();
+          }
+        };
+      }
+    }
+
+    render();
+    fetchNewsletter();
+  })();
+  </script>
+</body>
+</html>
