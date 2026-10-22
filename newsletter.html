@@ -146,13 +146,9 @@
       ).join('');
 
       const consultationPanelHtml = showConsultationForm ? `
-        <section class="card" id="nlConsultationSection" aria-label="Submit Request & Consultation" style="margin-bottom:18px;border:1.5px solid rgba(59,130,246,0.55);background:linear-gradient(135deg,rgba(11,24,49,0.96),rgba(6,11,24,0.98))">
+        <section class="card" id="nlConsultationSection" aria-label="Consultation Form" style="margin-bottom:18px;border:1.5px solid rgba(59,130,246,0.55);background:linear-gradient(135deg,rgba(11,24,49,0.96),rgba(6,11,24,0.98))">
           <div class="row" style="margin-bottom:12px">
-            <div>
-              <span class="chip ok">SUBMIT REQUEST &amp; CONSULTATION</span>
-              <h2 style="margin:6px 0 2px;font-size:18px;color:#fff">Information &amp; Executive Consultation Form</h2>
-              <p style="margin:0;font-size:13px;color:#cbd5e1">Submit your inquiry, custom project scope, or consultation request below.</p>
-            </div>
+            <h2 style="margin:0;font-size:18px;color:#fff">Consultation Form</h2>
             <button type="button" class="btn" id="btnCloseNlConsultation" style="padding:6px 12px;font-size:12px">Close ✕</button>
           </div>
           ${lastConsultationReceipt ? `
