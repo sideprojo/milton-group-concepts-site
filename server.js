@@ -259,6 +259,8 @@ const CLEAN_ROUTE_TO_FILE = {
   '/sam-radar':         'sdvosb-contract-radar.html',
   '/trust-center':      'compliance-trust-center.html',
   '/newsletter':        'newsletter.html',
+  '/consultation':      'consultation.html',
+  '/consultation-form': 'consultation.html',
   '/mobile':            'mobile-control.html',
   '/mobile-control':    'mobile-control.html'
 };
@@ -285,6 +287,7 @@ const FILE_TO_CLEAN_ROUTE = {
   'sdvosb-contract-radar.html':          '/sam-radar',
   'compliance-trust-center.html':        '/trust-center',
   'newsletter.html':                     '/newsletter',
+  'consultation.html':                   '/consultation',
   'mobile-control.html':                 '/mobile'
 };
 
@@ -2619,10 +2622,15 @@ const server = http.createServer(async (req, res) => {
       const clientName = sanitizeInput(d.clientName || d.name || '', 120);
       const clientEmail = sanitizeInput(d.clientEmail || d.email || '', 160).toLowerCase();
       const organization = sanitizeInput(d.organization || d.org || '', 140);
+      const roleTitle = sanitizeInput(d.roleTitle || '', 90);
       const phone = sanitizeInput(d.phone || '', 32);
       const track = sanitizeInput(d.track || 'ai-web', 60);
+      const scaleTier = sanitizeInput(d.scaleTier || 'Growth (Up to 25 Users)', 80);
       const architectureScope = sanitizeInput(d.architectureScope || 'Executive Consultation & Information Request', 140);
+      const consultationFormat = sanitizeInput(d.consultationFormat || 'Video Briefing & Screen Share', 80);
       const timeline = sanitizeInput(d.timeline || '2-4 Weeks', 60);
+      const preferredWindow = sanitizeInput(d.preferredWindow || 'Next Available Executive Slot', 80);
+      const integrationEnv = sanitizeInput(d.integrationEnv || 'Google Cloud / Workspace', 100);
       const projectBrief = sanitizeInput(d.projectBrief || d.note || '', 600);
 
       if (!clientName || !/^\S+@\S+\.\S+$/.test(clientEmail)) {
@@ -2640,10 +2648,15 @@ const server = http.createServer(async (req, res) => {
         clientName,
         clientEmail,
         organization,
+        roleTitle,
         phone,
         track,
+        scaleTier,
         architectureScope,
+        consultationFormat,
         timeline,
+        preferredWindow,
+        integrationEnv,
         projectBrief,
         source: 'newsletter_public_form',
         status: 'submitted',
@@ -4901,7 +4914,7 @@ const server = http.createServer(async (req, res) => {
     }
     // Enforce Mobile-Only Minimalist Control & Workflow Experience when accessed from a mobile device
     const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
-    const isExplicitAuthRoute = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login';
+    const isExplicitAuthRoute = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html';
     if (isHtmlRoute && !isExplicitAuthRoute && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
       cleanRel = 'mobile-control.html';
     }

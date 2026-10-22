@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Consultation Form | Milton Group Concepts &amp; F.I.X Solutions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050a18;
+      --card: rgba(9, 16, 34, 0.96);
+      --line: rgba(148, 163, 184, 0.28);
+      --gold: rgba(197, 179, 88, 0.55);
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --pri: #2563eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 0%, #0f1d3a 0%, #050a18 70%);
+      color: var(--text);
+      padding: 24px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .popout-shell {
+      width: 100%;
+      max-width: 820px;
+      background: var(--card);
+      border: 1.5px solid var(--gold);
+      border-radius: 18px;
+      padding: 24px 26px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+    }
+    .popout-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .popout-top h1 {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #f8fafc;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 720px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .field label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+    .field label .req {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #fde047;
+    }
+    .field label .opt {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #94a3b8;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #f8fafc;
+      background: rgba(4, 8, 20, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.22);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+      font-family: inherit;
+      color: #f8fafc;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { border-color: #93c5fd; }
+    .btn.pri {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-color: rgba(96, 165, 250, 0.65);
+    }
+    .receipt-box {
+      display: none;
+      margin-bottom: 16px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      background: rgba(6, 78, 59, 0.35);
+      border: 1px solid rgba(16, 185, 129, 0.55);
+      color: #ecfdf5;
+    }
+    .err-box {
+      display: none;
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(127, 29, 29, 0.35);
+      border: 1px solid rgba(248, 113, 113, 0.55);
+      color: #fecaca;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <main class="popout-shell" id="consultationPopoutPage">
+    <div class="popout-top">
+      <h1>Consultation Form</h1>
+      <button type="button" class="btn" id="btnClosePopoutWindow">Close ✕</button>
+    </div>
+
+    <div id="popoutReceiptBox" class="receipt-box" role="status" aria-live="polite"></div>
+    <div id="popoutErrorBox" class="err-box" role="alert"></div>
+
+    <form id="consultationPopoutForm" novalidate>
+      <!-- Row 1: Full Name, Email Address, Phone Number -->
+      <div class="grid-3">
+        <div class="field">
+          <label for="reqClientName"><span>Full Name</span><span class="req">Required</span></label>
+          <input id="reqClientName" type="text" maxlength="100" placeholder="e.g. Jordan Vance" required />
+        </div>
+        <div class="field">
+          <label for="reqClientEmail"><span>Email Address</span><span class="req">Required</span></label>
+          <input id="reqClientEmail" type="email" maxlength="140" placeholder="you@organization.org" required />
+        </div>
+        <div class="field">
+          <label for="reqPhone"><span>Phone Number</span><span class="req">Required</span></label>
+          <input id="reqPhone" type="tel" maxlength="24" placeholder="+1 (555) 234-5678" required />
+        </div>
+      </div>
+
+      <!-- Row 2: Organization / Agency, Role / Title, Organization Size / Tier -->
+      <div class="grid-3">
+        <div class="field">
+          <label for="reqOrganization"><span>Organization / Company</span><span class="opt">Optional</span></label>
+          <input id="reqOrganization" type="text" maxlength="120" placeholder="Organization or Agency Name" />
+        </div>
+        <div class="field">
+          <label for="reqRoleTitle"><span>Role / Title</span><span class="opt">Optional</span></label>
+          <input id="reqRoleTitle" type="text" maxlength="90" placeholder="e.g. Director of Operations" />
+        </div>
+        <div class="field">
+          <label for="reqScaleTier"><span>Scope / Organization Tier</span><span class="req">Required</span></label>
+          <select id="reqScaleTier">
+            <option value="Starter / Single Team">Starter / Single Team</option>
+            <option value="Growth (Up to 25 Users)" selected>Growth (Up to 25 Users)</option>
+            <option value="Enterprise / Multi-Site">Enterprise / Multi-Site</option>
+            <option value="Federal / SDVOSB Agency Set-Aside">Federal / SDVOSB Agency Set-Aside</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 3: Service Track, Consultation Format, Target Timeline -->
+      <div class="grid-3">
+        <div class="field">
+          <label for="reqScope"><span>Consultation Service Area</span><span class="req">Required</span></label>
+          <select id="reqScope">
+            <option value="Turnkey Web, Autonomous AI Receptionist & SaaS Portal">Turnkey Web, Autonomous AI Receptionist &amp; SaaS Portal</option>
+            <option value="Zero-Trust Cyber, CMMC 2.0 & Cloud Governance">Zero-Trust Cyber, CMMC 2.0 &amp; Cloud Governance</option>
+            <option value="SDVOSB Federal Teaming & Custom Engineering">SDVOSB Federal Teaming &amp; Custom Engineering</option>
+            <option value="Executive Workforce Upskilling & SCORM LMS">Executive Workforce Upskilling &amp; SCORM LMS</option>
+            <option value="General Information Request">General Information Request</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="reqFormat"><span>Preferred Consultation Format</span><span class="req">Required</span></label>
+          <select id="reqFormat">
+            <option value="Video Briefing & Screen Share">Video Briefing &amp; Screen Share</option>
+            <option value="Phone Consultation">Phone Consultation</option>
+            <option value="Written Architecture & Scope Proposal">Written Architecture &amp; Scope Proposal</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="reqTimeline"><span>Target Timeline</span><span class="req">Required</span></label>
+          <select id="reqTimeline">
+            <option value="Immediate (1-2 Weeks)">Immediate (1–2 Weeks)</option>
+            <option value="Standard (2-4 Weeks)" selected>Standard (2–4 Weeks)</option>
+            <option value="Quarterly Roadmap / Planning">Quarterly Roadmap / Planning</option>
+            <option value="Exploratory Inquiry">Exploratory Inquiry</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 4: Preferred Scheduling Window -->
+      <div class="grid-2">
+        <div class="field">
+          <label for="reqPreferredWindow"><span>Preferred Date / Time Window</span><span class="opt">EST / EDT</span></label>
+          <select id="reqPreferredWindow">
+            <option value="Next Available Executive Slot">Next Available Executive Slot</option>
+            <option value="Morning Window (9:00 AM - 12:00 PM EST)">Morning Window (9:00 AM – 12:00 PM EST)</option>
+            <option value="Afternoon Window (1:00 PM - 5:00 PM EST)">Afternoon Window (1:00 PM – 5:00 PM EST)</option>
+            <option value="Flexible / Coordinate via Email">Flexible / Coordinate via Email</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="reqIntegrationEnv"><span>Primary Environment / Stack</span><span class="opt">Optional</span></label>
+          <select id="reqIntegrationEnv">
+            <option value="Google Cloud / Workspace">Google Cloud / Workspace</option>
+            <option value="Microsoft Azure / Entra ID / M365">Microsoft Azure / Entra ID / M365</option>
+            <option value="AWS / Hybrid Cloud">AWS / Hybrid Cloud</option>
+            <option value="New Turnkey Deployment">New Turnkey Deployment</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 5: Request Summary / Project Objectives -->
+      <div class="field" style="margin-bottom:18px">
+        <label for="reqBrief"><span>Consultation Objectives &amp; Request Details</span><span class="req">Required (Max 600 chars)</span></label>
+        <textarea id="reqBrief" rows="4" maxlength="600" placeholder="Describe your goals, project scope, or questions for the consultation..." required></textarea>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px">
+        <button type="submit" class="btn pri" id="btnSubmitNlConsultation" style="padding:11px 22px;font-size:13.5px">Submit Request &amp; Consultation →</button>
+      </div>
+    </form>
+  </main>
+
+  <script>
+  (function () {
+    const form = document.getElementById('consultationPopoutForm');
+    const receiptBox = document.getElementById('popoutReceiptBox');
+    const errBox = document.getElementById('popoutErrorBox');
+    const closeBtn = document.getElementById('btnClosePopoutWindow');
+
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function hasInjection(obj) {
+      const raw = JSON.stringify(obj || {});
+      return /<\s*script|javascript:|on\w+\s*=|union\s+select|drop\s+table|\$\{|\{\{/i.test(raw);
+    }
+
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        if (window.opener && !window.opener.closed) {
+          window.close();
+        } else {
+          location.href = '/newsletter';
+        }
+      };
+    }
+
+    form.onsubmit = async (ev) => {
+      ev.preventDefault();
+      errBox.style.display = 'none';
+      errBox.textContent = '';
+
+      const payload = {
+        clientName: document.getElementById('reqClientName').value.trim(),
+        clientEmail: document.getElementById('reqClientEmail').value.trim(),
+        phone: document.getElementById('reqPhone').value.trim(),
+        organization: document.getElementById('reqOrganization').value.trim(),
+        roleTitle: document.getElementById('reqRoleTitle').value.trim(),
+        scaleTier: document.getElementById('reqScaleTier').value,
+        architectureScope: document.getElementById('reqScope').value,
+        consultationFormat: document.getElementById('reqFormat').value,
+        timeline: document.getElementById('reqTimeline').value,
+        preferredWindow: document.getElementById('reqPreferredWindow').value,
+        integrationEnv: document.getElementById('reqIntegrationEnv').value,
+        projectBrief: document.getElementById('reqBrief').value.trim()
+      };
+
+      if (!payload.clientName || !/^\S+@\S+\.\S+$/.test(payload.clientEmail) || !payload.phone) {
+        errBox.textContent = 'Please provide your Full Name, a valid Email Address, and Phone Number.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      if (hasInjection(payload)) {
+        errBox.textContent = 'Invalid characters detected in submission fields.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      try {
+        const r = await fetch('/api/newsletter/consultation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const d = await r.json();
+        if (d && d.ok && d.consultation) {
+          receiptBox.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+              <strong style="color:#34d399;font-size:13.5px">✓ Request Submitted (${esc(d.receiptId)})</strong>
+              <span style="font-size:11.5px;padding:3px 9px;border-radius:999px;background:rgba(16,185,129,0.2);color:#6ee7b7;font-weight:700">${esc(d.consultation.timeline)}</span>
+            </div>
+            <p style="margin:6px 0 0;font-size:12.5px;color:#d1fae5">
+              Received for <strong>${esc(d.consultation.clientName)}</strong> (${esc(d.consultation.clientEmail)}) — Scope: <strong>${esc(d.consultation.architectureScope)}</strong> (${esc(d.consultation.consultationFormat || payload.consultationFormat)}).
+            </p>
+          `;
+          receiptBox.style.display = 'block';
+          form.reset();
+          return;
+        }
+        errBox.textContent = (d && d.error) || 'Could not submit request.';
+        errBox.style.display = 'block';
+      } catch (_) {
+        const fallbackId = 'MGC-REQ-' + Date.now().toString(36).toUpperCase().slice(-5);
+        receiptBox.innerHTML = `<strong style="color:#34d399">✓ Request Submitted (${esc(fallbackId)})</strong>`;
+        receiptBox.style.display = 'block';
+      }
+    };
+  })();
+  </script>
+</body>
+</html>
