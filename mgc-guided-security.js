@@ -2114,7 +2114,7 @@
     }
 
     function checkAndEnforce2FAGate() {
-      const publicAuthPages = ['onboarding-portal.html', 'login.html', 'request-access.html', 'newsletter.html', 'marketing-home.html'];
+      const publicAuthPages = ['login.html', 'employee-login.html', 'request-access.html', 'newsletter.html', 'consultation.html', 'marketing-home.html'];
       if (publicAuthPages.includes(currentFile)) {
         gateBackdrop.style.display = 'none';
         return;

@@ -224,18 +224,19 @@ const BLOCKED_FILES = new Set([
 
 // Server-Side Clean Route Masking Table (hides raw .html filenames and query params)
 const CLEAN_ROUTE_TO_FILE = {
-  '/':                  'login.html',
+  '/':                  'marketing-home.html',
   '/home':              'marketing-home.html',
   '/about':             'marketing-home.html',
   '/services':          'marketing-home.html',
   '/contact':           'marketing-home.html',
   '/auth':              'login.html',
   '/login':             'login.html',
+  '/portal':            'login.html',
+  '/client-portal':     'login.html',
   '/employee-login':    'employee-login.html',
   '/staff-login':       'employee-login.html',
   '/request-access':    'request-access.html',
   '/intake':            'request-access.html',
-  '/portal':            'onboarding-portal.html',
   '/onboarding':        'onboarding-portal.html',
   '/onboarding-portal': 'onboarding-portal.html',
   '/workspace':         'member-portal.html',
@@ -266,9 +267,10 @@ const CLEAN_ROUTE_TO_FILE = {
 };
 
 const FILE_TO_CLEAN_ROUTE = {
+  'marketing-home.html':                 '/',
   'login.html':                          '/auth',
   'request-access.html':                 '/request-access',
-  'onboarding-portal.html':              '/portal',
+  'onboarding-portal.html':              '/onboarding-portal',
   'member-portal.html':                  '/workspace',
   'agile-board.html':                    '/agile',
   'access-admin.html':                   '/access-admin',
@@ -4914,7 +4916,7 @@ const server = http.createServer(async (req, res) => {
     }
     // Enforce Mobile-Only Minimalist Control & Workflow Experience when accessed from a mobile device
     const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
-    const isExplicitAuthRoute = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html';
+    const isExplicitAuthRoute = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html';
     if (isHtmlRoute && !isExplicitAuthRoute && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
       cleanRel = 'mobile-control.html';
     }
@@ -4985,8 +4987,8 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Gate admin-command-portal.html (/command): Strictly 1 Administrator (Malik A. Khabir)
-    if (baseName === 'admin-command-portal.html') {
+    // Gate admin-command-portal.html (/command) and onboarding-portal.html (/onboarding-portal): Strictly 1 Administrator (Malik A. Khabir)
+    if (baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html') {
       if (!u) {
         return redirectToCleanAuth(baseName);
       }
@@ -5002,7 +5004,7 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Gate the 16 root internal portals: Owner has full access; onboarding-portal.html (/portal) is a public 2FA/SSO onboarding gate
+    // Gate the 16 root internal portals: Owner has full access
     if (!cleanRel.startsWith('projects/') && INTERNAL_PORTALS.has(baseName) && baseName !== 'access-admin.html' && baseName !== 'admin-command-portal.html' && baseName !== 'onboarding-portal.html') {
       if (!u) {
         return redirectToCleanAuth(baseName);

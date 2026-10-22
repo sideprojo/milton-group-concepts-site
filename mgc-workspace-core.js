@@ -1739,7 +1739,7 @@
   const CLEAN_URL_MAP = {
     'login.html': '/auth',
     'request-access.html': '/request-access',
-    'onboarding-portal.html': '/portal',
+    'onboarding-portal.html': '/onboarding-portal',
     'member-portal.html': '/workspace',
     'agile-board.html': '/agile',
     'access-admin.html': '/access-admin',
@@ -2019,7 +2019,7 @@
     const brandCode = (u && u.brand === 'FIX') ? 'FIX' : 'MGC';
     const brandTitle = (u && u.brand === 'FIX') ? 'F.I.X Solutions' : 'Milton Group Concepts';
     const subLabel = isNewsletterPage ? 'Executive Intelligence' : (u ? esc(u.name) : 'Not signed in');
-    el.innerHTML = '<div class="brand"><span class="brand-mark">' + brandCode + '</span><div>' + brandTitle + '<small>' + subLabel + '</small></div></div>' + nav + right;
+    el.innerHTML = '<a class="brand" id="mgcBrandHomeLink" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><span class="brand-mark">' + brandCode + '</span><div>' + brandTitle + '<small>' + subLabel + '</small></div></a>' + nav + right;
     const host = document.querySelector('.wrap');
     if (host) host.prepend(el);
     const soEl = el.querySelector('#w-signout');

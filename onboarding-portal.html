@@ -325,6 +325,15 @@
 
   <script src="mgc-workspace-core.js"></script>
   <script>
+    (function enforceSoleAdminOnlyGate() {
+      const W = window.MGCW;
+      const u = W && W.me ? W.me() : null;
+      const isSoleAdmin = Boolean(W && W.isOwner && W.isOwner(u));
+      if (!isSoleAdmin) {
+        document.body.innerHTML = '';
+        location.replace('/auth');
+      }
+    })();
     let mfaBiometricCleared = false;
     let currentSessionIsAdmin = false;
     let portalUnlockedState = false;
