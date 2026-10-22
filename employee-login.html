@@ -208,19 +208,11 @@
 <body class="mgc-login-screen">
 <main class="login-stage">
   <div class="login-card">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(148,163,184,0.18)">
-      <div style="display:flex;align-items:center;gap:10px">
-        <svg width="20" height="20" viewBox="0 0 23 23" aria-hidden="true">
-          <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
-          <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
-          <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
-          <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
-        </svg>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:#f8fafc;letter-spacing:.01em">Internal Employee Directory Sign-On</div>
-          <div style="font-size:11px;color:#94a3b8">Assigned Staff Usernames · Mandatory Password Reset &amp; Email Verification</div>
-        </div>
-      </div>
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(148,163,184,0.18)">
+      <a href="/" title="Return to Homepage" style="display:inline-flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none">
+        <img src="assets/mgc-logo.png" alt="MGC Logo" style="width:42px;height:42px;border-radius:10px;border:1px solid rgba(56,189,248,0.55);object-fit:contain;background:#040814" onerror="this.style.display='none'" />
+        <h1 style="margin:0;font-size:16px;font-weight:800;color:#f8fafc;letter-spacing:.01em">Internal Employee Directory Sign-On</h1>
+      </a>
       <div style="display:inline-flex;background:rgba(4,8,20,0.85);padding:4px;border-radius:10px;border:1px solid rgba(148,163,184,0.22)" role="tablist" aria-label="Employee Authentication Mode">
         <button type="button" class="btn pri" id="modeTabSignIn" role="tab" aria-selected="true" style="padding:7px 18px;border-radius:7px;font-size:12.5px">Staff Sign In</button>
         <button type="button" class="btn" id="modeTabRegister" role="tab" aria-selected="false" style="padding:7px 18px;border-radius:7px;font-size:12.5px;border-color:transparent;background:transparent">Activate / Reset Password</button>

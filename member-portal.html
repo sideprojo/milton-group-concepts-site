@@ -230,9 +230,11 @@
     return confirmBanner + consultErrBanner +
       '<form id="guidedConsultationForm" onsubmit="return false;" style="display:flex;flex-direction:column;gap:14px">' +
         '<div class="card" style="padding:18px 20px">' +
-          '<div class="row" style="margin-bottom:12px">' +
-            '<h2 style="margin:0;font-size:16px;font-weight:700;color:#fff">Consultation Form</h2>' +
-            '<button type="button" class="btn" id="btnPopoutClientConsultation" style="padding:6px 12px;font-size:12px">↗ Pop Out Window</button>' +
+          '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)">' +
+            '<a href="/" title="Return to Homepage" style="display:inline-flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none">' +
+              '<img src="assets/mgc-logo.png" alt="MGC Logo" style="width:42px;height:42px;border-radius:10px;border:1px solid rgba(197,179,88,0.55);object-fit:contain;background:#050a18" onerror="this.style.display=\'none\'" />' +
+            '</a>' +
+            '<h2 style="margin:0;font-size:18px;font-weight:800;color:#fff">Consultation Form</h2>' +
           '</div>' +
           '<div class="bento-2">' +
             CONSULTATION_TRACKS.map(t => {
