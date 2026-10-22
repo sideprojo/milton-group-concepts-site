@@ -66,11 +66,13 @@
       workflows: ['Diagnostic → weak domains → targeted SCORM EVE-NG labs → AI Studio simulators → practice exam'] }
   };
 
-  /* ---------- Seed (Sole Administrator = Malik A. Khabir; all users default to SaaS Apps & LMS only) ---------- */
+  /* ---------- Seed (Sole Administrator = Malik A. Khabir; zero fake/placeholder accounts) ---------- */
   function seed() {
     const t = now();
     const mk = (id, name, email, role, status, brand, interest, paid, pages, allowedApps) => ({
       id, name, email, role, status, brand,
+      ou: role === 'owner' ? 'internal' : 'external',
+      securityGroup: role === 'owner' ? 'DOMAIN_ADMIN' : 'EXTERNAL_SAAS_LMS',
       accessTier: role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
       quote: { interest, note: '' },
       plan: { base: paid, addons: [] },
@@ -84,17 +86,10 @@
     return {
       v: 1,
       users: {
-        owner: mk('owner', 'Malik A. Khabir (Administrator)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { saasapps: 'ready', agile: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready', home: 'ready', resources: 'ready' }, ['*']),
-        client: mk('client', 'Customer Account (SaaS & LMS)', 'customer@sterlingautorepairva.com', 'member', 'active', 'FIX', 'ai-web', true, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
-        ana: mk('ana', 'Ana (Requested)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
-        ben: mk('ben', 'Ben (SaaS & LMS User)', 'ben@example.com', 'member', 'active', 'FIX', 'federal', false, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
-        cara: mk('cara', 'Cara (SaaS & LMS User)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice())
+        owner: mk('owner', 'Malik A. Khabir (Administrator)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { saasapps: 'ready', agile: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready', home: 'ready', resources: 'ready' }, ['*'])
       },
-      shares: [
-        { id: 'project_p_sterling_client', type: 'project', resource: 'p_sterling', grantee: 'client', perms: ['view'], created: t },
-        { id: 'project_p_sterling_cara', type: 'project', resource: 'p_sterling', grantee: 'cara', perms: ['view'], created: t }
-      ],
-      tasks: [], notifications: [], audit: [], payments: [],
+      shares: [],
+      tasks: [], notifications: [], audit: [], payments: [], consultations: [],
       projects: {
         p_sterling: { id: 'p_sterling', name: 'Client Project: Sterling Auto Repair (Web + AI Receptionist)', owner: 'owner', brand: 'FIX', demoUrl: 'projects/sterling-auto-repair/index.html', budget: '$1,500 setup + $497/mo' },
         p1: { id: 'p1', name: 'Shared: Website launch', owner: 'owner', brand: 'FIX' },
@@ -103,16 +98,10 @@
       items: [
         { id: 'i_st1', project: 'p_sterling', type: 'story', title: 'Interactive repair estimator & bay RO status tracker', points: 5, col: 'done', sprint: 1, assignee: 'owner', createdBy: 'owner' },
         { id: 'i_st2', project: 'p_sterling', type: 'story', title: '24/7 AI lead receptionist + Google Calendar booking', points: 8, col: 'progress', sprint: 1, assignee: 'owner', createdBy: 'owner' },
-        { id: 'i_st3', project: 'p_sterling', type: 'task', title: 'Local SEO schema & Google Business Profile verification', points: 3, col: 'ready', sprint: 1, assignee: 'owner', createdBy: 'owner' },
-        { id: 'i1', project: 'p1', type: 'story', title: 'Homepage draft', points: 5, col: 'progress', sprint: 1, assignee: 'owner', createdBy: 'owner' },
-        { id: 'i2', project: 'p1', type: 'task', title: 'Collect brand assets', points: 2, col: 'ready', sprint: 1, assignee: 'cara', createdBy: 'owner' },
-        { id: 'i3', project: 'p1', type: 'story', title: 'Booking form + calendar', points: 8, col: 'backlog', sprint: 0, assignee: '', createdBy: 'owner' },
-        { id: 'i4', project: 'p1', type: 'bug', title: 'Logo too small on mobile', points: 1, col: 'review', sprint: 1, assignee: 'owner', createdBy: 'owner' },
-        { id: 'i5', project: 'p2', type: 'story', title: 'Per-page subscription checkout', points: 8, col: 'backlog', sprint: 0, assignee: '', createdBy: 'owner' },
-        { id: 'i6', project: 'p2', type: 'task', title: 'Enable Firebase Auth + rules', points: 5, col: 'ready', sprint: 1, assignee: 'owner', createdBy: 'owner' }
+        { id: 'i_st3', project: 'p_sterling', type: 'task', title: 'Local SEO schema & Google Business Profile verification', points: 3, col: 'ready', sprint: 1, assignee: 'owner', createdBy: 'owner' }
       ],
-      features: [{ id: 'f1', by: 'cara', title: 'Add Google Calendar sync to the board', body: 'Show sprint dates on my calendar.', votes: ['cara'], status: 'new', created: t }],
-      requests: [{ id: 'r1', uid: 'ana', status: 'requested', created: t }, { id: 'r2', uid: 'ben', status: 'approved', created: t }]
+      features: [],
+      requests: []
     };
   }
 
@@ -229,13 +218,31 @@
   function ensureSterlingProject(state) {
     if (!state) return state;
     const def = seed();
-    state.users = Object.assign({}, def.users, state.users || {});
+    if (!serverSyncOk) {
+      state.users = Object.assign({}, def.users, state.users || {});
+    } else if (!state.users) {
+      state.users = {};
+    }
+    // Purge any legacy placeholder accounts from localStorage
+    ['client', 'ana', 'ben', 'cara'].forEach(fakeId => {
+      if (state.users && state.users[fakeId]) delete state.users[fakeId];
+    });
+    if (Array.isArray(state.requests)) {
+      state.requests = state.requests.filter(r => !['ana', 'ben', 'cara', 'client'].includes(r.uid));
+    }
+    if (Array.isArray(state.features)) {
+      state.features = state.features.filter(f => !['ana', 'ben', 'cara', 'client'].includes(f.by));
+    }
+    if (!Array.isArray(state.consultations)) state.consultations = [];
     Object.values(state.users).forEach(u => {
       if (u.role === 'owner') {
         u.accessTier = 'OWNER_FULL';
+        u.ou = 'internal';
+        u.securityGroup = 'DOMAIN_ADMIN';
         u.allowedApps = ['*'];
       } else {
-        u.accessTier = u.accessTier || 'CUSTOMER_RESTRICTED';
+        u.ou = u.ou === 'internal' ? 'internal' : 'external';
+        u.accessTier = u.accessTier || (u.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED');
         if (!Array.isArray(u.allowedApps)) {
           u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
         }
@@ -410,12 +417,21 @@
     return null;
   };
 
+  const isOwner = (u) => Boolean(u && u.role === 'owner' && u.id === 'owner');
+  const isEmployee = (u) => Boolean(u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active');
+  const isClient = (u) => Boolean(u && u.role !== 'owner' && u.ou !== 'internal');
+
   function getAllowedPortalsForUser(u) {
     if (!u) return [];
-    if (u.role === 'owner' && u.id === 'owner') return ['*'];
+    if (isOwner(u)) return ['*'];
     const portals = new Set(['saas-apps-and-lms-showcase.html', 'member-portal.html']);
+    if (isEmployee(u)) {
+      portals.add('access-admin.html');
+    }
     CATALOG.forEach(c => {
       if (c.href && can(u, 'page', c.id, 'view')) {
+        // Employees never get payment settings access
+        if (isEmployee(u) && c.id === 'finance') return;
         portals.add(c.href.split('?')[0].split('#')[0]);
       }
     });
@@ -510,9 +526,9 @@
   function submitRequest(data) {
     const cleanEmail = sanitizeField(data && data.email, 160).toLowerCase();
     const cleanName = sanitizeField(data && data.name, 120) || (cleanEmail.split('@')[0] || 'Customer');
-    const ssoProvider = sanitizeField(data && (data.ssoProvider || data.provider || 'google'), 32).toLowerCase();
-    if (!['google', 'microsoft', 'apple'].includes(ssoProvider)) {
-      lastIntakeResult = { ok: false, status: 403, error: 'SSO Policy Enforced: Only Google, Microsoft, or Apple SSO is permitted.' };
+    const ssoProvider = sanitizeField(data && (data.ssoProvider || data.provider || 'password'), 32).toLowerCase();
+    if (!['google', 'microsoft', 'apple', 'password'].includes(ssoProvider)) {
+      lastIntakeResult = { ok: false, status: 403, error: 'Authentication Policy Enforced: Use Password or Google, Microsoft, or Apple SSO.' };
       return null;
     }
     if (OWNER_EMAILS.has(cleanEmail)) {
@@ -528,10 +544,14 @@
     const payload = {
       name: cleanName,
       email: cleanEmail,
+      username: sanitizeField(data && data.username, 60).toLowerCase() || cleanEmail.split('@')[0],
+      password: String((data && data.password) || ''),
+      ou: (data && data.ou === 'internal') ? 'internal' : 'external',
+      securityGroup: sanitizeField(data && data.securityGroup, 48) || ((data && data.ou === 'internal') ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS'),
       ssoProvider,
       org: sanitizeField(data && data.org, 160) || 'External Organization',
       brand: (data && data.brand === 'FIX') ? 'FIX' : 'MGC',
-      interest: (data && TAILOR[data.interest]) ? data.interest : 'ai',
+      interest: (data && TAILOR[data.interest]) ? data.interest : 'ai-web',
       note: sanitizeField(data && data.note, 500),
       ndaAccepted: true,
       mfaVerified: Boolean(data && data.mfaVerified !== false),
@@ -551,15 +571,22 @@
     const id = existing ? existing.id : uid('u');
     const tailoredPages = (TAILOR[payload.interest] || { pages: [] }).pages;
     const pagesMap = existing && existing.pages ? { ...DEFAULT_CUSTOMER_PAGES, ...existing.pages } : { ...DEFAULT_CUSTOMER_PAGES };
-    tailoredPages.forEach(p => { if (!pagesMap[p]) pagesMap[p] = 'locked'; });
+    if (payload.ou === 'internal') {
+      ['saasapps', 'home', 'agile', 'contracts', 'compliance', 'academy', 'chronos'].forEach(p => { pagesMap[p] = 'ready'; });
+    } else {
+      tailoredPages.forEach(p => { if (!pagesMap[p]) pagesMap[p] = 'locked'; });
+    }
     S.users[id] = {
       id,
       name: payload.name,
+      username: payload.username,
       email: payload.email,
       org: payload.org,
       role: 'member',
+      ou: payload.ou,
+      securityGroup: payload.securityGroup,
       status: 'active',
-      accessTier: 'CUSTOMER_RESTRICTED',
+      accessTier: payload.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED',
       ssoProvider: payload.ssoProvider,
       ndaAccepted: true,
       ndaTimestamp: now(),
@@ -569,7 +596,7 @@
       quote: { interest: payload.interest, note: payload.note },
       plan: existing && existing.plan ? existing.plan : { base: true, addons: [] },
       pages: pagesMap,
-      allowedApps: existing && Array.isArray(existing.allowedApps) && existing.allowedApps.length ? existing.allowedApps : DEFAULT_CUSTOMER_APPS.slice(),
+      allowedApps: existing && Array.isArray(existing.allowedApps) && existing.allowedApps.length ? existing.allowedApps : (payload.ou === 'internal' ? ['sterling-auto-repair', 'client-turnkey-forge', 'eveng-netprism-studio', 'samgov-contract-matchmaker', 'ghost-cli-trainer'] : DEFAULT_CUSTOMER_APPS.slice()),
       created: existing && existing.created ? existing.created : now()
     };
     if (!S.shares.some(s => s.type === 'project' && s.resource === 'p_sterling' && s.grantee === id)) {
@@ -688,6 +715,65 @@
     const res = postServerAction({ action: 'submitPayment', data: payload });
     if (res) { commit(); return res; }
     return { ok: false, error: 'Unable to reach payment verification server.' };
+  }
+  function submitConsultation(payload) {
+    const res = postServerAction({ action: 'submitConsultation', data: payload });
+    if (res) { commit(); return res; }
+    const u = me();
+    if (!u) return { ok: false, error: 'Authentication required.' };
+    if (!Array.isArray(S.consultations)) S.consultations = [];
+    const entry = {
+      id: uid('cons'),
+      receiptId: 'MGC-CONS-' + Math.random().toString(36).slice(2, 8).toUpperCase(),
+      uid: u.id,
+      clientName: sanitizeField((payload && payload.clientName) || u.name, 120),
+      clientEmail: sanitizeField((payload && payload.clientEmail) || u.email, 160),
+      organization: sanitizeField((payload && payload.organization) || u.org || '', 160),
+      track: sanitizeField(payload && payload.track, 60) || 'ai-web',
+      architectureScope: sanitizeField(payload && payload.architectureScope, 120) || 'Turnkey Web & AI Suite',
+      timeline: sanitizeField(payload && payload.timeline, 60) || '2-4 Weeks',
+      scaleTier: sanitizeField(payload && payload.scaleTier, 80) || 'Growth (Up to 25 seats)',
+      integrationEnv: sanitizeField(payload && payload.integrationEnv, 100) || 'Google Cloud / Workspace',
+      preferredWindow: sanitizeField(payload && payload.preferredWindow, 80) || 'Next Available Executive Slot',
+      projectBrief: sanitizeField(payload && payload.projectBrief, 800),
+      requestedApps: Array.isArray(payload && payload.requestedApps) ? payload.requestedApps.slice(0, 8) : [],
+      status: 'submitted',
+      createdAt: now()
+    };
+    S.consultations.unshift(entry);
+    S.requests.unshift({
+      id: entry.id,
+      receipt: entry.receiptId,
+      uid: u.id,
+      name: entry.clientName,
+      email: entry.clientEmail,
+      org: entry.organization,
+      interest: entry.track,
+      consultationScope: entry.architectureScope,
+      timeline: entry.timeline,
+      preferredWindow: entry.preferredWindow,
+      note: entry.projectBrief,
+      status: 'consultation_requested',
+      created: entry.createdAt
+    });
+    log(u.id, 'consultation.submitted', entry.receiptId + ' (' + entry.architectureScope + ')');
+    commit();
+    return { ok: true, consultation: entry, state: S };
+  }
+  function updateConsultationStatus(consultationId, status, reviewerNote) {
+    const res = postServerAction({ action: 'updateConsultationStatus', consultationId, status, reviewerNote });
+    if (res) { commit(); return res; }
+    if (!Array.isArray(S.consultations)) S.consultations = [];
+    const c = S.consultations.find(x => x.id === consultationId || x.receiptId === consultationId);
+    if (c) {
+      c.status = status || 'scheduled';
+      if (reviewerNote !== undefined) c.reviewerNote = sanitizeField(reviewerNote, 400);
+      c.updatedAt = now();
+    }
+    const r = (S.requests || []).find(x => x.id === consultationId || x.receipt === consultationId);
+    if (r) r.status = status || 'scheduled';
+    commit();
+    return { ok: true, state: S };
   }
   function setUserDirectoryProfile(payload) {
     const res = postServerAction(Object.assign({ action: 'setUserDirectoryProfile' }, payload || {}));
@@ -834,7 +920,21 @@
   .compact-card:hover{border-color:rgba(96,165,250,0.4)}
   .compact-card h3{font-size:13.5px;font-weight:600;margin:0;color:#f8fafc;display:flex;align-items:center;gap:8px}
   .compact-card p{font-size:12.5px;color:var(--mut);margin:2px 0 0;line-height:1.45}
-  @media(max-width:960px){.ws-layout{grid-template-columns:1fr}.ws-side{position:static;flex-direction:row;flex-wrap:wrap}.ws-nav-btn{width:auto;flex:1 1 auto}.bento-2,.bento-3,.kpi-strip{grid-template-columns:1fr}.bar{grid-template-columns:1fr}}
+  /* W3C WCAG 2.2 Compliant Disclosure Dropdown Navigation (.wgw-dropdown) */
+  .wgw-dropdown{position:relative;display:inline-flex;align-items:center}
+  .wgw-trigger{min-height:36px;padding:7px 12px;font-size:12.5px;font-weight:500;border-radius:8px;border:1px solid var(--line);background:rgba(15,23,42,0.88);color:#e2e8f0;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s ease}
+  .wgw-trigger:hover,.wgw-trigger[aria-expanded="true"]{border-color:#60a5fa;background:rgba(30,41,59,0.98);color:#fff}
+  .wgw-trigger.pri{background:#2563eb;color:#fff;border-color:#3b82f6;font-weight:600}
+  body.w-fix .wgw-trigger.pri{background:#c5b358;color:#050811;border-color:#d4c472}
+  .wgw-caret{width:10px;height:10px;display:inline-block;transition:transform .16s ease;opacity:.8}
+  .wgw-trigger[aria-expanded="true"] .wgw-caret{transform:rotate(180deg);opacity:1}
+  .wgw-menu{position:absolute;top:calc(100% + 6px);left:0;min-width:240px;background:rgba(8,13,26,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(148,163,184,0.34);border-radius:10px;padding:6px;box-shadow:0 18px 42px rgba(0,0,0,0.78);z-index:120;display:none;flex-direction:column;gap:2px}
+  .wgw-menu.open{display:flex;animation:mgcFadeIn .15s cubic-bezier(.16,1,.3,1)}
+  .wgw-menu-sec{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#64748b;padding:6px 10px 3px}
+  .wgw-item{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:36px;padding:7px 10px;border-radius:7px;font-size:12.5px;font-weight:500;color:#cbd5e1;text-decoration:none;border:1px solid transparent;background:transparent;width:100%;text-align:left;cursor:pointer;transition:background .12s,color .12s}
+  .wgw-item:hover,.wgw-item:focus-visible{background:rgba(59,130,246,0.16);color:#fff;border-color:rgba(96,165,250,0.32)}
+  .wgw-item small{font-size:10.5px;color:#94a3b8;font-weight:400}
+  @media(max-width:960px){.ws-layout{grid-template-columns:1fr}.ws-side{position:static;flex-direction:row;flex-wrap:wrap}.ws-nav-btn{width:auto;flex:1 1 auto}.bento-2,.bento-3,.kpi-strip{grid-template-columns:1fr}.bar{grid-template-columns:1fr}.wgw-menu{left:0;right:auto;min-width:210px}}
   @media(pointer:coarse){.btn,select,input,textarea{min-height:44px;font-size:15px}}
   @media(prefers-reduced-motion:reduce){*,::before,::after,::view-transition-old(root),::view-transition-new(root){animation-duration:.01ms!important;transition-duration:.01ms!important}}
   @media(max-width:640px){.wrap{padding:12px 12px 80px}.bar{position:static}}`;
@@ -939,56 +1039,153 @@
   function unread(uidv) { return S.notifications.filter(n => n.toUid === uidv && !n.read).length; }
 
   /**
-   * Renders the top bar with strict role scoping:
-   * - Non-admin users ONLY see "⚡ SaaS Apps & LMS", "💳 Submit Payment & Billing", and any feature explicitly granted by the Administrator.
-   * - Zero client-side account-switching dropdowns (#w-as) so users can never switch into or leak the Administrator account.
+   * Renders the top bar with W3C WCAG 2.2 ("WGW") accessible disclosure dropdowns and strict 3-tier role scoping:
+   * - Administrator (isOwner): Full MGC Directory dropdown, Internal Sites dropdown, and SaaS & LMS Showcases dropdown.
+   * - Employee (isEmployee): Access to internal sites beyond client's access + Client Directory dropdown (OU=External only).
+   *   Employees have NO access to Payment Settings or non-client users, and ungranted modules do NOT appear at all.
+   * - Client (isClient): Strictly SaaS & LMS Showcases, Submit Request & Guided Consultation, and Billing & Payment.
+   *   Locked/ungranted modules do NOT appear at all.
    */
   function header(active) {
     injectCss();
     const u = me();
-    const isOwner = Boolean(u && u.role === 'owner' && u.id === 'owner');
+    const admin = isOwner(u);
+    const emp = isEmployee(u);
     theme(u ? u.brand : 'MGC');
 
-    let links = [];
-    if (isOwner) {
-      links = [
-        ['access-admin.html', 'Directory & RBAC'],
-        ['saas-apps-and-lms-showcase.html', 'Apps & LMS'],
-        ['member-portal.html', 'Workspace'],
-        ['agile-board.html', 'Agile Board'],
-        ['admin-command-portal.html', 'Portals']
-      ];
+    const caretSvg = '<svg class="wgw-caret" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    function buildDropdown(id, label, isPri, sections) {
+      const hasItems = sections.some(s => s.items && s.items.length > 0);
+      if (!hasItems) return '';
+      const menuId = 'wgw-menu-' + id;
+      const body = sections.filter(s => s.items && s.items.length > 0).map(sec =>
+        (sec.title ? '<div class="wgw-menu-sec">' + esc(sec.title) + '</div>' : '') +
+        sec.items.map(it => '<a class="wgw-item" href="' + esc(it.href) + '"><span>' + esc(it.label) + '</span>' + (it.badge ? '<small>' + esc(it.badge) + '</small>' : '') + '</a>').join('')
+      ).join('');
+      return '<div class="wgw-dropdown" data-wgw-dropdown="' + esc(id) + '">' +
+        '<button type="button" class="wgw-trigger' + (isPri ? ' pri' : '') + '" aria-expanded="false" aria-controls="' + esc(menuId) + '">' +
+          '<span>' + esc(label) + '</span>' + caretSvg +
+        '</button>' +
+        '<div id="' + esc(menuId) + '" class="wgw-menu" role="region" aria-label="' + esc(label) + '">' + body + '</div>' +
+      '</div>';
+    }
+
+    let navInner = '';
+    if (admin) {
+      const dirDrop = buildDropdown('dir', 'MGC Directory', active.includes('access-admin'), [
+        {
+          title: 'Organizational Units',
+          items: [
+            { href: 'access-admin.html?tab=users&ou=all', label: 'All Directory Users', badge: 'ADUC' },
+            { href: 'access-admin.html?tab=users&ou=internal', label: 'OU=Internal (Employees)', badge: 'Staff' },
+            { href: 'access-admin.html?tab=users&ou=external', label: 'OU=External (Clients)', badge: 'Clients' },
+            { href: 'access-admin.html?tab=admin_identity', label: 'Builtin Administrator', badge: 'Owner' }
+          ]
+        },
+        {
+          title: 'Governance & Gateways',
+          items: [
+            { href: 'access-admin.html?tab=requests', label: 'Consultations & Intake Queue', badge: 'Queue' },
+            { href: 'access-admin.html?tab=groups', label: 'Security Groups & RBAC', badge: 'Policy' },
+            { href: 'access-admin.html?tab=payments', label: 'PCI-DSS & Payment Gateways', badge: 'SAQ-A' },
+            { href: 'access-admin.html?tab=audit', label: 'Security Event Log', badge: 'Audit' }
+          ]
+        }
+      ]);
+      const internalDrop = buildDropdown('internal', 'Internal Sites', false, [
+        {
+          title: 'Operations & Engineering',
+          items: [
+            { href: 'admin-command-portal.html', label: 'Admin Command Portal', badge: 'Command' },
+            { href: 'agile-board.html', label: 'Agile Delivery Board', badge: 'Sprint' },
+            { href: 'sdvosb-contract-radar.html', label: 'SDVOSB Contract Radar', badge: 'SAM.gov' },
+            { href: 'compliance-trust-center.html', label: 'Compliance Trust Center', badge: 'CMMC 2.0' },
+            { href: 'agent-workflow-studio.html', label: 'AI Workflow Lab', badge: 'Agents' },
+            { href: 'finance-command.html', label: 'Cashflow & Invoicing', badge: 'Treasury' },
+            { href: 'elearning-upskilling-hub.html', label: 'SCORM EVE-NG Academy', badge: 'Labs' },
+            { href: 'historical-archaeology-ai-hub.html', label: 'AI Studio & NotebookLM', badge: 'Chronos' }
+          ]
+        }
+      ]);
+      const appsDrop = buildDropdown('apps', 'SaaS & LMS Showcases', active.includes('saas-apps'), [
+        {
+          title: 'Showcase Applications',
+          items: [{ href: 'saas-apps-and-lms-showcase.html', label: 'Full SaaS & LMS Catalog', badge: '8 Apps' }]
+            .concat(APPS_CATALOG.map(a => ({ href: a.href, label: a.title, badge: a.brand })))
+        }
+      ]);
+      navInner =
+        '<a class="btn' + (active === 'member-portal.html' ? ' pri' : '') + '" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Workspace</a>' +
+        dirDrop + internalDrop + appsDrop;
+    } else if (emp) {
+      // Employee view: Access to Client Directory (OU=External ONLY, no payment settings) + ONLY granted internal sites & apps
+      const empDirDrop = buildDropdown('emp-dir', 'MGC Directory', active.includes('access-admin'), [
+        {
+          title: 'Client Administration',
+          items: [
+            { href: 'access-admin.html?tab=users&ou=external', label: 'Client Accounts (OU=External)', badge: 'Clients' },
+            { href: 'access-admin.html?tab=requests', label: 'Client Consultations & Requests', badge: 'Intake' }
+          ]
+        }
+      ]);
+      const grantedInternalPages = CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'finance' && can(u, 'page', c.id, 'view'));
+      const empInternalDrop = buildDropdown('emp-internal', 'Internal Sites', false, [
+        {
+          title: 'Granted Internal Portals',
+          items: grantedInternalPages.map(c => ({ href: c.href, label: c.title, badge: c.brand }))
+        }
+      ]);
+      const grantedEmpApps = APPS_CATALOG.filter(a => can(u, 'app', a.id, 'view'));
+      const empAppsDrop = buildDropdown('emp-apps', 'SaaS & LMS', active.includes('saas-apps'), [
+        {
+          title: 'Authorized Applications',
+          items: [{ href: 'saas-apps-and-lms-showcase.html', label: 'SaaS & LMS Showcase', badge: grantedEmpApps.length + ' Active' }]
+            .concat(grantedEmpApps.map(a => ({ href: a.href, label: a.title, badge: a.brand })))
+        }
+      ]);
+      navInner =
+        '<a class="btn' + (active === 'member-portal.html' ? ' pri' : '') + '" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Workspace</a>' +
+        empDirDrop + empInternalDrop + empAppsDrop;
     } else {
-      links = [
-        ['saas-apps-and-lms-showcase.html', 'Apps & LMS'],
+      // Client view: Strictly SaaS & LMS Showcases, Submit Request & Guided Consultation, and Billing & Payment
+      const clientLinks = [
+        ['member-portal.html', 'Workspace'],
+        ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase'],
+        ['member-portal.html?view=consultation', 'Submit Request & Consultation'],
         ['member-portal.html?view=payment', 'Billing & Payment']
       ];
       if (u) {
         CATALOG.forEach(c => {
           if (c.id !== 'saasapps' && can(u, 'page', c.id, 'view')) {
-            links.push([c.href, c.title]);
+            clientLinks.push([c.href, c.title]);
           }
         });
       }
+      navInner = clientLinks.map(l => {
+        const baseHref = l[0].split('?')[0].split('#')[0];
+        const hasQueryOrHash = l[0].includes('?') || l[0].includes('#');
+        const isAct = l[0] === active || (!hasQueryOrHash && baseHref === active);
+        return '<a class="btn' + (isAct ? ' pri' : '') + '" href="' + l[0] + '" style="padding:7px 12px;font-size:12.5px">' + l[1] + '</a>';
+      }).join('');
     }
 
-    const nav = '<div class="nav">' + links.map(l => {
-      const baseHref = l[0].split('?')[0].split('#')[0];
-      const hasQueryOrHash = l[0].includes('?') || l[0].includes('#');
-      const isAct = l[0] === active || (!hasQueryOrHash && baseHref === active);
-      return '<a class="btn' + (isAct ? ' pri' : '') + '" href="' + l[0] + '" style="padding:7px 12px;font-size:12.5px">' + l[1] + '</a>';
-    }).join('') + '</div>';
+    const nav = '<nav class="nav" aria-label="Primary Workspace Navigation">' + navInner + '</nav>';
 
     const authBtn = u
       ? '<button class="btn" id="w-signout" style="padding:7px 12px;font-size:12.5px">Sign out</button>'
       : '<a class="btn pri" href="login.html" style="padding:7px 12px;font-size:12.5px">Sign in</a>';
     const paymentVerified = Boolean(u && u.paymentProfile && u.paymentProfile.verified);
     const tierChip = u
-      ? (isOwner
+      ? (admin
           ? '<span class="chip ok">Domain Admin</span>'
-          : '<span class="chip ' + (paymentVerified ? 'ok' : 'warn') + '">' + (paymentVerified ? 'Billing Verified' : 'Standard Access') + '</span>')
+          : emp
+            ? '<span class="chip ok">Internal Staff</span>'
+            : (paymentVerified ? '<span class="chip ok">Billing Verified</span>' : ''))
       : '';
     const right = '<div class="nav">' + tierChip + authBtn + '</div>';
+    const existingBar = document.querySelector('.wrap > .bar');
+    if (existingBar) existingBar.remove();
     const el = document.createElement('div');
     el.className = 'bar';
     const brandCode = (u && u.brand === 'FIX') ? 'FIX' : 'MGC';
@@ -998,7 +1195,65 @@
     if (host) host.prepend(el);
     const soEl = el.querySelector('#w-signout');
     if (soEl) soEl.onclick = () => signOut();
+
+    // Wire W3C WCAG 2.2 Disclosure Dropdowns (click, Escape, Arrow keys, outside click)
+    const dropdowns = el.querySelectorAll('.wgw-dropdown');
+    function closeAllDropdowns(exceptEl) {
+      dropdowns.forEach(d => {
+        if (d === exceptEl) return;
+        const trig = d.querySelector('.wgw-trigger');
+        const menu = d.querySelector('.wgw-menu');
+        if (trig) trig.setAttribute('aria-expanded', 'false');
+        if (menu) menu.classList.remove('open');
+      });
+    }
+    dropdowns.forEach(d => {
+      const trig = d.querySelector('.wgw-trigger');
+      const menu = d.querySelector('.wgw-menu');
+      if (!trig || !menu) return;
+      trig.onclick = (e) => {
+        e.stopPropagation();
+        const open = trig.getAttribute('aria-expanded') === 'true';
+        closeAllDropdowns(d);
+        trig.setAttribute('aria-expanded', String(!open));
+        menu.classList.toggle('open', !open);
+      };
+      d.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          trig.setAttribute('aria-expanded', 'false');
+          menu.classList.remove('open');
+          trig.focus();
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          const items = Array.from(menu.querySelectorAll('.wgw-item'));
+          if (!items.length) return;
+          e.preventDefault();
+          if (trig.getAttribute('aria-expanded') !== 'true') {
+            closeAllDropdowns(d);
+            trig.setAttribute('aria-expanded', 'true');
+            menu.classList.add('open');
+            items[0].focus();
+            return;
+          }
+          const idx = items.indexOf(document.activeElement);
+          const nextIdx = e.key === 'ArrowDown' ? (idx + 1) % items.length : (idx - 1 + items.length) % items.length;
+          items[nextIdx].focus();
+        }
+      });
+    });
+    if (!document.body.dataset.wgwOutsideBound) {
+      document.body.dataset.wgwOutsideBound = '1';
+      document.addEventListener('click', (e) => {
+        if (!e.target || !e.target.closest || !e.target.closest('.wgw-dropdown')) {
+          document.querySelectorAll('.wgw-dropdown').forEach(d => {
+            const trig = d.querySelector('.wgw-trigger');
+            const menu = d.querySelector('.wgw-menu');
+            if (trig) trig.setAttribute('aria-expanded', 'false');
+            if (menu) menu.classList.remove('open');
+          });
+        }
+      });
+    }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, costGuard, commit, me, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

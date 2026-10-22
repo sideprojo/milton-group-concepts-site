@@ -15,48 +15,178 @@
   let u = W.me();
   const qs = new URLSearchParams(location.search);
   const initialView = qs.get('view') || (location.hash || '').slice(1) || 'apps';
-  let tab = ['payment', 'billing'].includes(initialView) ? 'payment' : initialView;
+  let tab = ['payment', 'billing'].includes(initialView)
+    ? 'payment'
+    : (['consultation', 'request', 'consult'].includes(initialView) ? 'consultation' : initialView);
   let lastPaymentReceipt = null;
   let lastPaymentError = '';
+  let lastConsultationReceipt = null;
+  let selectedConsultTrack = 'ai-web';
 
-  const isSoleAdmin = () => Boolean(u && u.role === 'owner' && u.id === 'owner');
+  const isSoleAdmin = () => Boolean(W.isOwner ? W.isOwner(u) : (u && u.role === 'owner' && u.id === 'owner'));
+  const isEmp = () => Boolean(W.isEmployee ? W.isEmployee(u) : (u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active'));
+  const isClientUser = () => Boolean(W.isClient ? W.isClient(u) : (u && u.role !== 'owner' && u.ou !== 'internal'));
+
+  const CONSULTATION_TRACKS = [
+    {
+      id: 'ai-web',
+      scope: 'Turnkey Web, Autonomous AI Receptionist & SaaS Portal',
+      badge: 'Commercial & SaaS',
+      desc: 'Full-stack web presence, 24/7 AI lead intake, calendar booking, and customer portal.'
+    },
+    {
+      id: 'training',
+      scope: 'Decoupled SCORM 2004 LMS & Interactive Lab Studio',
+      badge: 'Enterprise Academy',
+      desc: 'SCORM 2004 4th Ed. courseware, EVE-NG topology workbenches, and automated grading.'
+    },
+    {
+      id: 'cyber',
+      scope: 'Zero-Trust Cybersecurity & CMMC 2.0 Architecture',
+      badge: 'Security & Compliance',
+      desc: 'NIST SP 800-171 control mapping, federated OIDC hardening, and continuous telemetry.'
+    },
+    {
+      id: 'federal',
+      scope: 'SDVOSB Federal Teaming & Custom Engineering',
+      badge: 'Federal & Defense',
+      desc: 'NAICS 541512/541519 prime/subcontract execution, capability architecture, and WAWF integration.'
+    }
+  ];
 
   function saasAppsAndLmsPanel() {
     const apps = W.APPS_CATALOG || [];
+    // Strict Zero-Leakage Policy: Only render applications the user actually has access to
     const unlockedApps = apps.filter(a => W.can(u, 'app', a.id, 'view'));
-    const lockedApps = apps.filter(a => !W.can(u, 'app', a.id, 'view'));
-    const grantedPages = W.CATALOG.filter(c => c.id !== 'saasapps' && W.can(u, 'page', c.id, 'view'));
+    const grantedPages = W.CATALOG.filter(c => c.id !== 'saasapps' && (!isEmp() || c.id !== 'finance') && W.can(u, 'page', c.id, 'view'));
 
     const renderAppCard = (a) => {
-      const allowed = W.can(u, 'app', a.id, 'view');
-      const badge = allowed
-        ? '<span class="chip ok">' + (isSoleAdmin() ? 'Admin' : 'Active') + '</span>'
-        : '<span class="chip warn">Locked</span>';
-      const act = allowed
-        ? '<a class="btn pri" href="' + esc(a.href) + '">Launch</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>SCORM</a>' : '')
-        : '<button class="btn" data-go-payment="1">Unlock</button>';
-      return '<div class="compact-card" style="border-color:' + (allowed ? 'rgba(16,185,129,0.38)' : 'rgba(148,163,184,0.18)') + ';padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px">' +
-        '<div class="row"><h3>' + esc(a.title) + '</h3>' + badge + '</div>' +
+      const badge = '<span class="chip ok">' + (isSoleAdmin() ? 'Admin' : 'Active') + '</span>';
+      const act = '<a class="btn pri" href="' + esc(a.href) + '">Launch</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>SCORM</a>' : '');
+      return '<div class="compact-card" data-app-card="' + esc(a.id) + '" style="border-color:rgba(16,185,129,0.38);padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px">' +
+        '<div><div class="row"><h3>' + esc(a.title) + '</h3>' + badge + '</div><p>' + esc(a.desc || '') + '</p></div>' +
         '<div class="row" style="justify-content:flex-start;gap:8px">' + act + '</div></div>';
     };
 
     const grantedPagesHtml = grantedPages.length
       ? '<div class="card" style="padding:18px 20px;margin-top:12px">' +
-          '<div class="row" style="margin-bottom:12px"><h2 style="margin:0;font-size:15px;font-weight:600">Granted Modules (' + grantedPages.length + ')</h2></div>' +
+          '<div class="row" style="margin-bottom:12px"><h2 style="margin:0;font-size:15px;font-weight:600">' + (isEmp() ? 'Internal Portals &amp; Operations (' : 'Authorized Workspace Modules (') + grantedPages.length + ')</h2></div>' +
           '<div class="bento-2">' + grantedPages.map(c =>
-            '<div class="compact-card" style="border-color:rgba(59,130,246,0.38);padding:14px 16px"><div class="row"><h3>' + esc(c.title) + '</h3><a class="btn pri" href="' + esc(c.href) + '">Open</a></div></div>'
+            '<div class="compact-card" style="border-color:rgba(59,130,246,0.38);padding:14px 16px"><div class="row"><h3>' + esc(c.title) + '</h3><a class="btn pri" href="' + esc(c.href) + '">Open</a></div><p>' + esc(c.desc || '') + '</p></div>'
           ).join('') + '</div></div>'
       : '';
 
+    const topRightActions = isEmp()
+      ? '<div style="display:flex;gap:8px"><a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a><a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
+      : '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a><button type="button" class="btn" data-go-consultation="1">Submit Request &amp; Consultation</button>' + (!isEmp() ? '<button type="button" class="btn pri" data-go-payment="1">Billing</button>' : '') + '</div>';
+
     return '<div class="card" style="padding:18px 20px;margin-top:0">' +
         '<div class="row" style="margin-bottom:14px">' +
-          '<h2 style="margin:0;font-size:15px;font-weight:600">Active Applications (' + unlockedApps.length + ' of ' + apps.length + ')</h2>' +
-          '<div style="display:flex;gap:8px"><a class="btn" href="saas-apps-and-lms-showcase.html">Catalog</a><button class="btn pri" data-go-payment="1">Billing</button></div>' +
+          '<h2 style="margin:0;font-size:15px;font-weight:600">Authorized Applications &amp; LMS (' + unlockedApps.length + ')</h2>' +
+          topRightActions +
         '</div>' +
         '<div class="bento-2">' + unlockedApps.map(renderAppCard).join('') + '</div>' +
-        (lockedApps.length ? '<details style="margin-top:14px"><summary style="font-size:12.5px">Additional Modules (' + lockedApps.length + ')</summary><div class="bento-2" style="margin-top:10px">' + lockedApps.map(renderAppCard).join('') + '</div></details>' : '') +
       '</div>' +
       grantedPagesHtml;
+  }
+
+  function consultationPanel() {
+    const myConsults = ((S() && S().consultations) || []).filter(c => isSoleAdmin() || c.uid === u.id);
+    const activeTrackObj = CONSULTATION_TRACKS.find(t => t.id === selectedConsultTrack) || CONSULTATION_TRACKS[0];
+
+    const confirmBanner = lastConsultationReceipt
+      ? '<div class="card" id="consultationConfirmedBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.52);background:linear-gradient(135deg,rgba(6,78,59,0.34),rgba(9,16,32,0.96))">' +
+          '<div class="row">' +
+            '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+              '<span class="chip ok">Request Logged</span>' +
+              '<strong style="font-size:13.5px;color:#fff">' + esc(lastConsultationReceipt.architectureScope) + '</strong>' +
+              '<span style="font-size:12.5px;color:#a7f3d0">' + esc(lastConsultationReceipt.timeline) + ' · ' + esc(lastConsultationReceipt.preferredWindow) + '</span>' +
+            '</div>' +
+            '<code style="font-size:11.5px;color:#34d399">' + esc(lastConsultationReceipt.receiptId) + '</code>' +
+          '</div>' +
+        '</div>'
+      : '';
+
+    return confirmBanner +
+      '<form id="guidedConsultationForm" onsubmit="return false;" style="display:flex;flex-direction:column;gap:14px">' +
+        '<div class="card" style="padding:18px 20px">' +
+          '<div class="row" style="margin-bottom:12px">' +
+            '<div>' +
+              '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa">Step 1 · Solution Architecture</span>' +
+              '<h2 style="margin:2px 0 0;font-size:15px;font-weight:600">Select Guided Consultation &amp; Request Track</h2>' +
+            '</div>' +
+            '<span class="chip ok">Enterprise Intake</span>' +
+          '</div>' +
+          '<div class="bento-2">' +
+            CONSULTATION_TRACKS.map(t => {
+              const sel = t.id === selectedConsultTrack;
+              return '<div class="compact-card" data-consult-track="' + esc(t.id) + '" style="cursor:pointer;border-color:' + (sel ? '#c5b358' : 'var(--line)') + ';background:' + (sel ? 'rgba(30,58,138,0.26)' : 'var(--card)') + '">' +
+                '<div class="row"><h3>' + esc(t.scope) + '</h3><span class="chip' + (sel ? ' ok' : '') + '">' + esc(t.badge) + '</span></div>' +
+                '<p>' + esc(t.desc) + '</p>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+        '<div style="display:grid;grid-template-columns:1.25fr 0.75fr;gap:14px;align-items:start">' +
+          '<div class="card" style="padding:18px 20px;margin:0">' +
+            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa">Step 2 · Scope &amp; Technical Parameters</span>' +
+            '<h3 style="margin:2px 0 12px;font-size:14.5px;font-weight:600">Deployment Requirements</h3>' +
+            '<input type="hidden" id="consArchitectureScope" value="' + esc(activeTrackObj.scope) + '">' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:10px">' +
+              '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:4px">Target Timeline</label>' +
+                '<select id="consTimeline" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+                  '<option value="Immediate (1-2 Weeks)">Immediate (1-2 Weeks)</option>' +
+                  '<option value="Standard Sprint (2-4 Weeks)" selected>Standard Sprint (2-4 Weeks)</option>' +
+                  '<option value="Quarterly Rollout (30-60 Days)">Quarterly Rollout (30-60 Days)</option>' +
+                '</select>' +
+              '</div>' +
+              '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:4px">Organization Scale</label>' +
+                '<select id="consScaleTier" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+                  '<option value="Starter Team (1-10 Seats)">Starter Team (1-10 Seats)</option>' +
+                  '<option value="Growth Organization (11-50 Seats)" selected>Growth Organization (11-50 Seats)</option>' +
+                  '<option value="Enterprise / Agency (50+ Seats)">Enterprise / Agency (50+ Seats)</option>' +
+                '</select>' +
+              '</div>' +
+              '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:4px">Primary Environment</label>' +
+                '<select id="consIntegrationEnv" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+                  '<option value="Google Cloud &amp; Workspace OIDC">Google Cloud &amp; Workspace OIDC</option>' +
+                  '<option value="Microsoft Entra ID / Azure">Microsoft Entra ID / Azure</option>' +
+                  '<option value="Hybrid On-Premises &amp; Cloud Run">Hybrid On-Premises &amp; Cloud Run</option>' +
+                '</select>' +
+              '</div>' +
+            '</div>' +
+            '<div style="margin-bottom:10px">' +
+              '<label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:4px">Project Objectives &amp; Custom Scope Details</label>' +
+              '<textarea id="consProjectBrief" rows="3" required placeholder="Describe your target deliverables, integration goals, or specific SaaS/LMS modules needed..." style="width:100%;padding:9px 12px;font-size:12.5px"></textarea>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="card" style="padding:18px 20px;margin:0">' +
+            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa">Step 3 · Guided Session</span>' +
+            '<h3 style="margin:2px 0 12px;font-size:14.5px;font-weight:600">Consultation Schedule</h3>' +
+            '<div style="margin-bottom:10px">' +
+              '<label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:4px">Organization / Agency</label>' +
+              '<input id="consOrg" value="' + esc(u.org || '') + '" placeholder="Organization name" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+            '</div>' +
+            '<div style="margin-bottom:14px">' +
+              '<label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:4px">Preferred Consultation Window</label>' +
+              '<select id="consPreferredWindow" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+                '<option value="Morning Architecture Review (09:00 - 12:00 EST)">Morning Architecture Review (09:00 - 12:00 EST)</option>' +
+                '<option value="Afternoon Executive Briefing (13:00 - 16:00 EST)" selected>Afternoon Executive Briefing (13:00 - 16:00 EST)</option>' +
+                '<option value="Priority Async Scope &amp; Proposal Dispatch">Priority Async Scope &amp; Proposal Dispatch</option>' +
+              '</select>' +
+            '</div>' +
+            '<button type="submit" class="btn pri" id="btnSubmitConsultation" style="width:100%;justify-content:center;padding:10px 16px;font-size:13px">Submit Request &amp; Schedule Consultation</button>' +
+          '</div>' +
+        '</div>' +
+      '</form>' +
+      (myConsults.length
+        ? '<div class="card" style="padding:16px 20px;margin-top:12px"><div class="row" style="margin-bottom:10px"><h3 style="margin:0;font-size:14px;font-weight:600">Submitted Requests &amp; Consultations (' + myConsults.length + ')</h3></div>' +
+          '<table><thead><tr><th>Receipt</th><th>Solution Scope</th><th>Timeline</th><th>Consultation Window</th><th>Status</th></tr></thead><tbody>' +
+          myConsults.map(c => '<tr><td><code>' + esc(c.receiptId) + '</code></td><td><b>' + esc(c.architectureScope) + '</b></td><td>' + esc(c.timeline) + '</td><td>' + esc(c.preferredWindow) + '</td><td><span class="chip ok">' + esc(c.status || 'submitted') + '</span></td></tr>').join('') +
+          '</tbody></table></div>'
+        : '');
   }
 
   function paymentPanel() {
@@ -174,11 +304,14 @@
   }
 
   function getAvailableTabsForUser() {
-    // Base tabs for all authenticated users: Strictly SaaS Apps & LMS + Submit Payment & Billing
     const list = [
-      ['apps', 'Applications & LMS', saasAppsAndLmsPanel],
-      ['payment', 'Billing & Payment', paymentPanel]
+      ['apps', 'Applications & LMS', saasAppsAndLmsPanel]
     ];
+    // Clients & Admin have access to Guided Consultation & Payment; Employees have NO access to Payment Settings
+    if (!isEmp()) {
+      list.push(['consultation', 'Submit Request & Consultation', consultationPanel]);
+      list.push(['payment', 'Billing & Payment', paymentPanel]);
+    }
     if (isSoleAdmin() || W.can(u, 'page', 'home', 'view')) {
       list.push(['overview', 'Overview Hub', overviewPanel]);
     }
@@ -191,7 +324,7 @@
   function render() {
     u = W.me();
     if (!u) {
-      app.innerHTML = '<div class="card lock"><span class="chip warn">Authentication Required</span><h1 style="margin-top:10px">Sign In Required</h1><p>Sign in with your account credentials or Federated SSO to access your workspace and billing settings.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In</a></div></div>';
+      app.innerHTML = '<div class="card lock"><span class="chip warn">Authentication Required</span><h1 style="margin-top:10px">Sign In Required</h1><p>Sign in with your account credentials or Federated SSO to access your workspace.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In</a></div></div>';
       W.header('member-portal.html');
       return;
     }
@@ -203,27 +336,19 @@
     const activeTabEntry = availableTabs.find(t => t[0] === tab) || availableTabs[0];
     const body = activeTabEntry[2]();
 
-    const apps = W.APPS_CATALOG || [];
-    const unlockedCount = apps.filter(a => W.can(u, 'app', a.id, 'view')).length;
-    const grantedFeatureLinks = W.CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'home' && c.id !== 'resources' && W.can(u, 'page', c.id, 'view'));
-    const paymentOk = Boolean(u.paymentProfile && u.paymentProfile.verified);
-
-    const kpiHtml = '<div class="kpi-strip">' +
-      '<div class="kpi-tile"><small>Account Scope</small><strong>' + (isSoleAdmin() ? 'Domain Administrator' : 'Standard Member') + '</strong></div>' +
-      '<div class="kpi-tile"><small>Applications</small><strong>' + unlockedCount + ' of ' + apps.length + ' Active</strong></div>' +
-      '<div class="kpi-tile"><small>Billing Status</small><strong style="color:' + (paymentOk ? '#34d399' : '#fbbf24') + '">' + (paymentOk ? 'Verified (' + esc(u.paymentProfile.last4) + ')' : 'Pending Setup') + '</strong></div>' +
-      '</div>';
+    const grantedFeatureLinks = W.CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'home' && c.id !== 'resources' && (!isEmp() || c.id !== 'finance') && W.can(u, 'page', c.id, 'view'));
 
     const sideNav = '<aside class="ws-side" aria-label="Authorized User Navigation">' +
       '<div class="ws-side-title">Workspace</div>' +
       availableTabs.map(t => '<button type="button" class="ws-nav-btn' + (t[0] === tab ? ' active' : '') + '" data-tab="' + t[0] + '"><span>' + t[1] + '</span></button>').join('') +
-      '<a class="ws-nav-btn" href="saas-apps-and-lms-showcase.html" style="text-decoration:none"><span>App Catalog</span></a>' +
+      '<a class="ws-nav-btn" href="saas-apps-and-lms-showcase.html" style="text-decoration:none"><span>SaaS &amp; LMS Showcase</span></a>' +
       grantedFeatureLinks.map(c => '<a class="ws-nav-btn" href="' + esc(c.href) + '" style="text-decoration:none"><span>' + esc(c.title) + '</span></a>').join('') +
-      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.42);color:#fde047"><span>Directory &amp; RBAC</span></a>' : '') +
+      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.42);color:#fde047"><span>MGC Directory &amp; RBAC</span></a>' : '') +
+      (isEmp() ? '<a class="ws-nav-btn" href="access-admin.html?tab=users&amp;ou=external" style="text-decoration:none;border-color:rgba(59,130,246,0.42);color:#93c5fd"><span>Client Directory</span></a>' : '') +
       '</aside>';
 
-    app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + kpiHtml + body + '</div></div>';
-    W.header(tab === 'payment' ? 'member-portal.html?view=payment' : 'member-portal.html');
+    app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + body + '</div></div>';
+    W.header(tab === 'payment' ? 'member-portal.html?view=payment' : tab === 'consultation' ? 'member-portal.html?view=consultation' : 'member-portal.html');
     bind();
   }
 
@@ -234,10 +359,55 @@
       render();
     });
     app.querySelectorAll('[data-go-payment]').forEach(b => b.onclick = () => {
+      if (isEmp()) return;
       tab = 'payment';
       lastPaymentError = '';
       render();
     });
+    app.querySelectorAll('[data-go-consultation]').forEach(b => b.onclick = () => {
+      tab = 'consultation';
+      render();
+    });
+    app.querySelectorAll('[data-consult-track]').forEach(card => card.onclick = () => {
+      selectedConsultTrack = card.dataset.consultTrack;
+      render();
+    });
+    const consultForm = document.getElementById('guidedConsultationForm');
+    if (consultForm) {
+      consultForm.onsubmit = async (ev) => {
+        ev.preventDefault();
+        const payload = {
+          track: selectedConsultTrack,
+          architectureScope: (document.getElementById('consArchitectureScope') && document.getElementById('consArchitectureScope').value) || 'Turnkey Web & Autonomous AI Suite',
+          timeline: document.getElementById('consTimeline').value,
+          scaleTier: document.getElementById('consScaleTier').value,
+          integrationEnv: document.getElementById('consIntegrationEnv').value,
+          organization: document.getElementById('consOrg').value.trim(),
+          preferredWindow: document.getElementById('consPreferredWindow').value,
+          projectBrief: document.getElementById('consProjectBrief').value.trim()
+        };
+        const res = W.submitConsultation ? W.submitConsultation(payload) : null;
+        if (res && res.ok && res.consultation) {
+          lastConsultationReceipt = res.consultation;
+          W.toast('Consultation request submitted (' + res.consultation.receiptId + ')');
+          render();
+          return;
+        }
+        try {
+          const resp = await fetch('/api/consultation/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await resp.json();
+          if (data && data.ok && data.consultation) {
+            lastConsultationReceipt = data.consultation;
+            W.toast('Consultation request submitted (' + data.consultation.receiptId + ')');
+            render();
+          }
+        } catch (_) {}
+      };
+    }
     app.querySelectorAll('[data-chk]').forEach(c => c.onchange = () => {
       const k = 'mgcw.chk.' + u.id;
       const st = JSON.parse(localStorage.getItem(k) || '{}');

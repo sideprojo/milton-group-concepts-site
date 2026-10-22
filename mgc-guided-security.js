@@ -51,16 +51,18 @@
         if (res && res.authenticated && res.user) {
           serverAuthUser = res.user;
           const isSoleAdmin = res.user.role === 'owner' && res.user.id === 'owner' && String(res.user.email || '').toLowerCase() === SOLE_ADMIN_EMAIL;
+          const isInternalEmp = !isSoleAdmin && res.user.ou === 'internal';
           const syncedSess = {
             uid: res.user.id,
             email: res.user.email,
             name: res.user.name,
             org: res.user.org || 'Milton Group Concepts LLC & F.I.X Solutions LLC',
-            role: isSoleAdmin ? 'OWNER_ADMIN' : 'CUSTOMER_RESTRICTED',
+            role: isSoleAdmin ? 'OWNER_ADMIN' : (isInternalEmp ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED'),
+            ou: res.user.ou || 'external',
             ssoVerified: true,
             ssoProvider: res.user.ssoProvider || 'google',
-            access: isSoleAdmin ? 'INTERNAL_SUITE_FULL' : 'CUSTOMER_RESTRICTED',
-            accessTier: isSoleAdmin ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+            access: isSoleAdmin ? 'INTERNAL_SUITE_FULL' : (isInternalEmp ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED'),
+            accessTier: isSoleAdmin ? 'OWNER_FULL' : (isInternalEmp ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED'),
             allowedPages: Array.isArray(res.user.allowedPages) ? res.user.allowedPages : ['saasapps'],
             allowedApps: Array.isArray(res.user.allowedApps) ? res.user.allowedApps : ['sterling-auto-repair', 'client-turnkey-forge'],
             allowedPortals: Array.isArray(res.user.allowedPortals) ? res.user.allowedPortals : DEFAULT_CUSTOMER_PORTALS,
@@ -1527,6 +1529,10 @@
       (serverAuthUser && serverAuthUser.role === 'owner' && serverAuthUser.id === 'owner' && String(serverAuthUser.email || '').toLowerCase() === SOLE_ADMIN_EMAIL) ||
       (!isHttpProtocol() && String(session.email || '').toLowerCase() === SOLE_ADMIN_EMAIL && String(session.role || '').toUpperCase().includes('OWNER'))
     );
+    const isEmployeeSession = Boolean(
+      !isSoleOwner &&
+      ((serverAuthUser && serverAuthUser.ou === 'internal') || String(session.accessTier || '').toUpperCase() === 'INTERNAL_EMPLOYEE')
+    );
     function isHttpProtocol() {
       return window.location.protocol === 'http:' || window.location.protocol === 'https:';
     }
@@ -1536,9 +1542,9 @@
 
     const adminGrantedPortalEntries = isSoleOwner
       ? pages
-      : pages.filter(p => p.file !== 'saas-apps-and-lms-showcase.html' && p.file !== 'member-portal.html' && userAllowedPortals.includes(p.file));
+      : pages.filter(p => p.file !== 'saas-apps-and-lms-showcase.html' && p.file !== 'member-portal.html' && (!isEmployeeSession || p.file !== 'finance-command.html') && userAllowedPortals.includes(p.file));
 
-    // Group pages by category for Administrator; for standard users, render ONLY SaaS Apps & LMS + Submit Payment & Billing + Admin-granted features
+    // Group pages by category for Administrator; for Employee and Client users, strictly omit any unauthorized links
     const categories = ['Command & Auth', 'Apps & Labs', 'Canvas Academy', 'Commerce & Gov'];
     const menusHtml = isSoleOwner
       ? categories.map(cat => {
@@ -1566,22 +1572,45 @@
           `;
         }).join('') + `
           <a href="access-admin.html" class="os-menu-trigger" style="text-decoration:none;color:#fde047;border:1px solid rgba(197,179,88,0.45);background:rgba(197,179,88,0.14);font-weight:800;">
-            <span>👑 Access Admin (Grant Features)</span>
+            <span>MGC Directory</span>
           </a>
         `
-      : `
-        <a href="saas-apps-and-lms-showcase.html" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'saas-apps-and-lms-showcase.html' ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
-          <span>⚡ SaaS Apps &amp; LMS</span>
-        </a>
-        <a href="member-portal.html?view=payment" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'member-portal.html' ? 'color:#34d399;border-color:rgba(16,185,129,0.45);background:rgba(16,185,129,0.15);' : ''}">
-          <span>💳 Submit Payment &amp; Billing</span>
-        </a>
-        ${adminGrantedPortalEntries.map(item => `
-          <a href="${item.file}" class="os-menu-trigger" style="text-decoration:none;${item.file.toLowerCase() === currentFile ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
-            <span>${item.icon} ${item.label}</span>
+      : isEmployeeSession
+        ? `
+          <a href="member-portal.html" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'member-portal.html' ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
+            <span>Workspace</span>
           </a>
-        `).join('')}
-      `;
+          <a href="access-admin.html?tab=users&amp;ou=external" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'access-admin.html' ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
+            <span>Client Directory</span>
+          </a>
+          <a href="saas-apps-and-lms-showcase.html" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'saas-apps-and-lms-showcase.html' ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
+            <span>SaaS &amp; LMS</span>
+          </a>
+          ${adminGrantedPortalEntries.map(item => `
+            <a href="${item.file}" class="os-menu-trigger" style="text-decoration:none;${item.file.toLowerCase() === currentFile ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
+              <span>${item.label}</span>
+            </a>
+          `).join('')}
+        `
+        : `
+          <a href="member-portal.html" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'member-portal.html' ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
+            <span>Workspace</span>
+          </a>
+          <a href="saas-apps-and-lms-showcase.html" class="os-menu-trigger" style="text-decoration:none;${currentFile === 'saas-apps-and-lms-showcase.html' ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
+            <span>SaaS &amp; LMS</span>
+          </a>
+          <a href="member-portal.html?view=consultation" class="os-menu-trigger" style="text-decoration:none;">
+            <span>Submit Request &amp; Consultation</span>
+          </a>
+          <a href="member-portal.html?view=payment" class="os-menu-trigger" style="text-decoration:none;">
+            <span>Billing &amp; Payment</span>
+          </a>
+          ${adminGrantedPortalEntries.map(item => `
+            <a href="${item.file}" class="os-menu-trigger" style="text-decoration:none;${item.file.toLowerCase() === currentFile ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
+              <span>${item.label}</span>
+            </a>
+          `).join('')}
+        `;
 
     const drawerCategoriesHtml = isSoleOwner
       ? categories.map(cat => {
@@ -1604,27 +1633,44 @@
         }).join('')
       : `
         <div class="os-drawer-cat">
-          <div class="os-drawer-cat-title">Authorized User Menu</div>
+          <div class="os-drawer-cat-title">Authorized Navigation</div>
           <a href="saas-apps-and-lms-showcase.html" class="os-drop-item ${currentFile === 'saas-apps-and-lms-showcase.html' ? 'active' : ''}">
             <span class="os-drop-icon" style="border-color:#C5B35866;">⚡</span>
             <span style="flex:1;min-width:0;">
               <span class="os-drop-title">SaaS Apps &amp; LMS</span>
-              <span class="os-drop-sub">Included Default Access</span>
+              <span class="os-drop-sub">Authorized Applications</span>
             </span>
           </a>
-          <a href="member-portal.html?view=payment" class="os-drop-item ${currentFile === 'member-portal.html' ? 'active' : ''}">
-            <span class="os-drop-icon" style="border-color:#10B98166;">💳</span>
-            <span style="flex:1;min-width:0;">
-              <span class="os-drop-title">Submit Payment &amp; Billing</span>
-              <span class="os-drop-sub">PCI-DSS v4.0 &amp; EFTA/NACHA Verified</span>
-            </span>
-          </a>
+          ${isEmployeeSession ? `
+            <a href="access-admin.html?tab=users&amp;ou=external" class="os-drop-item ${currentFile === 'access-admin.html' ? 'active' : ''}">
+              <span class="os-drop-icon" style="border-color:#3B82F666;">📁</span>
+              <span style="flex:1;min-width:0;">
+                <span class="os-drop-title">Client Directory</span>
+                <span class="os-drop-sub">OU=External Client Scope</span>
+              </span>
+            </a>
+          ` : `
+            <a href="member-portal.html?view=consultation" class="os-drop-item">
+              <span class="os-drop-icon" style="border-color:#3B82F666;">📋</span>
+              <span style="flex:1;min-width:0;">
+                <span class="os-drop-title">Submit Request &amp; Consultation</span>
+                <span class="os-drop-sub">Guided Architecture Scope</span>
+              </span>
+            </a>
+            <a href="member-portal.html?view=payment" class="os-drop-item ${currentFile === 'member-portal.html' ? 'active' : ''}">
+              <span class="os-drop-icon" style="border-color:#10B98166;">💳</span>
+              <span style="flex:1;min-width:0;">
+                <span class="os-drop-title">Billing &amp; Payment</span>
+                <span class="os-drop-sub">PCI-DSS v4.0 Verified</span>
+              </span>
+            </a>
+          `}
           ${adminGrantedPortalEntries.map(item => `
             <a href="${item.file}" class="os-drop-item ${item.file.toLowerCase() === currentFile ? 'active' : ''}">
               <span class="os-drop-icon" style="border-color:${item.color}66;">${item.icon}</span>
               <span style="flex:1;min-width:0;">
                 <span class="os-drop-title">${item.full}</span>
-                <span class="os-drop-sub">Granted by Administrator</span>
+                <span class="os-drop-sub">Authorized Portal</span>
               </span>
             </a>
           `).join('')}
@@ -1635,10 +1681,18 @@
       ? [
           { file: 'access-admin.html', icon: '👑', label: 'Admin', full: 'Access Admin · Grant User Features' }
         ].concat(pages.filter(p => p.rail))
-      : [
-          { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', label: 'SaaS & LMS', full: 'SaaS Apps & SCORM LMS Showcase' },
-          { file: 'member-portal.html?view=payment', icon: '💳', label: 'Payment', full: 'Legal & Secure Payment & Billing Center' }
-        ].concat(adminGrantedPortalEntries.map(p => ({ file: p.file, icon: p.icon, label: p.label, full: p.full })));
+      : isEmployeeSession
+        ? [
+            { file: 'member-portal.html', icon: '🏢', label: 'Workspace', full: 'Employee Workspace' },
+            { file: 'access-admin.html?tab=users&ou=external', icon: '📁', label: 'Clients', full: 'MGC Client Directory' },
+            { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', label: 'SaaS & LMS', full: 'SaaS Apps & SCORM LMS Showcase' }
+          ].concat(adminGrantedPortalEntries.map(p => ({ file: p.file, icon: p.icon, label: p.label, full: p.full })))
+        : [
+            { file: 'member-portal.html', icon: '🏠', label: 'Workspace', full: 'Client Workspace' },
+            { file: 'saas-apps-and-lms-showcase.html', icon: '⚡', label: 'SaaS & LMS', full: 'SaaS Apps & SCORM LMS Showcase' },
+            { file: 'member-portal.html?view=consultation', icon: '📋', label: 'Consult', full: 'Submit Request & Guided Consultation' },
+            { file: 'member-portal.html?view=payment', icon: '💳', label: 'Payment', full: 'Billing & Payment Center' }
+          ].concat(adminGrantedPortalEntries.map(p => ({ file: p.file, icon: p.icon, label: p.label, full: p.full })));
 
     const shellWrapper = document.createElement('div');
     shellWrapper.id = 'mgc-os-shell';
@@ -1707,19 +1761,36 @@
                   <span class="os-drop-sub">Launch authorized apps &amp; simulators</span>
                 </span>
               </a>
-              <a href="member-portal.html?view=payment" class="os-drop-item">
-                <span class="os-drop-icon">💳</span>
-                <span>
-                  <span class="os-drop-title">Submit Payment &amp; Billing</span>
-                  <span class="os-drop-sub">PCI-DSS v4.0 &amp; EFTA/NACHA Verified</span>
-                </span>
-              </a>
+              ${isEmployeeSession ? `
+                <a href="access-admin.html?tab=users&amp;ou=external" class="os-drop-item">
+                  <span class="os-drop-icon">📁</span>
+                  <span>
+                    <span class="os-drop-title">Client Directory</span>
+                    <span class="os-drop-sub">Manage OU=External Client Accounts</span>
+                  </span>
+                </a>
+              ` : `
+                <a href="member-portal.html?view=consultation" class="os-drop-item">
+                  <span class="os-drop-icon">📋</span>
+                  <span>
+                    <span class="os-drop-title">Submit Request &amp; Consultation</span>
+                    <span class="os-drop-sub">Guided Architecture Scope</span>
+                  </span>
+                </a>
+                <a href="member-portal.html?view=payment" class="os-drop-item">
+                  <span class="os-drop-icon">💳</span>
+                  <span>
+                    <span class="os-drop-title">Billing &amp; Payment</span>
+                    <span class="os-drop-sub">PCI-DSS v4.0 Verified</span>
+                  </span>
+                </a>
+              `}
               ${isSoleOwner ? `
                 <a href="access-admin.html" class="os-drop-item">
                   <span class="os-drop-icon">👑</span>
                   <span>
-                    <span class="os-drop-title">Access Admin (Grant Features)</span>
-                    <span class="os-drop-sub">Fluidly grant or revoke user features</span>
+                    <span class="os-drop-title">MGC Directory (Grant Features)</span>
+                    <span class="os-drop-sub">Manage all OUs &amp; security policies</span>
                   </span>
                 </a>
                 <a href="admin-command-portal.html" class="os-drop-item">
@@ -1750,25 +1821,28 @@
             <span id="os-drawer-logo-slot">${defaultPageBrand === 'FIX' ? FIX_SHIELD_SVG : MGC_SHIELD_SVG}</span>
             <div>
               <div id="os-drawer-title-slot" style="font-size:0.82rem;font-weight:900;color:#fff;letter-spacing:0.04em;">${defaultPageBrand === 'FIX' ? 'F.I.X SOLUTIONS' : 'MGC WORKSPACE'}</div>
-              <div style="font-size:0.65rem;color:#fcd34d;font-weight:700;">${isSoleOwner ? 'Sole Administrator' : 'SaaS Apps & LMS + Billing'}</div>
+              <div style="font-size:0.65rem;color:#fcd34d;font-weight:700;">${isSoleOwner ? 'Sole Administrator' : (isEmployeeSession ? 'Internal Staff' : 'SaaS Apps & LMS')}</div>
             </div>
           </div>
           <button type="button" class="os-drawer-close" id="os-drawer-close-btn" aria-label="Close Navigation Drawer">✕</button>
         </div>
         <div class="os-drawer-body">
-          <button type="button" id="os-drawer-search-btn" style="${isSoleOwner ? '' : 'display:none;'}width:100%;min-height:2.75rem;margin-bottom:0.9rem;background:rgba(30,58,138,0.35);border:1px solid rgba(252,211,77,0.35);border-radius:0.65rem;color:#f8fafc;font-weight:700;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 0.85rem;">
-            <span>🔍 Quick Search All Portals</span>
-            <span class="os-kbd">⌘K</span>
-          </button>
+          ${isSoleOwner ? `
+            <button type="button" id="os-drawer-search-btn" style="width:100%;min-height:2.75rem;margin-bottom:0.9rem;background:rgba(30,58,138,0.35);border:1px solid rgba(252,211,77,0.35);border-radius:0.65rem;color:#f8fafc;font-weight:700;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 0.85rem;">
+              <span>🔍 Quick Search All Portals</span>
+              <span class="os-kbd">⌘K</span>
+            </button>
+          ` : ''}
           ${drawerCategoriesHtml}
         </div>
       </aside>
 
-      <!-- 3. GOOGLE 9-DOT WAFFLE APP LAUNCHER POPOVER (Administrator Only) -->
-      <div id="os-waffle-popover" style="${isSoleOwner ? '' : 'display:none !important;'}">
+      <!-- 3. GOOGLE 9-DOT WAFFLE APP LAUNCHER POPOVER (Administrator Only — Omitted from DOM for non-admins) -->
+      ${isSoleOwner ? `
+      <div id="os-waffle-popover">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px;">
           <span style="font-size:11px;font-weight:800;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;">8 MGC + 8 F.I.X Portals</span>
-          <a href="access-admin.html" style="font-size:11px;color:#93c5fd;text-decoration:none;font-weight:700;">Access Admin →</a>
+          <a href="access-admin.html" style="font-size:11px;color:#93c5fd;text-decoration:none;font-weight:700;">MGC Directory →</a>
         </div>
         <div class="waffle-grid">
           ${pages.map(p => `
@@ -1780,6 +1854,7 @@
           `).join('')}
         </div>
       </div>
+      ` : ''}
 
       <!-- 4. INSTRUCTURE CANVAS LEFT ICON RAIL -->
       <aside id="mgc-os-rail" aria-label="Quick Launch Dock">

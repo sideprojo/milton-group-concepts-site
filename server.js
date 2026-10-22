@@ -280,27 +280,12 @@ function seedState() {
       owner: mk('owner', 'Malik K. (Administrator)', SOLE_ADMIN_EMAIL, 'owner', 'active', 'MGC', 'federal', true, {
         home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready',
         compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready'
-      }, ['*']),
-      client: mk('client', 'Customer Account (SaaS & LMS Only)', 'customer@sterlingautorepairva.com', 'member', 'active', 'FIX', 'ai-web', true, {
-        saasapps: 'ready'
-      }, DEFAULT_CUSTOMER_APPS.slice()),
-      ana: mk('ana', 'Ana (Pending Request)', 'ana@example.com', 'member', 'requested', 'MGC', 'cyber', false, { saasapps: 'ready' }, DEFAULT_CUSTOMER_APPS.slice()),
-      ben: mk('ben', 'Ben (SaaS & LMS User)', 'ben@example.com', 'member', 'active', 'FIX', 'federal', true, {
-        saasapps: 'ready'
-      }, DEFAULT_CUSTOMER_APPS.slice()),
-      cara: mk('cara', 'Cara (SaaS & LMS User)', 'cara@example.com', 'member', 'active', 'FIX', 'ai-web', true, {
-        saasapps: 'ready'
-      }, DEFAULT_CUSTOMER_APPS.slice())
+      }, ['*'])
     },
     shares: [],
     payments: [],
-    tasks: [
-      { id: 't_ben_home', uid: 'ben', page: 'home', title: 'Build "My Dashboard" for Ben', done: false },
-      { id: 't_ben_agile', uid: 'ben', page: 'agile', title: 'Build "Agile Board" for Ben', done: false },
-      { id: 't_ben_res', uid: 'ben', page: 'resources', title: 'Build "Curated Resources" for Ben', done: false },
-      { id: 't_ben_rad', uid: 'ben', page: 'radar', title: 'Build "Contract Radar" for Ben', done: false },
-      { id: 't_ben_cmp', uid: 'ben', page: 'compliance', title: 'Build "Compliance Tracker" for Ben', done: false }
-    ],
+    consultations: [],
+    tasks: [],
     notifications: [],
     audit: [],
     projects: {
@@ -311,25 +296,13 @@ function seedState() {
     items: [
       { id: 'i_st1', project: 'p_sterling', type: 'story', title: 'Interactive repair estimator & bay RO status tracker', points: 5, col: 'done', sprint: 1, assignee: 'owner', createdBy: 'owner' },
       { id: 'i_st2', project: 'p_sterling', type: 'story', title: '24/7 AI lead receptionist + Google Calendar booking', points: 8, col: 'progress', sprint: 1, assignee: 'owner', createdBy: 'owner' },
-      { id: 'i_st3', project: 'p_sterling', type: 'task', title: 'Local SEO schema & Google Business Profile verification', points: 3, col: 'ready', sprint: 1, assignee: 'owner', createdBy: 'owner' },
-      { id: 'i1', project: 'p1', type: 'story', title: 'Homepage draft', points: 5, col: 'progress', sprint: 1, assignee: 'owner', createdBy: 'owner' },
-      { id: 'i2', project: 'p1', type: 'task', title: 'Collect brand assets', points: 2, col: 'ready', sprint: 1, assignee: 'cara', createdBy: 'owner' },
-      { id: 'i3', project: 'p1', type: 'story', title: 'Booking form + calendar', points: 8, col: 'backlog', sprint: 0, assignee: '', createdBy: 'owner' },
-      { id: 'i4', project: 'p1', type: 'bug', title: 'Logo too small on mobile', points: 1, col: 'review', sprint: 1, assignee: 'owner', createdBy: 'owner' },
-      { id: 'i5', project: 'p2', type: 'story', title: 'Per-page subscription checkout', points: 8, col: 'backlog', sprint: 0, assignee: '', createdBy: 'owner' },
-      { id: 'i6', project: 'p2', type: 'task', title: 'Enable Firebase Auth + rules', points: 5, col: 'ready', sprint: 1, assignee: 'owner', createdBy: 'owner' }
+      { id: 'i_st3', project: 'p_sterling', type: 'task', title: 'Local SEO schema & Google Business Profile verification', points: 3, col: 'ready', sprint: 1, assignee: 'owner', createdBy: 'owner' }
     ],
-    features: [
-      { id: 'f1', by: 'cara', title: 'Add Google Calendar sync to the board', body: 'Show sprint dates on my calendar.', votes: ['cara'], status: 'new', created: t }
-    ],
-    requests: [
-      { id: 'r1', uid: 'ana', status: 'requested', created: t },
-      { id: 'r2', uid: 'ben', status: 'approved', created: t }
-    ],
+    features: [],
+    requests: [],
     newsletter: {
       subscribers: [
-        { email: 'malik.khabir@miltongroupsecurity.org', name: 'Malik K. (Owner)', track: 'ALL', frequency: 'weekly', subscribedAt: t, verified: true },
-        { email: 'client@miltongroupsecurity.org', name: 'Customer Account', track: 'AI_AUTOMATION', frequency: 'weekly', subscribedAt: t, verified: true }
+        { email: 'malik.khabir@miltongroupsecurity.org', name: 'Malik K. (Owner)', track: 'ALL', frequency: 'weekly', subscribedAt: t, verified: true }
       ],
       issues: [
         {
@@ -522,16 +495,35 @@ function loadState() {
       if (parsed && parsed.v === 1) {
         const def = seedState();
         parsed.users = Object.assign({}, def.users, parsed.users || {});
+        // Purge any legacy placeholder or fake seeded accounts from persisted state
+        ['client', 'ana', 'ben', 'cara'].forEach(fakeId => {
+          if (parsed.users && parsed.users[fakeId]) delete parsed.users[fakeId];
+        });
+        if (Array.isArray(parsed.requests)) {
+          parsed.requests = parsed.requests.filter(r => !['ana', 'ben', 'cara', 'client'].includes(r.uid) && !['r1', 'r2'].includes(r.id));
+        }
+        if (Array.isArray(parsed.tasks)) {
+          parsed.tasks = parsed.tasks.filter(t => !['ana', 'ben', 'cara', 'client'].includes(t.uid));
+        }
+        if (Array.isArray(parsed.features)) {
+          parsed.features = parsed.features.filter(f => !['ana', 'ben', 'cara', 'client'].includes(f.by) && f.id !== 'f1');
+        }
+        if (!Array.isArray(parsed.consultations)) {
+          parsed.consultations = [];
+        }
         Object.values(parsed.users).forEach(u => {
           // Enforce strictly ONE Administrator account: owner / malik.khabir@miltongroupsecurity.org
           if (u.id === 'owner' && String(u.email || '').toLowerCase() === SOLE_ADMIN_EMAIL) {
             u.role = 'owner';
+            u.ou = 'builtin';
+            u.securityGroup = 'DOMAIN_ADMIN';
             u.email = SOLE_ADMIN_EMAIL;
             u.accessTier = 'OWNER_FULL';
             u.allowedApps = ['*'];
           } else {
             u.role = 'member';
-            u.accessTier = 'CUSTOMER_RESTRICTED';
+            u.ou = u.ou === 'internal' ? 'internal' : 'external';
+            u.accessTier = u.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED';
             if (!Array.isArray(u.allowedApps)) {
               u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
             }
@@ -546,6 +538,10 @@ function loadState() {
                   delete u.pages[pid];
                 }
               });
+              // Employees never get finance/payment settings page
+              if (u.ou === 'internal') {
+                delete u.pages.finance;
+              }
             }
           }
         });
@@ -583,17 +579,29 @@ function saveState(state) {
 let S = loadState();
 
 /* ---------- Policy Engine (1:1 with firestore.rules and mgc-workspace-core.js) ---------- */
+function isOwnerUser(u) {
+  return Boolean(u && u.role === 'owner' && u.id === 'owner');
+}
+function isEmployeeUser(u) {
+  return Boolean(u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active');
+}
+function isClientUser(u) {
+  return Boolean(u && u.role !== 'owner' && u.ou !== 'internal');
+}
+
 function subActive(u) {
   return Boolean(u && (u.role === 'owner' || (u.plan && u.plan.base && u.status === 'active')));
 }
 
 function can(u, type, id, action) {
   if (!u) return false;
-  if (u.role === 'owner' && u.id === 'owner') return true;
+  if (isOwnerUser(u)) return true;
   if (!subActive(u)) return false;
   if (type === 'page') {
     const entry = CATALOG.find(c => c.id === id);
     if (!entry || action !== 'view') return false;
+    // Employees never have access to payment/finance settings
+    if (isEmployeeUser(u) && id === 'finance') return false;
     // New users and standard users ALWAYS have access to SaaS Apps & LMS ('saasapps')
     if (id === 'saasapps') return true;
     // All other features/pages require explicit Administrator grant
@@ -619,9 +627,13 @@ function can(u, type, id, action) {
 
 function getAllowedPortalsForUser(u) {
   if (!u) return [];
-  if (u.role === 'owner' && u.id === 'owner') return ['*'];
+  if (isOwnerUser(u)) return ['*'];
   const portals = new Set(DEFAULT_CUSTOMER_PORTALS);
+  if (isEmployeeUser(u)) {
+    portals.add('access-admin.html');
+  }
   Object.entries(PORTAL_TO_CATALOG).forEach(([file, catId]) => {
+    if (isEmployeeUser(u) && catId === 'finance') return;
     if (can(u, 'page', catId, 'view') || can(u, 'element', file, 'view')) {
       portals.add(file);
     }
@@ -821,10 +833,58 @@ function scopeStateForUser(u) {
       }
     };
   }
-  if (u.role === 'owner') {
+  if (isOwnerUser(u)) {
     return { ...S, currentUser: u.id, ssoProvider: u.ssoProvider || 'google', ssoEnforced: true };
   }
-  // Scoped member view: only their own profile, their own notifications, shared projects, and shared items
+  if (isEmployeeUser(u)) {
+    // Employee View:
+    // - Access to self + external Client users (ou !== 'internal' && role !== 'owner') ONLY.
+    // - Zero visibility into Builtin Administrator, other Employees, or any Payment Settings / Billing Profiles.
+    const empUsers = {
+      [u.id]: Object.assign({}, u, { paymentProfile: null, payments: [] })
+    };
+    const clientIds = new Set();
+    Object.values(S.users || {}).forEach(x => {
+      if (x.id !== 'owner' && x.role !== 'owner' && x.ou !== 'internal') {
+        clientIds.add(x.id);
+        empUsers[x.id] = Object.assign({}, x, {
+          passwordDigest: undefined,
+          paymentProfile: null,
+          payments: []
+        });
+      }
+    });
+    const allowedProjects = {};
+    Object.values(S.projects || {}).forEach(p => {
+      if (can(u, 'project', p.id, 'view') || can(u, 'page', 'agile', 'view')) allowedProjects[p.id] = p;
+    });
+    const allowedItems = (S.items || []).filter(i => Boolean(allowedProjects[i.project]));
+    const clientRequests = (S.requests || []).filter(r => clientIds.has(r.uid));
+    const clientConsultations = (S.consultations || []).filter(c => clientIds.has(c.uid));
+    return {
+      v: 1,
+      currentUser: u.id,
+      ssoProvider: u.ssoProvider || 'password',
+      ssoEnforced: true,
+      users: empUsers,
+      shares: (S.shares || []).filter(s => s.grantee === u.id || clientIds.has(s.grantee)),
+      tasks: (S.tasks || []).filter(t => clientIds.has(t.uid)),
+      notifications: (S.notifications || []).filter(n => n.toUid === u.id),
+      audit: [],
+      payments: [],
+      pciGatewayConfig: undefined,
+      projects: allowedProjects,
+      items: allowedItems,
+      features: (S.features || []).filter(f => f.by === u.id || clientIds.has(f.by)),
+      requests: clientRequests,
+      consultations: clientConsultations,
+      newsletter: {
+        subscriberCount: ((S.newsletter && S.newsletter.subscribers) || []).length,
+        issues: (S.newsletter && S.newsletter.issues) || []
+      }
+    };
+  }
+  // Scoped Client view: strictly their own profile, their own consultations/requests, and shared projects
   const allowedProjects = {};
   Object.values(S.projects).forEach(p => {
     if (can(u, 'project', p.id, 'view')) allowedProjects[p.id] = p;
@@ -834,6 +894,7 @@ function scopeStateForUser(u) {
   const myNotifs = S.notifications.filter(n => n.toUid === u.id);
   const myFeatures = S.features.filter(f => f.by === u.id || Object.keys(allowedProjects).length > 0);
   const myRequests = S.requests.filter(r => r.uid === u.id);
+  const myConsultations = (S.consultations || []).filter(c => c.uid === u.id);
   return {
     v: 1,
     currentUser: u.id,
@@ -844,10 +905,12 @@ function scopeStateForUser(u) {
     tasks: [],
     notifications: myNotifs,
     audit: [],
+    payments: Array.isArray(u.payments) ? u.payments : [],
     projects: allowedProjects,
     items: allowedItems,
     features: myFeatures,
     requests: myRequests,
+    consultations: myConsultations,
     newsletter: {
       subscriberCount: ((S.newsletter && S.newsletter.subscribers) || []).length,
       subscribed: Boolean(u && ((S.newsletter && S.newsletter.subscribers) || []).some(s => s.email === String(u.email || '').toLowerCase())),
@@ -1445,8 +1508,9 @@ const server = http.createServer(async (req, res) => {
         });
       }
       // STRICT 1-ADMIN ZERO-LEAKAGE GUARD: Only Malik A. Khabir (malik.khabir@Miltongroupsecurity.org, case-insensitive) is Administrator.
-      // Block any legacy/spoofed @miltongroupsecurity.org or owner@* / admin@* accounts.
-      if ((email.endsWith('@miltongroupsecurity.org') && email !== SOLE_ADMIN_EMAIL) || email.startsWith('owner@') || email.startsWith('admin@')) {
+      // Block any legacy/spoofed @miltongroupsecurity.org or owner@* / admin@* accounts unless provisioned as an active directory user by Admin.
+      const existingDirUser = Object.values(S.users).find(u => u.id !== 'owner' && String(u.email || '').toLowerCase() === email);
+      if (((email.endsWith('@miltongroupsecurity.org') && email !== SOLE_ADMIN_EMAIL && !existingDirUser) || email.startsWith('owner@') || email.startsWith('admin@'))) {
         logAudit('system', `security.admin_spoof_blocked.${provider}`, `Blocked spoofed/legacy admin email: ${email}`);
         return sendJson(res, 403, {
           ok: false,
@@ -1758,8 +1822,11 @@ const server = http.createServer(async (req, res) => {
       if (d.ndaAccepted === false) {
         return sendJson(res, 400, { ok: false, error: 'NDA Required: You must attest to the MGC Mutual Non-Disclosure & Federated SSO Zero-Trust Terms.' });
       }
+      const caller = getAuthenticatedUser(req);
+      const isAdminCaller = Boolean(caller && caller.role === 'owner' && caller.id === 'owner');
+      const isEmpCaller = isEmployeeUser(caller);
       // Critical Anti-Spoofing Guard: Prevent public customer intake from ever claiming or overwriting an Owner account
-      if (OWNER_EMAILS.has(cleanEmail) || cleanEmail.endsWith('@miltongroupsecurity.org') || cleanEmail.startsWith('owner@') || cleanEmail.startsWith('admin@')) {
+      if (OWNER_EMAILS.has(cleanEmail) || (!isAdminCaller && cleanEmail.endsWith('@miltongroupsecurity.org')) || cleanEmail.startsWith('owner@') || cleanEmail.startsWith('admin@')) {
         logAudit('system', 'security.intake_owner_spoof_blocked', `Blocked public intake attempt using owner/admin email: ${cleanEmail}`);
         return sendJson(res, 403, {
           ok: false,
@@ -1800,8 +1867,6 @@ const server = http.createServer(async (req, res) => {
         });
       }
       const computedPasswordDigest = rawPassword ? mgcDigest(rawPassword) : ((existing && existing.passwordDigest) || null);
-      const caller = getAuthenticatedUser(req);
-      const isAdminCaller = Boolean(caller && caller.role === 'owner' && caller.id === 'owner');
       const userOu = (isAdminCaller && (d.ou === 'internal' || d.ou === 'external'))
         ? d.ou
         : ((existing && existing.ou) || 'external');
@@ -1809,17 +1874,24 @@ const server = http.createServer(async (req, res) => {
         ? String(d.securityGroup)
         : ((existing && existing.securityGroup) || (userOu === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS'));
 
+      const defaultPagesForOu = userOu === 'internal'
+        ? Object.assign({}, DEFAULT_CUSTOMER_PAGES, { home: 'ready', agile: 'ready', contracts: 'ready', compliance: 'ready', academy: 'ready', chronos: 'ready' })
+        : { ...DEFAULT_CUSTOMER_PAGES };
+      const defaultAppsForOu = userOu === 'internal'
+        ? ['sterling-auto-repair', 'client-turnkey-forge', 'eveng-netprism-studio', 'samgov-contract-matchmaker', 'ghost-cli-trainer']
+        : DEFAULT_CUSTOMER_APPS.slice();
+
       S.users[id] = {
         id,
         name: cleanName,
         username: cleanUsername,
-        org: cleanOrg || (d.brand === 'FIX' ? 'F.I.X Solutions Client Partner' : 'MGC Client Partner'),
+        org: cleanOrg || (userOu === 'internal' ? 'MGC Internal Operations' : (d.brand === 'FIX' ? 'F.I.X Solutions Client Partner' : 'MGC Client Partner')),
         email: cleanEmail,
         role: 'member',
         ou: userOu,
         securityGroup: userGroup,
         status: 'active',
-        accessTier: 'CUSTOMER_RESTRICTED',
+        accessTier: userOu === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED',
         brand: d.brand === 'FIX' ? 'FIX' : 'MGC',
         ssoProvider: rawProv,
         passwordDigest: computedPasswordDigest,
@@ -1830,9 +1902,9 @@ const server = http.createServer(async (req, res) => {
         ndaAcceptedAt: now(),
         quote: { interest: interestKey, org: cleanOrg, note: cleanNote },
         plan: existing && existing.plan ? Object.assign({ base: true, addons: [] }, existing.plan, { base: true }) : { base: true, addons: [] },
-        pages: existing && existing.pages ? Object.assign({}, DEFAULT_CUSTOMER_PAGES, existing.pages) : { ...DEFAULT_CUSTOMER_PAGES },
-        adminGrantedPages: existing && Array.isArray(existing.adminGrantedPages) ? existing.adminGrantedPages : [],
-        allowedApps: existing && Array.isArray(existing.allowedApps) && existing.allowedApps.length ? existing.allowedApps : DEFAULT_CUSTOMER_APPS.slice(),
+        pages: existing && existing.pages ? Object.assign({}, defaultPagesForOu, existing.pages) : defaultPagesForOu,
+        adminGrantedPages: existing && Array.isArray(existing.adminGrantedPages) ? existing.adminGrantedPages : (userOu === 'internal' ? ['home', 'agile', 'contracts', 'compliance', 'academy', 'chronos'] : []),
+        allowedApps: existing && Array.isArray(existing.allowedApps) && existing.allowedApps.length ? existing.allowedApps : defaultAppsForOu,
         paymentProfile: (existing && existing.paymentProfile) || null,
         payments: (existing && Array.isArray(existing.payments)) ? existing.payments : [],
         checklist: (existing && existing.checklist) || {},
@@ -1886,21 +1958,26 @@ const server = http.createServer(async (req, res) => {
         uid: id,
         email: cleanEmail,
         role: 'member',
-        accessTier: 'CUSTOMER_RESTRICTED',
+        accessTier: userOu === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED',
         provider: rawProv,
         ssoVerified: true
       });
+      const createdByDirectoryOperator = Boolean(isAdminCaller || isEmpCaller);
+      const responseHeaders = createdByDirectoryOperator
+        ? {}
+        : { 'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}` };
       return sendJson(res, 200, {
         ok: true,
         registered: true,
         intakeReceipt: reqId,
-        uid: id,
+        uid: createdByDirectoryOperator ? caller.id : id,
+        createdUid: id,
         user: S.users[id],
         email: cleanEmail,
         name: cleanName,
         org: S.users[id].org,
         role: 'member',
-        accessTier: 'CUSTOMER_RESTRICTED',
+        accessTier: S.users[id].accessTier,
         provider: rawProv,
         providerLabel: SSO_PROVIDER_LABELS[rawProv],
         ssoVerified: true,
@@ -1914,10 +1991,8 @@ const server = http.createServer(async (req, res) => {
         allowedPortals: getAllowedPortalsForUser(S.users[id]),
         queuedTailoredPages: queuedPages,
         redirect: targetRedirect,
-        state: scopeStateForUser(S.users[id])
-      }, {
-        'Set-Cookie': `mgcw_session=${encodeURIComponent(sessionToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
-      });
+        state: scopeStateForUser(createdByDirectoryOperator ? caller : S.users[id])
+      }, responseHeaders);
     };
 
     const processLegalSecurePayment = (u, body) => {
@@ -2147,9 +2222,74 @@ const server = http.createServer(async (req, res) => {
       };
     };
 
+    const handleConsultationSubmission = (u, d) => {
+      if (!u) {
+        return { status: 401, payload: { ok: false, error: 'Authentication required to submit a consultation or scope request.' } };
+      }
+      if (!Array.isArray(S.consultations)) S.consultations = [];
+      const receiptId = 'MGC-CONS-' + Date.now().toString(36).toUpperCase().slice(-5) + '-' + crypto.randomBytes(2).toString('hex').toUpperCase();
+      const entry = {
+        id: uid('cons'),
+        receiptId,
+        uid: u.id,
+        clientName: sanitizeInput(d.clientName || u.name || '', 120),
+        clientEmail: sanitizeInput(d.clientEmail || u.email || '', 160).toLowerCase(),
+        organization: sanitizeInput(d.organization || u.org || '', 160),
+        track: sanitizeInput(d.track || 'ai-web', 60),
+        architectureScope: sanitizeInput(d.architectureScope || 'Turnkey Web & Autonomous AI Suite', 140),
+        timeline: sanitizeInput(d.timeline || '2-4 Weeks', 60),
+        scaleTier: sanitizeInput(d.scaleTier || 'Growth (Up to 25 seats)', 80),
+        integrationEnv: sanitizeInput(d.integrationEnv || 'Google Cloud / Workspace', 100),
+        preferredWindow: sanitizeInput(d.preferredWindow || 'Next Available Executive Slot', 80),
+        projectBrief: sanitizeInput(d.projectBrief || '', 800),
+        requestedApps: Array.isArray(d.requestedApps) ? d.requestedApps.slice(0, 8).map(x => sanitizeInput(x, 60)) : [],
+        status: 'submitted',
+        createdAt: now()
+      };
+      S.consultations.unshift(entry);
+      S.requests.unshift({
+        id: entry.id,
+        receipt: entry.receiptId,
+        uid: u.id,
+        name: entry.clientName,
+        email: entry.clientEmail,
+        org: entry.organization,
+        interest: entry.track,
+        consultationScope: entry.architectureScope,
+        timeline: entry.timeline,
+        preferredWindow: entry.preferredWindow,
+        note: entry.projectBrief,
+        status: 'consultation_requested',
+        created: entry.createdAt
+      });
+      notifyUser(u.id, 'Guided Consultation & Scope Request Submitted', `Receipt ${entry.receiptId}: Your consultation request (${entry.architectureScope}) is queued for architecture review.`);
+      notifyUser('owner', 'New Client Guided Consultation Request', `${entry.clientName} (${entry.clientEmail}) submitted consultation ${entry.receiptId}: ${entry.architectureScope} [${entry.timeline}].`);
+      logAudit(u.id, 'consultation.submitted', `${entry.receiptId} [${entry.architectureScope}]`);
+      saveState(S);
+      return {
+        status: 200,
+        payload: {
+          ok: true,
+          receiptId: entry.receiptId,
+          consultation: entry,
+          state: scopeStateForUser(u)
+        }
+      };
+    };
+
+    if (pathname === '/api/consultation/submit' && req.method === 'POST') {
+      const u = getAuthenticatedUser(req);
+      const body = await readJsonBody(req);
+      const result = handleConsultationSubmission(u, body.data || body || {});
+      return sendJson(res, result.status, result.payload);
+    }
+
     if (pathname === '/api/payment/status' && req.method === 'GET') {
       const u = getAuthenticatedUser(req);
       if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required.' });
+      if (isEmployeeUser(u)) {
+        return sendJson(res, 403, { ok: false, error: 'Employee accounts do not have access to payment settings.' });
+      }
       return sendJson(res, 200, {
         ok: true,
         verified: Boolean(u.paymentProfile && u.paymentProfile.verified),
@@ -2168,12 +2308,19 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 429, { ok: false, error: 'Too many payment attempts. Please wait 60 seconds.' });
       }
       const u = getAuthenticatedUser(req);
+      if (isEmployeeUser(u)) {
+        return sendJson(res, 403, { ok: false, error: 'Employee accounts do not have access to payment settings.' });
+      }
       const body = await readJsonBody(req);
       const result = processLegalSecurePayment(u, body || {});
       return sendJson(res, result.status, result.payload);
     }
 
     if (pathname === '/api/payments/config' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      if (isEmployeeUser(u)) {
+        return sendJson(res, 403, { ok: false, error: 'Employee accounts do not have access to payment gateway settings.' });
+      }
       const gw = Object.assign({
         activeProcessor: 'stripe_saq_a',
         complianceLevel: 'PCI-DSS v4.0 SAQ-A + EFTA Reg E + NACHA + DFARS 252.232-7003',
@@ -2322,7 +2469,14 @@ const server = http.createServer(async (req, res) => {
       if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required.' });
 
       // Member / Self actions
+      if (act === 'submitConsultation') {
+        const result = handleConsultationSubmission(u, body.data || body || {});
+        return sendJson(res, result.status, result.payload);
+      }
       if (act === 'submitPayment') {
+        if (isEmployeeUser(u)) {
+          return sendJson(res, 403, { ok: false, error: 'Employee accounts do not have access to payment settings.' });
+        }
         const result = processLegalSecurePayment(u, body.data || body || {});
         return sendJson(res, result.status, result.payload);
       }
@@ -2421,11 +2575,32 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
 
-      // Strictly Sole-Administrator-only actions (Malik A. Khabir)
-      if (u.role !== 'owner' || u.id !== 'owner') {
-        return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required.' });
+      // Directory & RBAC actions: Allowed for Sole Administrator (full scope) OR Internal Employee (strictly Client OU=External scope, zero payment settings)
+      if (!isOwnerUser(u) && !isEmployeeUser(u)) {
+        return sendJson(res, 403, { ok: false, error: 'Administrator or Internal Directory authorization required.' });
+      }
+      if (act === 'updateConsultationStatus') {
+        if (!Array.isArray(S.consultations)) S.consultations = [];
+        const cid = String(body.consultationId || '');
+        const nextStatus = sanitizeInput(body.status || 'scheduled', 40);
+        const c = S.consultations.find(x => x.id === cid || x.receiptId === cid);
+        if (c) {
+          c.status = nextStatus;
+          if (body.reviewerNote !== undefined) c.reviewerNote = sanitizeInput(body.reviewerNote, 400);
+          c.reviewedBy = u.id;
+          c.updatedAt = now();
+          notifyUser(c.uid, 'Consultation Status Updated', `Your consultation request (${c.receiptId}) is now "${nextStatus}".`);
+        }
+        const r = (S.requests || []).find(x => x.id === cid || x.receipt === cid);
+        if (r) r.status = nextStatus;
+        logAudit(u.id, 'consultation.status_updated', `${cid} -> ${nextStatus}`);
+        saveState(S);
+        return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
       if (act === 'updateAdminPassword') {
+        if (!isOwnerUser(u)) {
+          return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required.' });
+        }
         const newPass = String(body.newPassword || '').trim();
         if (!newPass || newPass.length < 8 || isGenericOrRevokedSecret(newPass)) {
           return sendJson(res, 400, { ok: false, error: 'New Administrator password must be at least 8 characters and not use a generic pattern.' });
@@ -2446,9 +2621,12 @@ const server = http.createServer(async (req, res) => {
         if (!target || target.id === 'owner' || !newPass || newPass.length < 8 || isGenericOrRevokedSecret(newPass)) {
           return sendJson(res, 400, { ok: false, error: 'Valid non-admin user and unique case-sensitive password (min 8 chars, non-generic) required.' });
         }
+        if (isEmployeeUser(u) && target.ou === 'internal') {
+          return sendJson(res, 403, { ok: false, error: 'Employees can only manage external client accounts.' });
+        }
         target.passwordDigest = mgcDigest(newPass);
         target.hasPassword = true;
-        logAudit('owner', 'security.user_password_set', target.email);
+        logAudit(u.id, 'security.user_password_set', target.email);
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
@@ -2457,8 +2635,14 @@ const server = http.createServer(async (req, res) => {
         if (!target || target.id === 'owner') {
           return sendJson(res, 400, { ok: false, error: 'Valid non-admin directory account required.' });
         }
-        if (body.ou === 'internal' || body.ou === 'external') {
+        if (isEmployeeUser(u)) {
+          if (target.ou === 'internal' || body.ou === 'internal' || (body.securityGroup && String(body.securityGroup).startsWith('INTERNAL_'))) {
+            return sendJson(res, 403, { ok: false, error: 'Employees only have access to manage external client accounts.' });
+          }
+        }
+        if (isOwnerUser(u) && (body.ou === 'internal' || body.ou === 'external')) {
           target.ou = body.ou;
+          target.accessTier = target.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED';
         }
         if (body.username !== undefined) {
           const cleanUn = sanitizeInput(body.username, 60).toLowerCase();
@@ -2478,22 +2662,31 @@ const server = http.createServer(async (req, res) => {
             const grp = target.securityGroup;
             if (grp === 'EXTERNAL_SAAS_LMS') {
               target.ou = 'external';
+              target.accessTier = 'CUSTOMER_RESTRICTED';
               target.pages = { saasapps: 'ready' };
               target.adminGrantedPages = [];
               target.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
             } else if (grp === 'EXTERNAL_FULL_CLIENT') {
               target.ou = 'external';
-              target.pages = { saasapps: 'ready', agile: 'ready', resources: 'ready', training: 'ready', finance: 'ready' };
-              target.adminGrantedPages = ['agile', 'resources', 'training', 'finance'];
+              target.accessTier = 'CUSTOMER_RESTRICTED';
+              target.pages = isEmployeeUser(u)
+                ? { saasapps: 'ready', agile: 'ready', resources: 'ready', training: 'ready' }
+                : { saasapps: 'ready', agile: 'ready', resources: 'ready', training: 'ready', finance: 'ready' };
+              target.adminGrantedPages = isEmployeeUser(u)
+                ? ['agile', 'resources', 'training']
+                : ['agile', 'resources', 'training', 'finance'];
               target.allowedApps = APPS_CATALOG.map(a => a.id);
-            } else if (grp === 'INTERNAL_ANALYST') {
+            } else if (isOwnerUser(u) && grp === 'INTERNAL_ANALYST') {
               target.ou = 'internal';
+              target.accessTier = 'INTERNAL_EMPLOYEE';
               target.pages = { saasapps: 'ready', agile: 'ready', radar: 'ready', resources: 'ready', training: 'ready', compliance: 'ready' };
               target.adminGrantedPages = ['agile', 'radar', 'resources', 'training', 'compliance'];
               target.allowedApps = APPS_CATALOG.map(a => a.id);
-            } else if (grp === 'INTERNAL_OPERATIONS') {
+            } else if (isOwnerUser(u) && grp === 'INTERNAL_OPERATIONS') {
               target.ou = 'internal';
+              target.accessTier = 'INTERNAL_EMPLOYEE';
               CATALOG.forEach(c => {
+                if (c.id === 'finance') return; // Employees have no access to payment/finance settings
                 target.pages[c.id] = 'ready';
                 if (c.id !== 'saasapps' && !target.adminGrantedPages.includes(c.id)) target.adminGrantedPages.push(c.id);
               });
@@ -2501,11 +2694,14 @@ const server = http.createServer(async (req, res) => {
             }
           }
         }
-        logAudit('owner', 'ad.user_profile_updated', `${target.email} [OU=${target.ou || 'external'} | Group=${target.securityGroup || 'EXTERNAL_SAAS_LMS'}]`);
+        logAudit(u.id, 'ad.user_profile_updated', `${target.email} [OU=${target.ou || 'external'} | Group=${target.securityGroup || 'EXTERNAL_SAAS_LMS'}]`);
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
       if (act === 'savePciGatewayConfig') {
+        if (!isOwnerUser(u)) {
+          return sendJson(res, 403, { ok: false, error: 'Employees do not have access to payment gateway settings.' });
+        }
         S.pciGatewayConfig = Object.assign({}, S.pciGatewayConfig || {}, {
           activeProcessor: sanitizeInput(body.activeProcessor || 'stripe_saq_a', 60),
           stripePublishableKey: sanitizeInput(body.stripePublishableKey || '', 160),
@@ -2519,14 +2715,20 @@ const server = http.createServer(async (req, res) => {
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
-      // Fluid Administrator Feature & Access Grant / Revoke
+      // Fluid Administrator & Employee (Client-only) Feature & Access Grant / Revoke
       if (act === 'toggleUserFeature') {
         const target = S.users[body.userId];
         if (!target || target.id === 'owner') {
           return sendJson(res, 400, { ok: false, error: 'Valid non-admin customer account required.' });
         }
+        if (isEmployeeUser(u) && target.ou === 'internal') {
+          return sendJson(res, 403, { ok: false, error: 'Employees only have access to manage external client accounts.' });
+        }
         const featureType = String(body.featureType || 'page');
         const featureId = String(body.featureId || '');
+        if (isEmployeeUser(u) && featureType === 'page' && featureId === 'finance') {
+          return sendJson(res, 403, { ok: false, error: 'Employees do not have access to payment or finance settings.' });
+        }
         if (!target.pages || typeof target.pages !== 'object') {
           target.pages = { ...DEFAULT_CUSTOMER_PAGES };
         }
@@ -2547,6 +2749,7 @@ const server = http.createServer(async (req, res) => {
             logAudit('owner', 'feature.preset.saas_only', target.email);
           } else if (featureId === 'grant_all_features') {
             CATALOG.forEach(c => {
+              if (isEmployeeUser(u) && c.id === 'finance') return;
               target.pages[c.id] = 'ready';
               if (c.id !== 'saasapps' && !target.adminGrantedPages.includes(c.id)) {
                 target.adminGrantedPages.push(c.id);
@@ -2554,8 +2757,8 @@ const server = http.createServer(async (req, res) => {
             });
             target.allowedApps = APPS_CATALOG.map(a => a.id);
             target.status = 'active';
-            notifyUser(target.id, 'Full Feature Suite Granted by Administrator', 'Malik A. Khabir unlocked all MGC & F.I.X workspace features and SCORM apps for your account.');
-            logAudit('owner', 'feature.preset.grant_all', target.email);
+            notifyUser(target.id, 'Full Feature Suite Granted', 'Your MGC & F.I.X workspace features and SCORM apps have been unlocked.');
+            logAudit(u.id, 'feature.preset.grant_all', target.email);
           }
           saveState(S);
           return sendJson(res, 200, {
@@ -2651,33 +2854,40 @@ const server = http.createServer(async (req, res) => {
       }
       if (act === 'approve') {
         const target = S.users[body.userId];
-        if (target) {
+        if (target && target.id !== 'owner') {
+          if (isEmployeeUser(u) && target.ou === 'internal') {
+            return sendJson(res, 403, { ok: false, error: 'Employees only have access to manage external client accounts.' });
+          }
           target.status = 'active';
           target.allowedApps = Array.isArray(target.allowedApps) && target.allowedApps.length ? target.allowedApps : DEFAULT_CUSTOMER_APPS.slice();
           if (!target.pages || typeof target.pages !== 'object') target.pages = { ...DEFAULT_CUSTOMER_PAGES };
           target.pages.saasapps = 'ready';
           const wanted = (TAILOR[(target.quote && target.quote.interest) || 'ai-web'] || { pages: [] }).pages;
           wanted.forEach(p => {
+            if (isEmployeeUser(u) && p === 'finance') return;
             target.pages[p] = 'ready';
             if (!Array.isArray(target.adminGrantedPages)) target.adminGrantedPages = [];
             if (p !== 'saasapps' && !target.adminGrantedPages.includes(p)) target.adminGrantedPages.push(p);
           });
           const r = S.requests.find(x => x.uid === target.id);
           if (r) r.status = 'approved';
-          notifyUser(target.id, 'Tailored Features Unlocked by Administrator', `Malik A. Khabir approved your tailored features (${wanted.join(', ')}). They are now live in your menu.`);
-          logAudit('owner', 'request.approved', target.email);
+          notifyUser(target.id, 'Tailored Features Unlocked', `Your tailored features (${wanted.join(', ')}) are now live in your menu.`);
+          logAudit(u.id, 'request.approved', target.email);
           saveState(S);
         }
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
       if (act === 'deny') {
         const target = S.users[body.userId];
-        if (target) {
+        if (target && target.id !== 'owner') {
+          if (isEmployeeUser(u) && target.ou === 'internal') {
+            return sendJson(res, 403, { ok: false, error: 'Employees only have access to manage external client accounts.' });
+          }
           target.status = 'denied';
           const r = S.requests.find(x => x.uid === target.id);
           if (r) r.status = 'denied';
           notifyUser(target.id, 'Request update', 'We are unable to approve this request right now.');
-          logAudit('owner', 'request.denied', target.email);
+          logAudit(u.id, 'request.denied', target.email);
           saveState(S);
         }
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
@@ -2841,19 +3051,36 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Gate access-admin.html (/access-admin) and admin-command-portal.html (/command): Strictly 1 Administrator (Malik A. Khabir)
-    if (baseName === 'access-admin.html' || baseName === 'admin-command-portal.html') {
+    // Gate access-admin.html (/access-admin): Allowed for Administrator OR Internal Employee (Client scope); blocked for External Clients
+    if (baseName === 'access-admin.html') {
       if (!u) {
         return redirectToCleanAuth(baseName);
       }
-      if (u.role !== 'owner' || u.id !== 'owner' || String(u.email || '').toLowerCase() !== SOLE_ADMIN_EMAIL) {
+      if (!isOwnerUser(u) && !isEmployeeUser(u)) {
+        res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
+        return res.end(renderLockedHtml(
+          u,
+          'Directory Authorization Required',
+          'The MGC Directory console is restricted to Internal Staff and the Domain Administrator. Client accounts have access to SaaS & LMS Showcases, Guided Consultations, and Billing & Payment.',
+          '/apps',
+          'Return to SaaS Apps & LMS →'
+        ));
+      }
+    }
+
+    // Gate admin-command-portal.html (/command): Strictly 1 Administrator (Malik A. Khabir)
+    if (baseName === 'admin-command-portal.html') {
+      if (!u) {
+        return redirectToCleanAuth(baseName);
+      }
+      if (!isOwnerUser(u) || String(u.email || '').toLowerCase() !== SOLE_ADMIN_EMAIL) {
         res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
         return res.end(renderLockedHtml(
           u,
           'Sole Administrator Authorization Required',
-          'This administrative control center is strictly locked to the single platform Administrator (Malik A. Khabir). Standard user accounts only have access to SaaS Apps & LMS and Payment & Billing unless granted additional view access.',
-          '/apps',
-          'Return to SaaS Apps & LMS →'
+          'This administrative command center is strictly locked to the single platform Administrator (Malik A. Khabir).',
+          '/workspace',
+          'Return to Workspace →'
         ));
       }
     }

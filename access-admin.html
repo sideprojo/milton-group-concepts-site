@@ -242,8 +242,14 @@
 (function () {
   const W = MGCW, S = () => W.S, esc = W.esc, app = document.getElementById('app');
   const me = W.me();
-  let tab = 'users';
-  let ouFilter = 'all'; // 'all' | 'internal' | 'external'
+  const isOwner = W.isOwner(me);
+  const isEmp = W.isEmployee(me);
+  const urlParams = new URLSearchParams(location.search);
+  let tab = urlParams.get('tab') || 'users';
+  let ouFilter = urlParams.get('ou') || (isEmp ? 'external' : 'all'); // 'all' | 'internal' | 'external'
+  let groupFilter = 'all';
+  let statusFilter = 'all';
+  let appFilter = 'all';
   let searchQuery = '';
   let selectedUserId = '';
   let propTab = 'rbac'; // 'rbac' | 'apps' | 'account' | 'billing'
@@ -251,16 +257,27 @@
   let treeCollapsed = false;
   let inspectorHidden = false;
 
-  if (!me || me.role !== 'owner' || me.id !== 'owner' || String(me.email || '').toLowerCase() !== 'malik.khabir@miltongroupsecurity.org') {
-    app.innerHTML = '<div class="card lock"><span class="chip warn">Active Directory Domain Controller</span><h1 style="margin-top:10px">Administrator authentication required</h1><p>This Active Directory &amp; RBAC console is restricted to the Domain Administrator account.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In</a></div></div>';
+  if (!me || (!isOwner && !isEmp)) {
+    app.innerHTML = '<div class="card lock"><span class="chip warn">MGC Directory Controller</span><h1 style="margin-top:10px">Directory authorization required</h1><p>This MGC Directory console is restricted to authorized Domain Administrators and Internal Staff.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In</a></div></div>';
     W.header('access-admin.html');
     return;
   }
 
-  const members = () => Object.values(S().users).filter(x => x.role !== 'owner');
-  const name = (id) => (S().users[id] || {}).name || id;
+  // Enforce strict Employee scoping: Employees ONLY see Client (OU=External) users and Client Consultations/Requests.
+  if (isEmp) {
+    ouFilter = 'external';
+    if (!['users', 'requests'].includes(tab)) tab = 'users';
+    if (propTab === 'billing') propTab = 'rbac';
+  }
+
   const getUserOu = (u) => u.ou === 'internal' ? 'internal' : 'external';
   const getUserGroup = (u) => u.securityGroup || (getUserOu(u) === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS');
+  const members = () => Object.values(S().users).filter(x => {
+    if (x.role === 'owner' || x.id === 'owner') return false;
+    if (isEmp && getUserOu(x) !== 'external') return false;
+    return true;
+  });
+  const name = (id) => (S().users[id] || {}).name || id;
 
   const SECURITY_GROUPS = [
     { id: 'EXTERNAL_SAAS_LMS',     ou: 'external', label: 'External · SaaS & LMS Subscribers (Default)', desc: 'Scoped strictly to SaaS Apps & LMS (2/8 default apps) + PCI Payment Submission.' },
@@ -268,10 +285,13 @@
     { id: 'INTERNAL_ANALYST',      ou: 'internal', label: 'Internal · Operations & Cyber Analyst',       desc: 'Internal staff access to Agile Board, Contract Radar, Compliance, Academy & Apps.' },
     { id: 'INTERNAL_OPERATIONS',   ou: 'internal', label: 'Internal · Full Operations Officer',          desc: 'All 10 Workspace Views & all 8 SCORM / SaaS Applications (Non-Admin).' }
   ];
+  const visibleSecurityGroups = () => isEmp ? SECURITY_GROUPS.filter(g => g.ou === 'external') : SECURITY_GROUPS;
 
   function ensureSelectedUser(list) {
     if (selectedUserId && S().users[selectedUserId] && S().users[selectedUserId].role !== 'owner') {
-      return S().users[selectedUserId];
+      if (!isEmp || getUserOu(S().users[selectedUserId]) === 'external') {
+        return S().users[selectedUserId];
+      }
     }
     const first = (list && list[0]) || members()[0] || null;
     selectedUserId = first ? first.id : '';
@@ -281,13 +301,16 @@
   function renderNewUserModal() {
     if (!showNewUserDrawer) return '';
     return '<div style="padding:12px 16px;background:rgba(4,8,20,0.92);border-bottom:1px solid rgba(197,179,88,0.4)">' +
-      '<div class="row" style="margin-bottom:8px"><strong>New Active Directory User Object</strong><button type="button" class="btn" id="btnCloseNewUser" style="padding:4px 10px;font-size:11.5px">Close</button></div>' +
+      '<div class="row" style="margin-bottom:8px"><strong>New Directory User Object' + (isEmp ? ' (Client Scope)' : '') + '</strong><button type="button" class="btn" id="btnCloseNewUser" style="padding:4px 10px;font-size:11.5px">Close</button></div>' +
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;align-items:center">' +
         '<input id="admRegName" placeholder="Display Name" style="padding:7px 10px;font-size:12px">' +
         '<input id="admRegEmail" placeholder="Logon Email (UPN)" style="padding:7px 10px;font-size:12px">' +
         '<input id="admRegPass" type="password" placeholder="Password" style="padding:7px 10px;font-size:12px">' +
         '<input id="admRegOrg" placeholder="Organization / Dept" style="padding:7px 10px;font-size:12px">' +
-        '<select id="admRegOu" style="padding:7px 10px;font-size:12px"><option value="external">OU=External (Client)</option><option value="internal">OU=Internal (Staff)</option></select>' +
+        '<select id="admRegOu" style="padding:7px 10px;font-size:12px">' +
+          '<option value="external">OU=External (Client)</option>' +
+          (isOwner ? '<option value="internal">OU=Internal (Staff)</option>' : '') +
+        '</select>' +
         '<select id="admRegProvider" style="padding:7px 10px;font-size:12px"><option value="password">Password + UPN</option><option value="google">Google OIDC</option><option value="microsoft">Microsoft Entra</option><option value="apple">Apple OIDC</option></select>' +
         '<select id="admRegInterest" style="padding:7px 10px;font-size:12px"><option value="ai-web">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="cyber">Zero-Trust Cyber</option><option value="training">SCORM Academy</option></select>' +
         '<button class="btn pri" id="admRegGo" type="button" style="padding:7px 12px;font-size:12px;justify-content:center">Create Object</button>' +
@@ -296,11 +319,14 @@
   }
 
   function renderUsersDirectoryView() {
-    const cols = W.CATALOG;
+    const cols = W.CATALOG.filter(c => !isEmp || c.id !== 'finance');
     const apps = W.APPS_CATALOG || [];
     const allM = members();
     const filtered = allM.filter(u => {
       if (ouFilter !== 'all' && getUserOu(u) !== ouFilter) return false;
+      if (groupFilter !== 'all' && getUserGroup(u) !== groupFilter) return false;
+      if (statusFilter !== 'all' && (u.status || 'active') !== statusFilter) return false;
+      if (appFilter !== 'all' && !W.can(u, 'app', appFilter, 'view')) return false;
       if (!searchQuery) return true;
       const q = searchQuery.toLowerCase();
       return String(u.name || '').toLowerCase().includes(q) ||
@@ -309,20 +335,55 @@
              String(u.org || '').toLowerCase().includes(q);
     });
     const sel = ensureSelectedUser(filtered);
+    const colSpan = isOwner ? 6 : 5;
 
     return '<div class="ad-center">' +
-      '<div class="ad-toolbar">' +
-        '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:220px">' +
-          '<span style="font-size:13px;font-weight:600;color:#fff">' +
-            (ouFilter === 'internal' ? 'OU=Internal Users' : ouFilter === 'external' ? 'OU=External Users' : 'All Directory Users') +
-            ' (' + filtered.length + ')' +
-          '</span>' +
-          '<input id="adSearchInput" type="search" value="' + esc(searchQuery) + '" placeholder="Filter by name, UPN/email, username, or org" style="flex:1;max-width:290px;padding:7px 11px;font-size:12.5px">' +
+      '<div class="ad-toolbar" style="flex-direction:column;align-items:stretch;gap:10px">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">' +
+          '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:220px">' +
+            '<span style="font-size:13px;font-weight:600;color:#fff">' +
+              (isEmp ? 'Client Directory (OU=External)' : (ouFilter === 'internal' ? 'OU=Internal Users' : ouFilter === 'external' ? 'OU=External Users' : 'All Directory Users')) +
+              ' (' + filtered.length + ')' +
+            '</span>' +
+            '<input id="adSearchInput" type="search" value="' + esc(searchQuery) + '" placeholder="Filter by name, UPN/email, username, or org" style="flex:1;max-width:280px;padding:7px 11px;font-size:12.5px">' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
+            '<button type="button" class="btn pri" id="btnToggleNewUser" style="padding:6px 11px;font-size:12px">' + (isEmp ? 'New Client' : 'New User') + '</button>' +
+            '<div class="wgw-dropdown">' +
+              '<button type="button" class="btn wgw-trigger" aria-expanded="false" aria-controls="adBulkMenu" style="padding:6px 11px;font-size:12px">Quick Actions <span class="wgw-caret" aria-hidden="true"></span></button>' +
+              '<div class="wgw-menu" id="adBulkMenu" role="region" aria-label="Directory Quick Actions" style="right:0;left:auto;min-width:220px">' +
+                '<div class="wgw-menu-hdr">Selected Object Policy</div>' +
+                (sel ? '<button type="button" class="wgw-item" data-preset="' + esc(sel.id) + '|grant_all_features" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Grant Eligible Views &amp; Apps</span><small>Unlock client/staff modules</small></button>' : '') +
+                (sel ? '<button type="button" class="wgw-item" data-preset="' + esc(sel.id) + '|reset_saas_only" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Reset to SaaS &amp; LMS Only</span><small>Default least-privilege</small></button>' : '') +
+                '<div class="wgw-menu-hdr">Workspace Layout</div>' +
+                '<button type="button" class="wgw-item" id="btnQuickToggleTree" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>' + (treeCollapsed ? 'Expand Directory Tree' : 'Collapse Directory Tree') + '</span></button>' +
+                '<button type="button" class="wgw-item" id="btnQuickToggleInspector" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>' + (inspectorHidden ? 'Show Object Inspector' : 'Hide Object Inspector') + '</span></button>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
-        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
-          '<button type="button" class="btn pri" id="btnToggleNewUser" style="padding:6px 11px;font-size:12px">New User</button>' +
-          (sel ? '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|grant_all_features" style="padding:6px 11px;font-size:12px">Grant All</button>' : '') +
-          (sel ? '<button type="button" class="btn" data-preset="' + esc(sel.id) + '|reset_saas_only" style="padding:6px 11px;font-size:12px">SaaS &amp; LMS Only</button>' : '') +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;align-items:center">' +
+          (isOwner
+            ? '<select id="adOuDropdown" aria-label="Filter by Organizational Unit" style="padding:6px 9px;font-size:12px">' +
+                '<option value="all"' + (ouFilter === 'all' ? ' selected' : '') + '>All Organizational Units</option>' +
+                '<option value="external"' + (ouFilter === 'external' ? ' selected' : '') + '>OU=External (Clients)</option>' +
+                '<option value="internal"' + (ouFilter === 'internal' ? ' selected' : '') + '>OU=Internal (Staff)</option>' +
+              '</select>'
+            : '<div class="chip" style="justify-content:center;padding:6px 9px">Scope: OU=External (Clients Only)</div>') +
+          '<select id="adGroupFilter" aria-label="Filter by Security Group" style="padding:6px 9px;font-size:12px">' +
+            '<option value="all"' + (groupFilter === 'all' ? ' selected' : '') + '>All Security Groups</option>' +
+            visibleSecurityGroups().map(g => '<option value="' + esc(g.id) + '"' + (groupFilter === g.id ? ' selected' : '') + '>' + esc(g.id) + '</option>').join('') +
+          '</select>' +
+          '<select id="adStatusFilter" aria-label="Filter by Account Status" style="padding:6px 9px;font-size:12px">' +
+            '<option value="all"' + (statusFilter === 'all' ? ' selected' : '') + '>All Account Statuses</option>' +
+            '<option value="active"' + (statusFilter === 'active' ? ' selected' : '') + '>Status: Active</option>' +
+            '<option value="requested"' + (statusFilter === 'requested' ? ' selected' : '') + '>Status: Pending Approval</option>' +
+            '<option value="suspended"' + (statusFilter === 'suspended' ? ' selected' : '') + '>Status: Suspended</option>' +
+          '</select>' +
+          '<select id="adAppFilter" aria-label="Filter by Application Entitlement" style="padding:6px 9px;font-size:12px">' +
+            '<option value="all"' + (appFilter === 'all' ? ' selected' : '') + '>All Application Entitlements</option>' +
+            apps.map(a => '<option value="' + esc(a.id) + '"' + (appFilter === a.id ? ' selected' : '') + '>App: ' + esc(a.title) + '</option>').join('') +
+          '</select>' +
         '</div>' +
       '</div>' +
       renderNewUserModal() +
@@ -334,7 +395,7 @@
             '<th>Scope</th>' +
             '<th>Views</th>' +
             '<th>Apps</th>' +
-            '<th>Billing</th>' +
+            (isOwner ? '<th>Billing</th>' : '') +
           '</tr></thead>' +
           '<tbody>' +
             (filtered.length ? filtered.map(x => {
@@ -359,13 +420,15 @@
                 '</td>' +
                 '<td><span class="chip ' + (grantedPages > 1 ? 'ok' : '') + '">' + grantedPages + '/' + cols.length + '</span></td>' +
                 '<td><span class="chip">' + grantedApps + '/' + apps.length + '</span></td>' +
-                '<td>' +
-                  ((pay && pay.verified)
-                    ? '<span class="chip ok" title="' + esc(pay.receiptId) + '">Verified · ' + esc(pay.last4) + '</span>'
-                    : '<span class="chip warn">Pending</span>') +
-                '</td>' +
+                (isOwner
+                  ? '<td>' +
+                      ((pay && pay.verified)
+                        ? '<span class="chip ok" title="' + esc(pay.receiptId) + '">Verified · ' + esc(pay.last4) + '</span>'
+                        : '<span class="chip warn">Pending</span>') +
+                    '</td>'
+                  : '') +
               '</tr>';
-            }).join('') : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--mut)">No directory user objects match the current filter.</td></tr>') +
+            }).join('') : '<tr><td colspan="' + colSpan + '" style="text-align:center;padding:24px;color:var(--mut)">No directory user objects match the current filter.</td></tr>') +
           '</tbody>' +
         '</table>' +
       '</div>' +
@@ -376,7 +439,7 @@
     if (inspectorHidden) return '';
     const sel = ensureSelectedUser();
     if (!sel || tab !== 'users') return '';
-    const cols = W.CATALOG;
+    const cols = W.CATALOG.filter(c => !isEmp || c.id !== 'finance');
     const apps = W.APPS_CATALOG || [];
     const ou = getUserOu(sel);
     const grp = getUserGroup(sel);
@@ -390,10 +453,10 @@
           '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">' +
             '<select id="propUserOu" style="padding:6px 8px;font-size:12px">' +
               '<option value="external"' + (ou === 'external' ? ' selected' : '') + '>OU=External (Client)</option>' +
-              '<option value="internal"' + (ou === 'internal' ? ' selected' : '') + '>OU=Internal (Staff)</option>' +
+              (isOwner ? '<option value="internal"' + (ou === 'internal' ? ' selected' : '') + '>OU=Internal (Staff)</option>' : '') +
             '</select>' +
             '<select id="propUserGroup" style="padding:6px 8px;font-size:12px">' +
-              SECURITY_GROUPS.map(g => '<option value="' + g.id + '"' + (grp === g.id ? ' selected' : '') + '>' + esc(g.id) + '</option>').join('') +
+              visibleSecurityGroups().map(g => '<option value="' + g.id + '"' + (grp === g.id ? ' selected' : '') + '>' + esc(g.id) + '</option>').join('') +
             '</select>' +
           '</div>' +
           '<button type="button" class="btn pri" id="btnApplyGroupPolicy" style="width:100%;justify-content:center;padding:6px 10px;font-size:12px">Apply OU &amp; Group Policy</button>' +
@@ -449,7 +512,7 @@
             '</div>' +
           '</div>' +
         '</div>';
-    } else if (propTab === 'billing') {
+    } else if (propTab === 'billing' && isOwner) {
       bodyHtml = (pay && pay.verified)
         ? '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px">' +
             '<span class="chip ok" style="align-self:flex-start">PCI-DSS Tokenized &amp; Verified</span>' +
@@ -461,6 +524,10 @@
         : '<p style="font-size:12px">No verified payment submission on file for this user yet. User can submit payment via <b>Billing &amp; Payment</b> in their workspace.</p>';
     }
 
+    const propTabsList = isOwner
+      ? [['rbac', 'Member Of / RBAC'], ['apps', 'Apps (8)'], ['account', 'Account'], ['billing', 'PCI Billing']]
+      : [['rbac', 'Member Of / RBAC'], ['apps', 'Apps (8)'], ['account', 'Account']];
+
     return '<aside class="ad-inspector">' +
       '<div class="ad-inspector-hdr">' +
         '<div class="row">' +
@@ -471,7 +538,7 @@
         '<div style="font-size:11.5px;color:#94a3b8;font-family:\'JetBrains Mono\',monospace">' + esc(sel.email) + '</div>' +
       '</div>' +
       '<div class="ad-prop-tabs">' +
-        [['rbac', 'Member Of / RBAC'], ['apps', 'Apps (8)'], ['account', 'Account'], ['billing', 'PCI Billing']].map(t =>
+        propTabsList.map(t =>
           '<button type="button" class="ad-prop-tab ' + (propTab === t[0] ? 'active' : '') + '" data-prop-tab="' + t[0] + '">' + t[1] + '</button>'
         ).join('') +
       '</div>' +
@@ -480,6 +547,7 @@
   }
 
   function renderAdminIdentityView() {
+    if (!isOwner) return '';
     const ownerObj = (S().users && S().users.owner) || {};
     return '<div class="ad-center" style="padding:18px 20px">' +
       '<div class="row" style="margin-bottom:14px"><h2 style="margin:0;font-size:15px;font-weight:600">malik.khabir@Miltongroupsecurity.org</h2><span class="chip ok">Builtin\\Administrator</span></div>' +
@@ -496,6 +564,7 @@
   }
 
   function renderSecurityGroupsView() {
+    if (!isOwner) return '';
     return '<div class="ad-center" style="padding:18px 20px">' +
       '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Security Groups</h2>' +
       '<table class="ad-table"><thead><tr><th>Group CN</th><th>Scope</th><th>Entitlements</th><th>Members</th></tr></thead><tbody>' +
@@ -509,6 +578,7 @@
   }
 
   function renderPaymentsAndPciView() {
+    if (!isOwner) return '';
     const list = S().payments || [];
     const gw = S().pciGatewayConfig || { activeProcessor: 'stripe_saq_a', mgcOption: 'stripe_saq_a', fixOptions: ['stripe_saq_a', 'wawf_piee_eft'], mercuryAchEnabled: true, wawfPieeEnabled: true };
     return '<div class="ad-center" style="padding:18px 20px">' +
@@ -547,8 +617,27 @@
   function renderRequestsView() {
     const list = members().filter(x => x.status === 'requested');
     const reqLog = (S().requests || []).slice(0, 20);
+    const consults = (S().consultations || []).slice(0, 25);
     return '<div class="ad-center" style="padding:18px 20px">' +
-      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Pending Requests (' + list.length + ')</h2>' +
+      '<div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)">' +
+        '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Client Guided Consultations &amp; Architecture Requests (' + consults.length + ')</h2>' +
+        (consults.length
+          ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Client</th><th>Practice Area</th><th>Timeline / Scope</th><th>Status</th></tr></thead><tbody>' +
+            consults.map(c => '<tr style="cursor:default">' +
+              '<td><span class="chip ok">' + esc(c.receipt || c.id) + '</span></td>' +
+              '<td><b>' + esc(c.name) + '</b><div style="font-size:11px;color:#94a3b8">' + esc(c.email) + ' · ' + esc(c.org || '') + '</div></td>' +
+              '<td><b>' + esc(c.practiceArea) + '</b><div style="font-size:11px;color:#94a3b8">' + esc(c.complianceScope || '') + '</div></td>' +
+              '<td><div>' + esc(c.timeline || '') + ' · ' + esc(c.budgetTier || '') + '</div><div style="font-size:11px;color:#cbd5e1;margin-top:2px">' + esc(c.objectives || '') + '</div></td>' +
+              '<td>' +
+                '<select data-consult-status="' + esc(c.id) + '" style="padding:5px 8px;font-size:11.5px">' +
+                  ['submitted', 'in_review', 'scheduled', 'completed'].map(st => '<option value="' + st + '"' + (c.status === st ? ' selected' : '') + '>' + st.replace('_', ' ').toUpperCase() + '</option>').join('') +
+                '</select>' +
+              '</td>' +
+            '</tr>').join('') +
+            '</tbody></table>'
+          : '<p style="font-size:12.5px">No client consultations submitted yet.</p>') +
+      '</div>' +
+      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Pending Account Approvals (' + list.length + ')</h2>' +
       (list.length
         ? list.map(x => '<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><div><b>' + esc(x.name) + '</b> (' + esc(x.email) + ')</div><div style="display:flex;gap:6px"><button class="btn pri" data-ap="' + x.id + '">Approve</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div>').join('')
         : '') +
@@ -556,11 +645,12 @@
         ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Name</th><th>Email</th><th>Status</th></tr></thead><tbody>' +
           reqLog.map(r => '<tr style="cursor:default"><td><span class="chip">' + esc(r.receipt || r.id) + '</span></td><td>' + esc(r.name || name(r.uid)) + '</td><td>' + esc(r.email || '') + '</td><td><span class="chip ok">' + esc(r.status || 'active') + '</span></td></tr>').join('') +
           '</tbody></table>'
-        : '<p style="font-size:12.5px">Queue empty.</p>') +
+        : '<p style="font-size:12.5px">Account registration queue empty.</p>') +
     '</div>';
   }
 
   function renderAuditView() {
+    if (!isOwner) return '';
     return '<div class="ad-center" style="padding:18px 20px"><h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Event Log</h2><table class="ad-table"><thead><tr><th>Time</th><th>Actor</th><th>Event</th><th>Detail</th></tr></thead><tbody>' +
       S().audit.slice(0, 50).map(a => '<tr style="cursor:default"><td style="font-size:11.5px;color:var(--mut)">' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') +
       '</tbody></table></div>';
@@ -571,6 +661,7 @@
     const intCount = allM.filter(u => getUserOu(u) === 'internal').length;
     const extCount = allM.filter(u => getUserOu(u) === 'external').length;
     const payCount = (S().payments || []).length;
+    const reqTotal = (S().requests || []).length + (S().consultations || []).length;
 
     const treeHtml =
       '<aside class="ad-tree">' +
@@ -579,24 +670,30 @@
           '<button type="button" class="btn" id="btnToggleTreeCollapse" title="Auto-hide / Pin Directory Tree" style="padding:2px 7px;font-size:10.5px">' + (treeCollapsed ? 'Expand' : 'Hide') + '</button>' +
         '</div>' +
         '<div class="ad-tree-section">Organizational Units</div>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'all' ? 'active' : '') + '" data-ou="all" data-tab="users"><span class="ad-tree-label">All Directory Users</span><span class="ad-tree-count">' + allM.length + '</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'internal' ? 'active' : '') + '" data-ou="internal" data-tab="users"><span class="ad-tree-label">OU=Internal (Staff)</span><span class="ad-tree-count">' + intCount + '</span></button>' +
+        (isOwner
+          ? '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'all' ? 'active' : '') + '" data-ou="all" data-tab="users"><span class="ad-tree-label">All Directory Users</span><span class="ad-tree-count">' + allM.length + '</span></button>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'internal' ? 'active' : '') + '" data-ou="internal" data-tab="users"><span class="ad-tree-label">OU=Internal (Staff)</span><span class="ad-tree-count">' + intCount + '</span></button>'
+          : '') +
         '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'external' ? 'active' : '') + '" data-ou="external" data-tab="users"><span class="ad-tree-label">OU=External (Clients)</span><span class="ad-tree-count">' + extCount + '</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'admin_identity' ? 'active' : '') + '" data-tab="admin_identity"><span class="ad-tree-label">Builtin Administrator</span><span class="ad-tree-count">1</span></button>' +
-        '<div class="ad-tree-section">RBAC &amp; Policy</div>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span class="ad-tree-label">Security Groups</span><span class="ad-tree-count">5</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'payments' ? 'active' : '') + '" data-tab="payments"><span class="ad-tree-label">PCI-DSS &amp; Billing</span><span class="ad-tree-count">' + payCount + '</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span class="ad-tree-label">Intake Queue</span><span class="ad-tree-count">' + (S().requests || []).length + '</span></button>' +
-        '<button type="button" class="ad-tree-item ' + (tab === 'audit' ? 'active' : '') + '" data-tab="audit"><span class="ad-tree-label">Event Viewer</span><span class="ad-tree-count">' + (S().audit || []).length + '</span></button>' +
+        (isOwner
+          ? '<button type="button" class="ad-tree-item ' + (tab === 'admin_identity' ? 'active' : '') + '" data-tab="admin_identity"><span class="ad-tree-label">Builtin Administrator</span><span class="ad-tree-count">1</span></button>' +
+            '<div class="ad-tree-section">RBAC &amp; Policy</div>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span class="ad-tree-label">Security Groups</span><span class="ad-tree-count">5</span></button>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'payments' ? 'active' : '') + '" data-tab="payments"><span class="ad-tree-label">PCI-DSS &amp; Billing</span><span class="ad-tree-count">' + payCount + '</span></button>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span class="ad-tree-label">Consultations &amp; Intake</span><span class="ad-tree-count">' + reqTotal + '</span></button>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'audit' ? 'active' : '') + '" data-tab="audit"><span class="ad-tree-label">Event Viewer</span><span class="ad-tree-count">' + (S().audit || []).length + '</span></button>'
+          : '<div class="ad-tree-section">Client Operations</div>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span class="ad-tree-label">Client Consultations</span><span class="ad-tree-count">' + reqTotal + '</span></button>') +
       '</aside>';
 
     let centerHtml = '';
     if (tab === 'users') centerHtml = renderUsersDirectoryView();
-    else if (tab === 'admin_identity') centerHtml = renderAdminIdentityView();
-    else if (tab === 'groups') centerHtml = renderSecurityGroupsView();
-    else if (tab === 'payments') centerHtml = renderPaymentsAndPciView();
+    else if (tab === 'admin_identity' && isOwner) centerHtml = renderAdminIdentityView();
+    else if (tab === 'groups' && isOwner) centerHtml = renderSecurityGroupsView();
+    else if (tab === 'payments' && isOwner) centerHtml = renderPaymentsAndPciView();
     else if (tab === 'requests') centerHtml = renderRequestsView();
-    else if (tab === 'audit') centerHtml = renderAuditView();
+    else if (tab === 'audit' && isOwner) centerHtml = renderAuditView();
+    else centerHtml = renderUsersDirectoryView();
 
     const inspectorHtml = tab === 'users' ? renderObjectInspector() : '';
     const cls = ['ad-console'];
@@ -616,6 +713,20 @@
         render();
       };
     }
+    const btnQuickTree = document.getElementById('btnQuickToggleTree');
+    if (btnQuickTree) {
+      btnQuickTree.onclick = () => {
+        treeCollapsed = !treeCollapsed;
+        render();
+      };
+    }
+    const btnQuickInsp = document.getElementById('btnQuickToggleInspector');
+    if (btnQuickInsp) {
+      btnQuickInsp.onclick = () => {
+        inspectorHidden = !inspectorHidden;
+        render();
+      };
+    }
     const btnHideInsp = document.getElementById('btnHideInspector');
     if (btnHideInsp) {
       btnHideInsp.onclick = () => {
@@ -625,7 +736,7 @@
     }
     app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
       tab = b.dataset.tab;
-      if (b.dataset.ou) ouFilter = b.dataset.ou;
+      if (b.dataset.ou) ouFilter = isEmp ? 'external' : b.dataset.ou;
       render();
     });
     app.querySelectorAll('[data-select-user]').forEach(row => row.onclick = () => {
@@ -636,6 +747,34 @@
     app.querySelectorAll('[data-prop-tab]').forEach(b => b.onclick = () => {
       propTab = b.dataset.propTab;
       render();
+    });
+
+    const ouDrop = document.getElementById('adOuDropdown');
+    if (ouDrop) ouDrop.onchange = () => { ouFilter = isEmp ? 'external' : ouDrop.value; render(); };
+    const grpDrop = document.getElementById('adGroupFilter');
+    if (grpDrop) grpDrop.onchange = () => { groupFilter = grpDrop.value; render(); };
+    const stDrop = document.getElementById('adStatusFilter');
+    if (stDrop) stDrop.onchange = () => { statusFilter = stDrop.value; render(); };
+    const appDrop = document.getElementById('adAppFilter');
+    if (appDrop) appDrop.onchange = () => { appFilter = appDrop.value; render(); };
+
+    // Bind WGW disclosure dropdown inside the directory toolbar
+    app.querySelectorAll('.wgw-dropdown').forEach(dd => {
+      const trig = dd.querySelector('.wgw-trigger');
+      if (!trig) return;
+      trig.onclick = (e) => {
+        e.stopPropagation();
+        const isOpen = dd.classList.contains('open');
+        document.querySelectorAll('.wgw-dropdown.open').forEach(o => {
+          o.classList.remove('open');
+          const b = o.querySelector('.wgw-trigger');
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          dd.classList.add('open');
+          trig.setAttribute('aria-expanded', 'true');
+        }
+      };
     });
 
     const searchEl = document.getElementById('adSearchInput');
@@ -684,7 +823,7 @@
     const btnApplyGrp = document.getElementById('btnApplyGroupPolicy');
     if (btnApplyGrp && selectedUserId) {
       btnApplyGrp.onclick = () => {
-        const ouVal = document.getElementById('propUserOu').value;
+        const ouVal = isEmp ? 'external' : document.getElementById('propUserOu').value;
         const grpVal = document.getElementById('propUserGroup').value;
         W.setUserDirectoryProfile({ userId: selectedUserId, ou: ouVal, securityGroup: grpVal, applyGroupPolicy: true });
         W.toast('Applied ' + grpVal + ' (' + ouVal.toUpperCase() + ') to ' + name(selectedUserId));
@@ -716,7 +855,7 @@
     }
 
     const admSavePassBtn = document.getElementById('admSavePassBtn');
-    if (admSavePassBtn) {
+    if (admSavePassBtn && isOwner) {
       admSavePassBtn.onclick = () => {
         const un = (document.getElementById('admUsernameInput') && document.getElementById('admUsernameInput').value || 'malik.khabir').trim();
         const np = (document.getElementById('admNewPassInput').value || '').trim();
@@ -728,7 +867,7 @@
     }
 
     const btnSavePci = document.getElementById('btnSavePciGateway');
-    if (btnSavePci) {
+    if (btnSavePci && isOwner) {
       btnSavePci.onclick = () => {
         const activeProcessor = document.getElementById('pciActiveProcessor').value;
         const stripePublishableKey = document.getElementById('pciStripePk').value.trim();
@@ -746,7 +885,7 @@
         const em = document.getElementById('admRegEmail').value.trim().toLowerCase();
         const pw = (document.getElementById('admRegPass') && document.getElementById('admRegPass').value || '').trim();
         const org = document.getElementById('admRegOrg').value.trim();
-        const ou = (document.getElementById('admRegOu') && document.getElementById('admRegOu').value) || 'external';
+        const ou = isEmp ? 'external' : ((document.getElementById('admRegOu') && document.getElementById('admRegOu').value) || 'external');
         const prov = document.getElementById('admRegProvider').value;
         const intr = document.getElementById('admRegInterest').value;
         if (!n || !/^\S+@\S+\.\S+$/.test(em)) { W.toast('Enter valid Name & Email'); return; }
@@ -771,6 +910,15 @@
         render();
       };
     }
+
+    app.querySelectorAll('[data-consult-status]').forEach(selEl => {
+      selEl.onchange = () => {
+        const cid = selEl.getAttribute('data-consult-status');
+        W.updateConsultationStatus(cid, selEl.value);
+        W.toast('Consultation status updated to ' + selEl.value.toUpperCase());
+        render();
+      };
+    });
 
     app.querySelectorAll('[data-ap]').forEach(b => b.onclick = () => { W.approve(b.dataset.ap); W.toast('Approved'); render(); });
     app.querySelectorAll('[data-dn]').forEach(b => b.onclick = () => { W.deny(b.dataset.dn); render(); });

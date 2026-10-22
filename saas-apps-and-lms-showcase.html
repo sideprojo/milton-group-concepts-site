@@ -518,11 +518,11 @@
       <div class="metrics-row">
         <div class="metric-pill" title="SCORM 2004 Status">
           <span style="color:#34d399;">SCORM 2004:</span>
-          <strong id="ui-scorm-status">7 SCO Apps Ready</strong>
+          <strong id="ui-scorm-status">SCO Apps Ready</strong>
         </div>
         <div class="metric-pill" title="Course & Lab XP">
           <span style="color:#fbbf24;">XP:</span>
-          <strong id="ui-xp">18,450</strong>
+          <strong id="ui-xp">0</strong>
         </div>
         <select id="cityscape-theme-selector" class="tier-select" onchange="switchShowcaseCityscape(this.value)" title="Switch between F.I.X. Cityscape, miltongroupsecurity.org Cityscape, and Color/Greyscale Filters">
           <option value="mgc-sunset">Cityscape: miltongroupsecurity.org + F.I.X. Gold</option>
@@ -537,52 +537,55 @@
           <option value="ppv">View as: Pay-Per-View Visitor ($19 Pass)</option>
           <option value="customer_restricted">View as: Customer Login — Default Restricted (2/8 Apps)</option>
         </select>
-        <button class="btn-pay" onclick="openSubscriptionCheckout()">
+        <a href="member-portal.html?view=consultation" class="btn-secondary" style="text-decoration:none;font-size:12px;padding:7px 12px;">
+          Guided Consultation
+        </a>
+        <button class="btn-pay" id="top-billing-btn" onclick="openSubscriptionCheckout()">
           Billing &amp; Payment
         </button>
       </div>
     </div>
 
-    <!-- HERO SHOWCASE & MONETIZATION PROPOSITION -->
+    <!-- HERO SHOWCASE & ARCHITECTURE PROPOSITION -->
     <div class="hero-box">
       <div>
         <div style="display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border-radius:6px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);color:#93c5fd;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">
-          Monetized Decoupled Apps · Course LMS · Client Showcase
+          Decoupled SaaS Applications · Course LMS · Client Showcase
         </div>
         <h1 class="hero-title">
           Enterprise Applications, SCORM 2004 Course LMS &amp; Tailored Intelligence
         </h1>
         <p class="hero-sub">
-          Access standalone interactive applications, live EVE-NG network topologies, procurement matchmakers, skill trackers, and custom enterprise builds.
+          Access authorized standalone applications, interactive network topologies, procurement matchmakers, skill trackers, and guided architecture consultations.
         </p>
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
           <button class="btn-primary" onclick="activateMainTab('tab-apps')">Explore Applications</button>
           <button class="btn-gold" onclick="activateMainTab('tab-lms')">Open Course LMS</button>
+          <a href="member-portal.html?view=consultation" class="btn-secondary" style="text-decoration:none;">Submit Request &amp; Consultation</a>
           <button class="btn-secondary" onclick="activateMainTab('tab-custom-build')">Custom Build Configurator</button>
-          <button class="btn-secondary" onclick="activateMainTab('tab-profile')">Profile &amp; Subscription</button>
         </div>
       </div>
 
       <div style="background:rgba(2,6,23,0.85);border:1px solid var(--border-gold);border-radius:14px;padding:18px;">
         <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold);margin-bottom:10px;">
-          Live Monetization &amp; Traffic Telemetry
+          Workspace Entitlements &amp; Runtime Status
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:10px;border:1px solid var(--border-subtle);">
-            <div style="font-size:10.5px;color:var(--text-muted);">Active App Subscriptions</div>
-            <div style="font-size:17px;font-weight:600;color:#34d399;font-family:'JetBrains Mono',monospace;">$14,850/mo</div>
+            <div style="font-size:10.5px;color:var(--text-muted);">Authorized Applications</div>
+            <div id="hero-unlocked-count" style="font-size:16px;font-weight:600;color:#34d399;font-family:'JetBrains Mono',monospace;">Active</div>
           </div>
           <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:10px;border:1px solid var(--border-subtle);">
-            <div style="font-size:10.5px;color:var(--text-muted);">Pay-Per-View &amp; Sandbox Passes</div>
-            <div style="font-size:17px;font-weight:600;color:#60a5fa;font-family:'JetBrains Mono',monospace;">184 Active</div>
+            <div style="font-size:10.5px;color:var(--text-muted);">LMS Standard</div>
+            <div style="font-size:16px;font-weight:600;color:#60a5fa;font-family:'JetBrains Mono',monospace;">SCORM 2004</div>
           </div>
           <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:10px;border:1px solid var(--border-subtle);">
-            <div style="font-size:10.5px;color:var(--text-muted);">Showcase Conversion Rate</div>
-            <div style="font-size:17px;font-weight:600;color:#fbbf24;font-family:'JetBrains Mono',monospace;">18.4%</div>
+            <div style="font-size:10.5px;color:var(--text-muted);">Consultation Desk</div>
+            <div style="font-size:16px;font-weight:600;color:#fbbf24;font-family:'JetBrains Mono',monospace;">Guided Intake</div>
           </div>
           <div style="padding:10px;background:rgba(15,23,42,0.9);border-radius:10px;border:1px solid var(--border-subtle);">
-            <div style="font-size:10.5px;color:var(--text-muted);">Customer Satisfaction (CSAT)</div>
-            <div style="font-size:17px;font-weight:600;color:#f8fafc;font-family:'JetBrains Mono',monospace;">99.4%</div>
+            <div style="font-size:10.5px;color:var(--text-muted);">Directory Scope</div>
+            <div id="hero-scope-label" style="font-size:16px;font-weight:600;color:#f8fafc;font-family:'JetBrains Mono',monospace;">Verified</div>
           </div>
         </div>
       </div>
@@ -592,13 +595,13 @@
     <div class="workspace-tabs">
       <button class="btn-secondary" onclick="prevShowcaseTab()" title="Previous Workspace Tab">Previous</button>
       <button class="ws-tab active" data-target="tab-apps" onclick="activateMainTab('tab-apps')">
-        <span>1. SCORM 2004 Showcase Apps (7)</span>
+        <span id="ws-tab-apps-label">1. SCORM 2004 Showcase Apps</span>
       </button>
       <button class="ws-tab" data-target="tab-lms" onclick="activateMainTab('tab-lms')">
         <span>2. Course LMS, Trackers &amp; Quizzes</span>
       </button>
       <button class="ws-tab" data-target="tab-leaderboard" onclick="activateMainTab('tab-leaderboard')">
-        <span>3. Leaderboards &amp; Cohort Rankings</span>
+        <span>3. Progress &amp; Milestones</span>
       </button>
       <button class="ws-tab" data-target="tab-ai-coach" onclick="activateMainTab('tab-ai-coach')">
         <span>4. AI Help &amp; Tailored Coach</span>
@@ -607,7 +610,7 @@
         <span>5. Custom Build Configurator</span>
       </button>
       <button class="ws-tab" data-target="tab-profile" onclick="activateMainTab('tab-profile')">
-        <span>6. Profile &amp; Subscription</span>
+        <span>6. Profile &amp; Preferences</span>
       </button>
       <button class="btn-gold" onclick="nextShowcaseTab()" title="Next Workspace Tab">Next</button>
     </div>
@@ -616,9 +619,9 @@
     <!-- TAB 1: DECOUPLED SCORM 2004 APPS & INTERACTIVE WORKBENCH           -->
     <!-- ================================================================= -->
     <div id="tab-apps" class="tab-pane active">
-      <div class="grid-3">
+      <div class="grid-3" id="showcase-apps-grid">
         <!-- App 1: EVE-NG Topology & Cast Recorder (F.I.X. Cityscape + F.I.X. Colors) -->
-        <div class="app-card">
+        <div class="app-card" data-app-id="eveng-netprism-studio">
           <div>
             <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
               App 01 · SCORM 2004 · F.I.X. Cityscape
@@ -636,7 +639,7 @@
         </div>
 
         <!-- App 2: Tailored Job, Contract & Procurement Matchmaker (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
-        <div class="app-card">
+        <div class="app-card" data-app-id="samgov-contract-matchmaker">
           <div>
             <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
               App 02 · SCORM 2004 · MGC Cityscape
@@ -654,7 +657,7 @@
         </div>
 
         <!-- App 3: Site Traffic, Expected Traffic & Conversion ROI Simulator (F.I.X. Cityscape + F.I.X. Colors) -->
-        <div class="app-card">
+        <div class="app-card" data-app-id="traffic-roi-simulator">
           <div>
             <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
               App 03 · SCORM 2004 · F.I.X. Cityscape
@@ -672,7 +675,7 @@
         </div>
 
         <!-- App 4: Ghost-CLI Kinetic Trainer & Ansible Auto-Grader (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
-        <div class="app-card">
+        <div class="app-card" data-app-id="ghost-cli-trainer">
           <div>
             <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
               App 04 · SCORM 2004 · MGC Cityscape
@@ -690,7 +693,7 @@
         </div>
 
         <!-- App 5: Chronos // Aetheria Geo-Historical AI WebApp (F.I.X. Cityscape + F.I.X. Colors) -->
-        <div class="app-card">
+        <div class="app-card" data-app-id="chronos-aetheria-scorm">
           <div>
             <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
               App 05 · SCORM 2004 · F.I.X. Cityscape
@@ -708,7 +711,7 @@
         </div>
 
         <!-- App 6: Spanish Acquisition OS (F.I.X. Cityscape + MGC Cityscape Switcher) -->
-        <div class="app-card">
+        <div class="app-card" data-app-id="spanish-acquisition-os">
           <div>
             <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
               App 06 · SCORM 2004 · F.I.X. &amp; MGC Cityscape
@@ -725,7 +728,7 @@
         </div>
 
         <!-- App 7: Custom Project & Client Turnkey Forge (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
-        <div class="app-card" style="grid-column: 1 / -1;">
+        <div class="app-card" data-app-id="client-turnkey-forge" style="grid-column: 1 / -1;">
           <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;">
             <div style="max-width:780px;">
               <span class="app-tag" style="background:rgba(197,179,88,0.22);color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
@@ -1067,51 +1070,22 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
         <table class="lb-table">
           <thead>
             <tr>
-              <th>Rank</th>
-              <th>Operator / Subscriber</th>
-              <th>Subscription Tier</th>
+              <th>Status</th>
+              <th>Operator / Member</th>
+              <th>Directory Scope</th>
               <th>Primary Specialty</th>
-              <th>Verified Labs / Builds</th>
-              <th>Streak</th>
+              <th>Course LMS Status</th>
               <th>Total XP</th>
             </tr>
           </thead>
           <tbody>
             <tr style="background:rgba(16,185,129,0.1);">
-              <td><strong>#1 🏆</strong></td>
-              <td><strong id="lb-user-name">Malik A. Khabir (You)</strong></td>
-              <td><span style="color:#34d399;font-weight:800;">Enterprise / Owner</span></td>
-              <td>Full-Stack AI, EVE-NG, SDVOSB &amp; Traffic Architecture</td>
-              <td>48 Verified</td>
-              <td>14d 🔥</td>
-              <td><strong id="lb-user-xp" style="color:#fbbf24;font-family:'JetBrains Mono',monospace;">18,450 XP</strong></td>
-            </tr>
-            <tr>
-              <td><strong>#2 🥈</strong></td>
-              <td>Vanguard_NetOps_VA</td>
-              <td><span style="color:#60a5fa;font-weight:700;">Pro Subscriber ($99/mo)</span></td>
-              <td>CCNP ENCOR &amp; Ansible Playbooks</td>
-              <td>39 Verified</td>
-              <td>11d 🔥</td>
-              <td style="font-family:'JetBrains Mono',monospace;">15,200 XP</td>
-            </tr>
-            <tr>
-              <td><strong>#3 🥉</strong></td>
-              <td>Apex_GovCon_Architect</td>
-              <td><span style="color:#60a5fa;font-weight:700;">Pro Subscriber ($99/mo)</span></td>
-              <td>SAM.gov Procurement &amp; High-Traffic Portals</td>
-              <td>34 Verified</td>
-              <td>9d 🔥</td>
-              <td style="font-family:'JetBrains Mono',monospace;">13,890 XP</td>
-            </tr>
-            <tr>
-              <td><strong>#4</strong></td>
-              <td>Sentinel_ZeroTrust_DC</td>
-              <td><span style="color:#c4b5fd;font-weight:700;">Enterprise Team Seat</span></td>
-              <td>Microsoft SC-100 / SC-200 &amp; CMMC L2</td>
-              <td>29 Verified</td>
-              <td>7d</td>
-              <td style="font-family:'JetBrains Mono',monospace;">11,450 XP</td>
+              <td><strong>Active</strong></td>
+              <td><strong id="lb-user-name">Verified Member (You)</strong></td>
+              <td><span id="lb-user-scope" style="color:#34d399;font-weight:700;">Authenticated Session</span></td>
+              <td>Enterprise AI, Network Topologies &amp; SCORM 2004 LMS</td>
+              <td>Active</td>
+              <td><strong id="lb-user-xp" style="color:#fbbf24;font-family:'JetBrains Mono',monospace;">0 XP</strong></td>
             </tr>
           </tbody>
         </table>
@@ -1132,13 +1106,13 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
             Select a quick-prompt or enter your custom goal to generate an actionable execution blueprint:
           </p>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-            <button class="btn-secondary" onclick="runAiCoachPrompt('traffic')">📈 Grow Site Traffic &amp; Monetize Views</button>
-            <button class="btn-secondary" onclick="runAiCoachPrompt('contracts')">🏛 Win SDVOSB &amp; Commercial Contracts</button>
-            <button class="btn-secondary" onclick="runAiCoachPrompt('eveng')">🖧 EVE-NG Local Lab &amp; Spectator Setup</button>
-            <button class="btn-secondary" onclick="runAiCoachPrompt('career')">🎯 Tailored High-Comp Architect Roles</button>
+            <button class="btn-secondary" onclick="runAiCoachPrompt('traffic')">Grow Site Traffic &amp; Monetize Views</button>
+            <button class="btn-secondary" onclick="runAiCoachPrompt('contracts')">Win SDVOSB &amp; Commercial Contracts</button>
+            <button class="btn-secondary" onclick="runAiCoachPrompt('eveng')">EVE-NG Local Lab &amp; Spectator Setup</button>
+            <button class="btn-secondary" onclick="runAiCoachPrompt('career')">Tailored High-Comp Architect Roles</button>
           </div>
           <textarea id="ai-coach-input" rows="3" placeholder="Ask for tailored guidance on jobs, contracts, expected site traffic, EVE-NG labs, or client builds..." style="width:100%;padding:12px;border-radius:12px;background:#020617;border:1px solid var(--border-subtle);color:#fff;font-family:inherit;font-size:12.5px;margin-bottom:10px;"></textarea>
-          <button class="btn-primary" onclick="runAiCoachCustom()">✨ Generate Tailored AI Guidance Blueprint (+150 XP)</button>
+          <button class="btn-primary" onclick="runAiCoachCustom()">Generate Tailored AI Guidance Blueprint (+150 XP)</button>
         </div>
 
         <div class="app-card" style="background:#050b18;">
@@ -1159,11 +1133,11 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
       <div class="grid-2">
         <div class="app-card">
           <span class="app-tag" style="background:rgba(197,179,88,0.2);color:#fbbf24;width:fit-content;">
-            Build to Customer Satisfaction • Interactive Scope &amp; Pricing
+            Build to Customer Satisfaction · Interactive Scope &amp; Pricing
           </span>
           <h3 style="margin:6px 0 8px;font-size:19px;">Client Custom Build &amp; App Experience Configurator</h3>
           <p style="font-size:12.5px;color:var(--text-muted);margin:0 0 14px;">
-            Use your live projects as a showcase. Clients select the exact modules and expected traffic scale they need, preview the architecture, and submit payment directly into Finance Command:
+            Select the exact modules and expected traffic scale needed, preview the architecture, and submit a guided consultation or payment:
           </p>
 
           <div style="display:grid;gap:10px;margin-bottom:16px;">
@@ -1189,25 +1163,28 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
         <div class="app-card" style="justify-content:space-between;">
           <div>
             <span class="app-tag" style="background:rgba(16,185,129,0.2);color:#34d399;width:fit-content;">
-              Turnkey Proposal &amp; Instant Payment Handoff
+              Turnkey Proposal &amp; Guided Handoff
             </span>
             <h3 style="margin:6px 0 8px;font-size:18px;">Configured Build Summary</h3>
             <div style="font-size:32px;font-weight:900;color:#fbbf24;font-family:'JetBrains Mono',monospace;margin:10px 0;" id="custom-build-total">
               $10,500
             </div>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;">
-              Includes dedicated mobile + PC responsive engineering, Cloud Run Zero-Charge deployment, Workspace SSO hardening, and 99.4% Customer Satisfaction SLA.
+              Includes dedicated mobile + PC responsive engineering, Cloud Run Zero-Charge deployment, and Workspace SSO hardening.
             </p>
             <div style="margin-top:12px;padding:12px;background:#091024;border-radius:12px;border:1px solid var(--border-subtle);font-size:12px;">
               <strong>Live Showcase Proof Links Included:</strong><br/>
-              • <a href="https://miltongroupsecurity.org" target="_blank" style="color:#60a5fa;">miltongroupsecurity.org</a> (Enterprise &amp; RWB Cursor)<br/>
+              • <a href="https://miltongroupsecurity.org" target="_blank" style="color:#60a5fa;">miltongroupsecurity.org</a> (Enterprise Command)<br/>
               • <a href="https://fix.miltongroupsecurity.org" target="_blank" style="color:#60a5fa;">fix.miltongroupsecurity.org</a> (Defense Procurement &amp; Live RSS)<br/>
               • <a href="chronos-external-insight-webapp.html" style="color:#60a5fa;">Chronos // Aetheria</a> (3-Pane Insight WebApp)
             </div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+            <a href="member-portal.html?view=consultation" class="btn-primary" style="flex:1;padding:12px;text-align:center;text-decoration:none;justify-content:center;">
+              Submit Guided Consultation Request
+            </a>
             <button class="btn-pay" style="flex:1;padding:12px;" onclick="sendBuildToFinance()">
-              💳 Accept Client Payment / Generate Signed Invoice →
+              Proceed to Billing &amp; Payment
             </button>
           </div>
         </div>
@@ -1224,50 +1201,42 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
           <div style="display:grid;gap:12px;">
             <div>
               <label style="display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">Display Name &amp; Callsign</label>
-              <input id="prof-name" type="text" value="Malik A. Khabir" style="width:100%;padding:10px 12px;border-radius:10px;background:#091024;border:1px solid var(--border-subtle);color:#fff;font-size:13px;" />
+              <input id="prof-name" type="text" value="" placeholder="Enter display name" style="width:100%;padding:10px 12px;border-radius:10px;background:#091024;border:1px solid var(--border-subtle);color:#fff;font-size:13px;" />
             </div>
             <div>
               <label style="display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">Primary Tailoring Focus (Jobs, Contracts, Site Traffic, Labs)</label>
-              <input id="prof-focus" type="text" value="Focus: Tailored Federal/Commercial Contracts • High-Traffic Web/Apps • EVE-NG Cyber Prototyping" style="width:100%;padding:10px 12px;border-radius:10px;background:#091024;border:1px solid var(--border-subtle);color:#fff;font-size:13px;" />
+              <input id="prof-focus" type="text" value="Enterprise SaaS Applications · SCORM 2004 LMS · Cyber & Cloud Architecture" style="width:100%;padding:10px 12px;border-radius:10px;background:#091024;border:1px solid var(--border-subtle);color:#fff;font-size:13px;" />
             </div>
-            <div>
-              <label style="display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">Default Payment Acceptance Rail</label>
-              <select id="prof-rail" style="width:100%;padding:10px 12px;border-radius:10px;background:#091024;border:1px solid var(--border-subtle);color:#fff;font-size:13px;">
-                <option value="stripe">Stripe / Commercial Card &amp; Government Purchase Card (GPC)</option>
-                <option value="ach">Mercury Treasury ACH / FedNow Instant Settlement</option>
-                <option value="wawf">SAM.gov WAWF / IPP Federal Contract Invoicing</option>
-              </select>
-            </div>
-            <button class="btn-primary" onclick="saveProfileSettings()">💾 Save Profile &amp; Tailoring Preferences</button>
+            <button class="btn-primary" onclick="saveProfileSettings()">Save Profile &amp; Tailoring Preferences</button>
             <div id="prof-save-msg" style="font-size:12px;color:#34d399;font-weight:700;display:none;">
-              ✓ Profile settings saved to local session &amp; synced across decoupled apps!
+              Profile settings saved to local session!
             </div>
           </div>
         </div>
 
-        <div class="app-card">
-          <h3 style="margin:0 0 14px;font-size:18px;">Subscription Plan &amp; Monetization Access Matrix</h3>
+        <div class="app-card" id="profile-subscription-card">
+          <h3 style="margin:0 0 14px;font-size:18px;">Subscription Plan &amp; Access Matrix</h3>
           <div style="display:grid;gap:10px;font-size:12.5px;">
             <div style="padding:12px;border-radius:12px;background:#091024;border:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;">
               <div>
                 <strong>Tier 1: Pay-Per-View / Sandbox Pass</strong>
-                <div style="color:var(--text-muted);font-size:11px;">Single-session interactive view, 250 interaction credits</div>
+                <div style="color:var(--text-muted);font-size:11px;">Single-session interactive view</div>
               </div>
-              <button class="btn-secondary" onclick="checkoutSpecificTier('Pay-Per-View Sandbox Pass', 19)">$19 Pass</button>
+              <button class="btn-secondary btn-pay" onclick="checkoutSpecificTier('Pay-Per-View Sandbox Pass', 19)">$19 Pass</button>
             </div>
             <div style="padding:12px;border-radius:12px;background:#091024;border:1px solid rgba(59,130,246,0.5);display:flex;justify-content:space-between;align-items:center;">
               <div>
                 <strong>Tier 2: Pro App &amp; Course LMS Subscriber</strong>
-                <div style="color:var(--text-muted);font-size:11px;">All 6 decoupled apps, Course LMS, Leaderboards &amp; AI Coach</div>
+                <div style="color:var(--text-muted);font-size:11px;">Decoupled apps, Course LMS &amp; AI Coach</div>
               </div>
-              <button class="btn-primary" onclick="checkoutSpecificTier('Pro App & LMS Subscription', 99)">$99 / mo</button>
+              <button class="btn-primary btn-pay" onclick="checkoutSpecificTier('Pro App & LMS Subscription', 99)">$99 / mo</button>
             </div>
             <div style="padding:12px;border-radius:12px;background:#091024;border:1px solid var(--border-gold);display:flex;justify-content:space-between;align-items:center;">
               <div>
                 <strong>Tier 3: Enterprise / Agency Custom Build &amp; Seats</strong>
-                <div style="color:var(--text-muted);font-size:11px;">Unlimited credits, Custom Build SLA, Dedicated EVE-NG &amp; Traffic Insights</div>
+                <div style="color:var(--text-muted);font-size:11px;">Custom Build SLA &amp; Dedicated Topology Insights</div>
               </div>
-              <button class="btn-gold" onclick="checkoutSpecificTier('Enterprise Custom Build & Seat License', 499)">$499 / mo</button>
+              <button class="btn-gold btn-pay" onclick="checkoutSpecificTier('Enterprise Custom Build & Seat License', 499)">$499 / mo</button>
             </div>
           </div>
         </div>
@@ -1279,8 +1248,8 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
   <script src="mgc-workspace-core.js"></script>
   <script src="mgc-guided-security.js"></script>
   <script>
-    let userXP = parseInt(localStorage.getItem('mgc_lms_xp') || '18450', 10);
-    let userCredits = parseInt(localStorage.getItem('mgc_app_credits') || '2450', 10);
+    let userXP = parseInt(localStorage.getItem('mgc_lms_xp') || '0', 10);
+    let userCredits = parseInt(localStorage.getItem('mgc_app_credits') || '0', 10);
     let currentTier = localStorage.getItem('mgc_sim_tier') || 'enterprise';
     const SHOWCASE_TABS = ['tab-apps', 'tab-lms', 'tab-leaderboard', 'tab-ai-coach', 'tab-custom-build', 'tab-profile'];
     let currentTabIndex = 0;
@@ -1334,6 +1303,9 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
     }
 
     function renderTopStats() {
+      if (typeof MGCW !== 'undefined' && MGCW.header) {
+        MGCW.header('saas-apps-and-lms-showcase.html');
+      }
       const xpEl = document.getElementById('ui-xp');
       if (xpEl) xpEl.textContent = userXP.toLocaleString();
       const lbXpEl = document.getElementById('lb-user-xp');
@@ -1341,9 +1313,43 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
       const credEl = document.getElementById('ui-credits');
       if (credEl) credEl.textContent = userCredits.toLocaleString();
       const meUser = (typeof MGCW !== 'undefined' && MGCW.me) ? MGCW.me() : null;
-      const isAdmin = Boolean(meUser && meUser.role === 'owner' && meUser.id === 'owner');
+      const isAdmin = Boolean(meUser && MGCW.isOwner && MGCW.isOwner(meUser));
+      const isEmp = Boolean(meUser && MGCW.isEmployee && MGCW.isEmployee(meUser));
       const tierSim = document.getElementById('tier-simulator');
       if (tierSim) tierSim.style.display = isAdmin ? '' : 'none';
+
+      // Enforce Universal Zero-Leakage Rule: remove any application cards the user does not have access to
+      if (meUser && typeof MGCW !== 'undefined' && MGCW.can) {
+        let visibleApps = 0;
+        document.querySelectorAll('#showcase-apps-grid [data-app-id]').forEach(card => {
+          const appId = card.getAttribute('data-app-id');
+          if (!MGCW.can(meUser, 'app', appId, 'view')) {
+            card.remove();
+          } else {
+            visibleApps++;
+          }
+        });
+        const scormStat = document.getElementById('ui-scorm-status');
+        if (scormStat) scormStat.textContent = visibleApps + ' SCO Apps Ready';
+        const tabLbl = document.getElementById('ws-tab-apps-label');
+        if (tabLbl) tabLbl.textContent = '1. SCORM 2004 Showcase Apps (' + visibleApps + ')';
+        const heroUnlocked = document.getElementById('hero-unlocked-count');
+        if (heroUnlocked) heroUnlocked.textContent = visibleApps + ' Unlocked';
+      }
+
+      // Employees have NO access to payment settings — remove all payment buttons/cards for Employees
+      if (isEmp) {
+        document.querySelectorAll('.btn-pay').forEach(btn => btn.remove());
+        const subCard = document.getElementById('profile-subscription-card');
+        if (subCard) subCard.remove();
+      }
+
+      const scopeLabel = isAdmin ? 'Domain Admin' : (isEmp ? 'Internal Staff' : 'External Client');
+      const heroScope = document.getElementById('hero-scope-label');
+      if (heroScope) heroScope.textContent = scopeLabel;
+      const lbScope = document.getElementById('lb-user-scope');
+      if (lbScope) lbScope.textContent = scopeLabel;
+
       const savedName = (meUser && meUser.name) || localStorage.getItem('mgc_prof_name') || 'Verified Member';
       const savedFocus = localStorage.getItem('mgc_prof_focus');
       if (savedName) {
