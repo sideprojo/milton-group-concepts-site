@@ -115,28 +115,49 @@ const APPS_CATALOG = [
   { id: 'spanish-acquisition-os',     icon: '🇪🇸', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
 ];
 
-// Qualified Partner & Ecosystem Resources Catalog (White Feather first; extensible as new resources are onboarded)
+// Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
+// White Feather is strictly a catalog resource (like an app or experience), never built into core architecture.
 const RESOURCES_CATALOG = [
   {
+    id: 'resource-fast-track',
+    title: 'Resource Fast-Track (Milton UI/UX & Guided AI Templates)',
+    shortTitle: 'Resource Fast-Track',
+    brand: 'MGC',
+    defaultCustomer: false,
+    category: 'Guided Interactive AI Templates & Workspace Accelerator',
+    href: 'member-portal.html?view=resources',
+    desc: 'Structured, template-driven Resource Fast-Track suite across Languages, Business Endeavors, Schooling, and Technical Upskilling (zero free-form prompting).',
+    uiUxEnhancements: [
+      'Fluid Bento Action Matrix & Hardware-Accelerated Card Transitions',
+      'DocuSign-Style Guided Progression & Locked Milestone Checkpoints',
+      'Deterministic Template Selector (Zero Open Prompt Attack Surface)'
+    ],
+    aiTools: [
+      { id: 'rft-associative-blueprint', title: 'Associative Sequence Blueprint Template', badge: 'Defined Template', desc: 'Generates a structured 3-stage associative path across Languages, Business, Schooling, or Upskilling.' },
+      { id: 'rft-turnkey-intake-matrix', title: 'Business & Operations Intake Matrix Template', badge: 'Defined Template', desc: 'Applies pre-validated SLA, intake, and milestone templates to your selected business track.' },
+      { id: 'rft-upskill-lab-schedule', title: 'Schooling & Certification Milestone Template', badge: 'Defined Template', desc: 'Organizes SCORM 2004 modules and verification checkpoints into a guided weekly schedule.' }
+    ]
+  },
+  {
     id: 'white-feather',
-    title: 'White Feather (Resource + Milton UI/UX & AI Fast-Track)',
+    title: 'White Feather Partner Resource',
     shortTitle: 'White Feather',
     brand: 'MGC',
     defaultCustomer: false,
-    category: 'Capital, Deal Flow & AI Automation Resource',
+    category: 'Optional Catalog Resource · Partner Community',
     href: 'whitefeather-ecommerce-hub.html',
     communityUrl: 'https://www.skool.com/white-feather-ai/plans',
     privateGroupUrl: 'https://members.whitefeatherinvestments.com/communities/groups/white-feather-bronze-community/private-group',
-    desc: 'Qualified White Feather resource access enhanced with custom Milton UI/UX workspace navigation and AI fast-track execution tools.',
+    desc: 'Catalog resource entry for qualified partner community access, organized through the standard Resource Fast-Track template interface.',
     uiUxEnhancements: [
-      'Milton Executive UI/UX Companion & Deal-Flow Progress Tracker',
-      'Zero-Clutter Action Matrix & Guided Milestone Execution Shell',
-      'Integrated Resource Playbook & Document Synthesis Vault'
+      'Standard Resource Fast-Track Companion View',
+      'Guided Milestone Checklist & Reference Vault',
+      'Structured Template Action Cards'
     ],
     aiTools: [
-      { id: 'wf-dealflow-ai', title: 'White Feather Deal-Flow & Asset Structuring AI', badge: 'Fast-Track AI', desc: 'Synthesizes deal parameters, partnership structures, and executive summaries.' },
-      { id: 'wf-agency-blueprint', title: 'White Feather AI Automation Blueprint Generator', badge: 'Agentic Tool', desc: 'Fast-tracks community AI agency blueprints into deployable LangGraph & client workflows.' },
-      { id: 'wf-ui-navigator', title: 'Milton UI/UX Resource Accelerator', badge: 'Milton UI/UX', desc: 'Custom visual roadmap that organizes and fast-tracks White Feather modules and deliverables.' }
+      { id: 'wf-dealflow-ai', title: 'Deal-Flow Summary Template', badge: 'Resource Fast-Track', desc: 'Applies a pre-defined deal parameters checklist and partnership structure template.' },
+      { id: 'wf-agency-blueprint', title: 'Automation Workflow Template', badge: 'Resource Fast-Track', desc: 'Maps selected service packages into a standard deployment checklist.' },
+      { id: 'wf-ui-navigator', title: 'Resource Module Roadmap Template', badge: 'Resource Fast-Track', desc: 'Organizes catalog modules into a step-by-step completion sequence.' }
     ]
   }
 ];
@@ -608,6 +629,41 @@ function loadState() {
             }
           }
         });
+        // Ensure dedicated Client-Only Verification Test Account (strictly OU=External, CUSTOMER_RESTRICTED)
+        if (!parsed.users.u_client_verified) {
+          parsed.users.u_client_verified = {
+            id: 'u_client_verified',
+            name: 'Verified Client Partner (Client Test)',
+            username: 'client.verified',
+            org: 'Partner Client Organization',
+            email: 'client.verified@partner-org.com',
+            recoveryEmail: 'recovery.client@partner-org.com',
+            phone: '+1 (703) 555-0194',
+            address: { streetAddress: '', city: '', stateRegion: '', postalCode: '' },
+            role: 'member',
+            ou: 'external',
+            securityGroup: 'EXTERNAL_SAAS_LMS',
+            status: 'active',
+            accessTier: 'CUSTOMER_RESTRICTED',
+            brand: 'MGC',
+            ssoProvider: 'password',
+            passwordDigest: mgcDigest('Client#Verify2026!'),
+            hasPassword: true,
+            mfaVerified: true,
+            mfaMethod: 'EMAIL_2FA_VERIFIED',
+            ndaAccepted: true,
+            quote: { interest: 'ai-web', note: 'Dedicated Client-Only Verification Account' },
+            plan: { base: true, addons: [] },
+            pages: { saasapps: 'ready', resources: 'ready' },
+            adminGrantedPages: ['resources'],
+            allowedApps: DEFAULT_CUSTOMER_APPS.slice(),
+            qualifiedResources: ['resource-fast-track'],
+            paymentProfile: null,
+            payments: [],
+            checklist: {},
+            created: now()
+          };
+        }
         parsed.payments = Array.isArray(parsed.payments) ? parsed.payments : [];
         parsed.projects = Object.assign({}, def.projects, parsed.projects || {});
         if (!parsed.items.some(i => i.project === 'p_sterling')) {
@@ -1196,8 +1252,13 @@ function scopeStateForUser(u) {
     };
   }
   if (isOwnerUser(u)) {
+    const scrubbedOwnerUsers = {};
+    Object.entries(S.users || {}).forEach(([k, val]) => {
+      scrubbedOwnerUsers[k] = Object.assign({}, val, { passwordDigest: undefined });
+    });
     return {
       ...S,
+      users: scrubbedOwnerUsers,
       customResources: Array.isArray(S.customResources) ? S.customResources : [],
       accountingLedger: Array.isArray(S.accountingLedger) ? S.accountingLedger : [],
       accountingSummary: computeAccountingSummary(),
@@ -1211,7 +1272,7 @@ function scopeStateForUser(u) {
     // - Access to self + external Client users (ou !== 'internal' && role !== 'owner') ONLY.
     // - Zero visibility into Builtin Administrator, other Employees, or any Payment Settings / Accounting Ledger.
     const empUsers = {
-      [u.id]: Object.assign({}, u, { paymentProfile: null, payments: [] })
+      [u.id]: Object.assign({}, u, { passwordDigest: undefined, paymentProfile: null, payments: [] })
     };
     const clientIds = new Set();
     Object.values(S.users || {}).forEach(x => {
@@ -1256,7 +1317,7 @@ function scopeStateForUser(u) {
       }
     };
   }
-  // Scoped Client view: strictly their own profile, their own qualified resources, their own consultations/requests, and shared projects
+  // Scoped Client view: strictly their own profile (with passwordDigest scrubbed), their own qualified resources, their own consultations/requests, and shared projects
   const allowedProjects = {};
   Object.values(S.projects).forEach(p => {
     if (can(u, 'project', p.id, 'view')) allowedProjects[p.id] = p;
@@ -1268,12 +1329,13 @@ function scopeStateForUser(u) {
   const myRequests = S.requests.filter(r => r.uid === u.id);
   const myConsultations = (S.consultations || []).filter(c => c.uid === u.id);
   const myQualifiedCustomRes = (S.customResources || []).filter(r => can(u, 'resource', r.id, 'view'));
+  const scrubbedSelf = Object.assign({}, u, { passwordDigest: undefined });
   return {
     v: 1,
     currentUser: u.id,
     ssoProvider: u.ssoProvider || 'google',
     ssoEnforced: true,
-    users: { [u.id]: u },
+    users: { [u.id]: scrubbedSelf },
     shares: myShares,
     customResources: myQualifiedCustomRes,
     accountingLedger: [],
@@ -1343,22 +1405,23 @@ function sanitizeInput(val, maxLen = 200) {
 }
 
 // Otto Guided Personalization & Resource Association Catalog
+// White Feather is decoupled from core architecture and treated strictly as an optional catalog resource.
 const ONBOARDING_CATEGORIES = [
   {
     id: 'cat_ai_saas',
     title: 'AI Receptionist & Web Portals',
-    tag: 'AI & Web',
+    tag: 'Business & SaaS',
     accent: '#3b82f6',
     gradient: 'linear-gradient(135deg, rgba(30,58,138,0.85), rgba(15,23,42,0.96))',
     summary: '24/7 client intake, automated booking, and turnkey business portals.',
     associatedApps: ['client-turnkey-forge', 'sterling-auto-repair', 'traffic-roi-simulator'],
-    associatedResources: ['white-feather'],
+    associatedResources: ['resource-fast-track'],
     learningTrack: 'ai-web'
   },
   {
     id: 'cat_divergent_lang',
     title: 'Otto Language Studio',
-    tag: 'Otto Languages',
+    tag: 'Languages',
     accent: '#10b981',
     gradient: 'linear-gradient(135deg, rgba(6,78,59,0.85), rgba(15,23,42,0.96))',
     summary: 'Fast-track new languages using languages you already know.',
@@ -1368,11 +1431,11 @@ const ONBOARDING_CATEGORIES = [
   },
   {
     id: 'cat_cyber_eveng',
-    title: 'Network & Cyber Labs',
-    tag: 'Cyber & NetOps',
+    title: 'Network & Cyber Upskilling',
+    tag: 'Upskilling & Certs',
     accent: '#06b6d4',
     gradient: 'linear-gradient(135deg, rgba(8,51,68,0.85), rgba(15,23,42,0.96))',
-    summary: 'Hands-on routing, Linux, SQL, and security practice labs.',
+    summary: 'Hands-on routing, Linux, SQL, and certification practice labs.',
     associatedApps: ['eveng-netprism-studio', 'ghost-cli-trainer'],
     associatedResources: [],
     learningTrack: 'cyber'
@@ -1380,7 +1443,7 @@ const ONBOARDING_CATEGORIES = [
   {
     id: 'cat_federal_sdvosb',
     title: 'Federal Contracting',
-    tag: 'Federal & Defense',
+    tag: 'Business & Defense',
     accent: '#c5b358',
     gradient: 'linear-gradient(135deg, rgba(120,53,15,0.78), rgba(15,23,42,0.96))',
     summary: 'SAM.gov contract matching, proposal readiness, and federal billing.',
@@ -1390,22 +1453,22 @@ const ONBOARDING_CATEGORIES = [
   },
   {
     id: 'cat_capital_dealflow',
-    title: 'Executive Deal-Flow & Growth',
-    tag: 'Partner Resources',
+    title: 'Business Endeavors & Scaling',
+    tag: 'Business Endeavors',
     accent: '#eab308',
     gradient: 'linear-gradient(135deg, rgba(113,63,18,0.82), rgba(15,23,42,0.96))',
-    summary: 'Capital strategy, growth modeling, and qualified partner tools.',
+    summary: 'Operational scaling, revenue modeling, and Resource Fast-Track templates.',
     associatedApps: ['traffic-roi-simulator', 'client-turnkey-forge'],
-    associatedResources: ['white-feather'],
+    associatedResources: ['resource-fast-track'],
     learningTrack: 'ai-web'
   },
   {
     id: 'cat_chronos_epigraphy',
-    title: 'Chronos Historical Atlas',
-    tag: 'History & Archives',
+    title: 'Schooling & Academic Systems',
+    tag: 'Schooling & Research',
     accent: '#8b5cf6',
     gradient: 'linear-gradient(135deg, rgba(76,29,149,0.80), rgba(15,23,42,0.96))',
-    summary: 'Interactive maps, primary texts, and regional history.',
+    summary: 'Structured academic foundations, data modeling, and primary research.',
     associatedApps: ['chronos-aetheria-scorm', 'spanish-acquisition-os'],
     associatedResources: [],
     learningTrack: 'training'
@@ -1413,19 +1476,10 @@ const ONBOARDING_CATEGORIES = [
 ];
 
 const DIVERGENT_BRIDGES = {
-  en_us_native: {
-    id: 'en_us_native',
-    label: 'English → Spanish → French',
-    familiarAnchors: ['English', 'Everyday U.S. Spanish'],
-    sequence: [
-      { step: 1, domain: 'Spanish Foundation', transferPct: '82% Match', rationale: 'Uses familiar U.S. Spanish vocabulary to build rapid conversational confidence.' },
-      { step: 2, domain: 'French & Italian', transferPct: '89% Match', rationale: 'Connects Spanish grammar with shared English-French roots for faster reading.' },
-      { step: 3, domain: 'Portuguese & Classical Texts', transferPct: '91% Match', rationale: 'Completes full Romance language fluency across modern and historical sources.' }
-    ]
-  },
   en_arabic_heritage: {
     id: 'en_arabic_heritage',
-    label: 'English + Arabic → Spanish, Farsi & French',
+    domainCategory: 'Languages',
+    label: 'Languages · English + Arabic → Spanish, Farsi & French',
     familiarAnchors: ['English', 'Arabic Roots & Script'],
     sequence: [
       { step: 1, domain: 'Spanish', transferPct: '86% Match', rationale: 'Connects 4,000+ Arabic-origin Spanish words with everyday English familiarity.' },
@@ -1433,9 +1487,21 @@ const DIVERGENT_BRIDGES = {
       { step: 3, domain: 'French', transferPct: '90% Match', rationale: 'Builds on Spanish grammar and shared Mediterranean vocabulary.' }
     ]
   },
+  en_us_native: {
+    id: 'en_us_native',
+    domainCategory: 'Languages',
+    label: 'Languages · English → Spanish → French & Portuguese',
+    familiarAnchors: ['English', 'Everyday U.S. Spanish'],
+    sequence: [
+      { step: 1, domain: 'Spanish Foundation', transferPct: '82% Match', rationale: 'Uses familiar U.S. Spanish vocabulary to build rapid conversational confidence.' },
+      { step: 2, domain: 'French & Italian', transferPct: '89% Match', rationale: 'Connects Spanish grammar with shared English-French roots for faster reading.' },
+      { step: 3, domain: 'Portuguese & Classical Texts', transferPct: '91% Match', rationale: 'Completes full Romance language fluency across modern and historical sources.' }
+    ]
+  },
   east_asian_hangul: {
     id: 'east_asian_hangul',
-    label: 'Korean → Chinese & Japanese',
+    domainCategory: 'Languages',
+    label: 'Languages · Korean (Hangul) → Chinese & Japanese',
     familiarAnchors: ['English', 'Phonetic Hangul Alphabet'],
     sequence: [
       { step: 1, domain: 'Korean (Hangul)', transferPct: '94% Match', rationale: 'Learn the phonetic alphabet in hours while picking up core root words.' },
@@ -1443,14 +1509,37 @@ const DIVERGENT_BRIDGES = {
       { step: 3, domain: 'Japanese', transferPct: '85% Match', rationale: 'Applies Korean sentence structure directly to Japanese grammar.' }
     ]
   },
+  business_endeavor_scale: {
+    id: 'business_endeavor_scale',
+    domainCategory: 'Business Endeavors',
+    label: 'Business · Service Operations → Turnkey Intake → Multi-Rail Scaling',
+    familiarAnchors: ['Service Delivery', 'Client Operations'],
+    sequence: [
+      { step: 1, domain: 'Service & Offer Standardization', transferPct: '90% Match', rationale: 'Translates existing service delivery into structured digital packages and clear SLAs.' },
+      { step: 2, domain: 'Automated Client Intake & Booking', transferPct: '93% Match', rationale: 'Connects standardized packages directly to 24/7 guided intake and scheduling templates.' },
+      { step: 3, domain: 'Multi-Rail Settlement & Retainers', transferPct: '89% Match', rationale: 'Links recurring engagements to automated ACH/Card billing and double-entry ledger tracking.' }
+    ]
+  },
+  schooling_academic_bridge: {
+    id: 'schooling_academic_bridge',
+    domainCategory: 'Schooling & Academics',
+    label: 'Schooling · Structured Logic → SQL & Data Systems → Applied Research',
+    familiarAnchors: ['Analytical Writing', 'Structured Problem Solving'],
+    sequence: [
+      { step: 1, domain: 'Structured Logic & Technical Writing', transferPct: '92% Match', rationale: 'Uses familiar outline logic to master technical specifications and lab documentation.' },
+      { step: 2, domain: 'Relational Data & 3NF SQL Modeling', transferPct: '88% Match', rationale: 'Maps structured outlines directly into relational database tables, keys, and queries.' },
+      { step: 3, domain: 'Systems Architecture & Verification', transferPct: '86% Match', rationale: 'Bridges data schemas into full-stack application architecture and empirical verification.' }
+    ]
+  },
   cli_netops_ai: {
     id: 'cli_netops_ai',
-    label: 'Network Commands → Automation & AI',
+    domainCategory: 'Technical Upskilling',
+    label: 'Upskilling · CLI & Networking → Zero-Trust Security → AI Workflows',
     familiarAnchors: ['Command Line', 'SQL & Logic'],
     sequence: [
-      { step: 1, domain: 'Routing, Linux & SQL', transferPct: '88% Match', rationale: 'Builds a solid foundation in live terminal commands and data structure.' },
-      { step: 2, domain: 'Network Automation', transferPct: '91% Match', rationale: 'Turns everyday terminal commands into reusable automation playbooks.' },
-      { step: 3, domain: 'AI Workflows', transferPct: '87% Match', rationale: 'Applies network routing logic to automated business and AI workflows.' }
+      { step: 1, domain: 'Routing, Linux & SQL Foundations', transferPct: '91% Match', rationale: 'Builds command-line muscle memory using guided terminal and database templates.' },
+      { step: 2, domain: 'Zero-Trust Cloud & Compliance', transferPct: '89% Match', rationale: 'Applies network segmentation directly to identity governance and CMMC / NIST controls.' },
+      { step: 3, domain: 'Guided AI Workflow Templates', transferPct: '87% Match', rationale: 'Connects security policy enforcement to deterministic workflow orchestration.' }
     ]
   }
 };
@@ -3477,7 +3566,7 @@ const server = http.createServer(async (req, res) => {
       const roleTitle = sanitizeInput(d.roleTitle || '', 120);
       const industrySector = sanitizeInput(d.industrySector || '', 80);
       const orgSize = sanitizeInput(d.orgSize || '1-10', 60);
-      const resourceInterest = sanitizeInput(d.resourceInterest || 'white-feather', 80);
+      const resourceInterest = sanitizeInput(d.resourceInterest || 'resource-fast-track', 80);
       const consentWorkspaceTailoring = d.consentWorkspaceTailoring !== false;
       const dataSharingOptIn = Boolean(d.dataSharingOptIn);
 
@@ -3552,7 +3641,7 @@ const server = http.createServer(async (req, res) => {
         const roleTitle = sanitizeInput(d.roleTitle || 'Executive', 120);
         const industrySector = sanitizeInput(d.industrySector || 'Technology & SaaS', 80);
         const orgSize = sanitizeInput(d.orgSize || '1-10', 60);
-        const resourceInterest = sanitizeInput(d.resourceInterest || 'white-feather', 80);
+        const resourceInterest = sanitizeInput(d.resourceInterest || 'resource-fast-track', 80);
         const consentWorkspaceTailoring = d.consentWorkspaceTailoring !== false;
         const dataSharingOptIn = Boolean(d.dataSharingOptIn);
         const ts = now();

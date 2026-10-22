@@ -29,15 +29,17 @@
   let showNetflixOnboarding = qs.get('onboard') === '1';
   let selectedCategories = [];
   let selectedDivergentBaseline = 'en_arabic_heritage';
-  let customLearningGoal = '';
+  let customLearningGoal = 'Spanish, Farsi & Cross-Domain Fluency';
   let ottoStep2Confirmed = false;
   let ottoRoleTitle = '';
   let ottoIndustrySector = '';
   let ottoOrgSize = '1-10';
-  let ottoResourceInterest = 'white-feather';
+  let ottoResourceInterest = 'resource-fast-track';
   let ottoConsentTailor = false;
   let ottoConsentDataSharing = false;
   let onboardingError = '';
+  let selectedAiTemplateId = 'tpl_lang_associative';
+  let selectedAiPacing = '30-Day Guided Sequence';
 
   const isSoleAdmin = () => Boolean(W.isOwner ? W.isOwner(u) : (u && u.role === 'owner' && u.id === 'owner'));
   const isEmp = () => Boolean(W.isEmployee ? W.isEmployee(u) : (u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active'));
@@ -388,13 +390,21 @@
   function resourcesPanel() {
     // Strict Zero-Leakage Policy: Only render resources the user is qualified for
     const qualifiedResources = getQualifiedResources();
-    const t = W.TAILOR[(u.quote && u.quote.interest) || 'ai-web'] || W.TAILOR.federal;
+    const templates = W.DEFINED_AI_TEMPLATES || [];
+    const activeTpl = templates.find(t => t.id === selectedAiTemplateId) || templates[0] || {
+      id: 'tpl_lang_associative',
+      domain: 'Languages',
+      title: 'Associative Language Acceleration Template',
+      pacing: '30-Day Guided Sequence',
+      summary: 'Structured bridge connecting your existing language roots to high-transfer vocabulary, phonetic drills, and SCORM checkpoints.',
+      steps: ['Stage 1: Shared Root & Cognate Activation', 'Stage 2: Sentence Structure & Verb Pattern Transfer', 'Stage 3: Applied Verification']
+    };
 
     const aiOutputBanner = activeAiToolOutput
       ? '<div class="card" id="aiFastTrackOutputBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.52);background:linear-gradient(135deg,rgba(6,78,59,0.34),rgba(9,16,32,0.96))">' +
           '<div class="row" style="margin-bottom:6px">' +
             '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
-              '<span class="chip ok">Milton AI Fast-Track Active</span>' +
+              '<span class="chip ok">Resource Fast-Track Active</span>' +
               '<strong style="font-size:13.5px;color:#fff">' + esc(activeAiToolOutput.resourceTitle) + ' · ' + esc(activeAiToolOutput.toolTitle) + '</strong>' +
             '</div>' +
             '<code style="font-size:11px;color:#34d399">' + esc(activeAiToolOutput.runId) + '</code>' +
@@ -402,6 +412,40 @@
           '<p style="margin:0;font-size:12.5px;color:#d1fae5;line-height:1.5">' + esc(activeAiToolOutput.summary) + '</p>' +
         '</div>'
       : '';
+
+    const definedTemplateSelectorCard =
+      '<div class="card" id="definedTemplateInteractiveCard" style="padding:16px 20px;margin-bottom:12px;border-color:rgba(16,185,129,0.45);background:linear-gradient(135deg,rgba(6,48,44,0.35),rgba(9,16,32,0.96))">' +
+        '<div class="row" style="margin-bottom:10px">' +
+          '<div>' +
+            '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Resource Fast-Track · Defined Interactive AI Templates</span>' +
+            '<h2 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">Select Your Guided Execution Template (Zero Free-Text Prompting)</h2>' +
+          '</div>' +
+          '<span class="chip ok" style="font-size:10.5px">Deterministic Template Mode</span>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1.3fr 1fr auto;gap:10px;align-items:end;margin-bottom:12px">' +
+          '<div>' +
+            '<label for="rftTemplateSelect" style="display:block;font-size:11px;font-weight:600;color:#cbd5e1;margin-bottom:4px">Defined Domain &amp; Sequence Template</label>' +
+            '<select id="rftTemplateSelect" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+              templates.map(tpl => '<option value="' + esc(tpl.id) + '"' + (tpl.id === activeTpl.id ? ' selected' : '') + '>' + esc(tpl.domain + ' · ' + tpl.title) + '</option>').join('') +
+            '</select>' +
+          '</div>' +
+          '<div>' +
+            '<label for="rftPacingSelect" style="display:block;font-size:11px;font-weight:600;color:#cbd5e1;margin-bottom:4px">Guided Progression Pacing</label>' +
+            '<select id="rftPacingSelect" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+              ['Rapid 7-Day Sprint', '14-Day Launch Blueprint', '30-Day Guided Sequence', 'Weekly Lab Checkpoints'].map(p => '<option value="' + esc(p) + '"' + (p === selectedAiPacing ? ' selected' : '') + '>' + esc(p) + '</option>').join('') +
+            '</select>' +
+          '</div>' +
+          '<button type="button" class="btn pri" id="btnRunDefinedTemplate" style="padding:9px 18px;font-size:12.5px;white-space:nowrap">Apply Defined Template</button>' +
+        '</div>' +
+        '<div class="bento-3" style="gap:8px">' +
+          (activeTpl.steps || []).map((st, idx) =>
+            '<div class="compact-card" style="padding:10px 12px;border-color:rgba(59,130,246,0.34);background:rgba(4,8,20,0.78)">' +
+              '<div class="row" style="margin-bottom:2px"><span class="chip ok" style="font-size:9.5px">Milestone ' + (idx + 1) + '</span><small style="font-size:10px;color:#93c5fd">' + esc(activeTpl.domain) + '</small></div>' +
+              '<p style="margin:0;font-size:11.5px;color:#f8fafc;font-weight:600;line-height:1.35">' + esc(st) + '</p>' +
+            '</div>'
+          ).join('') +
+        '</div>' +
+      '</div>';
 
     const renderResourceCard = (r) => {
       const uiList = Array.isArray(r.uiUxEnhancements) ? r.uiUxEnhancements : [];
@@ -414,21 +458,21 @@
           '</div>' +
           '<div style="display:flex;gap:8px;align-items:center">' +
             '<span class="chip ok">' + (isSoleAdmin() ? 'Admin · Qualified' : 'Qualified Member') + '</span>' +
-            '<span class="chip" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Milton UI/UX + AI Fast-Track</span>' +
+            '<span class="chip" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Resource Fast-Track</span>' +
           '</div>' +
         '</div>' +
-        '<p style="font-size:13px;color:#cbd5e1;margin:0 0 14px;line-height:1.55">' + esc(r.summary || '') + '</p>' +
+        '<p style="font-size:13px;color:#cbd5e1;margin:0 0 14px;line-height:1.55">' + esc(r.desc || r.summary || '') + '</p>' +
 
         '<div style="display:grid;grid-template-columns:1fr 1.25fr;gap:14px;align-items:start">' +
           '<div class="compact-card" style="padding:14px 16px;border-color:rgba(59,130,246,0.35)">' +
-            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa;margin-bottom:8px">Milton UI/UX Enhancements Applied</div>' +
+            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa;margin-bottom:8px">UI/UX &amp; Guided Progression Active</div>' +
             '<div style="display:flex;flex-direction:column;gap:7px">' +
               uiList.map(enh => '<div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#e2e8f0"><span class="chip ok" style="padding:1px 6px;font-size:10px">UI/UX</span><span>' + esc(enh) + '</span></div>').join('') +
             '</div>' +
           '</div>' +
 
           '<div class="compact-card" style="padding:14px 16px;border-color:rgba(16,185,129,0.38)">' +
-            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#34d399;margin-bottom:8px">Associated AI Fast-Track Tools (' + aiTools.length + ')</div>' +
+            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#34d399;margin-bottom:8px">Resource Fast-Track Templates (' + aiTools.length + ')</div>' +
             '<div style="display:flex;flex-direction:column;gap:8px">' +
               aiTools.map(tool =>
                 '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:rgba(4,8,20,0.65);border:1px solid rgba(148,163,184,0.2)">' +
@@ -436,7 +480,7 @@
                     '<div style="font-size:12.5px;font-weight:600;color:#fff">' + esc(tool.title) + '</div>' +
                     '<div style="font-size:11.5px;color:#94a3b8;margin-top:2px">' + esc(tool.desc || '') + '</div>' +
                   '</div>' +
-                  '<button type="button" class="btn pri" data-run-ai-tool="' + esc(tool.id) + '" data-res-id="' + esc(r.id) + '" data-res-title="' + esc(r.title) + '" data-tool-title="' + esc(tool.title) + '" style="white-space:nowrap;padding:6px 11px;font-size:11.5px">Fast-Track</button>' +
+                  '<button type="button" class="btn pri" data-run-ai-tool="' + esc(tool.id) + '" data-res-id="' + esc(r.id) + '" data-res-title="' + esc(r.title) + '" data-tool-title="' + esc(tool.title) + '" style="white-space:nowrap;padding:6px 11px;font-size:11.5px">Resource Fast-Track</button>' +
                 '</div>'
               ).join('') +
             '</div>' +
@@ -446,10 +490,11 @@
     };
 
     return aiOutputBanner +
+      definedTemplateSelectorCard +
       '<div class="card" style="padding:16px 20px;margin-bottom:12px">' +
         '<div class="row">' +
           '<div>' +
-            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Qualified Partner Resources &amp; AI Fast-Track</span>' +
+            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Qualified Catalog Resources &amp; Resource Fast-Track</span>' +
             '<h2 style="margin:2px 0 0;font-size:15px;font-weight:600">Authorized Resources (' + qualifiedResources.length + ')</h2>' +
           '</div>' +
           '<button type="button" class="btn" data-tab="apps">Applications &amp; LMS</button>' +
@@ -567,14 +612,23 @@
             '<div class="compact-card" style="padding:10px 12px;border-color:rgba(197,179,88,0.38)">' +
               '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">' +
                 '<div>' +
-                  '<label for="nfBaselineSelect" style="font-size:11px;font-weight:600;color:#cbd5e1;margin-bottom:3px;display:block">Starting Background</label>' +
+                  '<label for="nfBaselineSelect" style="font-size:11px;font-weight:600;color:#cbd5e1;margin-bottom:3px;display:block">Starting Background (Multi-Domain)</label>' +
                   '<select id="nfBaselineSelect" ' + (!step1Done ? 'disabled ' : '') + 'style="width:100%;padding:7px 9px;font-size:12px">' +
                     Object.values(bridges).map(b => '<option value="' + esc(b.id) + '"' + (b.id === selectedDivergentBaseline ? ' selected' : '') + '>' + esc(b.label) + '</option>').join('') +
                   '</select>' +
                 '</div>' +
                 '<div>' +
-                  '<label for="nfLearningGoalInput" style="font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:3px;display:block">Focus Goal (Optional)</label>' +
-                  '<input id="nfLearningGoalInput" type="text" maxlength="240" ' + (!step1Done ? 'disabled ' : '') + 'value="' + esc(customLearningGoal) + '" placeholder="e.g., Spanish & Farsi fluency" style="width:100%;padding:7px 9px;font-size:12px">' +
+                  '<label for="nfLearningGoalInput" style="font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:3px;display:block">Defined Outcome Template</label>' +
+                  '<select id="nfLearningGoalInput" ' + (!step1Done ? 'disabled ' : '') + 'style="width:100%;padding:7px 9px;font-size:12px">' +
+                    [
+                      'Spanish, Farsi & Cross-Domain Fluency',
+                      'Korean (Hangul) → Mandarin & Japanese Bridge',
+                      'Turnkey Client Intake & Multi-Rail Business Scaling',
+                      'Federal SDVOSB Contract & Proposal Readiness',
+                      'Structured Logic → 3NF SQL & Academic Systems Mastery',
+                      'CLI & Networking → Zero-Trust Security Certifications'
+                    ].map(opt => '<option value="' + esc(opt) + '"' + (opt === customLearningGoal ? ' selected' : '') + '>' + esc(opt) + '</option>').join('') +
+                  '</select>' +
                 '</div>' +
               '</div>' +
               '<button type="button" class="btn ' + (step2Done ? 'ok' : 'pri') + '" id="btnConfirmOttoStep2" ' + (!step1Done ? 'disabled ' : '') + 'style="width:100%;justify-content:center;padding:7px 12px;font-size:12px">' +
@@ -645,7 +699,7 @@
             '<div>' +
               '<label for="ottoResourceInterest" style="display:block;font-size:10.5px;font-weight:600;color:#cbd5e1;margin-bottom:3px">Resource Qualification</label>' +
               '<select id="ottoResourceInterest" ' + (!step2Done ? 'disabled ' : '') + 'style="width:100%;padding:7px 9px;font-size:12px">' +
-                '<option value="white-feather"' + (ottoResourceInterest === 'white-feather' ? ' selected' : '') + '>White Feather + AI Tools</option>' +
+                '<option value="resource-fast-track"' + (ottoResourceInterest === 'resource-fast-track' ? ' selected' : '') + '>Resource Fast-Track + Guided Templates</option>' +
                 '<option value="turnkey-saas"' + (ottoResourceInterest === 'turnkey-saas' ? ' selected' : '') + '>Turnkey Client Portals</option>' +
                 '<option value="federal-teaming"' + (ottoResourceInterest === 'federal-teaming' ? ' selected' : '') + '>Federal SDVOSB Teaming</option>' +
                 '<option value="language-academy"' + (ottoResourceInterest === 'language-academy' ? ' selected' : '') + '>Otto Language &amp; Lab Studio</option>' +
@@ -895,18 +949,49 @@
       tab = 'resources';
       render();
     });
+    const rftTemplateSelect = document.getElementById('rftTemplateSelect');
+    if (rftTemplateSelect) {
+      rftTemplateSelect.onchange = () => {
+        selectedAiTemplateId = rftTemplateSelect.value;
+        render();
+      };
+    }
+    const rftPacingSelect = document.getElementById('rftPacingSelect');
+    if (rftPacingSelect) {
+      rftPacingSelect.onchange = () => {
+        selectedAiPacing = rftPacingSelect.value;
+        render();
+      };
+    }
+    const btnRunDefinedTemplate = document.getElementById('btnRunDefinedTemplate');
+    if (btnRunDefinedTemplate) {
+      btnRunDefinedTemplate.onclick = () => {
+        const templates = W.DEFINED_AI_TEMPLATES || [];
+        const tpl = templates.find(t => t.id === selectedAiTemplateId) || templates[0];
+        const runId = 'RFT-TPL-' + Date.now().toString(36).toUpperCase().slice(-5);
+        activeAiToolOutput = {
+          runId,
+          resourceId: 'resource-fast-track',
+          resourceTitle: 'Resource Fast-Track (' + (tpl ? tpl.domain : 'Guided') + ')',
+          toolTitle: (tpl ? tpl.title : 'Defined Template') + ' [' + selectedAiPacing + ']',
+          summary: 'Defined Template Applied: ' + (tpl ? tpl.summary : '') + ' Active schedule: ' + selectedAiPacing + ' for ' + (u.name || u.email) + '.'
+        };
+        W.toast('Resource Fast-Track Template Active');
+        render();
+      };
+    }
     app.querySelectorAll('[data-run-ai-tool]').forEach(btn => btn.onclick = () => {
       const resTitle = btn.dataset.resTitle || 'Qualified Resource';
-      const toolTitle = btn.dataset.toolTitle || 'AI Fast-Track Tool';
-      const runId = 'MGC-FT-' + Date.now().toString(36).toUpperCase().slice(-5);
+      const toolTitle = btn.dataset.toolTitle || 'Resource Fast-Track Template';
+      const runId = 'RFT-' + Date.now().toString(36).toUpperCase().slice(-5);
       activeAiToolOutput = {
         runId,
         resourceId: btn.dataset.resId,
         resourceTitle: resTitle,
         toolTitle,
-        summary: 'Milton UI/UX & AI Fast-Track execution completed for "' + resTitle + '" (' + toolTitle + '). Personalized curriculum, structured knowledge synthesis, and accelerated action checkpoints are active for ' + (u.name || u.email) + '.'
+        summary: 'Resource Fast-Track template execution completed for "' + resTitle + '" (' + toolTitle + '). Pre-defined curriculum milestones and action checkpoints are active for ' + (u.name || u.email) + '.'
       };
-      W.toast('Fast-Track active: ' + toolTitle);
+      W.toast('Resource Fast-Track active: ' + toolTitle);
       render();
     });
     app.querySelectorAll('[data-go-payment]').forEach(b => b.onclick = () => {
@@ -1092,7 +1177,7 @@
 <!-- SCORM 2004 4TH EDITION + DUAL CITYSCAPE (F.I.X. & MILTONGROUPSECURITY.ORG) LAYER -->
 <style id="mgc-fix-scorm-cityscape-style">
   body { position: relative; isolation: isolate; }
-  body > *:not(#mgc-fix-bg-image):not(#mgc-fix-skyscraper-overlay):not(#mgc-scorm-floating-dock):not(#dual-cityscape-bg):not(#dual-cityscape-overlay):not(#mgc-skyscraper-layer):not(.thematic-city-backdrop):not(script):not(style):not(link) {
+  body > *:not(#mgc-fix-bg-image):not(#mgc-fix-skyscraper-overlay):not(#mgc-scorm-floating-dock):not(#dual-cityscape-bg):not(#dual-cityscape-overlay):not(#mgc-skyscraper-layer):not(.thematic-city-backdrop):not(.toast):not(#netflixOnboardingBackdrop):not(script):not(style):not(link) {
     position: relative;
     z-index: 5;
   }
