@@ -148,23 +148,19 @@
           <input type="hidden" id="ob-sso-provider" value="google" />
         </div>
 
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
-          <button type="button" id="presetCustomer" onclick="quickFillOnboarding('customer')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(56,189,248,0.5);background:rgba(56,189,248,0.12);color:#7dd3fc;font-size:0.72rem;font-weight:800;cursor:pointer;">🛡️ Customer Login</button>
-          <button type="button" id="presetNewPartner" onclick="quickFillOnboarding('register')" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid rgba(16,185,129,0.5);background:rgba(16,185,129,0.14);color:#6ee7b7;font-size:0.72rem;font-weight:800;cursor:pointer;">✨ Register Partner</button>
-        </div>
         <div class="form-group">
           <label>Full Name / Client Organization</label>
-          <input type="text" id="ob-name" placeholder="Enter your full name or organization" value="" autocomplete="off" />
+          <input type="text" id="ob-name" maxlength="100" placeholder="Enter your full name or organization" value="" autocomplete="off" />
         </div>
         <div class="form-group">
           <label id="ob-email-label">Authorized Google SSO Account Email</label>
-          <input type="email" id="ob-email" placeholder="Enter your authorized SSO email" value="" autocomplete="off" spellcheck="false" />
+          <input type="email" id="ob-email" maxlength="140" placeholder="Enter your authorized SSO email" value="" autocomplete="off" spellcheck="false" />
         </div>
         <div class="form-group">
           <label>Onboarding Track &amp; Portal Scope</label>
           <select id="ob-track">
-            <option value="CUSTOMER_RESTRICTED">Default Customer Login (Restricted App &amp; Workspace Access)</option>
-            <option value="ALL_INTERNAL_VIEW">Full Executive Evaluation (All Internal Sites — View Only)</option>
+            <option value="CUSTOMER_RESTRICTED">Customer Login (SaaS Apps, LMS &amp; Guided Consultation)</option>
+            <option value="ALL_INTERNAL_VIEW">Executive Evaluation (Role-Scoped Portal View)</option>
             <option value="DATA_COMMERCE_CIPP">Regulated Data Commerce &amp; SAS ModelOps Clean Room</option>
             <option value="SDVOSB_FEDERAL">VA Vets First / DoD SDVOSB Contracting &amp; 3D Geospatial</option>
           </select>
@@ -358,27 +354,6 @@
       if (box) box.style.display = 'none';
     }
 
-    function quickFillOnboarding(mode) {
-      clearAuthAlert();
-      if (mode === 'owner') {
-        document.getElementById('ob-name').value = 'Malik A. Khabir';
-        document.getElementById('ob-email').value = 'malik.khabir@miltongroupsecurity.org';
-        document.getElementById('ob-track').value = 'ALL_INTERNAL_VIEW';
-        document.getElementById('ob-totp').value = '';
-      } else if (mode === 'register') {
-        document.getElementById('ob-name').value = 'Jordan Vance (Vance Defense LLC)';
-        document.getElementById('ob-email').value = 'jordan.vance@vancedefense.com';
-        document.getElementById('ob-track').value = 'CUSTOMER_RESTRICTED';
-        document.getElementById('ob-totp').value = '';
-      } else {
-        document.getElementById('ob-name').value = 'Sterling Auto Repair Customer';
-        document.getElementById('ob-email').value = 'customer@sterlingautorepairva.com';
-        document.getElementById('ob-track').value = 'CUSTOMER_RESTRICTED';
-        document.getElementById('ob-totp').value = '';
-      }
-      triggerPortalBiometric();
-    }
-
     function setPortalsUnlockedUI(unlocked, emailLabel, isAdmin) {
       portalUnlockedState = unlocked;
       currentSessionIsAdmin = Boolean(isAdmin);
@@ -522,8 +497,8 @@
         showAuthAlert('Please enter a valid ' + OB_SSO_LABELS[ssoProvider] + ' account email.');
         return null;
       }
-      if (email === 'ana@example.com') {
-        showAuthAlert('Account Pending Approval: This demo request is awaiting Owner approval in Access Admin.');
+      if (/[<>{};$`\\]|(__proto__|constructor|prototype)/i.test(email)) {
+        showAuthAlert('Security Validation Failed: Disallowed characters detected.');
         return null;
       }
 
@@ -558,7 +533,7 @@
       let token = 'SHA256-' + btoa(res.email + ':' + res.ssoProvider + ':' + role + ':MGC-2026').slice(0, 24);
       let serverApps = ['sterling-auto-repair', 'client-turnkey-forge'];
       let serverPortals = ['saas-apps-and-lms-showcase.html', 'member-portal.html'];
-      let serverUid = res.isAdmin ? 'owner' : 'cara';
+      let serverUid = res.isAdmin ? 'owner' : ('u_' + res.email.replace(/[^a-z0-9]/g, '').slice(0, 12));
       let intakeReceipt = null;
 
       if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
@@ -647,13 +622,16 @@
 
       const tbody = document.getElementById('roster-body');
       if (tbody) {
+        const escFn = (typeof MGCW !== 'undefined' && MGCW.esc) ? MGCW.esc : (s => String(s || '').replace(/[&<>"']/g, ''));
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td><code>' + res.email + '</code> (' + name + ')</td><td>' + track + '</td><td style="color:#38bdf8;font-weight:700;">' + (res.isAdmin ? 'ROOT_SUPER_ADMIN (8/8 APPS)' : 'CUSTOMER_RESTRICTED (2/8 APPS)') + '</td><td style="color:#10b981;">✔ ' + OB_SSO_LABELS[res.ssoProvider] + ' + ' + res.mfaMethod + '</td>';
+        tr.innerHTML = '<td><code>' + escFn(res.email) + '</code> (' + escFn(name) + ')</td><td>' + escFn(track) + '</td><td style="color:#38bdf8;font-weight:700;">' + (res.isAdmin ? 'ROOT_SUPER_ADMIN (8/8 APPS)' : 'CUSTOMER_RESTRICTED (2/8 APPS)') + '</td><td style="color:#10b981;">✔ ' + escFn(OB_SSO_LABELS[res.ssoProvider]) + ' + ' + escFn(res.mfaMethod) + '</td>';
         tbody.appendChild(tr);
       }
 
       if (res.isAdmin) {
         window.location.href = 'admin-command-portal.html?mgc_verify=1&sso=' + encodeURIComponent(res.ssoProvider) + '&role=OWNER_ADMIN&email=' + encodeURIComponent(res.email) + '&mfa=' + encodeURIComponent(res.mfaMethod) + '&token=' + encodeURIComponent(token);
+      } else {
+        window.location.href = 'member-portal.html?onboard=1';
       }
     }
 

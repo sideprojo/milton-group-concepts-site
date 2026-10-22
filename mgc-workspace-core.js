@@ -573,10 +573,170 @@
     return false;
   }
 
-  /* ---------- Lifecycle workflow ---------- */
+  /* ---------- Lifecycle workflow & Input Security Hardening ---------- */
   let lastIntakeResult = null;
+  const DANGEROUS_INPUT_REGEX = /<\s*\/?\s*(script|iframe|object|embed|svg|math|meta|link|style|base)\b|javascript\s*:|vbscript\s*:|data\s*:\s*text\/html|on(load|error|click|mouseover|focus|blur|submit|input|change|keydown)\s*=|(\b(UNION\s+SELECT|DROP\s+TABLE|INSERT\s+INTO|DELETE\s+FROM|UPDATE\s+\w+\s+SET|xp_cmdshell)\b)|(\{\{[\s\S]*?\}\}|\$\{[\s\S]*?\})|(__proto__|prototype\s*\[|constructor\s*\[)/i;
+
+  function hasInjectionPayload(val) {
+    if (val == null) return false;
+    if (typeof val === 'string') return DANGEROUS_INPUT_REGEX.test(val);
+    if (Array.isArray(val)) return val.some(item => hasInjectionPayload(item));
+    if (typeof val === 'object') {
+      for (const k of Object.keys(val)) {
+        if (k === '__proto__' || k === 'constructor' || k === 'prototype') return true;
+        if (hasInjectionPayload(k) || hasInjectionPayload(val[k])) return true;
+      }
+    }
+    return false;
+  }
+
   function sanitizeField(val, maxLen) {
-    return String(val == null ? '' : val).replace(/[<>]/g, '').replace(/javascript:/gi, '').trim().slice(0, maxLen || 240);
+    return String(val == null ? '' : val)
+      .replace(/[\u0000-\u001F\u007F<>`$\\]/g, '')
+      .replace(/javascript\s*:/gi, '')
+      .replace(/on\w+\s*=/gi, '')
+      .replace(/(__proto__|constructor|prototype)/gi, '')
+      .trim()
+      .slice(0, maxLen || 240);
+  }
+
+  const ONBOARDING_CATEGORIES = [
+    {
+      id: 'cat_ai_saas',
+      title: 'Autonomous AI Agents & Turnkey SaaS',
+      tag: 'AI & SaaS',
+      accent: '#3b82f6',
+      gradient: 'linear-gradient(135deg, rgba(30,58,138,0.85), rgba(15,23,42,0.96))',
+      summary: '24/7 AI receptionists, LangGraph multi-agent orchestration, and commercial turnkey client portals.',
+      associatedApps: ['client-turnkey-forge', 'sterling-auto-repair', 'traffic-roi-simulator'],
+      associatedResources: ['white-feather'],
+      learningTrack: 'ai-web'
+    },
+    {
+      id: 'cat_divergent_lang',
+      title: 'Divergent Language & Cognitive Transfer',
+      tag: 'Associative Bridge',
+      accent: '#10b981',
+      gradient: 'linear-gradient(135deg, rgba(6,78,59,0.85), rgba(15,23,42,0.96))',
+      summary: 'Learn through high-familiarity cognitive bridges (Spanish → French, English + Arabic → Farsi & Spanish, Korean Hangul → Chinese).',
+      associatedApps: ['spanish-acquisition-os', 'chronos-aetheria-scorm'],
+      associatedResources: [],
+      learningTrack: 'training'
+    },
+    {
+      id: 'cat_cyber_eveng',
+      title: 'Zero-Trust Cyber, EVE-NG & Netmiko CLI',
+      tag: 'Cyber & NetOps',
+      accent: '#06b6d4',
+      gradient: 'linear-gradient(135deg, rgba(8,51,68,0.85), rgba(15,23,42,0.96))',
+      summary: '15-topology EVE-NG network simulation, IOS-XE/Linux/SQL Ghost-CLI auto-grading, and CMMC 2.0 compliance.',
+      associatedApps: ['eveng-netprism-studio', 'ghost-cli-trainer'],
+      associatedResources: [],
+      learningTrack: 'cyber'
+    },
+    {
+      id: 'cat_federal_sdvosb',
+      title: 'SDVOSB Federal Contracting & WAWF',
+      tag: 'Federal & Defense',
+      accent: '#c5b358',
+      gradient: 'linear-gradient(135deg, rgba(120,53,15,0.78), rgba(15,23,42,0.96))',
+      summary: 'SAM.gov NAICS 541512/541519 opportunity matching, capability architecture, and PIEE/WAWF settlement.',
+      associatedApps: ['samgov-contract-matchmaker', 'client-turnkey-forge'],
+      associatedResources: [],
+      learningTrack: 'federal'
+    },
+    {
+      id: 'cat_capital_dealflow',
+      title: 'Capital, Deal-Flow & Executive Strategy',
+      tag: 'Resource + Fast-Track AI',
+      accent: '#eab308',
+      gradient: 'linear-gradient(135deg, rgba(113,63,18,0.82), rgba(15,23,42,0.96))',
+      summary: 'Deal-flow structuring, agency automation blueprints, and qualified partner resource accelerators.',
+      associatedApps: ['traffic-roi-simulator', 'client-turnkey-forge'],
+      associatedResources: ['white-feather'],
+      learningTrack: 'ai-web'
+    },
+    {
+      id: 'cat_chronos_epigraphy',
+      title: 'Chronos Geo-Historical & Epigraphy AI',
+      tag: 'DeepMind Ithaca / Aeneas',
+      accent: '#8b5cf6',
+      gradient: 'linear-gradient(135deg, rgba(76,29,149,0.80), rgba(15,23,42,0.96))',
+      summary: 'Ancient text restoration, Mediterranean/Near-East linguistic evolution, and 3D geospatial excavation.',
+      associatedApps: ['chronos-aetheria-scorm', 'spanish-acquisition-os'],
+      associatedResources: [],
+      learningTrack: 'training'
+    }
+  ];
+
+  const DIVERGENT_BRIDGES = {
+    en_us_native: {
+      id: 'en_us_native',
+      label: 'American English Speaker → Spanish → French & Romance Bridge',
+      familiarAnchors: ['English (60% Latin/Norman Lexical Overlap)', 'High U.S. Spanish Cultural & Lexical Familiarity'],
+      sequence: [
+        { step: 1, domain: 'Spanish (High-Familiarity U.S. Anchor Bridge)', transferPct: '82% Lexical & Phonetic Familiarity', rationale: 'Spanish is immediately familiar across U.S. states, unlocking Romance verb conjugation, gender agreement, and Latin roots rapidly.' },
+        { step: 2, domain: 'French & Italian (Secondary Romance Transfer)', transferPct: '89% Structural Transfer from Spanish + English', rationale: 'Once Spanish grammatical scaffolding is internalized alongside English Norman-French cognates, French reading and syntax accelerate by 2.4x.' },
+        { step: 3, domain: 'Portuguese & Latin Epigraphy (Chronos OS)', transferPct: '91% Direct Cognate Mapping', rationale: 'Completes pan-Romance fluency and unlocks direct primary-source historical analysis.' }
+      ]
+    },
+    en_arabic_heritage: {
+      id: 'en_arabic_heritage',
+      label: 'English + Arabic-Influenced Background → Spanish, Farsi & French Bridge',
+      familiarAnchors: ['English', 'Arabic Root-and-Pattern & Perso-Arabic Script / Loanword Familiarity'],
+      sequence: [
+        { step: 1, domain: 'Spanish (Andalusian-Arabic & Latin Bridge)', transferPct: '86% Dual Cognate & Cultural Bridge', rationale: '4,000+ Arabic loanwords in Spanish (al- prefix, Guadal-, ojalá, alcalde) combine with American English familiarity to make Spanish an effortless first bridge.' },
+        { step: 2, domain: 'Farsi / Persian (Indo-European Syntax + Perso-Arabic Script)', transferPct: '88% Script + 45% Arabic Loanword + Indo-European Grammar Transfer', rationale: 'Leverages Arabic script and vocabulary familiarity alongside English Indo-European clause structure to master Farsi rapidly.' },
+        { step: 3, domain: 'French & Mediterranean Diplomacy', transferPct: '90% Romance + Levant/Maghreb Lexical Transfer', rationale: 'Combines Spanish Romance grammar with shared Arabic-French diplomatic and technical vocabulary.' }
+      ]
+    },
+    east_asian_hangul: {
+      id: 'east_asian_hangul',
+      label: 'Korean (Hangul) First → Mandarin Chinese & Japanese Structural Bridge',
+      familiarAnchors: ['English', 'Logical Phonetic Matrix & Sino-Xenic Root System'],
+      sequence: [
+        { step: 1, domain: 'Korean (Featural Hangul Alphabet + Hanja Roots)', transferPct: '94% Phonetic Decoding in <4 Hours + 60% Sino-Korean Vocabulary', rationale: 'Hangul is a featural phonetic alphabet learnable in a single afternoon while introducing 60% Sino-Korean (Hanja) syllable roots.' },
+        { step: 2, domain: 'Mandarin Chinese (Hanja → Hanzi Semantic & Phonetic Transfer)', transferPct: '78% Root & Compound Concept Transfer', rationale: 'Learning Korean first demystifies East Asian disyllabic compound logic before tackling tonal Mandarin and logographic Hanzi characters.' },
+        { step: 3, domain: 'Japanese (Shared SOV Syntax with Korean + Kanji Cognates)', transferPct: '85% Grammatical & Particle Equivalence with Korean', rationale: 'Korean and Japanese share near-identical agglutinative SOV grammar and topic/subject particles.' }
+      ]
+    },
+    cli_netops_ai: {
+      id: 'cli_netops_ai',
+      label: 'Network CLI & SQL → Ansible YAML → Autonomous LangGraph AI Agents',
+      familiarAnchors: ['Deterministic Command Syntax', 'Relational Logic & State Machines'],
+      sequence: [
+        { step: 1, domain: 'IOS-XE, Linux & 3NF SQL (Ghost-CLI & EVE-NG)', transferPct: '88% Deterministic State Mental Model', rationale: 'Grounds the learner in concrete packet routing, subnetting, and relational database normalization.' },
+        { step: 2, domain: 'Declarative Ansible Playbooks & Netmiko Python', transferPct: '91% CLI-to-Automation Transfer', rationale: 'Translates imperative CLI commands directly into idempotent infrastructure-as-code.' },
+        { step: 3, domain: 'LangGraph Multi-Agent & SAS ModelOps Pipelines', transferPct: '87% Graph Topology & Telemetry Transfer', rationale: 'Applies network routing and state-graph intuition directly to autonomous AI agent orchestration.' }
+      ]
+    }
+  };
+
+  function completeNetflixOnboarding(payload) {
+    if (hasInjectionPayload(payload)) {
+      return { ok: false, error: 'Security Validation Failed: Disallowed input characters detected.' };
+    }
+    const res = postServerAction({ action: 'completeNetflixOnboarding', data: payload });
+    if (res && res.ok) {
+      commit();
+      return res;
+    }
+    const u = me();
+    if (!u) return { ok: false, error: 'Authentication required.' };
+    const validIds = new Set(ONBOARDING_CATEGORIES.map(c => c.id));
+    const cleanCats = (Array.isArray(payload && payload.selectedCategories) ? payload.selectedCategories : [])
+      .map(c => sanitizeField(c, 48))
+      .filter(c => validIds.has(c));
+    if (!cleanCats.length) return { ok: false, error: 'Please select at least 1 category track.' };
+    const rawBase = sanitizeField(payload && payload.divergentBaseline, 48);
+    const cleanBase = DIVERGENT_BRIDGES[rawBase] ? rawBase : 'en_arabic_heritage';
+    u.onboardingCompleted = true;
+    u.onboardingCompletedAt = now();
+    u.selectedCategories = cleanCats;
+    u.divergentBaseline = cleanBase;
+    u.learningGoal = sanitizeField(payload && payload.learningGoal, 240);
+    commit();
+    return { ok: true, onboardingCompleted: true, state: S };
   }
   function submitRequest(data) {
     const cleanEmail = sanitizeField(data && data.email, 160).toLowerCase();
@@ -1396,5 +1556,5 @@
     }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

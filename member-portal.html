@@ -21,8 +21,16 @@
   let lastPaymentReceipt = null;
   let lastPaymentError = '';
   let lastConsultationReceipt = null;
+  let lastConsultationError = '';
   let selectedConsultTrack = 'ai-web';
   let activeAiToolOutput = null;
+
+  // Netflix-Style Category Selection & Divergent Learning Profile State
+  let showNetflixOnboarding = qs.get('onboard') === '1';
+  let selectedCategories = [];
+  let selectedDivergentBaseline = 'en_arabic_heritage';
+  let customLearningGoal = '';
+  let onboardingError = '';
 
   const isSoleAdmin = () => Boolean(W.isOwner ? W.isOwner(u) : (u && u.role === 'owner' && u.id === 'owner'));
   const isEmp = () => Boolean(W.isEmployee ? W.isEmployee(u) : (u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active'));
@@ -31,6 +39,21 @@
     const cat = W.getResourcesCatalog ? W.getResourcesCatalog() : (W.RESOURCES_CATALOG || []);
     return cat.filter(r => isSoleAdmin() || W.can(u, 'resource', r.id, 'view'));
   };
+
+  function syncOnboardingStateFromUser() {
+    if (!u) return;
+    if (Array.isArray(u.selectedCategories) && u.selectedCategories.length) {
+      selectedCategories = u.selectedCategories.slice();
+    } else if (!selectedCategories.length) {
+      selectedCategories = ['cat_ai_saas', 'cat_divergent_lang'];
+    }
+    if (u.divergentBaseline && W.DIVERGENT_BRIDGES && W.DIVERGENT_BRIDGES[u.divergentBaseline]) {
+      selectedDivergentBaseline = u.divergentBaseline;
+    }
+    if (u.learningGoal && !customLearningGoal) {
+      customLearningGoal = u.learningGoal;
+    }
+  }
 
   const CONSULTATION_TRACKS = [
     {
@@ -86,11 +109,44 @@
       ? '<button type="button" class="btn" data-go-resources="1" style="border-color:rgba(197,179,88,0.45);color:#fde047">Resources &amp; AI Tools (' + qualifiedRes.length + ')</button>'
       : '';
 
-    const topRightActions = isEmp()
-      ? '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
-      : '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<button type="button" class="btn" data-go-consultation="1">Submit Request &amp; Consultation</button>' + (!isEmp() ? '<button type="button" class="btn pri" data-go-payment="1">Billing</button>' : '') + '</div>';
+    const personalizeBtnHtml = '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Personalize Categories &amp; Divergent Path</button>';
 
-    return '<div class="card" style="padding:18px 20px;margin-top:0">' +
+    const topRightActions = isEmp()
+      ? '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '<a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
+      : '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '<a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<button type="button" class="btn" data-go-consultation="1">Submit Request &amp; Consultation</button>' + (!isEmp() ? '<button type="button" class="btn pri" data-go-payment="1">Billing</button>' : '') + '</div>';
+
+    const bridges = W.DIVERGENT_BRIDGES || {};
+    const catsCatalog = W.ONBOARDING_CATEGORIES || [];
+    const activeBaselineKey = (u && u.divergentBaseline && bridges[u.divergentBaseline]) ? u.divergentBaseline : selectedDivergentBaseline;
+    const activeBridge = bridges[activeBaselineKey] || Object.values(bridges)[0];
+    const userCatObjs = catsCatalog.filter(c => (Array.isArray(u && u.selectedCategories) ? u.selectedCategories : selectedCategories).includes(c.id));
+
+    const divergentSummaryStrip = activeBridge
+      ? '<div class="card" id="divergentLearningSummaryBanner" style="padding:16px 20px;margin-bottom:14px;border-color:rgba(16,185,129,0.42);background:linear-gradient(135deg,rgba(6,78,59,0.26),rgba(10,15,28,0.96))">' +
+          '<div class="row" style="margin-bottom:10px">' +
+            '<div>' +
+              '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Divergent Associative Learning &amp; Resource Path</span>' +
+              '<h3 style="margin:2px 0 0;font-size:14.5px;font-weight:600;color:#fff">' + esc(activeBridge.label) + '</h3>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
+              userCatObjs.map(c => '<span class="chip ok" style="font-size:10.5px">' + esc(c.tag) + '</span>').join('') +
+              '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 10px;font-size:11.5px">Edit Tracks</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="bento-3">' +
+            (activeBridge.sequence || []).map(st =>
+              '<div class="compact-card" style="padding:12px 14px;border-color:rgba(59,130,246,0.32);background:rgba(4,8,20,0.72)">' +
+                '<div class="row"><span class="chip ok" style="font-size:10px">Step ' + esc(st.step) + '</span><small style="font-size:10.5px;color:#93c5fd;font-weight:600">' + esc(st.transferPct) + '</small></div>' +
+                '<h3 style="font-size:12.5px;margin-top:4px;color:#f8fafc">' + esc(st.domain) + '</h3>' +
+                '<p style="font-size:11.5px;color:#94a3b8;margin-top:2px">' + esc(st.rationale) + '</p>' +
+              '</div>'
+            ).join('') +
+          '</div>' +
+        '</div>'
+      : '';
+
+    return divergentSummaryStrip +
+      '<div class="card" style="padding:18px 20px;margin-top:0">' +
         '<div class="row" style="margin-bottom:14px">' +
           '<h2 style="margin:0;font-size:15px;font-weight:600">Authorized Applications &amp; LMS (' + unlockedApps.length + ')</h2>' +
           topRightActions +
@@ -117,7 +173,11 @@
         '</div>'
       : '';
 
-    return confirmBanner +
+    const consultErrBanner = lastConsultationError
+      ? '<div class="card" id="consultationErrorBanner" style="padding:12px 16px;margin-bottom:12px;border-color:rgba(239,68,68,0.55);background:rgba(127,29,29,0.28);color:#fecaca;font-size:12.5px;font-weight:500">' + esc(lastConsultationError) + '</div>'
+      : '';
+
+    return confirmBanner + consultErrBanner +
       '<form id="guidedConsultationForm" onsubmit="return false;" style="display:flex;flex-direction:column;gap:14px">' +
         '<div class="card" style="padding:18px 20px">' +
           '<div class="row" style="margin-bottom:12px">' +
@@ -168,7 +228,7 @@
             '</div>' +
             '<div style="margin-bottom:10px">' +
               '<label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:4px">Project Objectives &amp; Custom Scope Details</label>' +
-              '<textarea id="consProjectBrief" rows="3" required placeholder="Describe your target deliverables, integration goals, or specific SaaS/LMS modules needed..." style="width:100%;padding:9px 12px;font-size:12.5px"></textarea>' +
+              '<textarea id="consProjectBrief" rows="3" maxlength="800" required placeholder="Describe your target deliverables, integration goals, or specific SaaS/LMS modules needed..." style="width:100%;padding:9px 12px;font-size:12.5px"></textarea>' +
             '</div>' +
           '</div>' +
 
@@ -177,7 +237,7 @@
             '<h3 style="margin:2px 0 12px;font-size:14.5px;font-weight:600">Consultation Schedule</h3>' +
             '<div style="margin-bottom:10px">' +
               '<label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:4px">Organization / Agency</label>' +
-              '<input id="consOrg" value="' + esc(u.org || '') + '" placeholder="Organization name" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+              '<input id="consOrg" maxlength="160" value="' + esc(u.org || '') + '" placeholder="Organization name" style="width:100%;padding:8px 10px;font-size:12.5px">' +
             '</div>' +
             '<div style="margin-bottom:14px">' +
               '<label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:4px">Preferred Consultation Window</label>' +
@@ -401,12 +461,105 @@
     return list;
   }
 
+  function netflixOnboardingModalHtml() {
+    if (!showNetflixOnboarding) return '';
+    const cats = W.ONBOARDING_CATEGORIES || [];
+    const bridges = W.DIVERGENT_BRIDGES || {};
+    const activeBridge = bridges[selectedDivergentBaseline] || Object.values(bridges)[0];
+    const qualifiedRes = getQualifiedResources();
+
+    const errHtml = onboardingError
+      ? '<div id="netflixOnboardingError" style="padding:10px 14px;margin-bottom:14px;border-radius:10px;border:1px solid rgba(239,68,68,0.55);background:rgba(127,29,29,0.35);color:#fecaca;font-size:12.5px;font-weight:500">' + esc(onboardingError) + '</div>'
+      : '';
+
+    return '<div id="netflixOnboardingBackdrop" role="dialog" aria-modal="true" aria-labelledby="netflixOnboardingTitle" style="position:fixed;inset:0;z-index:2000;background:rgba(2,5,14,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);overflow-y:auto;padding:28px 20px;display:flex;align-items:flex-start;justify-content:center">' +
+      '<div class="card" id="netflixOnboardingCard" style="width:min(1140px,100%);padding:28px 30px;border:1.5px solid rgba(197,179,88,0.55);border-radius:20px;background:rgba(6,11,24,0.97) !important;box-shadow:0 36px 96px rgba(0,0,0,0.92)">' +
+        '<div class="row" style="margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(148,163,184,0.2)">' +
+          '<div>' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+              '<span class="chip ok">2FA &amp; Identity Verified</span>' +
+              '<span class="chip" style="border-color:rgba(197,179,88,0.45);color:#fde047">Step 1 of 1 · Personalize Experience</span>' +
+            '</div>' +
+            '<h1 id="netflixOnboardingTitle" style="font-size:22px;font-weight:700;margin:4px 0 2px;color:#fff">Choose Your Categories &amp; Divergent Learning Baseline</h1>' +
+            '<p style="margin:0;font-size:13px;color:#94a3b8">Select the tracks that match your goals. Our Resource-Association &amp; Divergent-Learning engine sequences your workspace using high-familiarity cognitive bridges.</p>' +
+          '</div>' +
+          '<button type="button" class="btn" id="btnCloseNetflixOnboarding" style="padding:7px 14px;font-size:12px">Skip for Now</button>' +
+        '</div>' +
+
+        errHtml +
+
+        '<div style="margin-bottom:18px">' +
+          '<div class="row" style="margin-bottom:10px">' +
+            '<span style="font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa">1 · Select Your Focus Categories (Netflix-Style Multi-Track Selection)</span>' +
+            '<span style="font-size:12px;color:#cbd5e1;font-weight:600">' + selectedCategories.length + ' Selected</span>' +
+          '</div>' +
+          '<div class="bento-3" id="netflixCategoryGrid">' +
+            cats.map(c => {
+              const isSel = selectedCategories.includes(c.id);
+              return '<div class="compact-card" data-nf-cat="' + esc(c.id) + '" tabindex="0" role="checkbox" aria-checked="' + String(isSel) + '" style="cursor:pointer;padding:18px;border-radius:14px;border:1.5px solid ' + (isSel ? '#10b981' : 'rgba(148,163,184,0.25)') + ';background:' + (isSel ? c.gradient : 'rgba(10,16,32,0.92)') + ';box-shadow:' + (isSel ? '0 14px 32px rgba(16,185,129,0.22)' : 'none') + ';transition:all .18s ease">' +
+                '<div>' +
+                  '<div class="row" style="margin-bottom:8px">' +
+                    '<span class="chip' + (isSel ? ' ok' : '') + '" style="font-size:10.5px">' + esc(c.tag) + '</span>' +
+                    '<span style="font-size:11.5px;font-weight:700;color:' + (isSel ? '#34d399' : '#64748b') + '">' + (isSel ? '✓ Selected' : '+ Select') + '</span>' +
+                  '</div>' +
+                  '<h3 style="font-size:14.5px;font-weight:700;color:#fff;margin-bottom:6px">' + esc(c.title) + '</h3>' +
+                  '<p style="font-size:12px;color:#cbd5e1;line-height:1.5">' + esc(c.summary) + '</p>' +
+                '</div>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+        '<div style="display:grid;grid-template-columns:1fr 1.35fr;gap:16px;align-items:start;margin-bottom:18px">' +
+          '<div class="compact-card" style="padding:18px;border-color:rgba(197,179,88,0.42)">' +
+            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047;margin-bottom:6px">2 · Cognitive &amp; Linguistic Baseline (Divergent Learning)</span>' +
+            '<label for="nfBaselineSelect" style="font-size:12px;color:#cbd5e1;margin-bottom:6px;display:block">Select your existing language / technical anchor to sequence learning through association:</label>' +
+            '<select id="nfBaselineSelect" style="width:100%;padding:10px 12px;font-size:12.5px;margin-bottom:12px">' +
+              Object.values(bridges).map(b => '<option value="' + esc(b.id) + '"' + (b.id === selectedDivergentBaseline ? ' selected' : '') + '>' + esc(b.label) + '</option>').join('') +
+            '</select>' +
+            '<label for="nfLearningGoalInput" style="font-size:11.5px;font-weight:600;color:#94a3b8;margin-bottom:4px;display:block">Specific Objective or Target Skill (Optional, Sanitized)</label>' +
+            '<input id="nfLearningGoalInput" type="text" maxlength="240" value="' + esc(customLearningGoal) + '" placeholder="e.g., Spanish -> French & Farsi fluency, or Korean -> Chinese + AI SaaS" style="width:100%;padding:9px 12px;font-size:12.5px">' +
+            (qualifiedRes.length > 0
+              ? '<div style="margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.38);font-size:12px;color:#a7f3d0"><strong>Qualified Resources Associated:</strong> ' + qualifiedRes.map(r => esc(r.shortTitle || r.title)).join(', ') + ' (Milton UI/UX + AI Fast-Track Active)</div>'
+              : '') +
+          '</div>' +
+
+          '<div class="compact-card" id="nfDivergentPreviewBox" style="padding:18px;border-color:rgba(16,185,129,0.45);background:rgba(6,24,38,0.85)">' +
+            '<div class="row" style="margin-bottom:8px">' +
+              '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Associative Bridge Sequence Preview</span>' +
+              '<span class="chip ok" style="font-size:10.5px">Divergent Transfer Matrix</span>' +
+            '</div>' +
+            '<h3 style="font-size:14px;color:#fff;margin-bottom:8px">' + esc(activeBridge ? activeBridge.label : '') + '</h3>' +
+            '<div style="display:flex;flex-direction:column;gap:8px">' +
+              ((activeBridge && activeBridge.sequence) || []).map(st =>
+                '<div style="padding:10px 12px;border-radius:9px;background:rgba(4,8,20,0.78);border:1px solid rgba(59,130,246,0.32)">' +
+                  '<div class="row" style="margin-bottom:3px"><strong style="font-size:12.5px;color:#f8fafc">Step ' + esc(st.step) + ' · ' + esc(st.domain) + '</strong><span class="chip ok" style="font-size:10px">' + esc(st.transferPct) + '</span></div>' +
+                  '<p style="margin:0;font-size:11.5px;color:#cbd5e1">' + esc(st.rationale) + '</p>' +
+                '</div>'
+              ).join('') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="row" style="padding-top:14px;border-top:1px solid rgba(148,163,184,0.2);justify-content:space-between">' +
+          '<span style="font-size:12px;color:#94a3b8">Strict Zero-Leakage RBAC: Only authorized applications and qualified resources appear in your workspace.</span>' +
+          '<button type="button" class="btn pri" id="btnSaveNetflixOnboarding" style="padding:10px 24px;font-size:13.5px">Save Preferences &amp; Launch Personalized Workspace</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
   function render() {
     u = W.me();
     if (!u) {
       app.innerHTML = '<div class="card lock"><span class="chip warn">Authentication Required</span><h1 style="margin-top:10px">Sign In Required</h1><p>Sign in with your account credentials or Federated SSO to access your workspace.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In</a></div></div>';
       W.header('member-portal.html');
       return;
+    }
+    syncOnboardingStateFromUser();
+    if (!isSoleAdmin() && !u.onboardingCompleted && sessionStorage.getItem('mgc_nf_prompted_' + u.id) !== '1') {
+      showNetflixOnboarding = true;
+      sessionStorage.setItem('mgc_nf_prompted_' + u.id, '1');
     }
 
     const availableTabs = getAvailableTabsForUser();
@@ -427,7 +580,7 @@
       (isEmp() ? '<a class="ws-nav-btn" href="access-admin.html?tab=users&amp;ou=external" style="text-decoration:none;border-color:rgba(59,130,246,0.42);color:#93c5fd"><span>Client Directory</span></a>' : '') +
       '</aside>';
 
-    app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + body + '</div></div>';
+    app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + body + '</div></div>' + netflixOnboardingModalHtml();
     W.header(tab === 'payment' ? 'member-portal.html?view=payment' : tab === 'consultation' ? 'member-portal.html?view=consultation' : tab === 'resources' ? 'member-portal.html?view=resources' : 'member-portal.html');
     bind();
   }
@@ -436,8 +589,116 @@
     app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
       tab = b.dataset.tab;
       lastPaymentError = '';
+      lastConsultationError = '';
       render();
     });
+    const btnOpenNf = document.getElementById('btnOpenNetflixOnboarding');
+    if (btnOpenNf) {
+      btnOpenNf.onclick = () => {
+        onboardingError = '';
+        showNetflixOnboarding = true;
+        render();
+      };
+    }
+    app.querySelectorAll('[data-open-onboarding]').forEach(b => b.onclick = () => {
+      onboardingError = '';
+      showNetflixOnboarding = true;
+      render();
+    });
+    const btnCloseNf = document.getElementById('btnCloseNetflixOnboarding');
+    if (btnCloseNf) {
+      btnCloseNf.onclick = () => {
+        showNetflixOnboarding = false;
+        render();
+      };
+    }
+    app.querySelectorAll('[data-nf-cat]').forEach(card => {
+      const toggleCat = () => {
+        const cid = card.dataset.nfCat;
+        if (!cid) return;
+        const goalInput = document.getElementById('nfLearningGoalInput');
+        if (goalInput) customLearningGoal = goalInput.value;
+        if (selectedCategories.includes(cid)) {
+          selectedCategories = selectedCategories.filter(x => x !== cid);
+        } else {
+          selectedCategories.push(cid);
+        }
+        onboardingError = '';
+        render();
+      };
+      card.onclick = toggleCat;
+      card.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleCat();
+        }
+      };
+    });
+    const nfBaselineSelect = document.getElementById('nfBaselineSelect');
+    if (nfBaselineSelect) {
+      nfBaselineSelect.onchange = () => {
+        const goalInput = document.getElementById('nfLearningGoalInput');
+        if (goalInput) customLearningGoal = goalInput.value;
+        selectedDivergentBaseline = nfBaselineSelect.value;
+        render();
+      };
+    }
+    const btnSaveNf = document.getElementById('btnSaveNetflixOnboarding');
+    if (btnSaveNf) {
+      btnSaveNf.onclick = async () => {
+        onboardingError = '';
+        const goalInput = document.getElementById('nfLearningGoalInput');
+        const rawGoal = goalInput ? goalInput.value.trim() : customLearningGoal;
+        if (W.hasInjectionPayload && W.hasInjectionPayload(rawGoal)) {
+          onboardingError = 'Security Validation Failed: Input contains disallowed script, SQL, or template injection patterns.';
+          render();
+          return;
+        }
+        if (!selectedCategories.length) {
+          onboardingError = 'Please select at least 1 category card to personalize your workspace.';
+          render();
+          return;
+        }
+        const payload = {
+          selectedCategories,
+          divergentBaseline: selectedDivergentBaseline,
+          learningGoal: W.sanitizeField ? W.sanitizeField(rawGoal, 240) : rawGoal
+        };
+        try {
+          const resp = await fetch('/api/onboarding/complete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await resp.json();
+          if (!data || !data.ok) {
+            onboardingError = (data && data.error) || 'Failed to save category preferences.';
+            render();
+            return;
+          }
+          if (u) {
+            u.onboardingCompleted = true;
+            u.selectedCategories = selectedCategories.slice();
+            u.divergentBaseline = selectedDivergentBaseline;
+            u.learningGoal = payload.learningGoal;
+          }
+          if (W.completeNetflixOnboarding) W.completeNetflixOnboarding(payload);
+          showNetflixOnboarding = false;
+          W.toast('Personalized Categories & Divergent Path Saved');
+          render();
+        } catch (_) {
+          const localRes = W.completeNetflixOnboarding ? W.completeNetflixOnboarding(payload) : { ok: true };
+          if (!localRes.ok) {
+            onboardingError = localRes.error || 'Validation failed.';
+            render();
+            return;
+          }
+          showNetflixOnboarding = false;
+          W.toast('Personalized Categories & Divergent Path Saved');
+          render();
+        }
+      };
+    }
     app.querySelectorAll('[data-go-resources]').forEach(b => b.onclick = () => {
       tab = 'resources';
       render();
@@ -474,6 +735,7 @@
     if (consultForm) {
       consultForm.onsubmit = async (ev) => {
         ev.preventDefault();
+        lastConsultationError = '';
         const payload = {
           track: selectedConsultTrack,
           architectureScope: (document.getElementById('consArchitectureScope') && document.getElementById('consArchitectureScope').value) || 'Turnkey Web & Autonomous AI Suite',
@@ -484,10 +746,8 @@
           preferredWindow: document.getElementById('consPreferredWindow').value,
           projectBrief: document.getElementById('consProjectBrief').value.trim()
         };
-        const res = W.submitConsultation ? W.submitConsultation(payload) : null;
-        if (res && res.ok && res.consultation) {
-          lastConsultationReceipt = res.consultation;
-          W.toast('Consultation request submitted (' + res.consultation.receiptId + ')');
+        if (W.hasInjectionPayload && W.hasInjectionPayload(payload)) {
+          lastConsultationError = 'Security Validation Failed: Input contains disallowed script, SQL, or template injection patterns.';
           render();
           return;
         }
@@ -498,12 +758,24 @@
             body: JSON.stringify(payload)
           });
           const data = await resp.json();
-          if (data && data.ok && data.consultation) {
+          if (!data || !data.ok) {
+            lastConsultationError = (data && data.error) || 'Consultation validation failed.';
+            render();
+            return;
+          }
+          if (data.consultation) {
             lastConsultationReceipt = data.consultation;
             W.toast('Consultation request submitted (' + data.consultation.receiptId + ')');
             render();
+            return;
           }
         } catch (_) {}
+        const res = W.submitConsultation ? W.submitConsultation(payload) : null;
+        if (res && res.ok && res.consultation) {
+          lastConsultationReceipt = res.consultation;
+          W.toast('Consultation request submitted (' + res.consultation.receiptId + ')');
+          render();
+        }
       };
     }
     app.querySelectorAll('[data-chk]').forEach(c => c.onchange = () => {
