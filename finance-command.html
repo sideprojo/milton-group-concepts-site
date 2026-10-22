@@ -260,208 +260,201 @@
 </head>
 <body>
   <script src="mgc-guided-security.js"></script>
+  <script src="mgc-workspace-core.js"></script>
 
   <header class="top-bar">
     <div class="brand-cluster">
       <div class="shield-mini">MGC</div>
       <div>
-        <div class="brand-title">FINANCE, TREASURY &amp; PAYMENT COMMAND</div>
-        <div class="brand-sub">Internal Suite • MGC LLC • F.I.X Solutions • White Feather</div>
+        <div class="brand-title">FINANCE, TREASURY &amp; DOUBLE-ENTRY ACCOUNTING COMMAND</div>
+        <div class="brand-sub">Administrator-Only • MGC LLC (EIN 92-1370285) • F.I.X Solutions LLC</div>
       </div>
     </div>
     <nav class="suite-switcher">
       <a href="onboarding-portal.html" class="suite-link"><span>SSO Gate</span></a>
       <a href="index.html" class="suite-link"><span>Ops Hub</span></a>
-      <a href="finance-command.html" class="suite-link active"><span>1. Finance &amp; Payments</span></a>
-      <a href="elearning-upskilling-hub.html" class="suite-link"><span>2. eLearning &amp; Insights Atlas</span></a>
-      <a href="whitefeather-ecommerce-hub.html" class="suite-link"><span>3. White Feather &amp; eCommerce</span></a>
+      <a href="access-admin.html" class="suite-link"><span>Admin &amp; Directory</span></a>
+      <a href="finance-command.html" class="suite-link active"><span>Finance &amp; Accounting</span></a>
+      <a href="elearning-upskilling-hub.html" class="suite-link"><span>eLearning &amp; Insights</span></a>
       <a href="earth-3d.html" class="suite-link"><span>3D Geospatial</span></a>
     </nav>
   </header>
 
-  <main class="container">
+  <main class="container" id="finance-main-container">
     <section class="hero-banner">
       <div>
-        <div class="eyebrow">● ZERO-TRUST TREASURY • MERCURY SDVOSB • WAWF / ACH / STRIPE</div>
-        <h1>Internal Payment System &amp; <em>Multi-Entity Treasury</em></h1>
+        <div class="eyebrow">ZERO-TRUST GAAP / DCAA GENERAL LEDGER • MERCURY SDVOSB • WAWF / ACH / STRIPE</div>
+        <h1>Management Accounting &amp; <em>Double-Entry Treasury</em></h1>
       </div>
-      <div class="entity-tabs" id="entity-tabs">
-        <button class="entity-btn active" onclick="filterEntity('ALL', this)">All Entities ($148,920.00)</button>
-        <button class="entity-btn" onclick="filterEntity('MGC', this)">Milton Group Concepts LLC</button>
-        <button class="entity-btn" onclick="filterEntity('FIX', this)">F.I.X Solutions LLC (VAR)</button>
-        <button class="entity-btn" onclick="filterEntity('WF', this)">White Feather Investments</button>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <div class="entity-tabs" id="entity-tabs">
+          <button class="entity-btn active" data-entity-filter="ALL" onclick="filterEntity('ALL', this)">Consolidated (MGC + F.I.X)</button>
+          <button class="entity-btn" data-entity-filter="MGC" onclick="filterEntity('MGC', this)">Milton Group Concepts LLC</button>
+          <button class="entity-btn" data-entity-filter="FIX" onclick="filterEntity('FIX', this)">F.I.X Solutions LLC (VAR)</button>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <a href="/api/accounting/export?format=csv" id="export-csv-link" class="suite-link" style="transform:none; background:rgba(16,185,129,0.16); border-color:rgba(16,185,129,0.45); color:#6ee7b7;" download>Export GAAP CSV</a>
+          <a href="/api/accounting/export?format=iif" id="export-iif-link" class="suite-link" style="transform:none; background:rgba(37,99,235,0.2); border-color:rgba(96,165,250,0.45); color:#93c5fd;" download>Export QuickBooks IIF</a>
+          <a href="/api/accounting/export?format=json" id="export-json-link" class="suite-link" style="transform:none;" target="_blank">CPA JSON Package</a>
+        </div>
       </div>
     </section>
 
-    <!-- Compact NBA-Scoreboard Style Treasury Strip -->
+    <!-- Live Double-Entry KPI Scoreboard Strip -->
     <section class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-top">
-          <span class="kpi-label">CONSOLIDATED OPERATING LIQUIDITY</span>
+          <span class="kpi-label">OPERATING CASH (1010)</span>
           <span class="kpi-badge">MERCURY + TREASURY</span>
         </div>
-        <div class="kpi-value" id="kpi-liquidity">$148,920.00</div>
-        <div class="kpi-sub">EIN 92-1370285 • $0 Monthly Cloud Overhead</div>
+        <div class="kpi-value" id="kpi-liquidity">$0.00</div>
+        <div class="kpi-sub" id="kpi-gross-sub">Gross Settled Revenue: $0.00 • Processor Fees: $0.00</div>
       </div>
       <div class="kpi-card blue">
         <div class="kpi-top">
-          <span class="kpi-label">ACTIVE RECEIVABLES &amp; ESCROW</span>
-          <span class="kpi-badge" style="color:var(--cyan);background:rgba(56,189,248,0.14);">SAM / WAWF / GPC</span>
+          <span class="kpi-label">ACCOUNTS RECEIVABLE &amp; ESCROW (1100/1150)</span>
+          <span class="kpi-badge" style="color:var(--cyan);background:rgba(56,189,248,0.14);">SAM / WAWF / MILESTONE</span>
         </div>
-        <div class="kpi-value" id="kpi-escrow">$64,500.00</div>
-        <div class="kpi-sub">4 Milestone Invoices Pending Settlement</div>
+        <div class="kpi-value" id="kpi-escrow">$0.00</div>
+        <div class="kpi-sub" id="kpi-ar-sub">A/R (1100): $0.00 • Milestone Escrow (1150): $0.00</div>
       </div>
       <div class="kpi-card emerald">
         <div class="kpi-top">
-          <span class="kpi-label">PAYMENT ACCEPTANCE ENGINE</span>
-          <span class="kpi-badge">LIVE TERMINAL</span>
+          <span class="kpi-label">SMART RAIL FEE OPTIMIZER</span>
+          <span class="kpi-badge" id="kpi-balance-badge">TRIAL BALANCE: BALANCED</span>
         </div>
-        <div class="kpi-value">0.00% <span style="font-size:1rem;color:var(--gold);">ACH / FedNow</span></div>
-        <div class="kpi-sub">Instant Invoice Link &amp; GPC Card Routing Active</div>
+        <div class="kpi-value">0.00% <span style="font-size:1rem;color:var(--gold);">ACH / WAWF</span></div>
+        <div class="kpi-sub" id="kpi-trial-sub">Total Debits: $0.00 = Total Credits: $0.00</div>
       </div>
       <div class="kpi-card crimson">
         <div class="kpi-top">
-          <span class="kpi-label">INTERNAL SPLIT &amp; TAX RESERVE</span>
+          <span class="kpi-label">25% TAX RESERVE VAULT (1020 / 2100)</span>
           <span class="kpi-badge" style="color:#f87171;background:rgba(248,113,113,0.15);">AUTO-RULE 25%</span>
         </div>
-        <div class="kpi-value" id="kpi-reserve">$37,230.00</div>
-        <div class="kpi-sub">Automated VA/Federal Estimated Reserve Vault</div>
+        <div class="kpi-value" id="kpi-reserve">$0.00</div>
+        <div class="kpi-sub" id="kpi-net-sub">Operating Cash Ex-Tax Reserve: $0.00</div>
       </div>
     </section>
 
     <section class="workspace-grid">
-      <!-- Left Panel: Payment Acceptance & Checkout Link Generator -->
+      <!-- Left Panel: Double-Entry Journal & Smart Rail Settlement Terminal -->
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title">Payment Acceptance &amp; Invoice Terminal</div>
-          <span class="panel-tag">Inbound Settlement</span>
+          <div class="panel-title">Post Double-Entry Journal &amp; Smart Rail Terminal</div>
+          <span class="panel-tag">GAAP / DCAA Compliant</span>
         </div>
 
         <div class="rail-grid" id="rail-grid">
-          <button type="button" class="rail-option active" onclick="selectRail('ACH / FedNow Instant ($0 Fee)', 0, this)">
-            <span class="rail-name">ACH / FedNow Direct</span>
+          <button type="button" class="rail-option active" onclick="selectRail('MERCURY_ACH', 'Mercury ACH / Wire ($0 Fee)', 0, 0, 0, this)">
+            <span class="rail-name">Mercury ACH / Wire Direct</span>
             <span class="rail-meta">0.0% Fee • Same-Day Settlement</span>
           </button>
-          <button type="button" class="rail-option" onclick="selectRail('SAM.gov WAWF / IPP Federal', 0, this)">
-            <span class="rail-name">SAM.gov WAWF / IPP</span>
-            <span class="rail-meta">SDVOSB Contract EFT • Net-15</span>
+          <button type="button" class="rail-option" onclick="selectRail('WAWF_EFT', 'SAM.gov WAWF / IPP EFT ($0 Fee)', 0, 0, 0, this)">
+            <span class="rail-name">SAM.gov WAWF / IPP EFT</span>
+            <span class="rail-meta">0.0% Fee • SDVOSB Contract EFT</span>
           </button>
-          <button type="button" class="rail-option" onclick="selectRail('Gov Purchase Card (GPC) / Stripe', 0.029, this)">
+          <button type="button" class="rail-option" onclick="selectRail('STRIPE_ACH', 'Stripe ACH Direct Debit (0.8% cap $5)', 0.008, 0, 5, this)">
+            <span class="rail-name">Stripe ACH Direct Debit</span>
+            <span class="rail-meta">0.8% Capped at $5.00 • Verified Bank</span>
+          </button>
+          <button type="button" class="rail-option" onclick="selectRail('STRIPE_CARD', 'GPC / Commercial Card (2.9% + $0.30)', 0.029, 0.30, 0, this)">
             <span class="rail-name">GPC / Commercial Card</span>
-            <span class="rail-meta">Micro-Purchase &lt;$10K • Instant</span>
-          </button>
-          <button type="button" class="rail-option" onclick="selectRail('Milestone Escrow Vault', 0, this)">
-            <span class="rail-name">Milestone Escrow</span>
-            <span class="rail-meta">Multi-Phase Deliverable Lock</span>
+            <span class="rail-meta">2.9% + $0.30 • Micro-Purchase &lt;$10K</span>
           </button>
         </div>
 
         <form onsubmit="processPaymentAcceptance(event)">
           <div class="form-row">
             <div class="form-field">
-              <label>Receiving Entity</label>
+              <label>Corporate Entity</label>
               <select id="pay-entity">
-                <option value="MGC">Milton Group Concepts LLC</option>
-                <option value="FIX">F.I.X Solutions LLC (SDVOSB VAR)</option>
-                <option value="WF">White Feather Investments / AI</option>
+                <option value="MGC">Milton Group Concepts LLC (MGC)</option>
+                <option value="FIX">F.I.X Solutions LLC (FIX)</option>
               </select>
             </div>
             <div class="form-field">
-              <label>Client / Agency / Counterparty</label>
-              <input type="text" id="pay-client" required value="Dept. of Veterans Affairs — VISN 6" />
+              <label>Journal Entry Classification</label>
+              <select id="pay-entry-type" onchange="updateNetPreview()">
+                <option value="SETTLEMENT">4010 SaaS / LMS Revenue Settlement</option>
+                <option value="FEDERAL_WAWF">4020 SDVOSB Federal Contract Revenue (WAWF)</option>
+                <option value="CONSULTATION">4030 Guided Architecture Consultation Revenue</option>
+                <option value="RESOURCE_FASTTRACK">4040 Qualified Resource &amp; AI Fast-Track (e.g. White Feather)</option>
+                <option value="INVOICE_AR">1100 Issue Accounts Receivable Invoice (Net-15/30)</option>
+                <option value="ESCROW_DEPOSIT">1150 Milestone Escrow Deposit (2200 Deferred Rev)</option>
+                <option value="EXPENSE">5010 / 5020 Operating or Subcontractor Expense</option>
+              </select>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-field">
-              <label>Amount (USD)</label>
-              <input type="number" id="pay-amount" step="0.01" required value="12500.00" oninput="updateNetPreview()" />
+              <label>Client / Agency / Counterparty</label>
+              <input type="text" id="pay-client" required placeholder="Counterparty or Agency Name" />
             </div>
             <div class="form-field">
-              <label>Contract / Deliverable Reference</label>
-              <input type="text" id="pay-ref" required value="NAICS 541519 • Cloud &amp; CIPP Audit" />
+              <label>Gross Amount (USD)</label>
+              <input type="number" id="pay-amount" step="0.01" min="0.01" required placeholder="0.00" oninput="updateNetPreview()" />
             </div>
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:10px; background:rgba(7,13,25,0.7); border:1px solid var(--glass-border); margin-bottom:16px; font-family:'JetBrains Mono',monospace; font-size:0.75rem;">
-            <span style="color:var(--muted);">Selected Rail: <strong style="color:var(--gold);" id="selected-rail-label">ACH / FedNow Instant ($0 Fee)</strong></span>
-            <span style="color:var(--emerald); font-weight:700;" id="net-settlement-label">Net Deposit: $12,500.00</span>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Contract / CLIN / Reference Code</label>
+              <input type="text" id="pay-ref" required placeholder="CLIN-0001 / NAICS 541519 / Resource ID" />
+            </div>
+            <div class="form-field">
+              <label>Journal Memo</label>
+              <input type="text" id="pay-memo" placeholder="Audit trail description" />
+            </div>
           </div>
 
-          <button type="submit" class="btn-gold">Generate Signed Payment Link &amp; Post to Ledger →</button>
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; background:rgba(7,13,25,0.7); border:1px solid var(--glass-border); margin-bottom:16px; font-family:'JetBrains Mono',monospace; font-size:0.74rem;">
+            <span style="color:var(--muted);">Rail: <strong style="color:var(--gold);" id="selected-rail-label">Mercury ACH / Wire ($0 Fee)</strong></span>
+            <span style="color:#fca5a5;" id="fee-preview-label">Fee (5030): $0.00</span>
+            <span style="color:var(--emerald); font-weight:700;" id="net-settlement-label">Net Cash (1010): $0.00</span>
+            <span style="color:#fde047;" id="tax-preview-label">25% Tax Vault (1020): $0.00</span>
+          </div>
+
+          <button type="submit" id="btn-submit-journal" class="btn-gold">Post Balanced Double-Entry Journal &amp; Sign Hash →</button>
         </form>
 
         <div class="receipt-box" id="payment-receipt">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <strong style="font-size:0.86rem; color:var(--emerald);">✔ Payment Link &amp; Cryptographic Invoice Generated</strong>
-            <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--gold);" id="receipt-hash">SHA256-9F8A2C</span>
+            <strong style="font-size:0.86rem; color:var(--emerald);">Balanced Double-Entry Journal Committed</strong>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--gold);" id="receipt-hash"></span>
           </div>
           <p style="font-size:0.78rem; color:#cbd5e1; line-height:1.5;" id="receipt-details"></p>
         </div>
       </div>
 
-      <!-- Right Panel: Live Multi-Entity Payment Ledger & Internal Routing -->
+      <!-- Right Panel: Live Multi-Entity Double-Entry General Ledger -->
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title">Live Treasury Ledger &amp; Internal Disbursements</div>
-          <div style="display:flex; gap:8px;">
-            <button type="button" class="btn-blue" onclick="triggerInternalTransfer()">+ Internal Entity Transfer</button>
+          <div>
+            <div class="panel-title">Immutable Double-Entry General Ledger</div>
+            <div style="font-size:0.73rem; color:var(--muted); margin-top:2px;">Every entry enforces Debits = Credits with SHA-256 hash-chain integrity and 4-stage reconciliation.</div>
           </div>
+          <span class="panel-tag" id="ledger-count-badge">0 Journals</span>
         </div>
 
-        <table class="ledger-table">
-          <thead>
-            <tr>
-              <th>Entity</th>
-              <th>Counterparty &amp; Reference</th>
-              <th>Payment Rail</th>
-              <th>Amount</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="ledger-tbody">
-            <tr data-entity="MGC">
-              <td><strong style="color:var(--cyan);">MGC LLC</strong></td>
-              <td>
-                <div style="font-weight:700;">VA / Defense Health Agency</div>
-                <div style="font-size:0.72rem; color:var(--muted);">SAS ModelOps &amp; CIPP/US Privacy Architecture</div>
-              </td>
-              <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">SAM.gov WAWF EFT</td>
-              <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--emerald);">+$48,500.00</td>
-              <td><span class="status-chip status-settled">SETTLED</span></td>
-            </tr>
-            <tr data-entity="FIX">
-              <td><strong style="color:var(--gold);">F.I.X LLC</strong></td>
-              <td>
-                <div style="font-weight:700;">DoD Tactical Supply Chain Task Order</div>
-                <div style="font-size:0.72rem; color:var(--muted);">NAICS 334111 • Palo Alto &amp; Splunk Hardware VAR</div>
-              </td>
-              <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">Milestone Escrow</td>
-              <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cyan);">+$64,500.00</td>
-              <td><span class="status-chip status-escrow">IN ESCROW</span></td>
-            </tr>
-            <tr data-entity="WF">
-              <td><strong style="color:#a78bfa;">WHITE FEATHER</strong></td>
-              <td>
-                <div style="font-weight:700;">White Feather AI &amp; Digital Commerce Cohort</div>
-                <div style="font-size:0.72rem; color:var(--muted);">Enterprise Agentic Workflow Subscriptions</div>
-              </td>
-              <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">Stripe / ACH Direct</td>
-              <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--emerald);">+$21,420.00</td>
-              <td><span class="status-chip status-settled">SETTLED</span></td>
-            </tr>
-            <tr data-entity="MGC">
-              <td><strong style="color:var(--cyan);">MGC LLC</strong></td>
-              <td>
-                <div style="font-weight:700;"> Commercial Regulated Data Clean-Room</div>
-                <div style="font-size:0.72rem; color:var(--muted);">GLBA / FCRA De-Identified Dataset License</div>
-              </td>
-              <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">ACH / FedNow</td>
-              <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--gold);">+$14,500.00</td>
-              <td><span class="status-chip status-pending">LINK SENT</span></td>
-            </tr>
-          </tbody>
-        </table>
+        <div style="overflow-x:auto;">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th>Journal &amp; Entity</th>
+                <th>Counterparty &amp; Contract</th>
+                <th>Double-Entry Lines (DR / CR)</th>
+                <th>Gross / Fee / Net / 25% Tax</th>
+                <th>Reconciliation</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-tbody">
+              <tr>
+                <td colspan="5" style="text-align:center; color:var(--muted); padding:24px;">Loading live double-entry general ledger...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -472,7 +465,7 @@
           <div class="panel-title">Cloud Database &amp; Infrastructure Spend Tracker (Google Cloud Preferred · SharePoint Fallback)</div>
           <div style="font-size:0.76rem; color:var(--muted); margin-top:4px;">Financial &amp; quota telemetry for Google Cloud Firestore (nam5 Native Free Tier), Google Workspace Sheets/Drive, and Microsoft SharePoint List adapters.</div>
         </div>
-        <span class="panel-tag" id="fin-db-circuit-badge" style="color:var(--emerald); border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.12);">● $0.00 / MO · CIRCUIT BREAKER ARMED</span>
+        <span class="panel-tag" id="fin-db-circuit-badge" style="color:var(--emerald); border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.12);">$0.00 / MO · CIRCUIT BREAKER ARMED</span>
       </div>
 
       <div class="kpi-grid" style="margin-bottom: 16px;">
@@ -518,106 +511,250 @@
   </main>
 
   <script>
-    let currentRailName = 'ACH / FedNow Instant ($0 Fee)';
-    let currentRailFee = 0;
-    let totalLiquidity = 148920;
+    let currentRailCode = 'MERCURY_ACH';
+    let currentRailName = 'Mercury ACH / Wire ($0 Fee)';
+    let currentRailRate = 0;
+    let currentRailFixed = 0;
+    let currentRailCap = 0;
+    let currentEntityFilter = 'ALL';
+
+    function fmtUsd(val) {
+      return '$' + Number(val || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function enforceOwnerAccess() {
+      if (window.MGCW) {
+        const u = MGCW.me ? MGCW.me() : (MGCW.user ? MGCW.user() : null);
+        if (!MGCW.isOwner(u)) {
+          document.getElementById('finance-main-container').innerHTML = `
+            <div class="panel" style="max-width:640px;margin:48px auto;text-align:center;">
+              <div class="eyebrow" style="color:#f87171;border-color:rgba(248,113,113,0.4);">403 ZERO-TRUST ACCESS DENIED</div>
+              <h2 style="margin:12px 0;">Sole Administrator Treasury Authorization Required</h2>
+              <p style="color:var(--muted);font-size:0.9rem;margin-bottom:20px;">Management accounting, double-entry general ledger, and payment processor controls are strictly isolated to the Sole Administrator (malik.khabir@miltongroupsecurity.org).</p>
+              <a href="member-portal.html" class="btn-blue" style="text-decoration:none;display:inline-block;">Return to Authorized Portal</a>
+            </div>
+          `;
+          return false;
+        }
+      }
+      return true;
+    }
 
     // Pre-fill from eCommerce handoff if URL params exist
     (function checkUrlHandoff() {
       const params = new URLSearchParams(window.location.search);
       if (params.get('item')) {
-        document.getElementById('pay-ref').value = params.get('item');
+        const el = document.getElementById('pay-ref');
+        if (el) el.value = params.get('item');
       }
       if (params.get('amount')) {
-        document.getElementById('pay-amount').value = params.get('amount');
+        const el = document.getElementById('pay-amount');
+        if (el) el.value = params.get('amount');
       }
       if (params.get('entity')) {
-        document.getElementById('pay-entity').value = params.get('entity');
+        const ent = params.get('entity').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
+        const el = document.getElementById('pay-entity');
+        if (el) el.value = ent;
       }
     })();
 
-    function selectRail(name, feeRate, btn) {
+    function selectRail(code, name, feeRate, fixedFee, cap, btn) {
+      currentRailCode = code;
       currentRailName = name;
-      currentRailFee = feeRate;
+      currentRailRate = feeRate;
+      currentRailFixed = fixedFee || 0;
+      currentRailCap = cap || 0;
       document.querySelectorAll('#rail-grid .rail-option').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('selected-rail-label').textContent = name;
+      if (btn) btn.classList.add('active');
+      const lbl = document.getElementById('selected-rail-label');
+      if (lbl) lbl.textContent = name;
       updateNetPreview();
     }
 
+    function computePreviewFee(amt, entryType) {
+      if (entryType === 'INVOICE_AR' || entryType === 'EXPENSE') return 0;
+      let fee = amt * currentRailRate + (amt > 0 ? currentRailFixed : 0);
+      if (currentRailCap > 0 && fee > currentRailCap) fee = currentRailCap;
+      return Math.round(fee * 100) / 100;
+    }
+
     function updateNetPreview() {
-      const amt = parseFloat(document.getElementById('pay-amount').value) || 0;
-      const net = amt * (1 - currentRailFee);
-      document.getElementById('net-settlement-label').textContent =
-        'Net Deposit: $' + net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const amtEl = document.getElementById('pay-amount');
+      const typeEl = document.getElementById('pay-entry-type');
+      if (!amtEl || !typeEl) return;
+      const amt = parseFloat(amtEl.value) || 0;
+      const entryType = typeEl.value;
+      const fee = computePreviewFee(amt, entryType);
+      const net = Math.max(0, Math.round((amt - fee) * 100) / 100);
+      const isRev = !['INVOICE_AR', 'ESCROW_DEPOSIT', 'EXPENSE'].includes(entryType);
+      const tax = isRev ? Math.round(net * 0.25 * 100) / 100 : 0;
+      document.getElementById('fee-preview-label').textContent = 'Fee (5030): ' + fmtUsd(fee);
+      document.getElementById('net-settlement-label').textContent = 'Net Cash (1010): ' + fmtUsd(net);
+      document.getElementById('tax-preview-label').textContent = '25% Tax Vault (1020): ' + fmtUsd(tax);
+    }
+
+    function renderLedgerData(summary, ledger) {
+      if (!summary) return;
+      document.getElementById('kpi-liquidity').textContent = fmtUsd(summary.operatingCash);
+      document.getElementById('kpi-gross-sub').textContent =
+        `Gross Settled: ${fmtUsd(summary.grossRevenue)} • Fees (5030): ${fmtUsd(summary.processorFees)}`;
+      document.getElementById('kpi-escrow').textContent = fmtUsd((summary.accountsReceivable || 0) + (summary.milestoneEscrow || 0));
+      document.getElementById('kpi-ar-sub').textContent =
+        `A/R (1100): ${fmtUsd(summary.accountsReceivable)} • Escrow (1150): ${fmtUsd(summary.milestoneEscrow)}`;
+      document.getElementById('kpi-reserve').textContent = fmtUsd(summary.taxReserve25);
+      document.getElementById('kpi-net-sub').textContent =
+        `Operating Cash Ex-Tax Reserve: ${fmtUsd(summary.netOperatingExTax)}`;
+      document.getElementById('kpi-trial-sub').textContent =
+        `Debits: ${fmtUsd(summary.totalDebits)} = Credits: ${fmtUsd(summary.totalCredits)}`;
+      const balBadge = document.getElementById('kpi-balance-badge');
+      if (balBadge) {
+        balBadge.textContent = summary.isBalanced ? 'TRIAL BALANCE: BALANCED' : 'CHECK TRIAL BALANCE';
+      }
+
+      const expCsv = document.getElementById('export-csv-link');
+      const expIif = document.getElementById('export-iif-link');
+      const expJson = document.getElementById('export-json-link');
+      if (expCsv) expCsv.href = `/api/accounting/export?format=csv&entity=${encodeURIComponent(currentEntityFilter)}`;
+      if (expIif) expIif.href = `/api/accounting/export?format=iif&entity=${encodeURIComponent(currentEntityFilter)}`;
+      if (expJson) expJson.href = `/api/accounting/export?format=json&entity=${encodeURIComponent(currentEntityFilter)}`;
+
+      const rows = Array.isArray(ledger) ? ledger : [];
+      const countBadge = document.getElementById('ledger-count-badge');
+      if (countBadge) countBadge.textContent = `${rows.length} Journal${rows.length === 1 ? '' : 's'}`;
+
+      const tbody = document.getElementById('ledger-tbody');
+      if (!tbody) return;
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--muted); padding:28px;">No double-entry journal rows recorded yet for ${currentEntityFilter}. Post an entry on the left or complete a verified client checkout.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(j => {
+        const entColor = j.entity === 'MGC' ? 'var(--cyan)' : 'var(--gold)';
+        const linesHtml = (j.lines || []).map(l =>
+          `<div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;line-height:1.35;">${l.debit > 0 ? `<span style="color:#6ee7b7">DR</span> ${l.accountCode} ${l.accountName}: ${fmtUsd(l.debit)}` : `<span style="color:#93c5fd">CR</span> ${l.accountCode} ${l.accountName}: ${fmtUsd(l.credit)}`}</div>`
+        ).join('');
+        return `
+          <tr data-entity="${j.entity}">
+            <td>
+              <strong style="color:${entColor};font-family:'JetBrains Mono',monospace;">${j.id}</strong>
+              <div style="font-size:0.72rem;color:var(--muted);margin-top:2px;">${j.entityLabel || j.entity} • ${j.date || ''}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.64rem;color:var(--gold);margin-top:2px;">#${(j.entryHash || '').slice(0, 12)}</div>
+            </td>
+            <td>
+              <div style="font-weight:700;">${j.clientName || 'Counterparty'}</div>
+              <div style="font-size:0.72rem;color:var(--muted);">${j.contractCode || ''} • ${j.railLabel || j.rail || ''}</div>
+              <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${j.memo || ''}</div>
+            </td>
+            <td>${linesHtml}</td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:0.73rem;">
+              <div>Gross: <strong>${fmtUsd(j.grossAmount)}</strong></div>
+              <div style="color:#fca5a5;">Fee: -${fmtUsd(j.processorFee)}</div>
+              <div style="color:var(--emerald);font-weight:700;">Net: ${fmtUsd(j.netAmount)}</div>
+              <div style="color:#fde047;">25% Tax: ${fmtUsd(j.taxReserve25)}</div>
+            </td>
+            <td>
+              <select onchange="updateJournalStatus('${j.id}', this.value)" style="padding:6px 8px;border-radius:6px;background:rgba(7,13,25,0.9);color:var(--text);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:0.68rem;">
+                ${['ISSUED', 'AUTHORIZED', 'SETTLED', 'RECONCILED'].map(st => `<option value="${st}" ${j.reconciledStatus === st ? 'selected' : ''}>${st}</option>`).join('')}
+              </select>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function loadLiveAccountingLedger() {
+      if (!enforceOwnerAccess()) return;
+      fetch(`/api/accounting/ledger?entity=${encodeURIComponent(currentEntityFilter)}`, { credentials: 'include' })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (data && data.ok) {
+            renderLedgerData(data.summary, data.ledger);
+          } else if (window.MGCW && MGCW.S) {
+            const allRows = MGCW.S.accountingLedger || [];
+            const filtered = currentEntityFilter === 'ALL' ? allRows : allRows.filter(e => e.entity === currentEntityFilter);
+            renderLedgerData({
+              operatingCash: 0,
+              grossRevenue: 0,
+              processorFees: 0,
+              accountsReceivable: 0,
+              milestoneEscrow: 0,
+              taxReserve25: 0,
+              netOperatingExTax: 0,
+              totalDebits: 0,
+              totalCredits: 0,
+              isBalanced: true
+            }, filtered);
+          }
+        })
+        .catch(() => {});
     }
 
     function processPaymentAcceptance(e) {
       e.preventDefault();
+      if (!enforceOwnerAccess()) return;
       const entity = document.getElementById('pay-entity').value;
-      const client = document.getElementById('pay-client').value;
-      const amount = parseFloat(document.getElementById('pay-amount').value) || 0;
-      const ref = document.getElementById('pay-ref').value;
-      const net = amount * (1 - currentRailFee);
+      const entryType = document.getElementById('pay-entry-type').value;
+      const clientName = document.getElementById('pay-client').value.trim();
+      const grossAmount = parseFloat(document.getElementById('pay-amount').value) || 0;
+      const contractCode = document.getElementById('pay-ref').value.trim();
+      const memo = document.getElementById('pay-memo').value.trim();
+      if (grossAmount <= 0) return;
 
-      totalLiquidity += net;
-      document.getElementById('kpi-liquidity').textContent =
-        '$' + totalLiquidity.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const payload = {
+        entity,
+        entryType,
+        rail: currentRailCode,
+        grossAmount,
+        clientName,
+        contractCode,
+        memo: memo || `${entryType} (${contractCode}) via ${currentRailName}`,
+        reconciledStatus: entryType === 'INVOICE_AR' ? 'ISSUED' : 'SETTLED'
+      };
 
-      const tbody = document.getElementById('ledger-tbody');
-      const tr = document.createElement('tr');
-      tr.setAttribute('data-entity', entity);
-      const colorMap = { MGC: 'var(--cyan)', FIX: 'var(--gold)', WF: '#a78bfa' };
-      const labelMap = { MGC: 'MGC LLC', FIX: 'F.I.X LLC', WF: 'WHITE FEATHER' };
-      tr.innerHTML = `
-        <td><strong style="color:${colorMap[entity]};">${labelMap[entity]}</strong></td>
-        <td>
-          <div style="font-weight:700;">${client}</div>
-          <div style="font-size:0.72rem; color:var(--muted);">${ref}</div>
-        </td>
-        <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">${currentRailName.split('(')[0].trim()}</td>
-        <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--emerald);">+$${net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-        <td><span class="status-chip status-settled">AUTHORIZED</span></td>
-      `;
-      tbody.insertBefore(tr, tbody.firstChild);
-
-      const receiptId = 'MGC-PAY-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      document.getElementById('receipt-hash').textContent = receiptId;
-      document.getElementById('receipt-details').innerHTML =
-        `Counterparty: <strong>${client}</strong> • Rail: <strong>${currentRailName}</strong> • Net Credited to <strong>${labelMap[entity]}</strong>: <strong>$${net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>. Checkout URL copied to internal clipboard.`;
-      document.getElementById('payment-receipt').classList.add('show');
+      fetch('/api/accounting/post-entry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload)
+      })
+        .then(r => r.json())
+        .then(res => {
+          if (res && res.ok && res.entry) {
+            const j = res.entry;
+            document.getElementById('receipt-hash').textContent = j.id + ' • ' + (j.entryHash || '').slice(0, 12);
+            document.getElementById('receipt-details').innerHTML =
+              `Entity: <strong>${j.entityLabel}</strong> • Counterparty: <strong>${j.clientName}</strong> • Gross: <strong>${fmtUsd(j.grossAmount)}</strong> • Fee: <strong>${fmtUsd(j.processorFee)}</strong> • Net (1010): <strong>${fmtUsd(j.netAmount)}</strong> • 25% Tax Vault (1020): <strong>${fmtUsd(j.taxReserve25)}</strong>.`;
+            document.getElementById('payment-receipt').classList.add('show');
+            renderLedgerData(res.summary, (currentEntityFilter === 'ALL' ? (window.MGCW && MGCW.S ? MGCW.S.accountingLedger : [j]) : [j]));
+            loadLiveAccountingLedger();
+          }
+        })
+        .catch(() => {});
     }
 
-    function triggerInternalTransfer() {
-      const tbody = document.getElementById('ledger-tbody');
-      const tr = document.createElement('tr');
-      tr.setAttribute('data-entity', 'FIX');
-      tr.innerHTML = `
-        <td><strong style="color:var(--gold);">MGC → F.I.X</strong></td>
-        <td>
-          <div style="font-weight:700;">Internal Treasury Allocation (Zero-Fee Book Transfer)</div>
-          <div style="font-size:0.72rem; color:var(--muted);">Hardware VAR Escrow Replenishment</div>
-        </td>
-        <td style="font-family:'JetBrains Mono',monospace; font-size:0.74rem;">Internal Book</td>
-        <td style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cyan);">$15,000.00</td>
-        <td><span class="status-chip status-settled">CLEARED</span></td>
-      `;
-      tbody.insertBefore(tr, tbody.firstChild);
+    function updateJournalStatus(journalId, reconciledStatus) {
+      fetch('/api/accounting/reconcile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ journalId, reconciledStatus })
+      })
+        .then(r => r.json())
+        .then(() => loadLiveAccountingLedger())
+        .catch(() => {});
     }
 
     function filterEntity(entityCode, btn) {
+      currentEntityFilter = entityCode;
       document.querySelectorAll('#entity-tabs .entity-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('#ledger-tbody tr').forEach(row => {
-        if (entityCode === 'ALL' || row.getAttribute('data-entity') === entityCode) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
+      if (btn) btn.classList.add('active');
+      loadLiveAccountingLedger();
     }
 
     (function refreshFinanceDbTelemetry() {
+      updateNetPreview();
+      loadLiveAccountingLedger();
       fetch('/api/db/status', { credentials: 'include' })
         .then(r => r.ok ? r.json() : null)
         .then(data => {

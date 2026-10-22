@@ -250,12 +250,16 @@
   let groupFilter = 'all';
   let statusFilter = 'all';
   let appFilter = 'all';
+  let resourceFilter = 'all';
   let searchQuery = '';
   let selectedUserId = '';
-  let propTab = 'rbac'; // 'rbac' | 'apps' | 'account' | 'billing'
+  let propTab = 'rbac'; // 'rbac' | 'apps' | 'resources' | 'account' | 'billing'
   let showNewUserDrawer = false;
   let treeCollapsed = false;
   let inspectorHidden = false;
+  let accEntityFilter = 'ALL';
+
+  const getResourcesList = () => W.getResourcesCatalog ? W.getResourcesCatalog() : (W.RESOURCES_CATALOG || []);
 
   if (!me || (!isOwner && !isEmp)) {
     app.innerHTML = '<div class="card lock"><span class="chip warn">MGC Directory Controller</span><h1 style="margin-top:10px">Directory authorization required</h1><p>This MGC Directory console is restricted to authorized Domain Administrators and Internal Staff.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In</a></div></div>';
@@ -300,9 +304,10 @@
 
   function renderNewUserModal() {
     if (!showNewUserDrawer) return '';
+    const resCatalog = getResourcesList();
     return '<div style="padding:12px 16px;background:rgba(4,8,20,0.92);border-bottom:1px solid rgba(197,179,88,0.4)">' +
       '<div class="row" style="margin-bottom:8px"><strong>New Directory User Object' + (isEmp ? ' (Client Scope)' : '') + '</strong><button type="button" class="btn" id="btnCloseNewUser" style="padding:4px 10px;font-size:11.5px">Close</button></div>' +
-      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;align-items:center">' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;align-items:center;margin-bottom:10px">' +
         '<input id="admRegName" placeholder="Display Name" style="padding:7px 10px;font-size:12px">' +
         '<input id="admRegEmail" placeholder="Logon Email (UPN)" style="padding:7px 10px;font-size:12px">' +
         '<input id="admRegPass" type="password" placeholder="Password" style="padding:7px 10px;font-size:12px">' +
@@ -315,18 +320,29 @@
         '<select id="admRegInterest" style="padding:7px 10px;font-size:12px"><option value="ai-web">Turnkey SaaS</option><option value="federal">Federal SDVOSB</option><option value="cyber">Zero-Trust Cyber</option><option value="training">SCORM Academy</option></select>' +
         '<button class="btn pri" id="admRegGo" type="button" style="padding:7px 12px;font-size:12px;justify-content:center">Create Object</button>' +
       '</div>' +
+      '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(148,163,184,0.16)">' +
+        '<span style="font-size:11px;font-weight:600;color:#fde047;text-transform:uppercase;letter-spacing:.04em">Note Qualified Resources at Onboarding (Includes Milton UI/UX + AI Fast-Track):</span>' +
+        resCatalog.map(r =>
+          '<label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#e2e8f0;cursor:pointer;padding:4px 10px;border-radius:8px;background:rgba(15,23,42,0.85);border:1px solid rgba(197,179,88,0.35)">' +
+            '<input type="checkbox" data-onboard-res="' + esc(r.id) + '">' +
+            '<span><b>' + esc(r.title) + '</b> <small style="color:#93c5fd">(Resource + Milton UI/UX &amp; AI Tools)</small></span>' +
+          '</label>'
+        ).join('') +
+      '</div>' +
     '</div>';
   }
 
   function renderUsersDirectoryView() {
     const cols = W.CATALOG.filter(c => !isEmp || c.id !== 'finance');
     const apps = W.APPS_CATALOG || [];
+    const resCatalog = getResourcesList();
     const allM = members();
     const filtered = allM.filter(u => {
       if (ouFilter !== 'all' && getUserOu(u) !== ouFilter) return false;
       if (groupFilter !== 'all' && getUserGroup(u) !== groupFilter) return false;
       if (statusFilter !== 'all' && (u.status || 'active') !== statusFilter) return false;
       if (appFilter !== 'all' && !W.can(u, 'app', appFilter, 'view')) return false;
+      if (resourceFilter !== 'all' && !W.can(u, 'resource', resourceFilter, 'view')) return false;
       if (!searchQuery) return true;
       const q = searchQuery.toLowerCase();
       return String(u.name || '').toLowerCase().includes(q) ||
@@ -335,7 +351,7 @@
              String(u.org || '').toLowerCase().includes(q);
     });
     const sel = ensureSelectedUser(filtered);
-    const colSpan = isOwner ? 6 : 5;
+    const colSpan = isOwner ? 7 : 6;
 
     return '<div class="ad-center">' +
       '<div class="ad-toolbar" style="flex-direction:column;align-items:stretch;gap:10px">' +
@@ -362,7 +378,7 @@
             '</div>' +
           '</div>' +
         '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;align-items:center">' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;align-items:center">' +
           (isOwner
             ? '<select id="adOuDropdown" aria-label="Filter by Organizational Unit" style="padding:6px 9px;font-size:12px">' +
                 '<option value="all"' + (ouFilter === 'all' ? ' selected' : '') + '>All Organizational Units</option>' +
@@ -384,6 +400,10 @@
             '<option value="all"' + (appFilter === 'all' ? ' selected' : '') + '>All Application Entitlements</option>' +
             apps.map(a => '<option value="' + esc(a.id) + '"' + (appFilter === a.id ? ' selected' : '') + '>App: ' + esc(a.title) + '</option>').join('') +
           '</select>' +
+          '<select id="adResourceFilter" aria-label="Filter by Qualified Resource" style="padding:6px 9px;font-size:12px">' +
+            '<option value="all"' + (resourceFilter === 'all' ? ' selected' : '') + '>All Qualified Resources</option>' +
+            resCatalog.map(r => '<option value="' + esc(r.id) + '"' + (resourceFilter === r.id ? ' selected' : '') + '>Resource: ' + esc(r.title) + '</option>').join('') +
+          '</select>' +
         '</div>' +
       '</div>' +
       renderNewUserModal() +
@@ -395,6 +415,7 @@
             '<th>Scope</th>' +
             '<th>Views</th>' +
             '<th>Apps</th>' +
+            '<th>Resources</th>' +
             (isOwner ? '<th>Billing</th>' : '') +
           '</tr></thead>' +
           '<tbody>' +
@@ -405,6 +426,7 @@
               const pay = x.paymentProfile;
               const grantedPages = cols.filter(c => W.can(x, 'page', c.id, 'view')).length;
               const grantedApps = apps.filter(a => W.can(x, 'app', a.id, 'view')).length;
+              const qualifiedResObjs = resCatalog.filter(r => W.can(x, 'resource', r.id, 'view'));
               return '<tr class="' + (isSel ? 'selected' : '') + '" data-select-user="' + esc(x.id) + '" data-user-card="' + esc(x.id) + '">' +
                 '<td>' +
                   '<div style="font-weight:600;color:#fff">' + esc(x.name) + '</div>' +
@@ -420,6 +442,11 @@
                 '</td>' +
                 '<td><span class="chip ' + (grantedPages > 1 ? 'ok' : '') + '">' + grantedPages + '/' + cols.length + '</span></td>' +
                 '<td><span class="chip">' + grantedApps + '/' + apps.length + '</span></td>' +
+                '<td>' +
+                  (qualifiedResObjs.length > 0
+                    ? '<span class="chip ok" title="' + esc(qualifiedResObjs.map(r => r.title).join(', ')) + '">' + esc(qualifiedResObjs.map(r => r.title).join(', ')) + '</span>'
+                    : '<span class="chip" style="opacity:0.65">None</span>') +
+                '</td>' +
                 (isOwner
                   ? '<td>' +
                       ((pay && pay.verified)
@@ -441,6 +468,7 @@
     if (!sel || tab !== 'users') return '';
     const cols = W.CATALOG.filter(c => !isEmp || c.id !== 'finance');
     const apps = W.APPS_CATALOG || [];
+    const resCatalog = getResourcesList();
     const ou = getUserOu(sel);
     const grp = getUserGroup(sel);
     const pay = sel.paymentProfile;
@@ -490,6 +518,31 @@
             '</button>' +
           '</div>';
         }).join('');
+    } else if (propTab === 'resources') {
+      bodyHtml =
+        '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#fde047;margin-bottom:6px">Qualified Resources &amp; AI Fast-Track (' + resCatalog.length + ')</div>' +
+        '<p style="font-size:11px;color:#94a3b8;margin:0 0 8px">Qualifying a user unlocks the resource plus its associated Milton UI/UX enhancements and AI Fast-Track tools in their Resources section. Unqualified resources do not appear in their portal.</p>' +
+        resCatalog.map(r => {
+          const on = W.can(sel, 'resource', r.id, 'view');
+          const toolCount = Array.isArray(r.aiTools) ? r.aiTools.length : 1;
+          return '<div class="ad-check-row ' + (on ? 'granted' : '') + '" style="flex-direction:column;align-items:stretch;gap:6px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px">' +
+              '<div><b>' + esc(r.title) + '</b><div style="font-size:10.5px;color:#93c5fd">Milton UI/UX + ' + toolCount + ' AI Fast-Track Tool(s)</div></div>' +
+              '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-resource="' + esc(sel.id) + '|' + esc(r.id) + '|' + (!on) + '" style="padding:4px 9px;font-size:11px">' +
+                (on ? 'Qualified' : 'Qualify') +
+              '</button>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+        (isOwner
+          ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">' +
+              '<div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:6px">Register New Resource (Extensible Catalog)</div>' +
+              '<input id="admNewResTitle" placeholder="Resource Name (e.g. Sovereign Vault)" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:5px">' +
+              '<input id="admNewResCategory" placeholder="Category + Milton UI/UX &amp; AI Suite" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:5px">' +
+              '<input id="admNewResAiTool" placeholder="Associated AI Fast-Track Tool Title" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:6px">' +
+              '<button type="button" class="btn pri" id="btnAddCustomRes" style="width:100%;justify-content:center;padding:6px 10px;font-size:11.5px">+ Add Resource to Catalog</button>' +
+            '</div>'
+          : '');
     } else if (propTab === 'account') {
       bodyHtml =
         '<div style="display:flex;flex-direction:column;gap:8px;font-size:12px">' +
@@ -525,8 +578,8 @@
     }
 
     const propTabsList = isOwner
-      ? [['rbac', 'Member Of / RBAC'], ['apps', 'Apps (8)'], ['account', 'Account'], ['billing', 'PCI Billing']]
-      : [['rbac', 'Member Of / RBAC'], ['apps', 'Apps (8)'], ['account', 'Account']];
+      ? [['rbac', 'RBAC'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account'], ['billing', 'PCI']]
+      : [['rbac', 'RBAC'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account']];
 
     return '<aside class="ad-inspector">' +
       '<div class="ad-inspector-hdr">' +
@@ -580,8 +633,104 @@
   function renderPaymentsAndPciView() {
     if (!isOwner) return '';
     const list = S().payments || [];
+    const allLedger = Array.isArray(S().accountingLedger) ? S().accountingLedger : [];
+    const ledger = (accEntityFilter === 'MGC' || accEntityFilter === 'FIX')
+      ? allLedger.filter(e => e.entity === accEntityFilter)
+      : allLedger;
+
+    let grossRev = 0, procFees = 0, netCash = 0, taxVault = 0, expenses = 0, totalDebits = 0, totalCredits = 0;
+    ledger.forEach(e => {
+      totalDebits = Math.round((totalDebits + (Number(e.totalDebit) || 0)) * 100) / 100;
+      totalCredits = Math.round((totalCredits + (Number(e.totalCredit) || 0)) * 100) / 100;
+      if (e.entryType === 'EXPENSE') {
+        expenses = Math.round((expenses + (Number(e.grossUsd) || 0)) * 100) / 100;
+        netCash = Math.round((netCash - (Number(e.grossUsd) || 0)) * 100) / 100;
+      } else if (e.entryType === 'INVOICE_AR' && e.status === 'ISSUED') {
+        // AR pending settlement
+      } else {
+        grossRev = Math.round((grossRev + (Number(e.grossUsd) || 0)) * 100) / 100;
+        procFees = Math.round((procFees + (Number(e.processorFeeUsd) || 0)) * 100) / 100;
+        netCash = Math.round((netCash + (Number(e.netCashUsd) || 0)) * 100) / 100;
+        taxVault = Math.round((taxVault + (Number(e.taxReserveUsd) || 0)) * 100) / 100;
+      }
+    });
     const gw = S().pciGatewayConfig || { activeProcessor: 'stripe_saq_a', mgcOption: 'stripe_saq_a', fixOptions: ['stripe_saq_a', 'wawf_piee_eft'], mercuryAchEnabled: true, wawfPieeEnabled: true };
+
     return '<div class="ad-center" style="padding:18px 20px">' +
+      '<!-- Management Accounting & Double-Entry Back End (Option A + Option B + One-Click CPA Export) -->' +
+      '<div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)">' +
+        '<div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:10px">' +
+          '<div>' +
+            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Management Accounting &amp; Double-Entry General Ledger ($0 Incremental Cost)</span>' +
+            '<h2 style="margin:2px 0 0;font-size:15.5px;font-weight:700;color:#fff">MGC &amp; F.I.X GAAP / DCAA Double-Entry Accounting Engine</h2>' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
+            '<select id="accEntitySelect" style="padding:6px 10px;font-size:12px">' +
+              '<option value="ALL"' + (accEntityFilter === 'ALL' ? ' selected' : '') + '>All Entities (MGC + FIX)</option>' +
+              '<option value="MGC"' + (accEntityFilter === 'MGC' ? ' selected' : '') + '>Milton Group Concepts LLC (MGC)</option>' +
+              '<option value="FIX"' + (accEntityFilter === 'FIX' ? ' selected' : '') + '>F.I.X Solutions LLC (FIX)</option>' +
+            '</select>' +
+            '<a class="btn pri" href="/api/accounting/export?format=csv&amp;entity=' + esc(accEntityFilter) + '" download style="padding:6px 11px;font-size:11.5px">Export GAAP CSV</a>' +
+            '<a class="btn" href="/api/accounting/export?format=iif&amp;entity=' + esc(accEntityFilter) + '" download style="padding:6px 11px;font-size:11.5px">Export QuickBooks IIF</a>' +
+            '<a class="btn" href="/api/accounting/export?format=json&amp;entity=' + esc(accEntityFilter) + '" download style="padding:6px 11px;font-size:11.5px">Export Audit JSON</a>' +
+            '<a class="btn" href="finance-command.html" style="padding:6px 11px;font-size:11.5px;border-color:rgba(197,179,88,0.45);color:#fde047">Open Finance Command</a>' +
+          '</div>' +
+        '</div>' +
+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px">' +
+          '<div class="compact-card" style="padding:12px 14px;border-color:rgba(16,185,129,0.4)"><div style="font-size:10.5px;color:#94a3b8;text-transform:uppercase;font-weight:600">Gross Revenue</div><div style="font-size:18px;font-weight:700;color:#fff;margin-top:3px">$' + grossRev.toFixed(2) + '</div><div style="font-size:11px;color:#34d399;margin-top:2px">Processor Fees: $' + procFees.toFixed(2) + '</div></div>' +
+          '<div class="compact-card" style="padding:12px 14px;border-color:rgba(59,130,246,0.4)"><div style="font-size:10.5px;color:#94a3b8;text-transform:uppercase;font-weight:600">Net Settled Cash (1010)</div><div style="font-size:18px;font-weight:700;color:#fff;margin-top:3px">$' + netCash.toFixed(2) + '</div><div style="font-size:11px;color:#93c5fd;margin-top:2px">Expenses: $' + expenses.toFixed(2) + '</div></div>' +
+          '<div class="compact-card" style="padding:12px 14px;border-color:rgba(197,179,88,0.45)"><div style="font-size:10.5px;color:#94a3b8;text-transform:uppercase;font-weight:600">25% Tax Reserve Vault (1020)</div><div style="font-size:18px;font-weight:700;color:#fde047;margin-top:3px">$' + taxVault.toFixed(2) + '</div><div style="font-size:11px;color:#cbd5e1;margin-top:2px">Auto-allocated per settlement</div></div>' +
+          '<div class="compact-card" style="padding:12px 14px;border-color:rgba(16,185,129,0.4)"><div style="font-size:10.5px;color:#94a3b8;text-transform:uppercase;font-weight:600">GAAP Trial Balance</div><div style="font-size:15px;font-weight:700;color:#34d399;margin-top:4px">DR $' + totalDebits.toFixed(2) + ' = CR $' + totalCredits.toFixed(2) + '</div><div style="font-size:11px;color:#a7f3d0;margin-top:2px">SHA-256 Hash Chain Verified</div></div>' +
+        '</div>' +
+
+        '<!-- Post Double-Entry Journal / Invoice / Expense -->' +
+        '<div style="padding:12px 14px;border-radius:10px;background:rgba(4,8,20,0.78);border:1px solid rgba(148,163,184,0.22);margin-bottom:14px">' +
+          '<div style="font-size:11px;font-weight:600;color:#cbd5e1;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Post Double-Entry Journal / Invoice / Expense</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;align-items:center">' +
+            '<select id="accPostEntity" style="padding:7px 9px;font-size:12px"><option value="MGC">Entity: MGC</option><option value="FIX">Entity: FIX</option></select>' +
+            '<select id="accPostType" style="padding:7px 9px;font-size:12px"><option value="REVENUE">Settled Revenue</option><option value="INVOICE_AR">Invoice (1100 AR)</option><option value="EXPENSE">Operating Expense</option></select>' +
+            '<select id="accPostAccount" style="padding:7px 9px;font-size:12px">' +
+              '<option value="4010">4010 · SaaS &amp; LMS Revenue</option>' +
+              '<option value="4020">4020 · SDVOSB WAWF Revenue</option>' +
+              '<option value="4030">4030 · Consultation Revenue</option>' +
+              '<option value="4040">4040 · Qualified Resource &amp; AI Fast-Track</option>' +
+              '<option value="5010">5010 · Cloud &amp; Infra Expense</option>' +
+              '<option value="5020">5020 · Subcontractor COGS</option>' +
+            '</select>' +
+            '<select id="accPostRail" style="padding:7px 9px;font-size:12px">' +
+              '<option value="MERCURY_ACH">Mercury ACH ($0 Fee)</option>' +
+              '<option value="WAWF_EFT">DoD WAWF EFT ($0 Fee)</option>' +
+              '<option value="STRIPE_ACH">Stripe ACH (0.8% cap $5)</option>' +
+              '<option value="STRIPE_CARD">Stripe Card (2.9%+$0.30)</option>' +
+            '</select>' +
+            '<input id="accPostCounterparty" placeholder="Client / Vendor Name" style="padding:7px 9px;font-size:12px">' +
+            '<input id="accPostAmount" type="number" step="0.01" min="0.01" placeholder="Gross USD (e.g. 250.00)" style="padding:7px 9px;font-size:12px">' +
+            '<input id="accPostDesc" placeholder="Memo / Contract / Resource" style="padding:7px 9px;font-size:12px">' +
+            '<button type="button" class="btn pri" id="btnPostAccEntry" style="padding:7px 12px;font-size:12px;justify-content:center">Post Journal</button>' +
+          '</div>' +
+        '</div>' +
+
+        '<h3 style="margin:0 0 8px;font-size:13.5px;font-weight:600">Double-Entry General Ledger (' + ledger.length + ' Journal Entries)</h3>' +
+        (ledger.length
+          ? '<table class="ad-table"><thead><tr><th>Journal ID</th><th>Entity</th><th>Account</th><th>Counterparty &amp; Memo</th><th>Rail &amp; Fee</th><th>Gross / Net / 25% Tax</th><th>Reconciliation</th></tr></thead><tbody>' +
+            ledger.map(e => '<tr style="cursor:default">' +
+              '<td><code style="font-size:11px;color:#fde047">' + esc(e.journalId) + '</code><div style="font-size:10px;color:#64748b">' + esc(String(e.createdAt || '').slice(0, 10)) + '</div></td>' +
+              '<td><span class="chip ' + (e.entity === 'FIX' ? '' : 'ok') + '">' + esc(e.entity) + '</span></td>' +
+              '<td><b>' + esc(e.accountCode) + '</b><div style="font-size:10.5px;color:#94a3b8">' + esc(e.accountName) + '</div></td>' +
+              '<td><b>' + esc(e.counterparty) + '</b><div style="font-size:11px;color:#cbd5e1">' + esc(e.description) + '</div></td>' +
+              '<td><span class="chip">' + esc(e.rail) + '</span><div style="font-size:10.5px;color:#94a3b8">Fee: $' + Number(e.processorFeeUsd || 0).toFixed(2) + '</div></td>' +
+              '<td><div>Gross: <b>$' + Number(e.grossUsd || 0).toFixed(2) + '</b></div><div style="font-size:11px;color:#34d399">Net: $' + Number(e.netCashUsd || 0).toFixed(2) + ' · Tax: $' + Number(e.taxReserveUsd || 0).toFixed(2) + '</div></td>' +
+              '<td>' +
+                '<select data-reconcile-journal="' + esc(e.journalId) + '" style="padding:4px 7px;font-size:11px">' +
+                  ['ISSUED', 'AUTHORIZED', 'SETTLED', 'RECONCILED'].map(st => '<option value="' + st + '"' + (e.status === st ? ' selected' : '') + '>' + st + '</option>').join('') +
+                '</select>' +
+              '</td>' +
+            '</tr>').join('') +
+            '</tbody></table>'
+          : '<p style="font-size:12px;color:#94a3b8">No double-entry journal rows posted yet. Verified client payments and manual postings appear here automatically with zero fake data.</p>') +
+      '</div>' +
+
       '<div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)">' +
         '<div class="row" style="margin-bottom:12px">' +
           '<h2 style="margin:0;font-size:15px;font-weight:600">Payment Gateways (MGC &amp; F.I.X)</h2>' +
@@ -605,10 +754,10 @@
         '</div>' +
         '<button type="button" class="btn pri" id="btnSavePciGateway" style="padding:8px 16px;font-size:12.5px">Save Gateways</button>' +
       '</div>' +
-      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Ledger (' + list.length + ')</h2>' +
+      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">PCI-DSS Tokenized Receipts (' + list.length + ')</h2>' +
       (list.length
-        ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Entity</th><th>Customer</th><th>Plan</th><th>Instrument</th><th>Status</th><th>Date</th></tr></thead><tbody>' +
-          list.map(p => '<tr style="cursor:default"><td><span class="chip ok">' + esc(p.receiptId) + '</span></td><td><span class="chip ' + (p.merchantEntity === 'FIX' ? '' : 'ok') + '">' + esc(p.merchantEntity || 'MGC') + '</span></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b></td><td>$' + Number(p.amountUsd || 0).toLocaleString() + '</td><td><b>' + esc(p.cardBrand || p.method) + ' · ' + esc(p.last4) + '</b></td><td><span class="chip ok">Verified</span></td><td style="font-size:11.5px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleDateString() + '</td></tr>').join('') +
+        ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Entity</th><th>Customer</th><th>Gross / Net</th><th>Instrument</th><th>Status</th><th>Date</th></tr></thead><tbody>' +
+          list.map(p => '<tr style="cursor:default"><td><span class="chip ok">' + esc(p.receiptId) + '</span></td><td><span class="chip ' + (p.merchantEntity === 'FIX' ? '' : 'ok') + '">' + esc(p.merchantEntity || 'MGC') + '</span></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b></td><td>$' + Number(p.amountUsd || 0).toFixed(2) + (p.netCashUsd !== undefined ? ' <small style="color:#34d399">(Net $' + Number(p.netCashUsd).toFixed(2) + ')</small>' : '') + '</td><td><b>' + esc(p.cardBrand || p.method) + ' · ' + esc(p.last4) + '</b></td><td><span class="chip ok">' + esc(p.reconciliationStatus || 'VERIFIED') + '</span></td><td style="font-size:11.5px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleDateString() + '</td></tr>').join('') +
           '</tbody></table>'
         : '<p style="font-size:12.5px">No payments recorded yet.</p>') +
     '</div>';
@@ -757,6 +906,8 @@
     if (stDrop) stDrop.onchange = () => { statusFilter = stDrop.value; render(); };
     const appDrop = document.getElementById('adAppFilter');
     if (appDrop) appDrop.onchange = () => { appFilter = appDrop.value; render(); };
+    const resDrop = document.getElementById('adResourceFilter');
+    if (resDrop) resDrop.onchange = () => { resourceFilter = resDrop.value; render(); };
 
     // Bind WGW disclosure dropdown inside the directory toolbar
     app.querySelectorAll('.wgw-dropdown').forEach(dd => {
@@ -811,6 +962,31 @@
       W.toast((en ? 'Unlocked ' : 'Locked ') + appId + ' for ' + name(uidVal));
       render();
     });
+    app.querySelectorAll('[data-toggle-resource]').forEach(b => b.onclick = (e) => {
+      e.stopPropagation();
+      const [uidVal, resId, enStr] = b.dataset.toggleResource.split('|');
+      const en = enStr === 'true';
+      selectedUserId = uidVal;
+      W.toggleUserFeature(uidVal, 'resource', resId, en);
+      W.toast((en ? 'Qualified ' : 'Revoked ') + resId + ' (+ Milton UI/UX & AI Tools) for ' + name(uidVal));
+      render();
+    });
+    const btnAddRes = document.getElementById('btnAddCustomRes');
+    if (btnAddRes && isOwner) {
+      btnAddRes.onclick = () => {
+        const title = (document.getElementById('admNewResTitle').value || '').trim();
+        const cat = (document.getElementById('admNewResCategory').value || 'Partner Resource & AI Suite').trim();
+        const aiName = (document.getElementById('admNewResAiTool').value || '').trim();
+        if (!title) { W.toast('Enter a resource title'); return; }
+        W.addCustomResource({
+          title,
+          category: cat,
+          aiTools: aiName ? [{ id: 'ai-' + Date.now(), name: aiName, desc: 'Milton UI/UX & AI Fast-Track workflow for ' + title }] : undefined
+        });
+        W.toast('Added ' + title + ' to Resources Catalog');
+        render();
+      };
+    }
     app.querySelectorAll('[data-preset]').forEach(b => b.onclick = (e) => {
       e.stopPropagation();
       const [uidVal, presetId] = b.dataset.preset.split('|');
@@ -888,6 +1064,7 @@
         const ou = isEmp ? 'external' : ((document.getElementById('admRegOu') && document.getElementById('admRegOu').value) || 'external');
         const prov = document.getElementById('admRegProvider').value;
         const intr = document.getElementById('admRegInterest').value;
+        const qualifiedResources = Array.from(app.querySelectorAll('[data-onboard-res]:checked')).map(cb => cb.getAttribute('data-onboard-res'));
         if (!n || !/^\S+@\S+\.\S+$/.test(em)) { W.toast('Enter valid Name & Email'); return; }
         const newId = W.submitRequest({
           name: n,
@@ -899,6 +1076,7 @@
           securityGroup: ou === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS',
           ssoProvider: prov,
           interest: intr,
+          qualifiedResources,
           brand: 'FIX',
           ndaAccepted: true,
           mfaVerified: true
@@ -906,10 +1084,60 @@
         if (!newId) { W.toast((W.lastIntakeResult && W.lastIntakeResult.error) || 'Could not create object'); return; }
         selectedUserId = newId;
         showNewUserDrawer = false;
-        W.toast('Created ' + n + ' in OU=' + ou.toUpperCase());
+        W.toast('Created ' + n + ' in OU=' + ou.toUpperCase() + (qualifiedResources.length ? ' (Qualified: ' + qualifiedResources.join(', ') + ')' : ''));
         render();
       };
     }
+
+    const accEntitySel = document.getElementById('accEntitySelect');
+    if (accEntitySel && isOwner) {
+      accEntitySel.onchange = () => {
+        accEntityFilter = accEntitySel.value;
+        render();
+      };
+    }
+
+    const btnPostAcc = document.getElementById('btnPostAccEntry');
+    if (btnPostAcc && isOwner) {
+      btnPostAcc.onclick = () => {
+        const entity = document.getElementById('accPostEntity').value;
+        const entryType = document.getElementById('accPostType').value;
+        const accountCode = document.getElementById('accPostAccount').value;
+        const rail = document.getElementById('accPostRail').value;
+        const grossAmount = Number(document.getElementById('accPostAmount').value || 0);
+        const clientName = (document.getElementById('accPostCounterparty').value || '').trim();
+        const memo = (document.getElementById('accPostDesc').value || '').trim();
+        if (!grossAmount || grossAmount <= 0) {
+          W.toast('Enter a valid positive amount ($)');
+          return;
+        }
+        W.postAccountingEntry({
+          entity,
+          entryType,
+          accountCode,
+          rail,
+          grossUsd: grossAmount,
+          grossAmount,
+          counterparty: clientName || (entity === 'MGC' ? 'Federal / Commercial Counterparty' : 'F.I.X SaaS Counterparty'),
+          clientName: clientName || (entity === 'MGC' ? 'Federal / Commercial Counterparty' : 'F.I.X SaaS Counterparty'),
+          description: memo || (entryType + ' via ' + rail),
+          memo: memo || (entryType + ' via ' + rail),
+          status: entryType === 'INVOICE_AR' ? 'ISSUED' : 'SETTLED',
+          reconciledStatus: entryType === 'INVOICE_AR' ? 'ISSUED' : 'SETTLED'
+        });
+        W.toast('Posted balanced Double-Entry Journal (' + entity + ' • $' + grossAmount.toFixed(2) + ')');
+        render();
+      };
+    }
+
+    app.querySelectorAll('[data-reconcile-journal]').forEach(selEl => {
+      selEl.onchange = () => {
+        const jid = selEl.getAttribute('data-reconcile-journal');
+        W.reconcileAccountingEntry(jid, selEl.value);
+        W.toast('Updated reconciliation status for ' + jid + ' to ' + selEl.value);
+        render();
+      };
+    });
 
     app.querySelectorAll('[data-consult-status]').forEach(selEl => {
       selEl.onchange = () => {

@@ -115,8 +115,54 @@ const APPS_CATALOG = [
   { id: 'spanish-acquisition-os',     icon: '🇪🇸', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Restricted by default on customer login: 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
 ];
 
+// Qualified Partner & Ecosystem Resources Catalog (White Feather first; extensible as new resources are onboarded)
+const RESOURCES_CATALOG = [
+  {
+    id: 'white-feather',
+    title: 'White Feather (Resource + Milton UI/UX & AI Fast-Track)',
+    shortTitle: 'White Feather',
+    brand: 'MGC',
+    defaultCustomer: false,
+    category: 'Capital, Deal Flow & AI Automation Resource',
+    href: 'whitefeather-ecommerce-hub.html',
+    communityUrl: 'https://www.skool.com/white-feather-ai/plans',
+    privateGroupUrl: 'https://members.whitefeatherinvestments.com/communities/groups/white-feather-bronze-community/private-group',
+    desc: 'Qualified White Feather resource access enhanced with custom Milton UI/UX workspace navigation and AI fast-track execution tools.',
+    uiUxEnhancements: [
+      'Milton Executive UI/UX Companion & Deal-Flow Progress Tracker',
+      'Zero-Clutter Action Matrix & Guided Milestone Execution Shell',
+      'Integrated Resource Playbook & Document Synthesis Vault'
+    ],
+    aiTools: [
+      { id: 'wf-dealflow-ai', title: 'White Feather Deal-Flow & Asset Structuring AI', badge: 'Fast-Track AI', desc: 'Synthesizes deal parameters, partnership structures, and executive summaries.' },
+      { id: 'wf-agency-blueprint', title: 'White Feather AI Automation Blueprint Generator', badge: 'Agentic Tool', desc: 'Fast-tracks community AI agency blueprints into deployable LangGraph & client workflows.' },
+      { id: 'wf-ui-navigator', title: 'Milton UI/UX Resource Accelerator', badge: 'Milton UI/UX', desc: 'Custom visual roadmap that organizes and fast-tracks White Feather modules and deliverables.' }
+    ]
+  }
+];
+
+// Double-Entry Management Accounting Chart of Accounts (GAAP / DCAA / CPA Ready)
+// Corporate Entities: MGC (Milton Group Concepts LLC, EIN 92-1370285) and FIX (F.I.X Solutions LLC)
+const CHART_OF_ACCOUNTS = [
+  { code: '1010', name: 'Operating Cash — Mercury Checking',           type: 'ASSET',     normalBalance: 'DEBIT' },
+  { code: '1020', name: 'Tax Reserve Vault (25% Auto-Allocation)',     type: 'ASSET',     normalBalance: 'DEBIT' },
+  { code: '1100', name: 'Accounts Receivable — Commercial & Federal',  type: 'ASSET',     normalBalance: 'DEBIT' },
+  { code: '1150', name: 'Contract Milestone Escrow Receivable',        type: 'ASSET',     normalBalance: 'DEBIT' },
+  { code: '2100', name: 'Estimated Federal & VA Tax Payable (25%)',    type: 'LIABILITY', normalBalance: 'CREDIT' },
+  { code: '2200', name: 'Unearned Retainer & Deferred Revenue',        type: 'LIABILITY', normalBalance: 'CREDIT' },
+  { code: '3010', name: 'Sole Member Equity & Retained Earnings',      type: 'EQUITY',    normalBalance: 'CREDIT' },
+  { code: '4010', name: 'SaaS Apps & SCORM LMS Subscription Revenue',  type: 'REVENUE',   normalBalance: 'CREDIT' },
+  { code: '4020', name: 'SDVOSB Federal Contracting Revenue (WAWF)',   type: 'REVENUE',   normalBalance: 'CREDIT' },
+  { code: '4030', name: 'Guided Consultation & Custom Build Revenue',  type: 'REVENUE',   normalBalance: 'CREDIT' },
+  { code: '4040', name: 'Qualified Resource & AI Fast-Track Revenue',  type: 'REVENUE',   normalBalance: 'CREDIT' },
+  { code: '5010', name: 'Cloud & Infrastructure Expense',              type: 'EXPENSE',   normalBalance: 'DEBIT' },
+  { code: '5020', name: 'Subcontractor & Delivery COGS',               type: 'EXPENSE',   normalBalance: 'DEBIT' },
+  { code: '5030', name: 'Payment Processor & Gateway Fee Expense',     type: 'EXPENSE',   normalBalance: 'DEBIT' }
+];
+
 // New users ONLY have view and access of SaaS Apps & LMS (+ payment submission in member-portal.html)
 const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge'];
+const DEFAULT_CUSTOMER_RESOURCES = [];
 const DEFAULT_CUSTOMER_PAGES = { saasapps: 'ready' };
 const DEFAULT_CUSTOMER_PORTALS = ['saas-apps-and-lms-showcase.html', 'member-portal.html'];
 
@@ -254,7 +300,7 @@ const now = () => new Date().toISOString();
 
 function seedState() {
   const t = now();
-  const mk = (id, name, email, role, status, brand, interest, paid, pages, allowedApps) => ({
+  const mk = (id, name, email, role, status, brand, interest, paid, pages, allowedApps, qualifiedResources) => ({
     id,
     name,
     username: String(email || '').split('@')[0].toLowerCase(),
@@ -271,6 +317,7 @@ function seedState() {
     plan: { base: paid, addons: [] },
     pages: pages || {},
     allowedApps: allowedApps || (role === 'owner' ? ['*'] : DEFAULT_CUSTOMER_APPS.slice()),
+    qualifiedResources: qualifiedResources || (role === 'owner' ? ['*'] : DEFAULT_CUSTOMER_RESOURCES.slice()),
     checklist: {},
     created: t
   });
@@ -280,9 +327,11 @@ function seedState() {
       owner: mk('owner', 'Malik K. (Administrator)', SOLE_ADMIN_EMAIL, 'owner', 'active', 'MGC', 'federal', true, {
         home: 'ready', agile: 'ready', resources: 'ready', saasapps: 'ready', radar: 'ready',
         compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready'
-      }, ['*'])
+      }, ['*'], ['*'])
     },
     shares: [],
+    customResources: [],
+    accountingLedger: [],
     payments: [],
     consultations: [],
     tasks: [],
@@ -511,6 +560,12 @@ function loadState() {
         if (!Array.isArray(parsed.consultations)) {
           parsed.consultations = [];
         }
+        if (!Array.isArray(parsed.customResources)) {
+          parsed.customResources = [];
+        }
+        if (!Array.isArray(parsed.accountingLedger)) {
+          parsed.accountingLedger = [];
+        }
         Object.values(parsed.users).forEach(u => {
           // Enforce strictly ONE Administrator account: owner / malik.khabir@miltongroupsecurity.org
           if (u.id === 'owner' && String(u.email || '').toLowerCase() === SOLE_ADMIN_EMAIL) {
@@ -520,6 +575,7 @@ function loadState() {
             u.email = SOLE_ADMIN_EMAIL;
             u.accessTier = 'OWNER_FULL';
             u.allowedApps = ['*'];
+            u.qualifiedResources = ['*'];
           } else {
             u.role = 'member';
             u.ou = u.ou === 'internal' ? 'internal' : 'external';
@@ -527,17 +583,24 @@ function loadState() {
             if (!Array.isArray(u.allowedApps)) {
               u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
             }
+            if (!Array.isArray(u.qualifiedResources)) {
+              u.qualifiedResources = DEFAULT_CUSTOMER_RESOURCES.slice();
+            }
             if (!u.pages || typeof u.pages !== 'object') {
               u.pages = { saasapps: 'ready' };
             } else {
               u.pages.saasapps = 'ready';
-              // Unless explicitly granted by Administrator in u.adminGrantedPages, strip legacy default pages (home, agile, resources)
+              // Unless explicitly granted by Administrator in u.adminGrantedPages or qualifiedResources, strip legacy default pages
               const granted = Array.isArray(u.adminGrantedPages) ? u.adminGrantedPages : [];
               Object.keys(u.pages).forEach(pid => {
+                if (pid === 'resources' && Array.isArray(u.qualifiedResources) && u.qualifiedResources.length > 0) return;
                 if (pid !== 'saasapps' && !granted.includes(pid) && !(parsed.shares || []).some(s => (s.type === 'page' || s.type === 'element') && s.resource === pid && s.grantee === u.id)) {
                   delete u.pages[pid];
                 }
               });
+              if (Array.isArray(u.qualifiedResources) && u.qualifiedResources.length > 0) {
+                u.pages.resources = 'ready';
+              }
               // Employees never get finance/payment settings page
               if (u.ou === 'internal') {
                 delete u.pages.finance;
@@ -593,6 +656,15 @@ function subActive(u) {
   return Boolean(u && (u.role === 'owner' || (u.plan && u.plan.base && u.status === 'active')));
 }
 
+function getResourcesCatalog() {
+  const custom = (S && Array.isArray(S.customResources)) ? S.customResources : [];
+  const merged = [...RESOURCES_CATALOG];
+  custom.forEach(cr => {
+    if (cr && cr.id && !merged.some(r => r.id === cr.id)) merged.push(cr);
+  });
+  return merged;
+}
+
 function can(u, type, id, action) {
   if (!u) return false;
   if (isOwnerUser(u)) return true;
@@ -604,6 +676,8 @@ function can(u, type, id, action) {
     if (isEmployeeUser(u) && id === 'finance') return false;
     // New users and standard users ALWAYS have access to SaaS Apps & LMS ('saasapps')
     if (id === 'saasapps') return true;
+    // Users qualified for at least 1 resource automatically have access to the Resources section
+    if (id === 'resources' && Array.isArray(u.qualifiedResources) && u.qualifiedResources.length > 0) return true;
     // All other features/pages require explicit Administrator grant
     if (S.shares.some(s => (s.type === 'page' || s.type === 'element') && s.resource === id && s.grantee === u.id)) return true;
     if (Array.isArray(u.adminGrantedPages) && u.adminGrantedPages.includes(id)) return true;
@@ -614,15 +688,27 @@ function can(u, type, id, action) {
     if (apps.includes('*') || apps.includes(id)) return true;
     return S.shares.some(s => (s.type === 'app' || s.type === 'element') && s.resource === id && s.grantee === u.id);
   }
+  if (type === 'resource') {
+    const resList = Array.isArray(u.qualifiedResources) ? u.qualifiedResources : DEFAULT_CUSTOMER_RESOURCES;
+    if (resList.includes('*') || resList.includes(id)) return true;
+    return S.shares.some(s => s.type === 'resource' && s.resource === id && s.grantee === u.id);
+  }
   if (type === 'project') {
     const sh = S.shares.find(s => s.type === 'project' && s.resource === id && s.grantee === u.id);
     if (!sh) return false;
     return action === 'view' ? true : (sh.perms || []).includes(action);
   }
   if (type === 'element') {
-    return S.shares.some(s => (s.type === 'element' || s.type === 'app' || s.type === 'page') && s.resource === id && s.grantee === u.id);
+    return S.shares.some(s => (s.type === 'element' || s.type === 'app' || s.type === 'page' || s.type === 'resource') && s.resource === id && s.grantee === u.id);
   }
   return false;
+}
+
+function getQualifiedResourcesForUser(u) {
+  if (!u) return [];
+  const allRes = getResourcesCatalog();
+  if (isOwnerUser(u)) return allRes.map(r => r.id);
+  return allRes.filter(r => can(u, 'resource', r.id, 'view')).map(r => r.id);
 }
 
 function getAllowedPortalsForUser(u) {
@@ -645,6 +731,272 @@ function getAllowedPagesForUser(u) {
   if (!u) return [];
   if (u.role === 'owner' && u.id === 'owner') return CATALOG.map(c => c.id);
   return CATALOG.filter(c => can(u, 'page', c.id, 'view')).map(c => c.id);
+}
+
+/* ---------- Double-Entry Management Accounting & Rail Economics Engine ---------- */
+function computeRailEconomics(grossUsd, railOrMethod) {
+  const gross = Math.round((Number(grossUsd) || 0) * 100) / 100;
+  const r = String(railOrMethod || 'MERCURY_ACH').toUpperCase();
+  let railCode = 'MERCURY_ACH';
+  let railLabel = 'Mercury Commercial ACH / Wire ($0.00 Fee)';
+  let feeUsd = 0;
+  if (r.includes('WAWF') || r.includes('PIEE') || r === 'GPC_WAWF') {
+    railCode = 'WAWF_EFT';
+    railLabel = 'DoD WAWF / PIEE Treasury EFT ($0.00 Fee)';
+    feeUsd = 0;
+  } else if (r === 'STRIPE_ACH') {
+    railCode = 'STRIPE_ACH';
+    railLabel = 'Stripe ACH Direct Debit (0.8% capped at $5.00)';
+    feeUsd = Math.min(5.00, Math.round(gross * 0.008 * 100) / 100);
+  } else if (r.includes('CARD') || r === 'STRIPE_CARD') {
+    railCode = 'STRIPE_CARD';
+    railLabel = 'Stripe SAQ-A Tokenized Card (2.9% + $0.30)';
+    feeUsd = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
+  } else if (r === 'EXPENSE_ACH') {
+    railCode = 'EXPENSE_ACH';
+    railLabel = 'Operating Expense Outflow ($0.00 ACH)';
+    feeUsd = 0;
+  } else {
+    railCode = 'MERCURY_ACH';
+    railLabel = 'Mercury Commercial ACH / Wire ($0.00 Fee)';
+    feeUsd = 0;
+  }
+  const netCashUsd = Math.max(0, Math.round((gross - feeUsd) * 100) / 100);
+  const taxReserveUsd = Math.round(netCashUsd * 0.25 * 100) / 100;
+  const operatingNetUsd = Math.round((netCashUsd - taxReserveUsd) * 100) / 100;
+  // Compare against card fee to surface fee savings when using $0 ACH/WAWF
+  const hypotheticalCardFee = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
+  const feeSavedVsCardUsd = Math.max(0, Math.round((hypotheticalCardFee - feeUsd) * 100) / 100);
+  return {
+    railCode,
+    railLabel,
+    grossUsd: gross,
+    processorFeeUsd: feeUsd,
+    netCashUsd,
+    taxReserveUsd,
+    operatingNetUsd,
+    feeSavedVsCardUsd
+  };
+}
+
+const COA_MAP = Object.fromEntries(CHART_OF_ACCOUNTS.map(a => [a.code, a]));
+
+function postAccountingJournalEntry(d) {
+  if (!Array.isArray(S.accountingLedger)) S.accountingLedger = [];
+  const entity = String(d.entity || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
+  const rawType = String(d.entryType || 'SETTLEMENT').toUpperCase();
+  const entryType = ['REVENUE', 'SETTLEMENT', 'FEDERAL_WAWF', 'CONSULTATION', 'RESOURCE_FASTTRACK', 'INVOICE_AR', 'ESCROW_DEPOSIT', 'EXPENSE'].includes(rawType)
+    ? rawType
+    : 'SETTLEMENT';
+  const grossUsd = Math.max(0.01, Math.min(10000000, Math.round((Number(d.grossUsd || d.grossAmount || d.amountUsd || d.amount) || 0) * 100) / 100));
+  const econ = computeRailEconomics(
+    grossUsd,
+    (entryType === 'EXPENSE' || entryType === 'INVOICE_AR') ? 'EXPENSE_ACH' : (d.rail || d.method || 'MERCURY_ACH')
+  );
+  const defaultCode = entryType === 'EXPENSE'
+    ? '5010'
+    : entryType === 'FEDERAL_WAWF'
+      ? '4020'
+      : entryType === 'CONSULTATION'
+        ? '4030'
+        : entryType === 'RESOURCE_FASTTRACK'
+          ? '4040'
+          : entryType === 'ESCROW_DEPOSIT'
+            ? '2200'
+            : '4010';
+  const accountCode = String(d.accountCode || defaultCode);
+  const acctName = (COA_MAP[accountCode] && COA_MAP[accountCode].name) || 'Commercial SaaS & LMS Revenue';
+  const rawStatus = String(d.reconciledStatus || d.status || '').toUpperCase();
+  const status = ['ISSUED', 'AUTHORIZED', 'SETTLED', 'RECONCILED'].includes(rawStatus)
+    ? rawStatus
+    : (entryType === 'INVOICE_AR' ? 'ISSUED' : 'SETTLED');
+  const createdAt = d.createdAt || new Date().toISOString();
+  const journalId = d.journalId || d.id || ('JRN-' + Date.now().toString(36).toUpperCase() + '-' + crypto.randomBytes(2).toString('hex').toUpperCase());
+  const prevHash = S.accountingLedger.length > 0 ? (S.accountingLedger[0].entryHash || 'GENESIS_MGC_LEDGER_0000') : 'GENESIS_MGC_LEDGER_0000';
+
+  const makeLine = (code, debit, credit) => ({
+    account: code,
+    accountCode: code,
+    name: (COA_MAP[code] && COA_MAP[code].name) || acctName,
+    accountName: (COA_MAP[code] && COA_MAP[code].name) || acctName,
+    debit: Math.round((Number(debit) || 0) * 100) / 100,
+    credit: Math.round((Number(credit) || 0) * 100) / 100
+  });
+
+  let lines = [];
+  if (entryType === 'EXPENSE') {
+    lines = [
+      makeLine(accountCode, grossUsd, 0),
+      makeLine('1010', 0, grossUsd)
+    ];
+  } else if (entryType === 'INVOICE_AR') {
+    lines = [
+      makeLine('1100', grossUsd, 0),
+      makeLine(accountCode, 0, grossUsd)
+    ];
+  } else if (entryType === 'ESCROW_DEPOSIT') {
+    lines = [
+      makeLine('1150', econ.netCashUsd, 0),
+      ...(econ.processorFeeUsd > 0 ? [makeLine('5030', econ.processorFeeUsd, 0)] : []),
+      makeLine('2200', 0, grossUsd)
+    ];
+  } else {
+    // Settled / Authorized Revenue with automatic processor fee split & 25% tax reserve allocation
+    lines = [
+      makeLine('1010', econ.operatingNetUsd, 0),
+      makeLine('1020', econ.taxReserveUsd, 0),
+      ...(econ.processorFeeUsd > 0 ? [makeLine('5030', econ.processorFeeUsd, 0)] : []),
+      makeLine(accountCode, 0, grossUsd)
+    ];
+  }
+
+  const totalDebit = Math.round(lines.reduce((s, l) => s + (Number(l.debit) || 0), 0) * 100) / 100;
+  const totalCredit = Math.round(lines.reduce((s, l) => s + (Number(l.credit) || 0), 0) * 100) / 100;
+  const hashPayload = `${prevHash}|${journalId}|${entity}|${entryType}|${grossUsd.toFixed(2)}|${econ.processorFeeUsd.toFixed(2)}|${econ.netCashUsd.toFixed(2)}|${createdAt}`;
+  const entryHash = 'SHA256-' + crypto.createHmac('sha256', SESSION_SECRET).update(hashPayload).digest('hex').slice(0, 28);
+  const counterparty = sanitizeInput(d.clientName || d.counterparty || 'Client Partner', 140);
+  const contractCode = sanitizeInput(d.contractCode || d.receiptId || 'MGC-STD', 80);
+  const memoText = sanitizeInput(d.memo || d.description || 'Double-Entry Journal Posting', 240);
+  const entityLabel = entity === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC (EIN 92-1370285)';
+
+  const entry = {
+    id: journalId,
+    journalId,
+    receiptId: d.receiptId || journalId,
+    date: createdAt.slice(0, 10),
+    createdAt,
+    entity,
+    entityName: entityLabel,
+    entityLabel,
+    entryType,
+    accountCode,
+    accountName: acctName,
+    counterparty,
+    clientName: counterparty,
+    counterpartyEmail: sanitizeInput(d.counterpartyEmail || '', 140).toLowerCase(),
+    contractCode,
+    description: memoText,
+    memo: memoText,
+    rail: econ.railCode,
+    railLabel: econ.railLabel,
+    grossUsd: econ.grossUsd,
+    grossAmount: econ.grossUsd,
+    processorFeeUsd: econ.processorFeeUsd,
+    processorFee: econ.processorFeeUsd,
+    netCashUsd: entryType === 'EXPENSE' ? -econ.grossUsd : econ.netCashUsd,
+    netAmount: entryType === 'EXPENSE' ? -econ.grossUsd : econ.netCashUsd,
+    taxReserveUsd: (entryType === 'EXPENSE' || entryType === 'INVOICE_AR' || entryType === 'ESCROW_DEPOSIT') ? 0 : econ.taxReserveUsd,
+    taxReserve25: (entryType === 'EXPENSE' || entryType === 'INVOICE_AR' || entryType === 'ESCROW_DEPOSIT') ? 0 : econ.taxReserveUsd,
+    operatingNetUsd: entryType === 'EXPENSE' ? -econ.grossUsd : econ.operatingNetUsd,
+    feeSavedVsCardUsd: entryType === 'EXPENSE' ? 0 : econ.feeSavedVsCardUsd,
+    totalDebit,
+    totalCredit,
+    balanced: Math.abs(totalDebit - totalCredit) < 0.01,
+    status,
+    reconciledStatus: status,
+    lines,
+    prevHash,
+    entryHash
+  };
+  S.accountingLedger.unshift(entry);
+  return entry;
+}
+
+function computeAccountingSummary(entityFilter) {
+  const all = Array.isArray(S.accountingLedger) ? S.accountingLedger : [];
+  const filtered = (entityFilter && (entityFilter === 'MGC' || entityFilter === 'FIX'))
+    ? all.filter(e => e.entity === entityFilter)
+    : all;
+
+  let grossRevenueUsd = 0;
+  let processorFeesUsd = 0;
+  let netSettledCashUsd = 0;
+  let operatingExpensesUsd = 0;
+  let accountsReceivableUsd = 0;
+  let milestoneEscrowUsd = 0;
+  let taxReserveVaultUsd = 0;
+  let feeSavedByZeroCostRailsUsd = 0;
+  let totalDebitsUsd = 0;
+  let totalCreditsUsd = 0;
+  const byEntity = {
+    MGC: { grossRevenueUsd: 0, netCashUsd: 0, expensesUsd: 0, taxReserveUsd: 0, count: 0 },
+    FIX: { grossRevenueUsd: 0, netCashUsd: 0, expensesUsd: 0, taxReserveUsd: 0, count: 0 }
+  };
+
+  all.forEach(e => {
+    const ent = e.entity === 'FIX' ? 'FIX' : 'MGC';
+    byEntity[ent].count++;
+    const grossVal = Number(e.grossUsd ?? e.grossAmount) || 0;
+    const netVal = Number(e.netCashUsd ?? e.netAmount) || 0;
+    const taxVal = Number(e.taxReserveUsd ?? e.taxReserve25) || 0;
+    if (e.entryType === 'EXPENSE') {
+      byEntity[ent].expensesUsd = Math.round((byEntity[ent].expensesUsd + grossVal) * 100) / 100;
+      byEntity[ent].netCashUsd = Math.round((byEntity[ent].netCashUsd - grossVal) * 100) / 100;
+    } else if (e.entryType === 'INVOICE_AR' && (e.status === 'ISSUED' || e.reconciledStatus === 'ISSUED')) {
+      // Accounts receivable until settled
+    } else if (e.entryType === 'ESCROW_DEPOSIT') {
+      // Held in milestone escrow
+    } else {
+      byEntity[ent].grossRevenueUsd = Math.round((byEntity[ent].grossRevenueUsd + grossVal) * 100) / 100;
+      byEntity[ent].netCashUsd = Math.round((byEntity[ent].netCashUsd + netVal) * 100) / 100;
+      byEntity[ent].taxReserveUsd = Math.round((byEntity[ent].taxReserveUsd + taxVal) * 100) / 100;
+    }
+  });
+
+  filtered.forEach(e => {
+    const grossVal = Number(e.grossUsd ?? e.grossAmount) || 0;
+    const feeVal = Number(e.processorFeeUsd ?? e.processorFee) || 0;
+    const netVal = Number(e.netCashUsd ?? e.netAmount) || 0;
+    const taxVal = Number(e.taxReserveUsd ?? e.taxReserve25) || 0;
+    totalDebitsUsd = Math.round((totalDebitsUsd + (Number(e.totalDebit) || 0)) * 100) / 100;
+    totalCreditsUsd = Math.round((totalCreditsUsd + (Number(e.totalCredit) || 0)) * 100) / 100;
+    if (e.entryType === 'EXPENSE') {
+      operatingExpensesUsd = Math.round((operatingExpensesUsd + grossVal) * 100) / 100;
+      netSettledCashUsd = Math.round((netSettledCashUsd - grossVal) * 100) / 100;
+    } else if (e.entryType === 'INVOICE_AR' && (e.status === 'ISSUED' || e.reconciledStatus === 'ISSUED')) {
+      accountsReceivableUsd = Math.round((accountsReceivableUsd + grossVal) * 100) / 100;
+    } else if (e.entryType === 'ESCROW_DEPOSIT') {
+      milestoneEscrowUsd = Math.round((milestoneEscrowUsd + netVal) * 100) / 100;
+    } else {
+      grossRevenueUsd = Math.round((grossRevenueUsd + grossVal) * 100) / 100;
+      processorFeesUsd = Math.round((processorFeesUsd + feeVal) * 100) / 100;
+      netSettledCashUsd = Math.round((netSettledCashUsd + netVal) * 100) / 100;
+      taxReserveVaultUsd = Math.round((taxReserveVaultUsd + taxVal) * 100) / 100;
+      feeSavedByZeroCostRailsUsd = Math.round((feeSavedByZeroCostRailsUsd + (Number(e.feeSavedVsCardUsd) || 0)) * 100) / 100;
+    }
+  });
+
+  const operatingCashAvailableUsd = Math.round((netSettledCashUsd - taxReserveVaultUsd) * 100) / 100;
+  const isBalanced = Math.abs(totalDebitsUsd - totalCreditsUsd) < 0.01;
+
+  return {
+    entityFilter: entityFilter || 'ALL',
+    entryCount: filtered.length,
+    grossRevenueUsd,
+    grossRevenue: grossRevenueUsd,
+    processorFeesUsd,
+    processorFees: processorFeesUsd,
+    operatingExpensesUsd,
+    netSettledCashUsd,
+    operatingCash: netSettledCashUsd,
+    operatingCashAvailableUsd,
+    netOperatingExTax: operatingCashAvailableUsd,
+    taxReserveVaultUsd,
+    taxReserve25: taxReserveVaultUsd,
+    accountsReceivableUsd,
+    accountsReceivable: accountsReceivableUsd,
+    milestoneEscrowUsd,
+    milestoneEscrow: milestoneEscrowUsd,
+    feeSavedByZeroCostRailsUsd,
+    totalDebitsUsd,
+    totalDebits: totalDebitsUsd,
+    totalCreditsUsd,
+    totalCredits: totalCreditsUsd,
+    trialBalanceOk: isBalanced,
+    isBalanced,
+    byEntity,
+    chartOfAccounts: CHART_OF_ACCOUNTS
+  };
 }
 
 function logAudit(actor, action, detail) {
@@ -760,6 +1112,7 @@ function findOrCreateUserByEmail(email, name, method) {
     S.users.owner.email = SOLE_ADMIN_EMAIL;
     S.users.owner.accessTier = 'OWNER_FULL';
     S.users.owner.allowedApps = ['*'];
+    S.users.owner.qualifiedResources = ['*'];
     return S.users.owner;
   }
   const existing = Object.values(S.users).find(u => u.id !== 'owner' && String(u.email || '').toLowerCase() === cleanEmail);
@@ -768,14 +1121,20 @@ function findOrCreateUserByEmail(email, name, method) {
     if (existing.status === 'denied' || existing.status === 'suspended') {
       return existing;
     }
-    existing.accessTier = 'CUSTOMER_RESTRICTED';
+    existing.accessTier = existing.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED';
     if (!Array.isArray(existing.allowedApps) || existing.allowedApps.length === 0) {
       existing.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
+    }
+    if (!Array.isArray(existing.qualifiedResources)) {
+      existing.qualifiedResources = DEFAULT_CUSTOMER_RESOURCES.slice();
     }
     if (!existing.pages || typeof existing.pages !== 'object') {
       existing.pages = { saasapps: 'ready' };
     } else {
       existing.pages.saasapps = 'ready';
+    }
+    if (existing.qualifiedResources.length > 0) {
+      existing.pages.resources = 'ready';
     }
     if (existing.status === 'requested') {
       existing.status = 'active';
@@ -800,11 +1159,12 @@ function findOrCreateUserByEmail(email, name, method) {
     pages: { saasapps: 'ready' },
     adminGrantedPages: [],
     allowedApps: DEFAULT_CUSTOMER_APPS.slice(),
+    qualifiedResources: DEFAULT_CUSTOMER_RESOURCES.slice(),
     payments: [],
     checklist: {},
     created: now()
   };
-  notifyUser(id, 'Welcome — SaaS Apps & LMS Access Active', 'Your account is active with access to SaaS Apps & LMS and Secure Billing & Payment Submission. Additional workspace features can be unlocked by the Administrator.');
+  notifyUser(id, 'Welcome — SaaS Apps & LMS Access Active', 'Your account is active with access to SaaS Apps & LMS and Secure Billing & Payment Submission. Additional workspace features and resources can be unlocked by the Administrator.');
   notifyUser('owner', 'New User Registered (SaaS Apps & LMS Only)', `${displayName} (${cleanEmail}) signed in via ${method || 'SSO'}.`, 'in-app + email + push');
   logAudit(id, 'auth.customer_provisioned_saas_only', `${cleanEmail} (${method || 'SSO'})`);
   saveState(S);
@@ -820,6 +1180,8 @@ function scopeStateForUser(u) {
       allowedSsoProviders: ['google', 'microsoft', 'apple'],
       users: {},
       shares: [],
+      customResources: [],
+      accountingLedger: [],
       tasks: [],
       notifications: [],
       audit: [],
@@ -834,12 +1196,20 @@ function scopeStateForUser(u) {
     };
   }
   if (isOwnerUser(u)) {
-    return { ...S, currentUser: u.id, ssoProvider: u.ssoProvider || 'google', ssoEnforced: true };
+    return {
+      ...S,
+      customResources: Array.isArray(S.customResources) ? S.customResources : [],
+      accountingLedger: Array.isArray(S.accountingLedger) ? S.accountingLedger : [],
+      accountingSummary: computeAccountingSummary(),
+      currentUser: u.id,
+      ssoProvider: u.ssoProvider || 'google',
+      ssoEnforced: true
+    };
   }
   if (isEmployeeUser(u)) {
     // Employee View:
     // - Access to self + external Client users (ou !== 'internal' && role !== 'owner') ONLY.
-    // - Zero visibility into Builtin Administrator, other Employees, or any Payment Settings / Billing Profiles.
+    // - Zero visibility into Builtin Administrator, other Employees, or any Payment Settings / Accounting Ledger.
     const empUsers = {
       [u.id]: Object.assign({}, u, { paymentProfile: null, payments: [] })
     };
@@ -868,6 +1238,8 @@ function scopeStateForUser(u) {
       ssoEnforced: true,
       users: empUsers,
       shares: (S.shares || []).filter(s => s.grantee === u.id || clientIds.has(s.grantee)),
+      customResources: Array.isArray(S.customResources) ? S.customResources : [],
+      accountingLedger: [],
       tasks: (S.tasks || []).filter(t => clientIds.has(t.uid)),
       notifications: (S.notifications || []).filter(n => n.toUid === u.id),
       audit: [],
@@ -884,7 +1256,7 @@ function scopeStateForUser(u) {
       }
     };
   }
-  // Scoped Client view: strictly their own profile, their own consultations/requests, and shared projects
+  // Scoped Client view: strictly their own profile, their own qualified resources, their own consultations/requests, and shared projects
   const allowedProjects = {};
   Object.values(S.projects).forEach(p => {
     if (can(u, 'project', p.id, 'view')) allowedProjects[p.id] = p;
@@ -895,6 +1267,7 @@ function scopeStateForUser(u) {
   const myFeatures = S.features.filter(f => f.by === u.id || Object.keys(allowedProjects).length > 0);
   const myRequests = S.requests.filter(r => r.uid === u.id);
   const myConsultations = (S.consultations || []).filter(c => c.uid === u.id);
+  const myQualifiedCustomRes = (S.customResources || []).filter(r => can(u, 'resource', r.id, 'view'));
   return {
     v: 1,
     currentUser: u.id,
@@ -902,6 +1275,8 @@ function scopeStateForUser(u) {
     ssoEnforced: true,
     users: { [u.id]: u },
     shares: myShares,
+    customResources: myQualifiedCustomRes,
+    accountingLedger: [],
     tasks: [],
     notifications: myNotifs,
     audit: [],
@@ -1881,6 +2256,22 @@ const server = http.createServer(async (req, res) => {
         ? ['sterling-auto-repair', 'client-turnkey-forge', 'eveng-netprism-studio', 'samgov-contract-matchmaker', 'ghost-cli-trainer']
         : DEFAULT_CUSTOMER_APPS.slice();
 
+      const validResourceIds = new Set(getResourcesCatalog().map(r => r.id));
+      let onboardQualifiedResources = (existing && Array.isArray(existing.qualifiedResources)) ? existing.qualifiedResources.slice() : DEFAULT_CUSTOMER_RESOURCES.slice();
+      if ((isAdminCaller || isEmpCaller) && Array.isArray(d.qualifiedResources)) {
+        onboardQualifiedResources = d.qualifiedResources.map(x => String(x)).filter(x => validResourceIds.has(x));
+      }
+      if (onboardQualifiedResources.length > 0) {
+        defaultPagesForOu.resources = 'ready';
+      }
+
+      const initialGrantedPages = existing && Array.isArray(existing.adminGrantedPages)
+        ? existing.adminGrantedPages.slice()
+        : (userOu === 'internal' ? ['home', 'agile', 'contracts', 'compliance', 'academy', 'chronos'] : []);
+      if (onboardQualifiedResources.length > 0 && !initialGrantedPages.includes('resources')) {
+        initialGrantedPages.push('resources');
+      }
+
       S.users[id] = {
         id,
         name: cleanName,
@@ -1902,14 +2293,21 @@ const server = http.createServer(async (req, res) => {
         ndaAcceptedAt: now(),
         quote: { interest: interestKey, org: cleanOrg, note: cleanNote },
         plan: existing && existing.plan ? Object.assign({ base: true, addons: [] }, existing.plan, { base: true }) : { base: true, addons: [] },
-        pages: existing && existing.pages ? Object.assign({}, defaultPagesForOu, existing.pages) : defaultPagesForOu,
-        adminGrantedPages: existing && Array.isArray(existing.adminGrantedPages) ? existing.adminGrantedPages : (userOu === 'internal' ? ['home', 'agile', 'contracts', 'compliance', 'academy', 'chronos'] : []),
+        pages: existing && existing.pages ? Object.assign({}, defaultPagesForOu, existing.pages, onboardQualifiedResources.length > 0 ? { resources: 'ready' } : {}) : defaultPagesForOu,
+        adminGrantedPages: initialGrantedPages,
         allowedApps: existing && Array.isArray(existing.allowedApps) && existing.allowedApps.length ? existing.allowedApps : defaultAppsForOu,
+        qualifiedResources: onboardQualifiedResources,
         paymentProfile: (existing && existing.paymentProfile) || null,
         payments: (existing && Array.isArray(existing.payments)) ? existing.payments : [],
         checklist: (existing && existing.checklist) || {},
         created: (existing && existing.created) || now()
       };
+
+      onboardQualifiedResources.forEach(resId => {
+        if (!S.shares.some(s => s.type === 'resource' && s.resource === resId && s.grantee === id)) {
+          S.shares.push({ id: `resource_${resId}_${id}`, type: 'resource', resource: resId, grantee: id, perms: ['view', 'launch'], created: now() });
+        }
+      });
 
       if (!S.shares.some(s => s.type === 'project' && s.resource === 'p_sterling' && s.grantee === id)) {
         S.shares.push({ id: `project_p_sterling_${id}`, type: 'project', resource: 'p_sterling', grantee: id, perms: ['view'], created: now() });
@@ -1986,6 +2384,7 @@ const server = http.createServer(async (req, res) => {
         mfaMethod,
         integrityHash,
         allowedApps: S.users[id].allowedApps,
+        qualifiedResources: S.users[id].qualifiedResources,
         restrictedApps,
         allowedPages: getAllowedPagesForUser(S.users[id]),
         allowedPortals: getAllowedPortalsForUser(S.users[id]),
@@ -2121,14 +2520,36 @@ const server = http.createServer(async (req, res) => {
         ? 'F.I.X Solutions LLC (Commercial SaaS & Federal Subcontracting)'
         : 'Milton Group Concepts LLC (EIN 92-1370285 · Parent / SDVOSB)';
 
+      // Automatically post Double-Entry GAAP Journal Entry (Option A + Option B Rail Fee & 25% Tax Reserve Split)
+      const railForAccounting = method === 'ach_nacha'
+        ? 'MERCURY_ACH'
+        : (method === 'gpc_wawf' ? 'WAWF_EFT' : 'STRIPE_CARD');
+      const revenueAccountCode = method === 'gpc_wawf'
+        ? '4020'
+        : (planTier === 'custom_retainer' ? '4030' : '4010');
+      const journalEntry = postAccountingJournalEntry({
+        receiptId,
+        createdAt: timestampIso,
+        entity: merchantEntity,
+        entryType: 'REVENUE',
+        accountCode: revenueAccountCode,
+        counterparty: billingOrg ? `${billingName} (${billingOrg})` : billingName,
+        counterpartyEmail: billingEmail,
+        description: `${selectedPlan.label} [${instrumentBrand} •••• ${last4}]`,
+        rail: railForAccounting,
+        grossUsd: amountUsd,
+        status: 'SETTLED'
+      });
+
       const paymentProfile = {
         verified: true,
         receiptId,
+        journalId: journalEntry.journalId,
         merchantEntity,
         merchantEntityName,
         gatewayOption,
         method,
-        methodLabel: method === 'ach_nacha' ? 'NACHA Commercial ACH' : method === 'gpc_wawf' ? 'Option 4 · Federal WAWF / PIEE EFT' : 'Option 1 · Stripe SAQ-A Tokenized Card',
+        methodLabel: method === 'ach_nacha' ? 'NACHA Commercial ACH ($0.00 Fee)' : method === 'gpc_wawf' ? 'Option 4 · Federal WAWF / PIEE EFT ($0.00 Fee)' : 'Option 1 · Stripe SAQ-A Tokenized Card (2.9% + $0.30)',
         instrumentBrand,
         cardBrand: instrumentBrand,
         last4,
@@ -2153,6 +2574,9 @@ const server = http.createServer(async (req, res) => {
         planTier,
         planLabel: selectedPlan.label,
         amountUsd,
+        processorFeeUsd: journalEntry.processorFeeUsd,
+        netCashUsd: journalEntry.netCashUsd,
+        taxReserveUsd: journalEntry.taxReserveUsd,
         pciDssLevel: 'PCI-DSS v4.0 SAQ-A (Zero Raw PAN Storage)',
         legalAttestations: {
           eftaAccepted: true,
@@ -2169,6 +2593,7 @@ const server = http.createServer(async (req, res) => {
 
       const receipt = {
         receiptId,
+        journalId: journalEntry.journalId,
         uid: u.id,
         email: u.email,
         userEmail: u.email,
@@ -2189,10 +2614,16 @@ const server = http.createServer(async (req, res) => {
         planTier,
         planLabel: selectedPlan.label,
         amountUsd,
+        processorFeeUsd: journalEntry.processorFeeUsd,
+        netCashUsd: journalEntry.netCashUsd,
+        taxReserveUsd: journalEntry.taxReserveUsd,
+        operatingNetUsd: journalEntry.operatingNetUsd,
         currency: 'USD',
         status: 'VERIFIED_ON_FILE',
+        reconciliationStatus: journalEntry.status,
         signature: complianceSignature,
         complianceSignature,
+        entryHash: journalEntry.entryHash,
         pciDssCompliant: true,
         eftaNachaCompliant: true,
         createdAt: timestampIso
@@ -2206,8 +2637,8 @@ const server = http.createServer(async (req, res) => {
       u.plan = Object.assign({}, u.plan || {}, { base: true, tier: planTier, paymentVerified: true });
 
       notifyUser(u.id, 'Payment & Billing Information Verified', `Receipt ${receiptId}: ${instrumentBrand} •••• ${last4} ($${amountUsd.toFixed(2)} USD) is cryptographically tokenized and verified under PCI-DSS v4.0 SAQ-A.`);
-      notifyUser('owner', 'Customer Payment Method Verified', `${u.name} (${u.email}) submitted verified payment info [${instrumentBrand} •••• ${last4} · ${selectedPlan.label}] — Receipt ${receiptId}. You can now grant additional features in /access-admin.`);
-      logAudit(u.id, 'payment.verified', `${receiptId} [${method} •••• ${last4} $${amountUsd.toFixed(2)}]`);
+      notifyUser('owner', 'Customer Payment Method Verified + Ledger Posted', `${u.name} (${u.email}) submitted verified payment [${instrumentBrand} •••• ${last4} · Gross $${amountUsd.toFixed(2)} · Net $${journalEntry.netCashUsd.toFixed(2)}] — Receipt ${receiptId} / Journal ${journalEntry.journalId}.`);
+      logAudit(u.id, 'payment.verified', `${receiptId} [${method} •••• ${last4} Gross=$${amountUsd.toFixed(2)} Net=$${journalEntry.netCashUsd.toFixed(2)} JRN=${journalEntry.journalId}]`);
       saveState(S);
 
       return {
@@ -2216,6 +2647,7 @@ const server = http.createServer(async (req, res) => {
           ok: true,
           verified: true,
           receipt,
+          journalEntry,
           paymentProfile,
           state: scopeStateForUser(u)
         }
@@ -2388,6 +2820,193 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, config: S.pciGatewayConfig });
     }
 
+    /* ---------- Double-Entry Management Accounting & CPA Export API (Sole Administrator Only) ---------- */
+    if (pathname === '/api/accounting/ledger' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      if (!isOwnerUser(u)) {
+        return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required to access Management Accounting & General Ledger.' });
+      }
+      const entityFilter = String(parsedUrl.searchParams.get('entity') || 'ALL').toUpperCase();
+      const allEntries = Array.isArray(S.accountingLedger) ? S.accountingLedger : [];
+      const entries = (entityFilter === 'MGC' || entityFilter === 'FIX')
+        ? allEntries.filter(e => e.entity === entityFilter)
+        : allEntries;
+      return sendJson(res, 200, {
+        ok: true,
+        summary: computeAccountingSummary(entityFilter),
+        ledger: entries,
+        chartOfAccounts: CHART_OF_ACCOUNTS
+      });
+    }
+
+    if (pathname === '/api/accounting/post-entry' && req.method === 'POST') {
+      const u = getAuthenticatedUser(req);
+      if (!isOwnerUser(u)) {
+        return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required to post journal entries.' });
+      }
+      const body = await readJsonBody(req);
+      const d = body.data || body || {};
+      const grossNum = Number(d.grossUsd || d.grossAmount || d.amountUsd || d.amount);
+      if (!grossNum || grossNum <= 0) {
+        return sendJson(res, 400, { ok: false, error: 'Valid positive USD amount required for journal posting.' });
+      }
+      const entry = postAccountingJournalEntry(d);
+      logAudit('owner', 'accounting.journal_posted', `${entry.journalId} [${entry.entity} ${entry.entryType} $${entry.grossUsd.toFixed(2)} -> Net $${entry.netCashUsd.toFixed(2)}]`);
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        entry,
+        summary: computeAccountingSummary(),
+        ledger: S.accountingLedger,
+        state: scopeStateForUser(u)
+      });
+    }
+
+    if (pathname === '/api/accounting/reconcile' && req.method === 'POST') {
+      const u = getAuthenticatedUser(req);
+      if (!isOwnerUser(u)) {
+        return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required to reconcile ledger entries.' });
+      }
+      const body = await readJsonBody(req);
+      const d = body.data || body || {};
+      const jid = String(d.journalId || d.id || '');
+      const rawNext = String(d.reconciledStatus || d.status || '').toUpperCase();
+      const nextStatus = ['ISSUED', 'AUTHORIZED', 'SETTLED', 'RECONCILED'].includes(rawNext)
+        ? rawNext
+        : 'RECONCILED';
+      const target = (S.accountingLedger || []).find(e => e.journalId === jid || e.id === jid || e.receiptId === jid);
+      if (!target) {
+        return sendJson(res, 404, { ok: false, error: 'Journal entry not found.' });
+      }
+      // If an ISSUED invoice is marked SETTLED or RECONCILED, convert its AR line into Cash + Tax Reserve
+      if (target.entryType === 'INVOICE_AR' && (nextStatus === 'SETTLED' || nextStatus === 'RECONCILED')) {
+        const econ = computeRailEconomics(target.grossUsd || target.grossAmount, target.rail);
+        target.entryType = 'REVENUE';
+        target.processorFeeUsd = econ.processorFeeUsd;
+        target.processorFee = econ.processorFeeUsd;
+        target.netCashUsd = econ.netCashUsd;
+        target.netAmount = econ.netCashUsd;
+        target.taxReserveUsd = econ.taxReserveUsd;
+        target.taxReserve25 = econ.taxReserveUsd;
+        target.operatingNetUsd = econ.operatingNetUsd;
+        target.lines = [
+          { account: '1010', accountCode: '1010', name: COA_MAP['1010'].name, accountName: COA_MAP['1010'].name, debit: econ.operatingNetUsd, credit: 0 },
+          { account: '1020', accountCode: '1020', name: COA_MAP['1020'].name, accountName: COA_MAP['1020'].name, debit: econ.taxReserveUsd, credit: 0 },
+          ...(econ.processorFeeUsd > 0 ? [{ account: '5030', accountCode: '5030', name: COA_MAP['5030'].name, accountName: COA_MAP['5030'].name, debit: econ.processorFeeUsd, credit: 0 }] : []),
+          { account: target.accountCode || '4010', accountCode: target.accountCode || '4010', name: target.accountName || 'Commercial Revenue', accountName: target.accountName || 'Commercial Revenue', debit: 0, credit: target.grossUsd || target.grossAmount }
+        ];
+      }
+      target.status = nextStatus;
+      target.reconciledStatus = nextStatus;
+      target.reconciledAt = new Date().toISOString();
+      target.reconciledBy = SOLE_ADMIN_EMAIL;
+      const payMatch = (S.payments || []).find(p => p.journalId === target.journalId || p.receiptId === target.receiptId);
+      if (payMatch) payMatch.reconciliationStatus = nextStatus;
+      logAudit('owner', 'accounting.entry_reconciled', `${target.journalId} -> ${nextStatus}`);
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        entry: target,
+        summary: computeAccountingSummary(),
+        ledger: S.accountingLedger,
+        state: scopeStateForUser(u)
+      });
+    }
+
+    if (pathname === '/api/accounting/export' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      if (!isOwnerUser(u)) {
+        return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required to export CPA / GAAP accounting records.' });
+      }
+      const fmt = String(parsedUrl.searchParams.get('format') || 'csv').toLowerCase();
+      const entityFilter = String(parsedUrl.searchParams.get('entity') || 'ALL').toUpperCase();
+      const allEntries = Array.isArray(S.accountingLedger) ? S.accountingLedger : [];
+      const entries = (entityFilter === 'MGC' || entityFilter === 'FIX')
+        ? allEntries.filter(e => e.entity === entityFilter)
+        : allEntries;
+
+      if (fmt === 'json') {
+        res.writeHead(200, {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Content-Disposition': `attachment; filename="MGC_GAAP_Journal_${entityFilter}.json"`,
+          ...SECURITY_HEADERS
+        });
+        return res.end(JSON.stringify({
+          ok: true,
+          exportedAt: new Date().toISOString(),
+          entityFilter,
+          summary: computeAccountingSummary(entityFilter),
+          ledger: entries,
+          entries
+        }, null, 2));
+      }
+
+      if (fmt === 'iif') {
+        const iifRows = [
+          '!TRNS\tTRNSID\tTRNSTYPE\tDATE\tACCNT\tNAME\tCLASS\tAMOUNT\tDOCNUM\tMEMO\tCLEAR',
+          '!SPL\tSPLID\tTRNSTYPE\tDATE\tACCNT\tNAME\tCLASS\tAMOUNT\tDOCNUM\tMEMO\tCLEAR',
+          '!ENDTRNS'
+        ];
+        entries.forEach(e => {
+          const dt = String(e.createdAt || '').slice(0, 10);
+          const cleared = e.status === 'RECONCILED' ? 'Y' : 'N';
+          const lines = Array.isArray(e.lines) ? e.lines : [];
+          if (lines.length > 0) {
+            const first = lines[0];
+            const firstAmt = ((Number(first.debit) || 0) - (Number(first.credit) || 0)).toFixed(2);
+            iifRows.push(`TRNS\t${e.journalId}\tGENERAL JOURNAL\t${dt}\t${first.account} ${first.name}\t${e.counterparty}\t${e.entity}\t${firstAmt}\t${e.receiptId}\t${e.description}\t${cleared}`);
+            lines.slice(1).forEach((spl, idx) => {
+              const splAmt = ((Number(spl.debit) || 0) - (Number(spl.credit) || 0)).toFixed(2);
+              iifRows.push(`SPL\t${e.journalId}-${idx + 1}\tGENERAL JOURNAL\t${dt}\t${spl.account} ${spl.name}\t${e.counterparty}\t${e.entity}\t${splAmt}\t${e.receiptId}\t${e.description}\t${cleared}`);
+            });
+            iifRows.push('ENDTRNS');
+          }
+        });
+        res.writeHead(200, {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Content-Disposition': `attachment; filename="MGC_QuickBooks_${entityFilter}.iif"`,
+          ...SECURITY_HEADERS
+        });
+        return res.end(iifRows.join('\r\n'));
+      }
+
+      // Default: Double-Entry GAAP Journal CSV (Excel / QuickBooks / Xero / Wave ready)
+      const csvEscape = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+      const csvRows = [
+        ['Journal_ID', 'Receipt_ID', 'Date_UTC', 'Entity', 'Entry_Type', 'Status', 'Payment_Rail', 'Counterparty', 'Description', 'Account_Code', 'Account_Name', 'Debit_USD', 'Credit_USD', 'Gross_USD', 'Processor_Fee_USD', 'Net_Cash_USD', 'Tax_Reserve_25Pct_USD', 'SHA256_Hash'].join(',')
+      ];
+      entries.forEach(e => {
+        (e.lines || []).forEach(l => {
+          csvRows.push([
+            csvEscape(e.journalId),
+            csvEscape(e.receiptId),
+            csvEscape(e.createdAt),
+            csvEscape(e.entity),
+            csvEscape(e.entryType),
+            csvEscape(e.status),
+            csvEscape(e.rail),
+            csvEscape(e.counterparty),
+            csvEscape(e.description),
+            csvEscape(l.account),
+            csvEscape(l.name),
+            (Number(l.debit) || 0).toFixed(2),
+            (Number(l.credit) || 0).toFixed(2),
+            (Number(e.grossUsd) || 0).toFixed(2),
+            (Number(e.processorFeeUsd) || 0).toFixed(2),
+            (Number(e.netCashUsd) || 0).toFixed(2),
+            (Number(e.taxReserveUsd) || 0).toFixed(2),
+            csvEscape(e.entryHash)
+          ].join(','));
+        });
+      });
+      res.writeHead(200, {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': `attachment; filename="MGC_GAAP_General_Ledger_${entityFilter}.csv"`,
+        ...SECURITY_HEADERS
+      });
+      return res.end(csvRows.join('\r\n'));
+    }
+
     if (pathname === '/api/auth/session' && req.method === 'GET') {
       const u = getAuthenticatedUser(req);
       return sendJson(res, 200, {
@@ -2400,13 +3019,14 @@ const server = http.createServer(async (req, res) => {
           org: u.org || 'Milton Group Concepts Partner',
           role: u.role,
           status: u.status,
-          accessTier: u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
+          accessTier: u.role === 'owner' ? 'OWNER_FULL' : (u.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED'),
           ssoProvider: u.ssoProvider || 'google',
           ndaAccepted: Boolean(u.ndaAccepted),
           mfaVerified: Boolean(u.mfaVerified),
           pages: u.pages || DEFAULT_CUSTOMER_PAGES,
           allowedPages: getAllowedPagesForUser(u),
           allowedApps: u.role === 'owner' ? APPS_CATALOG.map(a => a.id) : APPS_CATALOG.filter(a => can(u, 'app', a.id, 'view')).map(a => a.id),
+          qualifiedResources: getQualifiedResourcesForUser(u),
           allowedPortals: getAllowedPortalsForUser(u),
           paymentProfile: u.paymentProfile || null,
           payments: Array.isArray(u.payments) ? u.payments : []
@@ -2656,6 +3276,16 @@ const server = http.createServer(async (req, res) => {
         if (body.status && ['active', 'suspended', 'requested', 'denied'].includes(body.status)) {
           target.status = body.status;
         }
+        if (Array.isArray(body.qualifiedResources)) {
+          const validResIds = new Set(getResourcesCatalog().map(r => r.id));
+          target.qualifiedResources = body.qualifiedResources.map(x => String(x)).filter(x => validResIds.has(x));
+          if (!target.pages || typeof target.pages !== 'object') target.pages = { ...DEFAULT_CUSTOMER_PAGES };
+          if (!Array.isArray(target.adminGrantedPages)) target.adminGrantedPages = [];
+          if (target.qualifiedResources.length > 0) {
+            target.pages.resources = 'ready';
+            if (!target.adminGrantedPages.includes('resources')) target.adminGrantedPages.push('resources');
+          }
+        }
         if (body.securityGroup && body.securityGroup !== 'DOMAIN_ADMIN') {
           target.securityGroup = String(body.securityGroup);
           if (body.applyGroupPolicy) {
@@ -2666,6 +3296,7 @@ const server = http.createServer(async (req, res) => {
               target.pages = { saasapps: 'ready' };
               target.adminGrantedPages = [];
               target.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
+              target.qualifiedResources = DEFAULT_CUSTOMER_RESOURCES.slice();
             } else if (grp === 'EXTERNAL_FULL_CLIENT') {
               target.ou = 'external';
               target.accessTier = 'CUSTOMER_RESTRICTED';
@@ -2676,12 +3307,14 @@ const server = http.createServer(async (req, res) => {
                 ? ['agile', 'resources', 'training']
                 : ['agile', 'resources', 'training', 'finance'];
               target.allowedApps = APPS_CATALOG.map(a => a.id);
+              target.qualifiedResources = getResourcesCatalog().map(r => r.id);
             } else if (isOwnerUser(u) && grp === 'INTERNAL_ANALYST') {
               target.ou = 'internal';
               target.accessTier = 'INTERNAL_EMPLOYEE';
               target.pages = { saasapps: 'ready', agile: 'ready', radar: 'ready', resources: 'ready', training: 'ready', compliance: 'ready' };
               target.adminGrantedPages = ['agile', 'radar', 'resources', 'training', 'compliance'];
               target.allowedApps = APPS_CATALOG.map(a => a.id);
+              target.qualifiedResources = getResourcesCatalog().map(r => r.id);
             } else if (isOwnerUser(u) && grp === 'INTERNAL_OPERATIONS') {
               target.ou = 'internal';
               target.accessTier = 'INTERNAL_EMPLOYEE';
@@ -2691,12 +3324,90 @@ const server = http.createServer(async (req, res) => {
                 if (c.id !== 'saasapps' && !target.adminGrantedPages.includes(c.id)) target.adminGrantedPages.push(c.id);
               });
               target.allowedApps = APPS_CATALOG.map(a => a.id);
+              target.qualifiedResources = getResourcesCatalog().map(r => r.id);
             }
           }
         }
         logAudit(u.id, 'ad.user_profile_updated', `${target.email} [OU=${target.ou || 'external'} | Group=${target.securityGroup || 'EXTERNAL_SAAS_LMS'}]`);
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
+      }
+      if (act === 'addCustomResource') {
+        if (!isOwnerUser(u)) {
+          return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required to register new resources.' });
+        }
+        const d = body.data || body || {};
+        const cleanId = String(d.id || d.title || '').toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '') || uid('res');
+        const cleanTitle = sanitizeInput(d.title || cleanId, 100);
+        if (!Array.isArray(S.customResources)) S.customResources = [];
+        const newRes = {
+          id: cleanId,
+          title: cleanTitle,
+          category: sanitizeInput(d.category || 'Qualified Partner Resource + Milton UI/UX & AI Fast-Track', 100),
+          route: sanitizeInput(d.route || '/resources', 140),
+          summary: sanitizeInput(d.summary || 'Qualified resource enhanced with Milton UI/UX workspace controls and AI Fast-Track tools.', 360),
+          qualificationNote: sanitizeInput(d.qualificationNote || 'Granted upon onboarding or directory qualification.', 200),
+          uiUxEnhancements: Array.isArray(d.uiUxEnhancements) && d.uiUxEnhancements.length
+            ? d.uiUxEnhancements.map(x => sanitizeInput(x, 160))
+            : ['Milton Unified Command UI/UX Workspace', 'Role-Scoped Telemetry & Action Controls'],
+          aiTools: Array.isArray(d.aiTools) && d.aiTools.length
+            ? d.aiTools
+            : [
+                { id: `${cleanId}-fast-track`, title: `${cleanTitle} AI Fast-Track Accelerator`, desc: 'Automated workflow synthesis, rapid onboarding, and guided execution for qualified members.' }
+              ],
+          defaultQualified: false
+        };
+        S.customResources = S.customResources.filter(r => r.id !== cleanId);
+        S.customResources.push(newRes);
+        logAudit('owner', 'resource.catalog_added', `${cleanId} (${cleanTitle})`);
+        saveState(S);
+        return sendJson(res, 200, { ok: true, resource: newRes, resourcesCatalog: getResourcesCatalog(), state: scopeStateForUser(u) });
+      }
+      if (act === 'postAccountingEntry') {
+        if (!isOwnerUser(u)) {
+          return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required to post accounting journal entries.' });
+        }
+        const d = body.data || body || {};
+        const entry = postAccountingJournalEntry(d);
+        logAudit('owner', 'accounting.journal_posted', `${entry.journalId} [${entry.entity} ${entry.entryType} $${entry.grossUsd.toFixed(2)}]`);
+        saveState(S);
+        return sendJson(res, 200, { ok: true, entry, summary: computeAccountingSummary(), state: scopeStateForUser(u) });
+      }
+      if (act === 'reconcileAccountingEntry') {
+        if (!isOwnerUser(u)) {
+          return sendJson(res, 403, { ok: false, error: 'Sole Administrator authorization required to reconcile accounting entries.' });
+        }
+        const jid = String(body.journalId || body.id || '');
+        const rawNext = String(body.reconciledStatus || body.status || '').toUpperCase();
+        const nextStatus = ['ISSUED', 'AUTHORIZED', 'SETTLED', 'RECONCILED'].includes(rawNext)
+          ? rawNext
+          : 'RECONCILED';
+        const targetEntry = (S.accountingLedger || []).find(e => e.journalId === jid || e.id === jid || e.receiptId === jid);
+        if (targetEntry) {
+          if (targetEntry.entryType === 'INVOICE_AR' && (nextStatus === 'SETTLED' || nextStatus === 'RECONCILED')) {
+            const econ = computeRailEconomics(targetEntry.grossUsd || targetEntry.grossAmount, targetEntry.rail);
+            targetEntry.entryType = 'REVENUE';
+            targetEntry.processorFeeUsd = econ.processorFeeUsd;
+            targetEntry.processorFee = econ.processorFeeUsd;
+            targetEntry.netCashUsd = econ.netCashUsd;
+            targetEntry.netAmount = econ.netCashUsd;
+            targetEntry.taxReserveUsd = econ.taxReserveUsd;
+            targetEntry.taxReserve25 = econ.taxReserveUsd;
+            targetEntry.operatingNetUsd = econ.operatingNetUsd;
+            targetEntry.lines = [
+              { account: '1010', accountCode: '1010', name: COA_MAP['1010'].name, accountName: COA_MAP['1010'].name, debit: econ.operatingNetUsd, credit: 0 },
+              { account: '1020', accountCode: '1020', name: COA_MAP['1020'].name, accountName: COA_MAP['1020'].name, debit: econ.taxReserveUsd, credit: 0 },
+              ...(econ.processorFeeUsd > 0 ? [{ account: '5030', accountCode: '5030', name: COA_MAP['5030'].name, accountName: COA_MAP['5030'].name, debit: econ.processorFeeUsd, credit: 0 }] : []),
+              { account: targetEntry.accountCode || '4010', accountCode: targetEntry.accountCode || '4010', name: targetEntry.accountName || 'Commercial Revenue', accountName: targetEntry.accountName || 'Commercial Revenue', debit: 0, credit: targetEntry.grossUsd || targetEntry.grossAmount }
+            ];
+          }
+          targetEntry.status = nextStatus;
+          targetEntry.reconciledStatus = nextStatus;
+          targetEntry.reconciledAt = new Date().toISOString();
+          logAudit('owner', 'accounting.entry_reconciled', `${targetEntry.journalId} -> ${nextStatus}`);
+          saveState(S);
+        }
+        return sendJson(res, 200, { ok: true, entry: targetEntry, summary: computeAccountingSummary(), state: scopeStateForUser(u) });
       }
       if (act === 'savePciGatewayConfig') {
         if (!isOwnerUser(u)) {
@@ -2738,13 +3449,17 @@ const server = http.createServer(async (req, res) => {
         if (!Array.isArray(target.allowedApps)) {
           target.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
         }
+        if (!Array.isArray(target.qualifiedResources)) {
+          target.qualifiedResources = DEFAULT_CUSTOMER_RESOURCES.slice();
+        }
 
         if (featureType === 'preset') {
           if (featureId === 'reset_saas_only') {
             target.pages = { saasapps: 'ready' };
             target.adminGrantedPages = [];
             target.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
-            S.shares = S.shares.filter(s => !(s.grantee === target.id && (s.type === 'page' || s.type === 'element' || s.type === 'app')));
+            target.qualifiedResources = DEFAULT_CUSTOMER_RESOURCES.slice();
+            S.shares = S.shares.filter(s => !(s.grantee === target.id && (s.type === 'page' || s.type === 'element' || s.type === 'app' || s.type === 'resource')));
             notifyUser(target.id, 'Workspace Scoped to SaaS Apps & LMS', 'Administrator reset your navigation to default SaaS Apps & LMS + Payment & Billing.');
             logAudit('owner', 'feature.preset.saas_only', target.email);
           } else if (featureId === 'grant_all_features') {
@@ -2756,8 +3471,9 @@ const server = http.createServer(async (req, res) => {
               }
             });
             target.allowedApps = APPS_CATALOG.map(a => a.id);
+            target.qualifiedResources = getResourcesCatalog().map(r => r.id);
             target.status = 'active';
-            notifyUser(target.id, 'Full Feature Suite Granted', 'Your MGC & F.I.X workspace features and SCORM apps have been unlocked.');
+            notifyUser(target.id, 'Full Feature & Resource Suite Granted', 'Your MGC & F.I.X workspace features, SCORM apps, and Qualified Resources + AI Fast-Track tools have been unlocked.');
             logAudit(u.id, 'feature.preset.grant_all', target.email);
           }
           saveState(S);
@@ -2769,7 +3485,49 @@ const server = http.createServer(async (req, res) => {
               pages: target.pages,
               allowedPages: getAllowedPagesForUser(target),
               allowedPortals: getAllowedPortalsForUser(target),
-              allowedApps: target.allowedApps
+              allowedApps: target.allowedApps,
+              qualifiedResources: target.qualifiedResources
+            },
+            state: scopeStateForUser(u)
+          });
+        }
+
+        if (featureType === 'resource') {
+          const allRes = getResourcesCatalog();
+          const resEntry = allRes.find(r => r.id === featureId);
+          if (!resEntry) return sendJson(res, 400, { ok: false, error: 'Unknown resource ID.' });
+          const currentlyHas = target.qualifiedResources.includes(featureId);
+          const enable = typeof body.enabled === 'boolean' ? body.enabled : !currentlyHas;
+          if (enable) {
+            if (!target.qualifiedResources.includes(featureId)) target.qualifiedResources.push(featureId);
+            target.pages.resources = 'ready';
+            if (!target.adminGrantedPages.includes('resources')) target.adminGrantedPages.push('resources');
+            S.shares = S.shares.filter(s => !(s.type === 'resource' && s.resource === featureId && s.grantee === target.id));
+            S.shares.push({ id: `resource_${featureId}_${target.id}`, type: 'resource', resource: featureId, grantee: target.id, perms: ['view', 'launch'], created: now() });
+            notifyUser(target.id, `Resource Qualification Granted: ${resEntry.title}`, `You are now qualified for "${resEntry.title}" along with its Milton UI/UX enhancements and AI Fast-Track tools in your Resources section.`);
+            logAudit(u.id, 'feature.resource.grant', `${featureId} -> ${target.email}`);
+          } else {
+            target.qualifiedResources = target.qualifiedResources.filter(r => r !== featureId);
+            S.shares = S.shares.filter(s => !(s.type === 'resource' && s.resource === featureId && s.grantee === target.id));
+            if (target.qualifiedResources.length === 0) {
+              delete target.pages.resources;
+              target.adminGrantedPages = target.adminGrantedPages.filter(p => p !== 'resources');
+              S.shares = S.shares.filter(s => !(s.type === 'page' && s.resource === 'resources' && s.grantee === target.id));
+            }
+            notifyUser(target.id, `Resource Qualification Updated: ${resEntry.title}`, `Qualification for "${resEntry.title}" was removed from your workspace.`);
+            logAudit(u.id, 'feature.resource.revoke', `${featureId} -> ${target.email}`);
+          }
+          saveState(S);
+          return sendJson(res, 200, {
+            ok: true,
+            targetUser: {
+              id: target.id,
+              email: target.email,
+              pages: target.pages,
+              allowedPages: getAllowedPagesForUser(target),
+              allowedPortals: getAllowedPortalsForUser(target),
+              allowedApps: target.allowedApps,
+              qualifiedResources: target.qualifiedResources
             },
             state: scopeStateForUser(u)
           });
@@ -2801,7 +3559,8 @@ const server = http.createServer(async (req, res) => {
               pages: target.pages,
               allowedPages: getAllowedPagesForUser(target),
               allowedPortals: getAllowedPortalsForUser(target),
-              allowedApps: target.allowedApps
+              allowedApps: target.allowedApps,
+              qualifiedResources: target.qualifiedResources
             },
             state: scopeStateForUser(u)
           });
@@ -2847,7 +3606,8 @@ const server = http.createServer(async (req, res) => {
             pages: target.pages,
             allowedPages: getAllowedPagesForUser(target),
             allowedPortals: getAllowedPortalsForUser(target),
-            allowedApps: target.allowedApps
+            allowedApps: target.allowedApps,
+            qualifiedResources: target.qualifiedResources
           },
           state: scopeStateForUser(u)
         });

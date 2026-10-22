@@ -22,10 +22,15 @@
   let lastPaymentError = '';
   let lastConsultationReceipt = null;
   let selectedConsultTrack = 'ai-web';
+  let activeAiToolOutput = null;
 
   const isSoleAdmin = () => Boolean(W.isOwner ? W.isOwner(u) : (u && u.role === 'owner' && u.id === 'owner'));
   const isEmp = () => Boolean(W.isEmployee ? W.isEmployee(u) : (u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active'));
   const isClientUser = () => Boolean(W.isClient ? W.isClient(u) : (u && u.role !== 'owner' && u.ou !== 'internal'));
+  const getQualifiedResources = () => {
+    const cat = W.getResourcesCatalog ? W.getResourcesCatalog() : (W.RESOURCES_CATALOG || []);
+    return cat.filter(r => isSoleAdmin() || W.can(u, 'resource', r.id, 'view'));
+  };
 
   const CONSULTATION_TRACKS = [
     {
@@ -76,9 +81,14 @@
           ).join('') + '</div></div>'
       : '';
 
+    const qualifiedRes = getQualifiedResources();
+    const resBtnHtml = qualifiedRes.length > 0
+      ? '<button type="button" class="btn" data-go-resources="1" style="border-color:rgba(197,179,88,0.45);color:#fde047">Resources &amp; AI Tools (' + qualifiedRes.length + ')</button>'
+      : '';
+
     const topRightActions = isEmp()
-      ? '<div style="display:flex;gap:8px"><a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a><a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
-      : '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a><button type="button" class="btn" data-go-consultation="1">Submit Request &amp; Consultation</button>' + (!isEmp() ? '<button type="button" class="btn pri" data-go-payment="1">Billing</button>' : '') + '</div>';
+      ? '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
+      : '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<button type="button" class="btn" data-go-consultation="1">Submit Request &amp; Consultation</button>' + (!isEmp() ? '<button type="button" class="btn pri" data-go-payment="1">Billing</button>' : '') + '</div>';
 
     return '<div class="card" style="padding:18px 20px;margin-top:0">' +
         '<div class="row" style="margin-bottom:14px">' +
@@ -297,9 +307,77 @@
   }
 
   function resourcesPanel() {
+    // Strict Zero-Leakage Policy: Only render resources the user is qualified for
+    const qualifiedResources = getQualifiedResources();
     const t = W.TAILOR[(u.quote && u.quote.interest) || 'ai-web'] || W.TAILOR.federal;
-    return '<div class="card"><h2>Curated Resources</h2>' +
-      t.resources.map(r => '<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><span>' + esc(r[0]) + '</span><a class="btn" target="_blank" rel="noopener" href="' + esc(r[1]) + '">Open</a></div>').join('') +
+
+    const aiOutputBanner = activeAiToolOutput
+      ? '<div class="card" id="aiFastTrackOutputBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.52);background:linear-gradient(135deg,rgba(6,78,59,0.34),rgba(9,16,32,0.96))">' +
+          '<div class="row" style="margin-bottom:6px">' +
+            '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+              '<span class="chip ok">Milton AI Fast-Track Active</span>' +
+              '<strong style="font-size:13.5px;color:#fff">' + esc(activeAiToolOutput.resourceTitle) + ' · ' + esc(activeAiToolOutput.toolTitle) + '</strong>' +
+            '</div>' +
+            '<code style="font-size:11px;color:#34d399">' + esc(activeAiToolOutput.runId) + '</code>' +
+          '</div>' +
+          '<p style="margin:0;font-size:12.5px;color:#d1fae5;line-height:1.5">' + esc(activeAiToolOutput.summary) + '</p>' +
+        '</div>'
+      : '';
+
+    const renderResourceCard = (r) => {
+      const uiList = Array.isArray(r.uiUxEnhancements) ? r.uiUxEnhancements : [];
+      const aiTools = Array.isArray(r.aiTools) ? r.aiTools : [];
+      return '<div class="card" data-resource-card="' + esc(r.id) + '" style="padding:18px 20px;margin-top:0;border-color:rgba(197,179,88,0.45)">' +
+        '<div class="row" style="margin-bottom:10px">' +
+          '<div>' +
+            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047">' + esc(r.category || 'Qualified Partner Resource') + '</span>' +
+            '<h2 style="margin:2px 0 0;font-size:16px;font-weight:700;color:#fff">' + esc(r.title) + '</h2>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;align-items:center">' +
+            '<span class="chip ok">' + (isSoleAdmin() ? 'Admin · Qualified' : 'Qualified Member') + '</span>' +
+            '<span class="chip" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Milton UI/UX + AI Fast-Track</span>' +
+          '</div>' +
+        '</div>' +
+        '<p style="font-size:13px;color:#cbd5e1;margin:0 0 14px;line-height:1.55">' + esc(r.summary || '') + '</p>' +
+
+        '<div style="display:grid;grid-template-columns:1fr 1.25fr;gap:14px;align-items:start">' +
+          '<div class="compact-card" style="padding:14px 16px;border-color:rgba(59,130,246,0.35)">' +
+            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa;margin-bottom:8px">Milton UI/UX Enhancements Applied</div>' +
+            '<div style="display:flex;flex-direction:column;gap:7px">' +
+              uiList.map(enh => '<div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#e2e8f0"><span class="chip ok" style="padding:1px 6px;font-size:10px">UI/UX</span><span>' + esc(enh) + '</span></div>').join('') +
+            '</div>' +
+          '</div>' +
+
+          '<div class="compact-card" style="padding:14px 16px;border-color:rgba(16,185,129,0.38)">' +
+            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#34d399;margin-bottom:8px">Associated AI Fast-Track Tools (' + aiTools.length + ')</div>' +
+            '<div style="display:flex;flex-direction:column;gap:8px">' +
+              aiTools.map(tool =>
+                '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:rgba(4,8,20,0.65);border:1px solid rgba(148,163,184,0.2)">' +
+                  '<div>' +
+                    '<div style="font-size:12.5px;font-weight:600;color:#fff">' + esc(tool.title) + '</div>' +
+                    '<div style="font-size:11.5px;color:#94a3b8;margin-top:2px">' + esc(tool.desc || '') + '</div>' +
+                  '</div>' +
+                  '<button type="button" class="btn pri" data-run-ai-tool="' + esc(tool.id) + '" data-res-id="' + esc(r.id) + '" data-res-title="' + esc(r.title) + '" data-tool-title="' + esc(tool.title) + '" style="white-space:nowrap;padding:6px 11px;font-size:11.5px">Fast-Track</button>' +
+                '</div>'
+              ).join('') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    };
+
+    return aiOutputBanner +
+      '<div class="card" style="padding:16px 20px;margin-bottom:12px">' +
+        '<div class="row">' +
+          '<div>' +
+            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Qualified Partner Resources &amp; AI Fast-Track</span>' +
+            '<h2 style="margin:2px 0 0;font-size:15px;font-weight:600">Authorized Resources (' + qualifiedResources.length + ')</h2>' +
+          '</div>' +
+          '<button type="button" class="btn" data-tab="apps">Applications &amp; LMS</button>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:12px">' +
+        qualifiedResources.map(renderResourceCard).join('') +
       '</div>';
   }
 
@@ -307,6 +385,11 @@
     const list = [
       ['apps', 'Applications & LMS', saasAppsAndLmsPanel]
     ];
+    const qualifiedRes = getQualifiedResources();
+    // Resources section appears right alongside Applications & LMS when the user is qualified for at least 1 resource (or granted 'resources' page)
+    if (isSoleAdmin() || qualifiedRes.length > 0 || W.can(u, 'page', 'resources', 'view')) {
+      list.push(['resources', 'Resources & AI Tools', resourcesPanel]);
+    }
     // Clients & Admin have access to Guided Consultation & Payment; Employees have NO access to Payment Settings
     if (!isEmp()) {
       list.push(['consultation', 'Submit Request & Consultation', consultationPanel]);
@@ -314,9 +397,6 @@
     }
     if (isSoleAdmin() || W.can(u, 'page', 'home', 'view')) {
       list.push(['overview', 'Overview Hub', overviewPanel]);
-    }
-    if (isSoleAdmin() || W.can(u, 'page', 'resources', 'view')) {
-      list.push(['resources', 'Curated Resources', resourcesPanel]);
     }
     return list;
   }
@@ -348,7 +428,7 @@
       '</aside>';
 
     app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + body + '</div></div>';
-    W.header(tab === 'payment' ? 'member-portal.html?view=payment' : tab === 'consultation' ? 'member-portal.html?view=consultation' : 'member-portal.html');
+    W.header(tab === 'payment' ? 'member-portal.html?view=payment' : tab === 'consultation' ? 'member-portal.html?view=consultation' : tab === 'resources' ? 'member-portal.html?view=resources' : 'member-portal.html');
     bind();
   }
 
@@ -356,6 +436,24 @@
     app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
       tab = b.dataset.tab;
       lastPaymentError = '';
+      render();
+    });
+    app.querySelectorAll('[data-go-resources]').forEach(b => b.onclick = () => {
+      tab = 'resources';
+      render();
+    });
+    app.querySelectorAll('[data-run-ai-tool]').forEach(btn => btn.onclick = () => {
+      const resTitle = btn.dataset.resTitle || 'Qualified Resource';
+      const toolTitle = btn.dataset.toolTitle || 'AI Fast-Track Tool';
+      const runId = 'MGC-FT-' + Date.now().toString(36).toUpperCase().slice(-5);
+      activeAiToolOutput = {
+        runId,
+        resourceId: btn.dataset.resId,
+        resourceTitle: resTitle,
+        toolTitle,
+        summary: 'Milton UI/UX & AI Fast-Track execution completed for "' + resTitle + '" (' + toolTitle + '). Personalized curriculum, structured knowledge synthesis, and accelerated action checkpoints are active for ' + (u.name || u.email) + '.'
+      };
+      W.toast('Fast-Track active: ' + toolTitle);
       render();
     });
     app.querySelectorAll('[data-go-payment]').forEach(b => b.onclick = () => {

@@ -40,7 +40,35 @@
     { id: 'spanish-acquisition-os',     icon: '', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module language training system with neural audio.' }
   ];
 
+  // Qualified Partner & Ecosystem Resources Catalog (White Feather first; extensible as new resources are onboarded)
+  // Users who qualify for a resource are noted at onboarding and receive the resource + Milton UI/UX & AI Fast-Track tools.
+  const RESOURCES_CATALOG = [
+    {
+      id: 'white-feather',
+      title: 'White Feather (Resource + Milton UI/UX & AI Fast-Track)',
+      shortTitle: 'White Feather',
+      brand: 'MGC',
+      defaultCustomer: false,
+      category: 'Capital, Deal Flow & AI Automation Resource',
+      href: 'whitefeather-ecommerce-hub.html',
+      communityUrl: 'https://www.skool.com/white-feather-ai/plans',
+      privateGroupUrl: 'https://members.whitefeatherinvestments.com/communities/groups/white-feather-bronze-community/private-group',
+      desc: 'Qualified White Feather resource access enhanced with custom Milton UI/UX workspace navigation and AI fast-track execution tools.',
+      uiUxEnhancements: [
+        'Milton Executive UI/UX Companion & Deal-Flow Progress Tracker',
+        'Zero-Clutter Action Matrix & Guided Milestone Execution Shell',
+        'Integrated Resource Playbook & Document Synthesis Vault'
+      ],
+      aiTools: [
+        { id: 'wf-dealflow-ai', title: 'White Feather Deal-Flow & Asset Structuring AI', badge: 'Fast-Track AI', desc: 'Synthesizes deal parameters, partnership structures, and executive summaries.' },
+        { id: 'wf-agency-blueprint', title: 'White Feather AI Automation Blueprint Generator', badge: 'Agentic Tool', desc: 'Fast-tracks community AI agency blueprints into deployable LangGraph & client workflows.' },
+        { id: 'wf-ui-navigator', title: 'Milton UI/UX Resource Accelerator', badge: 'Milton UI/UX', desc: 'Custom visual roadmap that organizes and fast-tracks White Feather modules and deliverables.' }
+      ]
+    }
+  ];
+
   const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge'];
+  const DEFAULT_CUSTOMER_RESOURCES = [];
   const DEFAULT_CUSTOMER_PAGES = { saasapps: 'ready' };
 
   const STEPS = ['requested', 'approved_building', 'active'];
@@ -69,7 +97,7 @@
   /* ---------- Seed (Sole Administrator = Malik A. Khabir; zero fake/placeholder accounts) ---------- */
   function seed() {
     const t = now();
-    const mk = (id, name, email, role, status, brand, interest, paid, pages, allowedApps) => ({
+    const mk = (id, name, email, role, status, brand, interest, paid, pages, allowedApps, qualifiedResources) => ({
       id, name, email, role, status, brand,
       ou: role === 'owner' ? 'internal' : 'external',
       securityGroup: role === 'owner' ? 'DOMAIN_ADMIN' : 'EXTERNAL_SAAS_LMS',
@@ -79,6 +107,7 @@
       pages: pages || { saasapps: 'ready' },
       adminGrantedPages: [],
       allowedApps: allowedApps || (role === 'owner' ? ['*'] : DEFAULT_CUSTOMER_APPS.slice()),
+      qualifiedResources: qualifiedResources || (role === 'owner' ? ['*'] : DEFAULT_CUSTOMER_RESOURCES.slice()),
       paymentProfile: null,
       payments: [],
       created: t
@@ -86,9 +115,11 @@
     return {
       v: 1,
       users: {
-        owner: mk('owner', 'Malik A. Khabir (Administrator)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { saasapps: 'ready', agile: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready', home: 'ready', resources: 'ready' }, ['*'])
+        owner: mk('owner', 'Malik A. Khabir (Administrator)', 'malik.khabir@miltongroupsecurity.org', 'owner', 'active', 'MGC', 'federal', true, { saasapps: 'ready', agile: 'ready', radar: 'ready', compliance: 'ready', ailab: 'ready', finance: 'ready', training: 'ready', aistudio: 'ready', home: 'ready', resources: 'ready' }, ['*'], ['*'])
       },
       shares: [],
+      customResources: [],
+      accountingLedger: [],
       tasks: [], notifications: [], audit: [], payments: [], consultations: [],
       projects: {
         p_sterling: { id: 'p_sterling', name: 'Client Project: Sterling Auto Repair (Web + AI Receptionist)', owner: 'owner', brand: 'FIX', demoUrl: 'projects/sterling-auto-repair/index.html', budget: '$1,500 setup + $497/mo' },
@@ -234,17 +265,23 @@
       state.features = state.features.filter(f => !['ana', 'ben', 'cara', 'client'].includes(f.by));
     }
     if (!Array.isArray(state.consultations)) state.consultations = [];
+    if (!Array.isArray(state.customResources)) state.customResources = [];
+    if (!Array.isArray(state.accountingLedger)) state.accountingLedger = [];
     Object.values(state.users).forEach(u => {
       if (u.role === 'owner') {
         u.accessTier = 'OWNER_FULL';
         u.ou = 'internal';
         u.securityGroup = 'DOMAIN_ADMIN';
         u.allowedApps = ['*'];
+        u.qualifiedResources = ['*'];
       } else {
         u.ou = u.ou === 'internal' ? 'internal' : 'external';
         u.accessTier = u.accessTier || (u.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED');
         if (!Array.isArray(u.allowedApps)) {
           u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
+        }
+        if (!Array.isArray(u.qualifiedResources)) {
+          u.qualifiedResources = DEFAULT_CUSTOMER_RESOURCES.slice();
         }
       }
     });
@@ -491,16 +528,34 @@
   const log = (actor, action, detail) => { S.audit.unshift({ id: uid('a'), ts: now(), actor, action, detail }); S.audit = S.audit.slice(0, 200); };
   const notify = (toUid, title, body, channel) => { S.notifications.unshift({ id: uid('n'), toUid, title, body, channel: channel || 'in-app + email', ts: now(), read: false }); };
 
+  function getResourcesCatalog() {
+    const custom = (S && Array.isArray(S.customResources)) ? S.customResources : [];
+    const map = new Map();
+    RESOURCES_CATALOG.forEach(r => map.set(r.id, r));
+    custom.forEach(r => { if (r && r.id) map.set(r.id, r); });
+    return Array.from(map.values());
+  }
+
   /* ---------- Policy: deny by default. Mirrors server.js ---------- */
   function subActive(u) { return u && (u.role === 'owner' || u.status === 'active' || (u.plan && u.plan.base)); }
   function can(u, type, id, action) {
     if (!u) return false;
     if (u.role === 'owner' && u.id === 'owner') return true;       // sole Administrator: everything
     if (!subActive(u)) return false;                              // members need an active account
+    if (type === 'resource') {
+      const resList = Array.isArray(u.qualifiedResources) ? u.qualifiedResources : DEFAULT_CUSTOMER_RESOURCES;
+      if (resList.includes('*') || resList.includes(id)) return true;
+      return (S.shares || []).some(s => s.type === 'resource' && s.resource === id && s.grantee === u.id);
+    }
     if (type === 'page') {
       const entry = CATALOG.find(c => c.id === id);
       if (!entry || action !== 'view') return false;
+      if (isEmployee(u) && id === 'finance') return false;
       if (id === 'saasapps') return true;                         // SaaS Apps & LMS is always unlocked for active users
+      if (id === 'resources') {
+        const hasAnyResource = getResourcesCatalog().some(r => can(u, 'resource', r.id, 'view'));
+        if (hasAnyResource) return true;
+      }
       if ((S.shares || []).some(s => (s.type === 'page' || s.type === 'element') && s.resource === id && s.grantee === u.id)) return true;
       return (u.pages || {})[id] === 'ready';                     // only ready pages explicitly granted by Administrator
     }
@@ -514,7 +569,7 @@
       if (!sh) return false;
       return action === 'view' ? true : sh.perms.includes(action);
     }
-    if (type === 'element') return S.shares.some(s => (s.type === 'element' || s.type === 'app') && s.resource === id && s.grantee === u.id);
+    if (type === 'element') return S.shares.some(s => (s.type === 'element' || s.type === 'app' || s.type === 'resource') && s.resource === id && s.grantee === u.id);
     return false;
   }
 
@@ -541,6 +596,9 @@
       lastIntakeResult = { ok: false, status: 400, error: 'Mutual NDA & Zero-Trust Terms attestation is required for customer intake.' };
       return null;
     }
+    const qualifiedResources = Array.isArray(data && data.qualifiedResources)
+      ? data.qualifiedResources.map(r => sanitizeField(r, 60)).filter(Boolean)
+      : [];
     const payload = {
       name: cleanName,
       email: cleanEmail,
@@ -552,6 +610,7 @@
       org: sanitizeField(data && data.org, 160) || 'External Organization',
       brand: (data && data.brand === 'FIX') ? 'FIX' : 'MGC',
       interest: (data && TAILOR[data.interest]) ? data.interest : 'ai-web',
+      qualifiedResources,
       note: sanitizeField(data && data.note, 500),
       ndaAccepted: true,
       mfaVerified: Boolean(data && data.mfaVerified !== false),
@@ -562,10 +621,10 @@
       lastIntakeResult = { ok: false, status: 403, error: srv.error };
       return null;
     }
-    if (srv && srv.uid) {
+    if (srv && (srv.createdUid || srv.uid)) {
       lastIntakeResult = srv;
       commit();
-      return srv.uid;
+      return srv.createdUid || srv.uid;
     }
     let existing = Object.values(S.users).find(u => (u.email || '').toLowerCase() === cleanEmail);
     const id = existing ? existing.id : uid('u');
@@ -575,6 +634,9 @@
       ['saasapps', 'home', 'agile', 'contracts', 'compliance', 'academy', 'chronos'].forEach(p => { pagesMap[p] = 'ready'; });
     } else {
       tailoredPages.forEach(p => { if (!pagesMap[p]) pagesMap[p] = 'locked'; });
+    }
+    if (qualifiedResources.length > 0) {
+      pagesMap.resources = 'ready';
     }
     S.users[id] = {
       id,
@@ -597,6 +659,7 @@
       plan: existing && existing.plan ? existing.plan : { base: true, addons: [] },
       pages: pagesMap,
       allowedApps: existing && Array.isArray(existing.allowedApps) && existing.allowedApps.length ? existing.allowedApps : (payload.ou === 'internal' ? ['sterling-auto-repair', 'client-turnkey-forge', 'eveng-netprism-studio', 'samgov-contract-matchmaker', 'ghost-cli-trainer'] : DEFAULT_CUSTOMER_APPS.slice()),
+      qualifiedResources: qualifiedResources.length ? qualifiedResources : ((existing && Array.isArray(existing.qualifiedResources)) ? existing.qualifiedResources : []),
       created: existing && existing.created ? existing.created : now()
     };
     if (!S.shares.some(s => s.type === 'project' && s.resource === 'p_sterling' && s.grantee === id)) {
@@ -613,6 +676,7 @@
     lastIntakeResult = {
       ok: true,
       uid: id,
+      createdUid: id,
       requestId: reqEntry.id,
       intakeReceipt: 'MGC-INTAKE-' + reqEntry.id.toUpperCase(),
       role: 'member',
@@ -622,6 +686,7 @@
       mfaVerified: payload.mfaVerified,
       mfaMethod: payload.mfaMethod,
       allowedApps: S.users[id].allowedApps,
+      qualifiedResources: S.users[id].qualifiedResources,
       queuedTailoredPages: tailoredPages,
       integrityHash: 'SHA256-' + btoa(payload.email + ':' + payload.ssoProvider + ':CUSTOMER_RESTRICTED:' + reqEntry.id).slice(0, 24)
     };
@@ -685,13 +750,30 @@
     if (!target || target.id === 'owner') return null;
     if (!target.pages) target.pages = { ...DEFAULT_CUSTOMER_PAGES };
     if (!Array.isArray(target.allowedApps)) target.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
+    if (!Array.isArray(target.qualifiedResources)) target.qualifiedResources = DEFAULT_CUSTOMER_RESOURCES.slice();
     if (featureType === 'preset') {
       if (featureId === 'reset_saas_only') {
         target.pages = { saasapps: 'ready' };
         target.allowedApps = DEFAULT_CUSTOMER_APPS.slice();
+        target.qualifiedResources = [];
       } else if (featureId === 'grant_all_features') {
         CATALOG.forEach(c => { target.pages[c.id] = 'ready'; });
         target.allowedApps = APPS_CATALOG.map(a => a.id);
+        target.qualifiedResources = getResourcesCatalog().map(r => r.id);
+      }
+      commit();
+      return { ok: true, targetUser: target };
+    }
+    if (featureType === 'resource') {
+      const has = target.qualifiedResources.includes(featureId);
+      const next = typeof enabled === 'boolean' ? enabled : !has;
+      if (next && !has) {
+        target.qualifiedResources.push(featureId);
+        target.pages.resources = 'ready';
+      }
+      if (!next && has) {
+        target.qualifiedResources = target.qualifiedResources.filter(r => r !== featureId);
+        if (target.qualifiedResources.length === 0) delete target.pages.resources;
       }
       commit();
       return { ok: true, targetUser: target };
@@ -710,6 +792,41 @@
     else if (featureId !== 'saasapps') delete target.pages[featureId];
     commit();
     return { ok: true, targetUser: target };
+  }
+  function addCustomResource(payload) {
+    const res = postServerAction({ action: 'addCustomResource', data: payload });
+    if (res) { commit(); return res; }
+    if (!Array.isArray(S.customResources)) S.customResources = [];
+    const title = sanitizeField(payload && payload.title, 120);
+    if (!title) return { ok: false, error: 'Resource title required.' };
+    const id = sanitizeField(payload && payload.id, 60).toLowerCase().replace(/[^a-z0-9-]+/g, '-') || ('res-' + uid('r'));
+    const entry = {
+      id,
+      title,
+      shortTitle: sanitizeField(payload && payload.shortTitle, 50) || title,
+      brand: (payload && payload.brand === 'FIX') ? 'FIX' : 'MGC',
+      defaultCustomer: false,
+      category: sanitizeField(payload && payload.category, 80) || 'Qualified Partner Resource + Milton UI/UX & AI Tools',
+      href: sanitizeField(payload && payload.href, 200) || ('member-portal.html?view=resources&resource=' + id),
+      communityUrl: sanitizeField(payload && payload.communityUrl, 200) || '',
+      desc: sanitizeField(payload && payload.desc, 300) || 'Qualified partner resource enhanced with Milton UI/UX and AI Fast-Track tools.',
+      uiUxEnhancements: [
+        'Milton Executive UI/UX Companion & Progress Workspace',
+        'Guided Milestone Checklist & Fast-Track Synthesis'
+      ],
+      aiTools: [
+        { id: id + '-ai-fasttrack', title: title + ' AI Fast-Track Synthesizer', badge: 'Fast-Track AI', desc: 'Accelerates resource execution, workflow blueprints, and deliverable synthesis.' }
+      ]
+    };
+    S.customResources = S.customResources.filter(r => r.id !== id).concat([entry]);
+    commit();
+    return { ok: true, resource: entry, state: S };
+  }
+  function postAccountingEntry(payload) {
+    return postServerAction({ action: 'postAccountingEntry', data: payload });
+  }
+  function reconcileAccountingEntry(entryId, status, note) {
+    return postServerAction({ action: 'reconcileAccountingEntry', entryId, status, note });
   }
   function submitPayment(payload) {
     const res = postServerAction({ action: 'submitPayment', data: payload });
@@ -1115,11 +1232,19 @@
             .concat(APPS_CATALOG.map(a => ({ href: a.href, label: a.title, badge: a.brand })))
         }
       ]);
+      const allResources = getResourcesCatalog();
+      const resDrop = buildDropdown('resources', 'Resources', active.includes('view=resources') || active.includes('whitefeather'), [
+        {
+          title: 'Qualified Resources & Milton AI Tools',
+          items: [{ href: 'member-portal.html?view=resources', label: 'Resources & AI Fast-Track Hub', badge: allResources.length + ' Active' }]
+            .concat(allResources.map(r => ({ href: r.href || ('member-portal.html?view=resources&resource=' + r.id), label: r.title, badge: 'UI/UX + AI' })))
+        }
+      ]);
       navInner =
         '<a class="btn' + (active === 'member-portal.html' ? ' pri' : '') + '" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Workspace</a>' +
-        dirDrop + internalDrop + appsDrop;
+        dirDrop + internalDrop + appsDrop + resDrop;
     } else if (emp) {
-      // Employee view: Access to Client Directory (OU=External ONLY, no payment settings) + ONLY granted internal sites & apps
+      // Employee view: Access to Client Directory (OU=External ONLY, no payment settings) + ONLY granted internal sites, apps & qualified resources
       const empDirDrop = buildDropdown('emp-dir', 'MGC Directory', active.includes('access-admin'), [
         {
           title: 'Client Administration',
@@ -1129,7 +1254,7 @@
           ]
         }
       ]);
-      const grantedInternalPages = CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'finance' && can(u, 'page', c.id, 'view'));
+      const grantedInternalPages = CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'finance' && c.id !== 'resources' && can(u, 'page', c.id, 'view'));
       const empInternalDrop = buildDropdown('emp-internal', 'Internal Sites', false, [
         {
           title: 'Granted Internal Portals',
@@ -1144,20 +1269,36 @@
             .concat(grantedEmpApps.map(a => ({ href: a.href, label: a.title, badge: a.brand })))
         }
       ]);
+      const grantedEmpRes = getResourcesCatalog().filter(r => can(u, 'resource', r.id, 'view'));
+      const empResDrop = grantedEmpRes.length
+        ? buildDropdown('emp-res', 'Resources', active.includes('view=resources'), [
+            {
+              title: 'Qualified Resources & Milton AI Tools',
+              items: [{ href: 'member-portal.html?view=resources', label: 'Resources & AI Fast-Track', badge: grantedEmpRes.length + ' Qualified' }]
+                .concat(grantedEmpRes.map(r => ({ href: r.href || ('member-portal.html?view=resources&resource=' + r.id), label: r.shortTitle || r.title, badge: 'UI/UX + AI' })))
+            }
+          ])
+        : '';
       navInner =
         '<a class="btn' + (active === 'member-portal.html' ? ' pri' : '') + '" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Workspace</a>' +
-        empDirDrop + empInternalDrop + empAppsDrop;
+        empDirDrop + empInternalDrop + empAppsDrop + empResDrop;
     } else {
-      // Client view: Strictly SaaS & LMS Showcases, Submit Request & Guided Consultation, and Billing & Payment
+      // Client view: Strictly SaaS & LMS Showcases, Qualified Resources (ONLY if qualified), Submit Request & Guided Consultation, and Billing & Payment
       const clientLinks = [
         ['member-portal.html', 'Workspace'],
-        ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase'],
-        ['member-portal.html?view=consultation', 'Submit Request & Consultation'],
-        ['member-portal.html?view=payment', 'Billing & Payment']
+        ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase']
       ];
       if (u) {
+        const qualifiedClientRes = getResourcesCatalog().filter(r => can(u, 'resource', r.id, 'view'));
+        if (qualifiedClientRes.length > 0 || (u.pages && u.pages.resources === 'ready')) {
+          clientLinks.push(['member-portal.html?view=resources', 'Resources']);
+        }
+      }
+      clientLinks.push(['member-portal.html?view=consultation', 'Submit Request & Consultation']);
+      clientLinks.push(['member-portal.html?view=payment', 'Billing & Payment']);
+      if (u) {
         CATALOG.forEach(c => {
-          if (c.id !== 'saasapps' && can(u, 'page', c.id, 'view')) {
+          if (c.id !== 'saasapps' && c.id !== 'resources' && can(u, 'page', c.id, 'view')) {
             clientLinks.push([c.href, c.title]);
           }
         });
@@ -1255,5 +1396,5 @@
     }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);
