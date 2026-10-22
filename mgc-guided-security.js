@@ -1602,9 +1602,15 @@
           <a href="member-portal.html?view=consultation" class="os-menu-trigger" style="text-decoration:none;">
             <span>Submit Request &amp; Consultation</span>
           </a>
-          <a href="member-portal.html?view=payment" class="os-menu-trigger" style="text-decoration:none;">
-            <span>Billing &amp; Payment</span>
+          ${currentFile === 'newsletter.html' ? `
+          <a href="newsletter.html#donations" class="os-menu-trigger" style="text-decoration:none;color:#fde047;border-color:rgba(197,179,88,0.45);">
+            <span>💝 Donations</span>
           </a>
+          ` : `
+          <a href="member-portal.html?view=payment" class="os-menu-trigger" style="text-decoration:none;">
+            <span>Membership &amp; Billing</span>
+          </a>
+          `}
           ${adminGrantedPortalEntries.map(item => `
             <a href="${item.file}" class="os-menu-trigger" style="text-decoration:none;${item.file.toLowerCase() === currentFile ? 'color:#fde047;border-color:rgba(197,179,88,0.45);background:rgba(37,99,235,0.22);' : ''}">
               <span>${item.label}</span>
@@ -2108,7 +2114,7 @@
     }
 
     function checkAndEnforce2FAGate() {
-      const publicAuthPages = ['onboarding-portal.html', 'login.html', 'request-access.html'];
+      const publicAuthPages = ['onboarding-portal.html', 'login.html', 'request-access.html', 'newsletter.html', 'marketing-home.html'];
       if (publicAuthPages.includes(currentFile)) {
         gateBackdrop.style.display = 'none';
         return;
@@ -2125,7 +2131,7 @@
           gateMsg.style.background = 'rgba(245,158,11,0.16)';
           gateMsg.style.border = '1px solid rgba(245,158,11,0.5)';
           gateMsg.style.color = '#fde68a';
-          gateMsg.innerHTML = `🛡️ <b>SaaS Apps &amp; LMS Access Scope Enforced:</b> Signed in as <code>${sess ? sess.email : 'Customer'}</code>. Standard users have access strictly to <b>SaaS Apps &amp; LMS</b> and <b>Legal &amp; Secure Payment Submission</b> unless granted additional features by the Administrator.<br/><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"><a href="saas-apps-and-lms-showcase.html" style="padding:5px 10px;border-radius:6px;background:rgba(197,179,88,0.25);border:1px solid #c5b358;color:#fde047;font-weight:800;text-decoration:none;">⚡ Open SaaS Apps &amp; LMS →</a><a href="member-portal.html?view=payment" style="padding:5px 10px;border-radius:6px;background:#10b981;color:#04130d;font-weight:800;text-decoration:none;">💳 Submit Payment &amp; Billing →</a></div>`;
+          gateMsg.innerHTML = `🛡️ <b>Membership Tier Gate:</b> Signed in as <code>${sess ? sess.email : 'Member'}</code>. Standard accounts include <b>Starter SaaS &amp; LMS</b>. Unlock additional applications and workspaces via your Membership Tier or Administrator grant.<br/><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;"><a href="saas-apps-and-lms-showcase.html" style="padding:5px 10px;border-radius:6px;background:rgba(197,179,88,0.25);border:1px solid #c5b358;color:#fde047;font-weight:800;text-decoration:none;">⚡ Open SaaS Apps &amp; LMS →</a><a href="member-portal.html?view=payment" style="padding:5px 10px;border-radius:6px;background:#10b981;color:#04130d;font-weight:800;text-decoration:none;">⬆️ Upgrade Membership Tier →</a></div>`;
         }
         return;
       }

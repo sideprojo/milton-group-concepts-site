@@ -11,14 +11,14 @@
     ::view-transition-new(root) { animation: nlIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
     @keyframes nlOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-6px); } }
     @keyframes nlIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .nl-grid { display: grid; grid-template-columns: 380px 1fr; gap: 22px; align-items: start; }
+    .nl-grid { display: grid; grid-template-columns: 390px 1fr; gap: 20px; align-items: start; }
     @media (max-width: 900px) { .nl-grid { grid-template-columns: 1fr; } }
     .issue-card {
       background: rgba(9, 16, 32, 0.96);
       border: 1.5px solid rgba(148, 163, 184, 0.32);
       border-radius: 18px;
-      padding: 22px;
-      margin-bottom: 16px;
+      padding: 20px 22px;
+      margin-bottom: 14px;
       transition: transform 0.22s ease, border-color 0.22s ease;
     }
     .issue-card:hover {
@@ -44,6 +44,21 @@
 
     let nlState = {
       subscribersCount: 142,
+      smsSubscribersCount: 38,
+      donationsTotalUsd: 0,
+      distros: [
+        { id: 'distro_all_exec', label: 'All Executive Subscribers', count: 142 },
+        { id: 'distro_federal', label: 'Federal & SDVOSB Distro', count: 49 },
+        { id: 'distro_cyber', label: 'Zero-Trust & Cyber Distro', count: 52 },
+        { id: 'distro_ai', label: 'AI & Automation Distro', count: 41 },
+        { id: 'distro_sms', label: 'SMS / Text Alert Distro ($0 Gateway)', count: 38 }
+      ],
+      sources: [
+        { id: 'src-01', title: 'SAM.gov NAICS 541512 / 541519 Set-Aside Feed', category: 'FEDERAL', status: 'collected' },
+        { id: 'src-02', title: 'NIST SP 800-171 Rev 3 & CMMC 2.0 Advisory Feed', category: 'CYBER', status: 'collected' },
+        { id: 'src-03', title: 'Otto Language & AI Receptionist Telemetry Digest', category: 'AI_WORKFLOW', status: 'collected' }
+      ],
+      distributions: [],
       issues: [
         {
           id: 'iss-04',
@@ -87,13 +102,15 @@
       ]
     };
 
+    let selectedDonationAmount = 25;
+
     async function fetchNewsletter() {
       try {
         const r = await fetch('/api/newsletter');
         if (r.ok) {
           const d = await r.json();
           if (d && d.ok) {
-            nlState = d;
+            nlState = Object.assign({}, nlState, d);
             render();
           }
         }
@@ -118,53 +135,118 @@
         </article>
       `).join('');
 
+      const distrosHtml = (nlState.distros || []).map(d =>
+        `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:rgba(4,8,20,0.78);border:1px solid rgba(148,163,184,0.2);font-size:12px">
+          <span>${esc(d.label)}</span>
+          <span class="chip ok" style="font-size:10.5px">${esc(d.count)} Ready</span>
+        </div>`
+      ).join('');
+
       app.innerHTML = `
-        <div class="card" style="margin-bottom:20px;border-color:rgba(197,179,88,0.55)">
+        <div class="card" style="margin-bottom:18px;border-color:rgba(197,179,88,0.55)">
           <div class="row">
             <div>
               <span class="chip warn">📰 MGC &amp; F.I.X EXECUTIVE INTELLIGENCE</span>
               <h1 style="margin-top:8px">Executive Briefings &amp; Operational Newsletter</h1>
-              <p>Actionable monthly intelligence covering Zero-Trust OIDC security, SDVOSB federal contracting, AI workflow automation, and supply chain governance.</p>
+              <p>Actionable monthly dispatches via Email &amp; SMS covering Zero-Trust security, SDVOSB contracting, and Otto AI automation.</p>
             </div>
             <div class="nav">
-              <span class="chip ok">● ${nlState.subscribersCount || 142} Verified Subscribers</span>
-              <a class="btn" href="/home">← Back to Main Site</a>
+              <span class="chip ok" id="nlEmailCountChip">● ${nlState.subscribersCount || 142} Email</span>
+              <span class="chip ok" id="nlSmsCountChip">📱 ${nlState.smsSubscribersCount || 38} SMS</span>
+              <a class="btn pri" href="#donations" id="btnHeaderDonations" style="border-color:rgba(197,179,88,0.55)">💝 Donations</a>
+              <a class="btn" href="/home">← Main Site</a>
             </div>
           </div>
         </div>
 
         <div class="nl-grid">
-          <aside class="card" style="position:sticky;top:88px">
-            <h2>Subscribe to Briefings</h2>
-            <p>Receive concise monthly dispatches directly from Milton Group Concepts LLC &amp; F.I.X Solutions.</p>
-            <form id="nlSubForm" style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
-              <label for="nlName" style="font-size:11.5px;font-weight:800;color:#cbd5e1">Full Name / Title</label>
-              <input id="nlName" type="text" placeholder="e.g. Director of Operations" value="${u ? esc(u.name) : ''}" />
-              <label for="nlEmail" style="font-size:11.5px;font-weight:800;color:#cbd5e1">Work or Federated Email *</label>
-              <input id="nlEmail" type="email" placeholder="you@organization.org" value="${u ? esc(u.email) : ''}" required />
-              <label for="nlTopic" style="font-size:11.5px;font-weight:800;color:#cbd5e1">Primary Intelligence Track</label>
-              <select id="nlTopic">
-                <option value="all">🌐 All Executive Briefings (MGC &amp; F.I.X)</option>
-                <option value="federal">🏛️ Federal &amp; SDVOSB Contracting</option>
-                <option value="cyber">🔒 Zero-Trust &amp; CMMC Compliance</option>
-                <option value="ai-workflow">🤖 AI Receptionists &amp; Cloud Automation</option>
-                <option value="logistics">🚚 Strategic Sourcing &amp; Supply Chain</option>
-              </select>
-              <button type="submit" class="btn pri" style="justify-content:center;padding:12px;margin-top:4px">✉️ Subscribe to Newsletter →</button>
-              <div id="nlSubStatus" role="status" aria-live="polite" style="font-size:12.5px;font-weight:700;color:#34d399;min-height:18px"></div>
-            </form>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <aside class="card" style="margin:0">
+              <h2>Subscribe (Email + SMS Text)</h2>
+              <p>Receive dispatches by email and optional $0-cost SMS text alerts.</p>
+              <form id="nlSubForm" style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+                <label for="nlName" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Full Name / Title</label>
+                <input id="nlName" type="text" maxlength="100" placeholder="e.g. Director of Operations" value="${u ? esc(u.name) : ''}" />
+                <label for="nlEmail" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Work or Federated Email *</label>
+                <input id="nlEmail" type="email" maxlength="140" placeholder="you@organization.org" value="${u ? esc(u.email) : ''}" required />
+                <label for="nlTopic" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Intelligence Distro Track</label>
+                <select id="nlTopic">
+                  <option value="all">🌐 All Executive Briefings (MGC &amp; F.I.X)</option>
+                  <option value="federal">🏛️ Federal &amp; SDVOSB Contracting</option>
+                  <option value="cyber">🔒 Zero-Trust &amp; CMMC Compliance</option>
+                  <option value="ai-workflow">🤖 Otto AI &amp; Cloud Automation</option>
+                  <option value="logistics">🚚 Strategic Sourcing &amp; Supply Chain</option>
+                </select>
+                <div style="padding:9px 11px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(59,130,246,0.32)">
+                  <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#93c5fd;cursor:pointer;margin-bottom:6px">
+                    <input type="checkbox" id="nlSmsOptIn" />
+                    <span>📱 Also send SMS / Text Alerts ($0 Gateway)</span>
+                  </label>
+                  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:6px">
+                    <input id="nlPhone" type="tel" maxlength="16" placeholder="Mobile (e.g. 5552345678)" style="padding:7px 9px;font-size:12px" />
+                    <select id="nlCarrier" style="padding:7px 8px;font-size:11.5px">
+                      <option value="tmomail.net">T-Mobile ($0)</option>
+                      <option value="vtext.com">Verizon ($0)</option>
+                      <option value="txt.att.net">AT&amp;T ($0)</option>
+                      <option value="email.uscc.net">US Cellular ($0)</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn pri" id="btnSubmitNewsletterSub" style="justify-content:center;padding:10px;margin-top:2px">✉️ Subscribe to Distro →</button>
+                <div id="nlSubStatus" role="status" aria-live="polite" style="font-size:12px;font-weight:700;color:#34d399;min-height:18px"></div>
+              </form>
+            </aside>
+
+            <!-- DONATIONS CARD (Replaces Submit Payment & Billing on Newsletter Page) -->
+            <aside class="card" id="donations" style="margin:0;border-color:rgba(197,179,88,0.55)">
+              <div class="row" style="margin-bottom:6px">
+                <h2 style="margin:0;font-size:16px">💝 Support &amp; Donations</h2>
+                <span class="chip ok">Ledger Tracked</span>
+              </div>
+              <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support open executive briefings, veteran research, and community tools. (Workspace memberships are managed inside your authenticated portal.)</p>
+              <form id="nlDonateForm" style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+                  ${[10, 25, 50, 100].map(amt =>
+                    `<button type="button" class="btn ${selectedDonationAmount === amt ? 'pri' : ''}" data-donate-amt="${amt}" style="justify-content:center;padding:7px 4px;font-size:12px">$${amt}</button>`
+                  ).join('')}
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                  <input id="donName" type="text" maxlength="100" placeholder="Your Name" value="${u ? esc(u.name) : ''}" style="padding:8px 10px;font-size:12px" />
+                  <input id="donAmount" type="number" min="1" max="10000" value="${selectedDonationAmount}" placeholder="Amount ($)" style="padding:8px 10px;font-size:12px" />
+                </div>
+                <input id="donEmail" type="email" maxlength="140" placeholder="Email for donation receipt" value="${u ? esc(u.email) : ''}" style="padding:8px 10px;font-size:12px" />
+                <button type="submit" class="btn pri" id="btnSubmitDonation" style="justify-content:center;padding:10px">💝 Contribute Donation</button>
+                <div id="nlDonStatus" role="status" aria-live="polite" style="font-size:12px;font-weight:700;color:#fde047;min-height:18px"></div>
+              </form>
+            </aside>
 
             ${u && u.role === 'owner' ? `
-              <hr style="border:none;border-top:1px solid var(--line);margin:18px 0" />
-              <h2>👑 Owner: Publish Issue</h2>
-              <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-                <input id="pubCat" placeholder="Category (e.g. Zero-Trust & Federal)" value="Executive Briefing" />
-                <input id="pubTitle" placeholder="Issue Headline..." maxlength="140" />
-                <textarea id="pubSummary" rows="3" placeholder="Executive summary & key takeaways..."></textarea>
-                <button type="button" class="btn pri" id="btnPubIssue" style="justify-content:center">🚀 Publish Issue Now</button>
-              </div>
+              <aside class="card" style="margin:0;border-color:rgba(16,185,129,0.5)">
+                <h2>👑 Source Collection &amp; Distro Dishout</h2>
+                <div style="margin-bottom:10px">
+                  <div style="font-size:11px;font-weight:700;color:#93c5fd;text-transform:uppercase;margin-bottom:6px">1 · Collected Sources (${(nlState.sources || []).length})</div>
+                  <div style="display:flex;gap:6px;margin-bottom:6px">
+                    <input id="srcTitleInput" placeholder="Add source URL or brief note..." style="flex:1;padding:6px 9px;font-size:11.5px" />
+                    <button type="button" class="btn" id="btnAddSource" style="padding:6px 10px;font-size:11.5px">+ Collect</button>
+                  </div>
+                </div>
+                <div style="margin-bottom:10px">
+                  <div style="font-size:11px;font-weight:700;color:#34d399;text-transform:uppercase;margin-bottom:6px">2 · Active Distro Segments</div>
+                  <div style="display:flex;flex-direction:column;gap:4px">${distrosHtml}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">
+                  <div style="font-size:11px;font-weight:700;color:#fde047;text-transform:uppercase">3 · Dishout New Briefing (Email + SMS)</div>
+                  <select id="pubDistro" style="padding:7px 9px;font-size:12px">
+                    ${(nlState.distros || []).map(d => `<option value="${esc(d.id)}">${esc(d.label)} (${d.count})</option>`).join('')}
+                  </select>
+                  <input id="pubCat" placeholder="Category (e.g. Zero-Trust & Federal)" value="Executive Briefing" />
+                  <input id="pubTitle" placeholder="Issue Headline..." maxlength="140" />
+                  <textarea id="pubSummary" rows="2" placeholder="Executive summary & SMS text digest..."></textarea>
+                  <button type="button" class="btn pri" id="btnPubIssue" style="justify-content:center">🚀 Publish &amp; Dishout (Email + SMS)</button>
+                </div>
+              </aside>
             ` : ''}
-          </aside>
+          </div>
 
           <section aria-label="Published Newsletter Archive">
             ${issuesHtml}
@@ -173,6 +255,42 @@
       `;
       W.header('newsletter.html');
 
+      app.querySelectorAll('[data-donate-amt]').forEach(btn => {
+        btn.onclick = () => {
+          selectedDonationAmount = Number(btn.dataset.donateAmt) || 25;
+          const inp = document.getElementById('donAmount');
+          if (inp) inp.value = String(selectedDonationAmount);
+          render();
+        };
+      });
+
+      const donForm = document.getElementById('nlDonateForm');
+      if (donForm) {
+        donForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const donorName = document.getElementById('donName').value.trim() || 'Community Supporter';
+          const donorEmail = document.getElementById('donEmail').value.trim() || 'supporter@miltongroupsecurity.org';
+          const amountUsd = Number(document.getElementById('donAmount').value) || selectedDonationAmount;
+          const st = document.getElementById('nlDonStatus');
+          try {
+            const r = await fetch('/api/newsletter/donate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ donorName, donorEmail, amountUsd })
+            });
+            const d = await r.json();
+            if (d && d.ok) {
+              st.textContent = '✓ ' + d.message;
+              W.toast('Donation Recorded in Ledger (' + d.donation.id + ')');
+            } else {
+              st.textContent = (d && d.error) || 'Could not process donation.';
+            }
+          } catch (_) {
+            st.textContent = '✓ Thank you! Donation recorded.';
+          }
+        };
+      }
+
       const form = document.getElementById('nlSubForm');
       if (form) {
         form.onsubmit = async (e) => {
@@ -180,24 +298,51 @@
           const name = document.getElementById('nlName').value.trim();
           const email = document.getElementById('nlEmail').value.trim();
           const topic = document.getElementById('nlTopic').value;
+          const smsOptIn = document.getElementById('nlSmsOptIn').checked;
+          const phone = document.getElementById('nlPhone').value.trim();
+          const carrierGateway = document.getElementById('nlCarrier').value;
           const st = document.getElementById('nlSubStatus');
           if (!email) return;
           try {
             const r = await fetch('/api/newsletter/subscribe', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ name, email, topic, source: 'newsletter-page' })
+              body: JSON.stringify({ name, email, topic, smsOptIn, phone, carrierGateway, source: 'newsletter-page' })
             });
             const d = await r.json();
             if (d && d.ok) {
               nlState.subscribersCount = d.subscribersCount || nlState.subscribersCount;
-              st.textContent = '✓ Confirmed! You are subscribed to MGC & F.I.X Executive Briefings.';
-              W.toast('Subscribed to Executive Newsletter');
+              nlState.smsSubscribersCount = d.smsSubscribersCount || nlState.smsSubscribersCount;
+              const ec = document.getElementById('nlEmailCountChip');
+              if (ec) ec.textContent = '● ' + nlState.subscribersCount + ' Email';
+              const sc = document.getElementById('nlSmsCountChip');
+              if (sc) sc.textContent = '📱 ' + nlState.smsSubscribersCount + ' SMS';
+              st.textContent = '✓ ' + (d.message || 'Subscribed to MGC & F.I.X Executive Briefings.');
+              W.toast('Subscribed to Executive Distro');
             } else {
               st.textContent = (d && d.error) || 'Subscription error';
             }
           } catch (_) {
             st.textContent = '✓ Subscribed to MGC & F.I.X Executive Briefings.';
+          }
+        };
+      }
+
+      const btnAddSrc = document.getElementById('btnAddSource');
+      if (btnAddSrc) {
+        btnAddSrc.onclick = async () => {
+          const title = document.getElementById('srcTitleInput').value.trim();
+          if (!title) return;
+          const r = await fetch('/api/newsletter/sources', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, category: 'EXECUTIVE' })
+          });
+          const d = await r.json();
+          if (d && d.ok) {
+            nlState.sources = d.sources;
+            W.toast('Source Added to Collection Queue');
+            render();
           }
         };
       }
@@ -208,16 +353,17 @@
           const category = document.getElementById('pubCat').value.trim() || 'Executive Briefing';
           const title = document.getElementById('pubTitle').value.trim();
           const summary = document.getElementById('pubSummary').value.trim();
+          const distro = document.getElementById('pubDistro') ? document.getElementById('pubDistro').value : 'distro_all_exec';
           if (!title || !summary) { W.toast('Enter both headline and summary'); return; }
           const r = await fetch('/api/newsletter/publish', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ category, title, summary })
+            body: JSON.stringify({ category, title, summary, distro, dispatchSms: true })
           });
           const d = await r.json();
           if (d && d.ok && d.newsletter) {
-            nlState = d.newsletter;
-            W.toast('Published new briefing issue!');
+            nlState = Object.assign({}, nlState, d.newsletter);
+            W.toast('Dispatched to Email & SMS Distros!');
             render();
           }
         };

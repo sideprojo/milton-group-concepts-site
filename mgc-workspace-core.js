@@ -1467,7 +1467,9 @@
         '<a class="btn' + (active === 'member-portal.html' ? ' pri' : '') + '" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Workspace</a>' +
         empDirDrop + empInternalDrop + empAppsDrop + empResDrop;
     } else {
-      // Client view: Strictly SaaS & LMS Showcases, Qualified Resources (ONLY if qualified), Submit Request & Guided Consultation, and Billing & Payment
+      // Client & Public view: On newsletter or unauthenticated views, show Donations instead of Billing & Payment.
+      // Membership & Billing only appears inside the workspace after authentication & onboarding flow.
+      const isNewsletterPage = String(active || '').includes('newsletter');
       const clientLinks = [
         ['member-portal.html', 'Workspace'],
         ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase']
@@ -1479,7 +1481,11 @@
         }
       }
       clientLinks.push(['member-portal.html?view=consultation', 'Submit Request & Consultation']);
-      clientLinks.push(['member-portal.html?view=payment', 'Billing & Payment']);
+      if (isNewsletterPage || !u) {
+        clientLinks.push(['newsletter.html#donations', '💝 Donations']);
+      } else {
+        clientLinks.push(['member-portal.html?view=payment', 'Membership & Billing']);
+      }
       if (u) {
         CATALOG.forEach(c => {
           if (c.id !== 'saasapps' && c.id !== 'resources' && can(u, 'page', c.id, 'view')) {
