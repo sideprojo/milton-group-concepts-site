@@ -21,9 +21,8 @@
       "assignedRole": "VIEWER_ONBOARDED"
     },
     {
-      "provider": "One-Time PIN (OTP) + Partner Access Key (Salted Digest Verification)",
-      "keyVerificationMode": "SHA256_SALTED_DIGEST_ONLY",
-      "validAccessKeyDigests": ["b30cd4bf8036b366", "c54c9f8b7e3627b3"],
+      "provider": "Federated OIDC + Case-Sensitive Server Session Vault",
+      "keyVerificationMode": "SERVER_SIDE_HMAC_SHA256_SESSION",
       "assignedRole": "VIEWER_ONBOARDED"
     }
   ],
