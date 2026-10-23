@@ -2,23 +2,28 @@
   "id": "otto",
   "name": "Otto",
   "callSign": "OTTO-01",
-  "version": "2026.10.1",
-  "title": "Otto — Flagship Workspace Orchestrator & Associative Routing Agent",
+  "version": "2026.10.2",
+  "title": "Otto (OTTO-01) — Autonomous Orchestrator & Associative Router",
   "platforms": {
     "googleAiStudio": {
       "sdk": "@google/genai >= 2.29.1",
       "model": "gemini-3.8-flash",
       "managedBaseAgent": "antigravity-preview-09-2026",
       "fallbackModel": "gemini-3.5-flash-lite",
-      "aistudioUrl": "https://aistudio.google.com/apps"
+      "promptId": "1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6",
+      "status": "Active & Verified (2-Turn Function Call + Structured JSON)"
     },
     "googleWorkspaceStudio": {
       "agentId": "38ef575f-bce0-4895-bf93-36605220e1ca",
       "studioWorkflowId": "w13225285bbe5e967be82464a88a6262c",
       "studioUrl": "https://studio.workspace.google.com/workflow/w13225285bbe5e967be82464a88a6262c",
+      "manageUrl": "https://studio.workspace.google.com/manage",
       "adminConsoleUrl": "https://admin.google.com/ac/agents/list?journey=218&cid=028tf37o",
       "manager": "malik.khabir@miltongroupsecurity.org",
       "serviceIdentity": "connect@miltongroupsecurity.org",
+      "schedule": "Every weekday (Monday to Friday) at 7:45 AM + On-Demand",
+      "status": "On (Active)",
       "connectedApps": ["Cloud Search", "Drive", "Gmail", "Calendar", "MGC Workspace"]
     },
     "mgcNativeRuntime": {
@@ -28,33 +33,44 @@
       "telemetryEndpoint": "/api/associative/mastery"
     }
   },
-  "system_instruction": "You are Otto, the flagship autonomous orchestrator and associative routing agent for Milton Group Concepts LLC (MGC) and F.I.X Solutions LLC. Your role is to: (1) guide authenticated clients through the 4-step post-authentication onboarding flow (Focus Categories -> Associative Starting Path -> Qualified Profile & CCPA/GDPR Consent -> Workspace Launch), (2) deterministically map client focus categories and profile telemetry to the exact authorized SaaS applications and qualified resources, (3) compute 3-stage associative transfer sequences (Option A1 Matrix + Option A2 Weighted SCORM/Quiz Telemetry Graph) that connect a user's existing background to new domains across Languages, Business Scaling, Federal Contracting, Academic Systems, and Cyber/Network Engineering, and (4) coordinate Google Workspace Studio flows (Gmail, Drive, Calendar, Cloud Search) under connect@miltongroupsecurity.org. Never expose raw secrets, tax identifiers, or unauthorized tenant data. Always return structured, concise, actionable outputs matching the response_schema.",
+  "personaRoster": [
+    { "codename": "Otto", "callSign": "OTTO-01", "slug": "otto", "domain": "Flagship Autonomous Orchestrator & Associative Router" },
+    { "codename": "Argo", "callSign": "ARGO-01", "slug": "client-turnkey-forge", "domain": "Turnkey Web, Intake & Scope Builder" },
+    { "codename": "Arya", "callSign": "ARYA-01", "slug": "sterling-auto-repair", "domain": "24/7 AI Receptionist, Voice Triage & Bay Dispatch" },
+    { "codename": "Zeno", "callSign": "ZENO-01", "slug": "eveng-netprism-studio", "domain": "Network Topology, Packet Inspection & BGP/OSPF Lab" },
+    { "codename": "Cato", "callSign": "CATO-01", "slug": "samgov-contract-matchmaker", "domain": "Federal SDVOSB Contract Radar & Capability Matrix" },
+    { "codename": "Vega", "callSign": "VEGA-01", "slug": "traffic-roi-simulator", "domain": "Conversion Funnel & Multi-Rail Treasury Modeler" },
+    { "codename": "Kael", "callSign": "KAEL-01", "slug": "ghost-cli-trainer", "domain": "Multi-OS Command Terminal (Linux, IOS-XE, SQL & Ansible)" },
+    { "codename": "Clio", "callSign": "CLIO-01", "slug": "chronos-aetheria-scorm", "domain": "Ancient Text Restoration, Epigraphy & SCORM Engine" },
+    { "codename": "Alma", "callSign": "ALMA-01", "slug": "spanish-acquisition-os", "domain": "Associative Language Acquisition & Root Matrix" }
+  ],
+  "system_instruction": "You are Otto (OTTO-01), the flagship autonomous orchestrator and associative routing agent for Milton Group Concepts LLC (MGC) and F.I.X Solutions LLC. You coordinate the 8 specialist persona agents and SaaS applications: Argo (ARGO-01: Turnkey Web, Intake & Scope Builder), Arya (ARYA-01: 24/7 AI Receptionist, Voice Triage & Bay Dispatch), Zeno (ZENO-01: Network Topology, Packet Inspection & BGP/OSPF Lab), Cato (CATO-01: Federal SDVOSB Contract Radar & Capability Matrix), Vega (VEGA-01: Conversion Funnel & Multi-Rail Treasury Modeler), Kael (KAEL-01: Multi-OS Command Terminal for Linux, IOS-XE, SQL & Ansible), Clio (CLIO-01: Ancient Text Restoration, Epigraphy & SCORM Engine), and Alma (ALMA-01: Associative Language Acquisition & Root Matrix). Your role is to: (1) guide authenticated clients through the 4-step post-authentication onboarding flow (Focus Categories -> Associative Starting Path -> Qualified Profile & CCPA/GDPR Consent -> Workspace Launch), (2) deterministically map client focus categories and profile telemetry to the exact authorized persona SaaS applications and qualified resources, (3) compute 3-stage associative transfer sequences (Option A1 Matrix + Option A2 Weighted SCORM/Quiz Telemetry Graph), and (4) coordinate Google Workspace Studio flows (Gmail, Drive, Calendar, Cloud Search) under connect@miltongroupsecurity.org. Never expose raw secrets, tax identifiers, or unauthorized tenant data. Always return structured, concise, actionable outputs matching the response_schema.",
   "tools": [
     {
       "name": "route_client_workspace",
-      "description": "Maps a client's selected Netflix-style focus categories, starting background bridge, role, industry sector, and resource qualification to their matched SaaS applications, qualified resources, and primary domain template.",
+      "description": "Maps a client's selected Netflix-style focus categories, starting background bridge, role, industry sector, and resource qualification to their matched Persona SaaS applications (Argo, Arya, Zeno, Cato, Vega, Kael, Clio, Alma), qualified resources, and primary domain template.",
       "parameters": {
-        "type": "OBJECT",
+        "type": "object",
         "properties": {
           "selectedCategories": {
-            "type": "ARRAY",
-            "items": { "type": "STRING" },
+            "type": "array",
+            "items": { "type": "string" },
             "description": "Selected category IDs (cat_ai_saas, cat_divergent_lang, cat_cyber_eveng, cat_federal_sdvosb, cat_capital_dealflow, cat_chronos_epigraphy)."
           },
           "divergentBaseline": {
-            "type": "STRING",
+            "type": "string",
             "description": "Associative starting bridge ID (en_arabic_heritage, en_us_native, east_asian_hangul, business_endeavor_scale, schooling_academic_bridge, cli_netops_ai)."
           },
           "roleTitle": {
-            "type": "STRING",
+            "type": "string",
             "description": "Client executive or technical role."
           },
           "industrySector": {
-            "type": "STRING",
+            "type": "string",
             "description": "Client industry sector."
           },
           "resourceInterest": {
-            "type": "STRING",
+            "type": "string",
             "description": "Primary resource qualification key (resource-fast-track, turnkey-saas, federal-teaming, language-academy)."
           }
         },
@@ -65,22 +81,22 @@
       "name": "evaluate_associative_mastery",
       "description": "Records a completed SCORM checkpoint or Option T2 scenario branch selection and calculates the updated Option A2 associative transfer percentage and next unlocked stage.",
       "parameters": {
-        "type": "OBJECT",
+        "type": "object",
         "properties": {
           "baselineKey": {
-            "type": "STRING",
+            "type": "string",
             "description": "Active associative bridge ID."
           },
           "step": {
-            "type": "INTEGER",
+            "type": "integer",
             "description": "Completed stage number (1, 2, or 3)."
           },
           "source": {
-            "type": "STRING",
+            "type": "string",
             "description": "Telemetry event source (scorm_quiz_checkpoint or scenario_branch)."
           },
           "branchId": {
-            "type": "STRING",
+            "type": "string",
             "description": "Optional scenario branch identifier."
           }
         },
@@ -91,14 +107,14 @@
       "name": "recommend_outcome_template",
       "description": "Selects the optimal Guided Resource Fast-Track Template and 3-milestone schedule based on the client's focus track and pacing preference.",
       "parameters": {
-        "type": "OBJECT",
+        "type": "object",
         "properties": {
           "templateId": {
-            "type": "STRING",
+            "type": "string",
             "description": "Template ID (tpl_lang_associative, tpl_biz_turnkey_scale, tpl_school_systems, tpl_upskill_cert_lab)."
           },
           "pacing": {
-            "type": "STRING",
+            "type": "string",
             "description": "Selected pacing schedule (Rapid 7-Day Sprint, 14-Day Launch Blueprint, 30-Day Guided Sequence, Weekly Lab Checkpoints)."
           }
         },
@@ -109,14 +125,14 @@
       "name": "sync_workspace_studio_flow",
       "description": "Triggers or queries Otto's Google Workspace Studio workflow (w13225285bbe5e967be82464a88a6262c) under connect@miltongroupsecurity.org for Drive/Gmail/Calendar orchestration.",
       "parameters": {
-        "type": "OBJECT",
+        "type": "object",
         "properties": {
           "actionType": {
-            "type": "STRING",
+            "type": "string",
             "description": "Studio action (dispatch_onboarding_brief, provision_drive_folder, schedule_consultation_slot, status_check)."
           },
           "targetEmail": {
-            "type": "STRING",
+            "type": "string",
             "description": "Client or internal recipient email."
           }
         },
@@ -125,24 +141,24 @@
     }
   ],
   "response_schema": {
-    "type": "OBJECT",
+    "type": "object",
     "properties": {
-      "agent": { "type": "STRING" },
-      "callSign": { "type": "STRING" },
-      "toolExecuted": { "type": "STRING" },
-      "summary": { "type": "STRING" },
+      "agent": { "type": "string" },
+      "callSign": { "type": "string" },
+      "toolExecuted": { "type": "string" },
+      "summary": { "type": "string" },
       "recommendedApps": {
-        "type": "ARRAY",
-        "items": { "type": "STRING" }
+        "type": "array",
+        "items": { "type": "string" }
       },
       "recommendedResources": {
-        "type": "ARRAY",
-        "items": { "type": "STRING" }
+        "type": "array",
+        "items": { "type": "string" }
       },
-      "recommendedTemplateId": { "type": "STRING" },
-      "nextUnlockedStage": { "type": "STRING" },
-      "transferMatchPct": { "type": "STRING" },
-      "studioFlowStatus": { "type": "STRING" }
+      "recommendedTemplateId": { "type": "string" },
+      "nextUnlockedStage": { "type": "string" },
+      "transferMatchPct": { "type": "string" },
+      "studioFlowStatus": { "type": "string" }
     },
     "required": ["agent", "callSign", "toolExecuted", "summary"]
   }

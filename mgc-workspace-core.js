@@ -24,14 +24,14 @@
   ];
 
   const APPS_CATALOG = [
-    { id: 'client-turnkey-forge',       icon: '', title: 'Client Turnkey Forge',                 brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Interactive custom build scope and pricing configurator.' },
-    { id: 'sterling-auto-repair',       icon: '', title: 'Sterling Auto Repair',                 brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Commercial web and autonomous receptionist application.' },
-    { id: 'eveng-netprism-studio',      icon: '', title: 'EVE-NG & NetPrism Topology Studio',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'OSPF, BGP, ZTNA, and EVPN network topology simulator.' },
-    { id: 'samgov-contract-matchmaker', icon: '', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Federal NAICS 541512/541519 opportunity matchmaker.' },
-    { id: 'traffic-roi-simulator',      icon: '', title: 'Site Traffic & Conversion ROI',        brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator.' },
-    { id: 'ghost-cli-trainer',          icon: '', title: 'Ghost-CLI & Netmiko Auto-Grader',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'IOS-XE, Linux, SQL, KQL, and Ansible terminal lab.' },
-    { id: 'chronos-aetheria-scorm',     icon: '', title: 'Chronos Aetheria Geo-Historical AI',   brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Epigraphy and geodesic discovery application.' },
-    { id: 'spanish-acquisition-os',     icon: '', title: 'Spanish Acquisition (10,000 Words)',   brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module language training application with neural audio.' }
+    { id: 'client-turnkey-forge',       codename: 'Argo', callSign: 'ARGO-01', icon: '', title: 'Argo — Turnkey Web & Scope Builder',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Interactive custom build scope, intake, and pricing configurator powered by Argo.' },
+    { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', icon: '', title: 'Arya — AI Receptionist & Bay Dispatch',     brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: '24/7 commercial web, voice triage, and live bay dispatch powered by Arya.' },
+    { id: 'eveng-netprism-studio',      codename: 'Zeno', callSign: 'ZENO-01', icon: '', title: 'Zeno — NetPrism & EVE-NG Topology Lab',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'OSPF, BGP, ZTNA, and EVPN network topology simulator powered by Zeno.' },
+    { id: 'samgov-contract-matchmaker', codename: 'Cato', callSign: 'CATO-01', icon: '', title: 'Cato — Federal Contract & Role Radar',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Federal NAICS 541512/541519 SDVOSB opportunity matchmaker powered by Cato.' },
+    { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', icon: '', title: 'Vega — Funnel & Treasury ROI Modeler',      brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator powered by Vega.' },
+    { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', icon: '', title: 'Kael — Multi-OS CLI & Ansible Auto-Grader', brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'IOS-XE, Linux, SQL, KQL, and Ansible terminal lab powered by Kael.' },
+    { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', icon: '', title: 'Clio — Chronos Epigraphy & Geodesic AI',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Ancient text restoration, epigraphy, and geodesic discovery powered by Clio.' },
+    { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', icon: '', title: 'Alma — Associative Language OS (10K)',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module associative language training application powered by Alma.' }
   ];
 
   // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -90,9 +90,12 @@
     {
       id: 'otto',
       name: 'Otto',
-      title: 'Otto — Autonomous Workspace & Security Operations Agent',
-      type: 'Studio flow',
+      callSign: 'OTTO-01',
+      title: 'Otto (OTTO-01) — Autonomous Orchestrator & Associative Router',
+      type: 'AI Studio + Workspace Studio Flow',
       agentId: '38ef575f-bce0-4895-bf93-36605220e1ca',
+      aistudioPromptId: '1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
       studioWorkflowId: 'w13225285bbe5e967be82464a88a6262c',
       studioUrl: 'https://studio.workspace.google.com/workflow/w13225285bbe5e967be82464a88a6262c',
       adminConsoleUrl: 'https://admin.google.com/ac/agents/list?journey=218&cid=028tf37o',
@@ -102,8 +105,8 @@
       access: 'Default',
       accessPolicy: 'Default (Allow flow & Workspace Client access)',
       studioAttributionVisibility: 'ON',
-      status: 'Active',
-      schedule: 'Daily / On-Demand Studio Flow + MGC Portal Agent',
+      status: 'On (Active)',
+      schedule: 'Every weekday (Mon-Fri 7:45 AM) + On-Demand AI Studio & Portal Agent',
       boundaryRule: 'Administrator: Full Agent Governance & Actionable Controls · Workspace Clients: Interactive Otto Agent & Studio Flows · Access Clients: Showcase & Insights Only (Connect Workspace Required)'
     }
   ];
@@ -1027,66 +1030,66 @@
   const ONBOARDING_CATEGORIES = [
     {
       id: 'cat_ai_saas',
-      title: 'AI Receptionist & Web Portals',
+      title: 'AI Receptionist & Web Portals (Arya & Argo)',
       tag: 'Business & SaaS',
       accent: '#3b82f6',
       gradient: 'linear-gradient(135deg, rgba(30,58,138,0.85), rgba(15,23,42,0.96))',
-      summary: '24/7 client intake, automated booking, and turnkey business portals.',
+      summary: '24/7 client intake and turnkey portals powered by Arya, Argo, and Vega.',
       associatedApps: ['client-turnkey-forge', 'sterling-auto-repair', 'traffic-roi-simulator'],
       associatedResources: ['resource-fast-track'],
       learningTrack: 'ai-web'
     },
     {
       id: 'cat_divergent_lang',
-      title: 'Otto Language Studio',
+      title: 'Associative Language Studio (Alma & Clio)',
       tag: 'Languages',
       accent: '#10b981',
       gradient: 'linear-gradient(135deg, rgba(6,78,59,0.85), rgba(15,23,42,0.96))',
-      summary: 'Fast-track new languages using languages you already know.',
+      summary: 'Fast-track new languages using roots you already know with Alma and Clio.',
       associatedApps: ['spanish-acquisition-os', 'chronos-aetheria-scorm'],
       associatedResources: [],
       learningTrack: 'training'
     },
     {
       id: 'cat_cyber_eveng',
-      title: 'Network & Cyber Upskilling',
+      title: 'Network & Cyber Upskilling (Zeno & Kael)',
       tag: 'Upskilling & Certs',
       accent: '#06b6d4',
       gradient: 'linear-gradient(135deg, rgba(8,51,68,0.85), rgba(15,23,42,0.96))',
-      summary: 'Hands-on routing, Linux, SQL, and certification practice labs.',
+      summary: 'Hands-on routing, Linux, SQL, and certification labs with Zeno and Kael.',
       associatedApps: ['eveng-netprism-studio', 'ghost-cli-trainer'],
       associatedResources: [],
       learningTrack: 'cyber'
     },
     {
       id: 'cat_federal_sdvosb',
-      title: 'Federal Contracting',
+      title: 'Federal Contracting (Cato & Argo)',
       tag: 'Business & Defense',
       accent: '#c5b358',
       gradient: 'linear-gradient(135deg, rgba(120,53,15,0.78), rgba(15,23,42,0.96))',
-      summary: 'SAM.gov contract matching, proposal readiness, and federal billing.',
+      summary: 'SAM.gov contract matching, proposal readiness, and federal scope with Cato.',
       associatedApps: ['samgov-contract-matchmaker', 'client-turnkey-forge'],
       associatedResources: [],
       learningTrack: 'federal'
     },
     {
       id: 'cat_capital_dealflow',
-      title: 'Business Endeavors & Scaling',
+      title: 'Business Endeavors & Scaling (Vega & Argo)',
       tag: 'Business Endeavors',
       accent: '#eab308',
       gradient: 'linear-gradient(135deg, rgba(113,63,18,0.82), rgba(15,23,42,0.96))',
-      summary: 'Operational scaling, revenue modeling, and Resource Fast-Track templates.',
+      summary: 'Operational scaling, revenue modeling, and Fast-Track templates with Vega.',
       associatedApps: ['traffic-roi-simulator', 'client-turnkey-forge'],
       associatedResources: ['resource-fast-track'],
       learningTrack: 'ai-web'
     },
     {
       id: 'cat_chronos_epigraphy',
-      title: 'Schooling & Academic Systems',
+      title: 'Schooling & Academic Systems (Clio & Alma)',
       tag: 'Schooling & Research',
       accent: '#8b5cf6',
       gradient: 'linear-gradient(135deg, rgba(76,29,149,0.80), rgba(15,23,42,0.96))',
-      summary: 'Structured academic foundations, data modeling, and primary research.',
+      summary: 'Structured academic foundations, data modeling, and epigraphy with Clio.',
       associatedApps: ['chronos-aetheria-scorm', 'spanish-acquisition-os'],
       associatedResources: [],
       learningTrack: 'training'
