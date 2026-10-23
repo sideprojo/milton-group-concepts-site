@@ -796,7 +796,8 @@ function can(u, type, id, action) {
     return (u.pages || {})[id] === 'ready';
   }
   if (type === 'app') {
-    if (accessOnly) {
+    const hasPaidOrOnboarded = Boolean((u.plan && u.plan.paymentVerified) || u.onboardingCompleted);
+    if (accessOnly && !hasPaidOrOnboarded) {
       return DEFAULT_CUSTOMER_APPS.includes(id);
     }
     const apps = Array.isArray(u.allowedApps) ? u.allowedApps : DEFAULT_CUSTOMER_APPS;
@@ -1754,11 +1755,30 @@ function computeDivergentRecommendations(user) {
   const bridge = DIVERGENT_BRIDGES[baselineKey];
   const matchedCatObjs = ONBOARDING_CATEGORIES.filter(c => cats.includes(c.id));
   const recommendedAppIds = new Set();
-  const recommendedResourceIds = new Set();
+  const recommendedResourceIds = new Set(['resource-fast-track']);
   matchedCatObjs.forEach(c => {
     (c.associatedApps || []).forEach(a => recommendedAppIds.add(a));
     (c.associatedResources || []).forEach(r => recommendedResourceIds.add(r));
   });
+  const resInterest = String((user && user.ottoProfile && user.ottoProfile.resourceInterest) || '').toLowerCase();
+  if (resInterest === 'turnkey-saas') {
+    recommendedAppIds.add('client-turnkey-forge');
+    recommendedAppIds.add('traffic-roi-simulator');
+  } else if (resInterest === 'federal-teaming') {
+    recommendedAppIds.add('samgov-contract-matchmaker');
+    recommendedAppIds.add('client-turnkey-forge');
+  } else if (resInterest === 'language-academy') {
+    recommendedAppIds.add('spanish-acquisition-os');
+    recommendedAppIds.add('chronos-aetheria-scorm');
+  }
+  const primaryCatId = cats[0] || 'cat_ai_saas';
+  const recommendedTemplateId = primaryCatId === 'cat_divergent_lang' || resInterest === 'language-academy'
+    ? 'tpl_lang_associative'
+    : primaryCatId === 'cat_cyber_eveng'
+      ? 'tpl_upskill_cert_lab'
+      : primaryCatId === 'cat_chronos_epigraphy'
+        ? 'tpl_school_systems'
+        : 'tpl_biz_turnkey_scale';
   return {
     agent: 'Otto',
     onboardingCompleted: Boolean(user && user.onboardingCompleted),
@@ -1768,6 +1788,7 @@ function computeDivergentRecommendations(user) {
     associativeTelemetry: (user && user.associativeTelemetry) || { completedStages: {}, weightBoosts: {}, scenarioSelections: {}, events: [] },
     catalogThreshold: getCatalogThresholdStatus(),
     ottoProfile: (user && user.ottoProfile) || null,
+    recommendedTemplateId,
     recommendedApps: Array.from(recommendedAppIds),
     recommendedResources: Array.from(recommendedResourceIds),
     qualifiedResources: getQualifiedResourcesForUser(user)
@@ -2491,7 +2512,13 @@ const server = http.createServer(async (req, res) => {
       const requestedNext = (body.next && String(body.next).trim()) || (returnClaims && returnClaims.next) || '';
       const cleanNext = toCleanRoute(requestedNext);
       const mobileClient = isMobileRequest(req, parsedUrl);
-      const defaultClean = mobileClient ? '/mobile' : (user.role === 'owner' ? '/access-admin' : (user.clientTier === 'workspace' ? '/workspace' : '/apps'));
+      const defaultClean = mobileClient
+        ? '/mobile'
+        : (user.role === 'owner'
+            ? '/access-admin'
+            : (user.ou === 'internal'
+                ? '/employee-portal.html'
+                : (!user.onboardingCompleted ? '/workspace?onboard=1' : '/workspace')));
       const target = mobileClient ? '/mobile' : ((cleanNext && cleanNext !== '/auth' && cleanNext !== '/login') ? cleanNext : defaultClean);
       const effectiveAllowedApps = user.role === 'owner'
         ? APPS_CATALOG.map(a => a.id)
@@ -3760,6 +3787,7 @@ const server = http.createServer(async (req, res) => {
       if (!Array.isArray(S.payments)) S.payments = [];
       S.payments.unshift(receipt);
       u.plan = Object.assign({}, u.plan || {}, { base: true, tier: planTier, paymentVerified: true });
+      u.membershipActive = true;
 
       // Scalable Tiered Membership Gate: Automatically unlock apps & workspace modules based on verified planTier
       const isTier3Enterprise = ['enterprise_499', 'sdvosb_contract_retainer', 'custom_retainer'].includes(planTier) || amountUsd >= 250;
@@ -3808,6 +3836,9 @@ const server = http.createServer(async (req, res) => {
           receipt,
           journalEntry,
           paymentProfile,
+          unlockedApps: u.allowedApps,
+          qualifiedResources: u.qualifiedResources,
+          triggerGuidedOnboarding: !u.onboardingCompleted,
           state: scopeStateForUser(u)
         }
       };
@@ -4324,13 +4355,35 @@ const server = http.createServer(async (req, res) => {
         u.quote = Object.assign({}, u.quote || {}, { interest: primaryCat.learningTrack });
       }
       const profile = computeDivergentRecommendations(u);
-      logAudit(u.id, 'otto.onboarding_completed', `Categories=[${cleanCats.join(',')}] Path=${cleanBaseline} Role=${roleTitle} DataSharingOptIn=${dataSharingOptIn}`);
+      u.recommendedApps = profile.recommendedApps;
+      u.recommendedResources = profile.recommendedResources;
+      u.recommendedTemplateId = profile.recommendedTemplateId;
+      if (u.role !== 'owner' && u.ou !== 'internal' && u.status === 'active') {
+        const curApps = Array.isArray(u.allowedApps) ? u.allowedApps : DEFAULT_CUSTOMER_APPS.slice();
+        u.allowedApps = Array.from(new Set([...curApps, ...profile.recommendedApps]));
+        const curRes = Array.isArray(u.qualifiedResources) ? u.qualifiedResources : DEFAULT_CUSTOMER_RESOURCES.slice();
+        u.qualifiedResources = Array.from(new Set([...curRes, ...profile.recommendedResources, 'resource-fast-track']));
+        u.pages = Object.assign({}, u.pages || {}, { saasapps: 'ready', resources: 'ready' });
+        u.allowedApps.forEach(appId => {
+          if (!S.shares.some(s => s.type === 'app' && s.resource === appId && s.grantee === u.id)) {
+            S.shares.push({ id: `app_${appId}_${u.id}`, type: 'app', resource: appId, grantee: u.id, perms: ['view', 'launch'], created: ts });
+          }
+        });
+        u.qualifiedResources.forEach(resId => {
+          if (!S.shares.some(s => s.type === 'resource' && s.resource === resId && s.grantee === u.id)) {
+            S.shares.push({ id: `resource_${resId}_${u.id}`, type: 'resource', resource: resId, grantee: u.id, perms: ['view', 'launch'], created: ts });
+          }
+        });
+      }
+      logAudit(u.id, 'otto.onboarding_completed', `Categories=[${cleanCats.join(',')}] Path=${cleanBaseline} Role=${roleTitle} DataSharingOptIn=${dataSharingOptIn} Apps=[${profile.recommendedApps.join(',')}]`);
       saveState(S);
       return sendJson(res, 200, {
         ok: true,
         onboardingCompleted: true,
         ottoProfile: u.ottoProfile,
         profile,
+        allowedApps: u.allowedApps,
+        qualifiedResources: u.qualifiedResources,
         state: scopeStateForUser(u)
       });
     }
@@ -4394,9 +4447,29 @@ const server = http.createServer(async (req, res) => {
           u.quote = Object.assign({}, u.quote || {}, { interest: primaryCat.learningTrack });
         }
         const profile = computeDivergentRecommendations(u);
-        logAudit(u.id, 'otto.onboarding_completed', `Categories=[${cleanCats.join(',')}] Path=${cleanBaseline} DataSharingOptIn=${dataSharingOptIn}`);
+        u.recommendedApps = profile.recommendedApps;
+        u.recommendedResources = profile.recommendedResources;
+        u.recommendedTemplateId = profile.recommendedTemplateId;
+        if (u.role !== 'owner' && u.ou !== 'internal' && u.status === 'active') {
+          const curApps = Array.isArray(u.allowedApps) ? u.allowedApps : DEFAULT_CUSTOMER_APPS.slice();
+          u.allowedApps = Array.from(new Set([...curApps, ...profile.recommendedApps]));
+          const curRes = Array.isArray(u.qualifiedResources) ? u.qualifiedResources : DEFAULT_CUSTOMER_RESOURCES.slice();
+          u.qualifiedResources = Array.from(new Set([...curRes, ...profile.recommendedResources, 'resource-fast-track']));
+          u.pages = Object.assign({}, u.pages || {}, { saasapps: 'ready', resources: 'ready' });
+          u.allowedApps.forEach(appId => {
+            if (!S.shares.some(s => s.type === 'app' && s.resource === appId && s.grantee === u.id)) {
+              S.shares.push({ id: `app_${appId}_${u.id}`, type: 'app', resource: appId, grantee: u.id, perms: ['view', 'launch'], created: ts });
+            }
+          });
+          u.qualifiedResources.forEach(resId => {
+            if (!S.shares.some(s => s.type === 'resource' && s.resource === resId && s.grantee === u.id)) {
+              S.shares.push({ id: `resource_${resId}_${u.id}`, type: 'resource', resource: resId, grantee: u.id, perms: ['view', 'launch'], created: ts });
+            }
+          });
+        }
+        logAudit(u.id, 'otto.onboarding_completed', `Categories=[${cleanCats.join(',')}] Path=${cleanBaseline} DataSharingOptIn=${dataSharingOptIn} Apps=[${profile.recommendedApps.join(',')}]`);
         saveState(S);
-        return sendJson(res, 200, { ok: true, onboardingCompleted: true, ottoProfile: u.ottoProfile, profile, state: scopeStateForUser(u) });
+        return sendJson(res, 200, { ok: true, onboardingCompleted: true, ottoProfile: u.ottoProfile, profile, allowedApps: u.allowedApps, qualifiedResources: u.qualifiedResources, state: scopeStateForUser(u) });
       }
 
       // Member / Self actions

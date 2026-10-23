@@ -1126,7 +1126,7 @@
       }
       W.signInAs(existing.id, 'password');
       persistOnboardingBridge(existing.email, existing.name, 'member', 'password', existing.allowedApps, undefined, existing.clientTier || 'access');
-      location.href = nextUrl ? nextUrl.replace(/^\/+/, '') : 'member-portal.html';
+      location.href = nextUrl ? nextUrl.replace(/^\/+/, '') : (!existing.onboardingCompleted ? 'member-portal.html?onboard=1' : 'member-portal.html');
       return;
     }
 

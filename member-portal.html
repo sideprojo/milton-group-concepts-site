@@ -73,6 +73,9 @@
       if (typeof u.ottoProfile.consentWorkspaceTailoring === 'boolean') ottoConsentTailor = u.ottoProfile.consentWorkspaceTailoring;
       if (typeof u.ottoProfile.dataSharingOptIn === 'boolean') ottoConsentDataSharing = u.ottoProfile.dataSharingOptIn;
     }
+    if (u.recommendedTemplateId) {
+      selectedAiTemplateId = u.recommendedTemplateId;
+    }
   }
 
   const CONSULTATION_TRACKS = [
@@ -104,29 +107,42 @@
 
   function saasAppsAndLmsPanel() {
     const apps = W.APPS_CATALOG || [];
-    // Strict Zero-Leakage Policy: Only render applications the user actually has access to
-    const unlockedApps = apps.filter(a => W.can(u, 'app', a.id, 'view'));
+    const cats = W.ONBOARDING_CATEGORIES || [];
+    const userCats = (u && Array.isArray(u.selectedCategories) && u.selectedCategories.length)
+      ? u.selectedCategories
+      : selectedCategories;
+    const matchedCatObjs = cats.filter(c => userCats.includes(c.id));
+    const recAppIds = new Set(Array.isArray(u && u.recommendedApps) ? u.recommendedApps : []);
+    matchedCatObjs.forEach(c => (c.associatedApps || []).forEach(aid => recAppIds.add(aid)));
+
+    // Strict Zero-Leakage Policy: Only render applications the user actually has access to, sorted by Netflix-category match first
+    const unlockedApps = apps
+      .filter(a => W.can(u, 'app', a.id, 'view'))
+      .slice()
+      .sort((a, b) => (recAppIds.has(b.id) ? 1 : 0) - (recAppIds.has(a.id) ? 1 : 0));
 
     const renderAppCard = (a) => {
+      const matchingTrack = matchedCatObjs.find(c => (c.associatedApps || []).includes(a.id));
+      const trackLine = matchingTrack
+        ? '<div class="it-meta" style="margin-top:6px;color:#34d399;font-weight:600">Matched Track · ' + esc(matchingTrack.title) + '</div>'
+        : '';
       const act = '<a class="btn pri" href="' + esc(a.href) + '" target="_blank" rel="noopener">Launch App ↗</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>Download Package</a>' : '');
-      return '<div class="compact-card" data-app-card="' + esc(a.id) + '" style="border-color:rgba(16,185,129,0.38);padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px">' +
-        '<div><h3>' + esc(a.title) + '</h3><p>' + esc(a.desc || '') + '</p></div>' +
+      return '<div class="compact-card" data-app-card="' + esc(a.id) + '" style="border-color:' + (matchingTrack ? 'rgba(16,185,129,0.55)' : 'rgba(16,185,129,0.38)') + ';padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px">' +
+        '<div><h3>' + esc(a.title) + '</h3><p>' + esc(a.desc || '') + '</p>' + trackLine + '</div>' +
         '<div class="row" style="justify-content:flex-start;gap:8px">' + act + '</div></div>';
     };
 
     const qualifiedRes = getQualifiedResources();
-    const accessOnly = isAccessClientUser();
+    const accessOnly = isAccessClientUser() && !(u && ((u.plan && u.plan.paymentVerified) || u.onboardingCompleted));
     const resBtnHtml = qualifiedRes.length > 0
       ? '<button type="button" class="btn" data-go-resources="1" style="border-color:rgba(197,179,88,0.45);color:#fde047">' + (accessOnly ? 'Tools &amp; Insights' : ('Resources &amp; Otto (' + qualifiedRes.length + ')')) + '</button>'
       : '';
 
-    const personalizeBtnHtml = accessOnly
-      ? ''
-      : '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Otto Setup</button>';
+    const personalizeBtnHtml = '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Otto Setup</button>';
 
     const topRightActions = isEmp()
-      ? '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
-      : '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '</div>';
+      ? '<div style="display:flex;gap:8px;flex-wrap:wrap">' + resBtnHtml + personalizeBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
+      : '<div style="display:flex;gap:8px;flex-wrap:wrap">' + resBtnHtml + personalizeBtnHtml + '</div>';
 
     const bridges = W.DIVERGENT_BRIDGES || {};
     const activeBaselineKey = (u && u.divergentBaseline && bridges[u.divergentBaseline]) ? u.divergentBaseline : selectedDivergentBaseline;
@@ -316,7 +332,11 @@
               '<strong style="font-size:13.5px;font-weight:600;color:#fff">✓ ' + esc(prof.instrumentBrand) + ' · ' + esc(prof.last4) + '</strong>' +
               '<span style="font-size:12.5px;color:#a7f3d0">' + esc(prof.planLabel) + '</span>' +
             '</div>' +
-            (latestReceipt ? '<code style="font-size:11.5px;color:#34d399">' + esc(latestReceipt.receiptId) + '</code>' : '') +
+            '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+              (latestReceipt ? '<code style="font-size:11.5px;color:#34d399">' + esc(latestReceipt.receiptId) + '</code>' : '') +
+              '<button type="button" class="btn pri" data-open-onboarding="1" style="padding:6px 12px;font-size:11.5px">Otto Setup</button>' +
+              '<button type="button" class="btn" data-tab="apps" style="padding:6px 12px;font-size:11.5px">Applications</button>' +
+            '</div>' +
           '</div>' +
         '</div>'
       : '';
@@ -408,7 +428,7 @@
   }
 
   function resourcesPanel() {
-    if (isAccessClientUser()) {
+    if (isAccessClientUser() && !(u && ((u.plan && u.plan.paymentVerified) || u.onboardingCompleted))) {
       return '<div class="card" id="accessClientToolsInsightsCard" style="padding:18px 20px;margin-bottom:14px;border-color:rgba(59,130,246,0.45)">' +
         '<div class="row" style="margin-bottom:10px;flex-wrap:wrap;gap:8px">' +
           '<div>' +
@@ -578,7 +598,7 @@
   }
 
   function getAvailableTabsForUser() {
-    const accessOnly = isAccessClientUser();
+    const accessOnly = isAccessClientUser() && !(u && ((u.plan && u.plan.paymentVerified) || u.onboardingCompleted));
     const list = [
       ['apps', 'Applications', saasAppsAndLmsPanel]
     ];
@@ -797,9 +817,7 @@
       return;
     }
     syncOnboardingStateFromUser();
-    if ( isAccessClientUser() ) {
-      showNetflixOnboarding = false;
-    } else if (!isSoleAdmin() && !u.onboardingCompleted && sessionStorage.getItem('mgc_nf_prompted_' + u.id) !== '1') {
+    if (!isSoleAdmin() && !isEmp() && !u.onboardingCompleted && (qs.get('onboard') === '1' || sessionStorage.getItem('mgc_nf_prompted_' + u.id) !== '1')) {
       showNetflixOnboarding = true;
       sessionStorage.setItem('mgc_nf_prompted_' + u.id, '1');
     }
@@ -988,9 +1006,21 @@
             u.divergentBaseline = selectedDivergentBaseline;
             u.learningGoal = payload.learningGoal;
             u.ottoProfile = data.ottoProfile || payload;
+            if (Array.isArray(data.allowedApps)) u.allowedApps = data.allowedApps;
+            if (Array.isArray(data.qualifiedResources)) u.qualifiedResources = data.qualifiedResources;
+            if (data.profile) {
+              if (Array.isArray(data.profile.recommendedApps)) u.recommendedApps = data.profile.recommendedApps;
+              if (Array.isArray(data.profile.recommendedResources)) u.recommendedResources = data.profile.recommendedResources;
+              if (data.profile.recommendedTemplateId) {
+                u.recommendedTemplateId = data.profile.recommendedTemplateId;
+                selectedAiTemplateId = data.profile.recommendedTemplateId;
+              }
+            }
+            u.pages = Object.assign({}, u.pages || {}, { saasapps: 'ready', resources: 'ready' });
           }
           if (W.completeNetflixOnboarding) W.completeNetflixOnboarding(payload);
           showNetflixOnboarding = false;
+          tab = 'apps';
           W.toast('Otto Setup Complete');
           render();
         } catch (_) {
@@ -1000,7 +1030,11 @@
             render();
             return;
           }
+          if (u && localRes.recommendedTemplateId) {
+            selectedAiTemplateId = localRes.recommendedTemplateId;
+          }
           showNetflixOnboarding = false;
+          tab = 'apps';
           W.toast('Otto Setup Complete');
           render();
         }
@@ -1297,6 +1331,14 @@
           if (u) {
             u.paymentProfile = data.paymentProfile;
             u.payments = [data.receipt].concat(u.payments || []);
+            u.plan = Object.assign({}, u.plan || {}, { base: true, tier: payload.planTier, paymentVerified: true });
+            u.membershipActive = true;
+            if (Array.isArray(data.unlockedApps)) u.allowedApps = data.unlockedApps;
+            if (Array.isArray(data.qualifiedResources)) u.qualifiedResources = data.qualifiedResources;
+            u.pages = Object.assign({}, u.pages || {}, { saasapps: 'ready', resources: 'ready' });
+            if (!u.onboardingCompleted) {
+              showNetflixOnboarding = true;
+            }
           }
           W.toast('Payment verified — Receipt ' + data.receipt.receiptId);
           render();

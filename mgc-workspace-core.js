@@ -806,8 +806,9 @@
       return (u.pages || {})[id] === 'ready';                     // only ready pages explicitly granted by Administrator
     }
     if (type === 'app') {
-      if (accessOnlyClient) {
-        return DEFAULT_CUSTOMER_APPS.includes(id);                // Access Clients strictly get Showcase Access apps
+      const hasPaidOrOnboarded = Boolean((u.plan && u.plan.paymentVerified) || u.onboardingCompleted);
+      if (accessOnlyClient && !hasPaidOrOnboarded) {
+        return DEFAULT_CUSTOMER_APPS.includes(id);                // Un-onboarded Access Clients strictly get Showcase Access apps
       }
       const apps = Array.isArray(u.allowedApps) ? u.allowedApps : DEFAULT_CUSTOMER_APPS;
       if (apps.includes('*') || apps.includes(id)) return true;
@@ -1460,8 +1461,51 @@
       consentTimestamp: ts,
       consentStandard: 'CCPA_CPRA_GDPR_IAPP_2026'
     };
+    const matchedCatObjs = ONBOARDING_CATEGORIES.filter(c => cleanCats.includes(c.id));
+    const recApps = new Set();
+    const recRes = new Set(['resource-fast-track']);
+    matchedCatObjs.forEach(c => {
+      (c.associatedApps || []).forEach(a => recApps.add(a));
+      (c.associatedResources || []).forEach(r => recRes.add(r));
+    });
+    const rInt = String(resourceInterest || 'resource-fast-track').toLowerCase();
+    if (rInt === 'turnkey-saas') {
+      recApps.add('client-turnkey-forge');
+      recApps.add('traffic-roi-simulator');
+    } else if (rInt === 'federal-teaming') {
+      recApps.add('samgov-contract-matchmaker');
+      recApps.add('client-turnkey-forge');
+    } else if (rInt === 'language-academy') {
+      recApps.add('spanish-acquisition-os');
+      recApps.add('chronos-aetheria-scorm');
+    }
+    const primaryCatId = cleanCats[0] || 'cat_ai_saas';
+    u.recommendedTemplateId = primaryCatId === 'cat_divergent_lang' || rInt === 'language-academy'
+      ? 'tpl_lang_associative'
+      : primaryCatId === 'cat_cyber_eveng'
+        ? 'tpl_upskill_cert_lab'
+        : primaryCatId === 'cat_chronos_epigraphy'
+          ? 'tpl_school_systems'
+          : 'tpl_biz_turnkey_scale';
+    u.recommendedApps = Array.from(recApps);
+    u.recommendedResources = Array.from(recRes);
+    if (u.role !== 'owner' && u.ou !== 'internal') {
+      const curApps = Array.isArray(u.allowedApps) ? u.allowedApps : DEFAULT_CUSTOMER_APPS.slice();
+      u.allowedApps = Array.from(new Set([...curApps, ...u.recommendedApps]));
+      const curRes = Array.isArray(u.qualifiedResources) ? u.qualifiedResources : DEFAULT_CUSTOMER_RESOURCES.slice();
+      u.qualifiedResources = Array.from(new Set([...curRes, ...u.recommendedResources]));
+      u.pages = Object.assign({}, u.pages || {}, { saasapps: 'ready', resources: 'ready' });
+    }
     commit();
-    return { ok: true, onboardingCompleted: true, ottoProfile: u.ottoProfile, state: S };
+    return {
+      ok: true,
+      onboardingCompleted: true,
+      ottoProfile: u.ottoProfile,
+      recommendedApps: u.recommendedApps,
+      recommendedResources: u.recommendedResources,
+      recommendedTemplateId: u.recommendedTemplateId,
+      state: S
+    };
   }
   function submitRequest(data) {
     const cleanEmail = sanitizeField(data && data.email, 160).toLowerCase();
