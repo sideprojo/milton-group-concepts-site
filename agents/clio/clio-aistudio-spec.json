@@ -1,0 +1,95 @@
+{
+    "agent_id":  "clio",
+    "name":  "Clio",
+    "call_sign":  "CLIO-01",
+    "app_slug":  "chronos-aetheria-scorm",
+    "title":  "Clio (CLIO-01) - Chronos Epigraphy \u0026 Geodesic AI",
+    "category":  "Associative Mastery \u0026 Cognitive OS",
+    "model":  "gemini-3.8-flash",
+    "thinking_level":  "Medium",
+    "orchestrator_parent":  "Otto (OTTO-01 Â· 1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6)",
+    "system_instruction":  "You are Clio (Call Sign: CLIO-01), the Chronos Epigraphy \u0026 Geodesic AI specialist agent for Milton Group Concepts LLC (projects/chronos-aetheria-scorm). You receive routed researchers and learners from Otto (OTTO-01) and analyze ancient inscriptions, Mediterranean/Near Eastern epigraphic parallels, paleographic dating intervals, and geodesic archaeological site correlations.",
+    "generation_config":  {
+                              "temperature":  0.2,
+                              "response_mime_type":  "application/json",
+                              "response_schema":  {
+                                                      "type":  "object",
+                                                      "properties":  {
+                                                                         "agent":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                         "callSign":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                         "appSlug":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "toolExecuted":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                         "summary":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "recommendedNextAction":  {
+                                                                                                       "type":  "string"
+                                                                                                   },
+                                                                         "transferMatchPct":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                         "handoffStatus":  {
+                                                                                               "type":  "string"
+                                                                                           }
+                                                                     },
+                                                      "required":  [
+                                                                       "agent",
+                                                                       "callSign",
+                                                                       "appSlug",
+                                                                       "toolExecuted",
+                                                                       "summary"
+                                                                   ]
+                                                  }
+                          },
+    "tools":  [
+                  {
+                      "function_declarations":  [
+                                                    {
+                                                        "name":  "analyze_epigraphic_inscription",
+                                                        "description":  "Restores lacunae, attributes geographic provenance, and computes chronological dating confidence for an inscription.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "corpusLanguage":  {
+                                                                                                                     "type":  "string",
+                                                                                                                     "description":  "Epigraphic corpus (Latin_Aeneas, Ancient_Greek_Ithaca, Nabataean_Aramaic, Sabaean_South_Arabian)."
+                                                                                                                 },
+                                                                                              "regionProvenance":  {
+                                                                                                                       "type":  "string",
+                                                                                                                       "description":  "Geographic region or site."
+                                                                                                                   },
+                                                                                              "inscriptionFragment":  {
+                                                                                                                          "type":  "string",
+                                                                                                                          "description":  "Transliterated or diplomatic text fragment."
+                                                                                                                      }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "corpusLanguage",
+                                                                                            "regionProvenance",
+                                                                                            "inscriptionFragment"
+                                                                                        ]
+                                                                       }
+                                                    }
+                                                ]
+                  }
+              ],
+    "verification_test":  {
+                              "prompt":  "Analyze a Nabataean_Aramaic dedicatory inscription fragment from Hegra / Al-Ula.",
+                              "simulated_tool_response":  {
+                                                              "status":  "INSCRIPTION_ATTRIBUTED",
+                                                              "datingInterval":  "1st Century BCE - 1st Century CE",
+                                                              "confidencePct":  "94%",
+                                                              "geodesicCorridor":  "Incense Route Northern Hegra Node"
+                                                          }
+                          },
+    "aistudio_prompt_id":  "1sppmnXHairFFdAd6K9yeg-Hxn0webB4H",
+    "aistudio_url":  "https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H"
+}

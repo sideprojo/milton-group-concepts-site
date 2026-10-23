@@ -24,14 +24,14 @@
   ];
 
   const APPS_CATALOG = [
-    { id: 'client-turnkey-forge',       codename: 'Argo', callSign: 'ARGO-01', icon: '', title: 'Argo — Turnkey Web & Scope Builder',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Interactive custom build scope, intake, and pricing configurator powered by Argo.' },
-    { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', icon: '', title: 'Arya — AI Receptionist & Bay Dispatch',     brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: '24/7 commercial web, voice triage, and live bay dispatch powered by Arya.' },
-    { id: 'eveng-netprism-studio',      codename: 'Zeno', callSign: 'ZENO-01', icon: '', title: 'Zeno — NetPrism & EVE-NG Topology Lab',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'OSPF, BGP, ZTNA, and EVPN network topology simulator powered by Zeno.' },
-    { id: 'samgov-contract-matchmaker', codename: 'Cato', callSign: 'CATO-01', icon: '', title: 'Cato — Federal Contract & Role Radar',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Federal NAICS 541512/541519 SDVOSB opportunity matchmaker powered by Cato.' },
-    { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', icon: '', title: 'Vega — Funnel & Treasury ROI Modeler',      brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator powered by Vega.' },
-    { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', icon: '', title: 'Kael — Multi-OS CLI & Ansible Auto-Grader', brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'IOS-XE, Linux, SQL, KQL, and Ansible terminal lab powered by Kael.' },
-    { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', icon: '', title: 'Clio — Chronos Epigraphy & Geodesic AI',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Ancient text restoration, epigraphy, and geodesic discovery powered by Clio.' },
-    { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', icon: '', title: 'Alma — Associative Language OS (10K)',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module associative language training application powered by Alma.' }
+    { id: 'client-turnkey-forge',       codename: 'Argo', callSign: 'ARGO-01', aistudioPromptId: '1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', aistudioUrl: 'https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', primaryTool: 'generate_turnkey_scope',       icon: '', title: 'Argo — Turnkey Web & Scope Builder',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Interactive custom build scope, intake, and pricing configurator powered by Argo.' },
+    { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', aistudioUrl: 'https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', primaryTool: 'triage_service_intake',        icon: '', title: 'Arya — AI Receptionist & Bay Dispatch',     brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: '24/7 commercial web, voice triage, and live bay dispatch powered by Arya.' },
+    { id: 'eveng-netprism-studio',      codename: 'Zeno', callSign: 'ZENO-01', aistudioPromptId: '1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', aistudioUrl: 'https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', primaryTool: 'validate_network_topology',    icon: '', title: 'Zeno — NetPrism & EVE-NG Topology Lab',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'OSPF, BGP, ZTNA, and EVPN network topology simulator powered by Zeno.' },
+    { id: 'samgov-contract-matchmaker', codename: 'Cato', callSign: 'CATO-01', aistudioPromptId: '1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', aistudioUrl: 'https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', primaryTool: 'match_samgov_solicitations',   icon: '', title: 'Cato — Federal Contract & Role Radar',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Federal NAICS 541512/541519 SDVOSB opportunity matchmaker powered by Cato.' },
+    { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', primaryTool: 'simulate_funnel_treasury_roi', icon: '', title: 'Vega — Funnel & Treasury ROI Modeler',      brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator powered by Vega.' },
+    { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', primaryTool: 'grade_cli_ansible_drill',      icon: '', title: 'Kael — Multi-OS CLI & Ansible Auto-Grader', brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'IOS-XE, Linux, SQL, KQL, and Ansible terminal lab powered by Kael.' },
+    { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', primaryTool: 'analyze_epigraphic_inscription',icon: '', title: 'Clio — Chronos Epigraphy & Geodesic AI',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Ancient text restoration, epigraphy, and geodesic discovery powered by Clio.' },
+    { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '', title: 'Alma — Associative Language OS (10K)',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module associative language training application powered by Alma.' }
   ];
 
   // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -85,7 +85,7 @@
   const DEFAULT_CUSTOMER_RESOURCES = [];
   const DEFAULT_CUSTOMER_PAGES = { saasapps: 'ready' };
 
-  // Google Workspace Admin Console & Studio Agents Catalog (Otto Autonomous Agent)
+  // Google Workspace Admin Console & AI Studio Agents Catalog (Otto Orchestrator + 8 Specialist Personas)
   const AGENTS_CATALOG = [
     {
       id: 'otto',
@@ -108,6 +108,142 @@
       status: 'On (Active)',
       schedule: 'Every weekday (Mon-Fri 7:45 AM) + On-Demand AI Studio & Portal Agent',
       boundaryRule: 'Administrator: Full Agent Governance & Actionable Controls · Workspace Clients: Interactive Otto Agent & Studio Flows · Access Clients: Showcase & Insights Only (Connect Workspace Required)'
+    },
+    {
+      id: 'argo',
+      name: 'Argo',
+      callSign: 'ARGO-01',
+      appSlug: 'client-turnkey-forge',
+      title: 'Argo (ARGO-01) — Turnkey Web & Scope Builder',
+      type: 'AI Studio Specialist Persona',
+      agentId: 'argo-01-turnkey-scope',
+      aistudioPromptId: '1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia',
+      primaryTool: 'generate_turnkey_scope',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Client Turnkey Forge', 'MGC Workspace'],
+      access: 'Default',
+      status: 'On (Active)'
+    },
+    {
+      id: 'arya',
+      name: 'Arya',
+      callSign: 'ARYA-01',
+      appSlug: 'sterling-auto-repair',
+      title: 'Arya (ARYA-01) — AI Receptionist & Bay Dispatch',
+      type: 'AI Studio Specialist Persona',
+      agentId: 'arya-01-bay-dispatch',
+      aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD',
+      primaryTool: 'triage_service_intake',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Sterling Auto Repair', 'Calendar', 'MGC Workspace'],
+      access: 'Default',
+      status: 'On (Active)'
+    },
+    {
+      id: 'zeno',
+      name: 'Zeno',
+      callSign: 'ZENO-01',
+      appSlug: 'eveng-netprism-studio',
+      title: 'Zeno (ZENO-01) — NetPrism & EVE-NG Topology Lab',
+      type: 'AI Studio Specialist Persona',
+      agentId: 'zeno-01-netprism-topology',
+      aistudioPromptId: '1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv',
+      primaryTool: 'validate_network_topology',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['EVE-NG NetPrism Studio', 'MGC Workspace'],
+      access: 'Default',
+      status: 'On (Active)'
+    },
+    {
+      id: 'cato',
+      name: 'Cato',
+      callSign: 'CATO-01',
+      appSlug: 'samgov-contract-matchmaker',
+      title: 'Cato (CATO-01) — Federal Contract & Role Radar',
+      type: 'AI Studio Specialist Persona',
+      agentId: 'cato-01-samgov-radar',
+      aistudioPromptId: '1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx',
+      primaryTool: 'match_samgov_solicitations',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['SAM.gov Contract Radar', 'MGC Workspace'],
+      access: 'Default',
+      status: 'On (Active)'
+    },
+    {
+      id: 'vega',
+      name: 'Vega',
+      callSign: 'VEGA-01',
+      appSlug: 'traffic-roi-simulator',
+      title: 'Vega (VEGA-01) — Funnel & Treasury ROI Modeler',
+      type: 'AI Studio Specialist Persona',
+      agentId: 'vega-01-treasury-roi',
+      aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc',
+      primaryTool: 'simulate_funnel_treasury_roi',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Traffic & ROI Simulator', 'MGC Workspace'],
+      access: 'Default',
+      status: 'On (Active)'
+    },
+    {
+      id: 'kael',
+      name: 'Kael',
+      callSign: 'KAEL-01',
+      appSlug: 'ghost-cli-trainer',
+      title: 'Kael (KAEL-01) — Multi-OS CLI & Ansible Auto-Grader',
+      type: 'AI Studio Specialist Persona',
+      agentId: 'kael-01-cli-autograder',
+      aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr',
+      primaryTool: 'grade_cli_ansible_drill',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Ghost-CLI Trainer', 'MGC Workspace'],
+      access: 'Default',
+      status: 'On (Active)'
+    },
+    {
+      id: 'clio',
+      name: 'Clio',
+      callSign: 'CLIO-01',
+      appSlug: 'chronos-aetheria-scorm',
+      title: 'Clio (CLIO-01) — Chronos Epigraphy & Geodesic AI',
+      type: 'AI Studio Specialist Persona',
+      agentId: 'clio-01-chronos-epigraphy',
+      aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H',
+      primaryTool: 'analyze_epigraphic_inscription',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Chronos // Aetheria', 'MGC Workspace'],
+      access: 'Default',
+      status: 'On (Active)'
+    },
+    {
+      id: 'alma',
+      name: 'Alma',
+      callSign: 'ALMA-01',
+      appSlug: 'spanish-acquisition-os',
+      title: 'Alma (ALMA-01) — Associative Language OS (10K)',
+      type: 'AI Studio Specialist Persona',
+      agentId: 'alma-01-language-os',
+      aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR',
+      primaryTool: 'generate_cognate_drill_loop',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Spanish Acquisition OS', 'MGC Workspace'],
+      access: 'Default',
+      status: 'On (Active)'
     }
   ];
 

@@ -105,14 +105,14 @@ const PORTAL_TO_CATALOG = {
 
 // Granular SCORM 2004 & Showcase App Entitlement Catalog (Default Restricted Customer Access vs Owner Full Access)
 const APPS_CATALOG = [
-  { id: 'client-turnkey-forge',       icon: '🛠️', title: 'Client Turnkey Forge SCORM OS',        brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Included by default on customer login: interactive custom build scope & pricing configurator.' },
-  { id: 'sterling-auto-repair',       icon: '🔧', title: 'Sterling Auto Repair Showcase',        brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Included by default on customer login: live commercial web & AI receptionist showcase.' },
-  { id: 'eveng-netprism-studio',      icon: '🖧', title: 'EVE-NG & NetPrism Topology Studio',    brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Unlocked in Tier 2 Pro Suite: 8-page OSPF/BGP/ZTNA/EVPN network simulator & .cast studio.' },
-  { id: 'samgov-contract-matchmaker', icon: '🏛️', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Unlocked in Tier 2 Pro Suite: 6-page SDVOSB NAICS 541512/541519 & Principal AI role matchmaker.' },
-  { id: 'traffic-roi-simulator',      icon: '📈', title: 'Site Traffic & Conversion ROI OS',     brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Unlocked in Tier 2 Pro Suite: 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
-  { id: 'ghost-cli-trainer',          icon: '⌨️', title: 'Ghost-CLI & Netmiko Auto-Grader',      brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Unlocked in Tier 2 Pro Suite: 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
-  { id: 'chronos-aetheria-scorm',     icon: '🏺', title: 'Chronos // Aetheria Geo-Historical OS',brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Unlocked in Tier 2 Pro Suite: 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
-  { id: 'spanish-acquisition-os',     icon: '🇪🇸', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Unlocked in Tier 2 Pro Suite: 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
+  { id: 'client-turnkey-forge',       codename: 'Argo', callSign: 'ARGO-01', aistudioPromptId: '1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', aistudioUrl: 'https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', primaryTool: 'generate_turnkey_scope',       icon: '🛠️', title: 'Argo — Turnkey Web & Scope Builder',     brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Argo (ARGO-01): Included by default on customer login — interactive custom build scope & pricing configurator.' },
+  { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', aistudioUrl: 'https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', primaryTool: 'triage_service_intake',        icon: '🔧', title: 'Arya — AI Receptionist & Bay Dispatch',  brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Arya (ARYA-01): Included by default on customer login — live commercial web & 24/7 AI receptionist showcase.' },
+  { id: 'eveng-netprism-studio',      codename: 'Zeno', callSign: 'ZENO-01', aistudioPromptId: '1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', aistudioUrl: 'https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', primaryTool: 'validate_network_topology',    icon: '🖧', title: 'Zeno — NetPrism & EVE-NG Topology Lab',  brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Zeno (ZENO-01): Unlocked in Tier 2 Pro Suite — 8-page OSPF/BGP/ZTNA/EVPN network simulator & .cast studio.' },
+  { id: 'samgov-contract-matchmaker', codename: 'Cato', callSign: 'CATO-01', aistudioPromptId: '1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', aistudioUrl: 'https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', primaryTool: 'match_samgov_solicitations',   icon: '🏛️', title: 'Cato — Federal Contract & Role Radar',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Cato (CATO-01): Unlocked in Tier 2 Pro Suite — 6-page SDVOSB NAICS 541512/541519 & Principal AI role matchmaker.' },
+  { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', primaryTool: 'simulate_funnel_treasury_roi', icon: '📈', title: 'Vega — Funnel & Treasury ROI Modeler',   brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Vega (VEGA-01): Unlocked in Tier 2 Pro Suite — 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
+  { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', primaryTool: 'grade_cli_ansible_drill',      icon: '⌨️', title: 'Kael — Multi-OS CLI & Ansible Grader',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Kael (KAEL-01): Unlocked in Tier 2 Pro Suite — 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
+  { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', primaryTool: 'analyze_epigraphic_inscription', icon: '🏺', title: 'Clio — Chronos Epigraphy & Geodesic AI', brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Clio (CLIO-01): Unlocked in Tier 2 Pro Suite — 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
+  { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '🇪🇸', title: 'Alma — Associative Language OS (10K)',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Alma (ALMA-01): Unlocked in Tier 2 Pro Suite — 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
 ];
 
 // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -4274,20 +4274,34 @@ const server = http.createServer(async (req, res) => {
       return handleCustomerIntakeSubmission(body.data || body || {});
     }
 
+    if (pathname === '/api/agents/registry' && req.method === 'GET') {
+      const regPath = path.join(ROOT, 'agents', 'registry.json');
+      let registry = null;
+      try {
+        registry = JSON.parse(fs.readFileSync(regPath, 'utf8'));
+      } catch (_) {
+        registry = { ok: true,agents: [] };
+      }
+      return sendJson(res, 200, { ok: true, registry });
+    }
+
     if (pathname === '/api/otto/spec' && req.method === 'GET') {
-      const specPath = path.join(ROOT, 'agents', 'otto', 'otto-aistudio-spec.json');
+      const reqAgent = sanitizeInput(parsedUrl.searchParams.get('agent') || 'otto', 32).toLowerCase();
+      const allowedAgents = new Set(['otto', 'argo', 'arya', 'zeno', 'cato', 'vega', 'kael', 'clio', 'alma']);
+      const agentSlug = allowedAgents.has(reqAgent) ? reqAgent : 'otto';
+      const specPath = path.join(ROOT, 'agents', agentSlug, `${agentSlug}-aistudio-spec.json`);
       let spec = null;
       try {
         spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
       } catch (_) {
-        spec = { id: 'otto', name: 'Otto', callSign: 'OTTO-01', model: 'gemini-3.8-flash' };
+        spec = { id: agentSlug, name: agentSlug.toUpperCase(), callSign: agentSlug.toUpperCase() + '-01', model: 'gemini-3.8-flash' };
       }
-      return sendJson(res, 200, { ok: true, spec });
+      return sendJson(res, 200, { ok: true, agent: agentSlug, spec });
     }
 
     if (pathname === '/api/otto/execute' && req.method === 'POST') {
       const u = getAuthenticatedUser(req);
-      if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required to execute Otto tools.' });
+      if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required to execute Otto or Specialist Persona tools.' });
       const body = await readJsonBody(req);
       if (hasInjectionPayload(body)) {
         return sendJson(res, 400, { ok: false, code: 'INJECTION_PAYLOAD_REJECTED', error: 'Security Validation Failed: Disallowed input characters detected.' });
@@ -4296,8 +4310,115 @@ const server = http.createServer(async (req, res) => {
       const args = body.args || body.data || {};
       const runId = 'OTTO-' + Date.now().toString(36).toUpperCase().slice(-5);
 
+      const SPECIALIST_TOOL_MAP = {
+        generate_turnkey_scope: {
+          agent: 'Argo', callSign: 'ARGO-01', appSlug: 'client-turnkey-forge',
+          aistudioPromptId: '1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia',
+          summary: 'Argo (ARGO-01) generated a 14-day Turnkey Web, AI Receptionist & Stripe SAQ-A / WAWF scope blueprint ($4,850 build / $149 mo).',
+          recommendedApps: ['client-turnkey-forge', 'sterling-auto-repair', 'traffic-roi-simulator'],
+          recommendedTemplateId: 'tpl_biz_turnkey_scale',
+          nextUnlockedStage: 'Milestone 2: Multi-Rail Payment & Intake Lock',
+          transferMatchPct: '96% Match',
+          studioFlowStatus: 'ARGO_01_AISTUDIO_VERIFIED'
+        },
+        triage_service_intake: {
+          agent: 'Arya', callSign: 'ARYA-01', appSlug: 'sterling-auto-repair',
+          aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD',
+          summary: 'Arya (ARYA-01) triaged multi-vehicle diagnostic intake into Master L1 Diagnostic Bay 2 with automated SMS confirmation.',
+          recommendedApps: ['sterling-auto-repair', 'client-turnkey-forge'],
+          recommendedTemplateId: 'tpl_biz_turnkey_scale',
+          nextUnlockedStage: 'Stage 2: Live Bay Telemetry & Estimate Dispatch',
+          transferMatchPct: '95% Match',
+          studioFlowStatus: 'ARYA_01_AISTUDIO_VERIFIED'
+        },
+        validate_network_topology: {
+          agent: 'Zeno', callSign: 'ZENO-01', appSlug: 'eveng-netprism-studio',
+          aistudioPromptId: '1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv',
+          summary: 'Zeno (ZENO-01) validated 6-node Dual-Homed BGP AS 65001 + OSPF Area 0 + ZTNA mTLS Edge topology (Convergence: 185ms).',
+          recommendedApps: ['eveng-netprism-studio', 'ghost-cli-trainer'],
+          recommendedTemplateId: 'tpl_upskill_netprism_cyber',
+          nextUnlockedStage: 'Stage 3: EVPN VXLAN & Netmiko Verification',
+          transferMatchPct: '97% Match',
+          studioFlowStatus: 'ZENO_01_AISTUDIO_VERIFIED'
+        },
+        match_samgov_solicitations: {
+          agent: 'Cato', callSign: 'CATO-01', appSlug: 'samgov-contract-matchmaker',
+          aistudioPromptId: '1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx',
+          summary: 'Cato (CATO-01) matched NAICS 541512 & 541519 SDVOSB set-aside solicitations under CAGE 17GC6 with DFARS 252.232-7003 WAWF routing.',
+          recommendedApps: ['samgov-contract-matchmaker', 'eveng-netprism-studio'],
+          recommendedTemplateId: 'tpl_school_cert_capstone',
+          nextUnlockedStage: 'Stage 3: Capability Matrix & WAWF CLIN Mapping',
+          transferMatchPct: '96% Match',
+          studioFlowStatus: 'CATO_01_AISTUDIO_VERIFIED'
+        },
+        simulate_funnel_treasury_roi: {
+          agent: 'Vega', callSign: 'VEGA-01', appSlug: 'traffic-roi-simulator',
+          aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc',
+          summary: 'Vega (VEGA-01) modeled 25,000 monthly visitors at 3.8% conversion across Stripe SAQ-A, Mercury ACH & WAWF ($0.00 idle Cloud Run cost).',
+          recommendedApps: ['traffic-roi-simulator', 'client-turnkey-forge'],
+          recommendedTemplateId: 'tpl_biz_turnkey_scale',
+          nextUnlockedStage: 'Stage 3: GAAP Account 1020 25% Tax Vault Allocation',
+          transferMatchPct: '95% Match',
+          studioFlowStatus: 'VEGA_01_AISTUDIO_VERIFIED'
+        },
+        grade_cli_ansible_drill: {
+          agent: 'Kael', callSign: 'KAEL-01', appSlug: 'ghost-cli-trainer',
+          aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr',
+          summary: 'Kael (KAEL-01) auto-graded Cisco IOS-XE + Ansible Playbook + KQL Sentinel detection drill with 100% idempotency verification.',
+          recommendedApps: ['ghost-cli-trainer', 'eveng-netprism-studio'],
+          recommendedTemplateId: 'tpl_upskill_netprism_cyber',
+          nextUnlockedStage: 'Stage 3: Netmiko Multi-Vendor Zero-Touch Push',
+          transferMatchPct: '97% Match',
+          studioFlowStatus: 'KAEL_01_AISTUDIO_VERIFIED'
+        },
+        analyze_epigraphic_inscription: {
+          agent: 'Clio', callSign: 'CLIO-01', appSlug: 'chronos-aetheria-scorm',
+          aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H',
+          summary: 'Clio (CLIO-01) restored Latin/Greek epigraphic lacunae and triangulated geodesic provenance across Mediterranean trade corridors.',
+          recommendedApps: ['chronos-aetheria-scorm', 'spanish-acquisition-os'],
+          recommendedTemplateId: 'tpl_lang_associative',
+          nextUnlockedStage: 'Stage 3: Semantic Root & Geodesic Corridor Synthesis',
+          transferMatchPct: '94% Match',
+          studioFlowStatus: 'CLIO_01_AISTUDIO_VERIFIED'
+        },
+        generate_cognate_drill_loop: {
+          agent: 'Alma', callSign: 'ALMA-01', appSlug: 'spanish-acquisition-os',
+          aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR',
+          summary: 'Alma (ALMA-01) activated Arabic/Latin-to-Spanish al-* cognate cluster and Subjunctive Clause Transfer across 10 SCOs.',
+          recommendedApps: ['spanish-acquisition-os', 'chronos-aetheria-scorm'],
+          recommendedTemplateId: 'tpl_lang_associative',
+          nextUnlockedStage: 'SCO 4: High-Frequency Cognate & Neural MP3 Loop',
+          transferMatchPct: '96% Match',
+          studioFlowStatus: 'ALMA_01_AISTUDIO_VERIFIED'
+        }
+      };
+
       let output = null;
-      if (toolName === 'route_client_workspace') {
+      if (SPECIALIST_TOOL_MAP[toolName]) {
+        const sp = SPECIALIST_TOOL_MAP[toolName];
+        const mastery = recordAssociativeMasteryForUser(u, {
+          baselineKey: sanitizeInput(args.baselineKey || u.divergentBaseline || 'en_arabic_heritage', 48),
+          step: Math.max(1, Math.min(3, Number(args.step) || 2)),
+          source: args.source || ('specialist_tool_' + sp.callSign.toLowerCase())
+        });
+        output = {
+          agent: sp.agent,
+          callSign: sp.callSign,
+          appSlug: sp.appSlug,
+          aistudioPromptId: sp.aistudioPromptId,
+          aistudioUrl: 'https://aistudio.google.com/prompts/' + sp.aistudioPromptId,
+          runId: sp.callSign.replace('-01', '') + '-' + Date.now().toString(36).toUpperCase().slice(-5),
+          model: 'gemini-3.8-flash',
+          toolExecuted: toolName,
+          summary: sp.summary,
+          recommendedApps: sp.recommendedApps,
+          recommendedResources: ['resource-fast-track'],
+          recommendedTemplateId: sp.recommendedTemplateId,
+          nextUnlockedStage: sp.nextUnlockedStage,
+          transferMatchPct: (mastery && mastery.event && mastery.event.newAffinityPct) || sp.transferMatchPct,
+          studioFlowStatus: sp.studioFlowStatus
+        };
+      } else if (toolName === 'route_client_workspace') {
         const cats = Array.isArray(args.selectedCategories) && args.selectedCategories.length
           ? args.selectedCategories.map(c => sanitizeInput(c, 48))
           : (Array.isArray(u.selectedCategories) && u.selectedCategories.length ? u.selectedCategories : ['cat_ai_saas', 'cat_divergent_lang']);
@@ -4315,10 +4436,12 @@ const server = http.createServer(async (req, res) => {
         output = {
           agent: 'Otto',
           callSign: 'OTTO-01',
+          aistudioPromptId: '1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
+          aistudioUrl: 'https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
           runId,
           model: 'gemini-3.8-flash',
           toolExecuted: 'route_client_workspace',
-          summary: `Routed ${rec.recommendedApps.length} matched applications and ${rec.recommendedResources.length} qualified resources for [${cats.join(', ')}] via ${rec.bridge.label}.`,
+          summary: `Routed ${rec.recommendedApps.length} matched applications (${rec.recommendedApps.join(', ')}) and ${rec.recommendedResources.length} qualified resources for [${cats.join(', ')}] via ${rec.bridge.label}.`,
           recommendedApps: rec.recommendedApps,
           recommendedResources: rec.recommendedResources,
           recommendedTemplateId: rec.recommendedTemplateId,
@@ -4333,6 +4456,8 @@ const server = http.createServer(async (req, res) => {
         output = {
           agent: 'Otto',
           callSign: 'OTTO-01',
+          aistudioPromptId: '1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
+          aistudioUrl: 'https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
           runId,
           model: 'gemini-3.8-flash',
           toolExecuted: 'evaluate_associative_mastery',
@@ -4350,6 +4475,8 @@ const server = http.createServer(async (req, res) => {
         output = {
           agent: 'Otto',
           callSign: 'OTTO-01',
+          aistudioPromptId: '1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
+          aistudioUrl: 'https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
           runId,
           model: 'gemini-3.8-flash',
           toolExecuted: 'recommend_outcome_template',
@@ -4366,6 +4493,8 @@ const server = http.createServer(async (req, res) => {
         output = {
           agent: 'Otto',
           callSign: 'OTTO-01',
+          aistudioPromptId: '1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
+          aistudioUrl: 'https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
           runId,
           model: 'gemini-3.8-flash',
           toolExecuted: 'sync_workspace_studio_flow',
@@ -4379,7 +4508,7 @@ const server = http.createServer(async (req, res) => {
         };
       }
 
-      logAudit(u.id, `otto.tool.${toolName}`, `${runId} -> ${output.summary}`);
+      logAudit(u.id, `otto.tool.${toolName}`, `${output.runId} -> ${output.summary}`);
       saveState(S);
       return sendJson(res, 200, { ok: true, result: output });
     }

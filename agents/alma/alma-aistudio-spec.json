@@ -1,0 +1,101 @@
+{
+    "agent_id":  "alma",
+    "name":  "Alma",
+    "call_sign":  "ALMA-01",
+    "app_slug":  "spanish-acquisition-os",
+    "title":  "Alma (ALMA-01) - Associative Language OS (10K)",
+    "category":  "Associative Mastery \u0026 Cognitive OS",
+    "model":  "gemini-3.8-flash",
+    "thinking_level":  "Medium",
+    "orchestrator_parent":  "Otto (OTTO-01 Â· 1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6)",
+    "system_instruction":  "You are Alma (Call Sign: ALMA-01), the Associative Language OS (10K) specialist agent for Milton Group Concepts LLC (projects/spanish-acquisition-os). You receive routed learners from Otto (OTTO-01) and accelerate Spanish, Arabic, Mandarin, and Korean acquisition by bridging English + Arabic/Latin/Hangul etymological cognates, neural audio shadowing, and spaced-repetition SCORM checkpoints.",
+    "generation_config":  {
+                              "temperature":  0.2,
+                              "response_mime_type":  "application/json",
+                              "response_schema":  {
+                                                      "type":  "object",
+                                                      "properties":  {
+                                                                         "agent":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                         "callSign":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                         "appSlug":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "toolExecuted":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                         "summary":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "recommendedNextAction":  {
+                                                                                                       "type":  "string"
+                                                                                                   },
+                                                                         "transferMatchPct":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                         "handoffStatus":  {
+                                                                                               "type":  "string"
+                                                                                           }
+                                                                     },
+                                                      "required":  [
+                                                                       "agent",
+                                                                       "callSign",
+                                                                       "appSlug",
+                                                                       "toolExecuted",
+                                                                       "summary"
+                                                                   ]
+                                                  }
+                          },
+    "tools":  [
+                  {
+                      "function_declarations":  [
+                                                    {
+                                                        "name":  "generate_cognate_drill_loop",
+                                                        "description":  "Builds a high-transfer etymological cognate and phonetic shadowing loop tailored to the learner starting bridge.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "startingBridge":  {
+                                                                                                                     "type":  "string",
+                                                                                                                     "description":  "Learner starting bridge (en_arabic_heritage, en_us_native, east_asian_hangul)."
+                                                                                                                 },
+                                                                                              "targetModule":  {
+                                                                                                                   "type":  "string",
+                                                                                                                   "description":  "10K OS module (Module_1_AlAndalus_Loanwords, Module_2_Romance_Cognates, Module_3_Conversational_Cadence)."
+                                                                                                               },
+                                                                                              "immersionBranch":  {
+                                                                                                                      "type":  "string",
+                                                                                                                      "description":  "Selected immersion branch (Audio_Phonetics, Script_Morphology, Executive_Lexicon)."
+                                                                                                                  }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "startingBridge",
+                                                                                            "targetModule",
+                                                                                            "immersionBranch"
+                                                                                        ]
+                                                                       }
+                                                    }
+                                                ]
+                  }
+              ],
+    "verification_test":  {
+                              "prompt":  "Generate a cognate drill loop for en_arabic_heritage on Module_1_AlAndalus_Loanwords with Audio_Phonetics focus.",
+                              "simulated_tool_response":  {
+                                                              "status":  "COGNATE_LOOP_ACTIVE",
+                                                              "activatedCognates":  [
+                                                                                        "ojalÃ¡ (inshallah)",
+                                                                                        "aceite (az-zayt)",
+                                                                                        "alcalde (al-qadi)",
+                                                                                        "azÃºcar (as-sukkar)",
+                                                                                        "almohada (al-mikhadda)"
+                                                                                    ],
+                                                              "retentionVelocityBoost":  "+38%",
+                                                              "nextScormCheckpoint":  "Module 2: High-Frequency Verb Transfer"
+                                                          }
+                          },
+    "aistudio_prompt_id":  "1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR",
+    "aistudio_url":  "https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR"
+}

@@ -1,0 +1,131 @@
+{
+  "registryVersion": "2026.10.23",
+  "organization": "Milton Group Concepts LLC & F.I.X Solutions LLC",
+  "owner": "malik.khabir@miltongroupsecurity.org",
+  "serviceIdentity": "connect@miltongroupsecurity.org",
+  "orchestrator": {
+    "id": "otto",
+    "name": "Otto",
+    "callSign": "OTTO-01",
+    "role": "Autonomous Orchestrator & Associative Router",
+    "model": "gemini-3.8-flash",
+    "aistudioPromptId": "1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6",
+    "aistudioUrl": "https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6",
+    "workspaceStudioFlowId": "w13225285bbe5e967be82464a88a6262c",
+    "workspaceStudioUrl": "https://studio.workspace.google.com/workflow/w13225285bbe5e967be82464a88a6262c",
+    "workspaceAgentId": "38ef575f-bce0-4895-bf93-36605220e1ca",
+    "status": "On (Active)",
+    "tools": [
+      "route_client_workspace",
+      "evaluate_associative_mastery",
+      "recommend_outcome_template",
+      "sync_workspace_studio_flow"
+    ]
+  },
+  "specialists": [
+    {
+      "id": "argo",
+      "name": "Argo",
+      "callSign": "ARGO-01",
+      "appSlug": "client-turnkey-forge",
+      "title": "Argo (ARGO-01) — Turnkey Web & Scope Builder",
+      "category": "Business & Revenue",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia",
+      "primaryTool": "generate_turnkey_scope",
+      "specPath": "agents/argo/argo-aistudio-spec.json"
+    },
+    {
+      "id": "arya",
+      "name": "Arya",
+      "callSign": "ARYA-01",
+      "appSlug": "sterling-auto-repair",
+      "title": "Arya (ARYA-01) — AI Receptionist & Bay Dispatch",
+      "category": "Business & Revenue",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD",
+      "primaryTool": "triage_service_intake",
+      "specPath": "agents/arya/arya-aistudio-spec.json"
+    },
+    {
+      "id": "zeno",
+      "name": "Zeno",
+      "callSign": "ZENO-01",
+      "appSlug": "eveng-netprism-studio",
+      "title": "Zeno (ZENO-01) — NetPrism & EVE-NG Topology Lab",
+      "category": "Cloud, Cyber & Infrastructure",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv",
+      "primaryTool": "validate_network_topology",
+      "specPath": "agents/zeno/zeno-aistudio-spec.json"
+    },
+    {
+      "id": "cato",
+      "name": "Cato",
+      "callSign": "CATO-01",
+      "appSlug": "samgov-contract-matchmaker",
+      "title": "Cato (CATO-01) — Federal Contract & Role Radar",
+      "category": "GovTech & Federal Contracting",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx",
+      "primaryTool": "match_samgov_solicitations",
+      "specPath": "agents/cato/cato-aistudio-spec.json"
+    },
+    {
+      "id": "vega",
+      "name": "Vega",
+      "callSign": "VEGA-01",
+      "appSlug": "traffic-roi-simulator",
+      "title": "Vega (VEGA-01) — Funnel & Treasury ROI Modeler",
+      "category": "Business & Revenue",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc",
+      "primaryTool": "simulate_funnel_treasury_roi",
+      "specPath": "agents/vega/vega-aistudio-spec.json"
+    },
+    {
+      "id": "kael",
+      "name": "Kael",
+      "callSign": "KAEL-01",
+      "appSlug": "ghost-cli-trainer",
+      "title": "Kael (KAEL-01) — Multi-OS CLI & Ansible Auto-Grader",
+      "category": "Cloud, Cyber & Infrastructure",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr",
+      "primaryTool": "grade_cli_ansible_drill",
+      "specPath": "agents/kael/kael-aistudio-spec.json"
+    },
+    {
+      "id": "clio",
+      "name": "Clio",
+      "callSign": "CLIO-01",
+      "appSlug": "chronos-aetheria-scorm",
+      "title": "Clio (CLIO-01) — Chronos Epigraphy & Geodesic AI",
+      "category": "Associative Mastery & Cognitive OS",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1sppmnXHairFFdAd6K9yeg-Hxn0webB4H",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H",
+      "primaryTool": "analyze_epigraphic_inscription",
+      "specPath": "agents/clio/clio-aistudio-spec.json"
+    },
+    {
+      "id": "alma",
+      "name": "Alma",
+      "callSign": "ALMA-01",
+      "appSlug": "spanish-acquisition-os",
+      "title": "Alma (ALMA-01) — Associative Language OS (10K)",
+      "category": "Associative Mastery & Cognitive OS",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR",
+      "primaryTool": "generate_cognate_drill_loop",
+      "specPath": "agents/alma/alma-aistudio-spec.json"
+    }
+  ]
+}

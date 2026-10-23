@@ -1,0 +1,95 @@
+{
+    "agent_id":  "zeno",
+    "name":  "Zeno",
+    "call_sign":  "ZENO-01",
+    "app_slug":  "eveng-netprism-studio",
+    "title":  "Zeno (ZENO-01) - NetPrism \u0026 EVE-NG Topology Lab",
+    "category":  "Cloud, Cyber \u0026 Infrastructure",
+    "model":  "gemini-3.8-flash",
+    "thinking_level":  "Medium",
+    "orchestrator_parent":  "Otto (OTTO-01 Â· 1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6)",
+    "system_instruction":  "You are Zeno (Call Sign: ZENO-01), the NetPrism \u0026 EVE-NG Topology Lab specialist agent for Milton Group Concepts LLC (projects/eveng-netprism-studio). You receive routed technical learners and architects from Otto (OTTO-01) and validate multi-area OSPF, eBGP, VLAN trunking, Cisco ISE 802.1X, and Zero-Trust network topologies. Always invoke your declared topology verification tools and return structured JSON.",
+    "generation_config":  {
+                              "temperature":  0.2,
+                              "response_mime_type":  "application/json",
+                              "response_schema":  {
+                                                      "type":  "object",
+                                                      "properties":  {
+                                                                         "agent":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                         "callSign":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                         "appSlug":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "toolExecuted":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                         "summary":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "recommendedNextAction":  {
+                                                                                                       "type":  "string"
+                                                                                                   },
+                                                                         "transferMatchPct":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                         "handoffStatus":  {
+                                                                                               "type":  "string"
+                                                                                           }
+                                                                     },
+                                                      "required":  [
+                                                                       "agent",
+                                                                       "callSign",
+                                                                       "appSlug",
+                                                                       "toolExecuted",
+                                                                       "summary"
+                                                                   ]
+                                                  }
+                          },
+    "tools":  [
+                  {
+                      "function_declarations":  [
+                                                    {
+                                                        "name":  "validate_network_topology",
+                                                        "description":  "Audits an EVE-NG / NetPrism topology lab for OSPF adjacency, BGP peering, VLAN segmentation, and Zero-Trust policy enforcement.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "topologyId":  {
+                                                                                                                 "type":  "string",
+                                                                                                                 "description":  "Topology identifier (ospf_multi_area, bgp_dual_homed, ztna_ise_dot1x)."
+                                                                                                             },
+                                                                                              "routingProtocol":  {
+                                                                                                                      "type":  "string",
+                                                                                                                      "description":  "Primary protocol under verification."
+                                                                                                                  },
+                                                                                              "securityPosture":  {
+                                                                                                                      "type":  "string",
+                                                                                                                      "description":  "Zero-trust segmentation profile (CMMC_L2_ENCLAVE or ENTERPRISE_CORE)."
+                                                                                                                  }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "topologyId",
+                                                                                            "routingProtocol",
+                                                                                            "securityPosture"
+                                                                                        ]
+                                                                       }
+                                                    }
+                                                ]
+                  }
+              ],
+    "verification_test":  {
+                              "prompt":  "Validate an ospf_multi_area topology with Area 0 backbone and CMMC_L2_ENCLAVE segmentation.",
+                              "simulated_tool_response":  {
+                                                              "status":  "TOPOLOGY_VERIFIED",
+                                                              "adjacenciesUp":  6,
+                                                              "convergenceMs":  142,
+                                                              "scormScore":  96
+                                                          }
+                          },
+    "aistudio_prompt_id":  "1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv",
+    "aistudio_url":  "https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv"
+}

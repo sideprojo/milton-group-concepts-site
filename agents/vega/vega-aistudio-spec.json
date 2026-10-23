@@ -1,0 +1,99 @@
+{
+    "agent_id":  "vega",
+    "name":  "Vega",
+    "call_sign":  "VEGA-01",
+    "app_slug":  "traffic-roi-simulator",
+    "title":  "Vega (VEGA-01) - Funnel \u0026 Treasury ROI Modeler",
+    "category":  "Business \u0026 Revenue",
+    "model":  "gemini-3.8-flash",
+    "thinking_level":  "Medium",
+    "orchestrator_parent":  "Otto (OTTO-01 Â· 1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6)",
+    "system_instruction":  "You are Vega (Call Sign: VEGA-01), the Funnel \u0026 Treasury ROI Modeler specialist agent for F.I.X Solutions LLC and Milton Group Concepts LLC (projects/traffic-roi-simulator). You receive routed founders from Otto (OTTO-01) and model conversion funnels, CAC-to-LTV ratios, and net treasury savings comparing $0-fee NACHA ACH against 2.9% card processing rails.",
+    "generation_config":  {
+                              "temperature":  0.2,
+                              "response_mime_type":  "application/json",
+                              "response_schema":  {
+                                                      "type":  "object",
+                                                      "properties":  {
+                                                                         "agent":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                         "callSign":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                         "appSlug":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "toolExecuted":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                         "summary":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "recommendedNextAction":  {
+                                                                                                       "type":  "string"
+                                                                                                   },
+                                                                         "transferMatchPct":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                         "handoffStatus":  {
+                                                                                               "type":  "string"
+                                                                                           }
+                                                                     },
+                                                      "required":  [
+                                                                       "agent",
+                                                                       "callSign",
+                                                                       "appSlug",
+                                                                       "toolExecuted",
+                                                                       "summary"
+                                                                   ]
+                                                  }
+                          },
+    "tools":  [
+                  {
+                      "function_declarations":  [
+                                                    {
+                                                        "name":  "simulate_funnel_treasury_roi",
+                                                        "description":  "Calculates monthly conversion revenue, LTV/CAC ratio, and net fee savings across ACH and Stripe payment rails.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "monthlyTraffic":  {
+                                                                                                                     "type":  "integer",
+                                                                                                                     "description":  "Monthly qualified visitor volume."
+                                                                                                                 },
+                                                                                              "conversionRatePct":  {
+                                                                                                                        "type":  "string",
+                                                                                                                        "description":  "Expected funnel conversion percentage."
+                                                                                                                    },
+                                                                                              "averageContractValue":  {
+                                                                                                                           "type":  "integer",
+                                                                                                                           "description":  "Average contract value in USD."
+                                                                                                                       },
+                                                                                              "achSharePct":  {
+                                                                                                                  "type":  "integer",
+                                                                                                                  "description":  "Percentage of settlements routed via $0-fee NACHA ACH."
+                                                                                                              }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "monthlyTraffic",
+                                                                                            "conversionRatePct",
+                                                                                            "averageContractValue"
+                                                                                        ]
+                                                                       }
+                                                    }
+                                                ]
+                  }
+              ],
+    "verification_test":  {
+                              "prompt":  "Simulate funnel ROI for 4500 monthly visitors at 3.8% conversion with $2,500 ACV and 80% NACHA ACH settlement.",
+                              "simulated_tool_response":  {
+                                                              "status":  "ROI_MODELED",
+                                                              "projectedMonthlyRevenue":  "$427,500",
+                                                              "annualAchFeeSavings":  "$118,992",
+                                                              "ltvToCacRatio":  "6.4x"
+                                                          }
+                          },
+    "aistudio_prompt_id":  "1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc",
+    "aistudio_url":  "https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc"
+}

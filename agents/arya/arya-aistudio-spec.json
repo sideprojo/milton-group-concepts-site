@@ -1,0 +1,117 @@
+{
+    "agent_id":  "arya",
+    "name":  "Arya",
+    "call_sign":  "ARYA-01",
+    "app_slug":  "sterling-auto-repair",
+    "title":  "Arya (ARYA-01) - AI Receptionist \u0026 Bay Dispatch",
+    "category":  "Business \u0026 Revenue",
+    "model":  "gemini-3.8-flash",
+    "thinking_level":  "Medium",
+    "orchestrator_parent":  "Otto (OTTO-01 Â· 1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6)",
+    "system_instruction":  "You are Arya (Call Sign: ARYA-01), the 24/7 AI Receptionist \u0026 Bay Dispatch specialist agent for Sterling Auto Repair and F.I.X Solutions LLC (projects/sterling-auto-repair). You receive routed client handoffs from Otto (OTTO-01) to triage vehicle repair symptoms, generate transparent parts-and-labor repair order (RO) estimates, assign service bays, and book Google Calendar appointment slots. Always invoke your declared dispatch tools and return structured JSON.",
+    "generation_config":  {
+                              "temperature":  0.2,
+                              "response_mime_type":  "application/json",
+                              "response_schema":  {
+                                                      "type":  "object",
+                                                      "properties":  {
+                                                                         "agent":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                         "callSign":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                         "appSlug":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "toolExecuted":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                         "summary":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "recommendedNextAction":  {
+                                                                                                       "type":  "string"
+                                                                                                   },
+                                                                         "transferMatchPct":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                         "handoffStatus":  {
+                                                                                               "type":  "string"
+                                                                                           }
+                                                                     },
+                                                      "required":  [
+                                                                       "agent",
+                                                                       "callSign",
+                                                                       "appSlug",
+                                                                       "toolExecuted",
+                                                                       "summary"
+                                                                   ]
+                                                  }
+                          },
+    "tools":  [
+                  {
+                      "function_declarations":  [
+                                                    {
+                                                        "name":  "triage_service_intake",
+                                                        "description":  "Triages customer vehicle symptoms, calculates estimated labor/parts range, and assigns an active service bay.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "vehicleInfo":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "description":  "Year, make, and model of the vehicle."
+                                                                                                              },
+                                                                                              "symptomCategory":  {
+                                                                                                                      "type":  "string",
+                                                                                                                      "description":  "Service category (Brake System, Diagnostic/Check Engine, AC/Cooling, Preventative Maintenance)."
+                                                                                                                  },
+                                                                                              "assignedBay":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "description":  "Target bay assignment (Bay 1 Heavy, Bay 2 Express, Bay 3 Diagnostics)."
+                                                                                                              }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "vehicleInfo",
+                                                                                            "symptomCategory",
+                                                                                            "assignedBay"
+                                                                                        ]
+                                                                       }
+                                                    },
+                                                    {
+                                                        "name":  "book_repair_slot",
+                                                        "description":  "Locks a customer appointment window and triggers automated SMS/email repair order tracking.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "roNumber":  {
+                                                                                                               "type":  "string",
+                                                                                                               "description":  "Repair Order ID."
+                                                                                                           },
+                                                                                              "appointmentWindow":  {
+                                                                                                                        "type":  "string",
+                                                                                                                        "description":  "Confirmed drop-off slot."
+                                                                                                                    }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "roNumber",
+                                                                                            "appointmentWindow"
+                                                                                        ]
+                                                                       }
+                                                    }
+                                                ]
+                  }
+              ],
+    "verification_test":  {
+                              "prompt":  "Triage a 2022 Subaru Crosstrek with Check Engine \u0026 Eyesight diagnostic alert into Bay 3 Diagnostics.",
+                              "simulated_tool_response":  {
+                                                              "status":  "BAY_ASSIGNED",
+                                                              "roNumber":  "RO-8842",
+                                                              "assignedBay":  "Bay 3 Diagnostics",
+                                                              "estimateRange":  "$145 - $285",
+                                                              "appointmentWindow":  "Tomorrow 8:30 AM EST"
+                                                          }
+                          },
+    "aistudio_prompt_id":  "1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD",
+    "aistudio_url":  "https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD"
+}

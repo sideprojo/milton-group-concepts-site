@@ -1,0 +1,95 @@
+{
+    "agent_id":  "cato",
+    "name":  "Cato",
+    "call_sign":  "CATO-01",
+    "app_slug":  "samgov-contract-matchmaker",
+    "title":  "Cato (CATO-01) - Federal Contract \u0026 Role Radar",
+    "category":  "GovTech \u0026 Federal Contracting",
+    "model":  "gemini-3.8-flash",
+    "thinking_level":  "Medium",
+    "orchestrator_parent":  "Otto (OTTO-01 Â· 1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6)",
+    "system_instruction":  "You are Cato (Call Sign: CATO-01), the Federal Contract \u0026 Role Radar specialist agent for Milton Group Concepts LLC SDVOSB (projects/samgov-contract-matchmaker). You receive routed executives from Otto (OTTO-01) and match NAICS 541512, 541519, 541511, and 541611 solicitations, Sources Sought notices, and SDVOSB set-asides to capability matrices and PIEE/WAWF invoicing readiness.",
+    "generation_config":  {
+                              "temperature":  0.2,
+                              "response_mime_type":  "application/json",
+                              "response_schema":  {
+                                                      "type":  "object",
+                                                      "properties":  {
+                                                                         "agent":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                         "callSign":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                         "appSlug":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "toolExecuted":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                         "summary":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "recommendedNextAction":  {
+                                                                                                       "type":  "string"
+                                                                                                   },
+                                                                         "transferMatchPct":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                         "handoffStatus":  {
+                                                                                               "type":  "string"
+                                                                                           }
+                                                                     },
+                                                      "required":  [
+                                                                       "agent",
+                                                                       "callSign",
+                                                                       "appSlug",
+                                                                       "toolExecuted",
+                                                                       "summary"
+                                                                   ]
+                                                  }
+                          },
+    "tools":  [
+                  {
+                      "function_declarations":  [
+                                                    {
+                                                        "name":  "match_samgov_solicitations",
+                                                        "description":  "Scores active SAM.gov solicitations and Sources Sought notices against SDVOSB NAICS codes and clearance/compliance posture.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "naicsCode":  {
+                                                                                                                "type":  "string",
+                                                                                                                "description":  "Primary NAICS code (541512, 541519, 541511, 541611)."
+                                                                                                            },
+                                                                                              "setAsideType":  {
+                                                                                                                   "type":  "string",
+                                                                                                                   "description":  "Set-aside filter (SDVOSB, VetsFirst, 8a, TotalSmallBusiness)."
+                                                                                                               },
+                                                                                              "complianceLevel":  {
+                                                                                                                      "type":  "string",
+                                                                                                                      "description":  "Compliance readiness (NIST_800_171_CMMC_L2, FEDRAMP_MODERATE)."
+                                                                                                                  }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "naicsCode",
+                                                                                            "setAsideType",
+                                                                                            "complianceLevel"
+                                                                                        ]
+                                                                       }
+                                                    }
+                                                ]
+                  }
+              ],
+    "verification_test":  {
+                              "prompt":  "Match NAICS 541512 SDVOSB set-aside solicitations requiring NIST_800_171_CMMC_L2 compliance.",
+                              "simulated_tool_response":  {
+                                                              "status":  "SOLICITATIONS_MATCHED",
+                                                              "matchedCount":  4,
+                                                              "topSolicitation":  "W52P1J-26-R-0084 Cyber Operations \u0026 Zero-Trust Architecture",
+                                                              "pWinScore":  "91%"
+                                                          }
+                          },
+    "aistudio_prompt_id":  "1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx",
+    "aistudio_url":  "https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx"
+}

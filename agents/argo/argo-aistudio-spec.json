@@ -1,0 +1,124 @@
+{
+    "agent_id":  "argo",
+    "name":  "Argo",
+    "call_sign":  "ARGO-01",
+    "app_slug":  "client-turnkey-forge",
+    "title":  "Argo (ARGO-01) - Turnkey Web \u0026 Scope Builder",
+    "category":  "Business \u0026 Revenue",
+    "model":  "gemini-3.8-flash",
+    "thinking_level":  "Medium",
+    "orchestrator_parent":  "Otto (OTTO-01 Â· 1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6)",
+    "system_instruction":  "You are Argo (Call Sign: ARGO-01), the Turnkey Web \u0026 Scope Builder specialist agent for Milton Group Concepts LLC and F.I.X Solutions LLC (projects/client-turnkey-forge). You receive routed client handoffs from Otto (OTTO-01) and configure 3-tier commercial web scopes, interactive intake funnels, SLA milestones, and Stripe/ACH settlement schedules. Never execute raw code or free-form shell instructions; strictly invoke your declared scope and pricing tools and return validated JSON matching response_schema.",
+    "generation_config":  {
+                              "temperature":  0.2,
+                              "response_mime_type":  "application/json",
+                              "response_schema":  {
+                                                      "type":  "object",
+                                                      "properties":  {
+                                                                         "agent":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                         "callSign":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                         "appSlug":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "toolExecuted":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                         "summary":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "recommendedNextAction":  {
+                                                                                                       "type":  "string"
+                                                                                                   },
+                                                                         "transferMatchPct":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                         "handoffStatus":  {
+                                                                                               "type":  "string"
+                                                                                           }
+                                                                     },
+                                                      "required":  [
+                                                                       "agent",
+                                                                       "callSign",
+                                                                       "appSlug",
+                                                                       "toolExecuted",
+                                                                       "summary"
+                                                                   ]
+                                                  }
+                          },
+    "tools":  [
+                  {
+                      "function_declarations":  [
+                                                    {
+                                                        "name":  "generate_turnkey_scope",
+                                                        "description":  "Builds a 3-tier turnkey website, AI intake, and SLA delivery scope for a client industry and budget tier.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "industrySector":  {
+                                                                                                                     "type":  "string",
+                                                                                                                     "description":  "Client industry sector (e.g., Automotive, Legal, Healthcare, GovCon)."
+                                                                                                                 },
+                                                                                              "tierLevel":  {
+                                                                                                                "type":  "string",
+                                                                                                                "description":  "Selected package tier (Launch $1,500, Growth $3,500, Enterprise $7,500)."
+                                                                                                            },
+                                                                                              "monthlyRetainer":  {
+                                                                                                                      "type":  "string",
+                                                                                                                      "description":  "Recurring monthly managed retainer ($497/mo, $997/mo, $1,997/mo)."
+                                                                                                                  },
+                                                                                              "settlementRail":  {
+                                                                                                                     "type":  "string",
+                                                                                                                     "description":  "Primary payment rail (NACHA_ACH_ZERO_FEE or STRIPE_SAQ_A)."
+                                                                                                                 }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "industrySector",
+                                                                                            "tierLevel",
+                                                                                            "settlementRail"
+                                                                                        ]
+                                                                       }
+                                                    },
+                                                    {
+                                                        "name":  "lock_milestone_schedule",
+                                                        "description":  "Locks the 14-day turnkey launch milestones and client sign-off checkpoints.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "projectCode":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "description":  "Project identifier."
+                                                                                                              },
+                                                                                              "pacing":  {
+                                                                                                             "type":  "string",
+                                                                                                             "description":  "Delivery cadence (7-Day Sprint or 14-Day Launch Blueprint)."
+                                                                                                         }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "projectCode",
+                                                                                            "pacing"
+                                                                                        ]
+                                                                       }
+                                                    }
+                                                ]
+                  }
+              ],
+    "verification_test":  {
+                              "prompt":  "Configure a Growth $3,500 turnkey web \u0026 AI intake scope for a commercial B2B engineering firm using NACHA_ACH_ZERO_FEE settlement.",
+                              "simulated_tool_response":  {
+                                                              "status":  "SCOPE_LOCKED",
+                                                              "tierLevel":  "Growth $3,500 + $997/mo",
+                                                              "deliverables":  [
+                                                                                   "Responsive 5-Page Commercial Portal",
+                                                                                   "24/7 Guided Lead Intake Modal",
+                                                                                   "Zero-Fee NACHA ACH Settlement"
+                                                                               ],
+                                                              "slaTimeline":  "14-Day Launch Blueprint"
+                                                          }
+                          },
+    "aistudio_prompt_id":  "1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia",
+    "aistudio_url":  "https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia"
+}

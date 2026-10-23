@@ -1,0 +1,95 @@
+{
+    "agent_id":  "kael",
+    "name":  "Kael",
+    "call_sign":  "KAEL-01",
+    "app_slug":  "ghost-cli-trainer",
+    "title":  "Kael (KAEL-01) - Multi-OS CLI \u0026 Ansible Auto-Grader",
+    "category":  "Cloud, Cyber \u0026 Infrastructure",
+    "model":  "gemini-3.8-flash",
+    "thinking_level":  "Medium",
+    "orchestrator_parent":  "Otto (OTTO-01 Â· 1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6)",
+    "system_instruction":  "You are Kael (Call Sign: KAEL-01), the Multi-OS CLI \u0026 Ansible Auto-Grader specialist agent for Milton Group Concepts LLC (projects/ghost-cli-trainer). You receive routed engineers from Otto (OTTO-01) and grade Cisco IOS-XE, Linux bash/systemd, 3NF SQL, KQL threat hunting, and declarative Ansible playbooks with deterministic rubric feedback.",
+    "generation_config":  {
+                              "temperature":  0.2,
+                              "response_mime_type":  "application/json",
+                              "response_schema":  {
+                                                      "type":  "object",
+                                                      "properties":  {
+                                                                         "agent":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                         "callSign":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                         "appSlug":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "toolExecuted":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                         "summary":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                         "recommendedNextAction":  {
+                                                                                                       "type":  "string"
+                                                                                                   },
+                                                                         "transferMatchPct":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                         "handoffStatus":  {
+                                                                                               "type":  "string"
+                                                                                           }
+                                                                     },
+                                                      "required":  [
+                                                                       "agent",
+                                                                       "callSign",
+                                                                       "appSlug",
+                                                                       "toolExecuted",
+                                                                       "summary"
+                                                                   ]
+                                                  }
+                          },
+    "tools":  [
+                  {
+                      "function_declarations":  [
+                                                    {
+                                                        "name":  "grade_cli_ansible_drill",
+                                                        "description":  "Evaluates a learner CLI command sequence or Ansible playbook against deterministic syntax and idempotency rules.",
+                                                        "parameters":  {
+                                                                           "type":  "object",
+                                                                           "properties":  {
+                                                                                              "osTrack":  {
+                                                                                                              "type":  "string",
+                                                                                                              "description":  "Target environment (Cisco_IOS_XE, RHEL_Linux, Ansible_Playbook, KQL_Sentinel, SQL_3NF)."
+                                                                                                          },
+                                                                                              "drillId":  {
+                                                                                                              "type":  "string",
+                                                                                                              "description":  "Lab drill identifier."
+                                                                                                          },
+                                                                                              "submittedCommand":  {
+                                                                                                                       "type":  "string",
+                                                                                                                       "description":  "Sanitized CLI or YAML snippet under evaluation."
+                                                                                                                   }
+                                                                                          },
+                                                                           "required":  [
+                                                                                            "osTrack",
+                                                                                            "drillId",
+                                                                                            "submittedCommand"
+                                                                                        ]
+                                                                       }
+                                                    }
+                                                ]
+                  }
+              ],
+    "verification_test":  {
+                              "prompt":  "Grade a Cisco_IOS_XE drill ospf_passive_interface with command router ospf 1 / passive-interface default / no passive-interface GigabitEthernet0/1.",
+                              "simulated_tool_response":  {
+                                                              "status":  "DRILL_PASSED",
+                                                              "accuracyScore":  100,
+                                                              "ansibleEquivalent":  "cisco.ios.ios_ospfv2",
+                                                              "nextDrillUnlocked":  "bgp_route_map_hardening"
+                                                          }
+                          },
+    "aistudio_prompt_id":  "1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr",
+    "aistudio_url":  "https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr"
+}
