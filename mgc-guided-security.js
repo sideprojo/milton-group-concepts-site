@@ -2465,7 +2465,7 @@
         heading: 'F.I.X Solutions LLC • Federal Integration & Exchange SDVOSB Action Modules',
         mod1Title: '🎯 Module 1: Fort Bragg (USASOC) & VA OIT Sole-Source Pipeline',
         mod1Checks: [
-          { text: 'Submit SBA VetCert SDVOSB packet (EIN 92-1370285)', linkLabel: 'SBA VetCert ↗', linkUrl: 'https://veterans.certify.sba.gov/' },
+          { text: 'Submit SBA VetCert SDVOSB packet', linkLabel: 'SBA VetCert ↗', linkUrl: 'https://veterans.certify.sba.gov/' },
           { text: 'Respond to Fort Bragg USASOC / 112th Signal C4ISR Sources Sought', linkLabel: 'SAM.gov Radar ↗', linkUrl: 'https://sam.gov/content/opportunities' },
           { text: 'Register VA Vets First (38 U.S.C. 8127) Zero-Trust capability brief', linkLabel: 'VA Vets First ↗', linkUrl: 'https://www.va.gov/osdbu/verification/' }
         ],

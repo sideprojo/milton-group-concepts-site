@@ -30,7 +30,7 @@
             Compliant Platform & "Trust But Verify" Security Architecture
           </h1>
           <p class="text-slate-200 text-sm md:text-base leading-relaxed">
-            Engineered for <strong>Milton Group Concepts LLC</strong> (EIN 92-1370285) and <strong>F.I.X Solutions LLC</strong> (SDVOSB). Every external visitor, cloud agent, API connector, and billing resource is governed by 7 concentric Defense-in-Depth layers and continuous cryptographic verification.
+            Engineered for <strong>Milton Group Concepts LLC</strong> and <strong>F.I.X Solutions LLC</strong> (SDVOSB). Every external visitor, cloud agent, API connector, and billing resource is governed by 7 concentric Defense-in-Depth layers and continuous cryptographic verification.
           </p>
         </div>
 
@@ -80,7 +80,7 @@
               <span class="text-xs font-extrabold text-emerald-400 uppercase">Layer 3 • CUI & Zero-PII AI Guardrail</span>
               <span class="mono text-[11px] text-emerald-300">PASS</span>
             </div>
-            <p class="text-xs text-slate-300">Pre-inference regex + NER scrubber strips SSNs, EINs, API keys, and CUI markings before any Vertex AI or Azure OpenAI call.</p>
+            <p class="text-xs text-slate-300">Pre-inference regex + NER scrubber strips SSNs, API keys, and CUI markings before any Vertex AI or Azure OpenAI call.</p>
           </div>
 
           <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
@@ -117,7 +117,7 @@
           <p class="text-xs text-slate-300">
             Verify how the platform strips PII, CUI, SSNs, and credentials before any cloud LLM or analytics pipeline receives input:
           </p>
-          <textarea id="pii-input" rows="4" class="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 text-xs mono text-slate-100" placeholder="Enter test payload...">Contracting Officer Jane Doe (SSN 123-45-6789, email jane.doe@va.gov, CUI//SP-PRVCY, API_KEY=sk-live-998877) requested SDVOSB quote for EIN 92-1370285.</textarea>
+          <textarea id="pii-input" rows="4" class="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 text-xs mono text-slate-100" placeholder="Enter test payload...">Contracting Officer Jane Doe (SSN 123-45-6789, email jane.doe@va.gov, CUI//SP-PRVCY, API_KEY=sk-live-998877) requested SDVOSB quote for CAGE 17GC6.</textarea>
           <button onclick="runSanitizerTest()" class="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs uppercase tracking-widest transition-all">
             Sanitize & Verify Payload
           </button>
@@ -183,7 +183,7 @@
             <tr>
               <td class="py-3.5 px-4 font-bold text-white">VA Vets First / SBA VetCert SDVOSB</td>
               <td class="py-3.5 px-4">13 CFR Part 128 Service-Disabled Veteran-Owned Small Business eligibility</td>
-              <td class="py-3.5 px-4">100% unconditional ownership & control by Malik A. Khabir; EIN 92-1370285; NAICS 541611, 541512, 541614, 541330</td>
+              <td class="py-3.5 px-4">100% unconditional ownership & control by Malik A. Khabir; NAICS 541611, 541512, 541614, 541330</td>
               <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 font-bold">SDVOSB VERIFIED</span></td>
             </tr>
           </tbody>
@@ -206,7 +206,7 @@
       const raw = document.getElementById('pii-input').value;
       const sanitized = raw
         .replace(/\b\d{3}-\d{2}-\d{4}\b/g, '[REDACTED-SSN]')
-        .replace(/\b\d{2}-\d{7}\b/g, '[REDACTED-EIN]')
+        .replace(/\b\d{2}-\d{7}\b/g, '[REDACTED-ID]')
         .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[REDACTED-EMAIL]')
         .replace(/CUI\/\/[A-Z-]+/g, '[CUI-BOUNDARY-TAG]')
         .replace(/sk-[a-zA-Z0-9-]+/g, '[REDACTED-SECRET-KEY]');
@@ -222,11 +222,11 @@
         `[${ts}] ▶ STARTING 7-LAYER TRUST-BUT-VERIFY CRYPTOGRAPHIC & COMPLIANCE AUDIT...`,
         `[LAYER 1 - IDENTITY] Session Token Present: TRUE | Payload: ${session.slice(0, 96)}...`,
         `[LAYER 2 - BOUNDARY] External Sites (MGC & F.I.X) isolated from Internal Suite | Cross-Origin RBAC Token Verified`,
-        `[LAYER 3 - PRIVACY] CIPP/US & NIST AI RMF Pre-Inference Scrubber: ACTIVE (SSN/EIN/Key/CUI regexes armed)`,
+        `[LAYER 3 - PRIVACY] CIPP/US & NIST AI RMF Pre-Inference Scrubber: ACTIVE (SSN/Key/CUI regexes armed)`,
         `[LAYER 4 - COST GUARD] Cloud Run min-instances=0 max-instances=2 | Google Earth 3D Seat-License Blocker: ARMED ($0.00 Idle)`,
         `[LAYER 5 - PROVENANCE] Git Repositories: sideprojo/milton-group-concepts-llc, sideprojo/fix-solutions-llc, sideprojo/milton-group-concepts-site`,
         `[LAYER 6 - OS SAFETY] Browser Automation Mouse/Keyboard Hijack Lock: ENFORCED (Zero SetCursorPos / Zero SendKeys)`,
-        `[LAYER 7 - COMPLIANCE] FAR 52.204-21 (17/17) | NIST SP 800-171 Rev 3 Architecture | SDVOSB EIN 92-1370285: VERIFIED`
+        `[LAYER 7 - COMPLIANCE] FAR 52.204-21 (17/17) | NIST SP 800-171 Rev 3 Architecture | SDVOSB STATUS: VERIFIED`
       ].join('\n');
       runSanitizerTest();
     }
@@ -234,7 +234,6 @@
     function exportSSPReport() {
       const report = {
         organization: 'Milton Group Concepts LLC & F.I.X Solutions LLC',
-        ein: '92-1370285',
         designation: 'SDVOSB (Service-Disabled Veteran-Owned Small Business)',
         generatedAt: new Date().toISOString(),
         securityModel: 'Defense-in-Depth / Trust-But-Verify',

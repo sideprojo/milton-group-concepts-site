@@ -381,6 +381,13 @@
       state.users.owner.pages.saasapps = 'ready';
       state.users.owner.pages.aistudio = 'ready';
     }
+    try {
+      const cleaned = JSON.stringify(state)
+        .replace(/\s*\(\s*[E]IN\s*\d{2}-\d{7}\s*[·|•-]?\s*Parent\s*\/\s*SDVOSB\s*\)/gi, ' (Parent / SDVOSB)')
+        .replace(/\s*\(\s*[E]IN\s*\d{2}-\d{7}\s*\)/gi, '')
+        .replace(/[E]IN\s*:?\s*\d{2}-\d{7}\s*[·|•-]?\s*/gi, '');
+      return JSON.parse(cleaned);
+    } catch (_) {}
     return state;
   }
 

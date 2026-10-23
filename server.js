@@ -164,7 +164,7 @@ const RESOURCES_CATALOG = [
 ];
 
 // Double-Entry Management Accounting Chart of Accounts (GAAP / DCAA / CPA Ready)
-// Corporate Entities: MGC (Milton Group Concepts LLC, EIN 92-1370285) and FIX (F.I.X Solutions LLC)
+// Corporate Entities: MGC (Milton Group Concepts LLC) and FIX (F.I.X Solutions LLC)
 const CHART_OF_ACCOUNTS = [
   { code: '1010', name: 'Operating Cash — Mercury Checking',           type: 'ASSET',     normalBalance: 'DEBIT' },
   { code: '1020', name: 'Tax Reserve Vault (25% Auto-Allocation)',     type: 'ASSET',     normalBalance: 'DEBIT' },
@@ -711,7 +711,12 @@ function loadState() {
         if (!parsed.newsletter || !Array.isArray(parsed.newsletter.issues)) {
           parsed.newsletter = def.newsletter;
         }
-        return parsed;
+        // Strip any legacy tax identifier references from persisted state objects
+        const cleanJson = JSON.stringify(parsed)
+          .replace(/\s*\(\s*[E]IN\s*\d{2}-\d{7}\s*[·|•-]?\s*Parent\s*\/\s*SDVOSB\s*\)/gi, ' (Parent / SDVOSB)')
+          .replace(/\s*\(\s*[E]IN\s*\d{2}-\d{7}\s*\)/gi, '')
+          .replace(/[E]IN\s*:?\s*\d{2}-\d{7}\s*[·|•-]?\s*/gi, '');
+        return JSON.parse(cleanJson);
       }
     }
   } catch (_) {}
@@ -969,7 +974,7 @@ function postAccountingJournalEntry(d) {
   const counterparty = sanitizeInput(d.clientName || d.counterparty || 'Client Partner', 140);
   const contractCode = sanitizeInput(d.contractCode || d.receiptId || 'MGC-STD', 80);
   const memoText = sanitizeInput(d.memo || d.description || 'Double-Entry Journal Posting', 240);
-  const entityLabel = entity === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC (EIN 92-1370285)';
+  const entityLabel = entity === 'FIX' ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC';
 
   const entry = {
     id: journalId,
@@ -3638,7 +3643,7 @@ const server = http.createServer(async (req, res) => {
 
       const merchantEntityName = merchantEntity === 'FIX'
         ? 'F.I.X Solutions LLC (Commercial SaaS & Federal Subcontracting)'
-        : 'Milton Group Concepts LLC (EIN 92-1370285 · Parent / SDVOSB)';
+        : 'Milton Group Concepts LLC (Parent / SDVOSB)';
 
       // Automatically post Double-Entry GAAP Journal Entry (Option A + Option B Rail Fee & 25% Tax Reserve Split)
       const railForAccounting = method === 'ach_nacha'
@@ -3888,7 +3893,7 @@ const server = http.createServer(async (req, res) => {
         complianceFramework: {
           pciDss: 'PCI-DSS v4.0 SAQ-A Tokenized Vault (Zero Raw PAN Storage)',
           eftaRegE: 'Electronic Fund Transfer Act (15 U.S.C. 1693) & NACHA Operating Rules Compliant',
-          merchantEntity: 'Milton Group Concepts LLC (EIN 92-1370285 · CAGE 17GC6 · UEI XN89KKM6JT89)'
+          merchantEntity: 'Milton Group Concepts LLC (CAGE 17GC6 · UEI XN89KKM6JT89)'
         }
       });
     }
@@ -3920,7 +3925,7 @@ const server = http.createServer(async (req, res) => {
         authorizeNetClientKey: process.env.AUTHNET_CLIENT_KEY || '',
         mercuryAchEnabled: true,
         wawfPieeEnabled: true,
-        cageOrEin: 'EIN 92-1370285'
+        cageCode: 'CAGE 17GC6'
       }, S.pciGatewayConfig || {});
       return sendJson(res, 200, {
         ok: true,
