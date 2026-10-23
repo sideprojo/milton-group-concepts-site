@@ -17,27 +17,21 @@
   // Strict Policy: New & standard users ONLY have view & access to SaaS Apps & LMS (saasapps) + Payment & Billing.
   // All other pages/features are locked unless explicitly granted by the sole Administrator (Malik A. Khabir).
   const CATALOG = [
-    { id: 'saasapps',  icon: '', title: 'SaaS Apps & LMS',       brand: 'FIX', kind: 'app',  base: true,  price: 0,  href: 'saas-apps-and-lms-showcase.html', desc: 'Interactive SaaS applications, Turnkey Configurator, Sterling Auto Showcase, and SCORM 2004 LMS.' },
-    { id: 'agile',     icon: '', title: 'Agile Board',           brand: 'ANY', kind: 'app',  base: false, price: 9,  href: 'agile-board.html',                desc: 'Backlog, sprint board, and project deliverables.' },
-    { id: 'radar',     icon: '', title: 'Contract Radar',        brand: 'FIX', kind: 'app',  base: false, price: 9,  href: 'sdvosb-contract-radar.html',      desc: 'Federal opportunity feed filtered by NAICS codes.' },
-    { id: 'compliance',icon: '', title: 'Compliance Tracker',    brand: 'MGC', kind: 'page', base: false, price: 7,  href: 'compliance-trust-center.html',    desc: 'CMMC 2.0 and Zero-Trust control checklist.' },
-    { id: 'ailab',     icon: '', title: 'AI Workflow Lab',       brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'agent-workflow-studio.html',      desc: 'Agent and automation workflow studio.' },
-    { id: 'finance',   icon: '', title: 'Cashflow & Invoicing',  brand: 'FIX', kind: 'page', base: false, price: 8,  href: 'finance-command.html',            desc: 'Invoice tracker, WAWF/PIEE settlement, and treasury.' },
-    { id: 'training',  icon: '', title: 'SCORM EVE-NG Academy',  brand: 'MGC', kind: 'page', base: false, price: 10, href: 'elearning-upskilling-hub.html',   desc: 'SCORM 2004 EVE-NG topology workbench and auto-grader.' },
-    { id: 'aistudio',  icon: '', title: 'AI Studio & NotebookLM',brand: 'MGC', kind: 'app',  base: false, price: 12, href: 'historical-archaeology-ai-hub.html', desc: 'Chronos Historical AI and research workspace.' },
-    { id: 'home',      icon: '', title: 'Overview Hub',          brand: 'ANY', kind: 'page', base: false, price: 5,  href: 'member-portal.html?view=overview', desc: 'Project overview and action checklist.' },
-    { id: 'resources', icon: '', title: 'Curated Resources',     brand: 'ANY', kind: 'page', base: false, price: 5,  href: 'member-portal.html?view=resources', desc: 'Reference templates and operational workflows.' }
+    { id: 'saasapps',  icon: '', title: 'Applications',          brand: 'FIX', kind: 'app',  base: true,  price: 0,  href: 'member-portal.html',                desc: 'Launch authorized standalone SaaS and training applications.' },
+    { id: 'resources', icon: '', title: 'Resources & Otto',      brand: 'ANY', kind: 'page', base: false, price: 5,  href: 'member-portal.html?view=resources', desc: 'Guided templates, operational workflows, and Otto agent path.' },
+    { id: 'agile',     icon: '', title: 'Agile Delivery',        brand: 'ANY', kind: 'app',  base: false, price: 9,  href: 'agile-board.html',                  desc: 'Backlog, sprint board, and project deliverables.' },
+    { id: 'home',      icon: '', title: 'Overview Checklist',    brand: 'ANY', kind: 'page', base: false, price: 5,  href: 'member-portal.html?view=overview',  desc: 'Project overview and action checklist.' }
   ];
 
   const APPS_CATALOG = [
-    { id: 'client-turnkey-forge',       icon: '', title: 'Client Turnkey Forge SCORM OS',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Interactive custom build scope and pricing configurator.' },
-    { id: 'sterling-auto-repair',       icon: '', title: 'Sterling Auto Repair Showcase',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Commercial web and autonomous receptionist showcase.' },
+    { id: 'client-turnkey-forge',       icon: '', title: 'Client Turnkey Forge',                 brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Interactive custom build scope and pricing configurator.' },
+    { id: 'sterling-auto-repair',       icon: '', title: 'Sterling Auto Repair',                 brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Commercial web and autonomous receptionist application.' },
     { id: 'eveng-netprism-studio',      icon: '', title: 'EVE-NG & NetPrism Topology Studio',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'OSPF, BGP, ZTNA, and EVPN network topology simulator.' },
-    { id: 'samgov-contract-matchmaker', icon: '', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'SDVOSB NAICS 541512/541519 opportunity matchmaker.' },
-    { id: 'traffic-roi-simulator',      icon: '', title: 'Site Traffic & Conversion ROI OS',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator.' },
+    { id: 'samgov-contract-matchmaker', icon: '', title: 'SAM.gov Contract & Job Matchmaker',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Federal NAICS 541512/541519 opportunity matchmaker.' },
+    { id: 'traffic-roi-simulator',      icon: '', title: 'Site Traffic & Conversion ROI',        brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator.' },
     { id: 'ghost-cli-trainer',          icon: '', title: 'Ghost-CLI & Netmiko Auto-Grader',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'IOS-XE, Linux, SQL, KQL, and Ansible terminal lab.' },
-    { id: 'chronos-aetheria-scorm',     icon: '', title: 'Chronos Aetheria Geo-Historical OS',   brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Epigraphy and geodesic discovery engine.' },
-    { id: 'spanish-acquisition-os',     icon: '', title: 'Spanish Acquisition OS (10,000 Words)',brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module language training system with neural audio.' }
+    { id: 'chronos-aetheria-scorm',     icon: '', title: 'Chronos Aetheria Geo-Historical AI',   brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Epigraphy and geodesic discovery application.' },
+    { id: 'spanish-acquisition-os',     icon: '', title: 'Spanish Acquisition (10,000 Words)',   brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module language training application with neural audio.' }
   ];
 
   // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -1889,8 +1883,8 @@
   body.w-fix{--bg:#050811;--card:rgba(10,15,28,0.96);--card2:rgba(14,21,38,0.95);--line:rgba(197,179,88,0.28);--tx:#F8FAFC;--mut:#94A3B8;--ac:#C5B358;--acx:#050811;--ok:#10B981;
     background:radial-gradient(circle at 12% 15%,rgba(37,99,235,0.16),transparent 42%),radial-gradient(circle at 50% 85%,rgba(197,179,88,0.12),transparent 45%),#050811}
   body.w-mgc::before,body.w-fix::before{content:'';position:fixed;inset:0;z-index:-10;pointer-events:none}
-  body.w-mgc::before{background:linear-gradient(180deg,rgba(5,8,17,0.82) 0%,rgba(10,16,30,0.9) 55%,rgba(5,8,17,0.97) 100%),linear-gradient(rgba(148,163,184,.025) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(148,163,184,.025) 1px,transparent 1px) 0 0/44px 44px,url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500") center 38%/cover no-repeat;opacity:.78}
-  body.w-fix::before{background:linear-gradient(180deg,rgba(5,8,17,0.82) 0%,rgba(10,16,30,0.9) 55%,rgba(5,8,17,0.97) 100%),linear-gradient(rgba(197,179,88,.025) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(197,179,88,.025) 1px,transparent 1px) 0 0/44px 44px,url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500") center 38%/cover no-repeat;opacity:.78}
+  body.w-mgc::before{background:linear-gradient(180deg,rgba(5,8,17,0.92) 0%,rgba(10,16,30,0.96) 55%,rgba(5,8,17,0.99) 100%),linear-gradient(rgba(148,163,184,.025) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(148,163,184,.025) 1px,transparent 1px) 0 0/44px 44px}
+  body.w-fix::before{background:linear-gradient(180deg,rgba(5,8,17,0.92) 0%,rgba(10,16,30,0.96) 55%,rgba(5,8,17,0.99) 100%),linear-gradient(rgba(197,179,88,.025) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(197,179,88,.025) 1px,transparent 1px) 0 0/44px 44px}
   *{box-sizing:border-box}
   body{margin:0;font-family:var(--font-sans);font-size:13.5px;line-height:1.5;color:var(--tx);min-height:100vh;position:relative;isolation:isolate;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-feature-settings:"cv02","cv03","cv04","cv11"}
   code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
@@ -2134,137 +2128,28 @@
     const isNewsletterPage = String(active || '').includes('newsletter') || (typeof location !== 'undefined' && /newsletter/i.test(location.pathname || ''));
     let navInner = '';
     if (isNewsletterPage) {
-      // Public Newsletter Hardened Navigation: ONLY render "Submit Request & Consultation" (zero links to Workspace, SaaS & LMS, or Billing)
       navInner = '<button type="button" class="btn pri" id="btnNavSubmitConsultation" data-open-nl-consultation="1" style="padding:7px 14px;font-size:12.5px">Submit Request &amp; Consultation</button>';
-    } else if (admin) {
-      const dirDrop = buildDropdown('dir', 'MGC Directory', active.includes('access-admin'), [
-        {
-          title: 'Organizational Units',
-          items: [
-            { href: 'access-admin.html?tab=users&ou=all', label: 'All Directory Users', badge: 'ADUC' },
-            { href: 'access-admin.html?tab=users&ou=internal', label: 'OU=Internal (Employees)', badge: 'Staff' },
-            { href: 'access-admin.html?tab=users&ou=external', label: 'OU=External (Clients)', badge: 'Clients' },
-            { href: 'access-admin.html?tab=admin_identity', label: 'Builtin Administrator', badge: 'Owner' }
-          ]
-        },
-        {
-          title: 'Governance & Gateways',
-          items: [
-            { href: 'access-admin.html?tab=agents', label: 'Agent Access Management (Otto)', badge: 'Agents NEW' },
-            { href: 'access-admin.html?tab=requests', label: 'Consultations & Intake Queue', badge: 'Queue' },
-            { href: 'access-admin.html?tab=groups', label: 'Security Groups & RBAC', badge: 'Policy' },
-            { href: 'access-admin.html?tab=payments', label: 'PCI-DSS & Payment Gateways', badge: 'SAQ-A' },
-            { href: 'access-admin.html?tab=audit', label: 'Security Event Log', badge: 'Audit' }
-          ]
-        }
-      ]);
-      const internalDrop = buildDropdown('internal', 'Internal Sites', false, [
-        {
-          title: 'Operations & Engineering',
-          items: [
-            { href: 'admin-command-portal.html', label: 'Admin Command Portal', badge: 'Command' },
-            { href: 'agile-board.html', label: 'Agile Delivery Board', badge: 'Sprint' },
-            { href: 'sdvosb-contract-radar.html', label: 'SDVOSB Contract Radar', badge: 'SAM.gov' },
-            { href: 'compliance-trust-center.html', label: 'Compliance Trust Center', badge: 'CMMC 2.0' },
-            { href: 'agent-workflow-studio.html', label: 'AI Workflow Lab', badge: 'Agents' },
-            { href: 'finance-command.html', label: 'Cashflow & Invoicing', badge: 'Treasury' },
-            { href: 'elearning-upskilling-hub.html', label: 'SCORM EVE-NG Academy', badge: 'Labs' },
-            { href: 'historical-archaeology-ai-hub.html', label: 'AI Studio & NotebookLM', badge: 'Chronos' }
-          ]
-        }
-      ]);
-      const appsDrop = buildDropdown('apps', 'SaaS & LMS Showcases', active.includes('saas-apps'), [
-        {
-          title: 'Showcase Applications',
-          items: [{ href: 'saas-apps-and-lms-showcase.html', label: 'Full SaaS & LMS Catalog', badge: '8 Apps' }]
-            .concat(APPS_CATALOG.map(a => ({ href: a.href, label: a.title, badge: a.brand })))
-        }
-      ]);
-      const allResources = getResourcesCatalog();
-      const resDrop = buildDropdown('resources', 'Resources', active.includes('view=resources') || active.includes('whitefeather'), [
-        {
-          title: 'Qualified Resources & Milton AI Tools',
-          items: [{ href: 'member-portal.html?view=resources', label: 'Resources & AI Fast-Track Hub', badge: allResources.length + ' Active' }]
-            .concat(allResources.map(r => ({ href: r.href || ('member-portal.html?view=resources&resource=' + r.id), label: r.title, badge: 'UI/UX + AI' })))
-        }
-      ]);
-      navInner =
-        '<a class="btn' + (active === 'member-portal.html' ? ' pri' : '') + '" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Workspace</a>' +
-        dirDrop + internalDrop + appsDrop + resDrop;
-    } else if (emp) {
-      // Employee view: Access to Client Directory (OU=External ONLY, no payment settings) + ONLY granted internal sites, apps & qualified resources
-      const empDirDrop = buildDropdown('emp-dir', 'MGC Directory', active.includes('access-admin'), [
-        {
-          title: 'Client Administration',
-          items: [
-            { href: 'access-admin.html?tab=users&ou=external', label: 'Client Accounts (OU=External)', badge: 'Clients' },
-            { href: 'access-admin.html?tab=requests', label: 'Client Consultations & Requests', badge: 'Intake' }
-          ]
-        }
-      ]);
-      const grantedInternalPages = CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'finance' && c.id !== 'resources' && can(u, 'page', c.id, 'view'));
-      const empInternalDrop = buildDropdown('emp-internal', 'Internal Sites', false, [
-        {
-          title: 'Granted Internal Portals',
-          items: grantedInternalPages.map(c => ({ href: c.href, label: c.title, badge: c.brand }))
-        }
-      ]);
-      const grantedEmpApps = APPS_CATALOG.filter(a => can(u, 'app', a.id, 'view'));
-      const empAppsDrop = buildDropdown('emp-apps', 'SaaS & LMS', active.includes('saas-apps'), [
-        {
-          title: 'Authorized Applications',
-          items: [{ href: 'saas-apps-and-lms-showcase.html', label: 'SaaS & LMS Showcase', badge: grantedEmpApps.length + ' Active' }]
-            .concat(grantedEmpApps.map(a => ({ href: a.href, label: a.title, badge: a.brand })))
-        }
-      ]);
-      const grantedEmpRes = getResourcesCatalog().filter(r => can(u, 'resource', r.id, 'view'));
-      const empResDrop = grantedEmpRes.length
-        ? buildDropdown('emp-res', 'Resources', active.includes('view=resources'), [
-            {
-              title: 'Qualified Resources & Milton AI Tools',
-              items: [{ href: 'member-portal.html?view=resources', label: 'Resources & AI Fast-Track', badge: grantedEmpRes.length + ' Qualified' }]
-                .concat(grantedEmpRes.map(r => ({ href: r.href || ('member-portal.html?view=resources&resource=' + r.id), label: r.shortTitle || r.title, badge: 'UI/UX + AI' })))
-            }
-          ])
-        : '';
-      navInner =
-        '<a class="btn' + (active === 'member-portal.html' ? ' pri' : '') + '" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Workspace</a>' +
-        empDirDrop + empInternalDrop + empAppsDrop + empResDrop;
     } else {
-      const wsClient = isWorkspaceClient(u);
-      const clientLinks = wsClient
-        ? [
-            ['member-portal.html', 'Workspace'],
-            ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase']
-          ]
-        : [
-            ['member-portal.html', 'Showcase Access'],
-            ['saas-apps-and-lms-showcase.html', 'SaaS & LMS Showcase'],
-            ['member-portal.html?view=resources', 'Tools & Insights']
-          ];
-      if (u && wsClient) {
-        const qualifiedClientRes = getResourcesCatalog().filter(r => can(u, 'resource', r.id, 'view'));
-        if (qualifiedClientRes.length > 0 || (u.pages && u.pages.resources === 'ready')) {
-          clientLinks.push(['member-portal.html?view=resources', 'Resources']);
+      const links = [
+        ['member-portal.html', 'Workspace & Apps']
+      ];
+      if (u && (admin || emp || can(u, 'page', 'resources', 'view') || getResourcesCatalog().some(r => can(u, 'resource', r.id, 'view')))) {
+        links.push(['member-portal.html?view=resources', 'Resources & Otto']);
+      }
+      if (u && (admin || can(u, 'page', 'agile', 'view'))) {
+        links.push(['agile-board.html', 'Agile Delivery']);
+      }
+      if (!emp) {
+        links.push(['member-portal.html?view=consultation', 'Consultations']);
+        if (u) {
+          links.push(['member-portal.html?view=payment', 'Billing']);
         }
       }
-      clientLinks.push(['member-portal.html?view=consultation', 'Submit Request & Consultation']);
-      if (!u) {
-        clientLinks.push(['newsletter.html#donations', '💝 Donations']);
-      } else {
-        clientLinks.push(['member-portal.html?view=payment', 'Membership & Billing']);
+      if (admin || emp) {
+        links.push(['access-admin.html', admin ? 'Directory & Console' : 'Client Directory']);
       }
-      if (u && wsClient) {
-        CATALOG.forEach(c => {
-          if (c.id !== 'saasapps' && c.id !== 'resources' && can(u, 'page', c.id, 'view')) {
-            clientLinks.push([c.href, c.title]);
-          }
-        });
-      }
-      navInner = clientLinks.map(l => {
-        const baseHref = l[0].split('?')[0].split('#')[0];
-        const hasQueryOrHash = l[0].includes('?') || l[0].includes('#');
-        const isAct = l[0] === active || (!hasQueryOrHash && baseHref === active);
+      navInner = links.map(l => {
+        const isAct = l[0] === active || (l[0] === 'member-portal.html' && active === 'member-portal.html') || (l[0] === 'agile-board.html' && String(active).includes('agile-board')) || (l[0] === 'access-admin.html' && String(active).includes('access-admin'));
         return '<a class="btn' + (isAct ? ' pri' : '') + '" href="' + l[0] + '" style="padding:7px 12px;font-size:12.5px">' + l[1] + '</a>';
       }).join('');
     }
@@ -2274,17 +2159,7 @@
     const authBtn = u
       ? '<button class="btn" id="w-signout" style="padding:7px 12px;font-size:12.5px">Sign out</button>'
       : '<a class="btn pri" href="login.html" style="padding:7px 12px;font-size:12.5px">Sign in</a>';
-    const paymentVerified = Boolean(u && u.paymentProfile && u.paymentProfile.verified);
-    const tierChip = u
-      ? (admin
-          ? '<span class="chip ok">Domain Admin</span>'
-          : emp
-            ? '<span class="chip ok">Internal Staff</span>'
-            : isWorkspaceClient(u)
-              ? '<span class="chip ok">Workspace Client</span>'
-              : '<span class="chip">Access Client</span>' + (paymentVerified ? ' <span class="chip ok">Billing Verified</span>' : ''))
-      : '';
-    const right = isNewsletterPage ? '' : ('<div class="nav">' + tierChip + authBtn + '</div>');
+    const right = isNewsletterPage ? '' : ('<div class="nav">' + authBtn + '</div>');
     const existingBar = document.querySelector('.wrap > .bar');
     if (existingBar) existingBar.remove();
     const el = document.createElement('div');

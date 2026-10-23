@@ -5,12 +5,21 @@
 <title>Agile Board | MGC Workspace</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
-.cols{display:grid;grid-template-columns:repeat(5,minmax(190px,1fr));gap:10px;overflow-x:auto}
+.ws-layout{display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start}
+.ws-side{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;position:sticky;top:64px;display:flex;flex-direction:column;gap:4px}
+.ws-side-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);padding:4px 8px 6px}
+.ws-nav-btn{width:100%;text-align:left;padding:9px 11px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--mut);font-size:12.5px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .14s ease;text-decoration:none}
+.ws-nav-btn:hover{background:rgba(148,163,184,0.08);color:var(--ink)}
+.ws-nav-btn.active{background:rgba(37,99,235,0.16);border-color:rgba(59,130,246,0.45);color:#fff;font-weight:600}
+.ws-main{min-width:0}
+.cols{display:grid;grid-template-columns:repeat(5,minmax(175px,1fr));gap:10px;overflow-x:auto}
 .col{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;min-height:180px}
 .col h3{margin:0 0 8px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between}
-.it{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px;margin-bottom:8px;font-size:12px}
-.it b{display:block;margin-bottom:5px}
+.it{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:12px}
+.it b{display:block;margin-bottom:4px;color:#f8fafc}
+.it-meta{font-size:11px;color:#94a3b8;font-weight:500}
 .it .mv{display:flex;gap:4px;margin-top:6px}.it .mv .btn{padding:3px 8px;font-size:11px}
+@media(max-width:960px){.ws-layout{grid-template-columns:1fr}.ws-side{position:static;flex-direction:row;flex-wrap:wrap}}
 @media(max-width:760px){.cols{grid-template-columns:1fr}}
 </style>
 </head>
@@ -23,10 +32,12 @@
   const u = W.me();
   const COLS = [['backlog', 'Backlog'], ['ready', 'Ready'], ['progress', 'In progress'], ['review', 'Review'], ['done', 'Done']];
   let pid = null, view = 'board';
-  if (!u) { app.innerHTML = '<div class="card lock"><span class="chip warn">🔒 Federated SSO Enforced</span><h1 style="margin-top:10px">Single Sign-On Required</h1><p>Please authenticate exclusively with <b>Google</b>, <b>Microsoft</b>, or <b>Apple</b> SSO to access Agile Projects.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=/agile-board.html">Sign In with SSO →</a></div></div>'; W.header('agile-board.html'); return; }
+  if (!u) { app.innerHTML = '<div class="card lock"><h1 style="margin-top:4px">Single Sign-On Required</h1><p>Please authenticate with <b>Google</b>, <b>Microsoft</b>, or <b>Apple</b> SSO to access Agile Projects.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=/agile-board.html">Sign In with SSO →</a></div></div>'; W.header('agile-board.html'); return; }
   if (u.role !== 'owner' && !W.can(u, 'page', 'agile', 'view')) {
-    app.innerHTML = '<div class="card lock"><h1>🔒 Agile Board locked</h1><p>Your Agile Board is not built yet, or your workspace is not active. Check <a href="member-portal.html">My Workspace</a>.</p></div>'; W.header('agile-board.html'); return;
+    app.innerHTML = '<div class="card lock"><h1>Agile Board Locked</h1><p>Your Agile Board is not active yet. Check <a href="member-portal.html">My Workspace</a>.</p></div>'; W.header('agile-board.html'); return;
   }
+  const isSoleAdmin = () => u && (u.role === 'owner' || String(u.email || '').toLowerCase() === 'mkhabir@miltongroupsecurity.org');
+  const isEmp = () => u && (u.role === 'employee' || u.ou === 'Internal Staff');
   const visible = () => Object.values(S().projects).filter(p => W.can(u, 'project', p.id, 'view'));
   const canEdit = (p) => W.can(u, 'project', p, 'edit');
   const note = (k) => JSON.parse(localStorage.getItem('mgcw.notes.' + k) || '""');
@@ -39,14 +50,15 @@
   }
   function card(i, ed) {
     const idx = COLS.findIndex(c => c[0] === i.col);
-    return '<div class="it"><b>' + esc(i.title) + '</b><span class="chip">' + i.type + '</span> <span class="chip">' + i.points + ' pt</span>' + (i.assignee ? ' <span class="chip">' + esc((S().users[i.assignee] || {}).name ? S().users[i.assignee].name.split(' ')[0] : i.assignee) + '</span>' : '') +
+    const assigneeLabel = i.assignee ? ((S().users[i.assignee] || {}).name ? S().users[i.assignee].name.split(' ')[0] : i.assignee) : '';
+    return '<div class="it"><b>' + esc(i.title) + '</b><div class="it-meta">' + esc(i.type) + ' · ' + i.points + ' pt' + (assigneeLabel ? ' · ' + esc(assigneeLabel) : '') + '</div>' +
       (ed ? '<div class="mv"><button class="btn" data-mv="' + i.id + ':-1"' + (idx === 0 ? ' disabled' : '') + '>←</button><button class="btn" data-mv="' + i.id + ':1"' + (idx === COLS.length - 1 ? ' disabled' : '') + '>→</button></div>' : '') + '</div>';
   }
   function burndown(p) {
     const items = S().items.filter(i => i.project === p && i.sprint === 1);
     const total = items.reduce((a, i) => a + i.points, 0) || 1; const left = items.filter(i => i.col !== 'done').reduce((a, i) => a + i.points, 0);
     const yNow = 10 + (1 - left / total) * 70;
-    return '<div class="card"><h2>Sprint 1 burndown</h2><svg viewBox="0 0 220 90" width="100%" height="110"><line x1="10" y1="10" x2="210" y2="80" stroke="#888" stroke-dasharray="4"/><polyline fill="none" stroke="var(--ac)" stroke-width="3" points="10,10 110,' + yNow.toFixed(1) + '"/><circle cx="110" cy="' + yNow.toFixed(1) + '" r="4" fill="var(--ac)"/></svg><p>' + left + ' of ' + total + ' pts remaining · dashed = ideal pace</p></div>';
+    return '<div class="card"><h2>Sprint 1 Burndown</h2><svg viewBox="0 0 220 90" width="100%" height="110"><line x1="10" y1="10" x2="210" y2="80" stroke="#888" stroke-dasharray="4"/><polyline fill="none" stroke="var(--ac)" stroke-width="3" points="10,10 110,' + yNow.toFixed(1) + '"/><circle cx="110" cy="' + yNow.toFixed(1) + '" r="4" fill="var(--ac)"/></svg><p>' + left + ' of ' + total + ' pts remaining · dashed = ideal pace</p></div>';
   }
   function ceremonies(p) {
     const C = [['planning', 'Sprint planning', 'Goal, capacity, committed stories'], ['standup', 'Daily stand-up', 'Yesterday / today / blockers'], ['review', 'Sprint review', 'Demo notes + stakeholder feedback'], ['retro', 'Retrospective', 'Keep / stop / try']];
@@ -54,29 +66,39 @@
   }
   function features() {
     const list = S().features.slice().sort((a, b) => b.votes.length - a.votes.length);
-    return '<div class="card"><h2>Feature requests (' + list.length + ')</h2>' + list.map(f => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(f.title) + '</b><br><span style="font-size:12px;color:var(--mut)">' + esc((S().users[f.by] || {}).name || f.by) + ' · ' + esc(f.status) + '</span></span><span class="nav"><button class="btn" data-vote="' + f.id + '">▲ ' + f.votes.length + '</button>' + (u.role === 'owner' && f.status === 'new' ? '<button class="btn pri" data-promote="' + f.id + '">→ Backlog</button>' : '') + '</span></div>').join('') + '</div>';
+    return '<div class="card"><h2>Feature Requests (' + list.length + ')</h2>' + list.map(f => '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(f.title) + '</b><br><span style="font-size:12px;color:var(--mut)">' + esc((S().users[f.by] || {}).name || f.by) + ' · ' + esc(f.status) + '</span></span><span class="nav"><button class="btn" data-vote="' + f.id + '">▲ ' + f.votes.length + '</button>' + (u.role === 'owner' && f.status === 'new' ? '<button class="btn pri" data-promote="' + f.id + '">→ Backlog</button>' : '') + '</span></div>').join('') + '</div>';
   }
 
   function render() {
     const vis = visible();
     if (!pid || !vis.find(p => p.id === pid)) pid = vis[0] && vis[0].id;
     const curProj = pid ? S().projects[pid] : null;
-    const tabs = [['board', '📋 Kanban Board'], ['plan', '📈 Sprint & Ceremonies'], ['features', '💡 Feature Requests']];
+    const tabs = [['board', 'Kanban Board'], ['plan', 'Sprint & Ceremonies'], ['features', 'Feature Requests']];
     let body;
     if (view === 'features') body = features();
     else if (!pid) body = '<div class="card lock"><h2>No shared projects yet</h2><p>Projects appear here only when the owner shares them with you.</p></div>';
     else if (view === 'plan') body = '<div class="bento-2">' + burndown(pid) + ceremonies(pid) + '</div>';
     else body = board(pid) + (canEdit(pid) ? '<div class="card" style="margin-top:10px"><div class="row" style="justify-content:flex-start"><input id="nt" placeholder="New story / task / bug" style="flex:1;min-width:200px"><select id="ntype"><option>story</option><option>task</option><option>bug</option></select><select id="npts"><option>1</option><option>2</option><option>3</option><option selected>5</option><option>8</option></select><button class="btn pri" id="nadd">Add to backlog</button></div></div>' : '<p>You have view-only access to this project.</p>');
-    const projMeta = curProj && (curProj.demoUrl || curProj.budget)
-      ? '<div class="nav">' +
-        (curProj.budget ? '<span class="chip ok">💰 ' + esc(curProj.budget) + '</span>' : '') +
-        (curProj.demoUrl ? '<a class="btn pri" href="' + esc(curProj.demoUrl) + '">🚀 Live Deliverable ↗</a>' : '') +
-        '</div>'
+    const projMeta = curProj && curProj.demoUrl
+      ? '<div class="nav"><a class="btn pri" href="' + esc(curProj.demoUrl) + '" target="_blank" rel="noopener">Launch App ↗</a></div>'
       : '';
-    app.innerHTML =
+
+    const sideNav = '<aside class="ws-side" aria-label="Authorized User Navigation">' +
+      '<div class="ws-side-title">Workspace</div>' +
+      '<a class="ws-nav-btn" href="member-portal.html"><span>Applications</span></a>' +
+      '<a class="ws-nav-btn" href="member-portal.html?view=resources"><span>Resources &amp; Otto</span></a>' +
+      '<a class="ws-nav-btn" href="member-portal.html?view=consultation"><span>Consultations</span></a>' +
+      '<a class="ws-nav-btn" href="member-portal.html?view=payment"><span>Billing &amp; Payment</span></a>' +
+      '<a class="ws-nav-btn" href="member-portal.html?view=overview"><span>Overview Checklist</span></a>' +
+      '<a class="ws-nav-btn active" href="agile-board.html"><span>Agile Delivery</span></a>' +
+      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="border-color:rgba(197,179,88,0.42);color:#fde047"><span>Directory &amp; Console</span></a>' : '') +
+      (isEmp() ? '<a class="ws-nav-btn" href="access-admin.html?tab=users&amp;ou=external" style="border-color:rgba(59,130,246,0.42);color:#93c5fd"><span>Client Directory</span></a>' : '') +
+      '</aside>';
+
+    const mainContent =
       '<div class="card" style="margin-bottom:12px">' +
         '<div class="row">' +
-          '<div><span class="chip">Agile Delivery</span><h1 style="margin:4px 0 2px;font-size:20px">Agile Projects &amp; Deliverables</h1><p style="font-size:12px">Manage sprint backlog, client deliverables, and feature votes.</p></div>' +
+          '<div><h1 style="margin:0 0 2px;font-size:18px;font-weight:700">Agile Projects &amp; Deliverables</h1><p style="font-size:12px;margin:0">Manage sprint backlog, client deliverables, and feature votes.</p></div>' +
           '<div class="nav">' +
             '<select id="proj" aria-label="Project">' + vis.map(p => '<option value="' + p.id + '"' + (p.id === pid ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select>' +
             tabs.map(t => '<button class="btn' + (t[0] === view ? ' pri' : '') + '" data-vtab="' + t[0] + '">' + t[1] + '</button>').join('') +
@@ -85,6 +107,8 @@
         '</div>' +
       '</div>' +
       '<div>' + body + '</div>';
+
+    app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + mainContent + '</div></div>';
     W.header('agile-board.html'); bind();
   }
   function bind() {
@@ -99,138 +123,5 @@
   render();
 })();
 </script>
-
-<!-- SCORM 2004 4TH EDITION + DUAL CITYSCAPE (F.I.X. & MILTONGROUPSECURITY.ORG) LAYER -->
-<style id="mgc-fix-scorm-cityscape-style">
-  body { position: relative; isolation: isolate; }
-  body > *:not(#mgc-fix-bg-image):not(#mgc-fix-skyscraper-overlay):not(#mgc-scorm-floating-dock):not(#dual-cityscape-bg):not(#dual-cityscape-overlay):not(#mgc-skyscraper-layer):not(.thematic-city-backdrop):not(script):not(style):not(link) {
-    position: relative;
-    z-index: 5;
-  }
-  header, nav, main, section, .container, .wrap, .main-grid, .portal-grid, .stepper, .hero, .hero-banner, .top-nav, .topbar {
-    position: relative;
-    z-index: 5;
-  }
-  header, .hero, .hero-banner, .top-nav, .topbar {
-    background-color: rgba(7, 12, 24, 0.96) !important;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-  }
-  .card, .panel, .portal-item, .step, .stat-card, .hub-card, .glass-card, .module-card, .section-card, .eveng-console-pane, .theory-box, .kpi-card, .box, .tile, .feature-card, .metric-card, .control-card, .workflow-card, .product-card, .radar-card {
-    background-color: rgba(9, 16, 32, 0.96) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-color: rgba(148, 163, 184, 0.34) !important;
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    position: relative;
-    z-index: 5;
-  }
-  #mgc-fix-bg-image {
-    position: fixed;
-    inset: -5%;
-    z-index: -10 !important;
-    pointer-events: none;
-    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500');
-    background-size: 118% 118%;
-    background-position: 50% 50%;
-    opacity: 0.20;
-    mix-blend-mode: normal !important;
-    filter: grayscale(30%) contrast(118%) brightness(50%) sepia(24%) hue-rotate(185deg);
-    transition: filter 0.8s ease, background-position 1s ease, opacity 0.5s ease;
-  }
-  #mgc-fix-skyscraper-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: -9 !important;
-    pointer-events: none;
-    opacity: 0.75;
-    mix-blend-mode: normal !important;
-    transition: opacity 0.6s ease;
-  }
-  @keyframes waveFlagInjected {
-    0%, 100% { transform: skewY(0deg) scaleX(1); }
-    35% { transform: skewY(3.5deg) scaleX(0.93); }
-    70% { transform: skewY(-2.5deg) scaleX(0.97); }
-  }
-  #mgc-scorm-floating-dock {
-    position: fixed;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    background: rgba(11, 20, 38, 0.94);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(197, 179, 88, 0.48);
-    border-radius: 999px;
-    padding: 7px 16px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
-    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-    font-size: 11.5px;
-    color: #f8fafc;
-    max-width: 96vw;
-  }
-  #mgc-scorm-floating-dock a, #mgc-scorm-floating-dock button, #mgc-scorm-floating-dock select {
-    font-size: 11px;
-    font-weight: 700;
-    border-radius: 999px;
-    padding: 4px 10px;
-    cursor: pointer;
-    text-decoration: none;
-  }
-</style>
-<div id="mgc-fix-bg-image" aria-hidden="true"></div>
-<div id="mgc-fix-skyscraper-overlay" aria-hidden="true">
-  <div style="position:absolute;top:0;left:0;width:100%;height:65vh;background:linear-gradient(180deg,rgba(249,115,22,0.18),rgba(197,179,88,0.10),transparent);"></div>
-  <div style="position:absolute;bottom:0;right:4%;width:180px;height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;opacity:0.55;">
-    <div style="position:relative;width:3px;height:74px;background:#cbd5e1;margin-bottom:-4px;">
-      <div style="position:absolute;top:3px;left:3px;width:74px;height:44px;transform-origin:left center;animation:waveFlagInjected 2.6s infinite ease-in-out;">
-        <svg viewBox="0 0 60 40" style="width:100%;height:100%;border-radius:2px;">
-          <rect width="60" height="40" fill="#fff"/>
-          <rect width="60" height="3.07" y="0" fill="#b22234"/><rect width="60" height="3.07" y="6.15" fill="#b22234"/><rect width="60" height="3.07" y="12.3" fill="#b22234"/><rect width="60" height="3.07" y="18.46" fill="#b22234"/><rect width="60" height="3.07" y="24.61" fill="#b22234"/><rect width="60" height="3.07" y="30.76" fill="#b22234"/><rect width="60" height="3.07" y="36.92" fill="#b22234"/>
-          <rect width="24" height="21.5" fill="#3c3b6e"/>
-        </svg>
-      </div>
-    </div>
-    <div style="width:45px;height:60px;background:rgba(11,20,38,0.9);border-top:1px solid rgba(197,179,88,0.4);"></div>
-    <div style="width:110px;height:100px;background:rgba(11,20,38,0.92);border-top:1px solid rgba(197,179,88,0.4);"></div>
-    <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
-  </div>
-</div>
-
-<script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
-<script>
-  window.switchInjectedCityscape = function(mode) {
-    var bg = document.getElementById('mgc-fix-bg-image');
-    var sky = document.getElementById('mgc-fix-skyscraper-overlay');
-    if (!bg || !sky) return;
-    if (mode === 'mgc-cityscape') {
-      sky.style.opacity = '1';
-      bg.style.filter = 'contrast(122%) brightness(65%) saturate(130%)';
-    } else if (mode === 'noir-greyscale') {
-      sky.style.opacity = '0';
-      bg.style.filter = 'grayscale(100%) contrast(138%) brightness(52%)';
-    } else if (mode === 'emerald-matrix') {
-      sky.style.opacity = '1';
-      bg.style.filter = 'grayscale(55%) sepia(40%) hue-rotate(115deg) saturate(190%) contrast(122%) brightness(54%)';
-    } else {
-      sky.style.opacity = '0';
-      bg.style.filter = 'grayscale(30%) contrast(118%) brightness(58%) sepia(24%) hue-rotate(185deg)';
-    }
-    bg.style.backgroundPosition = (30 + Math.floor(Math.random() * 45)) + '% ' + (30 + Math.floor(Math.random() * 45)) + '%';
-  };
-  window.commitInjectedScorm = function() {
-    if (typeof SAOS_SCORM !== 'undefined') {
-      SAOS_SCORM.set('cmi.completion_status', 'completed');
-      SAOS_SCORM.set('cmi.success_status', 'passed');
-      SAOS_SCORM.commit();
-    }
-    alert('✓ SCORM 2004 4th Edition Completion committed (MGC_AGILE_BOARD_SCO)!');
-  };
-</script>
-
 </body>
 </html>

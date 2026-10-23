@@ -42,9 +42,7 @@
       max-width: 100%;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background:
-        linear-gradient(180deg, rgba(4, 8, 20, 0.88) 0%, rgba(7, 13, 28, 0.95) 60%, rgba(4, 8, 20, 0.99) 100%),
-        url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=1400') center top / cover fixed no-repeat,
-        var(--bg);
+        linear-gradient(180deg, #050811 0%, #070d1c 60%, #050811 100%);
       color: var(--tx);
       min-height: 100dvh;
       padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
@@ -502,8 +500,9 @@
     function renderHeader(u) {
       if (u) {
         const meta = getSessionRoleLabel(u);
+        const cleanName = String(u.name || '').replace(/\s*\(Administrator\)\s*/i, '').trim();
         hdrTitle.textContent = (u.brand === 'FIX' ? 'F.I.X' : 'MGC') + ' // ' + meta.badge;
-        hdrSub.textContent = u.name + ' · ' + meta.sub;
+        hdrSub.textContent = cleanName + ' · ' + meta.sub;
         hdrAuth.innerHTML = '<button type="button" class="m-btn inline" id="mBtnSignOut" aria-label="Sign out of session">Sign Out</button>';
         const so = document.getElementById('mBtnSignOut');
         if (so) so.onclick = () => W.signOut();
@@ -611,8 +610,8 @@
                 </div>
               </div>
               <div class="m-grid-2" style="margin-top:10px">
-                <a href="/access-admin?desktop=1" class="m-btn pri">Directory &amp; RBAC</a>
-                <a href="/command?desktop=1" class="m-btn">Command Portal</a>
+                <a href="/access-admin?desktop=1" class="m-btn pri">Directory &amp; Console</a>
+                <a href="/workspace?desktop=1" class="m-btn">Workspace &amp; Apps</a>
               </div>
             </div>
 

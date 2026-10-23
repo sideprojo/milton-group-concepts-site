@@ -15,13 +15,13 @@
   }
   .ad-console {
     display: grid;
-    grid-template-columns: 205px minmax(0, 1fr) 340px;
-    gap: 12px;
+    grid-template-columns: 220px minmax(0, 1fr) 340px;
+    gap: 14px;
     align-items: start;
     transition: grid-template-columns .24s cubic-bezier(.16,1,.3,1);
   }
   .ad-console.no-inspector {
-    grid-template-columns: 205px minmax(0, 1fr);
+    grid-template-columns: 220px minmax(0, 1fr);
   }
   .ad-console.tree-collapsed {
     grid-template-columns: 54px minmax(0, 1fr) 340px;
@@ -30,10 +30,12 @@
     grid-template-columns: 54px minmax(0, 1fr);
   }
   .ad-tree {
-    background: rgba(8, 13, 26, 0.96);
+    background: var(--card);
     border: 1px solid var(--line);
     border-radius: 12px;
-    padding: 12px;
+    padding: 10px;
+    position: sticky;
+    top: 64px;
     transition: width .22s cubic-bezier(.16,1,.3,1), opacity .2s ease, box-shadow .2s ease;
     overflow: hidden;
   }
@@ -153,6 +155,15 @@
     border-bottom: 1px solid rgba(148, 163, 184, 0.14);
     vertical-align: middle;
   }
+  #iseTrustSecMatrixTable th {
+    padding: 8px 6px;
+    font-size: 10px;
+    white-space: normal;
+    line-height: 1.25;
+  }
+  #iseTrustSecMatrixTable td {
+    padding: 7px 6px;
+  }
   table.ad-table tbody tr {
     cursor: pointer;
     transition: background .12s;
@@ -264,7 +275,7 @@
   const getResourcesList = () => W.getResourcesCatalog ? W.getResourcesCatalog() : (W.RESOURCES_CATALOG || []);
 
   if (!me || (!isOwner && !isEmp)) {
-    app.innerHTML = '<div class="card lock"><span class="chip warn">MGC Directory Controller</span><h1 style="margin-top:10px">Directory authorization required</h1><p>This MGC Directory console is restricted to authorized Domain Administrators and Internal Staff.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In</a></div></div>';
+    app.innerHTML = '<div class="card lock"><h1 style="margin-top:4px">Directory Authorization Required</h1><p>This MGC Directory console is restricted to authorized Domain Administrators and Internal Staff.</p><div style="margin-top:14px"><a class="btn pri" href="login.html?next=access-admin.html">Sign In</a></div></div>';
     W.header('access-admin.html');
     return;
   }
@@ -311,7 +322,7 @@
       '<div class="row" style="margin-bottom:10px">' +
         '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
           '<strong>Guided Directory User Provisioning' + (isEmp ? ' (Client Scope)' : '') + '</strong>' +
-          '<span id="admRegSecurityBadge" class="chip ok" style="font-size:10.5px">Username, Password, Recovery &amp; Phone Enforced</span>' +
+          '<span id="admRegSecurityBadge" style="font-size:11px;color:#34d399;font-weight:600">Username, Password, Recovery &amp; Phone Enforced</span>' +
         '</div>' +
         '<button type="button" class="btn" id="btnCloseNewUser" style="padding:4px 10px;font-size:11.5px">Close</button>' +
       '</div>' +
@@ -406,7 +417,7 @@
                 '<option value="external"' + (ouFilter === 'external' ? ' selected' : '') + '>OU=External (Clients)</option>' +
                 '<option value="internal"' + (ouFilter === 'internal' ? ' selected' : '') + '>OU=Internal (Staff)</option>' +
               '</select>'
-            : '<div class="chip" style="justify-content:center;padding:6px 9px">Scope: OU=External (Clients Only)</div>') +
+            : '<div style="font-size:11.5px;color:#cbd5e1;padding:6px 9px">Scope: OU=External (Clients Only)</div>') +
           '<select id="adGroupFilter" aria-label="Filter by Security Group" style="padding:6px 9px;font-size:12px">' +
             '<option value="all"' + (groupFilter === 'all' ? ' selected' : '') + '>All Security Groups</option>' +
             visibleSecurityGroups().map(g => '<option value="' + esc(g.id) + '"' + (groupFilter === g.id ? ' selected' : '') + '>' + esc(g.id) + '</option>').join('') +
@@ -458,21 +469,21 @@
                   '<div style="font-size:10.5px;color:#64748b">SAM: ' + esc(x.username || x.email.split('@')[0]) + '</div>' +
                 '</td>' +
                 '<td>' +
-                  '<span class="chip ' + (ou === 'internal' ? 'ok' : '') + '">' + (ou === 'internal' ? 'Internal' : 'External') + '</span>' +
-                  '<div style="font-size:10px;color:#64748b;margin-top:3px">' + esc(grp) + '</div>' +
+                  '<div style="font-weight:600;color:' + (ou === 'internal' ? '#34d399' : '#e2e8f0') + '">' + (ou === 'internal' ? 'Internal' : 'External') + '</div>' +
+                  '<div style="font-size:10px;color:#64748b;margin-top:2px">' + esc(grp) + '</div>' +
                 '</td>' +
-                '<td><span class="chip ' + (grantedPages > 1 ? 'ok' : '') + '">' + grantedPages + '/' + cols.length + '</span></td>' +
-                '<td><span class="chip">' + grantedApps + '/' + apps.length + '</span></td>' +
+                '<td><span style="font-weight:600;color:' + (grantedPages > 1 ? '#34d399' : '#cbd5e1') + '">' + grantedPages + '/' + cols.length + '</span></td>' +
+                '<td><span style="font-weight:600;color:#cbd5e1">' + grantedApps + '/' + apps.length + '</span></td>' +
                 '<td>' +
                   (qualifiedResObjs.length > 0
-                    ? '<span class="chip ok" title="' + esc(qualifiedResObjs.map(r => r.title).join(', ')) + '">' + esc(qualifiedResObjs.map(r => r.title).join(', ')) + '</span>'
-                    : '<span class="chip" style="opacity:0.65">None</span>') +
+                    ? '<span style="font-size:11.5px;color:#34d399;font-weight:600" title="' + esc(qualifiedResObjs.map(r => r.title).join(', ')) + '">' + esc(qualifiedResObjs.map(r => r.title).join(', ')) + '</span>'
+                    : '<span style="font-size:11.5px;color:#64748b">None</span>') +
                 '</td>' +
                 (isOwner
                   ? '<td>' +
                       ((pay && pay.verified)
-                        ? '<span class="chip ok" title="' + esc(pay.receiptId) + '">Verified · ' + esc(pay.last4) + '</span>'
-                        : '<span class="chip warn">Pending</span>') +
+                        ? '<span style="font-size:11.5px;color:#34d399;font-weight:600" title="' + esc(pay.receiptId) + '">Verified · ' + esc(pay.last4) + '</span>'
+                        : '<span style="font-size:11.5px;color:#fbbf24;font-weight:600">Pending</span>') +
                     '</td>'
                   : '') +
               '</tr>';
@@ -577,7 +588,7 @@
           '<div><small style="color:#fde047;display:block;margin-bottom:3px;font-weight:600">Mobile / Security Phone (Mandatory · 10-15 Digits)</small><input id="propPhone" type="tel" value="' + esc(sel.phone || '') + '" placeholder="+1 (555) 234-5678" style="width:100%;padding:6px 9px;font-size:12px"></div>' +
           '<div><small style="color:#94a3b8;display:block;margin-bottom:3px">Organization / Department</small><input id="propOrg" value="' + esc(sel.org || '') + '" style="width:100%;padding:6px 9px;font-size:12px"></div>' +
           '<div style="padding:8px 9px;border-radius:8px;background:rgba(4,8,20,0.78);border:1px solid ' + (isInternalUser ? 'rgba(251,191,36,0.45)' : 'rgba(148,163,184,0.2)') + '">' +
-            '<div class="row" style="margin-bottom:5px"><small style="color:' + (isInternalUser ? '#fde047' : '#cbd5e1') + ';font-weight:700">Physical Address</small><span class="chip ' + (isInternalUser ? 'warn' : 'ok') + '" style="font-size:10px;padding:1px 6px">' + addrPolicyText + '</span></div>' +
+            '<div class="row" style="margin-bottom:5px"><small style="color:' + (isInternalUser ? '#fde047' : '#cbd5e1') + ';font-weight:700">Physical Address</small><span style="font-size:10px;color:' + (isInternalUser ? '#fbbf24' : '#34d399') + ';font-weight:600">' + addrPolicyText + '</span></div>' +
             '<input id="propStreet" value="' + esc(addr.streetAddress || '') + '" placeholder="Street Address' + (isInternalUser ? ' (Required)' : ' (Optional)') + '" style="width:100%;padding:5px 8px;font-size:11.5px;margin-bottom:5px">' +
             '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px">' +
               '<input id="propCity" value="' + esc(addr.city || '') + '" placeholder="City" style="width:100%;padding:5px 7px;font-size:11.5px">' +
@@ -599,7 +610,7 @@
               ? '<div style="display:flex;flex-direction:column;gap:4px;font-size:11.5px;padding:8px 10px;border-radius:8px;background:rgba(4,8,20,0.85);border:1px solid rgba(16,185,129,0.35)">' +
                   '<div><span style="color:#94a3b8">Role / Sector:</span> <b>' + esc(op.roleTitle || '—') + '</b> · ' + esc(op.industrySector || '—') + '</div>' +
                   '<div><span style="color:#94a3b8">Team / Resource:</span> ' + esc(op.orgSize || '—') + ' · <code>' + esc(op.resourceInterest || '—') + '</code></div>' +
-                  '<div><span style="color:#94a3b8">Data-Sharing Opt-In:</span> <span class="chip ' + (op.dataSharingOptIn ? 'ok' : '') + '" style="font-size:10px">' + (op.dataSharingOptIn ? 'Opted In (CCPA/GDPR)' : 'Workspace Only') + '</span></div>' +
+                  '<div><span style="color:#94a3b8">Data-Sharing Opt-In:</span> <b style="color:' + (op.dataSharingOptIn ? '#34d399' : '#cbd5e1') + '">' + (op.dataSharingOptIn ? 'Opted In (CCPA/GDPR)' : 'Workspace Only') + '</b></div>' +
                 '</div>'
               : '<div style="font-size:11.5px;color:#94a3b8">Otto guided setup not yet completed by user.</div>') +
           '</div>' +
@@ -634,7 +645,7 @@
     } else if (propTab === 'billing' && isOwner) {
       bodyHtml = (pay && pay.verified)
         ? '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px">' +
-            '<span class="chip ok" style="align-self:flex-start">PCI-DSS Tokenized &amp; Verified</span>' +
+            '<div style="font-size:11px;font-weight:700;color:#34d399">PCI-DSS Tokenized &amp; Verified</div>' +
             '<div><small style="color:#94a3b8">Receipt ID:</small> <b>' + esc(pay.receiptId) + '</b></div>' +
             '<div><small style="color:#94a3b8">Instrument:</small> <b>' + esc(pay.cardBrand || pay.method) + ' · ' + esc(pay.last4) + '</b></div>' +
             '<div><small style="color:#94a3b8">Token:</small> <code style="font-size:11px;color:#38bdf8">' + esc(pay.paymentToken) + '</code></div>' +
@@ -656,7 +667,7 @@
     return '<aside class="ad-inspector">' +
       '<div class="ad-inspector-hdr">' +
         '<div class="row">' +
-          '<span class="chip ' + (ou === 'internal' ? 'ok' : '') + '">' + (ou === 'internal' ? 'OU=Internal' : 'OU=External') + '</span>' +
+          '<span style="font-size:11px;font-weight:700;color:' + (ou === 'internal' ? '#34d399' : '#93c5fd') + '">' + (ou === 'internal' ? 'OU=Internal' : 'OU=External') + '</span>' +
           '<button type="button" class="btn" id="btnHideInspector" title="Auto-hide Object Properties (Esc)" style="padding:3px 9px;font-size:11px">Close</button>' +
         '</div>' +
         '<h3 style="margin:6px 0 2px;font-size:14.5px;font-weight:600;color:#fff">' + esc(sel.name) + '</h3>' +
@@ -683,7 +694,7 @@
     if (!isOwner) return '';
     const ownerObj = (S().users && S().users.owner) || {};
     return '<div class="ad-center" style="padding:18px 20px">' +
-      '<div class="row" style="margin-bottom:14px"><h2 style="margin:0;font-size:15px;font-weight:600">malik.khabir@Miltongroupsecurity.org</h2><span class="chip ok">Builtin\\Administrator</span></div>' +
+      '<div class="row" style="margin-bottom:14px"><h2 style="margin:0;font-size:15px;font-weight:600">malik.khabir@Miltongroupsecurity.org</h2><span style="font-size:11.5px;color:#34d399;font-weight:600">Builtin\\Administrator</span></div>' +
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;max-width:640px;margin-bottom:14px">' +
         '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">Username (sAMAccountName)</label>' +
           '<input id="admUsernameInput" value="' + esc(ownerObj.username || 'malik.khabir') + '" placeholder="malik.khabir" style="width:100%;padding:8px 11px;font-size:13px">' +
@@ -764,11 +775,11 @@
     return '<div class="ad-center" style="padding:18px 20px">' +
       '<div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:10px">' +
         '<h2 style="margin:0;font-size:16px;font-weight:700;color:#fff">Security Groups &amp; Access Matrix</h2>' +
-        '<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px">' +
-          '<span class="chip ok">PERMIT · Full Access</span>' +
-          '<span class="chip" style="border-color:rgba(59,130,246,0.55);color:#93c5fd">SCOPED · Role-Bound</span>' +
-          '<span class="chip warn">TIER · Upgrade / Grant</span>' +
-          '<span class="chip" style="border-color:rgba(248,113,113,0.5);color:#fca5a5">DENY · Restricted</span>' +
+        '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;font-weight:600">' +
+          '<span style="color:#6ee7b7">● PERMIT · Full Access</span>' +
+          '<span style="color:#93c5fd">● SCOPED · Role-Bound</span>' +
+          '<span style="color:#fde047">● TIER · Upgrade / Grant</span>' +
+          '<span style="color:#fca5a5">● DENY · Restricted</span>' +
         '</div>' +
       '</div>' +
 
@@ -783,7 +794,7 @@
             sgtRows.map(r => {
               return '<tr>' +
                 '<td>' +
-                  '<div style="display:flex;align-items:center;gap:6px"><span class="chip ' + (r.ou === 'Builtin' || r.ou === 'OU=Internal' ? 'ok' : '') + '" style="font-size:10px">' + esc(r.tag) + '</span><b>' + esc(r.id) + '</b></div>' +
+                  '<div style="display:flex;align-items:center;gap:6px"><b style="color:' + (r.ou === 'Builtin' || r.ou === 'OU=Internal' ? '#34d399' : '#93c5fd') + '">' + esc(r.id) + '</b></div>' +
                   '<div style="font-size:11px;color:#94a3b8;margin-top:2px">' + esc(r.label) + ' (' + esc(r.ou) + ')</div>' +
                 '</td>' +
                 '<td><b>' + r.members.length + '</b></td>' +
@@ -791,15 +802,15 @@
                   const key = r.id + '|' + c.id;
                   const rule = matrixRules[key] || { state: 'DENY', sgacl: 'Restricted' };
                   const isCellSel = selectedMatrixCell === key;
-                  const badgeStyle = rule.state === 'PERMIT'
-                    ? 'background:rgba(16,185,129,0.18);border-color:rgba(16,185,129,0.55);color:#6ee7b7'
+                  const stateColor = rule.state === 'PERMIT'
+                    ? '#6ee7b7'
                     : rule.state === 'SCOPED'
-                      ? 'background:rgba(59,130,246,0.18);border-color:rgba(59,130,246,0.55);color:#93c5fd'
+                      ? '#93c5fd'
                       : rule.state === 'TIER'
-                        ? 'background:rgba(245,158,11,0.18);border-color:rgba(245,158,11,0.55);color:#fde047'
-                        : 'background:rgba(127,29,29,0.28);border-color:rgba(248,113,113,0.45);color:#fca5a5';
+                        ? '#fde047'
+                        : '#fca5a5';
                   return '<td data-matrix-cell="' + esc(key) + '" style="text-align:center;cursor:pointer;background:' + (isCellSel ? 'rgba(197,179,88,0.18)' : 'transparent') + ';outline:' + (isCellSel ? '1.5px solid #fde047' : 'none') + '">' +
-                    '<span class="chip" style="font-size:10px;padding:2px 8px;' + badgeStyle + '">' + esc(rule.state) + '</span>' +
+                    '<div style="font-size:11px;font-weight:700;color:' + stateColor + '">' + esc(rule.state) + '</div>' +
                     '<div style="font-size:9.5px;color:#94a3b8;margin-top:2px;font-family:\'JetBrains Mono\',monospace">' + esc(rule.sgacl) + '</div>' +
                   '</td>';
                 }).join('') +
@@ -816,9 +827,9 @@
             '<span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fde047">Selected Group &amp; Resource</span>' +
             '<h3 style="margin:2px 0 0;font-size:14px;color:#fff"><code>' + esc(activeSgtObj.id) + '</code> → <code>' + esc(activeDestObj.label) + '</code></h3>' +
           '</div>' +
-          '<div style="display:flex;gap:8px;align-items:center">' +
-            '<span class="chip ok">Scope: ' + esc(activeCellRule.sgacl) + '</span>' +
-            '<span class="chip">Status: ' + esc(activeCellRule.state) + '</span>' +
+          '<div style="display:flex;gap:12px;align-items:center;font-size:12px">' +
+            '<span style="color:#34d399;font-weight:600">Scope: ' + esc(activeCellRule.sgacl) + '</span>' +
+            '<span style="color:#e2e8f0;font-weight:600">Status: ' + esc(activeCellRule.state) + '</span>' +
           '</div>' +
         '</div>' +
         '<p style="margin:0 0 10px;font-size:12px;color:#cbd5e1">' + esc(activeCellRule.desc) + '</p>' +
@@ -827,7 +838,7 @@
           (activeSgtObj.members.length
             ? activeSgtObj.members.map(m =>
                 m.id === 'owner'
-                  ? '<span class="chip ok" style="font-size:11px">👑 ' + esc(m.name) + ' (' + esc(m.email) + ')</span>'
+                  ? '<span style="font-size:11.5px;color:#34d399;font-weight:600">' + esc(m.name) + ' (' + esc(m.email) + ')</span>'
                   : '<button type="button" class="btn" data-inspect-correlated-user="' + esc(m.id) + '" style="padding:4px 10px;font-size:11px">' + esc(m.name) + ' (' + esc(m.username || m.email) + ') → Inspect</button>'
               ).join('')
             : '<span style="font-size:11.5px;color:#64748b">No directory users currently assigned to this group.</span>') +
@@ -838,7 +849,7 @@
       '<div>' +
         '<div class="row" style="margin-bottom:8px">' +
           '<h3 style="margin:0;font-size:14px;font-weight:700;color:#fff">Access Policies</h3>' +
-          '<span class="chip" style="font-size:10.5px">Click to Expand</span>' +
+          '<span style="font-size:11px;color:#94a3b8">Click to Expand</span>' +
         '</div>' +
         '<div style="display:flex;flex-direction:column;gap:8px">' +
           '<details open style="padding:10px 14px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(16,185,129,0.4)">' +
@@ -905,7 +916,6 @@
             '<a class="btn pri" href="/api/accounting/export?format=csv&amp;entity=' + esc(accEntityFilter) + '" download style="padding:6px 11px;font-size:11.5px">Export GAAP CSV</a>' +
             '<a class="btn" href="/api/accounting/export?format=iif&amp;entity=' + esc(accEntityFilter) + '" download style="padding:6px 11px;font-size:11.5px">Export QuickBooks IIF</a>' +
             '<a class="btn" href="/api/accounting/export?format=json&amp;entity=' + esc(accEntityFilter) + '" download style="padding:6px 11px;font-size:11.5px">Export Audit JSON</a>' +
-            '<a class="btn" href="finance-command.html" style="padding:6px 11px;font-size:11.5px;border-color:rgba(197,179,88,0.45);color:#fde047">Open Finance Command</a>' +
           '</div>' +
         '</div>' +
 
@@ -948,10 +958,10 @@
           ? '<table class="ad-table"><thead><tr><th>Journal ID</th><th>Entity</th><th>Account</th><th>Counterparty &amp; Memo</th><th>Rail &amp; Fee</th><th>Gross / Net / 25% Tax</th><th>Reconciliation</th></tr></thead><tbody>' +
             ledger.map(e => '<tr style="cursor:default">' +
               '<td><code style="font-size:11px;color:#fde047">' + esc(e.journalId) + '</code><div style="font-size:10px;color:#64748b">' + esc(String(e.createdAt || '').slice(0, 10)) + '</div></td>' +
-              '<td><span class="chip ' + (e.entity === 'FIX' ? '' : 'ok') + '">' + esc(e.entity) + '</span></td>' +
+              '<td><b style="color:' + (e.entity === 'FIX' ? '#93c5fd' : '#34d399') + '">' + esc(e.entity) + '</b></td>' +
               '<td><b>' + esc(e.accountCode) + '</b><div style="font-size:10.5px;color:#94a3b8">' + esc(e.accountName) + '</div></td>' +
               '<td><b>' + esc(e.counterparty) + '</b><div style="font-size:11px;color:#cbd5e1">' + esc(e.description) + '</div></td>' +
-              '<td><span class="chip">' + esc(e.rail) + '</span><div style="font-size:10.5px;color:#94a3b8">Fee: $' + Number(e.processorFeeUsd || 0).toFixed(2) + '</div></td>' +
+              '<td><div style="font-weight:600;color:#e2e8f0">' + esc(e.rail) + '</div><div style="font-size:10.5px;color:#94a3b8">Fee: $' + Number(e.processorFeeUsd || 0).toFixed(2) + '</div></td>' +
               '<td><div>Gross: <b>$' + Number(e.grossUsd || 0).toFixed(2) + '</b></div><div style="font-size:11px;color:#34d399">Net: $' + Number(e.netCashUsd || 0).toFixed(2) + ' · Tax: $' + Number(e.taxReserveUsd || 0).toFixed(2) + '</div></td>' +
               '<td>' +
                 '<select data-reconcile-journal="' + esc(e.journalId) + '" style="padding:4px 7px;font-size:11px">' +
@@ -966,7 +976,6 @@
       '<div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)">' +
         '<div class="row" style="margin-bottom:12px">' +
           '<h2 style="margin:0;font-size:15px;font-weight:600">Payment Gateways (MGC &amp; F.I.X)</h2>' +
-          '<div style="display:flex;gap:6px"><span class="chip ok">MGC: Option 1 (Stripe)</span><span class="chip ok">FIX: Options 1 &amp; 4 (Stripe + WAWF)</span></div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px">' +
           '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">Default Rail</label>' +
@@ -989,7 +998,7 @@
       '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">PCI-DSS Tokenized Receipts (' + list.length + ')</h2>' +
       (list.length
         ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Entity</th><th>Customer</th><th>Gross / Net</th><th>Instrument</th><th>Status</th><th>Date</th></tr></thead><tbody>' +
-          list.map(p => '<tr style="cursor:default"><td><span class="chip ok">' + esc(p.receiptId) + '</span></td><td><span class="chip ' + (p.merchantEntity === 'FIX' ? '' : 'ok') + '">' + esc(p.merchantEntity || 'MGC') + '</span></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b></td><td>$' + Number(p.amountUsd || 0).toFixed(2) + (p.netCashUsd !== undefined ? ' <small style="color:#34d399">(Net $' + Number(p.netCashUsd).toFixed(2) + ')</small>' : '') + '</td><td><b>' + esc(p.cardBrand || p.method) + ' · ' + esc(p.last4) + '</b></td><td><span class="chip ok">' + esc(p.reconciliationStatus || 'VERIFIED') + '</span></td><td style="font-size:11.5px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleDateString() + '</td></tr>').join('') +
+          list.map(p => '<tr style="cursor:default"><td><code style="font-size:11px;color:#34d399">' + esc(p.receiptId) + '</code></td><td><b style="color:' + (p.merchantEntity === 'FIX' ? '#93c5fd' : '#34d399') + '">' + esc(p.merchantEntity || 'MGC') + '</b></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b></td><td>$' + Number(p.amountUsd || 0).toFixed(2) + (p.netCashUsd !== undefined ? ' <small style="color:#34d399">(Net $' + Number(p.netCashUsd).toFixed(2) + ')</small>' : '') + '</td><td><b>' + esc(p.cardBrand || p.method) + ' · ' + esc(p.last4) + '</b></td><td><span style="color:#34d399;font-weight:600">' + esc(p.reconciliationStatus || 'VERIFIED') + '</span></td><td style="font-size:11.5px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleDateString() + '</td></tr>').join('') +
           '</tbody></table>'
         : '<p style="font-size:12.5px">No payments recorded yet.</p>') +
     '</div>';
@@ -1005,7 +1014,7 @@
         (consults.length
           ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Client</th><th>Practice Area</th><th>Timeline / Scope</th><th>Status</th></tr></thead><tbody>' +
             consults.map(c => '<tr style="cursor:default">' +
-              '<td><span class="chip ok">' + esc(c.receipt || c.id) + '</span></td>' +
+              '<td><code style="font-size:11px;color:#34d399">' + esc(c.receipt || c.id) + '</code></td>' +
               '<td><b>' + esc(c.name) + '</b><div style="font-size:11px;color:#94a3b8">' + esc(c.email) + ' · ' + esc(c.org || '') + '</div></td>' +
               '<td><b>' + esc(c.practiceArea) + '</b><div style="font-size:11px;color:#94a3b8">' + esc(c.complianceScope || '') + '</div></td>' +
               '<td><div>' + esc(c.timeline || '') + ' · ' + esc(c.budgetTier || '') + '</div><div style="font-size:11px;color:#cbd5e1;margin-top:2px">' + esc(c.objectives || '') + '</div></td>' +
@@ -1024,7 +1033,7 @@
         : '') +
       (reqLog.length
         ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Name</th><th>Email</th><th>Status</th></tr></thead><tbody>' +
-          reqLog.map(r => '<tr style="cursor:default"><td><span class="chip">' + esc(r.receipt || r.id) + '</span></td><td>' + esc(r.name || name(r.uid)) + '</td><td>' + esc(r.email || '') + '</td><td><span class="chip ok">' + esc(r.status || 'active') + '</span></td></tr>').join('') +
+          reqLog.map(r => '<tr style="cursor:default"><td><code style="font-size:11px;color:#cbd5e1">' + esc(r.receipt || r.id) + '</code></td><td>' + esc(r.name || name(r.uid)) + '</td><td>' + esc(r.email || '') + '</td><td><span style="color:#34d399;font-weight:600">' + esc(r.status || 'active') + '</span></td></tr>').join('') +
           '</tbody></table>'
         : '<p style="font-size:12.5px">Account registration queue empty.</p>') +
     '</div>';
@@ -1033,7 +1042,7 @@
   function renderAuditView() {
     if (!isOwner) return '';
     return '<div class="ad-center" style="padding:18px 20px"><h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Event Log</h2><table class="ad-table"><thead><tr><th>Time</th><th>Actor</th><th>Event</th><th>Detail</th></tr></thead><tbody>' +
-      S().audit.slice(0, 50).map(a => '<tr style="cursor:default"><td style="font-size:11.5px;color:var(--mut)">' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><span class="chip">' + esc(a.action) + '</span></td><td>' + esc(a.detail) + '</td></tr>').join('') +
+      S().audit.slice(0, 50).map(a => '<tr style="cursor:default"><td style="font-size:11.5px;color:var(--mut)">' + new Date(a.ts).toLocaleString() + '</td><td>' + esc(name(a.actor)) + '</td><td><code style="font-size:11px;color:#93c5fd">' + esc(a.action) + '</code></td><td>' + esc(a.detail) + '</td></tr>').join('') +
       '</tbody></table></div>';
   }
 
@@ -1060,11 +1069,7 @@
     return '<div class="ad-center" style="padding:18px 20px">' +
       '<div class="row" style="margin-bottom:14px;flex-wrap:wrap;gap:10px">' +
         '<div>' +
-          '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
-            '<span class="chip ok">Agents · Agent Access Management</span>' +
-            '<span class="chip" style="border-color:rgba(59,130,246,0.55);color:#93c5fd">Google Workspace Studio + MGC Console Sync</span>' +
-          '</div>' +
-          '<h2 style="margin:4px 0 0;font-size:16.5px;font-weight:700;color:#fff">Manage Agents &amp; Autonomous Workspace Access</h2>' +
+          '<h2 style="margin:0;font-size:16.5px;font-weight:700;color:#fff">Manage Agents &amp; Autonomous Workspace Access</h2>' +
           '<p style="margin:3px 0 0;font-size:12px;color:#94a3b8">Review agents and manage their individual access to your organization’s Workspace data and MGC Client Portals.</p>' +
         '</div>' +
         '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
@@ -1093,7 +1098,7 @@
                   '<div style="font-weight:700;color:#60a5fa;font-size:13.5px">' + esc(ag.name) + '</div>' +
                   '<div style="font-size:11px;color:#94a3b8">' + esc(ag.title) + '</div>' +
                 '</td>' +
-                '<td><span class="chip">' + esc(ag.type) + '</span></td>' +
+                '<td><span style="font-size:12px;color:#cbd5e1;font-weight:600">' + esc(ag.type) + '</span></td>' +
                 '<td>' +
                   '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#fde047">' + esc(ag.agentId) + '</div>' +
                   '<div style="font-size:10.5px;color:#64748b">Flow: ' + esc(ag.studioWorkflowId) + '</div>' +
@@ -1103,8 +1108,8 @@
                   '<div style="font-size:10.5px;color:#34d399">Connect: ' + esc(ag.serviceIdentity) + '</div>' +
                 '</td>' +
                 '<td>' +
-                  '<div style="display:flex;gap:4px;flex-wrap:wrap">' +
-                    (ag.workspaceApps || []).map(w => '<span class="chip" style="font-size:10px;padding:2px 6px">' + esc(w) + '</span>').join('') +
+                  '<div style="font-size:11.5px;color:#cbd5e1">' +
+                    (ag.workspaceApps || []).map(w => esc(w)).join(' · ') +
                   '</div>' +
                 '</td>' +
                 '<td>' +
@@ -1114,7 +1119,7 @@
                   '</select>' +
                 '</td>' +
                 '<td>' +
-                  '<span class="chip ' + (isAct ? 'ok' : 'warn') + '">● ' + esc(ag.status || 'Active') + '</span>' +
+                  '<span style="font-size:11.5px;font-weight:700;color:' + (isAct ? '#34d399' : '#fbbf24') + '">● ' + esc(ag.status || 'Active') + '</span>' +
                 '</td>' +
                 '<td>' +
                   '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
@@ -1132,7 +1137,7 @@
         '<div style="padding:14px 16px;border-radius:12px;background:rgba(4,8,20,0.88);border:1px solid rgba(16,185,129,0.4)">' +
           '<div class="row" style="margin-bottom:8px">' +
             '<h3 style="margin:0;font-size:13.5px;font-weight:700;color:#6ee7b7">Persistent Role &amp; Agent Access Boundary</h3>' +
-            '<span class="chip ok" style="font-size:10px">Enforced</span>' +
+            '<span style="font-size:11px;color:#34d399;font-weight:600">Enforced</span>' +
           '</div>' +
           '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#cbd5e1">' +
             '<div><b style="color:#fde047">1. Administrator (malik.khabir@miltongroupsecurity.org):</b> Full security, authentication, directory governance, and actionable Agent Access Management controls.</div>' +
@@ -1144,13 +1149,13 @@
         '<div style="padding:14px 16px;border-radius:12px;background:rgba(4,8,20,0.88);border:1px solid rgba(59,130,246,0.4)">' +
           '<div class="row" style="margin-bottom:8px">' +
             '<h3 style="margin:0;font-size:13.5px;font-weight:700;color:#93c5fd">Google Workspace Directory Accounts (3 Users)</h3>' +
-            '<span class="chip ok" style="font-size:10px">Strong Passwords &amp; Passkeys Active</span>' +
+            '<span style="font-size:11px;color:#34d399;font-weight:600">Strong Passwords &amp; Passkeys Active</span>' +
           '</div>' +
           '<div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px">' +
             wsAccounts.map(acc =>
               '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;background:rgba(15,23,42,0.8);border:1px solid rgba(148,163,184,0.18)">' +
                 '<div><b>' + esc(acc.name) + '</b> <code style="color:#fde047;font-size:11px">' + esc(acc.email) + '</code><div style="font-size:10.5px;color:#94a3b8">' + esc(acc.roleLabel) + ' · ' + esc(acc.agentRole) + '</div></div>' +
-                '<span class="chip ok" style="font-size:10px">' + esc(acc.status) + '</span>' +
+                '<span style="font-size:11px;color:#34d399;font-weight:600">' + esc(acc.status) + '</span>' +
               '</div>'
             ).join('') +
           '</div>' +
@@ -1170,7 +1175,7 @@
     const treeHtml =
       '<aside class="ad-tree">' +
         '<div class="ad-tree-root" style="justify-content:space-between">' +
-          '<span class="ad-tree-label">miltongroupsecurity.org</span>' +
+          '<span class="ad-tree-label">Directory &amp; Console</span>' +
           '<button type="button" class="btn" id="btnToggleTreeCollapse" title="Auto-hide / Pin Directory Tree" style="padding:2px 7px;font-size:10.5px">' + (treeCollapsed ? 'Expand' : 'Hide') + '</button>' +
         '</div>' +
         '<div class="ad-tree-section">Organizational Units</div>' +
@@ -1181,14 +1186,17 @@
         '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'external' ? 'active' : '') + '" data-ou="external" data-tab="users"><span class="ad-tree-label">OU=External (Clients)</span><span class="ad-tree-count">' + extCount + '</span></button>' +
         (isOwner
           ? '<button type="button" class="ad-tree-item ' + (tab === 'admin_identity' ? 'active' : '') + '" data-tab="admin_identity"><span class="ad-tree-label">Builtin Administrator</span><span class="ad-tree-count">1</span></button>' +
-            '<div class="ad-tree-section">RBAC &amp; Agent Access</div>' +
-            '<button type="button" class="ad-tree-item ' + (tab === 'agents' ? 'active' : '') + '" data-tab="agents"><span class="ad-tree-label">Agent Access (Otto)</span><span class="ad-tree-count">' + agentsCount + ' Active</span></button>' +
+            '<div class="ad-tree-section">Governance &amp; Ledger</div>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'agents' ? 'active' : '') + '" data-tab="agents"><span class="ad-tree-label">Agent Access (Otto)</span><span class="ad-tree-count">' + agentsCount + '</span></button>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span class="ad-tree-label">Access Matrix</span><span class="ad-tree-count">5×7</span></button>' +
-            '<button type="button" class="ad-tree-item ' + (tab === 'payments' ? 'active' : '') + '" data-tab="payments"><span class="ad-tree-label">PCI-DSS &amp; Billing</span><span class="ad-tree-count">' + payCount + '</span></button>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'payments' ? 'active' : '') + '" data-tab="payments"><span class="ad-tree-label">Accounting &amp; Billing</span><span class="ad-tree-count">' + payCount + '</span></button>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span class="ad-tree-label">Consultations &amp; Intake</span><span class="ad-tree-count">' + reqTotal + '</span></button>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'audit' ? 'active' : '') + '" data-tab="audit"><span class="ad-tree-label">Event Viewer</span><span class="ad-tree-count">' + (S().audit || []).length + '</span></button>'
           : '<div class="ad-tree-section">Client Operations</div>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span class="ad-tree-label">Client Consultations</span><span class="ad-tree-count">' + reqTotal + '</span></button>') +
+        '<div class="ad-tree-section">Workspace Navigation</div>' +
+        '<a class="ad-tree-item" href="member-portal.html" style="text-decoration:none"><span class="ad-tree-label">Workspace &amp; Apps</span></a>' +
+        '<a class="ad-tree-item" href="agile-board.html" style="text-decoration:none"><span class="ad-tree-label">Agile Delivery</span></a>' +
       '</aside>';
 
     let centerHtml = '';
@@ -1206,40 +1214,7 @@
     if (!inspectorHtml) cls.push('no-inspector');
     if (treeCollapsed) cls.push('tree-collapsed');
 
-    const selObj = ensureSelectedUser();
-    const minimalCommandBar =
-      '<div id="adMinimalNavStrip" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 12px;margin-bottom:10px;border-radius:10px;background:rgba(8,13,26,0.96);border:1px solid var(--line)">' +
-        '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">' +
-          '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'all' ? 'pri' : '') + '" data-tab="users" data-ou="all" style="padding:5px 11px;font-size:11.5px">All Directory (' + allM.length + ')</button>' +
-          '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'external' ? 'pri' : '') + '" data-tab="users" data-ou="external" style="padding:5px 11px;font-size:11.5px">Clients · OU=External (' + extCount + ')</button>' +
-          (isOwner
-            ? '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'internal' ? 'pri' : '') + '" data-tab="users" data-ou="internal" style="padding:5px 11px;font-size:11.5px">Employees · OU=Internal (' + intCount + ')</button>' +
-              '<button type="button" class="btn ' + (tab === 'agents' ? 'pri' : '') + '" data-tab="agents" style="padding:5px 11px;font-size:11.5px;border-color:rgba(16,185,129,0.5);color:#6ee7b7">Agent Access (Otto)</button>' +
-              '<button type="button" class="btn ' + (tab === 'groups' ? 'pri' : '') + '" data-tab="groups" style="padding:5px 11px;font-size:11.5px">Access Matrix</button>' +
-              '<button type="button" class="btn ' + (tab === 'payments' ? 'pri' : '') + '" data-tab="payments" style="padding:5px 11px;font-size:11.5px">Accounting &amp; PCI (' + payCount + ')</button>' +
-              '<button type="button" class="btn ' + (tab === 'requests' ? 'pri' : '') + '" data-tab="requests" style="padding:5px 11px;font-size:11.5px">Consultations (' + reqTotal + ')</button>' +
-              '<button type="button" class="btn ' + (tab === 'admin_identity' ? 'pri' : '') + '" data-tab="admin_identity" style="padding:5px 11px;font-size:11.5px">Admin Identity</button>' +
-              '<button type="button" class="btn ' + (tab === 'audit' ? 'pri' : '') + '" data-tab="audit" style="padding:5px 11px;font-size:11.5px">Audit Log</button>'
-            : '<button type="button" class="btn ' + (tab === 'requests' ? 'pri' : '') + '" data-tab="requests" style="padding:5px 11px;font-size:11.5px">Consultations (' + reqTotal + ')</button>') +
-        '</div>' +
-        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
-          '<div class="wgw-dropdown">' +
-            '<button type="button" class="btn wgw-trigger" aria-expanded="false" aria-controls="adInspectorQuickMenu" style="padding:5px 11px;font-size:11.5px">Inspector Control <span class="wgw-caret" aria-hidden="true"></span></button>' +
-            '<div class="wgw-menu" id="adInspectorQuickMenu" role="region" aria-label="Inspector Quick Navigation" style="right:0;left:auto;min-width:225px">' +
-              '<div class="wgw-menu-hdr">Inspect Selected User' + (selObj ? ' (' + esc(selObj.username || selObj.name) + ')' : '') + '</div>' +
-              '<button type="button" class="wgw-item" data-jump-prop="account" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Account, Recovery &amp; Address</span><small>Username, Email, Phone, Address</small></button>' +
-              '<button type="button" class="wgw-item" data-jump-prop="agents" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Otto Agent Access</span><small>Workspace Agent Entitlement</small></button>' +
-              '<button type="button" class="wgw-item" data-jump-prop="rbac" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>RBAC &amp; Security Group</span><small>OU &amp; Workspace Views</small></button>' +
-              '<button type="button" class="wgw-item" data-jump-prop="apps" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>SaaS Apps &amp; LMS (8)</span><small>Toggle app entitlements</small></button>' +
-              '<button type="button" class="wgw-item" data-jump-prop="resources" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Qualified Resources</span><small>White Feather &amp; AI Tools</small></button>' +
-              (isOwner ? '<button type="button" class="wgw-item" data-jump-prop="billing" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>PCI &amp; Billing Profile</span><small>Verified payment tokens</small></button>' : '') +
-            '</div>' +
-          '</div>' +
-          '<button type="button" class="btn pri" id="btnTopNewUser" style="padding:5px 11px;font-size:11.5px">+ Guided User</button>' +
-        '</div>' +
-      '</div>';
-
-    app.innerHTML = minimalCommandBar + '<div class="' + cls.join(' ') + '">' + treeHtml + centerHtml + inspectorHtml + '</div>';
+    app.innerHTML = '<div class="' + cls.join(' ') + '">' + treeHtml + centerHtml + inspectorHtml + '</div>';
     W.header('access-admin.html');
     bind();
   }

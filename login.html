@@ -15,15 +15,7 @@
     background: #040814;
   }
   .thematic-city-backdrop .city-photo {
-    position: absolute;
-    inset: -4%;
-    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500');
-    background-size: cover;
-    background-position: center 38%;
-    opacity: 0.52;
-    mix-blend-mode: luminosity;
-    filter: contrast(1.15) brightness(0.88);
-    animation: cityHorizonPan 38s ease-in-out infinite alternate;
+    display: none;
   }
   .thematic-city-backdrop .city-atmosphere {
     position: absolute;
@@ -624,10 +616,10 @@
       <div id="regPage1" style="background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.42);border-radius:14px;padding:18px 20px">
         <div class="row" style="margin-bottom:14px">
           <div>
-            <span class="chip ok" style="font-size:10.5px">Page 1 of 3 · Account Credentials</span>
+            <span style="font-size:10.5px;font-weight:600;color:#34d399;text-transform:uppercase;letter-spacing:.04em">Page 1 of 3 · Account Credentials</span>
             <h2 id="regPage1Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Set Your Portal Username &amp; Password</h2>
           </div>
-          <span id="regPage1StatusChip" class="chip warn" style="font-size:11px">Required</span>
+          <span id="regPage1StatusChip" style="font-size:11px;font-weight:600;color:#fbbf24">Required</span>
         </div>
 
         <!-- Row 1: 2 Equal Pixel-Aligned Columns (Username + Authentication Method) -->
@@ -712,10 +704,10 @@
       <div id="regPage2" style="display:none;background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.42);border-radius:14px;padding:18px 20px">
         <div class="row" style="margin-bottom:14px">
           <div>
-            <span class="chip ok" style="font-size:10.5px">Page 2 of 3 · Identity, Recovery &amp; Email Verification</span>
+            <span style="font-size:10.5px;font-weight:600;color:#34d399;text-transform:uppercase;letter-spacing:.04em">Page 2 of 3 · Identity, Recovery &amp; Email Verification</span>
             <h2 style="margin:4px 0 0;font-size:15.5px;font-weight:700">Recovery Email, Phone &amp; Email Code Verification</h2>
           </div>
-          <span id="regPage2StatusChip" class="chip warn" style="font-size:11px">Email Verification Required</span>
+          <span id="regPage2StatusChip" style="font-size:11px;font-weight:600;color:#fbbf24">Email Verification Required</span>
         </div>
 
         <!-- Row 1: Full Name | Primary Logon Email (Pixel-Aligned) -->
@@ -762,7 +754,7 @@
               <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#38bdf8">Mandatory Email &amp; Username Verification</span>
               <div id="regEmailVerifySubtext" style="font-size:11.5px;color:#cbd5e1;margin-top:2px">Send a 6-digit verification code to your Primary Logon Email (includes your username confirmation) to unlock Page 3.</div>
             </div>
-            <span id="regEmailVerifiedBadge" class="chip warn" style="font-size:10.5px">Unverified</span>
+            <span id="regEmailVerifiedBadge" style="font-size:11px;font-weight:600;color:#fbbf24">Unverified</span>
           </div>
           <div class="ms-verify-code-grid">
             <button type="button" class="btn" id="btnSendEmailCode" style="height:40px;padding:0 14px;font-size:12px;border-color:rgba(56,189,248,0.55);color:#7dd3fc">📧 Send Verification Code</button>
@@ -784,10 +776,10 @@
       <div id="regPage3" style="display:none;background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.42);border-radius:14px;padding:18px 20px">
         <div class="row" style="margin-bottom:14px">
           <div>
-            <span class="chip ok" style="font-size:10.5px">Page 3 of 3 · Mandatory Physical Address &amp; Terms of Service</span>
+            <span style="font-size:10.5px;font-weight:600;color:#34d399;text-transform:uppercase;letter-spacing:.04em">Page 3 of 3 · Mandatory Physical Address &amp; Terms of Service</span>
             <h2 id="regPage3Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Physical Address &amp; Terms of Service</h2>
           </div>
-          <span id="regAddressPolicyBadge" class="chip warn" style="font-size:11px">Required</span>
+          <span id="regAddressPolicyBadge" style="font-size:11px;font-weight:600;color:#fbbf24">Required</span>
         </div>
 
         <!-- Row 1: Full-Width Street Address -->
@@ -820,7 +812,7 @@
               <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px">Click below to view all required Terms of Service schedules before accepting.</div>
             </div>
             <div style="display:flex;align-items:center;gap:8px">
-              <span id="tosReviewBadge" class="chip warn" style="font-size:10.5px">Click Terms to Review</span>
+              <span id="tosReviewBadge" style="font-size:11px;font-weight:600;color:#fbbf24">Click Terms to Review</span>
               <button type="button" class="btn" id="btnToggleTosReader" style="padding:6px 12px;font-size:11.5px;border-color:rgba(56,189,248,0.55);color:#7dd3fc">📄 View Required Terms of Service (5 Schedules)</button>
             </div>
           </div>
@@ -1396,7 +1388,7 @@
     const page1Ok = Boolean(unRes.ok && pwRes.ok && confirmMatch);
     const chip1 = document.getElementById('regPage1StatusChip');
     if (chip1) {
-      chip1.className = 'chip ' + (page1Ok ? 'ok' : 'warn');
+      chip1.style.color = page1Ok ? '#34d399' : '#fbbf24';
       chip1.textContent = page1Ok ? '✓ Verified' : 'Required';
     }
     if (btnRegNext1) btnRegNext1.disabled = !page1Ok;
@@ -1445,14 +1437,14 @@
     }
 
     if (regEmailVerifiedBadge) {
-      regEmailVerifiedBadge.className = 'chip ' + (emailVerifiedState ? 'ok' : 'warn');
+      regEmailVerifiedBadge.style.color = emailVerifiedState ? '#34d399' : '#fbbf24';
       regEmailVerifiedBadge.textContent = emailVerifiedState ? '✓ Email & Username Verified' : 'Required';
     }
 
     const page2Ok = Boolean(nameOk && emailOk && recoveryOk && phRes.ok && emailVerifiedState);
     const chip2 = document.getElementById('regPage2StatusChip');
     if (chip2) {
-      chip2.className = 'chip ' + (page2Ok ? 'ok' : 'warn');
+      chip2.style.color = page2Ok ? '#34d399' : '#fbbf24';
       chip2.textContent = page2Ok ? '✓ Verified' : 'Required';
     }
     if (btnRegNext2) btnRegNext2.disabled = !page2Ok;
@@ -1477,11 +1469,11 @@
 
     const badge = document.getElementById('regAddressPolicyBadge');
     if (badge) {
-      badge.className = 'chip ' + (page3Ok ? 'ok' : 'warn');
+      badge.style.color = page3Ok ? '#34d399' : '#fbbf24';
       badge.textContent = page3Ok ? '✓ Verified' : 'Required';
     }
     if (tosReviewBadge) {
-      tosReviewBadge.className = 'chip ' + (tosSchedulesReviewed ? 'ok' : 'warn');
+      tosReviewBadge.style.color = tosSchedulesReviewed ? '#34d399' : '#fbbf24';
       tosReviewBadge.textContent = tosSchedulesReviewed ? '✓ 5 Schedules Reviewed' : 'Click Terms to Review';
     }
     if (btnSubmitRegister) btnSubmitRegister.disabled = !page3Ok;

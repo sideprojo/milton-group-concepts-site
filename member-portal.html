@@ -106,28 +106,18 @@
     const apps = W.APPS_CATALOG || [];
     // Strict Zero-Leakage Policy: Only render applications the user actually has access to
     const unlockedApps = apps.filter(a => W.can(u, 'app', a.id, 'view'));
-    const grantedPages = W.CATALOG.filter(c => c.id !== 'saasapps' && (!isEmp() || c.id !== 'finance') && W.can(u, 'page', c.id, 'view'));
 
     const renderAppCard = (a) => {
-      const badge = '<span class="chip ok">' + (isSoleAdmin() ? 'Admin' : 'Active') + '</span>';
-      const act = '<a class="btn pri" href="' + esc(a.href) + '">Launch</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>SCORM</a>' : '');
+      const act = '<a class="btn pri" href="' + esc(a.href) + '" target="_blank" rel="noopener">Launch App ↗</a>' + (a.zipHref ? ' <a class="btn" href="' + esc(a.zipHref) + '" download>Download Package</a>' : '');
       return '<div class="compact-card" data-app-card="' + esc(a.id) + '" style="border-color:rgba(16,185,129,0.38);padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px">' +
-        '<div><div class="row"><h3>' + esc(a.title) + '</h3>' + badge + '</div><p>' + esc(a.desc || '') + '</p></div>' +
+        '<div><h3>' + esc(a.title) + '</h3><p>' + esc(a.desc || '') + '</p></div>' +
         '<div class="row" style="justify-content:flex-start;gap:8px">' + act + '</div></div>';
     };
-
-    const grantedPagesHtml = grantedPages.length
-      ? '<div class="card" style="padding:18px 20px;margin-top:12px">' +
-          '<div class="row" style="margin-bottom:12px"><h2 style="margin:0;font-size:15px;font-weight:600">' + (isEmp() ? 'Internal Portals &amp; Operations (' : 'Authorized Workspace Modules (') + grantedPages.length + ')</h2></div>' +
-          '<div class="bento-2">' + grantedPages.map(c =>
-            '<div class="compact-card" style="border-color:rgba(59,130,246,0.38);padding:14px 16px"><div class="row"><h3>' + esc(c.title) + '</h3><a class="btn pri" href="' + esc(c.href) + '">Open</a></div><p>' + esc(c.desc || '') + '</p></div>'
-          ).join('') + '</div></div>'
-      : '';
 
     const qualifiedRes = getQualifiedResources();
     const accessOnly = isAccessClientUser();
     const resBtnHtml = qualifiedRes.length > 0
-      ? '<button type="button" class="btn" data-go-resources="1" style="border-color:rgba(197,179,88,0.45);color:#fde047">' + (accessOnly ? 'Tools &amp; Insights' : ('Resources &amp; AI Tools (' + qualifiedRes.length + ')')) + '</button>'
+      ? '<button type="button" class="btn" data-go-resources="1" style="border-color:rgba(197,179,88,0.45);color:#fde047">' + (accessOnly ? 'Tools &amp; Insights' : ('Resources &amp; Otto (' + qualifiedRes.length + ')')) + '</button>'
       : '';
 
     const personalizeBtnHtml = accessOnly
@@ -135,46 +125,28 @@
       : '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Otto Setup</button>';
 
     const topRightActions = isEmp()
-      ? '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '<a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
-      : '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '<a class="btn" href="saas-apps-and-lms-showcase.html">Showcase</a>' + resBtnHtml + '<button type="button" class="btn" data-go-consultation="1">Submit Request &amp; Consultation</button>' + (!isEmp() ? '<button type="button" class="btn pri" data-go-payment="1">Billing</button>' : '') + '</div>';
+      ? '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
+      : '<div style="display:flex;gap:8px;flex-wrap:wrap">' + personalizeBtnHtml + '</div>';
 
     const bridges = W.DIVERGENT_BRIDGES || {};
-    const catsCatalog = W.ONBOARDING_CATEGORIES || [];
     const activeBaselineKey = (u && u.divergentBaseline && bridges[u.divergentBaseline]) ? u.divergentBaseline : selectedDivergentBaseline;
     const activeBridge = bridges[activeBaselineKey] || Object.values(bridges)[0];
-    const activeCatIds = (Array.isArray(u && u.selectedCategories) && u.selectedCategories.length)
-      ? u.selectedCategories
-      : (selectedCategories.length ? selectedCategories : ['cat_ai_saas', 'cat_divergent_lang']);
-    const userCatObjs = catsCatalog.filter(c => activeCatIds.includes(c.id));
-    const ottoProf = (u && u.ottoProfile) || null;
     const assocTelem = (u && u.associativeTelemetry) || { completedStages: {}, weightBoosts: {}, scenarioSelections: {}, events: [] };
-    const thresholdInfo = W.getCatalogThresholdStatus ? W.getCatalogThresholdStatus() : { currentCount: 18, threshold: 50, reached: false };
-
-    const userTierLabel = isSoleAdmin()
-      ? 'Administrator'
-      : (isEmp()
-          ? 'Internal Staff'
-          : (isWorkspaceClientUser()
-              ? 'Workspace Client'
-              : 'Access Client · Showcase & Insights'));
 
     const accessClientBoundaryBanner = accessOnly
       ? '<div class="card" id="accessClientBoundaryBanner" style="padding:16px 20px;margin-bottom:14px;border-color:rgba(59,130,246,0.45);background:linear-gradient(135deg,rgba(15,23,42,0.95),rgba(10,16,32,0.98))">' +
           '<div class="row" style="margin-bottom:8px;flex-wrap:wrap;gap:8px">' +
             '<div>' +
-              '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
-                '<span class="chip" id="iseClientSgtChip" style="font-size:10.5px;border-color:rgba(59,130,246,0.55);color:#93c5fd">Access Client · Showcase &amp; Tools</span>' +
-                '<span style="font-size:11.5px;color:#94a3b8">Standard Portal Logon</span>' +
-              '</div>' +
-              '<h3 style="margin:4px 0 0;font-size:15px;font-weight:700;color:#fff">Showcase Access &amp; Operational Insights</h3>' +
+              '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd">Standard Portal Logon</span>' +
+              '<h3 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">Application Access &amp; Operational Insights</h3>' +
             '</div>' +
             '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-              '<button type="button" class="btn" data-connect-workspace="google" style="padding:6px 12px;font-size:11.5px">🌐 Launch Google Sign-In</button>' +
-              '<button type="button" class="btn" data-connect-workspace="microsoft" style="padding:6px 12px;font-size:11.5px">🌐 Launch Microsoft Sign-In</button>' +
-              '<button type="button" class="btn" data-connect-workspace="apple" style="padding:6px 12px;font-size:11.5px">🌐 Launch Apple Sign-In</button>' +
+              '<button type="button" class="btn" data-connect-workspace="google" style="padding:6px 12px;font-size:11.5px">🌐 Connect Google</button>' +
+              '<button type="button" class="btn" data-connect-workspace="microsoft" style="padding:6px 12px;font-size:11.5px">🌐 Connect Microsoft</button>' +
+              '<button type="button" class="btn" data-connect-workspace="apple" style="padding:6px 12px;font-size:11.5px">🌐 Connect Apple</button>' +
             '</div>' +
           '</div>' +
-          '<p style="margin:0;font-size:12.5px;color:#cbd5e1;line-height:1.5">Your account has access to interactive Showcases, Operational Tools &amp; Insights, and Guided Consultations. Connect your Google, Microsoft, or Apple Workspace above to unlock full Workspace &amp; Otto Agent interactions.</p>' +
+          '<p style="margin:0;font-size:12.5px;color:#cbd5e1;line-height:1.5">Launch your authorized applications below or connect your Google, Microsoft, or Apple Workspace above to unlock Otto Agent workflows.</p>' +
         '</div>'
       : '';
 
@@ -182,24 +154,17 @@
       ? '<div class="card" id="divergentLearningSummaryBanner" style="padding:14px 18px;margin-bottom:14px;border-color:rgba(16,185,129,0.42);background:linear-gradient(135deg,rgba(6,78,59,0.26),rgba(10,15,28,0.96))">' +
           '<div class="row" style="margin-bottom:' + (showAssociativeGraph ? '10px' : '0') + ';flex-wrap:wrap;gap:8px">' +
             '<div>' +
-              '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
-                '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Otto Agent &amp; Learning Path</span>' +
-              '</div>' +
+              '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Otto Agent &amp; Learning Path</span>' +
               '<h3 style="margin:3px 0 0;font-size:14.5px;font-weight:600;color:#fff">' + esc(activeBridge.label) + '</h3>' +
             '</div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
-              userCatObjs.map(c => '<span class="chip ok" style="font-size:10.5px">' + esc(c.tag) + '</span>').join('') +
-              '<span class="chip" id="optionA3ThresholdBadge" style="font-size:10.5px;border-color:rgba(59,130,246,0.52);color:#93c5fd">' +
-                (thresholdInfo.currentCount + '/' + thresholdInfo.threshold + ' Catalog Modules') +
-              '</span>' +
-              (ottoProf && ottoProf.dataSharingOptIn ? '<span class="chip" style="font-size:10.5px;border-color:rgba(197,179,88,0.55);color:#fde047">Partner Program Active</span>' : '') +
               (isSoleAdmin() ? '<a class="btn" href="access-admin.html?tab=agents" style="padding:5px 10px;font-size:11.5px;border-color:rgba(197,179,88,0.5);color:#fde047">Agent Access Console</a>' : '') +
               '<button type="button" class="btn" id="btnToggleAssociativeGraph" style="padding:5px 10px;font-size:11.5px">' + (showAssociativeGraph ? 'Collapse' : 'Expand') + '</button>' +
               '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 10px;font-size:11.5px">Edit Otto</button>' +
             '</div>' +
           '</div>' +
           (showAssociativeGraph ? ('<div class="bento-3">' +
-            (activeBridge.sequence || []).map((st, idx) => {
+            (activeBridge.sequence || []).map((st) => {
               const stageKey = activeBaselineKey + ':step_' + st.step;
               const prevKey = activeBaselineKey + ':step_' + (st.step - 1);
               const isMastered = Boolean(assocTelem.completedStages && assocTelem.completedStages[stageKey]);
@@ -210,7 +175,7 @@
               return '<div class="compact-card" data-assoc-stage-card="' + esc(st.step) + '" style="padding:12px 14px;border-color:' + (isMastered ? 'rgba(16,185,129,0.58)' : (isUnlocked ? 'rgba(59,130,246,0.42)' : 'rgba(148,163,184,0.22)')) + ';background:rgba(4,8,20,0.78);display:flex;flex-direction:column;justify-content:space-between;gap:8px">' +
                 '<div>' +
                   '<div class="row">' +
-                    '<span class="chip ' + (isMastered ? 'ok' : (isUnlocked ? '' : 'warn')) + '" style="font-size:10px">' + (isMastered ? ('Step ' + st.step + ' · Mastered') : (isUnlocked ? ('Step ' + st.step + ' · Active') : ('Step ' + st.step + ' · Bridge Ready'))) + '</span>' +
+                    '<small style="font-size:10.5px;color:#94a3b8;font-weight:600">Step ' + st.step + '</small>' +
                     '<small style="font-size:10.5px;color:' + (boostVal > 0 ? '#34d399' : '#93c5fd') + ';font-weight:700">' + esc(matchLabel) + '</small>' +
                   '</div>' +
                   '<h3 style="font-size:12.5px;margin-top:5px;color:#f8fafc">' + esc(st.domain) + '</h3>' +
@@ -218,7 +183,7 @@
                   (st.unlockedBridge ? '<div style="margin-top:6px;font-size:10.5px;color:' + (isMastered ? '#6ee7b7' : '#cbd5e1') + '"><strong>Unlocks:</strong> ' + esc(st.unlockedBridge) + '</div>' : '') +
                 '</div>' +
                 '<button type="button" class="btn ' + (isMastered ? '' : 'pri') + '" data-complete-assoc-stage="' + esc(st.step) + '" data-baseline-key="' + esc(activeBaselineKey) + '" style="width:100%;justify-content:center;padding:6px 10px;font-size:11px">' +
-                  (isMastered ? '✓ SCORM / Quiz Mastery Verified (+Boost Active)' : ('Verify SCORM / Quiz: ' + esc(st.checkpointLabel || ('Complete Step ' + st.step)))) +
+                  (isMastered ? '✓ Stage Completed' : ('Complete Step ' + st.step)) +
                 '</button>' +
               '</div>';
             }).join('') +
@@ -230,12 +195,12 @@
       divergentSummaryStrip +
       '<div class="card" style="padding:18px 20px;margin-top:0">' +
         '<div class="row" style="margin-bottom:14px">' +
-          '<h2 style="margin:0;font-size:15px;font-weight:600">' + (accessOnly ? ('Showcase Access (' + unlockedApps.length + ')') : ('Authorized Applications &amp; LMS (' + unlockedApps.length + ')')) + '</h2>' +
+          '<h2 style="margin:0;font-size:15px;font-weight:600">Authorized Applications (' + unlockedApps.length + ')</h2>' +
           topRightActions +
         '</div>' +
         '<div class="bento-2">' + unlockedApps.map(renderAppCard).join('') + '</div>' +
       '</div>' +
-      (accessOnly ? ('<div style="margin-top:14px">' + resourcesPanel() + '</div>') : grantedPagesHtml);
+      (accessOnly ? ('<div style="margin-top:14px">' + resourcesPanel() + '</div>') : '');
   }
 
   function consultationPanel() {
@@ -246,8 +211,7 @@
       ? '<div class="card" id="consultationConfirmedBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.52);background:linear-gradient(135deg,rgba(6,78,59,0.34),rgba(9,16,32,0.96))">' +
           '<div class="row">' +
             '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
-              '<span class="chip ok">Request Logged</span>' +
-              '<strong style="font-size:13.5px;color:#fff">' + esc(lastConsultationReceipt.architectureScope) + '</strong>' +
+              '<strong style="font-size:13.5px;color:#fff">✓ ' + esc(lastConsultationReceipt.architectureScope) + '</strong>' +
               '<span style="font-size:12.5px;color:#a7f3d0">' + esc(lastConsultationReceipt.timeline) + ' · ' + esc(lastConsultationReceipt.preferredWindow) + '</span>' +
             '</div>' +
             '<code style="font-size:11.5px;color:#34d399">' + esc(lastConsultationReceipt.receiptId) + '</code>' +
@@ -272,7 +236,7 @@
             CONSULTATION_TRACKS.map(t => {
               const sel = t.id === selectedConsultTrack;
               return '<div class="compact-card" data-consult-track="' + esc(t.id) + '" style="cursor:pointer;border-color:' + (sel ? '#c5b358' : 'var(--line)') + ';background:' + (sel ? 'rgba(30,58,138,0.26)' : 'var(--card)') + '">' +
-                '<div class="row"><h3>' + esc(t.scope) + '</h3><span class="chip' + (sel ? ' ok' : '') + '">' + esc(t.badge) + '</span></div>' +
+                '<h3>' + esc(t.scope) + '</h3>' +
                 '<p>' + esc(t.desc) + '</p>' +
               '</div>';
             }).join('') +
@@ -335,7 +299,7 @@
       (myConsults.length
         ? '<div class="card" style="padding:16px 20px;margin-top:12px"><div class="row" style="margin-bottom:10px"><h3 style="margin:0;font-size:14px;font-weight:600">Submitted Requests &amp; Consultations (' + myConsults.length + ')</h3></div>' +
           '<table><thead><tr><th>Receipt</th><th>Solution Scope</th><th>Timeline</th><th>Consultation Window</th><th>Status</th></tr></thead><tbody>' +
-          myConsults.map(c => '<tr><td><code>' + esc(c.receiptId) + '</code></td><td><b>' + esc(c.architectureScope) + '</b></td><td>' + esc(c.timeline) + '</td><td>' + esc(c.preferredWindow) + '</td><td><span class="chip ok">' + esc(c.status || 'submitted') + '</span></td></tr>').join('') +
+          myConsults.map(c => '<tr><td><code>' + esc(c.receiptId) + '</code></td><td><b>' + esc(c.architectureScope) + '</b></td><td>' + esc(c.timeline) + '</td><td>' + esc(c.preferredWindow) + '</td><td><span style="color:#34d399;font-weight:600;font-size:12px">' + esc(c.status || 'submitted') + '</span></td></tr>').join('') +
           '</tbody></table></div>'
         : '');
   }
@@ -349,8 +313,7 @@
       ? '<div class="card" id="paymentVerifiedBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.52);background:linear-gradient(135deg,rgba(6,78,59,0.34),rgba(9,16,32,0.96))">' +
           '<div class="row">' +
             '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
-              '<span class="chip ok">Verified Method</span>' +
-              '<strong style="font-size:13.5px;font-weight:600;color:#fff">' + esc(prof.instrumentBrand) + ' · ' + esc(prof.last4) + '</strong>' +
+              '<strong style="font-size:13.5px;font-weight:600;color:#fff">✓ ' + esc(prof.instrumentBrand) + ' · ' + esc(prof.last4) + '</strong>' +
               '<span style="font-size:12.5px;color:#a7f3d0">' + esc(prof.planLabel) + '</span>' +
             '</div>' +
             (latestReceipt ? '<code style="font-size:11.5px;color:#34d399">' + esc(latestReceipt.receiptId) + '</code>' : '') +
@@ -445,32 +408,27 @@
   }
 
   function resourcesPanel() {
-    // Access Clients get Tools & Insights (Showcase + Operational Insights); Workspace Clients get full Agent Templates & Scenario Orchestration
     if (isAccessClientUser()) {
       return '<div class="card" id="accessClientToolsInsightsCard" style="padding:18px 20px;margin-bottom:14px;border-color:rgba(59,130,246,0.45)">' +
         '<div class="row" style="margin-bottom:10px;flex-wrap:wrap;gap:8px">' +
           '<div>' +
-            '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa">Access Client · Tools &amp; Insights</span>' +
+            '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa">Tools &amp; Insights</span>' +
             '<h2 style="margin:2px 0 0;font-size:16px;font-weight:700;color:#fff">Operational Tools &amp; Executive Insights</h2>' +
           '</div>' +
-          '<span class="chip">Showcase &amp; Insights Tier</span>' +
         '</div>' +
         '<p style="font-size:12.5px;color:#cbd5e1;margin:0 0 14px;line-height:1.5">Explore architecture readiness benchmarks, turnkey scope estimators, and executive briefings. Connect your external Workspace (Google, Microsoft, or Apple) to unlock interactive Otto Agent workflows.</p>' +
         '<div class="bento-3" style="gap:10px">' +
           '<div class="compact-card" style="padding:14px 16px;border-color:rgba(59,130,246,0.35)">' +
-            '<div class="row" style="margin-bottom:6px"><span class="chip ok" style="font-size:10px">Tool · Scope Estimator</span><small style="color:#93c5fd;font-size:10.5px">Turnkey SaaS</small></div>' +
             '<h3 style="font-size:13.5px;color:#fff;margin-bottom:4px">Turnkey Portal &amp; Receptionist Scope</h3>' +
             '<p style="font-size:11.5px;color:#94a3b8;margin-bottom:10px">Interactive configurator for 24/7 lead capture, booking workflows, and multi-rail settlement.</p>' +
-            '<a class="btn pri" href="projects/client-turnkey-forge/index.html" style="width:100%;justify-content:center;font-size:11.5px">Open Turnkey Forge Showcase</a>' +
+            '<a class="btn pri" href="projects/client-turnkey-forge/index.html" target="_blank" rel="noopener" style="width:100%;justify-content:center;font-size:11.5px">Launch Turnkey Forge ↗</a>' +
           '</div>' +
           '<div class="compact-card" style="padding:14px 16px;border-color:rgba(16,185,129,0.35)">' +
-            '<div class="row" style="margin-bottom:6px"><span class="chip ok" style="font-size:10px">Insight · Commercial AI</span><small style="color:#6ee7b7;font-size:10.5px">Live Demo</small></div>' +
             '<h3 style="font-size:13.5px;color:#fff;margin-bottom:4px">Commercial Web &amp; AI Receptionist</h3>' +
             '<p style="font-size:11.5px;color:#94a3b8;margin-bottom:10px">Benchmark how automated scheduling and customer intake operate in production.</p>' +
-            '<a class="btn pri" href="projects/sterling-auto-repair/index.html" style="width:100%;justify-content:center;font-size:11.5px">Open Sterling Auto Showcase</a>' +
+            '<a class="btn pri" href="projects/sterling-auto-repair/index.html" target="_blank" rel="noopener" style="width:100%;justify-content:center;font-size:11.5px">Launch Sterling Auto ↗</a>' +
           '</div>' +
           '<div class="compact-card" style="padding:14px 16px;border-color:rgba(197,179,88,0.4)">' +
-            '<div class="row" style="margin-bottom:6px"><span class="chip" style="font-size:10px;color:#fde047">Insight · Architecture</span><small style="color:#fde047;font-size:10.5px">Readiness</small></div>' +
             '<h3 style="font-size:13.5px;color:#fff;margin-bottom:4px">Custom Architecture &amp; Advisory</h3>' +
             '<p style="font-size:11.5px;color:#94a3b8;margin-bottom:10px">Request a tailored deployment blueprint across Commercial SaaS, Cyber, or Federal tracks.</p>' +
             '<button type="button" class="btn" data-go-consultation="1" style="width:100%;justify-content:center;font-size:11.5px">Open Consultation Form</button>' +
@@ -478,7 +436,6 @@
         '</div>' +
       '</div>';
     }
-    // Strict Zero-Leakage Policy: Only render resources the user is qualified for
     const qualifiedResources = getQualifiedResources();
     const templates = W.DEFINED_AI_TEMPLATES || [];
     const activeTpl = templates.find(t => t.id === selectedAiTemplateId) || templates[0] || {
@@ -486,7 +443,7 @@
       domain: 'Languages',
       title: 'Associative Language Acceleration Template',
       pacing: '30-Day Guided Sequence',
-      summary: 'Structured bridge connecting your existing language roots to high-transfer vocabulary, phonetic drills, and SCORM checkpoints.',
+      summary: 'Structured bridge connecting your existing language roots to high-transfer vocabulary, phonetic drills, and verification checkpoints.',
       steps: ['Stage 1: Shared Root & Cognate Activation', 'Stage 2: Sentence Structure & Verb Pattern Transfer', 'Stage 3: Applied Verification']
     };
 
@@ -494,8 +451,7 @@
       ? '<div class="card" id="aiFastTrackOutputBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.52);background:linear-gradient(135deg,rgba(6,78,59,0.34),rgba(9,16,32,0.96))">' +
           '<div class="row" style="margin-bottom:6px">' +
             '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
-              '<span class="chip ok">Resource Fast-Track Active</span>' +
-              '<strong style="font-size:13.5px;color:#fff">' + esc(activeAiToolOutput.resourceTitle) + ' · ' + esc(activeAiToolOutput.toolTitle) + '</strong>' +
+              '<strong style="font-size:13.5px;color:#fff">✓ ' + esc(activeAiToolOutput.resourceTitle) + ' · ' + esc(activeAiToolOutput.toolTitle) + '</strong>' +
             '</div>' +
             '<code style="font-size:11px;color:#34d399">' + esc(activeAiToolOutput.runId) + '</code>' +
           '</div>' +
@@ -509,7 +465,6 @@
       || (assocTelemRes.scenarioSelections && assocTelemRes.scenarioSelections[activeTpl.id])
       || (scenarioBranches[0] && scenarioBranches[0].id)
       || '';
-    const activeBranchObj = scenarioBranches.find(b => b.id === activeBranchId) || scenarioBranches[0] || null;
 
     const definedTemplateSelectorCard =
       '<div class="card" id="definedTemplateInteractiveCard" style="padding:16px 20px;margin-bottom:12px;border-color:rgba(16,185,129,0.45);background:linear-gradient(135deg,rgba(6,48,44,0.35),rgba(9,16,32,0.96))">' +
@@ -538,7 +493,6 @@
           ? '<div style="margin-bottom:12px">' +
               '<div class="row" style="margin-bottom:6px">' +
                 '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd">' + esc(activeTpl.scenarioPrompt || 'Select Scenario Branch') + '</span>' +
-                (activeBranchObj ? '<span class="chip ok" style="font-size:10px">' + esc(activeBranchObj.unlockedFocus || activeBranchObj.unlockedStage || 'Stage Unlocked') + ' (+' + esc(activeBranchObj.boostPct || 6) + '% Boost)</span>' : '') +
               '</div>' +
               '<div class="bento-3" style="gap:8px">' +
                 scenarioBranches.map((br, bIdx) => {
@@ -548,7 +502,7 @@
                   const bUnlocks = br.unlockedFocus || br.unlockedStage || '';
                   return '<div class="compact-card" data-select-scenario-branch="' + esc(br.id) + '" data-template-id="' + esc(activeTpl.id) + '" data-branch-step="' + (bIdx + 1) + '" data-branch-label="' + esc(bTitle) + '" data-branch-unlocked="' + esc(bUnlocks) + '" style="cursor:pointer;padding:11px 13px;border:2px solid ' + (isSel ? '#10b981' : 'rgba(59,130,246,0.34)') + ';background:' + (isSel ? 'rgba(6,78,59,0.38)' : 'rgba(4,8,20,0.78)') + ';transition:all .16s ease">' +
                     '<div class="row" style="margin-bottom:3px">' +
-                      '<span class="chip ' + (isSel ? 'ok' : '') + '" style="font-size:9.5px">' + (isSel ? '✓ Selected Scenario' : esc(br.badge || ('Option ' + (bIdx + 1)))) + '</span>' +
+                      '<small style="font-size:10px;color:' + (isSel ? '#34d399' : '#94a3b8') + ';font-weight:700">' + (isSel ? '✓ Selected' : ('Option ' + (bIdx + 1))) + '</small>' +
                       '<small style="font-size:10px;color:#34d399;font-weight:700">+' + esc(br.boostPct || 6) + '% Match</small>' +
                     '</div>' +
                     '<div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">' + esc(bTitle) + '</div>' +
@@ -562,7 +516,7 @@
         '<div class="bento-3" style="gap:8px">' +
           (activeTpl.steps || []).map((st, idx) =>
             '<div class="compact-card" style="padding:10px 12px;border-color:rgba(59,130,246,0.34);background:rgba(4,8,20,0.78)">' +
-              '<div class="row" style="margin-bottom:2px"><span class="chip ok" style="font-size:9.5px">Milestone ' + (idx + 1) + '</span><small style="font-size:10px;color:#93c5fd">' + esc(activeTpl.domain) + '</small></div>' +
+              '<div class="row" style="margin-bottom:2px"><small style="font-size:10px;color:#34d399;font-weight:700">Milestone ' + (idx + 1) + '</small><small style="font-size:10px;color:#93c5fd">' + esc(activeTpl.domain) + '</small></div>' +
               '<p style="margin:0;font-size:11.5px;color:#f8fafc;font-weight:600;line-height:1.35">' + esc(st) + '</p>' +
             '</div>'
           ).join('') +
@@ -578,23 +532,19 @@
             '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047">' + esc(r.category || 'Qualified Partner Resource') + '</span>' +
             '<h2 style="margin:2px 0 0;font-size:16px;font-weight:700;color:#fff">' + esc(r.title) + '</h2>' +
           '</div>' +
-          '<div style="display:flex;gap:8px;align-items:center">' +
-            '<span class="chip ok">' + (isSoleAdmin() ? 'Admin · Qualified' : 'Qualified Member') + '</span>' +
-            '<span class="chip" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Resource Fast-Track</span>' +
-          '</div>' +
         '</div>' +
         '<p style="font-size:13px;color:#cbd5e1;margin:0 0 14px;line-height:1.55">' + esc(r.desc || r.summary || '') + '</p>' +
 
         '<div style="display:grid;grid-template-columns:1fr 1.25fr;gap:14px;align-items:start">' +
           '<div class="compact-card" style="padding:14px 16px;border-color:rgba(59,130,246,0.35)">' +
-            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa;margin-bottom:8px">UI/UX &amp; Guided Progression Active</div>' +
+            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#60a5fa;margin-bottom:8px">Guided Progression Active</div>' +
             '<div style="display:flex;flex-direction:column;gap:7px">' +
-              uiList.map(enh => '<div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#e2e8f0"><span class="chip ok" style="padding:1px 6px;font-size:10px">UI/UX</span><span>' + esc(enh) + '</span></div>').join('') +
+              uiList.map(enh => '<div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#e2e8f0"><span>• ' + esc(enh) + '</span></div>').join('') +
             '</div>' +
           '</div>' +
 
           '<div class="compact-card" style="padding:14px 16px;border-color:rgba(16,185,129,0.38)">' +
-            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#34d399;margin-bottom:8px">Resource Fast-Track Templates (' + aiTools.length + ')</div>' +
+            '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#34d399;margin-bottom:8px">Fast-Track Templates (' + aiTools.length + ')</div>' +
             '<div style="display:flex;flex-direction:column;gap:8px">' +
               aiTools.map(tool =>
                 '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:rgba(4,8,20,0.65);border:1px solid rgba(148,163,184,0.2)">' +
@@ -602,7 +552,7 @@
                     '<div style="font-size:12.5px;font-weight:600;color:#fff">' + esc(tool.title) + '</div>' +
                     '<div style="font-size:11.5px;color:#94a3b8;margin-top:2px">' + esc(tool.desc || '') + '</div>' +
                   '</div>' +
-                  '<button type="button" class="btn pri" data-run-ai-tool="' + esc(tool.id) + '" data-res-id="' + esc(r.id) + '" data-res-title="' + esc(r.title) + '" data-tool-title="' + esc(tool.title) + '" style="white-space:nowrap;padding:6px 11px;font-size:11.5px">Resource Fast-Track</button>' +
+                  '<button type="button" class="btn pri" data-run-ai-tool="' + esc(tool.id) + '" data-res-id="' + esc(r.id) + '" data-res-title="' + esc(r.title) + '" data-tool-title="' + esc(tool.title) + '" style="white-space:nowrap;padding:6px 11px;font-size:11.5px">Run Template</button>' +
                 '</div>'
               ).join('') +
             '</div>' +
@@ -616,10 +566,10 @@
       '<div class="card" style="padding:16px 20px;margin-bottom:12px">' +
         '<div class="row">' +
           '<div>' +
-            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Qualified Catalog Resources &amp; Resource Fast-Track</span>' +
+            '<span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Catalog Resources</span>' +
             '<h2 style="margin:2px 0 0;font-size:15px;font-weight:600">Authorized Resources (' + qualifiedResources.length + ')</h2>' +
           '</div>' +
-          '<button type="button" class="btn" data-tab="apps">Applications &amp; LMS</button>' +
+          '<button type="button" class="btn" data-tab="apps">Applications</button>' +
         '</div>' +
       '</div>' +
       '<div style="display:flex;flex-direction:column;gap:12px">' +
@@ -630,21 +580,20 @@
   function getAvailableTabsForUser() {
     const accessOnly = isAccessClientUser();
     const list = [
-      ['apps', accessOnly ? 'Showcase Access' : 'Applications & LMS', saasAppsAndLmsPanel]
+      ['apps', 'Applications', saasAppsAndLmsPanel]
     ];
     const qualifiedRes = getQualifiedResources();
     if (accessOnly) {
       list.push(['resources', 'Tools & Insights', resourcesPanel]);
     } else if (isSoleAdmin() || qualifiedRes.length > 0 || W.can(u, 'page', 'resources', 'view')) {
-      list.push(['resources', 'Resources & AI Tools', resourcesPanel]);
+      list.push(['resources', 'Resources & Otto', resourcesPanel]);
     }
-    // Clients & Admin have access to Guided Consultation & Payment; Employees have NO access to Payment Settings
     if (!isEmp()) {
-      list.push(['consultation', 'Submit Request & Consultation', consultationPanel]);
+      list.push(['consultation', 'Consultations', consultationPanel]);
       list.push(['payment', 'Billing & Payment', paymentPanel]);
     }
     if (!accessOnly && (isSoleAdmin() || W.can(u, 'page', 'home', 'view'))) {
-      list.push(['overview', 'Overview Hub', overviewPanel]);
+      list.push(['overview', 'Overview Checklist', overviewPanel]);
     }
     return list;
   }
@@ -679,7 +628,6 @@
         '<div class="row" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(148,163,184,0.2)">' +
           '<div>' +
             '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">' +
-              '<span class="chip ok">Otto Guided Setup</span>' +
               stepPill(1, 'Focus Tracks', step1Done, activeStepNum === 1) +
               stepPill(2, 'Otto Path', step2Done, activeStepNum === 2) +
               stepPill(3, 'Profile & Data', step3Done, activeStepNum === 3) +
@@ -697,8 +645,7 @@
         '<div id="ottoStep1Section" style="margin-bottom:10px;padding:12px 14px;border-radius:12px;border:1.5px solid ' + (activeStepNum === 1 ? '#eab308' : (step1Done ? 'rgba(16,185,129,0.45)' : 'rgba(148,163,184,0.2)')) + ';background:rgba(8,14,28,0.85)">' +
           '<div class="row" style="margin-bottom:8px">' +
             '<div style="display:flex;align-items:center;gap:8px">' +
-              '<span class="chip ' + (step1Done ? 'ok' : '') + '" style="font-size:10px;border-color:' + (activeStepNum === 1 ? '#eab308' : '') + ';color:' + (activeStepNum === 1 ? '#fde047' : '') + '">' + (step1Done ? '✓ Step 1 Complete' : '▶ Next Action · Step 1') + '</span>' +
-              '<strong style="font-size:13px;color:#fff">Choose Your Focus Tracks</strong>' +
+              '<strong style="font-size:13px;color:#fff">Step 1 · Choose Your Focus Tracks</strong>' +
             '</div>' +
             '<span style="font-size:11.5px;color:#cbd5e1;font-weight:600">' + selectedCategories.length + ' Selected</span>' +
           '</div>' +
@@ -708,7 +655,7 @@
               return '<div class="compact-card" data-nf-cat="' + esc(c.id) + '" tabindex="0" role="checkbox" aria-checked="' + String(isSel) + '" style="cursor:pointer;padding:10px 12px;border-radius:10px;border:1.5px solid ' + (isSel ? '#10b981' : 'rgba(148,163,184,0.25)') + ';background:' + (isSel ? c.gradient : 'rgba(10,16,32,0.92)') + ';transition:all .16s ease">' +
                 '<div>' +
                   '<div class="row" style="margin-bottom:4px">' +
-                    '<span class="chip' + (isSel ? ' ok' : '') + '" style="font-size:9.5px;padding:2px 7px">' + esc(c.tag) + '</span>' +
+                    '<span style="font-size:10px;font-weight:600;color:#93c5fd">' + esc(c.tag) + '</span>' +
                     '<span style="font-size:10.5px;font-weight:700;color:' + (isSel ? '#34d399' : '#64748b') + '">' + (isSel ? '✓ Selected' : '+ Select') + '</span>' +
                   '</div>' +
                   '<h3 style="font-size:12.5px;font-weight:700;color:#fff;margin-bottom:2px">' + esc(c.title) + '</h3>' +
@@ -723,14 +670,8 @@
         '<div id="ottoStep2Section" data-locked="' + String(!step1Done) + '" style="margin-bottom:10px;padding:12px 14px;border-radius:12px;border:1.5px solid ' + (activeStepNum === 2 ? '#eab308' : (step2Done ? 'rgba(16,185,129,0.45)' : 'rgba(148,163,184,0.2)')) + ';background:rgba(8,14,28,0.85);opacity:' + (step1Done ? '1' : '0.48') + ';transition:opacity .2s ease">' +
           '<div class="row" style="margin-bottom:8px">' +
             '<div style="display:flex;align-items:center;gap:8px">' +
-              '<span id="ottoStep2Badge" class="chip ' + (step2Done ? 'ok' : '') + '" style="font-size:10px;border-color:' + (activeStepNum === 2 ? '#eab308' : '') + ';color:' + (activeStepNum === 2 ? '#fde047' : '') + '">' +
-                (!step1Done ? '🔒 Locked · Complete Step 1 First' : (step2Done ? '✓ Step 2 Confirmed' : '▶ Next Action · Step 2')) +
-              '</span>' +
-              '<strong style="font-size:13px;color:#fff">Set Your Otto Starting Path</strong>' +
+              '<strong style="font-size:13px;color:#fff">Step 2 · Set Your Otto Starting Path</strong>' +
             '</div>' +
-            (qualifiedRes.length > 0
-              ? '<span class="chip ok" style="font-size:10px">Resources Linked: ' + qualifiedRes.map(r => esc(r.shortTitle || r.title)).join(', ') + '</span>'
-              : '') +
           '</div>' +
           '<div style="display:grid;grid-template-columns:1fr 1.45fr;gap:10px;align-items:start">' +
             '<div class="compact-card" style="padding:10px 12px;border-color:rgba(197,179,88,0.38)">' +
@@ -763,12 +704,11 @@
             '<div class="compact-card" id="nfDivergentPreviewBox" style="padding:10px 12px;border-color:rgba(16,185,129,0.42);background:rgba(6,24,38,0.85)">' +
               '<div class="row" style="margin-bottom:6px">' +
                 '<span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Otto Sequence</span>' +
-                '<span class="chip ok" style="font-size:9.5px;padding:2px 7px">' + esc(activeBridge ? activeBridge.label : '') + '</span>' +
               '</div>' +
               '<div class="bento-3" style="gap:6px">' +
                 ((activeBridge && activeBridge.sequence) || []).map(st =>
                   '<div style="padding:7px 9px;border-radius:8px;background:rgba(4,8,20,0.78);border:1px solid rgba(59,130,246,0.28)">' +
-                    '<div class="row" style="margin-bottom:2px"><strong style="font-size:11.5px;color:#f8fafc">' + esc(st.step) + '. ' + esc(st.domain) + '</strong><span class="chip ok" style="font-size:9px;padding:1px 5px">' + esc(st.transferPct) + '</span></div>' +
+                    '<div class="row" style="margin-bottom:2px"><strong style="font-size:11.5px;color:#f8fafc">' + esc(st.step) + '. ' + esc(st.domain) + '</strong><span style="font-size:10px;color:#34d399;font-weight:600">' + esc(st.transferPct) + '</span></div>' +
                     '<p style="margin:0;font-size:10.5px;color:#cbd5e1;line-height:1.3">' + esc(st.rationale) + '</p>' +
                   '</div>'
                 ).join('') +
@@ -781,10 +721,7 @@
         '<div id="ottoStep3Section" data-locked="' + String(!step2Done) + '" style="margin-bottom:10px;padding:12px 14px;border-radius:12px;border:1.5px solid ' + (activeStepNum === 3 ? '#eab308' : (step3Done ? 'rgba(16,185,129,0.45)' : 'rgba(148,163,184,0.2)')) + ';background:rgba(8,14,28,0.85);opacity:' + (step2Done ? '1' : '0.48') + ';transition:opacity .2s ease">' +
           '<div class="row" style="margin-bottom:8px">' +
             '<div style="display:flex;align-items:center;gap:8px">' +
-              '<span id="ottoStep3Badge" class="chip ' + (step3Done ? 'ok' : '') + '" style="font-size:10px;border-color:' + (activeStepNum === 3 ? '#eab308' : '') + ';color:' + (activeStepNum === 3 ? '#fde047' : '') + '">' +
-                (!step2Done ? '🔒 Locked · Complete Step 2 First' : (step3Done ? '✓ Step 3 Complete' : '▶ Next Action · Step 3')) +
-              '</span>' +
-              '<strong style="font-size:13px;color:#fff">Qualified Profile &amp; Data Preferences</strong>' +
+              '<strong style="font-size:13px;color:#fff">Step 3 · Qualified Profile &amp; Data Preferences</strong>' +
             '</div>' +
           '</div>' +
           '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">' +
@@ -844,9 +781,6 @@
         '<!-- STEP 4: FINISH & LAUNCH (LOCKED UNTIL STEP 3 COMPLETE) -->' +
         '<div id="ottoStep4Section" data-locked="' + String(!step3Done) + '" class="row" style="padding-top:10px;border-top:1px solid rgba(148,163,184,0.2);justify-content:space-between;opacity:' + (step3Done ? '1' : '0.55') + '">' +
           '<div style="display:flex;align-items:center;gap:8px">' +
-            '<span id="ottoStep4Badge" class="chip ' + (step3Done ? 'ok' : '') + '" style="font-size:10px;border-color:' + (step3Done ? '#eab308' : '') + ';color:' + (step3Done ? '#fde047' : '') + '">' +
-              (step3Done ? '▶ Step 4 Ready · Finish Setup' : '🔒 Step 4 Locked · Complete Steps 1–3') +
-            '</span>' +
             '<span style="font-size:11.5px;color:#94a3b8">Only your authorized apps and qualified resources are shown.</span>' +
           '</div>' +
           '<button type="button" class="btn pri" id="btnSaveNetflixOnboarding" ' + (!step3Done ? 'disabled ' : '') + 'style="padding:9px 22px;font-size:13px;cursor:' + (step3Done ? 'pointer' : 'not-allowed') + '">Finish &amp; Launch with Otto</button>' +
@@ -858,7 +792,7 @@
   function render() {
     u = W.me();
     if (!u) {
-      app.innerHTML = '<div class="card lock"><span class="chip warn">Authentication Required</span><h1 style="margin-top:10px">Sign In Required</h1><p>Sign in with your account credentials or Federated SSO to access your workspace.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In</a></div></div>';
+      app.innerHTML = '<div class="card lock"><h1 style="margin-top:4px">Sign In Required</h1><p>Sign in with your account credentials or Federated SSO to access your workspace.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In</a></div></div>';
       W.header('member-portal.html');
       return;
     }
@@ -877,16 +811,11 @@
     const activeTabEntry = availableTabs.find(t => t[0] === tab) || availableTabs[0];
     const body = activeTabEntry[2]();
 
-    const grantedFeatureLinks = isAccessClientUser()
-      ? []
-      : W.CATALOG.filter(c => c.id !== 'saasapps' && c.id !== 'home' && c.id !== 'resources' && (!isEmp() || c.id !== 'finance') && W.can(u, 'page', c.id, 'view'));
-
     const sideNav = '<aside class="ws-side" aria-label="Authorized User Navigation">' +
       '<div class="ws-side-title">' + (isAccessClientUser() ? 'Access Portal' : 'Workspace') + '</div>' +
       availableTabs.map(t => '<button type="button" class="ws-nav-btn' + (t[0] === tab ? ' active' : '') + '" data-tab="' + t[0] + '"><span>' + t[1] + '</span></button>').join('') +
-      '<a class="ws-nav-btn" href="saas-apps-and-lms-showcase.html" style="text-decoration:none"><span>SaaS &amp; LMS Showcase</span></a>' +
-      grantedFeatureLinks.map(c => '<a class="ws-nav-btn" href="' + esc(c.href) + '" style="text-decoration:none"><span>' + esc(c.title) + '</span></a>').join('') +
-      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.42);color:#fde047"><span>MGC Directory &amp; RBAC</span></a>' : '') +
+      ((!isAccessClientUser() && (isSoleAdmin() || W.can(u, 'page', 'agile', 'view'))) ? '<a class="ws-nav-btn" href="agile-board.html" style="text-decoration:none"><span>Agile Delivery</span></a>' : '') +
+      (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.42);color:#fde047"><span>Directory &amp; Console</span></a>' : '') +
       (isEmp() ? '<a class="ws-nav-btn" href="access-admin.html?tab=users&amp;ou=external" style="text-decoration:none;border-color:rgba(59,130,246,0.42);color:#93c5fd"><span>Client Directory</span></a>' : '') +
       '</aside>';
 
@@ -1381,138 +1310,5 @@
   render();
 })();
 </script>
-
-<!-- SCORM 2004 4TH EDITION + DUAL CITYSCAPE (F.I.X. & MILTONGROUPSECURITY.ORG) LAYER -->
-<style id="mgc-fix-scorm-cityscape-style">
-  body { position: relative; isolation: isolate; }
-  body > *:not(#mgc-fix-bg-image):not(#mgc-fix-skyscraper-overlay):not(#mgc-scorm-floating-dock):not(#dual-cityscape-bg):not(#dual-cityscape-overlay):not(#mgc-skyscraper-layer):not(.thematic-city-backdrop):not(.toast):not(#netflixOnboardingBackdrop):not(script):not(style):not(link) {
-    position: relative;
-    z-index: 5;
-  }
-  header, nav, main, section, .container, .wrap, .main-grid, .portal-grid, .stepper, .hero, .hero-banner, .top-nav, .topbar {
-    position: relative;
-    z-index: 5;
-  }
-  header, .hero, .hero-banner, .top-nav, .topbar {
-    background-color: rgba(7, 12, 24, 0.96) !important;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-  }
-  .card, .panel, .portal-item, .step, .stat-card, .hub-card, .glass-card, .module-card, .section-card, .eveng-console-pane, .theory-box, .kpi-card, .box, .tile, .feature-card, .metric-card, .control-card, .workflow-card, .product-card, .radar-card {
-    background-color: rgba(9, 16, 32, 0.96) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-color: rgba(148, 163, 184, 0.34) !important;
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    position: relative;
-    z-index: 5;
-  }
-  #mgc-fix-bg-image {
-    position: fixed;
-    inset: -5%;
-    z-index: -10 !important;
-    pointer-events: none;
-    background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=2500');
-    background-size: 118% 118%;
-    background-position: 50% 50%;
-    opacity: 0.20;
-    mix-blend-mode: normal !important;
-    filter: grayscale(30%) contrast(118%) brightness(50%) sepia(24%) hue-rotate(185deg);
-    transition: filter 0.8s ease, background-position 1s ease, opacity 0.5s ease;
-  }
-  #mgc-fix-skyscraper-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: -9 !important;
-    pointer-events: none;
-    opacity: 0.75;
-    mix-blend-mode: normal !important;
-    transition: opacity 0.6s ease;
-  }
-  @keyframes waveFlagInjected {
-    0%, 100% { transform: skewY(0deg) scaleX(1); }
-    35% { transform: skewY(3.5deg) scaleX(0.93); }
-    70% { transform: skewY(-2.5deg) scaleX(0.97); }
-  }
-  #mgc-scorm-floating-dock {
-    position: fixed;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    background: rgba(11, 20, 38, 0.94);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(197, 179, 88, 0.48);
-    border-radius: 999px;
-    padding: 7px 16px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
-    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-    font-size: 11.5px;
-    color: #f8fafc;
-    max-width: 96vw;
-  }
-  #mgc-scorm-floating-dock a, #mgc-scorm-floating-dock button, #mgc-scorm-floating-dock select {
-    font-size: 11px;
-    font-weight: 700;
-    border-radius: 999px;
-    padding: 4px 10px;
-    cursor: pointer;
-    text-decoration: none;
-  }
-</style>
-<div id="mgc-fix-bg-image" aria-hidden="true"></div>
-<div id="mgc-fix-skyscraper-overlay" aria-hidden="true">
-  <div style="position:absolute;top:0;left:0;width:100%;height:65vh;background:linear-gradient(180deg,rgba(249,115,22,0.18),rgba(197,179,88,0.10),transparent);"></div>
-  <div style="position:absolute;bottom:0;right:4%;width:180px;height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;opacity:0.55;">
-    <div style="position:relative;width:3px;height:74px;background:#cbd5e1;margin-bottom:-4px;">
-      <div style="position:absolute;top:3px;left:3px;width:74px;height:44px;transform-origin:left center;animation:waveFlagInjected 2.6s infinite ease-in-out;">
-        <svg viewBox="0 0 60 40" style="width:100%;height:100%;border-radius:2px;">
-          <rect width="60" height="40" fill="#fff"/>
-          <rect width="60" height="3.07" y="0" fill="#b22234"/><rect width="60" height="3.07" y="6.15" fill="#b22234"/><rect width="60" height="3.07" y="12.3" fill="#b22234"/><rect width="60" height="3.07" y="18.46" fill="#b22234"/><rect width="60" height="3.07" y="24.61" fill="#b22234"/><rect width="60" height="3.07" y="30.76" fill="#b22234"/><rect width="60" height="3.07" y="36.92" fill="#b22234"/>
-          <rect width="24" height="21.5" fill="#3c3b6e"/>
-        </svg>
-      </div>
-    </div>
-    <div style="width:45px;height:60px;background:rgba(11,20,38,0.9);border-top:1px solid rgba(197,179,88,0.4);"></div>
-    <div style="width:110px;height:100px;background:rgba(11,20,38,0.92);border-top:1px solid rgba(197,179,88,0.4);"></div>
-    <div style="width:180px;flex:1;background:rgba(11,20,38,0.95);border-top:1px solid rgba(197,179,88,0.5);"></div>
-  </div>
-</div>
-
-<script src="projects/spanish-acquisition-os/src/modules/scorm_adapter.js"></script>
-<script>
-  window.switchInjectedCityscape = function(mode) {
-    var bg = document.getElementById('mgc-fix-bg-image');
-    var sky = document.getElementById('mgc-fix-skyscraper-overlay');
-    if (!bg || !sky) return;
-    if (mode === 'mgc-cityscape') {
-      sky.style.opacity = '1';
-      bg.style.filter = 'contrast(122%) brightness(65%) saturate(130%)';
-    } else if (mode === 'noir-greyscale') {
-      sky.style.opacity = '0';
-      bg.style.filter = 'grayscale(100%) contrast(138%) brightness(52%)';
-    } else if (mode === 'emerald-matrix') {
-      sky.style.opacity = '1';
-      bg.style.filter = 'grayscale(55%) sepia(40%) hue-rotate(115deg) saturate(190%) contrast(122%) brightness(54%)';
-    } else {
-      sky.style.opacity = '0';
-      bg.style.filter = 'grayscale(30%) contrast(118%) brightness(58%) sepia(24%) hue-rotate(185deg)';
-    }
-    bg.style.backgroundPosition = (30 + Math.floor(Math.random() * 45)) + '% ' + (30 + Math.floor(Math.random() * 45)) + '%';
-  };
-  window.commitInjectedScorm = function() {
-    if (typeof SAOS_SCORM !== 'undefined') {
-      SAOS_SCORM.set('cmi.completion_status', 'completed');
-      SAOS_SCORM.set('cmi.success_status', 'passed');
-      SAOS_SCORM.commit();
-    }
-    alert('✓ SCORM 2004 4th Edition Completion committed (MGC_MEMBER_PORTAL_SCO)!');
-  };
-</script>
-
 </body>
 </html>

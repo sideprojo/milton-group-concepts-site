@@ -1507,7 +1507,7 @@ const SECURITY_HEADERS = {
   'X-Frame-Options': 'SAMEORIGIN',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(self), geolocation=(self)',
-  'Content-Security-Policy': "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; connect-src 'self' https:; frame-ancestors 'self'; base-uri 'self'"
+  'Content-Security-Policy': "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; connect-src 'self' https:; frame-ancestors 'self'; base-uri 'self'"
 };
 
 const DANGEROUS_PAYLOAD_REGEX = /<\s*\/?\s*(script|iframe|object|embed|svg|math|meta|link|style|base)\b|javascript\s*:|vbscript\s*:|data\s*:\s*text\/html|on(load|error|click|mouseover|focus|blur|submit|input|change|keydown)\s*=|(\b(UNION\s+SELECT|DROP\s+TABLE|INSERT\s+INTO|DELETE\s+FROM|UPDATE\s+\w+\s+SET|xp_cmdshell)\b)|(\{\{[\s\S]*?\}\}|\$\{[\s\S]*?\})|(__proto__|prototype\s*\[|constructor\s*\[)/i;
@@ -5252,9 +5252,11 @@ const server = http.createServer(async (req, res) => {
           'Return to Workspace →'
         ));
       }
+      res.writeHead(302, { Location: '/access-admin', 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
+      return res.end();
     }
 
-    // Gate the 16 root internal portals: Owner has full access
+    // Gate the root internal portals: Owner has full access; consolidate legacy internal pages into persistent Workspace / Console / Standalone SaaS Apps
     if (!cleanRel.startsWith('projects/') && INTERNAL_PORTALS.has(baseName) && baseName !== 'access-admin.html' && baseName !== 'admin-command-portal.html' && baseName !== 'onboarding-portal.html') {
       if (!u) {
         return redirectToCleanAuth(baseName);
@@ -5269,10 +5271,29 @@ const server = http.createServer(async (req, res) => {
             u,
             'Restricted Feature · Administrator Grant Required',
             'Your account is configured for SaaS Apps & LMS and Legal & Secure Payment Submission. Only features explicitly granted to your account by the Administrator are accessible.',
-            '/apps',
-            'Open SaaS Apps & LMS →'
+            '/workspace',
+            'Open Workspace →'
           ));
         }
+      }
+      const CONSOLIDATED_INTERNAL_TARGETS = {
+        'saas-apps-and-lms-showcase.html':      '/workspace',
+        'index.html':                           '/workspace',
+        'finance-command.html':                 isOwnerUser(u) ? '/access-admin?tab=payments' : '/workspace?view=payment',
+        'agent-workflow-studio.html':           isOwnerUser(u) ? '/access-admin?tab=agents' : '/workspace?view=resources',
+        'compliance-trust-center.html':         isOwnerUser(u) ? '/access-admin?tab=groups' : '/workspace',
+        'whitefeather-ecommerce-hub.html':      '/workspace?view=resources',
+        'integrations-connections-hub.html':    '/workspace?view=resources',
+        'sdvosb-contract-radar.html':           '/projects/samgov-contract-matchmaker/index.html',
+        'elearning-upskilling-hub.html':        '/projects/eveng-netprism-studio/index.html',
+        'historical-archaeology-ai-hub.html':   '/projects/chronos-aetheria-scorm/index.html',
+        'chronos-external-insight-webapp.html': '/projects/chronos-aetheria-scorm/index.html',
+        'earth-3d.html':                        '/projects/chronos-aetheria-scorm/index.html',
+        'vr-command.html':                      '/projects/ghost-cli-trainer/index.html'
+      };
+      if (CONSOLIDATED_INTERNAL_TARGETS[baseName]) {
+        res.writeHead(302, { Location: CONSOLIDATED_INTERNAL_TARGETS[baseName], 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
+        return res.end();
       }
     }
 
