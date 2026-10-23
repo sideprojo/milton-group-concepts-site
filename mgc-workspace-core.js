@@ -520,7 +520,9 @@
   const me = () => {
     if (localStorage.getItem('mgc_edge_gate_locked') === '1') return null;
     if (S.currentUser && S.users[S.currentUser]) return S.users[S.currentUser];
-    // Bridge with OS Federated SSO Session (must be Google, Microsoft, or Apple SSO)
+    // When running against the HTTP/HTTPS server, the signed HttpOnly mgcw_session cookie (S.currentUser) is the sole source of truth
+    if (serverSyncOk) return null;
+    // Offline file: mode bridge with OS Federated SSO Session (must be Google, Microsoft, or Apple SSO)
     try {
       const osSess = JSON.parse(localStorage.getItem('mgc_onboarded_session') || 'null');
       if (osSess && osSess.email && osSess.ssoVerified === true && ALLOWED_SSO.includes(String(osSess.ssoProvider || '').toLowerCase())) {
@@ -604,24 +606,26 @@
   }
 
   const signInAs = (id, provider = 'google', mfaCode = '') => {
+    if (!id || ['client', 'ana', 'ben', 'cara'].includes(String(id).toLowerCase())) return;
     const cleanProv = ALLOWED_SSO.includes(String(provider || '').toLowerCase()) ? String(provider).toLowerCase() : 'google';
     const u = S.users[id];
     if (!u) return;
-    // Strict guard: signing in as owner requires server verification with mfaCode
-    if (u.role === 'owner' && serverSyncOk && S.currentUser !== 'owner' && !mfaCode) {
-      return;
-    }
-    if (serverSyncOk && u.email && cleanProv !== 'password') {
+    // Strict guard: when connected to HTTP/HTTPS server, require active server session or server verification
+    if (serverSyncOk && S.currentUser !== id) {
+      if (u.role === 'owner' && !mfaCode) return;
+      if (!u.email || cleanProv === 'password') return;
       try {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/api/auth/sso', false);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({ provider: cleanProv, email: u.email, mfaCode: mfaCode || undefined }));
         if (xhr.status !== 200) return;
+        S.currentUser = id;
       } catch (_) {
         return;
       }
     }
+    if (!serverSyncOk) S.currentUser = id;
     const isAdminUser = u.role === 'owner' && u.id === 'owner';
     const isWs = !isAdminUser && (['google', 'microsoft', 'apple'].includes(cleanProv) || u.workspaceConnected === true);
     u.ssoProvider = cleanProv;
@@ -2016,7 +2020,21 @@
     try {
       const pathLower = location.pathname.toLowerCase();
       const file = (pathLower.split('/').pop() || '').toLowerCase();
-      if (isMobileClientDevice() && !pathLower.includes('mobile') && !pathLower.includes('auth') && !pathLower.includes('login') && !pathLower.includes('/projects/')) {
+      const qs = new URLSearchParams(location.search);
+      const isStandaloneMobileRoute =
+        pathLower.includes('mobile') ||
+        pathLower.includes('auth') ||
+        pathLower.includes('login') ||
+        pathLower.includes('portal') ||
+        pathLower.includes('consultation') ||
+        pathLower.includes('newsletter') ||
+        pathLower.includes('apps') ||
+        pathLower.includes('access-admin') ||
+        pathLower.includes('command') ||
+        pathLower.includes('/projects/') ||
+        qs.get('onboard') === '1' ||
+        qs.get('desktop') === '1';
+      if (isMobileClientDevice() && !isStandaloneMobileRoute) {
         location.replace('/mobile' + (location.hash || ''));
         return;
       }
@@ -2332,5 +2350,5 @@
     }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, isMobileClientDevice, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

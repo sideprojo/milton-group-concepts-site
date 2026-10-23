@@ -2418,6 +2418,19 @@ const server = http.createServer(async (req, res) => {
           logAudit(existingCustomer.id, 'security.user_password_failed', `Case-sensitive password mismatch for ${email}`);
           return sendJson(res, 403, { ok: false, error: 'Invalid email/username or password (passwords are case-sensitive).' });
         }
+      } else if (existingDirUser && existingDirUser.passwordDigest && existingDirUser.ssoProvider === 'password' && !jwksVerified) {
+        // Prevent unauthenticated SSO takeover of an existing password-protected account without OIDC JWKS / state verification or active session
+        const activeCaller = getAuthenticatedUser(req);
+        const isSameSession = Boolean(activeCaller && activeCaller.id === existingDirUser.id);
+        const oidcCookieClaims = verifyToken(parseCookies(req).mgcw_oidc_state);
+        const hasValidPassword = Boolean(body.password && mgcDigest(String(body.password)) === existingDirUser.passwordDigest);
+        if (!isSameSession && !oidcCookieClaims && !hasValidPassword) {
+          logAudit(existingDirUser.id, `security.sso_password_bypass_blocked.${provider}`, `Blocked unverified SSO login for password-protected account ${email}`);
+          return sendJson(res, 403, {
+            ok: false,
+            error: 'This account is protected by a password. Sign in with your Username/Email & Password first, or complete Federated OAuth verification.'
+          });
+        }
       }
       const user = findOrCreateUserByEmail(email, name, SSO_PROVIDER_LABELS[provider], provider);
       if (!user || user.status === 'denied' || user.status === 'suspended') {
@@ -3188,8 +3201,12 @@ const server = http.createServer(async (req, res) => {
       const caller = getAuthenticatedUser(req);
       const isAdminCaller = Boolean(caller && caller.role === 'owner' && caller.id === 'owner');
       const isEmpCaller = isEmployeeUser(caller);
+      const isGuidedReg = Boolean(d.guidedRegistration || pathname === '/api/auth/register');
+      if (isGuidedReg && d.tosAccepted === false) {
+        return sendJson(res, 400, { ok: false, error: 'Terms of Service Required: You must review and accept the MGC Master Terms of Service, Privacy Notice, and Mutual NDA.' });
+      }
       const rawUsernameInput = String(d.username || '').trim().toLowerCase();
-      if (d.guidedRegistration && !rawUsernameInput) {
+      if (isGuidedReg && !rawUsernameInput) {
         return sendJson(res, 400, { ok: false, error: 'Username is mandatory for portal registration and logon (not optional).' });
       }
       let cleanUsername = sanitizeInput(rawUsernameInput || cleanEmail.split('@')[0], 60).toLowerCase();
@@ -3251,7 +3268,7 @@ const server = http.createServer(async (req, res) => {
           error: 'SECURITY ENFORCEMENT: Generic or default passwords are prohibited. Choose a unique case-sensitive password (8+ characters).'
         });
       }
-      if (d.guidedRegistration && (rawProv === 'password' || rawPassword || empRec.isAssignedEmployee)) {
+      if (isGuidedReg && (rawProv === 'password' || rawPassword || empRec.isAssignedEmployee)) {
         const pwLenOk = rawPassword.length >= 8 && rawPassword.length <= 128;
         const pwUpper = /[A-Z]/.test(rawPassword);
         const pwLower = /[a-z]/.test(rawPassword);
@@ -3268,7 +3285,7 @@ const server = http.createServer(async (req, res) => {
       const cleanRecoveryEmail = sanitizeInput(d.recoveryEmail || '', 140).toLowerCase();
       const cleanPhone = sanitizeInput(d.phone || '', 32);
       const phoneDigits = cleanPhone.replace(/\D/g, '');
-      if (d.guidedRegistration) {
+      if (isGuidedReg) {
         if (!cleanRecoveryEmail || !/^\S+@\S+\.\S+$/.test(cleanRecoveryEmail)) {
           return sendJson(res, 400, { ok: false, error: 'A valid Recovery Email is required to complete registration.' });
         }
@@ -3277,7 +3294,7 @@ const server = http.createServer(async (req, res) => {
         }
         const emailVerRec = S.emailVerifications && S.emailVerifications[cleanEmail];
         const tokenClaims = d.emailVerificationToken ? verifyToken(d.emailVerificationToken) : null;
-        const isEmailVerified = Boolean((emailVerRec && emailVerRec.verified) || (tokenClaims && tokenClaims.emailVerified && tokenClaims.email === cleanEmail) || d.emailVerified === true);
+        const isEmailVerified = Boolean((emailVerRec && emailVerRec.verified) || (tokenClaims && tokenClaims.emailVerified && tokenClaims.email === cleanEmail) || (pathname !== '/api/auth/register' && d.emailVerified === true) || isAdminCaller || isEmpCaller);
         if (!isEmailVerified) {
           return sendJson(res, 400, { ok: false, error: 'Email Verification Required: Please verify your Primary Email with the 6-digit verification code on Page 2 before completing registration.' });
         }
@@ -3299,7 +3316,7 @@ const server = http.createServer(async (req, res) => {
           assignedByAdmin: true,
           mustResetPassword: Boolean(d.mustResetPassword !== false)
         };
-      } else if (empRec.isAssignedEmployee && S.employeeAssignedUsernames && S.employeeAssignedUsernames[cleanUsername] && d.guidedRegistration) {
+      } else if (empRec.isAssignedEmployee && S.employeeAssignedUsernames && S.employeeAssignedUsernames[cleanUsername] && isGuidedReg) {
         S.employeeAssignedUsernames[cleanUsername].mustResetPassword = false;
         S.employeeAssignedUsernames[cleanUsername].passwordResetAt = now();
       }
@@ -3311,7 +3328,7 @@ const server = http.createServer(async (req, res) => {
         postalCode: sanitizeInput(rawAddr.postalCode || rawAddr.zip || d.postalCode || '', 24)
       };
       // Physical Address is now mandatory for ALL users (both Client users and Employee users) during guided registration
-      if (d.guidedRegistration) {
+      if (isGuidedReg) {
         if (!cleanAddress.streetAddress || !cleanAddress.city || !cleanAddress.stateRegion || !cleanAddress.postalCode) {
           return sendJson(res, 400, {
             ok: false,
@@ -5149,13 +5166,6 @@ const server = http.createServer(async (req, res) => {
         cleanRel = stripped;
       }
     }
-    // Enforce Mobile-Only Minimalist Control & Workflow Experience when accessed from a mobile device
-    const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
-    const isExplicitAuthRoute = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html';
-    if (isHtmlRoute && !isExplicitAuthRoute && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
-      cleanRel = 'mobile-control.html';
-    }
-
     const baseName = path.basename(cleanRel);
 
     if (BLOCKED_FILES.has(baseName) || cleanRel.startsWith('.')) {
@@ -5259,6 +5269,13 @@ const server = http.createServer(async (req, res) => {
           ));
         }
       }
+    }
+
+    // Enforce Mobile-Only Minimalist Control & Workflow Experience AFTER all authentication & RBAC gates pass
+    const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
+    const isStandaloneMobilePage = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html' || pathname === '/newsletter' || pathname === '/newsletter.html' || pathname === '/apps' || pathname === '/saas-apps-and-lms-showcase.html' || baseName === 'access-admin.html' || baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html' || parsedUrl.searchParams.get('onboard') === '1';
+    if (isHtmlRoute && !isStandaloneMobilePage && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
+      cleanRel = 'mobile-control.html';
     }
 
     const filePath = path.resolve(ROOT, cleanRel);

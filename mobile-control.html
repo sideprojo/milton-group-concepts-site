@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; connect-src 'self' https:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="theme-color" content="#040814" />
   <title>MGC &amp; F.I.X | Mobile Control &amp; Workflow Deck</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -489,17 +491,26 @@
       }
     }
 
+    function getSessionRoleLabel(u) {
+      if (!u) return { badge: 'UNAUTHENTICATED', sub: 'Zero-Trust Auth Required' };
+      if (W.isOwner && W.isOwner(u)) return { badge: 'OWNER CONTROL', sub: 'Sole Administrator · 10m Guard' };
+      if (W.isEmployee && W.isEmployee(u)) return { badge: 'STAFF OPERATIONS', sub: 'OU=Internal · MFA Verified · 10m Guard' };
+      if (W.isWorkspaceClient && W.isWorkspaceClient(u)) return { badge: 'WORKSPACE DECK', sub: 'Workspace Client (' + String(u.ssoProvider || 'OIDC').toUpperCase() + ') · 10m Guard' };
+      return { badge: 'SHOWCASE ACCESS', sub: 'Access Client · Showcase & Insights · 10m Guard' };
+    }
+
     function renderHeader(u) {
       if (u) {
-        hdrTitle.textContent = (u.brand === 'FIX' ? 'F.I.X' : 'MGC') + ' // ' + (u.role === 'owner' ? 'OWNER CONTROL' : 'WORKFLOW DECK');
-        hdrSub.textContent = u.name + ' · ' + (u.role === 'owner' ? 'Full Control' : 'Active Session');
+        const meta = getSessionRoleLabel(u);
+        hdrTitle.textContent = (u.brand === 'FIX' ? 'F.I.X' : 'MGC') + ' // ' + meta.badge;
+        hdrSub.textContent = u.name + ' · ' + meta.sub;
         hdrAuth.innerHTML = '<button type="button" class="m-btn inline" id="mBtnSignOut" aria-label="Sign out of session">🔒 Sign Out</button>';
         const so = document.getElementById('mBtnSignOut');
         if (so) so.onclick = () => W.signOut();
       } else {
         hdrTitle.textContent = 'MGC // MOBILE';
-        hdrSub.textContent = 'Control & Workflow Access';
-        hdrAuth.innerHTML = '<a href="/auth" class="m-btn pri inline" aria-label="Sign in with Single Sign-On">🔑 SSO Sign In</a>';
+        hdrSub.textContent = 'Zero-Trust Authentication & Control';
+        hdrAuth.innerHTML = '<a href="/auth" class="m-btn pri inline" aria-label="Sign in to Workspace">🔑 Sign In</a>';
       }
     }
 
@@ -507,46 +518,53 @@
     function renderControlTab(u) {
       if (!u) {
         return `
-          <section class="m-pane" aria-label="Public Control and Access">
+          <section class="m-pane" aria-label="Zero-Trust Mobile Authentication Gate">
             <div class="m-card priority">
               <div class="m-row" style="margin-bottom:8px">
                 <span class="m-pill ok">● ZERO-TRUST MOBILE</span>
                 <span class="m-pill blue">SDVOSB · EIN 92-1370285</span>
               </div>
-              <h1>Executive Control &amp; Workflow Access</h1>
-              <p>Mobile access is streamlined for rapid sign-in, project workflow control, and direct dispatch without desktop feature clutter.</p>
+              <h1>Verified Mobile Authentication</h1>
+              <p>Sign in with your verified credentials or Federated OIDC identity (Google, Microsoft Entra ID, or Apple). All sessions are protected by signed HttpOnly cookies and a 10-minute inactivity guard.</p>
               <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
-                <a href="/auth" class="m-btn pri">🔑 Continue with Federated SSO →</a>
+                <a href="/auth" class="m-btn pri" id="btnMobileClientSignIn">🔑 Client Sign In (Password / OIDC) →</a>
                 <div class="m-grid-2">
-                  <a href="/auth?mode=register" class="m-btn">✨ Register Account</a>
-                  <button type="button" class="m-btn" id="btnQuickCustomer">🛡️ Customer View</button>
+                  <a href="/auth?mode=register" class="m-btn" id="btnMobileRegister">✨ 3-Page Registration</a>
+                  <a href="/employee-login" class="m-btn" id="btnMobileStaffLogin">🛡️ Staff Logon</a>
                 </div>
-                <button type="button" class="m-btn" data-jump-tab="briefings">📰 Read MGC Executive Newsletter</button>
               </div>
             </div>
 
             <div class="m-card">
-              <h2>Quick Operational Dispatch</h2>
-              <p>Request an immediate briefing or project workflow activation.</p>
-              <form id="mQuickIntakeForm" novalidate>
-                <label class="sr-only" for="mqName">Your Name</label>
-                <input class="m-input" id="mqName" name="name" type="text" placeholder="Full Name" required autocomplete="name" />
-                <label class="sr-only" for="mqEmail">Work or SSO Email</label>
-                <input class="m-input" id="mqEmail" name="email" type="email" placeholder="Work or SSO Email" required autocomplete="email" />
-                <label class="sr-only" for="mqInterest">Workflow Focus</label>
-                <select class="m-select" id="mqInterest" name="interest" aria-label="Workflow Focus">
-                  <option value="federal">🏛️ Federal &amp; SDVOSB Contracting</option>
-                  <option value="cyber">🔒 Cyber &amp; Zero-Trust Compliance</option>
-                  <option value="ai-web">🤖 AI Receptionist &amp; Web Automation</option>
-                  <option value="training">🎓 Technical Upskilling &amp; Labs</option>
-                </select>
-                <button type="submit" class="m-btn gold">⚡ Activate Mobile Workspace →</button>
-              </form>
+              <div class="m-row" style="margin-bottom:6px">
+                <h2>Federated OAuth 2.0 / OIDC</h2>
+                <span class="m-pill blue">RS256 JWKS</span>
+              </div>
+              <p>Connect your organizational Workspace directly to unlock Tier 3 Workspace &amp; Otto Agent flows:</p>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+                <a href="/api/auth/oauth/start?provider=google" class="m-btn" style="justify-content:space-between">
+                  <span>🌐 Continue with Google Workspace</span>
+                  <span>OIDC →</span>
+                </a>
+                <a href="/api/auth/oauth/start?provider=microsoft" class="m-btn" style="justify-content:space-between">
+                  <span>💠 Continue with Microsoft Entra ID</span>
+                  <span>OIDC →</span>
+                </a>
+                <a href="/api/auth/oauth/start?provider=apple" class="m-btn" style="justify-content:space-between">
+                  <span>🍎 Continue with Apple ID</span>
+                  <span>OIDC →</span>
+                </a>
+              </div>
             </div>
 
             <div class="m-card">
-              <h2>Direct Command Lines</h2>
-              <div class="m-grid-2" style="margin-top:8px">
+              <h2>Public Executive Channels</h2>
+              <p>Schedule an architectural consultation or read monthly intelligence briefings:</p>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+                <a href="/consultation" class="m-btn gold">📋 Submit Request &amp; Consultation →</a>
+                <button type="button" class="m-btn" data-jump-tab="briefings">📰 Read MGC Executive Newsletter</button>
+              </div>
+              <div class="m-grid-2" style="margin-top:10px">
                 <a href="tel:8047605797" class="m-btn">📞 Call 804-760-5797</a>
                 <a href="mailto:contact@miltongroupsecurity.org" class="m-btn">✉️ Email Ops</a>
               </div>
@@ -555,7 +573,21 @@
         `;
       }
 
-      if (u.role === 'owner') {
+      const isAdmin = W.isOwner ? W.isOwner(u) : (u.role === 'owner' && u.id === 'owner');
+      const isEmp = W.isEmployee ? W.isEmployee(u) : (u.ou === 'internal' && !isAdmin);
+      const isWsClient = W.isWorkspaceClient ? W.isWorkspaceClient(u) : false;
+      const isAccClient = W.isAccessClient ? W.isAccessClient(u) : (!isAdmin && !isEmp && !isWsClient);
+      const ottoAgent = (W.getAgentsCatalog && W.getAgentsCatalog()[0]) || {
+        id: 'otto',
+        agentId: '38ef575f-bce0-4895-bf93-36605220e1ca',
+        name: 'Otto',
+        access: 'All domain users',
+        status: 'Active',
+        serviceIdentity: 'studio.workspace.google.com'
+      };
+      const canUseOtto = W.can ? W.can(u, 'agent', 'otto', 'view') : (isAdmin || isEmp || isWsClient);
+
+      if (isAdmin) {
         const members = Object.values(S().users).filter(x => x.role !== 'owner');
         const pendingReqs = members.filter(x => x.status === 'requested');
         const openTasks = S().tasks.filter(t => !t.done);
@@ -566,9 +598,9 @@
               <div style="padding:12px;border-radius:12px;background:rgba(4,8,20,0.85);border:1px solid var(--line);margin-bottom:8px">
                 <div class="m-row" style="margin-bottom:6px">
                   <strong>${esc(x.name)}</strong>
-                  <span class="m-pill warn">${esc((W.TAILOR[x.quote.interest] || {}).label || x.quote.interest)}</span>
+                  <span class="m-pill warn">${esc(((W.TAILOR[x.quote && x.quote.interest] || {}).label) || (x.quote && x.quote.interest) || 'Workspace')}</span>
                 </div>
-                <p style="font-size:12px;margin-bottom:10px">${esc(x.email)} · ${esc(x.brand)}</p>
+                <p style="font-size:12px;margin-bottom:10px">${esc(x.email)} · ${esc(x.brand || 'MGC')}</p>
                 <div class="m-grid-2">
                   <button type="button" class="m-btn ok" data-approve="${esc(x.id)}">✓ Approve</button>
                   <button type="button" class="m-btn" data-deny="${esc(x.id)}">✕ Deny</button>
@@ -581,11 +613,11 @@
           <section class="m-pane" aria-label="Owner Command Controls">
             <div class="m-card priority">
               <div class="m-row" style="margin-bottom:8px">
-                <span class="m-pill ok">👑 OWNER CONTROL DECK</span>
-                <span class="m-pill blue">$0.00 IDLE GUARD</span>
+                <span class="m-pill ok">👑 SOLE ADMINISTRATOR</span>
+                <span class="m-pill blue">10M INACTIVITY GUARD</span>
               </div>
               <h1>Command &amp; Approvals</h1>
-              <p>Manage incoming access approvals, customer entitlements, and live sprint workflows.</p>
+              <p>Authenticated as <b>${esc(u.email)}</b>. Full Directory, RBAC, and Agent Access governance.</p>
               <div class="m-grid-2" style="margin-top:10px">
                 <div style="padding:10px 12px;border-radius:12px;background:rgba(4,8,20,0.8);border:1px solid var(--line)">
                   <span style="font-size:11px;color:var(--mut);display:block">Pending Approvals</span>
@@ -596,6 +628,24 @@
                   <strong style="font-size:20px;color:var(--blue-bright)">${openTasks.length}</strong>
                 </div>
               </div>
+              <div class="m-grid-2" style="margin-top:10px">
+                <a href="/access-admin?desktop=1" class="m-btn pri">🛡️ Directory &amp; RBAC</a>
+                <a href="/command?desktop=1" class="m-btn">⚡ Command Portal</a>
+              </div>
+            </div>
+
+            <div class="m-card">
+              <div class="m-row" style="margin-bottom:6px">
+                <h2>🤖 Otto Agent Governance</h2>
+                <span class="m-pill ${ottoAgent.status === 'Active' ? 'ok' : 'warn'}">${esc(ottoAgent.status)}</span>
+              </div>
+              <p style="font-size:12px">ID: <code>${esc(ottoAgent.agentId)}</code> · ${esc(ottoAgent.serviceIdentity || 'studio.workspace.google.com')}</p>
+              <label class="sr-only" for="mOttoAccessSel">Otto Access Policy</label>
+              <select class="m-select" id="mOttoAccessSel" aria-label="Otto Access Policy">
+                <option value="All domain users" ${ottoAgent.access === 'All domain users' ? 'selected' : ''}>Access: All domain users (Default)</option>
+                <option value="Restricted" ${ottoAgent.access === 'Restricted' ? 'selected' : ''}>Access: Restricted (Explicit Grant)</option>
+              </select>
+              <button type="button" class="m-btn ok" id="mBtnUpdateOttoAgent">✓ Save Otto Agent Access Policy</button>
             </div>
 
             <div class="m-card">
@@ -621,24 +671,100 @@
         `;
       }
 
-      // Authenticated Customer / Member Control View
+      if (isEmp) {
+        const externalClients = Object.values(S().users).filter(x => x.role !== 'owner' && x.ou !== 'internal');
+        const pendingClientReqs = externalClients.filter(x => x.status === 'requested');
+        const unlockedApps = (W.APPS_CATALOG || []).filter(a => W.can(u, 'app', a.id, 'view'));
+
+        return `
+          <section class="m-pane" aria-label="Internal Staff Operations Deck">
+            <div class="m-card priority">
+              <div class="m-row" style="margin-bottom:8px">
+                <span class="m-pill blue">🛡️ INTERNAL STAFF (OU=INTERNAL)</span>
+                <span class="m-pill ok">10M GUARD ACTIVE</span>
+              </div>
+              <h1>Staff Operations Deck</h1>
+              <p>Welcome, <b>${esc(u.name)}</b>. Scoped access to Client Intake (OU=External), authorized apps, and Otto Agent workflows. Zero payment/treasury access enforced.</p>
+              <div class="m-grid-2" style="margin-top:10px">
+                <a href="/employee-portal.html?desktop=1" class="m-btn pri">🛡️ Staff Workspace</a>
+                <a href="/apps" class="m-btn">🚀 Authorized Apps (${unlockedApps.length})</a>
+              </div>
+            </div>
+
+            <div class="m-card">
+              <div class="m-row" style="margin-bottom:6px">
+                <h2>🤖 Otto Autonomous Agent</h2>
+                <span class="m-pill ${canUseOtto ? 'ok' : 'warn'}">${canUseOtto ? '● ACTIVE' : 'LOCKED'}</span>
+              </div>
+              <p>Agent ID: <code>${esc(ottoAgent.agentId)}</code> · Operational intake triage &amp; associative templates ready.</p>
+            </div>
+
+            <div class="m-card">
+              <h2>Client Intake Queue (OU=External · ${pendingClientReqs.length})</h2>
+              ${pendingClientReqs.length ? pendingClientReqs.map(x => `
+                <div style="padding:12px;border-radius:12px;background:rgba(4,8,20,0.85);border:1px solid var(--line);margin-bottom:8px">
+                  <div class="m-row" style="margin-bottom:6px">
+                    <strong>${esc(x.name)}</strong>
+                    <span class="m-pill warn">Client Request</span>
+                  </div>
+                  <p style="font-size:12px;margin-bottom:10px">${esc(x.email)}</p>
+                  <button type="button" class="m-btn ok" data-approve="${esc(x.id)}">✓ Approve Client Intake</button>
+                </div>
+              `).join('') : '<p style="margin:0;color:var(--emerald-bright);font-weight:700">✓ All external client requests processed.</p>'}
+            </div>
+          </section>
+        `;
+      }
+
+      // Authenticated Client View (Tier 3 Workspace Client vs Tier 4 Access Client)
       const unlockedApps = (W.APPS_CATALOG || []).filter(a => W.can(u, 'app', a.id, 'view'));
       const lockedApps = (W.APPS_CATALOG || []).filter(a => !W.can(u, 'app', a.id, 'view'));
+      const interestLabel = ((W.TAILOR[u.quote && u.quote.interest] || {}).label) || 'Tailored Workspace';
 
       return `
         <section class="m-pane" aria-label="Customer Workspace Control">
           <div class="m-card priority">
             <div class="m-row" style="margin-bottom:8px">
-              <span class="m-pill ok">● ACTIVE SESSION</span>
-              <span class="m-pill warn">${unlockedApps.length} WORKFLOW APPS READY</span>
+              <span class="m-pill ${isWsClient ? 'ok' : 'warn'}">${isWsClient ? '🌐 WORKSPACE CLIENT (' + esc(String(u.ssoProvider || 'OIDC').toUpperCase()) + ')' : '🔒 ACCESS CLIENT (SHOWCASE & INSIGHTS)'}</span>
+              <span class="m-pill blue">10M GUARD</span>
             </div>
             <h1>Welcome, ${esc(u.name.split(' (')[0])}</h1>
-            <p>${esc((W.TAILOR[u.quote.interest] || {}).label || 'Tailored Workspace')} · Base membership is required for add-on modules.</p>
+            <p>${esc(interestLabel)} · ${isWsClient ? 'Workspace OAuth connected with full Otto Agent & workflow access.' : 'Signed in via password. Scoped to Showcase Apps & Insights until a Workspace is connected via OAuth.'}</p>
+            <div class="m-grid-2" style="margin-top:10px">
+              <a href="/apps" class="m-btn pri">🚀 Showcase Catalog</a>
+              <a href="/consultation" class="m-btn gold">📋 Consultation</a>
+            </div>
           </div>
 
+          ${isAccClient ? `
+          <div class="m-card" style="border-color:rgba(251,191,36,0.55)">
+            <div class="m-row" style="margin-bottom:6px">
+              <h2>🔗 Connect Workspace to Unlock Otto &amp; Workflows</h2>
+              <span class="m-pill warn">TIER UPGRADE</span>
+            </div>
+            <p>Access Clients have access strictly to Showcase Apps &amp; Insights. Connect your Google, Microsoft, or Apple Workspace via OAuth 2.0 / OIDC to unlock the <b>Otto Agent (${esc(ottoAgent.agentId)})</b>, Action Workflows, and Agile Sprints:</p>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+              <button type="button" class="m-btn pri" data-connect-ws="google">🌐 Connect Google Workspace (OIDC) →</button>
+              <div class="m-grid-2">
+                <button type="button" class="m-btn" data-connect-ws="microsoft">💠 Connect Microsoft</button>
+                <button type="button" class="m-btn" data-connect-ws="apple">🍎 Connect Apple</button>
+              </div>
+            </div>
+          </div>
+          ` : `
           <div class="m-card">
-            <h2>Active Workflow Launchers</h2>
-            <p>Direct access to your provisioned applications:</p>
+            <div class="m-row" style="margin-bottom:6px">
+              <h2>🤖 Otto Autonomous Agent</h2>
+              <span class="m-pill ${canUseOtto ? 'ok' : 'warn'}">${canUseOtto ? '● WORKSPACE ACTIVE' : 'RESTRICTED'}</span>
+            </div>
+            <p>Agent ID: <code>${esc(ottoAgent.agentId)}</code> · Guided Workspace Setup &amp; Associative AI Sequences unlocked for your connected Workspace.</p>
+            <a href="/workspace?onboard=1" class="m-btn ok" style="margin-top:6px">⚡ Open Otto Guided Workspace →</a>
+          </div>
+          `}
+
+          <div class="m-card">
+            <h2>${isAccClient ? 'Showcase Applications (Access Tier)' : 'Active Workflow Launchers'}</h2>
+            <p>${isAccClient ? 'Default Showcase Applications provisioned for your account:' : 'Direct access to your provisioned applications:'}</p>
             <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
               ${unlockedApps.map(a => `
                 <a href="/${esc(a.href)}" class="m-btn pri" style="justify-content:space-between">
@@ -649,7 +775,7 @@
             </div>
           </div>
 
-          ${lockedApps.length ? `
+          ${isWsClient && lockedApps.length ? `
           <div class="m-card">
             <h2>Request Additional Module Unlock</h2>
             <p>Need access to an enterprise simulator or radar module?</p>
@@ -667,12 +793,31 @@
     function renderWorkflowsTab(u) {
       if (!u) {
         return `
-          <section class="m-pane" aria-label="Workflows Preview">
+          <section class="m-pane" aria-label="Workflows Sign In Gate">
             <div class="m-card priority">
               <span class="m-pill warn">🔒 AUTHENTICATION REQUIRED</span>
               <h1 style="margin-top:8px">Action Checklists &amp; Workflows</h1>
-              <p>Sign in with Google, Microsoft, or Apple SSO to check off your tailored operational workflows and sync progress in real time.</p>
+              <p>Sign in with your verified account and connect Google, Microsoft, or Apple SSO to access tailored operational workflows and Otto Agent automation.</p>
               <a href="/auth" class="m-btn pri" style="margin-top:10px">🔑 Sign In to Access Workflows →</a>
+            </div>
+          </section>
+        `;
+      }
+
+      if (W.isAccessClient && W.isAccessClient(u)) {
+        return `
+          <section class="m-pane" aria-label="Workspace Connection Required for Workflows">
+            <div class="m-card priority">
+              <span class="m-pill warn">🔒 WORKSPACE CONNECTION REQUIRED</span>
+              <h1 style="margin-top:8px">Workspace OAuth Required for Workflows</h1>
+              <p>Your account is currently signed in as an <b>Access Client</b> (Showcase Apps &amp; Insights only). Connect your Google, Microsoft, or Apple Workspace to unlock operational checklists, automated pipelines, and the Otto Agent.</p>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+                <button type="button" class="m-btn pri" data-connect-ws="google">🌐 Connect Google Workspace →</button>
+                <div class="m-grid-2">
+                  <button type="button" class="m-btn" data-connect-ws="microsoft">💠 Microsoft SSO</button>
+                  <button type="button" class="m-btn" data-connect-ws="apple">🍎 Apple SSO</button>
+                </div>
+              </div>
             </div>
           </section>
         `;
@@ -700,7 +845,7 @@
         `;
       }
 
-      const tailor = W.TAILOR[u.quote.interest] || W.TAILOR.federal;
+      const tailor = W.TAILOR[(u.quote && u.quote.interest) || 'federal'] || W.TAILOR.federal;
       const chkKey = 'mgcw.chk.' + u.id;
       const chkState = JSON.parse(localStorage.getItem(chkKey) || '{}');
 
@@ -709,7 +854,7 @@
           <div class="m-card priority">
             <span class="m-pill ok">${esc(tailor.label)}</span>
             <h1 style="margin-top:6px">My Action Checklist</h1>
-            <p>Tap items as you complete them. Progress syncs to your workspace.</p>
+            <p>Tap items as you complete them. Progress syncs to your connected workspace.</p>
             <div style="margin-top:12px">
               ${tailor.actions.map((act, idx) => `
                 <label class="m-check-row ${chkState[idx] ? 'done' : ''}">
@@ -749,6 +894,25 @@
               <h1 style="margin-top:8px">Agile Sprint Control</h1>
               <p>Authenticate with Federated SSO to view shared project deliverables and update sprint stages from your mobile device.</p>
               <a href="/auth" class="m-btn pri" style="margin-top:10px">🔑 Sign In with SSO →</a>
+            </div>
+          </section>
+        `;
+      }
+
+      if (W.isAccessClient && W.isAccessClient(u)) {
+        return `
+          <section class="m-pane" aria-label="Workspace Connection Required for Sprint Board">
+            <div class="m-card priority">
+              <span class="m-pill warn">🔒 WORKSPACE CONNECTION REQUIRED</span>
+              <h1 style="margin-top:8px">Agile Sprint Board Locked</h1>
+              <p>Access Clients have access strictly to Showcase Apps &amp; Insights. Connect your Google, Microsoft, or Apple Workspace via OAuth to view shared project deliverables and sprint stages.</p>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+                <button type="button" class="m-btn pri" data-connect-ws="google">🌐 Connect Google Workspace →</button>
+                <div class="m-grid-2">
+                  <button type="button" class="m-btn" data-connect-ws="microsoft">💠 Microsoft SSO</button>
+                  <button type="button" class="m-btn" data-connect-ws="apple">🍎 Apple SSO</button>
+                </div>
+              </div>
             </div>
           </section>
         `;
@@ -888,32 +1052,33 @@
         };
       });
 
-      const qCust = document.getElementById('btnQuickCustomer');
-      if (qCust) {
-        qCust.onclick = () => {
-          W.signInAs('client', 'google');
-          showToast('✓ Customer Workflow View Active');
-          render(true);
-        };
-      }
-
-      // Public quick intake
-      const qForm = document.getElementById('mQuickIntakeForm');
-      if (qForm) {
-        qForm.onsubmit = async (e) => {
-          e.preventDefault();
-          const name = document.getElementById('mqName').value.trim();
-          const email = document.getElementById('mqEmail').value.trim();
-          const interest = document.getElementById('mqInterest').value;
-          if (!name || !email) { showToast('Please enter your name and email'); return; }
-          const id = W.submitRequest({ name, email, interest, brand: 'MGC', ssoProvider: 'google', ndaAccepted: true });
-          if (id) {
-            W.signInAs(id, 'google');
-            showToast('✓ Mobile Workspace Activated');
-            render(true);
-          } else if (W.lastIntakeResult && W.lastIntakeResult.error) {
-            showToast(W.lastIntakeResult.error);
+      // Access Client 1-tap Workspace OAuth Connection (Google, Microsoft, Apple)
+      mainEl.querySelectorAll('[data-connect-ws]').forEach(btn => {
+        btn.onclick = () => {
+          const prov = btn.getAttribute('data-connect-ws') || 'google';
+          showToast('Redirecting to ' + prov.toUpperCase() + ' OIDC...');
+          if (W.connectWorkspace) {
+            W.connectWorkspace(prov);
+          } else {
+            location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
           }
+        };
+      });
+
+      // Owner Otto Agent Access Policy update
+      const ottoSaveBtn = document.getElementById('mBtnUpdateOttoAgent');
+      if (ottoSaveBtn) {
+        ottoSaveBtn.onclick = () => {
+          const accessVal = (document.getElementById('mOttoAccessSel') && document.getElementById('mOttoAccessSel').value) || 'All domain users';
+          if (W.updateAgentAccess) {
+            W.updateAgentAccess('otto', {
+              access: accessVal,
+              accessPolicy: accessVal === 'Restricted' ? 'Explicit Administrator Grant Required' : 'Default (Organizational unit: Milton Group Concepts LLC)',
+              status: 'Active'
+            });
+          }
+          showToast('✓ Otto Agent access policy saved (' + accessVal + ')');
+          render(true);
         };
       }
 

@@ -307,9 +307,21 @@
     gap: 14px 16px;
     align-items: start;
   }
+  .ms-verify-code-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
   @media (max-width: 680px) {
-    .ms-form-grid-2, .ms-form-grid-3 {
+    .login-shell { padding: 14px 10px; }
+    .login-card { padding: 20px 16px !important; border-radius: 16px !important; }
+    .ms-form-grid-2, .ms-form-grid-3, .ms-verify-code-grid {
       grid-template-columns: 1fr;
+    }
+    .ms-input {
+      font-size: 16px !important;
+      height: 46px !important;
     }
   }
   .ms-field {
@@ -752,7 +764,7 @@
             </div>
             <span id="regEmailVerifiedBadge" class="chip warn" style="font-size:10.5px">Unverified</span>
           </div>
-          <div style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center">
+          <div class="ms-verify-code-grid">
             <button type="button" class="btn" id="btnSendEmailCode" style="height:40px;padding:0 14px;font-size:12px;border-color:rgba(56,189,248,0.55);color:#7dd3fc">📧 Send Verification Code</button>
             <input id="regEmailVerifyCode" class="ms-input" type="text" maxlength="6" inputmode="numeric" placeholder="Enter 6-digit email verification code" style="height:40px !important;letter-spacing:0.14em;font-weight:700;text-align:center">
             <button type="button" class="btn pri" id="btnVerifyEmailCode" style="height:40px;padding:0 16px;font-size:12px">Verify Email Code</button>
@@ -1024,7 +1036,8 @@
       serverOidcConfig.oidcProviders[prov] &&
       serverOidcConfig.oidcProviders[prov].clientId
     );
-    if (firebaseAuthReady && hasCustomIdpClient && prov === 'google') {
+    const isMobileDevice = Boolean(W.isMobileClientDevice && W.isMobileClientDevice());
+    if (firebaseAuthReady && hasCustomIdpClient && prov === 'google' && !isMobileDevice) {
       const handled = await launchFirebaseFederatedPopup(prov);
       if (handled) return;
     }
