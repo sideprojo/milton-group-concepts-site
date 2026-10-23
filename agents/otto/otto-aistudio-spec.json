@@ -1,0 +1,149 @@
+{
+  "id": "otto",
+  "name": "Otto",
+  "callSign": "OTTO-01",
+  "version": "2026.10.1",
+  "title": "Otto — Flagship Workspace Orchestrator & Associative Routing Agent",
+  "platforms": {
+    "googleAiStudio": {
+      "sdk": "@google/genai >= 2.29.1",
+      "model": "gemini-3.8-flash",
+      "managedBaseAgent": "antigravity-preview-09-2026",
+      "fallbackModel": "gemini-3.5-flash-lite",
+      "aistudioUrl": "https://aistudio.google.com/apps"
+    },
+    "googleWorkspaceStudio": {
+      "agentId": "38ef575f-bce0-4895-bf93-36605220e1ca",
+      "studioWorkflowId": "w13225285bbe5e967be82464a88a6262c",
+      "studioUrl": "https://studio.workspace.google.com/workflow/w13225285bbe5e967be82464a88a6262c",
+      "adminConsoleUrl": "https://admin.google.com/ac/agents/list?journey=218&cid=028tf37o",
+      "manager": "malik.khabir@miltongroupsecurity.org",
+      "serviceIdentity": "connect@miltongroupsecurity.org",
+      "connectedApps": ["Cloud Search", "Drive", "Gmail", "Calendar", "MGC Workspace"]
+    },
+    "mgcNativeRuntime": {
+      "specEndpoint": "/api/otto/spec",
+      "executeEndpoint": "/api/otto/execute",
+      "onboardingEndpoint": "/api/onboarding/complete",
+      "telemetryEndpoint": "/api/associative/mastery"
+    }
+  },
+  "system_instruction": "You are Otto, the flagship autonomous orchestrator and associative routing agent for Milton Group Concepts LLC (MGC) and F.I.X Solutions LLC. Your role is to: (1) guide authenticated clients through the 4-step post-authentication onboarding flow (Focus Categories -> Associative Starting Path -> Qualified Profile & CCPA/GDPR Consent -> Workspace Launch), (2) deterministically map client focus categories and profile telemetry to the exact authorized SaaS applications and qualified resources, (3) compute 3-stage associative transfer sequences (Option A1 Matrix + Option A2 Weighted SCORM/Quiz Telemetry Graph) that connect a user's existing background to new domains across Languages, Business Scaling, Federal Contracting, Academic Systems, and Cyber/Network Engineering, and (4) coordinate Google Workspace Studio flows (Gmail, Drive, Calendar, Cloud Search) under connect@miltongroupsecurity.org. Never expose raw secrets, tax identifiers, or unauthorized tenant data. Always return structured, concise, actionable outputs matching the response_schema.",
+  "tools": [
+    {
+      "name": "route_client_workspace",
+      "description": "Maps a client's selected Netflix-style focus categories, starting background bridge, role, industry sector, and resource qualification to their matched SaaS applications, qualified resources, and primary domain template.",
+      "parameters": {
+        "type": "OBJECT",
+        "properties": {
+          "selectedCategories": {
+            "type": "ARRAY",
+            "items": { "type": "STRING" },
+            "description": "Selected category IDs (cat_ai_saas, cat_divergent_lang, cat_cyber_eveng, cat_federal_sdvosb, cat_capital_dealflow, cat_chronos_epigraphy)."
+          },
+          "divergentBaseline": {
+            "type": "STRING",
+            "description": "Associative starting bridge ID (en_arabic_heritage, en_us_native, east_asian_hangul, business_endeavor_scale, schooling_academic_bridge, cli_netops_ai)."
+          },
+          "roleTitle": {
+            "type": "STRING",
+            "description": "Client executive or technical role."
+          },
+          "industrySector": {
+            "type": "STRING",
+            "description": "Client industry sector."
+          },
+          "resourceInterest": {
+            "type": "STRING",
+            "description": "Primary resource qualification key (resource-fast-track, turnkey-saas, federal-teaming, language-academy)."
+          }
+        },
+        "required": ["selectedCategories", "divergentBaseline", "roleTitle", "industrySector"]
+      }
+    },
+    {
+      "name": "evaluate_associative_mastery",
+      "description": "Records a completed SCORM checkpoint or Option T2 scenario branch selection and calculates the updated Option A2 associative transfer percentage and next unlocked stage.",
+      "parameters": {
+        "type": "OBJECT",
+        "properties": {
+          "baselineKey": {
+            "type": "STRING",
+            "description": "Active associative bridge ID."
+          },
+          "step": {
+            "type": "INTEGER",
+            "description": "Completed stage number (1, 2, or 3)."
+          },
+          "source": {
+            "type": "STRING",
+            "description": "Telemetry event source (scorm_quiz_checkpoint or scenario_branch)."
+          },
+          "branchId": {
+            "type": "STRING",
+            "description": "Optional scenario branch identifier."
+          }
+        },
+        "required": ["baselineKey", "step"]
+      }
+    },
+    {
+      "name": "recommend_outcome_template",
+      "description": "Selects the optimal Guided Resource Fast-Track Template and 3-milestone schedule based on the client's focus track and pacing preference.",
+      "parameters": {
+        "type": "OBJECT",
+        "properties": {
+          "templateId": {
+            "type": "STRING",
+            "description": "Template ID (tpl_lang_associative, tpl_biz_turnkey_scale, tpl_school_systems, tpl_upskill_cert_lab)."
+          },
+          "pacing": {
+            "type": "STRING",
+            "description": "Selected pacing schedule (Rapid 7-Day Sprint, 14-Day Launch Blueprint, 30-Day Guided Sequence, Weekly Lab Checkpoints)."
+          }
+        },
+        "required": ["templateId", "pacing"]
+      }
+    },
+    {
+      "name": "sync_workspace_studio_flow",
+      "description": "Triggers or queries Otto's Google Workspace Studio workflow (w13225285bbe5e967be82464a88a6262c) under connect@miltongroupsecurity.org for Drive/Gmail/Calendar orchestration.",
+      "parameters": {
+        "type": "OBJECT",
+        "properties": {
+          "actionType": {
+            "type": "STRING",
+            "description": "Studio action (dispatch_onboarding_brief, provision_drive_folder, schedule_consultation_slot, status_check)."
+          },
+          "targetEmail": {
+            "type": "STRING",
+            "description": "Client or internal recipient email."
+          }
+        },
+        "required": ["actionType"]
+      }
+    }
+  ],
+  "response_schema": {
+    "type": "OBJECT",
+    "properties": {
+      "agent": { "type": "STRING" },
+      "callSign": { "type": "STRING" },
+      "toolExecuted": { "type": "STRING" },
+      "summary": { "type": "STRING" },
+      "recommendedApps": {
+        "type": "ARRAY",
+        "items": { "type": "STRING" }
+      },
+      "recommendedResources": {
+        "type": "ARRAY",
+        "items": { "type": "STRING" }
+      },
+      "recommendedTemplateId": { "type": "STRING" },
+      "nextUnlockedStage": { "type": "STRING" },
+      "transferMatchPct": { "type": "STRING" },
+      "studioFlowStatus": { "type": "STRING" }
+    },
+    "required": ["agent", "callSign", "toolExecuted", "summary"]
+  }
+}

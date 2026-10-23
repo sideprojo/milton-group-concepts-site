@@ -271,6 +271,8 @@
   let showAdvancedFilters = false;
   let selectedMatrixCell = 'EXTERNAL_SAAS_LMS|turnkey';
   let accEntityFilter = 'ALL';
+  let activeOttoTool = 'route_client_workspace';
+  let lastOttoToolResult = null;
 
   const getResourcesList = () => W.getResourcesCatalog ? W.getResourcesCatalog() : (W.RESOURCES_CATALOG || []);
 
@@ -1161,6 +1163,55 @@
           '</div>' +
         '</div>' +
       '</div>' +
+
+      '<!-- OTTO MULTI-PLATFORM STUDIO & TOOL EXECUTOR (1. Google AI Studio · 2. Google Workspace Studio · 3. Native Portal Runtime) -->' +
+      '<div id="ottoMultiPlatformStudioCard" style="margin-top:14px;padding:16px 18px;border-radius:12px;background:rgba(4,8,20,0.92);border:1.5px solid rgba(197,179,88,0.48)">' +
+        '<div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:10px">' +
+          '<div>' +
+            '<span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Otto (OTTO-01) · 3-Platform Agent Architecture</span>' +
+            '<h3 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">1. Google AI Studio · 2. Workspace Studio · 3. MGC Native Runtime</h3>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
+            '<select id="ottoToolSelect" style="padding:6px 10px;font-size:12px">' +
+              '<option value="route_client_workspace"' + (activeOttoTool === 'route_client_workspace' ? ' selected' : '') + '>Tool 1 · route_client_workspace (Categories → Apps)</option>' +
+              '<option value="evaluate_associative_mastery"' + (activeOttoTool === 'evaluate_associative_mastery' ? ' selected' : '') + '>Tool 2 · evaluate_associative_mastery (SCORM Telemetry)</option>' +
+              '<option value="recommend_outcome_template"' + (activeOttoTool === 'recommend_outcome_template' ? ' selected' : '') + '>Tool 3 · recommend_outcome_template (Fast-Track)</option>' +
+              '<option value="sync_workspace_studio_flow"' + (activeOttoTool === 'sync_workspace_studio_flow' ? ' selected' : '') + '>Tool 4 · sync_workspace_studio_flow (Workspace Studio)</option>' +
+            '</select>' +
+            '<button type="button" class="btn pri" id="btnRunOttoTool" style="padding:7px 14px;font-size:12px">Run Otto Tool</button>' +
+            '<a class="btn" href="/api/otto/spec" target="_blank" rel="noopener" style="padding:7px 12px;font-size:12px">AI Studio JSON Spec ↗</a>' +
+          '</div>' +
+        '</div>' +
+
+        '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:' + (lastOttoToolResult ? '12px' : '0') + '">' +
+          '<div style="padding:10px 12px;border-radius:9px;background:rgba(15,23,42,0.85);border:1px solid rgba(59,130,246,0.35)">' +
+            '<div style="font-size:10.5px;font-weight:700;color:#93c5fd;text-transform:uppercase;margin-bottom:4px">1 · Google AI Studio (@google/genai)</div>' +
+            '<div style="font-size:12px;color:#fff;font-weight:600">Model: <code>gemini-3.8-flash</code></div>' +
+            '<div style="font-size:11px;color:#94a3b8;margin-top:3px">Base Agent: <code>antigravity-preview-09-2026</code> · 4 Function Tools + Structured JSON Schema (<code>agents/otto/otto-aistudio-spec.json</code>)</div>' +
+          '</div>' +
+          '<div style="padding:10px 12px;border-radius:9px;background:rgba(15,23,42,0.85);border:1px solid rgba(16,185,129,0.38)">' +
+            '<div style="font-size:10.5px;font-weight:700;color:#34d399;text-transform:uppercase;margin-bottom:4px">2 · Google Workspace Studio</div>' +
+            '<div style="font-size:12px;color:#fff;font-weight:600">Flow: <code>w13225285bbe5e967be82464a88a6262c</code></div>' +
+            '<div style="font-size:11px;color:#94a3b8;margin-top:3px">Agent ID: <code>38ef575f-bce0-4895-bf93-36605220e1ca</code> · Connect Identity: <code>connect@miltongroupsecurity.org</code></div>' +
+          '</div>' +
+          '<div style="padding:10px 12px;border-radius:9px;background:rgba(15,23,42,0.85);border:1px solid rgba(197,179,88,0.42)">' +
+            '<div style="font-size:10.5px;font-weight:700;color:#fde047;text-transform:uppercase;margin-bottom:4px">3 · MGC / F.I.X Native Runtime</div>' +
+            '<div style="font-size:12px;color:#fff;font-weight:600">Endpoints: <code>/api/otto/execute</code> &amp; <code>/api/otto/spec</code></div>' +
+            '<div style="font-size:11px;color:#94a3b8;margin-top:3px">4-Step Post-Auth Guided Onboarding + Option A1/A2 Associative Routing Engine</div>' +
+          '</div>' +
+        '</div>' +
+
+        (lastOttoToolResult
+          ? '<div id="ottoToolExecutionOutput" style="padding:11px 14px;border-radius:9px;background:rgba(6,78,59,0.28);border:1px solid rgba(16,185,129,0.52);font-size:12px">' +
+              '<div class="row" style="margin-bottom:4px">' +
+                '<strong style="color:#fff">✓ ' + esc(lastOttoToolResult.agent) + ' (' + esc(lastOttoToolResult.callSign) + ') · Tool: <code>' + esc(lastOttoToolResult.toolExecuted) + '</code></strong>' +
+                '<code style="color:#34d399;font-size:11px">' + esc(lastOttoToolResult.runId) + ' · ' + esc(lastOttoToolResult.transferMatchPct || '') + '</code>' +
+              '</div>' +
+              '<div style="color:#d1fae5;margin-bottom:4px">' + esc(lastOttoToolResult.summary) + '</div>' +
+              '<div style="font-size:11px;color:#93c5fd">Matched Apps: <code>' + esc((lastOttoToolResult.recommendedApps || []).join(', ')) + '</code> · Next Stage: <b>' + esc(lastOttoToolResult.nextUnlockedStage || '') + '</b></div>' +
+            '</div>'
+          : '') +
+      '</div>' +
     '</div>';
   }
 
@@ -1427,6 +1478,30 @@
         render();
       };
     });
+    const ottoToolSel = document.getElementById('ottoToolSelect');
+    if (ottoToolSel) {
+      ottoToolSel.onchange = () => {
+        activeOttoTool = ottoToolSel.value;
+      };
+    }
+    const btnRunOttoTool = document.getElementById('btnRunOttoTool');
+    if (btnRunOttoTool) {
+      btnRunOttoTool.onclick = async () => {
+        try {
+          const r = await fetch('/api/otto/execute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tool: activeOttoTool })
+          });
+          const d = await r.json();
+          if (d && d.ok && d.result) {
+            lastOttoToolResult = d.result;
+            W.toast('Otto executed ' + activeOttoTool);
+            render();
+          }
+        } catch (_) {}
+      };
+    }
     const btnAddRes = document.getElementById('btnAddCustomRes');
     if (btnAddRes && isOwner) {
       btnAddRes.onclick = () => {
