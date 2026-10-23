@@ -130,10 +130,6 @@
       const u = W.me();
       const issuesHtml = (nlState.issues || []).map(iss => `
         <article class="issue-card">
-          <div class="row" style="margin-bottom:10px">
-            <span class="chip ok">${esc(iss.issueNumber || 'BRIEFING')}</span>
-            <span class="chip">${esc(iss.category || 'Executive Briefing')} · ${esc(iss.readTime || '3 min read')}</span>
-          </div>
           <h2 style="font-size:19px;margin-bottom:8px">${esc(iss.title)}</h2>
           <p style="font-size:14px;color:#e2e8f0;margin-bottom:12px">${esc(iss.summary)}</p>
           ${Array.isArray(iss.highlights) && iss.highlights.length ? `
@@ -313,7 +309,6 @@
             <aside class="card" id="donations" style="margin:0;border-color:rgba(197,179,88,0.55)">
               <div class="row" style="margin-bottom:6px">
                 <h2 style="margin:0;font-size:16px">💝 Support &amp; Donations</h2>
-                <span class="chip ok">Ledger Tracked</span>
               </div>
               <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support open executive briefings, veteran research, and community tools. (Workspace memberships are managed inside your authenticated portal.)</p>
               <form id="nlDonateForm" style="display:flex;flex-direction:column;gap:8px">

@@ -505,21 +505,16 @@
         <div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <strong id="ui-user-name" style="font-size:14px;">Verified Member</strong>
-            <span id="ui-tier-badge" style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:rgba(197,179,88,0.2);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
-              SCORM 2004 4TH ED. • SAAS APPS &amp; LMS
-            </span>
+            <span id="ui-tier-badge" style="display:none;"></span>
           </div>
           <div style="font-size:11px;color:var(--text-muted);" id="ui-user-focus">
-            F.I.X. Thematic Colors • Dual Cityscape Engine (fix.miltongroupsecurity.org + miltongroupsecurity.org)
+            Enterprise Applications &amp; Course LMS
           </div>
         </div>
       </div>
 
       <div class="metrics-row">
-        <div class="metric-pill" title="SCORM 2004 Status">
-          <span style="color:#34d399;">SCORM 2004:</span>
-          <strong id="ui-scorm-status">SCO Apps Ready</strong>
-        </div>
+        <span id="ui-scorm-status" style="display:none;"></span>
         <div class="metric-pill" title="Course & Lab XP">
           <span style="color:#fbbf24;">XP:</span>
           <strong id="ui-xp">0</strong>
@@ -549,11 +544,8 @@
     <!-- HERO SHOWCASE & ARCHITECTURE PROPOSITION -->
     <div class="hero-box">
       <div>
-        <div style="display:inline-flex;align-items:center;gap:8px;padding:4px 12px;border-radius:6px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);color:#93c5fd;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">
-          Decoupled SaaS Applications · Course LMS · Client Showcase
-        </div>
         <h1 class="hero-title">
-          Enterprise Applications, SCORM 2004 Course LMS &amp; Tailored Intelligence
+          Enterprise Applications, Course LMS &amp; Tailored Intelligence
         </h1>
         <p class="hero-sub">
           Access authorized standalone applications, interactive network topologies, procurement matchmakers, skill trackers, and guided architecture consultations.
@@ -623,107 +615,89 @@
         <!-- App 1: EVE-NG Topology & Cast Recorder (F.I.X. Cityscape + F.I.X. Colors) -->
         <div class="app-card" data-app-id="eveng-netprism-studio">
           <div>
-            <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
-              App 01 · SCORM 2004 · F.I.X. Cityscape
-            </span>
             <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">EVE-NG &amp; NetPrism Topology + .cast Studio</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              8-Page SCORM 2004 4th Ed. Network Studio ($0 cloud cost) with OSPF/BGP/ZTNA/EVPN topologies, 18 KB <code>.cast</code> CLI recordings, and F.I.X. Cityscape filters.
+              Interactive Network Studio with OSPF/BGP/ZTNA/EVPN topologies, CLI recordings, and visual filters.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/eveng-netprism-studio/index.html" class="btn-gold">Launch SCORM OS</a>
+            <a href="projects/eveng-netprism-studio/index.html" class="btn-gold">Launch Studio</a>
             <button class="btn-primary" onclick="selectAppWorkbench('eve'); switchShowcaseCityscape('fix-vanguard');">Inline Studio</button>
-            <a href="projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
+            <a href="projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip" download class="btn-secondary">Download .ZIP</a>
           </div>
         </div>
 
         <!-- App 2: Tailored Job, Contract & Procurement Matchmaker (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
         <div class="app-card" data-app-id="samgov-contract-matchmaker">
           <div>
-            <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
-              App 02 · SCORM 2004 · MGC Cityscape
-            </span>
             <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Tailored Job, Contract &amp; SAM.gov Matchmaker</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              6-Page SCORM 2004 4th Ed. Procurement &amp; Career OS matching NAICS 541512/541519 SDVOSB set-asides and Principal AI roles over the <code>miltongroupsecurity.org</code> cityscape.
+              Procurement &amp; Career workspace matching NAICS 541512/541519 SDVOSB set-asides and Principal AI roles.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/samgov-contract-matchmaker/index.html" class="btn-gold">Launch SCORM OS</a>
+            <a href="projects/samgov-contract-matchmaker/index.html" class="btn-gold">Launch Matchmaker</a>
             <button class="btn-primary" onclick="selectAppWorkbench('contracts'); switchShowcaseCityscape('mgc-sunset');">Inline Matchmaker</button>
-            <a href="projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
+            <a href="projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip" download class="btn-secondary">Download .ZIP</a>
           </div>
         </div>
 
         <!-- App 3: Site Traffic, Expected Traffic & Conversion ROI Simulator (F.I.X. Cityscape + F.I.X. Colors) -->
         <div class="app-card" data-app-id="traffic-roi-simulator">
           <div>
-            <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
-              App 03 · SCORM 2004 · F.I.X. Cityscape
-            </span>
             <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Site Traffic, Expected Traffic &amp; ROI Simulator</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              6-Page SCORM 2004 4th Ed. Growth &amp; Cloud Run Zero-Charge ($0.00 idle) simulator forecasting visitor funnels and multi-rail revenue over the F.I.X. Cityscape.
+              Growth &amp; Cloud Run cost simulator forecasting visitor funnels and multi-rail revenue.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/traffic-roi-simulator/index.html" class="btn-gold">Launch SCORM OS</a>
+            <a href="projects/traffic-roi-simulator/index.html" class="btn-gold">Launch Simulator</a>
             <button class="btn-primary" onclick="selectAppWorkbench('traffic'); switchShowcaseCityscape('fix-vanguard');">Inline Simulator</button>
-            <a href="projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
+            <a href="projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip" download class="btn-secondary">Download .ZIP</a>
           </div>
         </div>
 
         <!-- App 4: Ghost-CLI Kinetic Trainer & Ansible Auto-Grader (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
         <div class="app-card" data-app-id="ghost-cli-trainer">
           <div>
-            <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
-              App 04 · SCORM 2004 · MGC Cityscape
-            </span>
             <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Ghost-CLI Trainer &amp; Netmiko Auto-Grader</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              8-Page SCORM 2004 4th Ed. kinetic terminal for Cisco IOS-XE, Linux (CST200), 3NF SQL (SDC200), Sentinel KQL, and Ansible DevNet over the <code>miltongroupsecurity.org</code> cityscape.
+              Interactive kinetic terminal for Cisco IOS-XE, Linux, 3NF SQL, Sentinel KQL, and Ansible DevNet.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/ghost-cli-trainer/index.html" class="btn-gold">Launch SCORM OS</a>
+            <a href="projects/ghost-cli-trainer/index.html" class="btn-gold">Launch Trainer</a>
             <button class="btn-primary" onclick="selectAppWorkbench('cli'); switchShowcaseCityscape('mgc-emerald');">Inline CLI Drill</button>
-            <a href="projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
+            <a href="projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip" download class="btn-secondary">Download .ZIP</a>
           </div>
         </div>
 
         <!-- App 5: Chronos // Aetheria Geo-Historical AI WebApp (F.I.X. Cityscape + F.I.X. Colors) -->
         <div class="app-card" data-app-id="chronos-aetheria-scorm">
           <div>
-            <span class="app-tag" style="background:rgba(197,179,88,0.18);color:#fbbf24;border:1px solid rgba(197,179,88,0.45);">
-              App 05 · SCORM 2004 · F.I.X. Cityscape
-            </span>
             <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Chronos // Aetheria Geo-Historical AI OS</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              6-Page SCORM 2004 4th Ed. discovery engine combining DeepMind Ithaca/Aeneas Epigraphy, WGS-84 Geodesics, and Diachronic Latin-to-Spanish roots over the F.I.X. Cityscape.
+              Discovery engine combining DeepMind Ithaca/Aeneas Epigraphy, WGS-84 Geodesics, and Diachronic Latin-to-Spanish roots.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="projects/chronos-aetheria-scorm/index.html" class="btn-gold">Launch SCORM OS</a>
+            <a href="projects/chronos-aetheria-scorm/index.html" class="btn-gold">Launch Chronos</a>
             <a href="chronos-external-insight-webapp.html" class="btn-primary">3-Pane Map App</a>
-            <a href="projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
+            <a href="projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip" download class="btn-secondary">Download .ZIP</a>
           </div>
         </div>
 
         <!-- App 6: Spanish Acquisition OS (F.I.X. Cityscape + MGC Cityscape Switcher) -->
         <div class="app-card" data-app-id="spanish-acquisition-os">
           <div>
-            <span class="app-tag" style="background:rgba(16,185,129,0.18);color:#34d399;border:1px solid rgba(16,185,129,0.45);">
-              App 06 · SCORM 2004 · F.I.X. &amp; MGC Cityscape
-            </span>
             <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Spanish Acquisition OS (10,000 Words &amp; 100 Roots)</h3>
             <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
-              10-SCO SCORM 2004 4th Ed. language OS with 344 Azure Neural MP3s, 100 Latin/Spanish root families, universal pagination, and F.I.X. &amp; MGC cityscape filters.
+              Interactive language platform with 344 Neural MP3s, 100 Latin/Spanish root families, and universal pagination.
             </p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <a href="projects/spanish-acquisition-os/index.html" class="btn-gold">Launch Spanish OS</a>
-            <a href="projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP (8.6 MB)</a>
+            <a href="projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip" download class="btn-secondary">Download .ZIP</a>
           </div>
         </div>
 
@@ -731,19 +705,16 @@
         <div class="app-card" data-app-id="client-turnkey-forge" style="grid-column: 1 / -1;">
           <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;">
             <div style="max-width:780px;">
-              <span class="app-tag" style="background:rgba(197,179,88,0.22);color:#fbbf24;border:1px solid rgba(197,179,88,0.5);">
-                App 07 · SCORM 2004 · miltongroupsecurity.org Cityscape
-              </span>
               <h3 style="margin:0 0 6px;font-size:17px;font-weight:600;">Client Turnkey Forge &amp; Custom Project Experience Builder (Includes Sterling Auto Repair OS)</h3>
               <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0;">
-                6-Page SCORM 2004 4th Ed. Turnkey Architecture Configurator showcasing Defense VAR (<code>fix.miltongroupsecurity.org</code>), Executive Command (<code>miltongroupsecurity.org</code>), SCORM LMS Academies, and Commercial Service Booking (<code>Sterling Auto Repair</code>) with instant Finance Command invoicing.
+                Turnkey Architecture Configurator showcasing Defense VAR, Executive Command, LMS Academies, and Commercial Service Booking (<code>Sterling Auto Repair</code>) with instant invoicing.
               </p>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <a href="projects/client-turnkey-forge/index.html" class="btn-gold">Launch Turnkey Forge</a>
               <a href="projects/sterling-auto-repair/index.html" class="btn-primary">Sterling Auto Showcase</a>
               <button class="btn-secondary" onclick="activateMainTab('tab-custom-build'); switchShowcaseCityscape('mgc-sunset');">Configure Pricing</button>
-              <a href="projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip" download class="btn-secondary">SCORM .ZIP</a>
+              <a href="projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip" download class="btn-secondary">Download .ZIP</a>
             </div>
           </div>
         </div>

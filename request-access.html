@@ -294,7 +294,6 @@
   <div class="card intake-shell-card" id="form">
     <div class="row" style="justify-content:space-between;align-items:flex-start;gap:14px">
       <div>
-        <span class="chip ok" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;border-width:1.5px">🛡️ ZERO-TRUST EXECUTIVE INTAKE · FEDERATED SSO + 2FA</span>
         <h1>Client Intake &amp; Custom Workspace Request</h1>
       </div>
       <div class="row" style="gap:8px">
@@ -304,13 +303,6 @@
     </div>
     <p class="intake-lead">Provide your organization details and mission objectives below. Every intake request is authenticated via <b>Federated SSO (Google, Microsoft, or Apple)</b>, <b>FIDO2 Passkey / 2FA</b>, and <b>Mutual NDA Attestation</b> to provision your dedicated workspace and custom build queue.</p>
 
-    <div class="sec-grid" id="secPostureGrid">
-      <div class="sec-pill"><b>Federated Identity</b><span id="sp-sso">Google · Microsoft · Apple</span></div>
-      <div class="sec-pill"><b>Identity Protection</b><span id="sp-spoof">Anti-Spoof Shield Active</span></div>
-      <div class="sec-pill"><b>Payload Inspection</b><span id="sp-xss">XSS Sanitized · Rate Guarded</span></div>
-      <div class="sec-pill"><b>Session Binding</b><span id="sp-tier">HMAC-SHA256 Zero-Trust</span></div>
-    </div>
-
     <!-- Section 01: Organization & Federated SSO Identity -->
     <div class="intake-section">
       <div class="intake-section-head">
@@ -318,7 +310,6 @@
           <span class="intake-step-tag">SECTION 01</span>
           <span>Organization &amp; Federated SSO Identity</span>
         </div>
-        <span class="chip" style="font-size:10px">OIDC / SAML 2.0</span>
       </div>
       <div class="intake-grid-2">
         <label class="field-wrap">
@@ -355,7 +346,6 @@
           <span class="intake-step-tag">SECTION 02</span>
           <span>Service Division &amp; Tailored Workspace Scope</span>
         </div>
-        <span class="chip" style="font-size:10px">Custom Architecture</span>
       </div>
       <div class="intake-grid-2" style="margin-bottom:14px">
         <label class="field-wrap">
@@ -383,9 +373,9 @@
           <span class="intake-step-tag">SECTION 03</span>
           <span>Hardware Passkey / 2FA Identity Verification</span>
         </div>
-        <span class="chip warn" id="mfaBadge" style="font-family:'JetBrains Mono',monospace">2FA VERIFICATION REQUIRED</span>
+        <span id="mfaBadge" style="font-size:11px;font-weight:600;color:#fbbf24"></span>
       </div>
-      <p style="font-size:12.5px;color:#cbd5e1;margin:0 0 14px">Authenticate your intake session using a FIDO2 Biometric Passkey sensor OR enter an authorized 6-digit TOTP authenticator code (<code>250100</code> or <code>440921</code>).</p>
+      <p style="font-size:12.5px;color:#cbd5e1;margin:0 0 14px">Authenticate your intake session using a FIDO2 Biometric Passkey sensor OR enter your 6-digit TOTP authenticator code.</p>
       <div class="intake-grid-2" style="align-items:end">
         <div class="field-wrap">
           <span class="field-label">Option A · WebAuthn / FIDO2 Passkey</span>
@@ -393,7 +383,7 @@
         </div>
         <label class="field-wrap">
           <span class="field-label">Option B · 6-Digit Authenticator Code</span>
-          <input class="intake-input totp-code-input" id="totp" type="text" maxlength="6" placeholder="250100 or 440921" autocomplete="off">
+          <input class="intake-input totp-code-input" id="totp" type="text" maxlength="6" placeholder="6-digit TOTP code" autocomplete="off">
         </label>
       </div>
     </div>
@@ -403,8 +393,7 @@
       <span style="font-size:12.5px;line-height:1.55;color:#e2e8f0"><b>Mutual Non-Disclosure &amp; Zero-Trust Governance Attestation:</b> I confirm that I am an authorized representative of my organization and consent to Federated SSO + 2FA cryptographic session binding under Milton Group Concepts LLC &amp; F.I.X Solutions LLC security terms.</span>
     </label>
 
-    <div class="row" style="justify-content:space-between;gap:12px;padding-top:6px">
-      <span class="chip" style="font-size:10.5px;border-width:1.5px">No Charge Until Approved · Instant Workspace Provisioning</span>
+    <div class="row" style="justify-content:flex-end;gap:12px;padding-top:6px">
       <button class="btn pri submit-intake-btn" id="go" type="button">Verify Identity &amp; Submit Intake Request →</button>
     </div>
     <p id="err" style="color:#f87171;font-weight:700;margin-top:12px;font-size:13px"></p>
