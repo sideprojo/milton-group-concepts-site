@@ -91,6 +91,57 @@
   const DEFAULT_CUSTOMER_RESOURCES = [];
   const DEFAULT_CUSTOMER_PAGES = { saasapps: 'ready' };
 
+  // Google Workspace Admin Console & Studio Agents Catalog (Otto Autonomous Agent)
+  const AGENTS_CATALOG = [
+    {
+      id: 'otto',
+      name: 'Otto',
+      title: 'Otto — Autonomous Workspace & Security Operations Agent',
+      type: 'Studio flow',
+      agentId: '38ef575f-bce0-4895-bf93-36605220e1ca',
+      studioWorkflowId: 'w13225285bbe5e967be82464a88a6262c',
+      studioUrl: 'https://studio.workspace.google.com/workflow/w13225285bbe5e967be82464a88a6262c',
+      adminConsoleUrl: 'https://admin.google.com/ac/agents/list?journey=218&cid=028tf37o',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Cloud Search', 'Drive', 'Gmail', 'MGC Workspace'],
+      access: 'Default',
+      accessPolicy: 'Default (Allow flow & Workspace Client access)',
+      studioAttributionVisibility: 'ON',
+      status: 'Active',
+      schedule: 'Daily / On-Demand Studio Flow + MGC Portal Agent',
+      boundaryRule: 'Administrator: Full Agent Governance & Actionable Controls · Workspace Clients: Interactive Otto Agent & Studio Flows · Access Clients: Showcase & Insights Only (Connect Workspace Required)'
+    }
+  ];
+
+  // Official Google Workspace Directory Accounts (miltongroupsecurity.org)
+  const WORKSPACE_DIRECTORY_ACCOUNTS = [
+    {
+      email: 'malik.khabir@miltongroupsecurity.org',
+      name: 'Malik Khabir',
+      roleLabel: 'Super Admin · Sole Administrator & Otto Agent Manager',
+      status: 'Active',
+      storageUsed: '0.28 GB',
+      agentRole: 'Agent Manager & Owner (Full Governance)'
+    },
+    {
+      email: 'connect@miltongroupsecurity.org',
+      name: 'MGC admin',
+      roleLabel: 'Connect & Autonomous Agent Operations Identity',
+      status: 'Active',
+      storageUsed: '0.001 GB',
+      agentRole: 'Otto Connect Service Identity'
+    },
+    {
+      email: 'mustafa.khabir@miltongroupsecurity.org',
+      name: 'Mustafa Khabir',
+      roleLabel: 'Organization Workspace User',
+      status: 'Active',
+      storageUsed: '0.03 GB',
+      agentRole: 'Workspace Member (Otto Flow Access)'
+    }
+  ];
+
   const STEPS = ['requested', 'approved_building', 'active'];
   const STATUS_LABEL = { requested: 'Pending approval', approved_building: 'Pages being built', active: 'Active', denied: 'Not approved', suspended: 'Suspended' };
 
@@ -287,6 +338,9 @@
     if (!Array.isArray(state.consultations)) state.consultations = [];
     if (!Array.isArray(state.customResources)) state.customResources = [];
     if (!Array.isArray(state.accountingLedger)) state.accountingLedger = [];
+    if (!Array.isArray(state.agents) || !state.agents.length) {
+      state.agents = AGENTS_CATALOG.map(a => Object.assign({}, a));
+    }
     Object.values(state.users).forEach(u => {
       if (u.role === 'owner') {
         u.accessTier = 'OWNER_FULL';
@@ -296,6 +350,8 @@
         u.securityGroup = 'DOMAIN_ADMIN';
         u.allowedApps = ['*'];
         u.qualifiedResources = ['*'];
+        u.allowedAgents = ['*'];
+        u.ottoAgentEnabled = true;
       } else {
         u.ou = u.ou === 'internal' ? 'internal' : 'external';
         u.accessTier = u.accessTier || (u.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED');
@@ -308,6 +364,12 @@
         }
         if (!Array.isArray(u.qualifiedResources)) {
           u.qualifiedResources = DEFAULT_CUSTOMER_RESOURCES.slice();
+        }
+        if (!Array.isArray(u.allowedAgents)) {
+          u.allowedAgents = (hasWorkspaceSso || u.ou === 'internal') ? ['otto'] : [];
+        }
+        if (typeof u.ottoAgentEnabled !== 'boolean') {
+          u.ottoAgentEnabled = Boolean(hasWorkspaceSso || u.ou === 'internal');
         }
       }
     });
@@ -668,6 +730,39 @@
     return Array.from(map.values());
   }
 
+  function getAgentsCatalog() {
+    const stored = (S && Array.isArray(S.agents) && S.agents.length) ? S.agents : [];
+    const map = new Map();
+    AGENTS_CATALOG.forEach(a => map.set(a.id, Object.assign({}, a)));
+    stored.forEach(a => {
+      if (a && a.id) {
+        map.set(a.id, Object.assign({}, map.get(a.id) || {}, a));
+      }
+    });
+    return Array.from(map.values());
+  }
+
+  function updateAgentAccess(agentId, updates) {
+    const curr = me();
+    if (!isOwner(curr)) return { ok: false, error: 'Only the Administrator can modify Agent Access Management settings.' };
+    const cleanId = sanitizeField(agentId || 'otto', 60).toLowerCase();
+    const srv = postServerAction({ action: 'updateAgentAccess', agentId: cleanId, data: updates || {} });
+    if (srv && srv.ok) { commit(); return srv; }
+    if (!Array.isArray(S.agents) || !S.agents.length) {
+      S.agents = AGENTS_CATALOG.map(a => Object.assign({}, a));
+    }
+    const target = S.agents.find(a => a.id === cleanId) || S.agents[0];
+    if (!target) return { ok: false, error: 'Agent not found.' };
+    if (updates && updates.access) target.access = sanitizeField(updates.access, 60);
+    if (updates && updates.accessPolicy) target.accessPolicy = sanitizeField(updates.accessPolicy, 160);
+    if (updates && updates.status) target.status = sanitizeField(updates.status, 40);
+    if (updates && updates.serviceIdentity) target.serviceIdentity = sanitizeField(updates.serviceIdentity, 120);
+    if (updates && updates.studioAttributionVisibility) target.studioAttributionVisibility = sanitizeField(updates.studioAttributionVisibility, 20);
+    log('owner', 'agent.access_updated', target.name + ' (' + target.agentId + ') -> Access:' + target.access + ', Status:' + target.status);
+    commit();
+    return { ok: true, agent: target, state: S };
+  }
+
   /* ---------- Policy: deny by default. Mirrors server.js ---------- */
   function subActive(u) { return u && (u.role === 'owner' || u.status === 'active' || (u.plan && u.plan.base)); }
   function can(u, type, id, action) {
@@ -676,6 +771,17 @@
     if (!subActive(u)) return false;                              // members need an active account
     // Access Clients (non-workspace connected) only get Showcase Access & Tools/Insights
     const accessOnlyClient = isAccessClient(u);
+    if (type === 'agent') {
+      if (accessOnlyClient) return false;                         // Persistent boundary: Access Clients must connect a Workspace for Agent interactions
+      const ag = getAgentsCatalog().find(a => a.id === id || a.agentId === id);
+      if (ag && ag.status === 'Disabled') return false;
+      if (ag && ag.access === 'Restricted' && !isEmployee(u)) {
+        return Array.isArray(u.allowedAgents) && (u.allowedAgents.includes('*') || u.allowedAgents.includes(id));
+      }
+      if (u.ottoAgentEnabled === false) return false;
+      const agList = Array.isArray(u.allowedAgents) ? u.allowedAgents : ['otto'];
+      return agList.includes('*') || agList.includes(id) || isWorkspaceClient(u) || isEmployee(u);
+    }
     if (type === 'resource') {
       const resList = Array.isArray(u.qualifiedResources) ? u.qualifiedResources : DEFAULT_CUSTOMER_RESOURCES;
       if (resList.includes('*') || resList.includes(id)) return true;
@@ -1581,6 +1687,16 @@
       commit();
       return { ok: true, targetUser: target };
     }
+    if (featureType === 'agent') {
+      if (!Array.isArray(target.allowedAgents)) target.allowedAgents = [];
+      const has = target.allowedAgents.includes(featureId);
+      const next = typeof enabled === 'boolean' ? enabled : !has;
+      if (next && !has) target.allowedAgents.push(featureId);
+      if (!next && has) target.allowedAgents = target.allowedAgents.filter(a => a !== featureId);
+      if (featureId === 'otto') target.ottoAgentEnabled = next;
+      commit();
+      return { ok: true, targetUser: target };
+    }
     const isReady = target.pages[featureId] === 'ready';
     const next = typeof enabled === 'boolean' ? enabled : !isReady;
     if (next) target.pages[featureId] = 'ready';
@@ -2009,6 +2125,7 @@
         {
           title: 'Governance & Gateways',
           items: [
+            { href: 'access-admin.html?tab=agents', label: 'Agent Access Management (Otto)', badge: 'Agents NEW' },
             { href: 'access-admin.html?tab=requests', label: 'Consultations & Intake Queue', badge: 'Queue' },
             { href: 'access-admin.html?tab=groups', label: 'Security Groups & RBAC', badge: 'Policy' },
             { href: 'access-admin.html?tab=payments', label: 'PCI-DSS & Payment Gateways', badge: 'SAQ-A' },
@@ -2215,5 +2332,5 @@
     }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

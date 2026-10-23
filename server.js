@@ -4755,6 +4755,39 @@ const server = http.createServer(async (req, res) => {
         saveState(S);
         return sendJson(res, 200, { ok: true, state: scopeStateForUser(u) });
       }
+      if (act === 'updateAgentAccess') {
+        if (!isOwnerUser(u)) {
+          return sendJson(res, 403, { ok: false, error: 'Only the Administrator can manage Agent Access Management settings.' });
+        }
+        if (!Array.isArray(S.agents) || !S.agents.length) {
+          S.agents = [
+            {
+              id: 'otto',
+              name: 'Otto',
+              title: 'Otto — Autonomous Workspace & Security Operations Agent',
+              type: 'Studio flow',
+              agentId: '38ef575f-bce0-4895-bf93-36605220e1ca',
+              studioWorkflowId: 'w13225285bbe5e967be82464a88a6262c',
+              studioUrl: 'https://studio.workspace.google.com/workflow/w13225285bbe5e967be82464a88a6262c',
+              adminConsoleUrl: 'https://admin.google.com/ac/agents/list?journey=218&cid=028tf37o',
+              manager: 'malik.khabir@miltongroupsecurity.org',
+              serviceIdentity: 'connect@miltongroupsecurity.org',
+              workspaceApps: ['Cloud Search', 'Drive', 'Gmail', 'MGC Workspace'],
+              access: 'Default',
+              status: 'Active'
+            }
+          ];
+        }
+        const cleanId = sanitizeInput(body.agentId || 'otto', 60).toLowerCase();
+        const targetAg = S.agents.find(a => a.id === cleanId) || S.agents[0];
+        const upd = body.data || {};
+        if (upd.access) targetAg.access = sanitizeInput(upd.access, 60);
+        if (upd.status) targetAg.status = sanitizeInput(upd.status, 40);
+        if (upd.serviceIdentity) targetAg.serviceIdentity = sanitizeInput(upd.serviceIdentity, 120);
+        logAudit('owner', 'agent.access_updated', `${targetAg.name} (${targetAg.agentId}) -> Access:${targetAg.access}, Status:${targetAg.status}`);
+        saveState(S);
+        return sendJson(res, 200, { ok: true, agent: targetAg, state: scopeStateForUser(u) });
+      }
       // Fluid Administrator & Employee (Client-only) Feature & Access Grant / Revoke
       if (act === 'toggleUserFeature') {
         const target = S.users[body.userId];
@@ -4890,6 +4923,37 @@ const server = http.createServer(async (req, res) => {
               allowedPortals: getAllowedPortalsForUser(target),
               allowedApps: target.allowedApps,
               qualifiedResources: target.qualifiedResources
+            },
+            state: scopeStateForUser(u)
+          });
+        }
+
+        if (featureType === 'agent') {
+          if (!Array.isArray(target.allowedAgents)) target.allowedAgents = [];
+          const currentlyHas = target.allowedAgents.includes(featureId);
+          const enable = typeof body.enabled === 'boolean' ? body.enabled : !currentlyHas;
+          if (enable) {
+            if (!target.allowedAgents.includes(featureId)) target.allowedAgents.push(featureId);
+            if (featureId === 'otto') target.ottoAgentEnabled = true;
+            logAudit(u.id, 'feature.agent.grant', `${featureId} -> ${target.email}`);
+          } else {
+            target.allowedAgents = target.allowedAgents.filter(a => a !== featureId);
+            if (featureId === 'otto') target.ottoAgentEnabled = false;
+            logAudit(u.id, 'feature.agent.revoke', `${featureId} -> ${target.email}`);
+          }
+          saveState(S);
+          return sendJson(res, 200, {
+            ok: true,
+            targetUser: {
+              id: target.id,
+              email: target.email,
+              pages: target.pages,
+              allowedPages: getAllowedPagesForUser(target),
+              allowedPortals: getAllowedPortalsForUser(target),
+              allowedApps: target.allowedApps,
+              qualifiedResources: target.qualifiedResources,
+              allowedAgents: target.allowedAgents,
+              ottoAgentEnabled: target.ottoAgentEnabled
             },
             state: scopeStateForUser(u)
           });

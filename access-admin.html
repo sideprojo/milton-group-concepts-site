@@ -611,6 +611,26 @@
             '</div>' +
           '</div>' +
         '</div>';
+    } else if (propTab === 'agents') {
+      const agentsList = W.getAgentsCatalog ? W.getAgentsCatalog() : (W.AGENTS_CATALOG || []);
+      const isWsConnected = Boolean(W.isWorkspaceClient ? W.isWorkspaceClient(sel) : (sel.workspaceConnected || ['google', 'microsoft', 'apple'].includes(String(sel.ssoProvider || '').toLowerCase())));
+      bodyHtml =
+        '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#34d399;margin-bottom:6px">Agent Access Management (' + agentsList.length + ')</div>' +
+        '<p style="font-size:11px;color:#94a3b8;margin:0 0 8px">Enforces the persistent boundary between Administrators, Workspace Clients (connected via Google/Microsoft/Apple OAuth), and Access Clients (Showcase &amp; Insights only).</p>' +
+        agentsList.map(ag => {
+          const on = W.can(sel, 'agent', ag.id, 'view');
+          return '<div class="ad-check-row ' + (on ? 'granted' : '') + '" style="flex-direction:column;align-items:stretch;gap:6px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px">' +
+              '<div><b>' + esc(ag.name) + ' · ' + esc(ag.type) + '</b><div style="font-size:10.5px;color:#93c5fd">ID: <code>' + esc(ag.agentId.slice(0, 13)) + '...</code> · ' + esc(ag.serviceIdentity) + '</div></div>' +
+              '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-agent="' + esc(sel.id) + '|' + esc(ag.id) + '|' + (!on) + '" style="padding:4px 9px;font-size:11px">' +
+                (on ? 'Active Access' : 'Grant Agent') +
+              '</button>' +
+            '</div>' +
+            '<div style="font-size:10.5px;color:' + (isWsConnected || ou === 'internal' ? '#6ee7b7' : '#fde047') + '">' +
+              (ou === 'internal' ? '✓ Internal Staff · Full Otto Agent Interaction' : (isWsConnected ? '✓ Workspace Connected · Interactive Otto Agent Active' : '⚠ Access Client · Requires Workspace OAuth Connection for Agent Interactions')) +
+            '</div>' +
+          '</div>';
+        }).join('');
     } else if (propTab === 'billing' && isOwner) {
       bodyHtml = (pay && pay.verified)
         ? '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px">' +
@@ -624,8 +644,8 @@
     }
 
     const propTabsList = isOwner
-      ? [['rbac', 'RBAC'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account'], ['billing', 'PCI']]
-      : [['rbac', 'RBAC'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account']];
+      ? [['rbac', 'RBAC'], ['agents', 'Agents (Otto)'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account'], ['billing', 'PCI']]
+      : [['rbac', 'RBAC'], ['agents', 'Agents (Otto)'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account']];
 
     const grantedPagesCnt = cols.filter(c => W.can(sel, 'page', c.id, 'view')).length;
     const grantedAppsCnt = apps.filter(a => W.can(sel, 'app', a.id, 'view')).length;
@@ -686,6 +706,7 @@
       { id: 'EXTERNAL_SAAS_LMS',   tag: 'Standard',   ou: 'OU=External', label: 'External · SaaS & LMS Subscribers',     members: members().filter(u => getUserGroup(u) === 'EXTERNAL_SAAS_LMS') }
     ];
     const destCols = [
+      { id: 'otto_agent',label: 'Otto Agent (38ef575f)',     type: 'Agent Access' },
       { id: 'turnkey',   label: 'Turnkey & Sterling (Base)', type: 'App Suite' },
       { id: 'scorm_lms', label: 'Chronos & Spanish SCORM',   type: 'LMS Apps' },
       { id: 'fasttrack', label: 'Resource Fast-Track + AI',  type: 'Resource' },
@@ -694,6 +715,7 @@
       { id: 'pci_acct',  label: 'GAAP Ledger & PCI Vault',   type: 'Treasury' }
     ];
     const matrixRules = {
+      'DOMAIN_ADMIN|otto_agent':       { state: 'PERMIT', sgacl: 'Agent Manager',    desc: 'Malik A. Khabir owns and governs Otto (38ef575f-bce0-4895-bf93-36605220e1ca) across Google Workspace Studio & MGC Console.' },
       'DOMAIN_ADMIN|turnkey':          { state: 'PERMIT', sgacl: 'Full Access',      desc: 'Unrestricted administrative and launch access.' },
       'DOMAIN_ADMIN|scorm_lms':        { state: 'PERMIT', sgacl: 'Full Access',      desc: 'Full SCORM 2004 authoring and telemetry access.' },
       'DOMAIN_ADMIN|fasttrack':        { state: 'PERMIT', sgacl: 'Full Access',      desc: 'Full Resource Fast-Track and template governance.' },
@@ -701,6 +723,7 @@
       'DOMAIN_ADMIN|ext_dir':          { state: 'PERMIT', sgacl: 'Full Access',      desc: 'Full Internal + External Directory and RBAC control.' },
       'DOMAIN_ADMIN|pci_acct':         { state: 'PERMIT', sgacl: 'Owner Only',       desc: 'Locked exclusively to Malik A. Khabir (Sole Admin).' },
 
+      'INTERNAL_OPERATIONS|otto_agent':{ state: 'PERMIT', sgacl: 'Workspace Flow',   desc: 'Permitted to run Otto Studio flows and internal agent automations.' },
       'INTERNAL_OPERATIONS|turnkey':   { state: 'PERMIT', sgacl: 'Staff Scope',      desc: 'Permitted to launch and support client showcase apps.' },
       'INTERNAL_OPERATIONS|scorm_lms': { state: 'PERMIT', sgacl: 'Staff Scope',      desc: 'Permitted to launch all 8 SCORM and SaaS modules.' },
       'INTERNAL_OPERATIONS|fasttrack': { state: 'PERMIT', sgacl: 'Staff Scope',      desc: 'Permitted to execute defined AI templates for operations.' },
@@ -708,6 +731,7 @@
       'INTERNAL_OPERATIONS|ext_dir':   { state: 'SCOPED', sgacl: 'Clients Only',     desc: 'Scoped strictly to OU=External Client accounts and consultations.' },
       'INTERNAL_OPERATIONS|pci_acct':  { state: 'DENY',   sgacl: 'Restricted',       desc: 'Zero employee access to GAAP ledger or PCI gateway settings.' },
 
+      'INTERNAL_ANALYST|otto_agent':   { state: 'PERMIT', sgacl: 'Workspace Flow',   desc: 'Permitted to execute Otto agent workflows within assigned scope.' },
       'INTERNAL_ANALYST|turnkey':      { state: 'PERMIT', sgacl: 'Staff Scope',      desc: 'Permitted to launch and support client showcase apps.' },
       'INTERNAL_ANALYST|scorm_lms':    { state: 'PERMIT', sgacl: 'Analyst LMS',      desc: 'Permitted to run cyber and SCORM training modules.' },
       'INTERNAL_ANALYST|fasttrack':    { state: 'SCOPED', sgacl: 'Grant Required',   desc: 'Requires explicit qualification or Admin assignment.' },
@@ -715,6 +739,7 @@
       'INTERNAL_ANALYST|ext_dir':      { state: 'SCOPED', sgacl: 'Clients Only',     desc: 'Scoped strictly to OU=External Client accounts and consultations.' },
       'INTERNAL_ANALYST|pci_acct':     { state: 'DENY',   sgacl: 'Restricted',       desc: 'Zero employee access to GAAP ledger or PCI gateway settings.' },
 
+      'EXTERNAL_FULL_CLIENT|otto_agent':{ state: 'PERMIT', sgacl: 'Workspace OAuth', desc: 'Workspace Clients connected via Google/Microsoft/Apple OAuth receive full Otto Agent interactions.' },
       'EXTERNAL_FULL_CLIENT|turnkey':  { state: 'PERMIT', sgacl: 'Client Base',      desc: 'Included in base and enterprise client entitlements.' },
       'EXTERNAL_FULL_CLIENT|scorm_lms':{ state: 'PERMIT', sgacl: 'Pro / Enterprise', desc: 'Auto-unlocked via Verified Pro ($49) / Enterprise ($250) tier.' },
       'EXTERNAL_FULL_CLIENT|fasttrack':{ state: 'PERMIT', sgacl: 'Pro / Enterprise', desc: 'Auto-qualified for Resource Fast-Track and Guided Templates.' },
@@ -722,6 +747,7 @@
       'EXTERNAL_FULL_CLIENT|ext_dir':  { state: 'DENY',   sgacl: 'Isolated',         desc: 'Clients are strictly blocked from Directory and other tenants.' },
       'EXTERNAL_FULL_CLIENT|pci_acct': { state: 'SCOPED', sgacl: 'Self Billing',     desc: 'Client can submit own tokenized payment; zero ledger visibility.' },
 
+      'EXTERNAL_SAAS_LMS|otto_agent':  { state: 'TIER',   sgacl: 'Connect Workspace',desc: 'Access Clients receive Showcase & Insights only until they connect their Google/Microsoft/Apple Workspace.' },
       'EXTERNAL_SAAS_LMS|turnkey':     { state: 'PERMIT', sgacl: 'Client Base',      desc: 'Default 2 showcase apps (Client Turnkey Forge and Sterling Auto).' },
       'EXTERNAL_SAAS_LMS|scorm_lms':   { state: 'TIER',   sgacl: 'Upgrade / Grant',  desc: 'Unlocks automatically on Tier 2/3 payment or Admin grant.' },
       'EXTERNAL_SAAS_LMS|fasttrack':   { state: 'TIER',   sgacl: 'Upgrade / Grant',  desc: 'Hidden until qualified via Tier 2/3 upgrade or Admin grant.' },
@@ -1011,12 +1037,135 @@
       '</tbody></table></div>';
   }
 
+  function renderAgentsManagementView() {
+    if (!isOwner) return '';
+    const agents = W.getAgentsCatalog ? W.getAgentsCatalog() : (W.AGENTS_CATALOG || []);
+    const wsAccounts = W.WORKSPACE_DIRECTORY_ACCOUNTS || [];
+    const otto = agents[0] || {
+      id: 'otto',
+      name: 'Otto',
+      title: 'Otto — Autonomous Workspace & Security Operations Agent',
+      type: 'Studio flow',
+      agentId: '38ef575f-bce0-4895-bf93-36605220e1ca',
+      studioWorkflowId: 'w13225285bbe5e967be82464a88a6262c',
+      studioUrl: 'https://studio.workspace.google.com/workflow/w13225285bbe5e967be82464a88a6262c',
+      adminConsoleUrl: 'https://admin.google.com/ac/agents/list?journey=218&cid=028tf37o',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Cloud Search', 'Drive', 'Gmail', 'MGC Workspace'],
+      access: 'Default',
+      status: 'Active'
+    };
+
+    return '<div class="ad-center" style="padding:18px 20px">' +
+      '<div class="row" style="margin-bottom:14px;flex-wrap:wrap;gap:10px">' +
+        '<div>' +
+          '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+            '<span class="chip ok">Agents · Agent Access Management</span>' +
+            '<span class="chip" style="border-color:rgba(59,130,246,0.55);color:#93c5fd">Google Workspace Studio + MGC Console Sync</span>' +
+          '</div>' +
+          '<h2 style="margin:4px 0 0;font-size:16.5px;font-weight:700;color:#fff">Manage Agents &amp; Autonomous Workspace Access</h2>' +
+          '<p style="margin:3px 0 0;font-size:12px;color:#94a3b8">Review agents and manage their individual access to your organization’s Workspace data and MGC Client Portals.</p>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+          '<a class="btn pri" href="' + esc(otto.studioUrl) + '" target="_blank" rel="noopener noreferrer" style="padding:7px 12px;font-size:12px">Open Otto in Workspace Studio ↗</a>' +
+          '<a class="btn" href="' + esc(otto.adminConsoleUrl) + '" target="_blank" rel="noopener noreferrer" style="padding:7px 12px;font-size:12px;border-color:rgba(197,179,88,0.45);color:#fde047">Google Admin Agent Access ↗</a>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="ad-table-wrap" style="margin-bottom:16px;border:1px solid var(--line);border-radius:10px">' +
+        '<table class="ad-table" id="mgcManageAgentsTable">' +
+          '<thead><tr>' +
+            '<th>Name</th>' +
+            '<th>Type</th>' +
+            '<th>Agent ID / Studio Flow</th>' +
+            '<th>Manager &amp; Connect Identity</th>' +
+            '<th>Workspace Apps</th>' +
+            '<th>Access Policy</th>' +
+            '<th>Status</th>' +
+            '<th>Actions</th>' +
+          '</tr></thead>' +
+          '<tbody>' +
+            agents.map(ag => {
+              const isAct = String(ag.status || 'Active').toLowerCase() === 'active';
+              return '<tr style="cursor:default">' +
+                '<td>' +
+                  '<div style="font-weight:700;color:#60a5fa;font-size:13.5px">' + esc(ag.name) + '</div>' +
+                  '<div style="font-size:11px;color:#94a3b8">' + esc(ag.title) + '</div>' +
+                '</td>' +
+                '<td><span class="chip">' + esc(ag.type) + '</span></td>' +
+                '<td>' +
+                  '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#fde047">' + esc(ag.agentId) + '</div>' +
+                  '<div style="font-size:10.5px;color:#64748b">Flow: ' + esc(ag.studioWorkflowId) + '</div>' +
+                '</td>' +
+                '<td>' +
+                  '<div style="font-size:11.5px;color:#fff;font-weight:600">' + esc(ag.manager) + '</div>' +
+                  '<div style="font-size:10.5px;color:#34d399">Connect: ' + esc(ag.serviceIdentity) + '</div>' +
+                '</td>' +
+                '<td>' +
+                  '<div style="display:flex;gap:4px;flex-wrap:wrap">' +
+                    (ag.workspaceApps || []).map(w => '<span class="chip" style="font-size:10px;padding:2px 6px">' + esc(w) + '</span>').join('') +
+                  '</div>' +
+                '</td>' +
+                '<td>' +
+                  '<select id="admAgentAccessSelect" data-agent-access="' + esc(ag.id) + '" style="padding:5px 8px;font-size:11.5px">' +
+                    '<option value="Default"' + (ag.access === 'Default' ? ' selected' : '') + '>Default (Allow Workspace Access)</option>' +
+                    '<option value="Restricted"' + (ag.access === 'Restricted' ? ' selected' : '') + '>Restricted (Explicit Grant Only)</option>' +
+                  '</select>' +
+                '</td>' +
+                '<td>' +
+                  '<span class="chip ' + (isAct ? 'ok' : 'warn') + '">● ' + esc(ag.status || 'Active') + '</span>' +
+                '</td>' +
+                '<td>' +
+                  '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+                    '<button type="button" class="btn ' + (isAct ? '' : 'pri') + '" data-toggle-agent-status="' + esc(ag.id) + '|' + (isAct ? 'Paused' : 'Active') + '" style="padding:5px 10px;font-size:11px">' + (isAct ? 'Pause' : 'Activate') + '</button>' +
+                    '<a class="btn pri" href="' + esc(ag.studioUrl) + '" target="_blank" rel="noopener noreferrer" style="padding:5px 10px;font-size:11px">Studio ↗</a>' +
+                  '</div>' +
+                '</td>' +
+              '</tr>';
+            }).join('') +
+          '</tbody>' +
+        '</table>' +
+      '</div>' +
+
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">' +
+        '<div style="padding:14px 16px;border-radius:12px;background:rgba(4,8,20,0.88);border:1px solid rgba(16,185,129,0.4)">' +
+          '<div class="row" style="margin-bottom:8px">' +
+            '<h3 style="margin:0;font-size:13.5px;font-weight:700;color:#6ee7b7">Persistent Role &amp; Agent Access Boundary</h3>' +
+            '<span class="chip ok" style="font-size:10px">Enforced</span>' +
+          '</div>' +
+          '<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#cbd5e1">' +
+            '<div><b style="color:#fde047">1. Administrator (malik.khabir@miltongroupsecurity.org):</b> Full security, authentication, directory governance, and actionable Agent Access Management controls.</div>' +
+            '<div><b style="color:#6ee7b7">2. Workspace Clients (OAuth Connected):</b> Authenticate by connecting their Google, Microsoft, or Apple Workspace; receive full Workspace experience and interactive <b>Otto Agent</b> workflows.</div>' +
+            '<div><b style="color:#93c5fd">3. Access Clients (Standard Portal):</b> Scoped strictly to Showcase Access and Operational Tools &amp; Insights until a Workspace is connected.</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div style="padding:14px 16px;border-radius:12px;background:rgba(4,8,20,0.88);border:1px solid rgba(59,130,246,0.4)">' +
+          '<div class="row" style="margin-bottom:8px">' +
+            '<h3 style="margin:0;font-size:13.5px;font-weight:700;color:#93c5fd">Google Workspace Directory Accounts (3 Users)</h3>' +
+            '<span class="chip ok" style="font-size:10px">Strong Passwords &amp; Passkeys Active</span>' +
+          '</div>' +
+          '<div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px">' +
+            wsAccounts.map(acc =>
+              '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;background:rgba(15,23,42,0.8);border:1px solid rgba(148,163,184,0.18)">' +
+                '<div><b>' + esc(acc.name) + '</b> <code style="color:#fde047;font-size:11px">' + esc(acc.email) + '</code><div style="font-size:10.5px;color:#94a3b8">' + esc(acc.roleLabel) + ' · ' + esc(acc.agentRole) + '</div></div>' +
+                '<span class="chip ok" style="font-size:10px">' + esc(acc.status) + '</span>' +
+              '</div>'
+            ).join('') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
   function render() {
     const allM = members();
     const intCount = allM.filter(u => getUserOu(u) === 'internal').length;
     const extCount = allM.filter(u => getUserOu(u) === 'external').length;
     const payCount = (S().payments || []).length;
     const reqTotal = (S().requests || []).length + (S().consultations || []).length;
+    const agentsCount = (W.getAgentsCatalog ? W.getAgentsCatalog() : (W.AGENTS_CATALOG || [])).length || 1;
 
     const treeHtml =
       '<aside class="ad-tree">' +
@@ -1032,8 +1181,9 @@
         '<button type="button" class="ad-tree-item ' + (tab === 'users' && ouFilter === 'external' ? 'active' : '') + '" data-ou="external" data-tab="users"><span class="ad-tree-label">OU=External (Clients)</span><span class="ad-tree-count">' + extCount + '</span></button>' +
         (isOwner
           ? '<button type="button" class="ad-tree-item ' + (tab === 'admin_identity' ? 'active' : '') + '" data-tab="admin_identity"><span class="ad-tree-label">Builtin Administrator</span><span class="ad-tree-count">1</span></button>' +
-            '<div class="ad-tree-section">RBAC &amp; Policy</div>' +
-            '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span class="ad-tree-label">Access Matrix</span><span class="ad-tree-count">5×6</span></button>' +
+            '<div class="ad-tree-section">RBAC &amp; Agent Access</div>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'agents' ? 'active' : '') + '" data-tab="agents"><span class="ad-tree-label">Agent Access (Otto)</span><span class="ad-tree-count">' + agentsCount + ' Active</span></button>' +
+            '<button type="button" class="ad-tree-item ' + (tab === 'groups' ? 'active' : '') + '" data-tab="groups"><span class="ad-tree-label">Access Matrix</span><span class="ad-tree-count">5×7</span></button>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'payments' ? 'active' : '') + '" data-tab="payments"><span class="ad-tree-label">PCI-DSS &amp; Billing</span><span class="ad-tree-count">' + payCount + '</span></button>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'requests' ? 'active' : '') + '" data-tab="requests"><span class="ad-tree-label">Consultations &amp; Intake</span><span class="ad-tree-count">' + reqTotal + '</span></button>' +
             '<button type="button" class="ad-tree-item ' + (tab === 'audit' ? 'active' : '') + '" data-tab="audit"><span class="ad-tree-label">Event Viewer</span><span class="ad-tree-count">' + (S().audit || []).length + '</span></button>'
@@ -1043,6 +1193,7 @@
 
     let centerHtml = '';
     if (tab === 'users') centerHtml = renderUsersDirectoryView();
+    else if (tab === 'agents' && isOwner) centerHtml = renderAgentsManagementView();
     else if (tab === 'admin_identity' && isOwner) centerHtml = renderAdminIdentityView();
     else if (tab === 'groups' && isOwner) centerHtml = renderSecurityGroupsView();
     else if (tab === 'payments' && isOwner) centerHtml = renderPaymentsAndPciView();
@@ -1063,6 +1214,7 @@
           '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'external' ? 'pri' : '') + '" data-tab="users" data-ou="external" style="padding:5px 11px;font-size:11.5px">Clients · OU=External (' + extCount + ')</button>' +
           (isOwner
             ? '<button type="button" class="btn ' + (tab === 'users' && ouFilter === 'internal' ? 'pri' : '') + '" data-tab="users" data-ou="internal" style="padding:5px 11px;font-size:11.5px">Employees · OU=Internal (' + intCount + ')</button>' +
+              '<button type="button" class="btn ' + (tab === 'agents' ? 'pri' : '') + '" data-tab="agents" style="padding:5px 11px;font-size:11.5px;border-color:rgba(16,185,129,0.5);color:#6ee7b7">Agent Access (Otto)</button>' +
               '<button type="button" class="btn ' + (tab === 'groups' ? 'pri' : '') + '" data-tab="groups" style="padding:5px 11px;font-size:11.5px">Access Matrix</button>' +
               '<button type="button" class="btn ' + (tab === 'payments' ? 'pri' : '') + '" data-tab="payments" style="padding:5px 11px;font-size:11.5px">Accounting &amp; PCI (' + payCount + ')</button>' +
               '<button type="button" class="btn ' + (tab === 'requests' ? 'pri' : '') + '" data-tab="requests" style="padding:5px 11px;font-size:11.5px">Consultations (' + reqTotal + ')</button>' +
@@ -1076,6 +1228,7 @@
             '<div class="wgw-menu" id="adInspectorQuickMenu" role="region" aria-label="Inspector Quick Navigation" style="right:0;left:auto;min-width:225px">' +
               '<div class="wgw-menu-hdr">Inspect Selected User' + (selObj ? ' (' + esc(selObj.username || selObj.name) + ')' : '') + '</div>' +
               '<button type="button" class="wgw-item" data-jump-prop="account" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Account, Recovery &amp; Address</span><small>Username, Email, Phone, Address</small></button>' +
+              '<button type="button" class="wgw-item" data-jump-prop="agents" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Otto Agent Access</span><small>Workspace Agent Entitlement</small></button>' +
               '<button type="button" class="wgw-item" data-jump-prop="rbac" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>RBAC &amp; Security Group</span><small>OU &amp; Workspace Views</small></button>' +
               '<button type="button" class="wgw-item" data-jump-prop="apps" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>SaaS Apps &amp; LMS (8)</span><small>Toggle app entitlements</small></button>' +
               '<button type="button" class="wgw-item" data-jump-prop="resources" style="width:100%;text-align:left;background:transparent;border:0;cursor:pointer"><span>Qualified Resources</span><small>White Feather &amp; AI Tools</small></button>' +
@@ -1269,6 +1422,35 @@
       W.toggleUserFeature(uidVal, 'resource', resId, en);
       W.toast((en ? 'Qualified ' : 'Revoked ') + resId + ' (+ Milton UI/UX & AI Tools) for ' + name(uidVal));
       render();
+    });
+    app.querySelectorAll('[data-toggle-agent]').forEach(b => b.onclick = (e) => {
+      e.stopPropagation();
+      const [uidVal, agId, enStr] = b.dataset.toggleAgent.split('|');
+      const en = enStr === 'true';
+      selectedUserId = uidVal;
+      W.toggleUserFeature(uidVal, 'agent', agId, en);
+      W.toast((en ? 'Granted ' : 'Revoked ') + 'Otto Agent access for ' + name(uidVal));
+      render();
+    });
+    app.querySelectorAll('[data-agent-access]').forEach(selEl => {
+      selEl.onchange = () => {
+        const agId = selEl.getAttribute('data-agent-access') || 'otto';
+        if (W.updateAgentAccess) {
+          W.updateAgentAccess(agId, { access: selEl.value });
+        }
+        W.toast('Updated Otto Agent access policy to ' + selEl.value);
+        render();
+      };
+    });
+    app.querySelectorAll('[data-toggle-agent-status]').forEach(btn => {
+      btn.onclick = () => {
+        const [agId, nextSt] = (btn.getAttribute('data-toggle-agent-status') || 'otto|Active').split('|');
+        if (W.updateAgentAccess) {
+          W.updateAgentAccess(agId, { status: nextSt });
+        }
+        W.toast('Otto Agent status set to ' + nextSt);
+        render();
+      };
     });
     const btnAddRes = document.getElementById('btnAddCustomRes');
     if (btnAddRes && isOwner) {
