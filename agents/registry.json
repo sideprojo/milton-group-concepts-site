@@ -126,6 +126,19 @@
       "aistudioUrl": "https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR",
       "primaryTool": "generate_cognate_drill_loop",
       "specPath": "agents/alma/alma-aistudio-spec.json"
+    },
+    {
+      "id": "orin",
+      "name": "Orin",
+      "callSign": "ORIN-01",
+      "appSlug": "maps-geospatial-insights",
+      "title": "Orin (ORIN-01) — Maps, 3D Geospatial & Location Insights AI",
+      "category": "Maps, 3D Geospatial & Location Insights",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng",
+      "primaryTool": "analyze_geospatial_corridor",
+      "specPath": "agents/orin/orin-aistudio-spec.json"
     }
   ]
 }

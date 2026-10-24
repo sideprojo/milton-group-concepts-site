@@ -112,7 +112,8 @@ const APPS_CATALOG = [
   { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', primaryTool: 'simulate_funnel_treasury_roi', icon: '📈', title: 'Vega — Funnel & Treasury ROI Modeler',   brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Vega (VEGA-01): Unlocked in Tier 2 Pro Suite — 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
   { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', primaryTool: 'grade_cli_ansible_drill',      icon: '⌨️', title: 'Kael — Multi-OS CLI & Ansible Grader',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Kael (KAEL-01): Unlocked in Tier 2 Pro Suite — 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
   { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', primaryTool: 'analyze_epigraphic_inscription', icon: '🏺', title: 'Clio — Chronos Epigraphy & Geodesic AI', brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Clio (CLIO-01): Unlocked in Tier 2 Pro Suite — 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
-  { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '🇪🇸', title: 'Alma — Associative Language OS (10K)',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Alma (ALMA-01): Unlocked in Tier 2 Pro Suite — 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' }
+  { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '🇪🇸', title: 'Alma — Associative Language OS (10K)',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Alma (ALMA-01): Unlocked in Tier 2 Pro Suite — 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' },
+  { id: 'maps-geospatial-insights',   codename: 'Orin', callSign: 'ORIN-01', aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', aistudioUrl: 'https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', primaryTool: 'analyze_geospatial_corridor',  icon: '🌍', title: 'Orin — Maps, 3D Geospatial & Location Insights', brand: 'MGC', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/maps-geospatial-insights/index.html',   zipHref: '',                                                                               desc: 'Orin (ORIN-01): Included by default — Google Earth 3D (<gmp-map-3d>), Photorealistic 3D Tiles & regional market/DoD corridor insights.' }
 ];
 
 // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -183,7 +184,7 @@ const CHART_OF_ACCOUNTS = [
 ];
 
 // New users ONLY have view and access of SaaS Apps & LMS (+ payment submission in member-portal.html)
-const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge'];
+const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge', 'maps-geospatial-insights'];
 const DEFAULT_CUSTOMER_RESOURCES = [];
 const DEFAULT_CUSTOMER_PAGES = { saasapps: 'ready' };
 const DEFAULT_CUSTOMER_PORTALS = ['saas-apps-and-lms-showcase.html', 'member-portal.html'];
@@ -4287,7 +4288,7 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/otto/spec' && req.method === 'GET') {
       const reqAgent = sanitizeInput(parsedUrl.searchParams.get('agent') || 'otto', 32).toLowerCase();
-      const allowedAgents = new Set(['otto', 'argo', 'arya', 'zeno', 'cato', 'vega', 'kael', 'clio', 'alma']);
+      const allowedAgents = new Set(['otto', 'argo', 'arya', 'zeno', 'cato', 'vega', 'kael', 'clio', 'alma', 'orin']);
       const agentSlug = allowedAgents.has(reqAgent) ? reqAgent : 'otto';
       const specPath = path.join(ROOT, 'agents', agentSlug, `${agentSlug}-aistudio-spec.json`);
       let spec = null;
@@ -4390,6 +4391,26 @@ const server = http.createServer(async (req, res) => {
           nextUnlockedStage: 'SCO 4: High-Frequency Cognate & Neural MP3 Loop',
           transferMatchPct: '96% Match',
           studioFlowStatus: 'ALMA_01_AISTUDIO_VERIFIED'
+        },
+        analyze_geospatial_corridor: {
+          agent: 'Orin', callSign: 'ORIN-01', appSlug: 'maps-geospatial-insights',
+          aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng',
+          summary: 'Orin (ORIN-01) analyzed Richmond I-95 HQ to NCR Fort Belvoir DoD corridor (50-mi radius) using <gmp-map-3d> Photorealistic 3D Tiles ($0/seat guardrail) and mapped 142 SDVOSB/DoDAAC nodes.',
+          recommendedApps: ['maps-geospatial-insights', 'samgov-contract-matchmaker', 'traffic-roi-simulator'],
+          recommendedTemplateId: 'tpl_biz_turnkey_scale',
+          nextUnlockedStage: 'Stage 3: Multi-Corridor KML & SAM.gov DoDAAC Overlay Locked',
+          transferMatchPct: '97% Match',
+          studioFlowStatus: 'ORIN_01_AISTUDIO_VERIFIED'
+        },
+        generate_3d_tiles_kml_overlay: {
+          agent: 'Orin', callSign: 'ORIN-01', appSlug: 'maps-geospatial-insights',
+          aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng',
+          summary: 'Orin (ORIN-01) compiled KML/GeoJSON perimeter overlays and <gmp-map-3d> camera fly-to presets across Richmond, Haymarket I-66, Fort Belvoir NCR, and Norfolk Naval corridors.',
+          recommendedApps: ['maps-geospatial-insights', 'chronos-aetheria-scorm'],
+          recommendedTemplateId: 'tpl_biz_turnkey_scale',
+          nextUnlockedStage: 'Stage 3: Photorealistic 3D Tiles Deck.gl / Cesium Session Ready',
+          transferMatchPct: '97% Match',
+          studioFlowStatus: 'ORIN_01_KML_OVERLAY_READY'
         }
       };
 
@@ -5600,7 +5621,7 @@ const server = http.createServer(async (req, res) => {
         'elearning-upskilling-hub.html':        '/projects/eveng-netprism-studio/index.html',
         'historical-archaeology-ai-hub.html':   '/projects/chronos-aetheria-scorm/index.html',
         'chronos-external-insight-webapp.html': '/projects/chronos-aetheria-scorm/index.html',
-        'earth-3d.html':                        '/projects/chronos-aetheria-scorm/index.html',
+        'earth-3d.html':                        '/projects/maps-geospatial-insights/index.html',
         'vr-command.html':                      '/projects/ghost-cli-trainer/index.html'
       };
       if (CONSOLIDATED_INTERNAL_TARGETS[baseName]) {

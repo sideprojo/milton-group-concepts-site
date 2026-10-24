@@ -31,7 +31,8 @@
     { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', primaryTool: 'simulate_funnel_treasury_roi', icon: '', title: 'Vega — Funnel & Treasury ROI Modeler',      brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator powered by Vega.' },
     { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', primaryTool: 'grade_cli_ansible_drill',      icon: '', title: 'Kael — Multi-OS CLI & Ansible Auto-Grader', brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'IOS-XE, Linux, SQL, KQL, and Ansible terminal lab powered by Kael.' },
     { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', primaryTool: 'analyze_epigraphic_inscription',icon: '', title: 'Clio — Chronos Epigraphy & Geodesic AI',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Ancient text restoration, epigraphy, and geodesic discovery powered by Clio.' },
-    { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '', title: 'Alma — Associative Language OS (10K)',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module associative language training application powered by Alma.' }
+    { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '', title: 'Alma — Associative Language OS (10K)',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module associative language training application powered by Alma.' },
+    { id: 'maps-geospatial-insights',   codename: 'Orin', callSign: 'ORIN-01', aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', aistudioUrl: 'https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', primaryTool: 'analyze_geospatial_corridor',  icon: '', title: 'Orin — Maps, 3D Geospatial & Location Insights', brand: 'MGC', defaultCustomer: true,  price: 0,  href: 'projects/maps-geospatial-insights/index.html', zipHref: '',                                                                               desc: 'Google Earth 3D (<gmp-map-3d>), Photorealistic 3D Tiles, and regional market/DoD corridor insights powered by Orin.' }
   ];
 
   // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -242,6 +243,23 @@
       manager: 'malik.khabir@miltongroupsecurity.org',
       serviceIdentity: 'connect@miltongroupsecurity.org',
       workspaceApps: ['Spanish Acquisition OS', 'MGC Workspace'],
+      access: 'Default',
+      status: 'On (Active)'
+    },
+    {
+      id: 'orin',
+      name: 'Orin',
+      callSign: 'ORIN-01',
+      appSlug: 'maps-geospatial-insights',
+      title: 'Orin (ORIN-01) — Maps, 3D Geospatial & Location Insights AI',
+      type: 'AI Studio Specialist Persona',
+      agentId: 'orin-01-maps-geospatial',
+      aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng',
+      aistudioUrl: 'https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng',
+      primaryTool: 'analyze_geospatial_corridor',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Maps & 3D Geospatial Insights', 'Google Earth 3D', 'MGC Workspace'],
       access: 'Default',
       status: 'On (Active)'
     }

@@ -1,0 +1,135 @@
+{
+  "agent_id": "orin",
+  "name": "Orin",
+  "call_sign": "ORIN-01",
+  "app_slug": "maps-geospatial-insights",
+  "title": "Orin (ORIN-01) â€” Maps, 3D Geospatial & Location Insights AI",
+  "category": "Maps, 3D Geospatial & Location Insights",
+  "model": "gemini-3.8-flash",
+  "thinking_level": "Medium",
+  "orchestrator_parent": "Otto (OTTO-01 Â· 1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6)",
+  "system_instruction": "You are Orin (Call Sign: ORIN-01), the Maps, 3D Geospatial & Location Insights specialist agent for Milton Group Concepts LLC and F.I.X Solutions LLC (projects/maps-geospatial-insights and earth-3d.html). You receive routed client handoffs from Otto (OTTO-01) and orchestrate Google Maps Platform (<gmp-map-3d>), Photorealistic 3D Tiles ($0-per-seat Developer Tier guardrails), KML/GeoJSON logistics corridors, commercial market catchment insights, and federal contracting node telemetry (Richmond HQ, NoVA I-66 Corridor, Fort Belvoir / NCR Defense Hub, and Norfolk Naval Corridor). Never execute raw shell commands; strictly invoke your declared geospatial and location insight tools and return validated JSON matching response_schema.",
+  "generation_config": {
+    "temperature": 0.2,
+    "response_mime_type": "application/json",
+    "response_schema": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "type": "string"
+        },
+        "callSign": {
+          "type": "string"
+        },
+        "appSlug": {
+          "type": "string"
+        },
+        "toolExecuted": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "recommendedCorridors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendedTemplateId": {
+          "type": "string"
+        },
+        "nextUnlockedStage": {
+          "type": "string"
+        },
+        "transferMatchPct": {
+          "type": "string"
+        },
+        "studioFlowStatus": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent",
+        "callSign",
+        "appSlug",
+        "toolExecuted",
+        "summary",
+        "recommendedCorridors",
+        "recommendedTemplateId",
+        "nextUnlockedStage",
+        "transferMatchPct",
+        "studioFlowStatus"
+      ]
+    }
+  },
+  "tools": [
+    {
+      "function_declarations": [
+        {
+          "name": "analyze_geospatial_corridor",
+          "description": "Analyzes a commercial or federal geospatial corridor using Google Maps Platform (<gmp-map-3d>), Photorealistic 3D Tiles, and regional market/logistics telemetry.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "corridorId": {
+                "type": "string",
+                "description": "Target corridor identifier (e.g. richmond_hq_i95, nova_i66_haymarket, ncr_fort_belvoir_dod, hampton_roads_naval)."
+              },
+              "radiusMiles": {
+                "type": "number",
+                "description": "Catchment or operational radius in miles (e.g. 25, 50, 100)."
+              },
+              "insightLayer": {
+                "type": "string",
+                "description": "Telemetry layer to synthesize (e.g. commercial_catchment_roi, sdvosb_dod_proximity, logistics_3d_tiles_kml)."
+              }
+            },
+            "required": [
+              "corridorId",
+              "radiusMiles",
+              "insightLayer"
+            ]
+          }
+        },
+        {
+          "name": "generate_3d_tiles_kml_overlay",
+          "description": "Generates <gmp-map-3d> camera fly-to coordinates, KML/GeoJSON perimeter overlays, and $0-per-seat Developer Tier Photorealistic 3D Tiles configuration.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "centerLatLng": {
+                "type": "string",
+                "description": "Target latitude,longitude,altitude string (e.g. 37.6247,-77.5458,140)."
+              },
+              "exportFormat": {
+                "type": "string",
+                "description": "Overlay export format (KML_EARTH_3D, GEOJSON_DECKGL, GMP_MAP_3D_CAMERA)."
+              }
+            },
+            "required": [
+              "centerLatLng",
+              "exportFormat"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "verification_test": {
+    "prompt": "Analyze the richmond_hq_i95 to ncr_fort_belvoir_dod corridor across a 50-mile radius with insightLayer sdvosb_dod_proximity and generate a 3D geospatial & location insights report.",
+    "simulated_tool_response": {
+      "status": "GEOSPATIAL_CORRIDOR_VERIFIED",
+      "corridorId": "richmond_hq_i95 -> ncr_fort_belvoir_dod",
+      "nodesAnalyzed": [
+        "Principal HQ â€” 8401 Mayland Dr #10286, Richmond, VA (37.6247, -77.5458)",
+        "NoVA Operations Node â€” Haymarket / I-66 Corridor (38.8151, -77.6364)",
+        "DoD NCR Contracting Hub â€” Fort Belvoir, VA (38.7189, -77.1477)"
+      ],
+      "billingGuardrail": "DEVELOPER_TIER_GMP_MAP_3D_ZERO_SEAT_COST",
+      "catchmentScore": "97% Match"
+    }
+  },
+  "aistudio_prompt_id": "1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng",
+  "aistudio_url": "https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng"
+}
