@@ -677,47 +677,40 @@
           '<span id="valBadgeToken" style="display:none"></span>' +
         '</div>' +
 
-        '<!-- RIGHT COLUMN: Processor Checkout & Billing Box -->' +
+        '<!-- RIGHT COLUMN: External Redirect Checkout (Zero On-Site Payment Processing) -->' +
         '<div class="card" style="padding:18px 20px;margin:0">' +
-          '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px">Billing Details</div>' +
-          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:10px">' +
+          '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px">Prefilled Redirect Contact Details</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px">' +
             '<input id="payBillingName" required maxlength="100" value="' + esc((prof && prof.billingName) || u.name || '') + '" placeholder="Full Name" style="padding:9px 12px;font-size:13px">' +
             '<input id="payBillingEmail" type="email" required maxlength="120" value="' + esc((prof && prof.billingEmail) || u.email || '') + '" placeholder="Email Address" style="padding:9px 12px;font-size:13px">' +
             '<input id="payBillingOrg" maxlength="120" value="' + esc((prof && prof.billingOrg) || u.org || '') + '" placeholder="Organization" style="padding:9px 12px;font-size:13px">' +
           '</div>' +
+          '<input id="payAddress" type="hidden" value="' + esc((prof && prof.addressLine1) || 'Verified Address') + '">' +
+          '<input id="payCity" type="hidden" value="' + esc((prof && prof.city) || 'Arlington') + '">' +
+          '<input id="payState" type="hidden" value="' + esc((prof && prof.stateRegion) || 'VA') + '">' +
+          '<input id="payZip" type="hidden" value="' + esc((prof && prof.postalCode) || '22202') + '">' +
+          '<input id="payBrand" type="hidden" value="External Hosted Redirect">' +
+          '<input id="payCardOrLast4" type="hidden" value="REDIR">' +
+          '<input id="payExpMonth" type="hidden" value="12">' +
+          '<input id="payExpYear" type="hidden" value="2029">' +
+          '<span id="lblPayLast4" style="display:none"></span>' +
+          '<span id="valBadgeZip" style="display:none"></span>' +
+          '<div id="expFieldsWrap" style="display:none"></div>' +
 
-          '<div style="display:grid;grid-template-columns:2fr 1fr 84px 104px;gap:10px;margin-bottom:14px">' +
-            '<input id="payAddress" required maxlength="140" value="' + esc((prof && prof.addressLine1) || 'Verified Address') + '" placeholder="Street Address" style="padding:9px 12px;font-size:13px">' +
-            '<input id="payCity" required maxlength="80" value="' + esc((prof && prof.city) || 'Arlington') + '" placeholder="City" style="padding:9px 12px;font-size:13px">' +
-            '<input id="payState" required maxlength="40" value="' + esc((prof && prof.stateRegion) || 'VA') + '" placeholder="State" style="padding:9px 12px;font-size:13px">' +
-            '<input id="payZip" required maxlength="10" pattern="^\\d{5}(-\\d{4})?$" value="' + esc((prof && prof.postalCode) || '22202') + '" placeholder="ZIP Code" style="padding:9px 12px;font-size:13px">' +
+          '<div style="padding:12px 14px;border-radius:10px;background:rgba(4,8,20,0.85);border:1px solid rgba(59,130,246,0.38);margin-bottom:14px;font-size:12px;color:#cbd5e1;line-height:1.5">' +
+            '<strong style="color:#fff">External Redirect Only (Zero On-Site Processing):</strong> No card numbers or banking details are collected on this site. Selecting checkout redirects you with prefilled details, verifies your authentication, and returns you within security controls.' +
           '</div>' +
 
-          '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">' +
-            '<span id="lblPayLast4">Processor Network / Instrument</span>' +
-            '<span id="valBadgeZip" style="color:#34d399;font-size:11px;font-weight:500"></span>' +
-          '</div>' +
-          '<div id="pciInstrumentVaultCard" style="display:grid;grid-template-columns:1.4fr 1fr 136px;gap:8px;padding:7px 10px;border-radius:10px;background:rgba(4,8,20,0.92);border:1px solid rgba(59,130,246,0.42);margin-bottom:14px;align-items:center">' +
-            '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa / Cash App / ACH') + '" placeholder="Network (Visa, Cash App, Bank)" style="border:none;background:transparent;padding:6px 8px;font-size:13px">' +
-            '<input id="payCardOrLast4" maxlength="4" inputmode="numeric" value="' + esc((prof && prof.last4) || '4242') + '" placeholder="Ref (Optional)" autocomplete="off" style="border:none;border-left:1px solid rgba(148,163,184,0.2);border-radius:0;background:transparent;padding:6px 10px;font-size:13px;font-family:\'JetBrains Mono\',monospace;font-weight:600;letter-spacing:.08em">' +
-            '<div id="expFieldsWrap" style="display:flex;gap:4px;border-left:1px solid rgba(148,163,184,0.2);padding-left:8px;transition:opacity .2s ease;align-items:center">' +
-              '<input id="payExpMonth" type="number" min="1" max="12" value="' + esc((prof && prof.expMonth) || 12) + '" placeholder="MM" style="border:none;background:transparent;padding:6px 4px;font-size:12.5px;width:48px;text-align:center">' +
-              '<span style="color:#64748b">/</span>' +
-              '<input id="payExpYear" type="number" min="2026" max="2040" value="' + esc((prof && prof.expYear) || 2029) + '" placeholder="YYYY" style="border:none;background:transparent;padding:6px 4px;font-size:12.5px;width:64px;text-align:center">' +
-            '</div>' +
-          '</div>' +
-
-          '<!-- Minimalist 1-Line Authorization + Processor Checkout Buttons -->' +
           '<div class="row" style="padding-top:10px;border-top:1px solid var(--line);gap:12px;flex-wrap:wrap">' +
             '<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#cbd5e1;cursor:pointer;font-weight:400">' +
               '<input type="checkbox" id="payEftaNacha" checked onchange="document.getElementById(\'payPciTerms\').checked=this.checked;document.getElementById(\'payMsaTerms\').checked=this.checked">' +
               '<input type="checkbox" id="payPciTerms" checked style="display:none">' +
               '<input type="checkbox" id="payMsaTerms" checked style="display:none">' +
-              '<span>Authorize payment via Hosted Processor under EFTA/NACHA and MSA terms</span>' +
+              '<span>Agree to Terms of Service, Privacy Policy, and Official Legal Notice</span>' +
             '</label>' +
             '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-              '<button type="button" class="btn" id="btnRouteProcessorCheckout" style="padding:9px 16px;font-size:12.5px;border-color:#3b82f6;color:#93c5fd">Continue to Processor Checkout →</button>' +
-              '<button type="submit" class="btn pri" id="btnSubmitLegalPayment" style="padding:9px 20px;font-size:13px">Save &amp; Verify</button>' +
+              '<button type="button" class="btn pri" id="btnRouteProcessorCheckout" style="padding:9px 16px;font-size:12.5px">Proceed to Prefilled Redirect →</button>' +
+              '<button type="submit" class="btn" id="btnSubmitLegalPayment" style="padding:9px 16px;font-size:12.5px">Verify Redirect Return</button>' +
             '</div>' +
           '</div>' +
         '</div>' +

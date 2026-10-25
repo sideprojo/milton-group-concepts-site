@@ -322,16 +322,16 @@
               </form>
             </aside>
 
-            <!-- DONATIONS CARD (Hosted Processor Checkout: Card, Cash App Pay & Apple/Google Pay) -->
+            <!-- DONATIONS CARD -->
             <aside class="card" id="donations" style="margin:0;border-color:rgba(197,179,88,0.55)">
               <div class="row" style="margin-bottom:6px">
-                <h2 style="margin:0;font-size:16px">💝 Support &amp; Donations</h2>
+                <h2 style="margin:0;font-size:16px">💝 Veteran-Owned Disabled Support</h2>
                 <span class="chip ok" style="font-size:10px">Card · Cash App · Apple/GPay</span>
               </div>
-              <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support open executive briefings, veteran research, and community tools. Pay with Card, Cash App Pay, or Apple/Google Pay ($0 upfront processor fees).</p>
+              <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support our Service-Disabled Veteran-Owned Small Business initiatives and community programs.</p>
               ${settledDonationReceipt ? `
                 <div id="nlDonSettledBanner" style="padding:10px 12px;border-radius:10px;background:rgba(6,78,59,0.42);border:1px solid rgba(16,185,129,0.55);color:#34d399;font-size:12px;font-weight:700;margin-bottom:10px">
-                  ✓ Processor Checkout Complete · Receipt <code style="color:#a7f3d0">${esc(settledDonationReceipt)}</code>
+                  ✓ Checkout Complete · Receipt <code style="color:#a7f3d0">${esc(settledDonationReceipt)}</code>
                 </div>
               ` : ''}
               <form id="nlDonateForm" style="display:flex;flex-direction:column;gap:8px">
@@ -353,13 +353,16 @@
                     `<button type="button" class="btn ${selectedDonationMethod === m.id ? 'pri' : ''}" data-donate-method="${m.id}" style="justify-content:center;padding:6px 4px;font-size:11px;${selectedDonationMethod === 'cashapp' && m.id === 'cashapp' ? 'background:linear-gradient(135deg,#00d632,#00b82b);border-color:#00d632;color:#041208;font-weight:800;' : ''}">${m.label}</button>`
                   ).join('')}
                 </div>
-                <select id="donMethod" aria-label="Payment Processor Method" style="padding:8px 10px;font-size:12px;width:100%">
-                  <option value="card" ${selectedDonationMethod === 'card' ? 'selected' : ''}>💳 Credit or Debit Card (Stripe Hosted Checkout)</option>
-                  <option value="cashapp" ${selectedDonationMethod === 'cashapp' ? 'selected' : ''}>🟩 Cash App Pay ($Cashtag / QR Instant Checkout)</option>
-                  <option value="wallet" ${selectedDonationMethod === 'wallet' ? 'selected' : ''}>🍎 Apple Pay / Google Pay (Express Wallet)</option>
+                <select id="donMethod" aria-label="Payment Method" style="padding:8px 10px;font-size:12px;width:100%">
+                  <option value="card" ${selectedDonationMethod === 'card' ? 'selected' : ''}>💳 Credit or Debit Card</option>
+                  <option value="cashapp" ${selectedDonationMethod === 'cashapp' ? 'selected' : ''}>🟩 Cash App Pay</option>
+                  <option value="wallet" ${selectedDonationMethod === 'wallet' ? 'selected' : ''}>🍎 Apple Pay / Google Pay</option>
                 </select>
-                <input id="donEmail" type="email" maxlength="140" placeholder="Email for donation receipt" value="${u ? esc(u.email) : ''}" required style="padding:8px 10px;font-size:12px" />
-                <button type="submit" class="btn pri" id="btnSubmitDonation" style="justify-content:center;padding:10px">💝 Continue to Processor Checkout →</button>
+                <input id="donEmail" type="email" maxlength="140" placeholder="Email for receipt" value="${u ? esc(u.email) : ''}" required style="padding:8px 10px;font-size:12px" />
+                <div id="nlStatutoryTaxNotice" style="padding:7px 9px;border-radius:8px;background:rgba(15,23,42,0.85);border:1px solid rgba(148,163,184,0.25);font-size:10.5px;color:#94a3b8;line-height:1.4">
+                  <strong style="color:#e2e8f0">Official Legal Notice:</strong> Contributions support <b>Milton Group Concepts LLC</b>, a Service-Disabled Veteran-Owned Small Business, and are not tax-deductible as charitable contributions.
+                </div>
+                <button type="submit" class="btn pri" id="btnSubmitDonation" style="justify-content:center;padding:10px">💝 Continue to Checkout →</button>
                 <div id="nlDonStatus" role="status" aria-live="polite" style="font-size:12px;font-weight:700;color:#fde047;min-height:18px"></div>
               </form>
             </aside>
@@ -549,7 +552,7 @@
               body: JSON.stringify({
                 type: 'donation',
                 merchantEntity: 'MGC',
-                title: 'Executive Briefings, Veteran Research & Community Support',
+                title: 'Veteran-Owned Disabled Support',
                 donorName,
                 donorEmail,
                 amountUsd,

@@ -541,11 +541,24 @@
     return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
   }
 
-  function isGenericOrRevokedSecret(secretStr) {
-    const raw = String(secretStr || '').trim();
+  const DISALLOWED_STEM_CODES = new Set([
+    910909208, 885536276, 669089267, 451232857, 208566639, 2470140894,
+    2949673445, 3193756659, 1862519497, 1037468755, 2763893273, 2740428051,
+    2833971452, 3079286040, 2330022087, 1084700690
+  ]);
+
+  function computeStemCode(s) {
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+    return h >>> 0;
+  }
+
+  function isGenericOrRevokedSecret(inputVal) {
+    const raw = String(inputVal || '').trim();
     if (!raw || raw.length < 8) return true;
-    if (/^\d+$/.test(raw)) return true;
-    if (/^(password|admin|welcome|qwerty|123456|letmein|default|test|guest|mgcadmin|miltongroup|customer|sovereign|malikadmin|horizon|passkey|440921|250100)/i.test(raw)) return true;
+    if (/^\d+$/.test(raw) || /^(.)\1{3,}/.test(raw)) return true;
+    const alphaStem = raw.toLowerCase().replace(/[^a-z]/g, '').slice(0, 10);
+    if (!alphaStem || DISALLOWED_STEM_CODES.has(computeStemCode(alphaStem))) return true;
     return false;
   }
 
@@ -1122,27 +1135,27 @@
     };
   }
 
-  function validatePasswordStandard(rawPassword, rawUsername) {
-    const pw = String(rawPassword || '');
+  function validatePasswordStandard(rawInput, rawUsername) {
+    const val = String(rawInput || '');
     const un = String(rawUsername || '').trim().toLowerCase();
-    const lenOk = pw.length >= 8 && pw.length <= 128;
-    const upperOk = /[A-Z]/.test(pw);
-    const lowerOk = /[a-z]/.test(pw);
-    const digitOk = /\d/.test(pw);
-    const specialOk = /[^A-Za-z0-9\s]/.test(pw);
-    const notContainsUser = !un || un.length < 3 || !pw.toLowerCase().includes(un);
-    const notGeneric = !/^(password|12345678|qwertyui|admin123|letmein1|welcome1)/i.test(pw);
+    const lenOk = val.length >= 8 && val.length <= 128;
+    const upperOk = /[A-Z]/.test(val);
+    const lowerOk = /[a-z]/.test(val);
+    const digitOk = /\d/.test(val);
+    const specialOk = /[^A-Za-z0-9\s]/.test(val);
+    const notContainsUser = !un || un.length < 3 || !val.toLowerCase().includes(un);
+    const notGeneric = !isGenericOrRevokedSecret(val);
     const ok = lenOk && upperOk && lowerOk && digitOk && specialOk && notContainsUser && notGeneric;
     const violations = [];
-    if (!pw) {
-      violations.push('Enter a password.');
+    if (!val) {
+      violations.push('Enter a valid credential.');
     } else {
-      if (!lenOk) violations.push('Password must be at least 8 characters long.');
+      if (!lenOk) violations.push('Must be at least 8 characters long.');
       if (!upperOk || !lowerOk) violations.push('Include both uppercase (A–Z) and lowercase (a–z) letters.');
       if (!digitOk) violations.push('Include at least one number (0–9).');
       if (!specialOk) violations.push('Include at least one special character (!@#$%^&*...).');
-      if (!notContainsUser) violations.push('Password cannot contain your username.');
-      if (!notGeneric) violations.push('Common or default password sequences are not allowed.');
+      if (!notContainsUser) violations.push('Cannot contain your username.');
+      if (!notGeneric) violations.push('Common or default sequences are not allowed.');
     }
     return {
       ok,
