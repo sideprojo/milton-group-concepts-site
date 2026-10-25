@@ -61,11 +61,13 @@
   let paywallZip = '23294';
   let paywallError = '';
 
-  const isSoleAdmin = () => Boolean(W.isOwner ? W.isOwner(u) : (u && u.role === 'owner' && u.id === 'owner'));
-  const isEmp = () => Boolean(W.isEmployee ? W.isEmployee(u) : (u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active'));
-  const isClientUser = () => Boolean(W.isClient ? W.isClient(u) : (u && u.role !== 'owner' && u.ou !== 'internal'));
-  const isWorkspaceClientUser = () => Boolean(W.isWorkspaceClient ? W.isWorkspaceClient(u) : (isClientUser() && (u.clientTier === 'workspace' || u.workspaceConnected === true || ['google', 'microsoft', 'apple'].includes(String(u.ssoProvider || '').toLowerCase()))));
-  const isAccessClientUser = () => Boolean(W.isAccessClient ? W.isAccessClient(u) : (isClientUser() && !isWorkspaceClientUser()));
+  const isTrueAdminAccount = () => Boolean(W.isTrueSoleAdmin ? W.isTrueSoleAdmin(u) : (u && u.role === 'owner' && u.id === 'owner'));
+  const getActiveAdminView = () => (isTrueAdminAccount() && W.getAdminRoleView) ? W.getAdminRoleView(u) : null;
+  const isSoleAdmin = () => isTrueAdminAccount() && (!getActiveAdminView() || getActiveAdminView() === 'owner');
+  const isEmp = () => (isTrueAdminAccount() && getActiveAdminView() === 'employee') || Boolean(!isTrueAdminAccount() && (W.isEmployee ? W.isEmployee(u) : (u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active')));
+  const isClientUser = () => (isTrueAdminAccount() && (getActiveAdminView() === 'workspace' || getActiveAdminView() === 'access')) || Boolean(!isTrueAdminAccount() && (W.isClient ? W.isClient(u) : (u && u.role !== 'owner' && u.ou !== 'internal')));
+  const isWorkspaceClientUser = () => (isTrueAdminAccount() && getActiveAdminView() === 'workspace') || Boolean(!isTrueAdminAccount() && (W.isWorkspaceClient ? W.isWorkspaceClient(u) : (isClientUser() && u.clientTier !== 'access' && (u.clientTier === 'workspace' || u.workspaceConnected === true))));
+  const isAccessClientUser = () => (isTrueAdminAccount() && getActiveAdminView() === 'access') || Boolean(!isTrueAdminAccount() && (W.isAccessClient ? W.isAccessClient(u) : (isClientUser() && !isWorkspaceClientUser())));
   const getQualifiedResources = () => {
     const cat = W.getResourcesCatalog ? W.getResourcesCatalog() : (W.RESOURCES_CATALOG || []);
     return cat.filter(r => isSoleAdmin() || W.can(u, 'resource', r.id, 'view'));
@@ -133,7 +135,15 @@
     const recAppIds = new Set(Array.isArray(u && u.recommendedApps) ? u.recommendedApps : []);
     matchedCatObjs.forEach(c => (c.associatedApps || []).forEach(aid => recAppIds.add(aid)));
 
-    const isEntitledApp = (appId) => Boolean(isSoleAdmin() || W.can(u, 'app', appId, 'view'));
+    const isEntitledApp = (appId) => {
+      if (isTrueAdminAccount()) {
+        const av = getActiveAdminView();
+        if (av === 'access') return (W.DEFAULT_CUSTOMER_APPS || ['sterling-auto-repair', 'client-turnkey-forge', 'maps-geospatial-insights']).includes(appId);
+        if (av === 'employee') return ['sterling-auto-repair', 'client-turnkey-forge', 'eveng-netprism-studio', 'samgov-contract-matchmaker', 'ghost-cli-trainer', 'maps-geospatial-insights'].includes(appId);
+        return true; // 'owner' and 'workspace' have all 9 apps unlocked
+      }
+      return Boolean(W.can(u, 'app', appId, 'view'));
+    };
 
     const unlockedApps = apps
       .filter(a => isEntitledApp(a.id))
@@ -187,7 +197,7 @@
 
     // Security Boundary & Membership Tier Ribbon
     const ouCode = isSoleAdmin() ? 'OU=Builtin (Sole Admin)' : (isEmp() ? 'OU=Internal (Staff Analyst)' : 'OU=External (Client)');
-    const isFullPartner = isSoleAdmin() || isEmp() || (u && u.securityGroup === 'EXTERNAL_CLIENT_PARTNER') || (u && u.plan && u.plan.planTier === 'sdvosb_contract_retainer');
+    const isFullPartner = isSoleAdmin() || isEmp() || isWorkspaceClientUser() || (u && u.securityGroup === 'EXTERNAL_CLIENT_PARTNER') || (u && u.plan && u.plan.planTier === 'sdvosb_contract_retainer');
     const secGroup = isSoleAdmin() ? 'DOMAIN_ADMIN' : (isEmp() ? 'INTERNAL_ANALYST' : (isFullPartner ? 'EXTERNAL_CLIENT_PARTNER' : 'EXTERNAL_SAAS_LMS'));
     const tierBadgeText = isSoleAdmin()
       ? 'Administrator · All 9 Apps Active'

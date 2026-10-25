@@ -649,7 +649,72 @@
     return null;
   };
 
-  const isOwner = (u = me()) => Boolean(u && u.role === 'owner' && u.id === 'owner');
+  const isTrueSoleAdmin = (u = me()) => Boolean(u && u.role === 'owner' && u.id === 'owner' && String(u.email || '').toLowerCase() === 'malik.khabir@miltongroupsecurity.org');
+  const isOwner = (u = me()) => isTrueSoleAdmin(u);
+
+  function getAdminRoleView(u = me()) {
+    if (!isTrueSoleAdmin(u)) return null;
+    try {
+      if (typeof location !== 'undefined') {
+        const qs = new URLSearchParams(location.search || '');
+        const qRole = String(qs.get('adminRoleView') || '').toLowerCase();
+        if (['owner', 'employee', 'workspace', 'access'].includes(qRole)) {
+          sessionStorage.setItem('mgcw.admin_role_view', qRole);
+          if (S && S.users && S.users.owner) S.users.owner.adminRoleView = qRole;
+          return qRole;
+        }
+        if (/access-admin/i.test(location.pathname || '')) {
+          sessionStorage.setItem('mgcw.admin_role_view', 'owner');
+          if (S && S.users && S.users.owner) S.users.owner.adminRoleView = 'owner';
+          return 'owner';
+        }
+        if (/employee-portal|staff-portal/i.test(location.pathname || '')) {
+          sessionStorage.setItem('mgcw.admin_role_view', 'employee');
+          if (S && S.users && S.users.owner) S.users.owner.adminRoleView = 'employee';
+          return 'employee';
+        }
+      }
+      const stored = String(sessionStorage.getItem('mgcw.admin_role_view') || (S && S.users && S.users.owner && S.users.owner.adminRoleView) || '').toLowerCase();
+      if (['owner', 'employee', 'workspace', 'access'].includes(stored)) return stored;
+    } catch (_) {}
+    return 'owner';
+  }
+
+  async function setAdminRoleView(targetRole) {
+    const u = me();
+    if (!isTrueSoleAdmin(u)) {
+      return { ok: false, status: 403, error: 'Role toggle is strictly restricted to the Sole Administrator.' };
+    }
+    const cleanRole = ['owner', 'employee', 'workspace', 'access'].includes(String(targetRole || '').toLowerCase())
+      ? String(targetRole).toLowerCase()
+      : 'owner';
+    try {
+      sessionStorage.setItem('mgcw.admin_role_view', cleanRole);
+      if (S && S.users && S.users.owner) S.users.owner.adminRoleView = cleanRole;
+    } catch (_) {}
+    let dest = cleanRole === 'owner'
+      ? '/access-admin'
+      : cleanRole === 'employee'
+        ? '/employee-portal?adminRoleView=employee'
+        : '/workspace?adminRoleView=' + cleanRole;
+    try {
+      if (typeof location !== 'undefined' && (location.protocol === 'http:' || location.protocol === 'https:')) {
+        const res = await fetch('/api/admin/role-toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roleView: cleanRole })
+        });
+        const data = await res.json();
+        if (data && data.ok && data.redirect) {
+          dest = data.redirect;
+        }
+      }
+    } catch (_) {}
+    if (typeof location !== 'undefined') {
+      location.href = dest;
+    }
+    return { ok: true, activeRoleView: cleanRole, redirect: dest };
+  }
   const isEmployee = (u = me()) => Boolean(u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active');
   const isClient = (u = me()) => Boolean(u && u.role !== 'owner' && u.ou !== 'internal');
   const isWorkspaceClient = (u = me()) => {
@@ -2307,9 +2372,15 @@
 
   function getAssignedAnimatedAgent(u) {
     if (!u) return ANIMATED_AGENTS.otto;
-    if (isOwner(u)) return ANIMATED_AGENTS.sovereign;
+    if (isTrueSoleAdmin(u)) {
+      const rv = getAdminRoleView(u);
+      if (rv === 'employee') return ANIMATED_AGENTS.sentinel;
+      if (rv === 'workspace') return ANIMATED_AGENTS.atlas;
+      if (rv === 'access') return ANIMATED_AGENTS.otto;
+      return ANIMATED_AGENTS.sovereign;
+    }
     if (isEmployee(u)) return ANIMATED_AGENTS.sentinel;
-    const isFullPartner = u.securityGroup === 'EXTERNAL_CLIENT_PARTNER' || (u.plan && u.plan.planTier === 'sdvosb_contract_retainer') || (Array.isArray(u.allowedApps) && u.allowedApps.length >= 9);
+    const isFullPartner = u.securityGroup === 'EXTERNAL_CLIENT_PARTNER' || u.clientTier === 'workspace' || (u.plan && u.plan.planTier === 'sdvosb_contract_retainer') || (Array.isArray(u.allowedApps) && u.allowedApps.length >= 9);
     return isFullPartner ? ANIMATED_AGENTS.atlas : ANIMATED_AGENTS.otto;
   }
 
@@ -2607,14 +2678,52 @@
     const right = '<div class="nav">' + authBtn + '</div>';
     const existingBar = document.querySelector('.wrap > .bar');
     if (existingBar) existingBar.remove();
+    const existingAdminToggle = document.getElementById('soleAdminRoleToggleBar');
+    if (existingAdminToggle) existingAdminToggle.remove();
     const el = document.createElement('div');
     el.className = 'bar';
     const brandCode = (u && u.brand === 'FIX') ? 'FIX' : 'MGC';
     const brandTitle = (u && u.brand === 'FIX') ? 'F.I.X Solutions' : 'Milton Group Concepts';
     const subLabel = isNewsletterPage ? 'Executive Intelligence' : (u ? esc(u.name) : 'Not signed in');
-    el.innerHTML = '<a class="brand" id="mgcBrandHomeLink" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><img src="assets/mgc-crest.png" alt="MGC Crest" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.75));flex-shrink:0" /><div>Milton Group Concepts<small>' + subLabel + '</small></div></a>' + nav + right;
+    el.innerHTML = '<a class="brand" id="mgcBrandHomeLink" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:40px;height:40px;object-fit:contain;flex-shrink:0" /><div>Milton Group Concepts<small>' + subLabel + '</small></div></a>' + nav + right;
     const host = document.querySelector('.wrap');
-    if (host) host.prepend(el);
+    if (host) {
+      host.prepend(el);
+      // STRICT SOLE ADMINISTRATOR ROLE TOGGLE BAR: Rendered ONLY for Malik A. Khabir (isTrueSoleAdmin). Never rendered in DOM for any other user or role.
+      if (isTrueSoleAdmin(u) && !isNewsletterPage) {
+        const activeRv = getAdminRoleView(u) || 'owner';
+        const roleOptions = [
+          { id: 'owner',     label: '👑 Sole Admin (Sovereign)',      accent: '#fde047' },
+          { id: 'employee',  label: '🛡️ Internal Staff (Sentinel)',   accent: '#60a5fa' },
+          { id: 'workspace', label: '🚀 Workspace Partner (Atlas)',   accent: '#10b981' },
+          { id: 'access',    label: '⚡ Showcase Client (Otto)',      accent: '#38bdf8' }
+        ];
+        const toggleBar = document.createElement('div');
+        toggleBar.id = 'soleAdminRoleToggleBar';
+        toggleBar.setAttribute('role', 'region');
+        toggleBar.setAttribute('aria-label', 'Sole Administrator Role View Switcher');
+        toggleBar.style.cssText = 'display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:9px 14px;margin-bottom:12px;border-radius:11px;background:linear-gradient(90deg,rgba(15,23,42,0.96),rgba(6,11,24,0.98));border:1.5px solid rgba(253,224,71,0.55);box-shadow:0 8px 24px rgba(0,0,0,0.45)';
+        toggleBar.innerHTML =
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<span style="padding:2px 8px;border-radius:999px;background:rgba(253,224,71,0.18);border:1px solid #fde047;color:#fde047;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase">SOLE ADMIN ROLE TOGGLE</span>' +
+            '<span style="font-size:11.5px;color:#cbd5e1;font-weight:600">Active View: <strong style="color:#fff">' + esc((roleOptions.find(r => r.id === activeRv) || roleOptions[0]).label) + '</strong></span>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
+            roleOptions.map(ro => {
+              const isCur = ro.id === activeRv;
+              return '<button type="button" class="btn' + (isCur ? ' pri' : '') + '" data-admin-role-toggle="' + ro.id + '" aria-pressed="' + String(isCur) + '" style="padding:5px 11px;font-size:11.5px;font-weight:700;border-color:' + (isCur ? ro.accent : 'rgba(148,163,184,0.28)') + ';background:' + (isCur ? 'rgba(30,58,138,0.45)' : 'rgba(15,23,42,0.85)') + ';color:' + (isCur ? '#fff' : '#cbd5e1') + '">' + ro.label + '</button>';
+            }).join('') +
+          '</div>';
+        el.insertAdjacentElement('afterend', toggleBar);
+        toggleBar.querySelectorAll('[data-admin-role-toggle]').forEach(btn => {
+          btn.onclick = (ev) => {
+            ev.preventDefault();
+            const targetRole = btn.getAttribute('data-admin-role-toggle');
+            setAdminRoleView(targetRole);
+          };
+        });
+      }
+    }
     const soEl = el.querySelector('#w-signout');
     if (soEl) soEl.onclick = () => signOut();
     mountFloatingCompanion();
@@ -2678,5 +2787,5 @@
     }
   }
 
-  global.MGCW = { ANIMATED_AGENTS, getAssignedAnimatedAgent, renderAnimatedAvatarSvg, triggerGuidedHighlight, mountFloatingCompanion,  CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, isMobileClientDevice, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { ANIMATED_AGENTS, getAssignedAnimatedAgent, renderAnimatedAvatarSvg, triggerGuidedHighlight, mountFloatingCompanion,  CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isTrueSoleAdmin, getAdminRoleView, setAdminRoleView, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, isMobileClientDevice, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

@@ -4564,6 +4564,50 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
+    if (pathname === '/api/admin/role-toggle' && (req.method === 'POST' || req.method === 'GET')) {
+      const u = getAuthenticatedUser(req);
+      if (!u || !isOwnerUser(u) || String(u.email || '').toLowerCase() !== SOLE_ADMIN_EMAIL) {
+        logAudit(u ? u.id : 'anonymous', 'security.unauthorized_role_toggle_blocked', 'Blocked non-admin attempt to access /api/admin/role-toggle');
+        return sendJson(res, 403, {
+          ok: false,
+          code: 'SOLE_ADMIN_ONLY',
+          error: 'Role toggle is strictly restricted to the Sole Administrator.'
+        });
+      }
+      if (req.method === 'GET') {
+        const curView = (S.users && S.users.owner && S.users.owner.adminRoleView) || 'owner';
+        return sendJson(res, 200, {
+          ok: true,
+          canToggleRoles: true,
+          activeRoleView: curView
+        });
+      }
+      const body = await readJsonBody(req);
+      const rawRole = String(body.roleView || body.role || 'owner').trim().toLowerCase();
+      const validRoles = new Set(['owner', 'employee', 'workspace', 'access']);
+      const cleanRole = validRoles.has(rawRole) ? rawRole : 'owner';
+      if (S.users && S.users.owner) {
+        S.users.owner.adminRoleView = cleanRole;
+      }
+      const viewToken = signToken({ uid: 'owner', email: SOLE_ADMIN_EMAIL, roleView: cleanRole }, 86400 * 7);
+      logAudit('owner', 'admin.role_toggle', 'Sole Administrator switched active role view to ' + cleanRole.toUpperCase());
+      saveState(S);
+      const redirectMap = {
+        owner: '/access-admin',
+        employee: '/employee-portal?adminRoleView=employee',
+        workspace: '/workspace?adminRoleView=workspace',
+        access: '/workspace?adminRoleView=access'
+      };
+      return sendJson(res, 200, {
+        ok: true,
+        canToggleRoles: true,
+        activeRoleView: cleanRole,
+        redirect: redirectMap[cleanRole] || '/access-admin'
+      }, {
+        'Set-Cookie': `mgcw_admin_view=${encodeURIComponent(viewToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${86400 * 7}`
+      });
+    }
+
     if (pathname === '/api/admin/sml' && req.method === 'POST') {
       const u = getAuthenticatedUser(req);
       if (!u || !isOwnerUser(u)) {
@@ -5983,17 +6027,29 @@ const server = http.createServer(async (req, res) => {
       }
       if (baseName === 'member-portal.html') {
         const isEmployeePath = pathname === '/employee-portal' || pathname === '/employee-portal.html' || pathname === '/staff-portal';
-        if (isOwnerUser(u)) {
-          res.writeHead(302, { Location: '/access-admin', 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
-          return res.end();
-        }
-        if (isEmployeeUser(u) && !isEmployeePath) {
-          res.writeHead(302, { Location: '/employee-portal', 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
-          return res.end();
-        }
-        if (!isEmployeeUser(u) && isEmployeePath) {
-          res.writeHead(302, { Location: '/workspace', 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
-          return res.end();
+        const reqRoleView = parsedUrl.searchParams.get('adminRoleView');
+        if (isOwnerUser(u) && String(u.email || '').toLowerCase() === SOLE_ADMIN_EMAIL) {
+          // Sole Administrator is authorized to toggle into and view all role portals (/employee-portal and /workspace)
+          if (reqRoleView && ['owner', 'employee', 'workspace', 'access'].includes(reqRoleView)) {
+            if (S.users && S.users.owner) S.users.owner.adminRoleView = reqRoleView;
+          } else if (isEmployeePath) {
+            if (S.users && S.users.owner) S.users.owner.adminRoleView = 'employee';
+          }
+        } else {
+          // Non-Admin: strictly strip any unauthorized ?adminRoleView= parameter and lock to their RBAC portal
+          if (reqRoleView) {
+            const safeTarget = isEmployeeUser(u) ? '/employee-portal' : '/workspace';
+            res.writeHead(302, { Location: safeTarget, 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
+            return res.end();
+          }
+          if (isEmployeeUser(u) && !isEmployeePath) {
+            res.writeHead(302, { Location: '/employee-portal', 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
+            return res.end();
+          }
+          if (!isEmployeeUser(u) && isEmployeePath) {
+            res.writeHead(302, { Location: '/workspace', 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
+            return res.end();
+          }
         }
       }
       if (baseName === 'agile-board.html' && u.role !== 'owner' && !can(u, 'page', 'agile', 'view')) {
