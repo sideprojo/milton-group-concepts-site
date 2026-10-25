@@ -454,9 +454,13 @@
         u.ou = u.ou === 'internal' ? 'internal' : 'external';
         u.accessTier = u.accessTier || (u.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED');
         const prov = String(u.ssoProvider || '').toLowerCase();
-        const hasWorkspaceSso = ['google', 'microsoft', 'apple'].includes(prov) || u.workspaceConnected === true || u.clientTier === 'workspace';
+        const hasWorkspaceSso = u.ou === 'internal'
+          ? true
+          : (u.clientTier === 'access'
+            ? false
+            : (u.clientTier === 'workspace' || u.workspaceConnected === true || ['google', 'microsoft', 'apple'].includes(prov)));
         u.workspaceConnected = Boolean(hasWorkspaceSso);
-        u.clientTier = hasWorkspaceSso ? 'workspace' : 'access';
+        u.clientTier = u.ou === 'internal' ? 'employee' : (hasWorkspaceSso ? 'workspace' : 'access');
         if (!Array.isArray(u.allowedApps)) {
           u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
         }
@@ -719,17 +723,19 @@
   const isClient = (u = me()) => Boolean(u && u.role !== 'owner' && u.ou !== 'internal');
   const isWorkspaceClient = (u = me()) => {
     if (!u || isOwner(u) || isEmployee(u)) return false;
+    if (u.clientTier === 'access') return false;
     if (u.clientTier === 'workspace' || u.workspaceConnected === true) return true;
-    const prov = String(u.ssoProvider || sessionStorage.getItem('mgcw.sso_provider') || '').toLowerCase();
-    if (['google', 'microsoft', 'apple'].includes(prov)) return true;
     try {
       const sess = JSON.parse(localStorage.getItem('mgc_onboarded_session') || 'null');
       if (sess && String(sess.email || '').toLowerCase() === String(u.email || '').toLowerCase()) {
-        if (sess.clientTier === 'workspace' || sess.workspaceConnected === true || ['google', 'microsoft', 'apple'].includes(String(sess.ssoProvider || '').toLowerCase())) {
+        if (sess.clientTier === 'access') return false;
+        if (sess.clientTier === 'workspace' || sess.workspaceConnected === true) {
           return true;
         }
       }
     } catch (_) {}
+    const prov = String(u.ssoProvider || sessionStorage.getItem('mgcw.sso_provider') || '').toLowerCase();
+    if (['google', 'microsoft', 'apple'].includes(prov)) return true;
     return false;
   };
   const isAccessClient = (u = me()) => Boolean(u && isClient(u) && !isWorkspaceClient(u));
@@ -797,10 +803,11 @@
     }
     if (!serverSyncOk) S.currentUser = id;
     const isAdminUser = u.role === 'owner' && u.id === 'owner';
-    const isWs = !isAdminUser && (['google', 'microsoft', 'apple'].includes(cleanProv) || u.workspaceConnected === true);
+    const isEmpUser = !isAdminUser && u.ou === 'internal';
+    const isWs = !isAdminUser && !isEmpUser && (u.clientTier === 'access' ? false : (u.clientTier === 'workspace' || ['google', 'microsoft', 'apple'].includes(cleanProv) || u.workspaceConnected === true));
     u.ssoProvider = cleanProv;
-    u.workspaceConnected = isAdminUser ? true : isWs;
-    u.clientTier = isAdminUser ? 'administrator' : (isWs ? 'workspace' : 'access');
+    u.workspaceConnected = (isAdminUser || isEmpUser) ? true : isWs;
+    u.clientTier = isAdminUser ? 'administrator' : (isEmpUser ? 'employee' : (isWs ? 'workspace' : 'access'));
     commit();
     sessionStorage.setItem('mgcw.uid', id);
     sessionStorage.setItem('mgcw.sso_provider', cleanProv);

@@ -2029,8 +2029,22 @@ const server = http.createServer(async (req, res) => {
         const payload = JSON.parse(Buffer.from(pB64, 'base64url').toString('utf8'));
         if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
 
-        // Verify cryptographic RS256 signature against provider's live JWKS (or Firebase JWKS if issued by securetoken.google.com)
         const iss = String(payload.iss || '');
+        const aud = String(payload.aud || '');
+        const cfg = getOauthConfig();
+        const allowedAuds = new Set([
+          'gen-lang-client-0636792472',
+          '254657731107-sgdbihvbrpar0sr6mg1msf6mv11s1cor.apps.googleusercontent.com',
+          cfg.firebaseProjectId,
+          cfg.googleClientId,
+          cfg.microsoftClientId,
+          cfg.appleClientId
+        ].filter(Boolean));
+        if (aud && allowedAuds.size > 0 && !allowedAuds.has(aud)) {
+          return null;
+        }
+
+        // Verify cryptographic RS256 signature against provider's live JWKS (or Firebase JWKS if issued by securetoken.google.com)
         const jwksUrl = iss.includes('securetoken.google.com')
           ? OIDC_JWKS_URLS.firebase
           : (OIDC_JWKS_URLS[provider] || OIDC_JWKS_URLS.google);
@@ -2047,12 +2061,14 @@ const server = http.createServer(async (req, res) => {
             );
           }
         }
+        if (!sigVerified) return null;
         return {
           email: String(payload.email || payload.preferred_username || payload.upn || '').toLowerCase(),
           name: String(payload.name || payload.given_name || ''),
           sub: String(payload.sub || ''),
           iss,
-          sigVerified
+          aud,
+          sigVerified: true
         };
       } catch (_) {
         return null;
@@ -2243,7 +2259,7 @@ const server = http.createServer(async (req, res) => {
         : null;
 
       const targetUrls = {
-        google: 'https://accounts.google.com/ServiceLogin?hl=en',
+        google: 'https://gen-lang-client-0636792472.firebaseapp.com/oauth-bridge.html?start=1&state=' + encodeURIComponent(stateTok),
         microsoft: 'https://login.live.com/',
         apple: 'https://account.apple.com/sign-in'
       };
@@ -2388,6 +2404,30 @@ const server = http.createServer(async (req, res) => {
           const d = await r.json();
           if (d && d.ok && d.redirect) {
             targetDest = d.redirect;
+            try {
+              sessionStorage.setItem('mgcw.uid', d.uid || '');
+              sessionStorage.setItem('mgcw.sso_provider', d.provider || 'google');
+              localStorage.removeItem('mgc_edge_gate_locked');
+              localStorage.setItem('mgc_last_activity_ts', String(Date.now()));
+              const isAdmin = d.role === 'owner' && d.email === 'malik.khabir@miltongroupsecurity.org';
+              const isWorkspace = !isAdmin && d.clientTier === 'workspace';
+              const sessObj = {
+                email: d.email,
+                name: d.name || d.email,
+                role: isAdmin ? 'OWNER_ADMIN' : (isWorkspace ? 'WORKSPACE_CLIENT' : 'ACCESS_CLIENT'),
+                clientTier: d.clientTier || (isAdmin ? 'administrator' : 'workspace'),
+                workspaceConnected: Boolean(d.workspaceConnected),
+                ssoVerified: true,
+                ssoProvider: d.provider || 'google',
+                allowedApps: d.allowedApps || [],
+                allowedPortals: d.allowedPortals || [],
+                verifiedAt: new Date().toISOString(),
+                lastActivityTs: Date.now()
+              };
+              localStorage.setItem('mgc_onboarded_session', JSON.stringify(sessObj));
+              localStorage.setItem('mgc_onboarded_user', JSON.stringify(sessObj));
+              history.replaceState(null, '', location.pathname);
+            } catch (_) {}
             const subEl = document.getElementById('cbSub');
             if (subEl) subEl.textContent = 'RBAC role verified · Opening authorized portal view...';
           }
@@ -2443,13 +2483,19 @@ const server = http.createServer(async (req, res) => {
       let email = resolveCaseInsensitiveIdentifier(rawIdentifier);
       let name = String(body.name || '').trim();
       let jwksVerified = false;
-      if (body.idToken && typeof body.idToken === 'string' && body.idToken.split('.').length === 3) {
-        const verified = await verifyOidcIdToken(body.idToken, provider);
-        if (verified && verified.email) {
-          email = resolveCaseInsensitiveIdentifier(verified.email);
-          if (verified.name) name = verified.name;
-          jwksVerified = Boolean(verified.sigVerified);
+      if (body.idToken !== undefined && body.idToken !== null && String(body.idToken).trim() !== '') {
+        const verified = await verifyOidcIdToken(String(body.idToken).trim(), provider);
+        if (!verified || !verified.sigVerified || !verified.email) {
+          logAudit('system', 'security.invalid_oidc_token_rejected', `Rejected unverified or forged OIDC idToken for provider=${provider}`);
+          return sendJson(res, 403, {
+            ok: false,
+            code: 'INVALID_OIDC_SIGNATURE',
+            error: 'Cryptographic OIDC token verification failed (JWKS RS256 signature or audience invalid).'
+          });
         }
+        email = resolveCaseInsensitiveIdentifier(verified.email);
+        if (verified.name) name = verified.name;
+        jwksVerified = true;
       }
       if (!/^\S+@\S+\.\S+$/.test(email)) {
         return sendJson(res, 400, { ok: false, error: 'Please enter a valid Email address or registered Username.' });

@@ -1157,8 +1157,9 @@
 
   function persistOnboardingBridge(email, name, role, provider, allowedApps, allowedPortals, clientTier) {
     const isAdmin = role === 'owner' && email === 'malik.khabir@miltongroupsecurity.org';
-    const isWorkspace = !isAdmin && (clientTier === 'workspace' || ['google', 'microsoft', 'apple'].includes(String(provider || '').toLowerCase()));
-    const resolvedTier = isAdmin ? 'administrator' : (isWorkspace ? 'workspace' : 'access');
+    const isEmp = !isAdmin && clientTier === 'employee';
+    const isWorkspace = !isAdmin && !isEmp && (clientTier === 'access' ? false : (clientTier === 'workspace' || ['google', 'microsoft', 'apple'].includes(String(provider || '').toLowerCase())));
+    const resolvedTier = isAdmin ? 'administrator' : (isEmp ? 'employee' : (isWorkspace ? 'workspace' : 'access'));
     const sessionObj = {
       email,
       name: name || (isAdmin ? 'Malik A. Khabir' : email),
