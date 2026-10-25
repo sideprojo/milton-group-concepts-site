@@ -23,16 +23,16 @@
     { id: 'home',      icon: '', title: 'Overview Checklist',    brand: 'ANY', kind: 'page', base: false, price: 5,  href: 'member-portal.html?view=overview',  desc: 'Project overview and action checklist.' }
   ];
 
-  const APPS_CATALOG = [
-    { id: 'client-turnkey-forge',       codename: 'Argo', callSign: 'ARGO-01', aistudioPromptId: '1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', aistudioUrl: 'https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', primaryTool: 'generate_turnkey_scope',       icon: '', title: 'Argo — Turnkey Web & Scope Builder',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Interactive custom build scope, intake, and pricing configurator powered by Argo.' },
-    { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', aistudioUrl: 'https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', primaryTool: 'triage_service_intake',        icon: '', title: 'Arya — Automated Receptionist & Bay Dispatch',     brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: '24/7 commercial web, voice triage, and live bay dispatch powered by Arya.' },
-    { id: 'eveng-netprism-studio',      codename: 'Zeno', callSign: 'ZENO-01', aistudioPromptId: '1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', aistudioUrl: 'https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', primaryTool: 'validate_network_topology',    icon: '', title: 'Zeno — NetPrism & EVE-NG Topology Lab',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'OSPF, BGP, ZTNA, and EVPN network topology simulator powered by Zeno.' },
-    { id: 'samgov-contract-matchmaker', codename: 'Cato', callSign: 'CATO-01', aistudioPromptId: '1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', aistudioUrl: 'https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', primaryTool: 'match_samgov_solicitations',   icon: '', title: 'Cato — Federal Contract & Role Radar',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Federal NAICS 541512/541519 SDVOSB opportunity matchmaker powered by Cato.' },
-    { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', primaryTool: 'simulate_funnel_treasury_roi', icon: '', title: 'Vega — Funnel & Treasury ROI Modeler',      brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator powered by Vega.' },
-    { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', primaryTool: 'grade_cli_ansible_drill',      icon: '', title: 'Kael — Multi-OS CLI & Ansible Auto-Grader', brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'IOS-XE, Linux, SQL, KQL, and Ansible terminal lab powered by Kael.' },
-    { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', primaryTool: 'analyze_epigraphic_inscription',icon: '', title: 'Clio — Chronos Epigraphy & Geodesic Lab',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Ancient text restoration, epigraphy, and geodesic discovery powered by Clio.' },
-    { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '', title: 'Alma — Associative Language OS (10K)',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module associative language training application powered by Alma.' },
-    { id: 'maps-geospatial-insights',   codename: 'Orin', callSign: 'ORIN-01', aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', aistudioUrl: 'https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', primaryTool: 'analyze_geospatial_corridor',  icon: '', title: 'Orin — Maps, 3D Geospatial & Location Insights', brand: 'MGC', defaultCustomer: true,  price: 0,  href: 'projects/maps-geospatial-insights/index.html', zipHref: '',                                                                               desc: 'Google Earth 3D (<gmp-map-3d>), Photorealistic 3D Tiles, and regional market/DoD corridor insights powered by Orin.' }
+    const APPS_CATALOG = [
+    { id: 'client-turnkey-forge',       codename: 'Argo', callSign: 'ARGO-01', aistudioPromptId: '1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', aistudioUrl: 'https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', primaryTool: 'generate_turnkey_scope',       icon: '', title: 'Argo · Web Scope Builder',           brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Build custom project scopes, timelines, and pricing in minutes.' },
+    { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', aistudioUrl: 'https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', primaryTool: 'triage_service_intake',        icon: '', title: 'Arya · Service Intake & Dispatch',   brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Automated customer intake, booking, and live service bay tracking.' },
+    { id: 'eveng-netprism-studio',      codename: 'Zeno', callSign: 'ZENO-01', aistudioPromptId: '1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', aistudioUrl: 'https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', primaryTool: 'validate_network_topology',    icon: '', title: 'Zeno · Network Topology Lab',        brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Interactive routing, switching, and secure network architecture lab.' },
+    { id: 'samgov-contract-matchmaker', codename: 'Cato', callSign: 'CATO-01', aistudioPromptId: '1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', aistudioUrl: 'https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', primaryTool: 'match_samgov_solicitations',   icon: '', title: 'Cato · Federal Contract Radar',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Match federal contract opportunities and team capabilities.' },
+    { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', primaryTool: 'simulate_funnel_treasury_roi', icon: '', title: 'Vega · Revenue & Growth Modeler',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Model customer conversion funnels and projected revenue growth.' },
+    { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', primaryTool: 'grade_cli_ansible_drill',      icon: '', title: 'Kael · Command Line & Automation',   brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Hands on system administration and automation terminal practice.' },
+    { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', primaryTool: 'analyze_epigraphic_inscription',icon: '', title: 'Clio · Historical Text & Archive Lab',brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Explore primary historical archives and geographical alignments.' },
+    { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '', title: 'Alma · Language Learning Studio',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Acquire new languages rapidly through shared word roots.' },
+    { id: 'maps-geospatial-insights',   codename: 'Orin', callSign: 'ORIN-01', aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', aistudioUrl: 'https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', primaryTool: 'analyze_geospatial_corridor',  icon: '', title: 'Orin · 3D Maps & Location Insights', brand: 'MGC', defaultCustomer: true,  price: 0,  href: 'projects/maps-geospatial-insights/index.html', zipHref: '',                                                                               desc: 'Interactive 3D map visualization and regional corridor analysis.' }
   ];
 
   // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -1013,26 +1013,7 @@
 
   const RESERVED_USERNAMES = new Set(['admin', 'administrator', 'owner', 'root', 'system', 'malik.khabir', 'security', 'postmaster', 'support']);
 
-  const EMPLOYEE_ASSIGNED_ROSTER = {
-    'emp.jordan.vance': {
-      username: 'emp.jordan.vance',
-      name: 'Jordan Vance',
-      email: 'jordan.vance@miltongroupsecurity.org',
-      org: 'MGC Internal Operations',
-      ou: 'internal',
-      assignedByAdmin: true,
-      mustResetPassword: true
-    },
-    'emp.elena.rostova': {
-      username: 'emp.elena.rostova',
-      name: 'Elena Rostova',
-      email: 'elena.rostova@miltongroupsecurity.org',
-      org: 'MGC Cyber Operations',
-      ou: 'internal',
-      assignedByAdmin: true,
-      mustResetPassword: true
-    }
-  };
+  const EMPLOYEE_ASSIGNED_ROSTER = {};
 
   function resolveEmployeeAssignedRecord(rawUsername, rawEmail) {
     const un = String(rawUsername || '').trim().toLowerCase();
@@ -1260,8 +1241,8 @@
       label: 'Languages · English + Arabic → Spanish, Farsi & French',
       familiarAnchors: ['English', 'Arabic Roots & Script'],
       sequence: [
-        { step: 1, stageId: 'lang_ar_1', domain: 'Spanish', baseWeight: 86, transferPct: '86% Match', checkpointLabel: 'SCORM Cognate & Root Drill', unlockedBridge: 'Farsi (Persian) Script & Lexicon Bridge', rationale: 'Connects 4,000+ Arabic-origin Spanish words with everyday English familiarity.' },
-        { step: 2, stageId: 'lang_ar_2', domain: 'Farsi (Persian)', baseWeight: 88, transferPct: '88% Match', checkpointLabel: 'Syntactic & Script Mastery Quiz', unlockedBridge: 'French & Mediterranean Grammar Bridge', rationale: 'Pairs familiar script and vocabulary with English-style sentence structure.' },
+        { step: 1, stageId: 'lang_ar_1', domain: 'Spanish', baseWeight: 86, transferPct: '86% Match', checkpointLabel: 'SCORM Cognate & Root Drill', unlockedBridge: 'Farsi (Persian) Script & Lexicon Bridge', rationale: 'Connects shared vocabulary roots with everyday English familiarity.' },
+        { step: 2, stageId: 'lang_ar_2', domain: 'Farsi (Persian)', baseWeight: 88, transferPct: '88% Match', checkpointLabel: 'Syntactic & Script Mastery Quiz', unlockedBridge: 'French & Mediterranean Grammar Bridge', rationale: 'Pairs familiar script and vocabulary with familiar sentence structure.' },
         { step: 3, stageId: 'lang_ar_3', domain: 'French', baseWeight: 90, transferPct: '90% Match', checkpointLabel: 'Applied Trilingual Comprehension Check', unlockedBridge: 'Full Mediterranean & Diplomatic Fluency', rationale: 'Builds on Spanish grammar and shared Mediterranean vocabulary.' }
       ]
     },
@@ -1271,7 +1252,7 @@
       label: 'Languages · English → Spanish → French & Portuguese',
       familiarAnchors: ['English', 'Everyday U.S. Spanish'],
       sequence: [
-        { step: 1, stageId: 'lang_us_1', domain: 'Spanish Foundation', baseWeight: 82, transferPct: '82% Match', checkpointLabel: 'High-Frequency Cognate SCORM Check', unlockedBridge: 'French & Italian Lexical Bridge', rationale: 'Uses familiar U.S. Spanish vocabulary to build rapid conversational confidence.' },
+        { step: 1, stageId: 'lang_us_1', domain: 'Spanish Foundation', baseWeight: 82, transferPct: '82% Match', checkpointLabel: 'common Cognate SCORM Check', unlockedBridge: 'French & Italian Lexical Bridge', rationale: 'Uses familiar U.S. Spanish vocabulary to build rapid conversational confidence.' },
         { step: 2, stageId: 'lang_us_2', domain: 'French & Italian', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'Romance Verb & Pattern Quiz', unlockedBridge: 'Portuguese & Classical Epigraphy Bridge', rationale: 'Connects Spanish grammar with shared English-French roots for faster reading.' },
         { step: 3, stageId: 'lang_us_3', domain: 'Portuguese & Classical Texts', baseWeight: 91, transferPct: '91% Match', checkpointLabel: 'Applied Reading & Audio Mastery', unlockedBridge: 'Complete Romance Language Mastery', rationale: 'Completes full Romance language fluency across modern and historical sources.' }
       ]
@@ -1290,12 +1271,12 @@
     business_endeavor_scale: {
       id: 'business_endeavor_scale',
       domainCategory: 'Business Endeavors',
-      label: 'Business · Service Operations → Turnkey Intake → Multi-Rail Scaling',
+      label: 'Business · Service Operations → Turnkey Intake → Direct Scaling',
       familiarAnchors: ['Service Delivery', 'Client Operations'],
       sequence: [
         { step: 1, stageId: 'biz_scale_1', domain: 'Service & Offer Standardization', baseWeight: 90, transferPct: '90% Match', checkpointLabel: '3-Tier SLA & Scope Verification', unlockedBridge: 'Automated 24/7 Client Intake Bridge', rationale: 'Translates existing service delivery into structured digital packages and clear SLAs.' },
-        { step: 2, stageId: 'biz_scale_2', domain: 'Automated Client Intake & Booking', baseWeight: 93, transferPct: '93% Match', checkpointLabel: 'Turnkey Intake & Conversion Checkpoint', unlockedBridge: 'Multi-Rail ACH / WAWF / Card Settlement', rationale: 'Connects standardized packages directly to 24/7 guided intake and scheduling templates.' },
-        { step: 3, stageId: 'biz_scale_3', domain: 'Multi-Rail Settlement & Retainers', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'GAAP Double-Entry & Tax Reserve Audit', unlockedBridge: 'Enterprise Multi-Entity Scaling', rationale: 'Links recurring engagements to automated ACH/Card billing and double-entry ledger tracking.' }
+        { step: 2, stageId: 'biz_scale_2', domain: 'Automated Client Intake & Booking', baseWeight: 93, transferPct: '93% Match', checkpointLabel: 'Turnkey Intake & Conversion Checkpoint', unlockedBridge: 'Direct ACH / WAWF / Card Settlement', rationale: 'Connects standardized packages directly to 24/7 guided intake and scheduling templates.' },
+        { step: 3, stageId: 'biz_scale_3', domain: 'Direct Settlement & Retainers', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'GAAP Double-Entry & Tax Reserve Audit', unlockedBridge: 'Enterprise Multi-Entity Scaling', rationale: 'Links recurring engagements to automated ACH/Card billing and double-entry ledger tracking.' }
       ]
     },
     schooling_academic_bridge: {
@@ -1312,11 +1293,11 @@
     cli_netops_ai: {
       id: 'cli_netops_ai',
       domainCategory: 'Technical Upskilling',
-      label: 'Upskilling · CLI & Networking → Zero-Trust Security → AI Workflows',
+      label: 'Upskilling · CLI & Networking → Secure Security → AI Workflows',
       familiarAnchors: ['Command Line', 'SQL & Logic'],
       sequence: [
-        { step: 1, stageId: 'upsk_cli_1', domain: 'Routing, Linux & SQL Foundations', baseWeight: 91, transferPct: '91% Match', checkpointLabel: 'Ghost-CLI & Netmiko Verification Lab', unlockedBridge: 'Zero-Trust IAM & CMMC 2.0 Bridge', rationale: 'Builds command-line muscle memory using guided terminal and database templates.' },
-        { step: 2, stageId: 'upsk_cli_2', domain: 'Zero-Trust Cloud & Compliance', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'NIST 800-171 & SC-100 Control Quiz', unlockedBridge: 'Deterministic Workflow Orchestration', rationale: 'Applies network segmentation directly to identity governance and CMMC / NIST controls.' },
+        { step: 1, stageId: 'upsk_cli_1', domain: 'Routing, Linux & SQL Foundations', baseWeight: 91, transferPct: '91% Match', checkpointLabel: 'Ghost-CLI & Netmiko Verification Lab', unlockedBridge: 'Secure IAM & CMMC 2.0 Bridge', rationale: 'Builds terminal muscle memory using guided terminal and database templates.' },
+        { step: 2, stageId: 'upsk_cli_2', domain: 'Secure Cloud & Compliance', baseWeight: 89, transferPct: '89% Match', checkpointLabel: 'NIST 800-171 & SC-100 Control Quiz', unlockedBridge: 'Deterministic Workflow Orchestration', rationale: 'Applies network segmentation directly to identity governance and CMMC / NIST controls.' },
         { step: 3, stageId: 'upsk_cli_3', domain: 'Guided AI Workflow Templates', baseWeight: 87, transferPct: '87% Match', checkpointLabel: 'ModelOps & Policy Automation Check', unlockedBridge: 'Principal Security & Automation Architect', rationale: 'Connects security policy enforcement to deterministic workflow orchestration.' }
       ]
     }
@@ -1332,7 +1313,7 @@
       pacing: '30-Day Guided Sequence',
       summary: 'Structured bridge connecting your existing language roots to high-transfer vocabulary, phonetic drills, and SCORM checkpoints.',
       steps: [
-        'Stage 1: Shared Root & Cognate Activation (Top 500 High-Frequency Anchors)',
+        'Stage 1: Shared Root & Cognate Activation (Top 500 common Anchors)',
         'Stage 2: Sentence Structure & Verb Pattern Transfer',
         'Stage 3: Applied Conversational & Reading Verification'
       ],
@@ -1342,7 +1323,7 @@
           id: 'branch_lang_audio',
           badge: 'Scenario Branch A · +5% Weight',
           title: 'Conversational Audio & Phonetics',
-          desc: 'Prioritizes spoken cadence, neural audio shadowing, and high-frequency conversational cognate drills.',
+          desc: 'Prioritizes spoken cadence, neural audio shadowing, and common conversational cognate drills.',
           unlockedFocus: 'Unlocked Stage Focus: Neural Audio Cadence + 300 Spoken Cognate Loops',
           boostPct: 5
         },
@@ -1369,7 +1350,7 @@
       domain: 'Business Endeavors',
       title: 'Turnkey Business Intake & Scaling Template',
       pacing: '14-Day Launch Blueprint',
-      summary: 'Pre-decided operational template mapping your service tiers to 24/7 guided client intake, SLA milestones, and multi-rail settlement.',
+      summary: 'Pre-decided operational template mapping your service tiers to 24/7 guided client intake, SLA milestones, and Direct settlement.',
       steps: [
         'Stage 1: Standardized 3-Tier Service Scope & Pricing Matrix',
         'Stage 2: Guided Client Intake & Calendar Slot Lock',
@@ -1447,7 +1428,7 @@
       domain: 'Technical Upskilling',
       title: 'Certification & Cyber Readiness Template',
       pacing: 'Sprint Readiness Track',
-      summary: 'Deterministic certification accelerator across CCNA/NetOps, Zero-Trust Security (SC-100/CMMC), and ModelOps governance.',
+      summary: 'Deterministic certification accelerator across CCNA/NetOps, Secure Security (SC-100/CMMC), and ModelOps governance.',
       steps: [
         'Stage 1: Domain Diagnostic & High-Weight Topic Lock',
         'Stage 2: EVE-NG / Terminal Topology Verification Drills',
@@ -1458,7 +1439,7 @@
         {
           id: 'branch_upskill_ztna',
           badge: 'Scenario Branch A · +7% Weight',
-          title: 'Zero-Trust IAM & CMMC 2.0 Level 2',
+          title: 'Secure IAM & CMMC 2.0 Level 2',
           desc: 'Focuses on OIDC federation, conditional access policy hardening, and NIST SP 800-171 Rev 3 evidence.',
           unlockedFocus: 'Unlocked Stage Focus: SC-100 / CMMC L2 Control Matrix + JWKS Audit',
           boostPct: 7
@@ -1679,7 +1660,7 @@
       return null;
     }
     if (data && data.ndaAccepted === false) {
-      lastIntakeResult = { ok: false, status: 400, error: 'Mutual NDA & Zero-Trust Terms attestation is required for customer intake.' };
+      lastIntakeResult = { ok: false, status: 400, error: 'Mutual NDA & Secure Terms attestation is required for customer intake.' };
       return null;
     }
     const qualifiedResources = Array.isArray(data && data.qualifiedResources)
@@ -2314,7 +2295,7 @@
       controlledBy: 'Sovereign (Admin)',
       accent: '#38bdf8',
       secondary: '#fde047',
-      greeting: 'Hi! I am Otto. I will guide you through your 3 included apps and show you what you can unlock next.',
+      greeting: 'Welcome. Select a step below to explore your apps.',
       steps: [
         { id: 'otto_step_entitled', label: '1. Tour Included Apps (3)', targetSelector: '#swimlaneEntitled, #netflixSpotlightHero', speech: 'Here are your 3 ready-to-launch applications: Argo, Arya, and Orin. Click any card to open it immediately.' },
         { id: 'otto_step_spotlight', label: '2. Cycle Spotlight Preview', targetSelector: '#netflixSpotlightHero', action: 'cycleSpotlight', speech: 'I switched the Spotlight preview so you can inspect each application and its capabilities.' },
@@ -2332,7 +2313,7 @@
       controlledBy: 'Sovereign (Admin)',
       accent: '#10b981',
       secondary: '#60a5fa',
-      greeting: 'Welcome back! I am Atlas, your Workspace guide. All 9 applications and your Agile delivery board are active.',
+      greeting: 'Welcome back. All 9 applications and delivery tools are ready.',
       steps: [
         { id: 'atlas_step_apps', label: '1. Review All 9 Apps', targetSelector: '#swimlaneEntitled, #netflixSpotlightHero, #agileTelemetryRibbon', speech: 'All 9 applications are unlocked for your workspace. Select any card to launch.' },
         { id: 'atlas_step_templates', label: '2. Open Fast-Track Templates', targetSelector: '[data-tab="resources"], #rftTemplateSelect', action: 'goResources', speech: 'Opening your guided Fast-Track templates to organize your current milestone.' },
@@ -2367,7 +2348,7 @@
       smlModel: 'Sovereign-SML-4B (Local Small Language Model)',
       accent: '#fde047',
       secondary: '#f43f5e',
-      greeting: 'Sovereign Master Core active. SML prompt console unlocked. Commanding Otto (Showcase), Atlas (Workspace), and Sentinel (Staff).',
+      greeting: 'Sovereign ready. Prompt below to direct Otto, Atlas, and Sentinel.',
       steps: [
         { id: 'sov_cmd_otto', label: 'Command Otto (Showcase)', smlPrompt: 'Direct Otto to highlight locked pro applications and guide showcase members to the $49 all-access pass', targetAgent: 'otto' },
         { id: 'sov_cmd_atlas', label: 'Command Atlas (Workspace)', smlPrompt: 'Direct Atlas to prioritize Sprint 1 deliverables and fast-track templates for workspace partners', targetAgent: 'atlas' },
@@ -2642,7 +2623,10 @@
     const isNewsletterPage = String(active || '').includes('newsletter') || (typeof location !== 'undefined' && /newsletter/i.test(location.pathname || ''));
     let navInner = '';
     if (isNewsletterPage) {
-      navInner = '<button type="button" class="btn pri" id="btnNavSubmitConsultation" data-open-nl-consultation="1" style="padding:7px 14px;font-size:12.5px">Submit Request &amp; Consultation</button>';
+      navInner =
+        '<a class="btn" href="/" style="padding:7px 12px;font-size:12.5px">Home</a>' +
+        '<a class="btn" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Client Workspace</a>' +
+        '<button type="button" class="btn pri" id="btnNavSubmitConsultation" data-open-nl-consultation="1" style="padding:7px 14px;font-size:12.5px">Submit Consultation</button>';
     } else {
       const links = [
         ['member-portal.html', 'Workspace & Apps']
@@ -2673,7 +2657,7 @@
     const authBtn = u
       ? '<button class="btn" id="w-signout" style="padding:7px 12px;font-size:12.5px">Sign out</button>'
       : '<a class="btn pri" href="login.html" style="padding:7px 12px;font-size:12.5px">Sign in</a>';
-    const right = isNewsletterPage ? '' : ('<div class="nav">' + authBtn + '</div>');
+    const right = '<div class="nav">' + authBtn + '</div>';
     const existingBar = document.querySelector('.wrap > .bar');
     if (existingBar) existingBar.remove();
     const el = document.createElement('div');

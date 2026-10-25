@@ -69,45 +69,48 @@
       distributions: [],
       issues: [
         {
-          id: 'iss-04',
-          issueNumber: 'ISSUE #04 · OCT 2026',
-          category: 'Zero-Trust & Federal',
-          title: 'Zero-Trust Federated OIDC & CMMC 2.0 Readiness for Federal & Commercial Partners',
-          summary: 'How MGC enforces Google, Microsoft Entra ID, and Apple OIDC federation with RS256 JWKS verification while eliminating password attack surfaces across partner portals.',
-          highlights: [
-            'Eliminating local password and unverified email-link vectors across all 16 MGC & F.I.X portals',
-            'Cryptographic RS256 JWKS verification against Google, Microsoft Entra ID, and Apple live key sets',
-            'Mapping NIST SP 800-171 Rev 3 access control families to per-page & per-app workspace entitlements'
-          ],
-          readTime: '3 min read'
+                "id": "iss_2026_04",
+                "issueNumber": "Briefing 04",
+                "track": "OPERATIONS & IDENTITY",
+                "date": "October 2026",
+                "readTime": "2 min read",
+                "title": "Unified Identity and Mobile Workflow Control",
+                "summary": "How modern commercial and defense teams replace cluttered dashboards with focused approval workflows and single sign on.",
+                "highlights": [
+                        "Direct Google, Microsoft, and Apple sign in with verified session protection",
+                        "Streamlined mobile approvals, access grants, and sprint tracking",
+                        "Dedicated cloud infrastructure with automated cost controls"
+                ]
         },
         {
-          id: 'iss-03',
-          issueNumber: 'ISSUE #03 · SEP 2026',
-          category: 'AI & Cloud Run',
-          title: 'AI Receptionists & Scale-to-Zero Architecture: Cutting Idle Cloud Spend to $0.00',
-          summary: 'Architectural breakdown of F.I.X Solutions autonomous 24/7 lead capture receptionists paired with Cloud Run min-instances=0 cost-guarded deployments.',
-          highlights: [
-            '24/7 autonomous lead capture & calendar dispatch in under 60 seconds',
-            'Zero-Charge Guard (min-instances=0, max-instances=2) + Firestore 80% daily quota circuit breaker',
-            'Case study: Sterling Auto Repair commercial bay tracker & AI receptionist ROI'
-          ],
-          readTime: '4 min read'
+                "id": "iss_2026_03",
+                "issueNumber": "Briefing 03",
+                "track": "FEDERAL CONTRACTING",
+                "date": "October 2026",
+                "readTime": "3 min read",
+                "title": "Federal Readiness and Contract Alignment",
+                "summary": "Practical steps for aligning technical capabilities with defense compliance standards and rapid proposal delivery.",
+                "highlights": [
+                        "Structured security control mapping and readiness documentation",
+                        "Rapid capability brief preparation for federal notices",
+                        "Direct milestone invoicing for predictable settlement"
+                ]
         },
         {
-          id: 'iss-02',
-          issueNumber: 'ISSUE #02 · AUG 2026',
-          category: 'Supply Chain & FAR',
-          title: 'Strategic Sourcing & Lifecycle Governance in High-Compliance Supply Chains',
-          summary: 'Executing NIST SP 800-88 media sanitization, FAR/DFARS procurement tracking, and milestone-driven agile delivery from a single control plane.',
-          highlights: [
-            'End-to-end chain-of-custody verification and DoD 5220.22-M / NIST SP 800-88 data sanitization',
-            'SDVOSB sole-source and set-aside teaming velocity under FAR Part 19',
-            'Streamlined mobile workflow controls for field executives and contracting officers'
-          ],
-          readTime: '3 min read'
+                "id": "iss_2026_02",
+                "issueNumber": "Briefing 02",
+                "track": "COMMERCIAL OPERATIONS",
+                "date": "September 2026",
+                "readTime": "2 min read",
+                "title": "Automated Reception and Live Service Tracking",
+                "summary": "Field results from Sterling Auto Repair showing how instant intake and live bay tracking eliminate missed customer calls.",
+                "highlights": [
+                        "Immediate customer intake connected directly to calendar scheduling",
+                        "Clear project board visibility from request through launch",
+                        "Guided team training modules included for new staff"
+                ]
         }
-      ]
+]
     };
 
     let selectedDonationAmount = 25;
@@ -132,7 +135,11 @@
       const u = W.me();
       const issuesHtml = (nlState.issues || []).map(iss => `
         <article class="issue-card">
-          <h2 style="font-size:19px;margin-bottom:8px">${esc(iss.title)}</h2>
+          <div class="row" style="margin-bottom:8px;gap:8px;flex-wrap:wrap">
+            <span class="chip ok" style="font-size:10.5px;font-weight:700">${esc(iss.issueNumber || 'Briefing')} · ${esc(iss.date || 'October 2026')}</span>
+            <span class="chip" style="font-size:10.5px;color:#fde047;border-color:rgba(197,179,88,0.45)">${esc(iss.track || iss.category || 'Executive Briefing')}</span>
+          </div>
+          <h2 style="font-size:18.5px;margin-bottom:6px">${esc(iss.title)}</h2>
           <p style="font-size:14px;color:#e2e8f0;margin-bottom:12px">${esc(iss.summary)}</p>
           ${Array.isArray(iss.highlights) && iss.highlights.length ? `
             <ul style="margin:0;padding-left:18px;color:#cbd5e1;font-size:13px;line-height:1.6">
@@ -278,7 +285,7 @@
             </aside>
             <aside class="card" style="margin:0">
               <h2>Subscribe (Email + SMS Text)</h2>
-              <p>Receive dispatches by email and optional $0-cost SMS text alerts.</p>
+              <p>Receive briefings by email and optional text alerts.</p>
               <form id="nlSubForm" style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
                 <label for="nlName" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Full Name / Title</label>
                 <input id="nlName" type="text" maxlength="100" placeholder="e.g. Director of Operations" value="${u ? esc(u.name) : ''}" />
@@ -288,22 +295,22 @@
                 <select id="nlTopic">
                   <option value="all">🌐 All Executive Briefings (MGC &amp; F.I.X)</option>
                   <option value="federal">🏛️ Federal &amp; SDVOSB Contracting</option>
-                  <option value="cyber">🔒 Zero-Trust &amp; CMMC Compliance</option>
-                  <option value="ai-workflow">🤖 Otto AI &amp; Cloud Automation</option>
-                  <option value="logistics">🚚 Strategic Sourcing &amp; Supply Chain</option>
+                  <option value="cyber">🔒 Security &amp; Compliance</option>
+                  <option value="ai-workflow">🤖 Workflow Automation</option>
+                  <option value="logistics">🚚 Supply Chain &amp; Operations</option>
                 </select>
                 <div style="padding:9px 11px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(59,130,246,0.32)">
                   <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#93c5fd;cursor:pointer;margin-bottom:6px">
                     <input type="checkbox" id="nlSmsOptIn" />
-                    <span>📱 Also send SMS / Text Alerts ($0 Gateway)</span>
+                    <span>📱 Also send Text Alerts</span>
                   </label>
                   <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:6px">
                     <input id="nlPhone" type="tel" maxlength="16" placeholder="Mobile (e.g. 5552345678)" style="padding:7px 9px;font-size:12px" />
                     <select id="nlCarrier" style="padding:7px 8px;font-size:11.5px">
-                      <option value="tmomail.net">T-Mobile ($0)</option>
-                      <option value="vtext.com">Verizon ($0)</option>
-                      <option value="txt.att.net">AT&amp;T ($0)</option>
-                      <option value="email.uscc.net">US Cellular ($0)</option>
+                      <option value="tmomail.net">T-Mobile </option>
+                      <option value="vtext.com">Verizon </option>
+                      <option value="txt.att.net">AT&amp;T </option>
+                      <option value="email.uscc.net">US Cellular </option>
                     </select>
                   </div>
                 </div>

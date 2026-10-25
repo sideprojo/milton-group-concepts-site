@@ -385,48 +385,48 @@ function seedState() {
       ],
       issues: [
         {
-          id: 'iss_2026_04',
-          issueNumber: 'Issue #04',
-          track: 'ZERO-TRUST & AI OPS',
-          date: 'October 2026',
-          readTime: '3 min read',
-          title: 'Zero-Trust Federated OIDC & Mobile-First Workflow Command',
-          summary: 'Why modern SDVOSB and commercial operations are replacing bloated mobile dashboards with dedicated, minimalist workflow control surfaces and RS256 JWKS federated identity.',
-          highlights: [
-            'Enforced Google, Microsoft, and Apple Federated OIDC with zero password attack surface',
-            'Minimalist Mobile Control Deck: 1-tap approvals, entitlement grants, and sprint progression',
-            'Zero-Charge Cloud Run architecture (min-instances=0) with Firestore free-tier cost guard'
-          ]
+                "id": "iss_2026_04",
+                "issueNumber": "Briefing 04",
+                "track": "OPERATIONS & IDENTITY",
+                "date": "October 2026",
+                "readTime": "2 min read",
+                "title": "Unified Identity and Mobile Workflow Control",
+                "summary": "How modern commercial and defense teams replace cluttered dashboards with focused approval workflows and single sign on.",
+                "highlights": [
+                        "Direct Google, Microsoft, and Apple sign in with verified session protection",
+                        "Streamlined mobile approvals, access grants, and sprint tracking",
+                        "Dedicated cloud infrastructure with automated cost controls"
+                ]
         },
         {
-          id: 'iss_2026_03',
-          issueNumber: 'Issue #03',
-          track: 'SDVOSB FEDERAL RADAR',
-          date: 'October 2026',
-          readTime: '4 min read',
-          title: 'FY27 Federal Cyber & AI Contracting: CMMC 2.0 Level 2 Readiness',
-          summary: 'Actionable playbook for aligning NAICS 541512/541519 capabilities with DoD Zero-Trust Reference Architecture and automated POA&M evidence collection.',
-          highlights: [
-            'Automated NIST SP 800-171 Rev 3 control family mapping and artifact tracking',
-            'Rapid capability brief dispatch workflow for Sources Sought notices',
-            'WAWF / PIEE milestone invoicing integration for sub-15-day net settlement'
-          ]
+                "id": "iss_2026_03",
+                "issueNumber": "Briefing 03",
+                "track": "FEDERAL CONTRACTING",
+                "date": "October 2026",
+                "readTime": "3 min read",
+                "title": "Federal Readiness and Contract Alignment",
+                "summary": "Practical steps for aligning technical capabilities with defense compliance standards and rapid proposal delivery.",
+                "highlights": [
+                        "Structured security control mapping and readiness documentation",
+                        "Rapid capability brief preparation for federal notices",
+                        "Direct milestone invoicing for predictable settlement"
+                ]
         },
         {
-          id: 'iss_2026_02',
-          issueNumber: 'Issue #02',
-          track: 'COMMERCIAL AI TURNKEY',
-          date: 'September 2026',
-          readTime: '3 min read',
-          title: '60-Second Lead Response: Autonomous Receptionist & Bay Status Workflows',
-          summary: 'Case study from the Sterling Auto Repair deployment showing how 24/7 AI lead intake + live repair order status tracking eliminates missed calls.',
-          highlights: [
-            'Sub-60-second SMS/Voice AI triage connected directly to Google Calendar slots',
-            'Scoped customer Agile board transparency from intake through production launch',
-            'Turnkey SCORM 2004 4th Edition operator training modules included out of the box'
-          ]
+                "id": "iss_2026_02",
+                "issueNumber": "Briefing 02",
+                "track": "COMMERCIAL OPERATIONS",
+                "date": "September 2026",
+                "readTime": "2 min read",
+                "title": "Automated Reception and Live Service Tracking",
+                "summary": "Field results from Sterling Auto Repair showing how instant intake and live bay tracking eliminate missed customer calls.",
+                "highlights": [
+                        "Immediate customer intake connected directly to calendar scheduling",
+                        "Clear project board visibility from request through launch",
+                        "Guided team training modules included for new staff"
+                ]
         }
-      ]
+]
     }
   };
 }
@@ -657,65 +657,24 @@ function loadState() {
             }
           }
         });
-        // Ensure dedicated Client-Only Verification Test Account (strictly OU=External, CUSTOMER_RESTRICTED)
-        if (!parsed.users.u_client_verified) {
-          parsed.users.u_client_verified = {
-            id: 'u_client_verified',
-            name: 'Verified Client Partner (Client Test)',
-            username: 'client.verified',
-            org: 'Partner Client Organization',
-            email: 'client.verified@partner-org.com',
-            recoveryEmail: 'recovery.client@partner-org.com',
-            phone: '+1 (703) 555-0194',
-            address: { streetAddress: '1400 Crystal Dr Suite 400', city: 'Arlington', stateRegion: 'VA', postalCode: '22202' },
-            role: 'member',
-            ou: 'external',
-            securityGroup: 'EXTERNAL_SAAS_LMS',
-            status: 'active',
-            accessTier: 'CUSTOMER_RESTRICTED',
-            brand: 'MGC',
-            ssoProvider: 'password',
-            passwordDigest: mgcDigest('Client#Verify2026!'),
-            hasPassword: true,
-            emailVerified: true,
-            mfaVerified: true,
-            mfaMethod: 'EMAIL_2FA_VERIFIED',
-            ndaAccepted: true,
-            tosAccepted: true,
-            quote: { interest: 'ai-web', note: 'Dedicated Client-Only Verification Account' },
-            plan: { base: true, addons: [] },
-            pages: { saasapps: 'ready', resources: 'ready' },
-            adminGrantedPages: ['resources'],
-            allowedApps: DEFAULT_CUSTOMER_APPS.slice(),
-            qualifiedResources: ['resource-fast-track'],
-            paymentProfile: null,
-            payments: [],
-            checklist: {},
-            created: now()
-          };
-        }
-        parsed.employeeAssignedUsernames = Object.assign({
-          'emp.jordan.vance': {
-            username: 'emp.jordan.vance',
-            name: 'Jordan Vance',
-            email: 'jordan.vance@miltongroupsecurity.org',
-            org: 'MGC Internal Operations',
-            ou: 'internal',
-            securityGroup: 'INTERNAL_ANALYST',
-            assignedByAdmin: true,
-            mustResetPassword: true
-          },
-          'emp.elena.rostova': {
-            username: 'emp.elena.rostova',
-            name: 'Elena Rostova',
-            email: 'elena.rostova@miltongroupsecurity.org',
-            org: 'MGC Cyber Operations',
-            ou: 'internal',
-            securityGroup: 'INTERNAL_ANALYST',
-            assignedByAdmin: true,
-            mustResetPassword: true
+        // Deduplicate users by email and strip legacy placeholder test accounts
+        const seenEmails = new Set();
+        const fakeNames = /nadia|al-mansoor|marcus sterling|elena rodriguez|jordan vance|elena rostova|verified client partner/i;
+        Object.keys(parsed.users || {}).forEach(uidKey => {
+          const uObj = parsed.users[uidKey];
+          if (!uObj || uidKey === "owner") {
+            if (uObj && uObj.email) seenEmails.add(String(uObj.email).toLowerCase());
+            return;
           }
-        }, parsed.employeeAssignedUsernames || {});
+          const em = String(uObj.email || "").toLowerCase();
+          if (!em || seenEmails.has(em) || fakeNames.test(String(uObj.name || ""))) {
+            delete parsed.users[uidKey];
+            return;
+          }
+          seenEmails.add(em);
+        });
+        parsed.employeeAssignedUsernames = {};
+        parsed.newsletter = def.newsletter;
         parsed.emailVerifications = parsed.emailVerifications || {};
         parsed.payments = Array.isArray(parsed.payments) ? parsed.payments : [];
         parsed.projects = Object.assign({}, def.projects, parsed.projects || {});

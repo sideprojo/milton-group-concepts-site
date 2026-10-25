@@ -102,7 +102,7 @@
     const donePts = pItems.filter(i => i.col === 'done').reduce((a, i) => a + (Number(i.points) || 0), 0);
     const progPts = pItems.filter(i => i.col === 'progress' || i.col === 'review').reduce((a, i) => a + (Number(i.points) || 0), 0);
     const pctDone = totalPts ? Math.round((donePts / totalPts) * 100) : 0;
-    const roleBadge = isSoleAdmin() ? 'OU=Builtin · DOMAIN_ADMIN (Full Control)' : (isEmp() ? 'OU=Internal · INTERNAL_ANALYST (Client Delivery Scope)' : 'OU=External · EXTERNAL_CLIENT_PARTNER (Workspace Unlocked)');
+    const roleBadge = isSoleAdmin() ? 'Administrator · Full Access' : (isEmp() ? 'Internal Staff · Client Delivery' : 'Workspace Partner · Active');
     const telemetryRibbon =
       '<div id="agileTelemetryRibbon" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px">' +
         '<div class="card" style="padding:10px 12px;border-color:rgba(16,185,129,0.4);background:rgba(6,20,34,0.88)">' +
@@ -118,7 +118,7 @@
         '<div class="card" style="padding:10px 12px;border-color:rgba(197,179,88,0.42);background:rgba(18,16,8,0.85)">' +
           '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#fde047">In-Flight &amp; Review</div>' +
           '<div style="font-size:15px;font-weight:900;color:#fff;margin-top:3px">' + progPts + ' pts Active</div>' +
-          '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">SLA Target: 99.4% On-Schedule</div>' +
+          '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">Updated in Real Time</div>' +
         '</div>' +
         '<div class="card" id="agileCompanionCard" style="padding:10px 12px;border-color:rgba(16,185,129,0.45);background:rgba(6,20,34,0.92);display:flex;align-items:center;gap:10px">' +
           (W.renderAnimatedAvatarSvg ? W.renderAnimatedAvatarSvg(isSoleAdmin() ? 'sovereign' : (isEmp() ? 'sentinel' : 'atlas'), 42) : '') +
@@ -130,7 +130,7 @@
       telemetryRibbon +
       '<div class="card" style="margin-bottom:12px">' +
         '<div class="row">' +
-          '<div><h1 style="margin:0 0 2px;font-size:18px;font-weight:700">Agile Projects &amp; Deliverables</h1><p style="font-size:12px;margin:0">Manage sprint backlog, client deliverables, and feature votes.</p></div>' +
+          '<div><h1 style="margin:0 0 2px;font-size:18px;font-weight:700">Project Delivery Board</h1><p style="font-size:12px;margin:0">Select a step or move tasks across your delivery board.</p></div>' +
           '<div class="nav">' +
             '<select id="proj" aria-label="Project">' + vis.map(p => '<option value="' + p.id + '"' + (p.id === pid ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') + '</select>' +
             tabs.map(t => '<button class="btn' + (t[0] === view ? ' pri' : '') + '" data-vtab="' + t[0] + '">' + t[1] + '</button>').join('') +
