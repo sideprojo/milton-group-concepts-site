@@ -2252,7 +2252,7 @@ const server = http.createServer(async (req, res) => {
     // Real Federated OAuth 2.0 / OIDC Callback (/api/auth/oauth/callback)
     if (pathname === '/api/auth/oauth/callback' && req.method === 'GET') {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      return res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Completing Federated SSO...</title></head><body style="background:#040814;color:#f8fafc;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh"><div>Verifying Federated OIDC Token...</div><script>
+      return res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Completing SSO...</title></head><body style="background:#040814;color:#f8fafc;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh"><div>Verifying Federated OIDC Token...</div><script>
         (async function(){
           const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
           const qs = new URLSearchParams(location.search);

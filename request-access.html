@@ -297,31 +297,30 @@
         <h1>Client Intake &amp; Custom Workspace Request</h1>
       </div>
       <div class="row" style="gap:8px">
-        <button type="button" class="btn" id="fillDemoBtn" style="font-size:12px;border-width:1.5px;border-color:rgba(56,189,248,0.45);color:#7dd3fc">⚡ Fill Sample Intake</button>
         <a class="btn" href="login.html" style="font-size:12px;border-width:1.5px">Existing Account Sign In →</a>
       </div>
     </div>
-    <p class="intake-lead">Provide your organization details and mission objectives below. Every intake request is authenticated via <b>Federated SSO (Google, Microsoft, or Apple)</b>, <b>FIDO2 Passkey / 2FA</b>, and <b>Mutual NDA Attestation</b> to provision your dedicated workspace and custom build queue.</p>
+    <p class="intake-lead">Provide your organization details and mission objectives below. Every intake request is authenticated via <b>SSO (Google, Microsoft, or Apple)</b>, <b>FIDO2 Passkey / 2FA</b>, and <b>Mutual NDA Attestation</b> to provision your dedicated workspace and custom build queue.</p>
 
-    <!-- Section 01: Organization & Federated SSO Identity -->
+    <!-- Section 01: Organization & SSO Identity -->
     <div class="intake-section">
       <div class="intake-section-head">
         <div class="intake-section-title">
           <span class="intake-step-tag">SECTION 01</span>
-          <span>Organization &amp; Federated SSO Identity</span>
+          <span>Organization &amp; SSO Identity</span>
         </div>
       </div>
       <div class="intake-grid-2">
         <label class="field-wrap">
           <span class="field-label">Full Name (Required)</span>
-          <input class="intake-input" id="name" value="" placeholder="e.g., Jordan Vance" autocomplete="off">
+          <input class="intake-input" id="name" value="" placeholder="Full Name" autocomplete="off">
         </label>
         <label class="field-wrap">
           <span class="field-label">Organization / Agency / CAGE (Required)</span>
-          <input class="intake-input" id="org" value="" placeholder="e.g., Apex Defense Logistics LLC" autocomplete="off">
+          <input class="intake-input" id="org" value="" placeholder="Organization or Agency" autocomplete="off">
         </label>
         <label class="field-wrap">
-          <span class="field-label">Federated SSO Provider (Required)</span>
+          <span class="field-label">SSO Provider (Required)</span>
           <select class="intake-select" id="ssoProvider">
             <option value="google">Google SSO (Google Workspace / Cloud Identity)</option>
             <option value="microsoft">Microsoft SSO (Entra ID / Microsoft 365)</option>
@@ -330,11 +329,11 @@
         </label>
         <label class="field-wrap">
           <span class="field-label">Authorized SSO Account Email (Required)</span>
-          <input class="intake-input" id="email" type="email" value="" placeholder="jordan.vance@apexdefense.org" autocomplete="off" spellcheck="false">
+          <input class="intake-input" id="email" type="email" value="" placeholder="Work Email" autocomplete="off" spellcheck="false">
         </label>
         <label class="field-wrap">
           <span class="field-label">Portal Username (Required)</span>
-          <input class="intake-input" id="username" type="text" maxlength="32" value="" placeholder="jordan.vance" autocomplete="off" spellcheck="false">
+          <input class="intake-input" id="username" type="text" maxlength="32" value="" placeholder="Username" autocomplete="off" spellcheck="false">
         </label>
       </div>
     </div>
@@ -390,7 +389,7 @@
 
     <label class="nda-box">
       <input type="checkbox" id="ndaAccepted" checked>
-      <span style="font-size:12.5px;line-height:1.55;color:#e2e8f0"><b>Mutual Non-Disclosure &amp; Zero-Trust Governance Attestation:</b> I confirm that I am an authorized representative of my organization and consent to Federated SSO + 2FA cryptographic session binding under Milton Group Concepts LLC &amp; F.I.X Solutions LLC security terms.</span>
+      <span style="font-size:12.5px;line-height:1.55;color:#e2e8f0"><b>Mutual Non-Disclosure &amp; Zero-Trust Governance Attestation:</b> I confirm that I am an authorized representative of my organization and consent to SSO + 2FA cryptographic session binding under Milton Group Concepts LLC &amp; F.I.X Solutions LLC security terms.</span>
     </label>
 
     <div class="row" style="justify-content:flex-end;gap:12px;padding-top:6px">
@@ -405,7 +404,7 @@
       <span class="chip ok" id="rcptTier" style="font-family:'JetBrains Mono',monospace">WORKSPACE ACTIVE</span>
     </div>
     <h1 style="margin-top:12px">Executive Intake Receipt &amp; Workspace Ready</h1>
-    <p class="intake-lead">Your Federated SSO + 2FA intake has been cryptographically verified and your client workspace is now active. Custom workspace modules selected in your request have been queued for executive build review.</p>
+    <p class="intake-lead">Your SSO + 2FA intake has been cryptographically verified and your client workspace is now active. Custom workspace modules selected in your request have been queued for executive build review.</p>
 
     <div class="receipt-box">
       <div class="receipt-row"><span>Intake Receipt ID</span><code id="rcptId" style="font-family:'JetBrains Mono',monospace;color:#38bdf8;font-weight:700">-</code></div>
@@ -465,27 +464,6 @@
     errEl.textContent = '';
   };
 
-  document.getElementById('fillDemoBtn').onclick = () => {
-    document.getElementById('name').value = 'Jordan Vance';
-    document.getElementById('org').value = 'Apex Defense Logistics LLC';
-    document.getElementById('ssoProvider').value = 'microsoft';
-    document.getElementById('email').value = 'jordan.vance@apexdefense.org';
-    const unEl = document.getElementById('username');
-    if (unEl) unEl.value = 'jordan.vance';
-    document.getElementById('brand').value = 'FIX';
-    W.theme('FIX');
-    sel.value = 'federal';
-    document.getElementById('note').value = 'Requesting executive workspace onboarding and custom architecture proposal for SDVOSB Contract Radar and Turnkey SaaS Forge.';
-    totpInput.value = '';
-    biometricVerified = true;
-    bioBtn.style.borderColor = '#10b981';
-    bioBtn.style.color = '#10b981';
-    bioBtn.textContent = '✔ FIDO2 Biometric Passkey Bound';
-    document.getElementById('ndaAccepted').checked = true;
-    updateMfaStatus();
-    errEl.textContent = '';
-  };
-
   if (location.protocol === 'http:' || location.protocol === 'https:') {
     fetch('/api/intake/verify').then(r => r.json()).then(d => {
       if (d && d.ok && d.intakeSecurity) {
@@ -516,7 +494,7 @@
       return;
     }
     if (!name || !/^\S+@\S+\.\S+$/.test(email) || !rawUsername) {
-      errEl.textContent = 'Please enter your full name, a valid Federated SSO email address, and a portal username.';
+      errEl.textContent = 'Please enter your full name, a valid SSO email address, and a portal username.';
       return;
     }
     if (email === 'malik.khabir@miltongroupsecurity.org' || email === 'owner@miltongroupsecurity.org') {

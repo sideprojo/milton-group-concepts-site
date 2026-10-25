@@ -182,15 +182,15 @@
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
                 <div>
                   <label for="reqClientName" style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:#e2e8f0;margin-bottom:4px"><span>Full Name</span><span style="color:#fde047;font-size:10.5px">Required</span></label>
-                  <input id="reqClientName" type="text" maxlength="120" required placeholder="e.g. Jordan Vance" value="${u ? esc(u.name) : ''}" />
+                  <input id="reqClientName" type="text" maxlength="120" required placeholder="Full Name" value="${u ? esc(u.name) : ''}" />
                 </div>
                 <div>
                   <label for="reqClientEmail" style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:#e2e8f0;margin-bottom:4px"><span>Email Address</span><span style="color:#fde047;font-size:10.5px">Required</span></label>
-                  <input id="reqClientEmail" type="email" maxlength="160" required placeholder="you@organization.org" value="${u ? esc(u.email) : ''}" />
+                  <input id="reqClientEmail" type="email" maxlength="160" required placeholder="Work Email" value="${u ? esc(u.email) : ''}" />
                 </div>
                 <div>
                   <label for="reqPhone" style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:#e2e8f0;margin-bottom:4px"><span>Phone Number</span><span style="color:#fde047;font-size:10.5px">Required</span></label>
-                  <input id="reqPhone" type="tel" maxlength="24" required placeholder="+1 (555) 234-5678" />
+                  <input id="reqPhone" type="tel" maxlength="24" required placeholder="Phone Number" />
                 </div>
               </div>
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
@@ -200,7 +200,7 @@
                 </div>
                 <div>
                   <label for="reqRoleTitle" style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:#e2e8f0;margin-bottom:4px"><span>Role / Title</span><span style="color:#94a3b8;font-size:10.5px">Optional</span></label>
-                  <input id="reqRoleTitle" type="text" maxlength="90" placeholder="e.g. Director of Operations" />
+                  <input id="reqRoleTitle" type="text" maxlength="90" placeholder="Role or Title" />
                 </div>
                 <div>
                   <label for="reqScaleTier" style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:#e2e8f0;margin-bottom:4px"><span>Scope / Organization Tier</span><span style="color:#fde047;font-size:10.5px">Required</span></label>
@@ -288,9 +288,9 @@
               <p>Receive briefings by email and optional text alerts.</p>
               <form id="nlSubForm" style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
                 <label for="nlName" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Full Name / Title</label>
-                <input id="nlName" type="text" maxlength="100" placeholder="e.g. Director of Operations" value="${u ? esc(u.name) : ''}" />
+                <input id="nlName" type="text" maxlength="100" placeholder="Role or Title" value="${u ? esc(u.name) : ''}" />
                 <label for="nlEmail" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Work or Federated Email *</label>
-                <input id="nlEmail" type="email" maxlength="140" placeholder="you@organization.org" value="${u ? esc(u.email) : ''}" required />
+                <input id="nlEmail" type="email" maxlength="140" placeholder="Work Email" value="${u ? esc(u.email) : ''}" required />
                 <label for="nlTopic" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Intelligence Distro Track</label>
                 <select id="nlTopic">
                   <option value="all">🌐 All Executive Briefings (MGC &amp; F.I.X)</option>
@@ -305,7 +305,7 @@
                     <span>📱 Also send Text Alerts</span>
                   </label>
                   <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:6px">
-                    <input id="nlPhone" type="tel" maxlength="16" placeholder="Mobile (e.g. 5552345678)" style="padding:7px 9px;font-size:12px" />
+                    <input id="nlPhone" type="tel" maxlength="16" placeholder="Mobile Number" style="padding:7px 9px;font-size:12px" />
                     <select id="nlCarrier" style="padding:7px 8px;font-size:11.5px">
                       <option value="tmomail.net">T-Mobile </option>
                       <option value="vtext.com">Verizon </option>
@@ -341,7 +341,7 @@
                     <option value="card_tokenized">Tokenized Card</option>
                     <option value="ach_nacha">Bank Transfer (ACH)</option>
                   </select>
-                  <input id="donLast4" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="Last 4 Digits (4242)" value="4242" title="4-digit tokenized reference only (never enter full card number)" style="padding:8px 10px;font-size:12px;font-family:var(--mono)" />
+                  <input id="donLast4" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="Last 4 Digits" value="" title="4-digit tokenized reference only (never enter full card number)" style="padding:8px 10px;font-size:12px;font-family:var(--mono)" />
                 </div>
                 <input id="donEmail" type="email" maxlength="140" placeholder="Email for donation receipt" value="${u ? esc(u.email) : ''}" required style="padding:8px 10px;font-size:12px" />
                 <button type="submit" class="btn pri" id="btnSubmitDonation" style="justify-content:center;padding:10px">💝 Contribute Donation</button>
@@ -368,7 +368,7 @@
                   <select id="pubDistro" style="padding:7px 9px;font-size:12px">
                     ${(nlState.distros || []).map(d => `<option value="${esc(d.id)}">${esc(d.label)} (${d.count})</option>`).join('')}
                   </select>
-                  <input id="pubCat" placeholder="Category (e.g. Zero-Trust & Federal)" value="Executive Briefing" />
+                  <input id="pubCat" placeholder="Briefing Category" value="Executive Briefing" />
                   <input id="pubTitle" placeholder="Issue Headline..." maxlength="140" />
                   <textarea id="pubSummary" rows="2" placeholder="Executive summary & SMS text digest..."></textarea>
                   <button type="button" class="btn pri" id="btnPubIssue" style="justify-content:center">🚀 Publish &amp; Dishout (Email + SMS)</button>

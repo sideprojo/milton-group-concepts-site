@@ -375,7 +375,7 @@
                             Or Enter 6-Digit Authenticator TOTP Code
                         </label>
                         <div class="flex gap-2">
-                            <input id="ch-totp" type="text" value="" placeholder="000-000" autocomplete="one-time-code" class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-center font-mono-code text-xs tracking-widest focus:border-emerald-400 outline-none" />
+                            <input id="ch-totp" type="text" value="" placeholder="6-digit code" autocomplete="one-time-code" class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-center font-mono-code text-xs tracking-widest focus:border-emerald-400 outline-none" />
                             <button type="submit" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider cursor-pointer">
                                 Verify 2FA &rarr;
                             </button>
@@ -712,7 +712,7 @@
         }
 
         function finalizeChronosAuthRedirect(mfaMethod) {
-            const email = (document.getElementById('ch-email').value || 'client@miltongroupsecurity.org').trim().toLowerCase();
+            const email = (document.getElementById('ch-email').value || '').trim().toLowerCase();
             const role = chronosRole === 'admin' ? 'OWNER_ADMIN' : 'VERIFIED_CLIENT';
             const token = 'SHA256-' + btoa(email + ':' + role + ':' + mfaMethod + ':MGC-2026').slice(0, 24);
             const dest = chronosTargetPortal || 'historical-archaeology-ai-hub.html';

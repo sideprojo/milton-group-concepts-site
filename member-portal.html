@@ -497,11 +497,11 @@
             '</div>' +
             '<div>' +
               '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Tokenized Last 4 Digits</label>' +
-              '<input id="paywallLast4Input" type="text" maxlength="4" value="' + esc(paywallLast4) + '" placeholder="4829" style="width:100%;padding:8px 10px;font-size:12.5px;font-family:monospace;font-weight:700">' +
+              '<input id="paywallLast4Input" type="text" maxlength="4" value="' + esc(paywallLast4) + '" placeholder="Last 4" style="width:100%;padding:8px 10px;font-size:12.5px;font-family:monospace;font-weight:700">' +
             '</div>' +
             '<div>' +
               '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Billing ZIP Code</label>' +
-              '<input id="paywallZipInput" type="text" maxlength="10" value="' + esc(paywallZip) + '" placeholder="23294" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+              '<input id="paywallZipInput" type="text" maxlength="10" value="' + esc(paywallZip) + '" placeholder="ZIP Code" style="width:100%;padding:8px 10px;font-size:12.5px">' +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -1111,7 +1111,7 @@
   function render() {
     u = W.me();
     if (!u) {
-      app.innerHTML = '<div class="card lock"><h1 style="margin-top:4px">Sign In Required</h1><p>Sign in with your account credentials or Federated SSO to access your workspace.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In</a></div></div>';
+      app.innerHTML = '<div class="card lock"><h1 style="margin-top:4px">Sign In Required</h1><p>Sign in with your account credentials or SSO to access your workspace.</p><div style="margin-top:14px"><a class="btn pri" href="login.html">Sign In</a></div></div>';
       W.header('member-portal.html');
       return;
     }

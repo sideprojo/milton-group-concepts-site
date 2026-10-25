@@ -1895,11 +1895,11 @@
         </div>
       </div>
 
-      <!-- 6. FEDERATED SSO ENFORCEMENT GATE OVERLAY -->
-      <div id="os-2fa-gate-backdrop" role="dialog" aria-modal="true" aria-label="Federated SSO Enforcement Gate" style="position:fixed;inset:0;background:rgba(4,8,20,0.96);backdrop-filter:blur(16px);z-index:100001;display:none;align-items:center;justify-content:center;padding:1.25rem;font-family:'Inter',sans-serif;">
+      <!-- 6. SSO ENFORCEMENT GATE OVERLAY -->
+      <div id="os-2fa-gate-backdrop" role="dialog" aria-modal="true" aria-label="SSO Enforcement Gate" style="position:fixed;inset:0;background:rgba(4,8,20,0.96);backdrop-filter:blur(16px);z-index:100001;display:none;align-items:center;justify-content:center;padding:1.25rem;font-family:'Inter',sans-serif;">
         <div style="width:100%;max-width:34rem;background:rgba(15,23,42,0.96);border:1px solid rgba(197,179,88,0.48);border-radius:18px;padding:1.65rem;box-shadow:0 30px 90px rgba(0,0,0,0.95);">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;">
-            <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.25rem 0.65rem;border-radius:999px;background:rgba(220,38,38,0.18);border:1px solid rgba(220,38,38,0.45);color:#fca5a5;font-size:0.68rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">🔒 Federated SSO Enforced</span>
+            <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.25rem 0.65rem;border-radius:999px;background:rgba(220,38,38,0.18);border:1px solid rgba(220,38,38,0.45);color:#fca5a5;font-size:0.68rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">🔒 SSO Enforced</span>
             <span style="font-size:0.7rem;color:#fde047;font-weight:700;">OIDC 2.0 • Zero Passwords</span>
           </div>
           <h3 style="font-size:1.15rem;font-weight:900;color:#fff;margin:0 0 0.35rem;">Single Sign-On Required</h3>
@@ -1907,15 +1907,15 @@
             Authenticate with <strong>Google</strong>, <strong>Microsoft</strong>, or <strong>Apple</strong> SSO. Standard accounts receive access to <strong>SaaS Apps &amp; LMS</strong> and <strong>Payment &amp; Billing</strong>.
           </p>
 
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.55rem;margin-bottom:0.9rem;" role="group" aria-label="Choose SSO Identity Provider">
-            <button type="button" data-os-sso-prov="google" class="os-sso-prov-btn" style="padding:0.65rem 0.5rem;border-radius:0.65rem;background:rgba(37,99,235,0.28);border:1px solid #c5b358;color:#fff;font-size:0.76rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
-              <span>G</span><span>Google SSO</span>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.65rem;margin-bottom:0.9rem;" role="group" aria-label="SSO">
+            <button type="button" data-os-sso-prov="google" class="os-sso-prov-btn" aria-label="Google SSO" title="Google SSO" style="height:52px;border-radius:0.75rem;background:rgba(37,99,235,0.28);border:1.5px solid #c5b358;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.6H12z"/><path fill="#34A853" d="M3.6 7.4l3.2 2.4c.9-2.1 2.9-3.6 5.2-3.6 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/><path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.5 3 4.7 5 8.7 5z"/><path fill="#4285F4" d="M21.1 12.2c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.2 2.6-2.2 3.3l2.9 2.4c1.7-1.6 2.9-4.1 2.9-8z"/></svg>
             </button>
-            <button type="button" data-os-sso-prov="microsoft" class="os-sso-prov-btn" style="padding:0.65rem 0.5rem;border-radius:0.65rem;background:rgba(15,23,42,0.9);border:1px solid rgba(148,163,184,0.3);color:#e2e8f0;font-size:0.76rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
-              <span>⊞</span><span>Microsoft SSO</span>
+            <button type="button" data-os-sso-prov="microsoft" class="os-sso-prov-btn" aria-label="Microsoft SSO" title="Microsoft SSO" style="height:52px;border-radius:0.75rem;background:rgba(15,23,42,0.9);border:1.5px solid rgba(148,163,184,0.3);color:#e2e8f0;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <svg width="20" height="20" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>
             </button>
-            <button type="button" data-os-sso-prov="apple" class="os-sso-prov-btn" style="padding:0.65rem 0.5rem;border-radius:0.65rem;background:rgba(15,23,42,0.9);border:1px solid rgba(148,163,184,0.3);color:#e2e8f0;font-size:0.76rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
-              <span></span><span>Apple SSO</span>
+            <button type="button" data-os-sso-prov="apple" class="os-sso-prov-btn" aria-label="Apple SSO" title="Apple SSO" style="height:52px;border-radius:0.75rem;background:rgba(15,23,42,0.9);border:1.5px solid rgba(148,163,184,0.3);color:#e2e8f0;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
             </button>
           </div>
 
@@ -2037,7 +2037,7 @@
       document.getElementById('os-clean-label').textContent = `Minimalist UI: ${next ? 'ON' : 'OFF'}`;
     });
 
-    // Wire Federated SSO Enforcement Gate Overlay (Google, Microsoft, Apple Only) & Lock Session Button
+    // Wire SSO Enforcement Gate Overlay (Google, Microsoft, Apple Only) & Lock Session Button
     const gateBackdrop = document.getElementById('os-2fa-gate-backdrop');
     const lockSessionBtn = document.getElementById('os-lock-session');
     const gateEmail = document.getElementById('os-2fa-email');

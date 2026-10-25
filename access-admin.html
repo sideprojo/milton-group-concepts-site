@@ -577,7 +577,7 @@
         (isOwner
           ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">' +
               '<div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:6px">Register New Resource (Extensible Catalog)</div>' +
-              '<input id="admNewResTitle" placeholder="Resource Name (e.g. Sovereign Vault)" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:5px">' +
+              '<input id="admNewResTitle" placeholder="Resource Name" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:5px">' +
               '<input id="admNewResCategory" placeholder="Category + Milton UI/UX &amp; AI Suite" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:5px">' +
               '<input id="admNewResAiTool" placeholder="Associated Fast-Track Tool Title" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:6px">' +
               '<button type="button" class="btn pri" id="btnAddCustomRes" style="width:100%;justify-content:center;padding:6px 10px;font-size:11.5px">+ Add Resource to Catalog</button>' +
@@ -705,7 +705,7 @@
       '<div class="row" style="margin-bottom:14px"><h2 style="margin:0;font-size:15px;font-weight:600">malik.khabir@Miltongroupsecurity.org</h2><span style="font-size:11.5px;color:#34d399;font-weight:600">Builtin\\Administrator</span></div>' +
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;max-width:640px;margin-bottom:14px">' +
         '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">Username (sAMAccountName)</label>' +
-          '<input id="admUsernameInput" value="' + esc(ownerObj.username || 'malik.khabir') + '" placeholder="malik.khabir" style="width:100%;padding:8px 11px;font-size:13px">' +
+          '<input id="admUsernameInput" value="' + esc(ownerObj.username || 'malik.khabir') + '" placeholder="Administrator username" style="width:100%;padding:8px 11px;font-size:13px">' +
         '</div>' +
         '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">New Password (Case-Sensitive)</label>' +
           '<input id="admNewPassInput" type="password" placeholder="Enter new password" style="width:100%;padding:8px 11px;font-size:13px">' +
@@ -955,7 +955,7 @@
               '<option value="STRIPE_CARD">Stripe Card (2.9%+$0.30)</option>' +
             '</select>' +
             '<input id="accPostCounterparty" placeholder="Client / Vendor Name" style="padding:7px 9px;font-size:12px">' +
-            '<input id="accPostAmount" type="number" step="0.01" min="0.01" placeholder="Gross USD (e.g. 250.00)" style="padding:7px 9px;font-size:12px">' +
+            '<input id="accPostAmount" type="number" step="0.01" min="0.01" placeholder="Amount (USD)" style="padding:7px 9px;font-size:12px">' +
             '<input id="accPostDesc" placeholder="Memo / Contract / Resource" style="padding:7px 9px;font-size:12px">' +
             '<button type="button" class="btn pri" id="btnPostAccEntry" style="padding:7px 12px;font-size:12px;justify-content:center">Post Journal</button>' +
           '</div>' +
@@ -995,10 +995,10 @@
             '</select>' +
           '</div>' +
           '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">MGC Stripe Key</label>' +
-            '<input id="pciStripePk" value="' + esc(gw.stripePublishableKey || '') + '" placeholder="pk_live_mgc_..." style="width:100%;padding:8px 10px;font-size:12.5px">' +
+            '<input id="pciStripePk" value="' + esc(gw.stripePublishableKey || '') + '" placeholder="Publishable Key" style="width:100%;padding:8px 10px;font-size:12.5px">' +
           '</div>' +
           '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">FIX Key / CAGE</label>' +
-            '<input id="pciAuthNetKey" value="' + esc(gw.authorizeNetClientKey || '') + '" placeholder="pk_live_fix_... / CAGE" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+            '<input id="pciAuthNetKey" value="' + esc(gw.authorizeNetClientKey || '') + '" placeholder="Client Key" style="width:100%;padding:8px 10px;font-size:12.5px">' +
           '</div>' +
         '</div>' +
         '<button type="button" class="btn pri" id="btnSavePciGateway" style="padding:8px 16px;font-size:12.5px">Save Gateways</button>' +

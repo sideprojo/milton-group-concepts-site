@@ -112,7 +112,7 @@
           <p class="text-xs text-slate-300">
             Verify how the platform strips PII, CUI, SSNs, and credentials before any cloud LLM or analytics pipeline receives input:
           </p>
-          <textarea id="pii-input" rows="4" class="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 text-xs mono text-slate-100" placeholder="Enter test payload...">Contracting Officer Jane Doe (SSN 123-45-6789, email jane.doe@va.gov, CUI//SP-PRVCY, API_KEY=sk-live-998877) requested SDVOSB quote for CAGE 17GC6.</textarea>
+          <textarea id="pii-input" rows="4" class="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 text-xs mono text-slate-100" placeholder="Enter text to verify redaction"></textarea>
           <button onclick="runSanitizerTest()" class="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs uppercase tracking-widest transition-all">
             Sanitize & Verify Payload
           </button>

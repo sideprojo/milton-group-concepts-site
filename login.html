@@ -120,8 +120,8 @@
     gap: 16px;
     align-items: stretch;
   }
-  @media (max-width: 760px) {
-    .sso-grid { grid-template-columns: 1fr; }
+  @media (max-width: 520px) {
+    .sso-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   }
 
   @keyframes ssoCascadeIn {
@@ -131,19 +131,18 @@
 
   .sso-provider-card {
     position: relative;
-    background: linear-gradient(180deg, rgba(15, 25, 48, 0.96) 0%, rgba(9, 15, 30, 0.98) 100%);
-    border: 1.5px solid rgba(148, 163, 184, 0.32);
-    border-radius: 16px;
-    padding: 20px 16px 18px;
+    height: 76px;
+    background: linear-gradient(180deg, rgba(15, 25, 48, 0.96) 0%, rgba(7, 12, 26, 0.99) 100%);
+    border: 1.5px solid rgba(197, 179, 88, 0.42);
+    border-radius: 18px;
+    padding: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 0;
+    justify-content: center;
     transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
-    text-align: center;
     overflow: hidden;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     animation: ssoCascadeIn 0.36s ease backwards;
   }
   .sso-provider-card:nth-child(1) { animation-delay: 0.02s; }
@@ -154,45 +153,39 @@
     content: "";
     position: absolute;
     top: 0;
-    left: 18%;
-    right: 18%;
+    left: 22%;
+    right: 22%;
     height: 2px;
     border-radius: 0 0 4px 4px;
-    background: linear-gradient(90deg, transparent, rgba(197, 179, 88, 0.75), transparent);
-    opacity: 0.65;
+    background: linear-gradient(90deg, transparent, rgba(197, 179, 88, 0.85), transparent);
+    opacity: 0.72;
     transition: opacity 0.22s ease, left 0.22s ease, right 0.22s ease;
   }
 
   .sso-provider-card:hover,
   .sso-provider-card.active {
-    border-color: #c5b358;
-    background: linear-gradient(180deg, rgba(23, 43, 92, 0.52) 0%, rgba(11, 20, 42, 0.98) 100%);
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.58), 0 0 0 1px rgba(197, 179, 88, 0.22);
+    border-color: #fde047;
+    background: linear-gradient(180deg, rgba(30, 58, 138, 0.56) 0%, rgba(11, 20, 42, 0.99) 100%);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.65), 0 0 24px rgba(37, 99, 235, 0.36), 0 0 0 1px rgba(253, 224, 71, 0.28);
+    transform: translateY(-3px);
   }
-  .sso-provider-card:hover {
-    transform: translateY(-2px);
+  .sso-provider-card:active {
+    transform: translateY(0) scale(0.98);
   }
   .sso-provider-card:hover::before,
   .sso-provider-card.active::before {
     opacity: 1;
-    left: 8%;
-    right: 8%;
+    left: 10%;
+    right: 10%;
   }
 
-  /* Cascading Symbol Medallion -> Stem -> Joined Action Button */
-  .sso-cascade-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
   .sso-emblem-medallion {
-    width: 44px;
-    height: 44px;
-    border-radius: 13px;
-    background: radial-gradient(circle at 30% 25%, rgba(30, 58, 138, 0.55), rgba(6, 11, 25, 0.96));
-    border: 1.5px solid rgba(197, 179, 88, 0.52);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: radial-gradient(circle at 30% 25%, rgba(37, 99, 235, 0.48), rgba(4, 8, 20, 0.96));
+    border: 1.5px solid rgba(197, 179, 88, 0.58);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.16);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -202,64 +195,9 @@
   }
   .sso-provider-card:hover .sso-emblem-medallion,
   .sso-provider-card.active .sso-emblem-medallion {
-    transform: scale(1.05);
+    transform: scale(1.08);
     border-color: #fde047;
-    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.35), 0 0 14px rgba(197, 179, 88, 0.32);
-  }
-  .sso-provider-title {
-    margin: 8px 0 0;
-    font-size: 14.5px;
-    font-weight: 800;
-    letter-spacing: 0.01em;
-    color: #f8fafc;
-    line-height: 1.2;
-  }
-  .sso-cascade-bridge {
-    width: 2px;
-    height: 14px;
-    background: linear-gradient(180deg, rgba(197, 179, 88, 0.78) 0%, rgba(59, 130, 246, 0.85) 100%);
-    position: relative;
-    margin: 4px 0 0;
-  }
-  .sso-cascade-bridge::after {
-    content: "";
-    position: absolute;
-    bottom: -3px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #60a5fa;
-    box-shadow: 0 0 8px #3b82f6;
-  }
-
-  .sso-btn {
-    width: 100%;
-    height: 44px;
-    padding: 0 12px;
-    border-radius: 11px;
-    border: 1px solid rgba(197, 179, 88, 0.42);
-    background: linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(8, 13, 26, 0.98) 100%);
-    color: #f8fafc;
-    font-weight: 700;
-    font-size: 12.5px;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-  .sso-provider-card:hover .sso-btn,
-  .sso-btn:hover {
-    border-color: #60a5fa;
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: #ffffff;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.38);
+    box-shadow: 0 10px 26px rgba(37, 99, 235, 0.42), 0 0 16px rgba(197, 179, 88, 0.38);
   }
 
   /* Clean OAuth / OIDC Popup Modal when a provider card/button is clicked */
@@ -514,13 +452,13 @@
       </div>
     </div>
 
-    <!-- SIGN IN VIEW: Username + Password Logon Screen + Federated SSO -->
+    <!-- SIGN IN VIEW: Username + Password Logon Screen + SSO -->
     <div id="signInPane">
       <form id="emailPasswordForm" onsubmit="return false" style="background:linear-gradient(180deg,rgba(6,11,24,0.88) 0%,rgba(4,8,18,0.94) 100%);border:1px solid rgba(197,179,88,0.42);border-radius:16px;padding:20px 22px;margin-bottom:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05)">
         <div class="ms-form-grid-2">
           <div class="ms-field">
             <label for="loginIdentifier" class="ms-label"><span style="letter-spacing:.01em">Portal Username or Logon Email</span><span class="ms-label-req">Required</span></label>
-            <input id="loginIdentifier" class="ms-input" type="text" maxlength="140" placeholder="username (e.g. client.verified) or email" autocomplete="username" spellcheck="false" required>
+            <input id="loginIdentifier" class="ms-input" type="text" maxlength="140" placeholder="Username or email" autocomplete="username" spellcheck="false" required>
           </div>
           <div class="ms-field">
             <label for="loginPassword" class="ms-label"><span style="letter-spacing:.01em">Account Password</span><span class="ms-label-req">Case-Sensitive</span></label>
@@ -537,63 +475,42 @@
       </form>
 
       <div class="sso-section-divider" aria-hidden="true">
-        <span>Federated SSO</span>
+        <span>SSO</span>
       </div>
 
-      <div class="sso-grid" role="group" aria-label="Single Sign-On Providers">
-        <!-- 1. Google SSO (Thematically Joined & Cascaded Symbol -> Button) -->
-        <div class="sso-provider-card" data-provider="google" id="card-google">
-          <div class="sso-cascade-stack">
-            <div class="sso-emblem-medallion" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24">
-                <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.6H12z"/>
-                <path fill="#34A853" d="M3.6 7.4l3.2 2.4c.9-2.1 2.9-3.6 5.2-3.6 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/>
-                <path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.5 3 4.7 5 8.7 5z"/>
-                <path fill="#4285F4" d="M21.1 12.2c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.2 2.6-2.2 3.3l2.9 2.4c1.7-1.6 2.9-4.1 2.9-8z"/>
-              </svg>
-            </div>
-            <h2 class="sso-provider-title">Google</h2>
-            <div class="sso-cascade-bridge" aria-hidden="true"></div>
+      <div class="sso-grid" role="group" aria-label="SSO">
+        <!-- 1. Google SSO (Stylized Icon-Only Clickable Button) -->
+        <button type="button" class="sso-provider-card sso-btn" data-provider="google" data-sso-trigger="google" id="btnSsoGoogle" aria-label="Google SSO" title="Google SSO">
+          <div class="sso-emblem-medallion" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.6H12z"/>
+              <path fill="#34A853" d="M3.6 7.4l3.2 2.4c.9-2.1 2.9-3.6 5.2-3.6 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/>
+              <path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.5 3 4.7 5 8.7 5z"/>
+              <path fill="#4285F4" d="M21.1 12.2c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.2 2.6-2.2 3.3l2.9 2.4c1.7-1.6 2.9-4.1 2.9-8z"/>
+            </svg>
           </div>
-          <button type="button" class="sso-btn" data-sso-trigger="google" id="btnSsoGoogle">
-            <span>🌐 Launch Google Sign-In</span>
-          </button>
-        </div>
+        </button>
 
-        <!-- 2. Microsoft SSO (Thematically Joined & Cascaded Symbol -> Button) -->
-        <div class="sso-provider-card" data-provider="microsoft" id="card-microsoft">
-          <div class="sso-cascade-stack">
-            <div class="sso-emblem-medallion" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 23 23">
-                <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
-                <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
-                <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
-                <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
-              </svg>
-            </div>
-            <h2 class="sso-provider-title">Microsoft</h2>
-            <div class="sso-cascade-bridge" aria-hidden="true"></div>
+        <!-- 2. Microsoft SSO (Stylized Icon-Only Clickable Button) -->
+        <button type="button" class="sso-provider-card sso-btn" data-provider="microsoft" data-sso-trigger="microsoft" id="btnSsoMicrosoft" aria-label="Microsoft SSO" title="Microsoft SSO">
+          <div class="sso-emblem-medallion" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 23 23">
+              <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+              <rect x="12" y="1" width="10" height="10" fill="#7FBA00"/>
+              <rect x="1" y="12" width="10" height="10" fill="#00A4EF"/>
+              <rect x="12" y="12" width="10" height="10" fill="#FFB900"/>
+            </svg>
           </div>
-          <button type="button" class="sso-btn" data-sso-trigger="microsoft" id="btnSsoMicrosoft">
-            <span>🌐 Launch Microsoft Sign-In</span>
-          </button>
-        </div>
+        </button>
 
-        <!-- 3. Apple SSO (Thematically Joined & Cascaded Symbol -> Button) -->
-        <div class="sso-provider-card" data-provider="apple" id="card-apple">
-          <div class="sso-cascade-stack">
-            <div class="sso-emblem-medallion" aria-hidden="true">
-              <svg width="21" height="21" viewBox="0 0 24 24" fill="#FFFFFF">
-                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-              </svg>
-            </div>
-            <h2 class="sso-provider-title">Apple</h2>
-            <div class="sso-cascade-bridge" aria-hidden="true"></div>
+        <!-- 3. Apple SSO (Stylized Icon-Only Clickable Button) -->
+        <button type="button" class="sso-provider-card sso-btn" data-provider="apple" data-sso-trigger="apple" id="btnSsoApple" aria-label="Apple SSO" title="Apple SSO">
+          <div class="sso-emblem-medallion" aria-hidden="true">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="#FFFFFF">
+              <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
           </div>
-          <button type="button" class="sso-btn" data-sso-trigger="apple" id="btnSsoApple">
-            <span>🌐 Launch Apple Sign-In</span>
-          </button>
-        </div>
+        </button>
       </div>
     </div>
 
@@ -721,7 +638,7 @@
           </div>
           <div class="ms-field">
             <label for="regEmail" class="ms-label"><span>Primary Logon Email</span><span class="ms-label-req">Verification Target</span></label>
-            <input id="regEmail" class="ms-input" type="email" maxlength="140" placeholder="name@organization.com" required spellcheck="false">
+            <input id="regEmail" class="ms-input" type="email" maxlength="140" placeholder="Primary email" required spellcheck="false">
           </div>
         </div>
 
@@ -729,11 +646,11 @@
         <div class="ms-form-grid-2" style="margin-bottom:14px">
           <div class="ms-field">
             <label for="regRecoveryEmail" class="ms-label"><span style="color:#fde047">Recovery Email Address</span><span class="ms-label-req" style="color:#fde047">Required</span></label>
-            <input id="regRecoveryEmail" class="ms-input" type="email" maxlength="140" placeholder="recovery@domain.com" required spellcheck="false">
+            <input id="regRecoveryEmail" class="ms-input" type="email" maxlength="140" placeholder="Recovery email" required spellcheck="false">
           </div>
           <div class="ms-field">
             <label for="regPhone" class="ms-label"><span style="color:#fde047">Security Phone Number</span><span class="ms-label-req" style="color:#fde047">10–15 Digits Required</span></label>
-            <input id="regPhone" class="ms-input" type="tel" maxlength="24" placeholder="+1 (555) 234-5678" required>
+            <input id="regPhone" class="ms-input" type="tel" maxlength="24" placeholder="Phone number" required>
           </div>
         </div>
 
@@ -992,7 +909,7 @@
           return true;
         } else {
           msg.style.color = '#f87171';
-          msg.textContent = (data && data.error) ? data.error : 'Federated account is not yet provisioned.';
+          msg.textContent = (data && data.error) ? data.error : 'Account is not yet provisioned.';
           return true;
         }
       }
