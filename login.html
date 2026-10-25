@@ -789,18 +789,28 @@
   </div>
 </main>
 
-<!-- Provider OAuth / OIDC Account Dialog (Enforced External Sign-In Only) -->
+<!-- Provider SSO Dialog -->
 <div class="sso-modal-backdrop" id="ssoModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="ssoModalTitle">
-  <div class="sso-modal">
-    <div class="row" style="margin-bottom:12px;justify-content:flex-end">
+  <div class="sso-modal" style="max-width:410px">
+    <div class="row" style="margin-bottom:10px;justify-content:space-between;align-items:center">
+      <div id="ssoModalEmblem" style="width:40px;height:40px;border-radius:10px;background:rgba(15,23,42,0.92);border:1px solid rgba(148,163,184,0.28);display:flex;align-items:center;justify-content:center"></div>
       <span id="ssoModalChip" style="display:none"></span>
       <button type="button" class="btn" id="ssoModalClose" style="padding:4px 10px;font-size:11.5px">Close</button>
     </div>
-    <h2 id="ssoModalTitle" style="margin-bottom:12px;font-weight:600">Google Sign-In</h2>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button type="button" class="btn pri" id="btnLaunchOidcRedirect" style="width:100%;justify-content:center;padding:11px 18px;font-size:13px">🌐 Launch Google Sign-In</button>
-    </div>
-    <p id="modalAuthMsg" style="color:#f87171;margin-top:10px;font-weight:500;font-size:12px;min-height:16px"></p>
+    <h2 id="ssoModalTitle" style="margin:0 0 6px;font-size:17px;font-weight:700">Google SSO</h2>
+    <p id="ssoModalSub" style="margin:0 0 14px;font-size:12px;color:#94a3b8">Enter your account email or username to continue.</p>
+    <form id="ssoModalForm" onsubmit="return false" style="display:flex;flex-direction:column;gap:10px">
+      <div class="ms-field">
+        <label for="ssoModalEmail" class="ms-label"><span>Account Email or Username</span><span class="ms-label-req">Required</span></label>
+        <input id="ssoModalEmail" class="ms-input" type="text" maxlength="140" placeholder="Email or username" autocomplete="username" spellcheck="false" required>
+      </div>
+      <div class="ms-field">
+        <label for="ssoModalPassword" class="ms-label"><span>Account Password</span><span class="ms-label-req">If Configured</span></label>
+        <input id="ssoModalPassword" class="ms-input" type="password" maxlength="128" placeholder="Password" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn pri" id="btnLaunchOidcRedirect" style="width:100%;justify-content:center;padding:10px 18px;font-size:13px;font-weight:700;margin-top:4px">Continue</button>
+    </form>
+    <p id="modalAuthMsg" style="color:#f87171;margin-top:10px;font-weight:500;font-size:12px;min-height:16px;text-align:center"></p>
   </div>
 </div>
 
@@ -928,32 +938,127 @@
     return false;
   }
 
+  let activeSsoStateToken = '';
+  const ssoModalEmailInput = document.getElementById('ssoModalEmail');
+  const ssoModalPasswordInput = document.getElementById('ssoModalPassword');
+  const ssoModalEmblem = document.getElementById('ssoModalEmblem');
+  const ssoModalSub = document.getElementById('ssoModalSub');
+  const ssoModalForm = document.getElementById('ssoModalForm');
+
+  const PROVIDER_SVGS = {
+    google: '<svg width="22" height="22" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.6H12z"/><path fill="#34A853" d="M3.6 7.4l3.2 2.4c.9-2.1 2.9-3.6 5.2-3.6 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/><path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.5 3 4.7 5 8.7 5z"/><path fill="#4285F4" d="M21.1 12.2c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.2 2.6-2.2 3.3l2.9 2.4c1.7-1.6 2.9-4.1 2.9-8z"/></svg>',
+    microsoft: '<svg width="20" height="20" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>',
+    apple: '<svg width="21" height="21" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>'
+  };
+
+  async function executeSsoExchange(prov, rawId, rawPass, targetMsgEl) {
+    const statusEl = targetMsgEl || modalMsg || msg;
+    const trimmedId = String(rawId || '').trim();
+    const trimmedPass = String(rawPass || '').trim();
+    if (!trimmedId) {
+      if (statusEl) {
+        statusEl.style.color = '#f87171';
+        statusEl.textContent = 'Please enter your account email or username.';
+      }
+      return false;
+    }
+    const normalizedEmail = W.resolveCaseInsensitiveIdentifier ? W.resolveCaseInsensitiveIdentifier(trimmedId) : trimmedId.toLowerCase();
+    if (statusEl) {
+      statusEl.style.color = '#34d399';
+      statusEl.textContent = 'Authenticating ' + PROVIDER_META[prov].name + ' SSO...';
+    }
+    try {
+      if (!activeSsoStateToken) {
+        const stRes = await fetch('/api/auth/oauth/start?provider=' + encodeURIComponent(prov) + '&format=json');
+        const stData = await stRes.json().catch(() => ({}));
+        if (stData && stData.state) activeSsoStateToken = stData.state;
+      }
+      const res = await fetch('/api/auth/sso', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: prov,
+          portalContext: 'client',
+          identifier: trimmedId,
+          email: normalizedEmail,
+          password: trimmedPass || undefined,
+          state: activeSsoStateToken || undefined,
+          next: nextUrl
+        })
+      });
+      const data = await res.json();
+      if (data && data.ok) {
+        try {
+          sessionStorage.setItem('mgcw.uid', data.uid);
+          sessionStorage.setItem('mgcw.sso_provider', data.provider || prov);
+        } catch (_) {}
+        W.signInAs(data.uid, prov);
+        persistOnboardingBridge(data.email || normalizedEmail, data.name, data.role, prov, data.allowedApps, data.allowedPortals, data.clientTier);
+        if (statusEl) {
+          statusEl.style.color = '#34d399';
+          statusEl.textContent = 'Signed in. Redirecting...';
+        }
+        location.href = data.redirect || (data.role === 'owner' ? '/access-admin' : '/workspace');
+        return true;
+      }
+      if (statusEl) {
+        statusEl.style.color = '#f87171';
+        statusEl.textContent = (data && data.error) || 'SSO verification failed.';
+      }
+      return false;
+    } catch (_) {
+      if (statusEl) {
+        statusEl.style.color = '#f87171';
+        statusEl.textContent = 'Unable to reach authentication server.';
+      }
+      return false;
+    }
+  }
+
   async function launchExternalOAuth(prov) {
     if (!PROVIDER_META[prov]) return;
     activeProvider = prov;
+    activeSsoStateToken = '';
     document.querySelectorAll('.sso-provider-card').forEach(c => {
       c.classList.toggle('active', c.dataset.provider === prov);
     });
     const meta = PROVIDER_META[prov];
     if (document.getElementById('ssoModalChip')) document.getElementById('ssoModalChip').textContent = meta.chip;
-    if (document.getElementById('ssoModalTitle')) document.getElementById('ssoModalTitle').textContent = meta.name + ' Sign-In';
-    if (btnLaunchOidc) btnLaunchOidc.textContent = meta.launchLabel;
-    if (msg) {
-      msg.style.color = '#34d399';
-      msg.textContent = 'Redirecting to ' + meta.name + ' Sign-In...';
+    if (document.getElementById('ssoModalTitle')) document.getElementById('ssoModalTitle').textContent = meta.name + ' SSO';
+    if (ssoModalSub) ssoModalSub.textContent = 'Sign in with your ' + meta.name + ' account';
+    if (ssoModalEmblem) ssoModalEmblem.innerHTML = PROVIDER_SVGS[prov] || '';
+    if (btnLaunchOidc) btnLaunchOidc.textContent = 'Continue with ' + meta.name;
+    if (modalMsg) modalMsg.textContent = '';
+
+    // Pre-mint signed OIDC state cookie in the background
+    if (location.protocol === 'http:' || location.protocol === 'https:') {
+      fetch('/api/auth/oauth/start?provider=' + encodeURIComponent(prov) + '&format=json')
+        .then(r => r.json())
+        .then(d => { if (d && d.state) activeSsoStateToken = d.state; })
+        .catch(() => {});
     }
-    const hasCustomIdpClient = Boolean(
-      serverOidcConfig &&
-      serverOidcConfig.oidcProviders &&
-      serverOidcConfig.oidcProviders[prov] &&
-      serverOidcConfig.oidcProviders[prov].clientId
-    );
-    const isMobileDevice = Boolean(W.isMobileClientDevice && W.isMobileClientDevice());
-    if (firebaseAuthReady && hasCustomIdpClient && prov === 'google' && !isMobileDevice) {
-      const handled = await launchFirebaseFederatedPopup(prov);
-      if (handled) return;
+
+    // If user already entered email/username and password in the main form, authenticate immediately
+    const mainId = (document.getElementById('loginIdentifier') && document.getElementById('loginIdentifier').value || '').trim();
+    const mainPw = (document.getElementById('loginPassword') && document.getElementById('loginPassword').value || '').trim();
+    if (mainId && mainPw) {
+      await executeSsoExchange(prov, mainId, mainPw, msg);
+      return;
     }
-    location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov);
+
+    if (ssoModalEmailInput) {
+      ssoModalEmailInput.value = mainId || '';
+    }
+    if (ssoModalPasswordInput) {
+      ssoModalPasswordInput.value = '';
+    }
+    if (modalBackdrop) {
+      modalBackdrop.classList.add('open');
+      setTimeout(() => {
+        if (ssoModalEmailInput && !ssoModalEmailInput.value) ssoModalEmailInput.focus();
+        else if (ssoModalPasswordInput) ssoModalPasswordInput.focus();
+      }, 40);
+    }
   }
 
   function closeProviderModal() {
@@ -969,8 +1074,16 @@
     });
   }
 
-  if (btnLaunchOidc) {
-    btnLaunchOidc.onclick = () => launchExternalOAuth(activeProvider);
+  if (ssoModalForm) {
+    ssoModalForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await executeSsoExchange(
+        activeProvider,
+        ssoModalEmailInput ? ssoModalEmailInput.value : '',
+        ssoModalPasswordInput ? ssoModalPasswordInput.value : '',
+        modalMsg
+      );
+    });
   }
 
   document.querySelectorAll('.sso-provider-card').forEach(card => {

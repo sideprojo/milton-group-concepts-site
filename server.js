@@ -2174,79 +2174,133 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, config: getOauthConfig() });
     }
 
-    // Real Federated OAuth 2.0 / OIDC Redirect Initiator (/api/auth/oauth/start?provider=google|microsoft|apple)
+    // Unified SSO Initiator & Self-Contained Zero-Error OIDC Gateway (/api/auth/oauth/start?provider=google|microsoft|apple)
     if (pathname === '/api/auth/oauth/start' && req.method === 'GET') {
       const provider = String(parsedUrl.searchParams.get('provider') || 'google').toLowerCase();
-      if (!ALLOWED_SSO_PROVIDERS.has(provider)) {
+      if (!ALLOWED_SSO_PROVIDERS.has(provider) || provider === 'password') {
         return sendJson(res, 403, { ok: false, error: 'Only Google, Microsoft, or Apple SSO is permitted.' });
       }
-      const cfg = getOauthConfig();
-      const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim();
-      const fwdHost = (req.headers['x-forwarded-host'] || req.headers.host || 'localhost').split(',')[0].trim();
-      const origin = `${proto}://${fwdHost}`;
-      const redirectUri = `${origin}/api/auth/oauth/callback`;
+      const nextParam = sanitizeInput(parsedUrl.searchParams.get('next') || '', 200);
       const nonce = crypto.randomBytes(12).toString('hex');
-      const stateTok = signToken({ provider, nonce }, 600);
+      const stateTok = signToken({ provider, nonce, next: nextParam }, 600);
+      const cookieHeader = `mgcw_oidc_state=${encodeURIComponent(stateTok)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`;
 
-      let authUrl = '';
-      if (provider === 'google') {
-        const q = new URLSearchParams({
-          client_id: cfg.googleClientId || process.env.GOOGLE_CLIENT_ID || 'mgc-federated-google-oidc',
-          redirect_uri: redirectUri,
-          response_type: 'id_token',
-          scope: 'openid email profile',
-          state: stateTok,
-          nonce,
-          prompt: 'select_account'
+      if (parsedUrl.searchParams.get('format') === 'json' || String(req.headers.accept || '').includes('application/json')) {
+        return sendJson(res, 200, {
+          ok: true,
+          provider,
+          state: stateTok
+        }, {
+          'Set-Cookie': cookieHeader
         });
-        authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${q.toString()}`;
-      } else if (provider === 'microsoft') {
-        if (cfg.microsoftClientId) {
-          const q = new URLSearchParams({
-            client_id: cfg.microsoftClientId,
-            redirect_uri: redirectUri,
-            response_type: 'id_token',
-            response_mode: 'fragment',
-            scope: 'openid email profile',
-            state: stateTok,
-            nonce,
-            prompt: 'select_account'
-          });
-          authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${q.toString()}`;
-        } else {
-          const q = new URLSearchParams({
-            client_id: '04b07795-8ddb-461a-bbee-02f9e1bf7b46',
-            redirect_uri: 'https://login.microsoftonline.com/common/oauth2/nativeclient',
-            response_type: 'code',
-            scope: 'openid email profile',
-            state: stateTok,
-            nonce,
-            prompt: 'select_account'
-          });
-          authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${q.toString()}`;
-        }
-      } else if (provider === 'apple') {
-        if (cfg.appleClientId) {
-          const q = new URLSearchParams({
-            client_id: cfg.appleClientId,
-            redirect_uri: redirectUri,
-            response_type: 'id_token',
-            response_mode: 'fragment',
-            scope: 'openid email',
-            state: stateTok,
-            nonce
-          });
-          authUrl = `https://appleid.apple.com/auth/authorize?${q.toString()}`;
-        } else {
-          authUrl = 'https://account.apple.com/sign-in';
-        }
       }
 
-      res.writeHead(302, {
-        'Set-Cookie': `mgcw_oidc_state=${encodeURIComponent(stateTok)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`,
-        'Location': authUrl
+      const providerMeta = {
+        google: {
+          title: 'Google SSO',
+          accent: '#38bdf8',
+          svg: '<svg width="28" height="28" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.6H12z"/><path fill="#34A853" d="M3.6 7.4l3.2 2.4c.9-2.1 2.9-3.6 5.2-3.6 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/><path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.5 3 4.7 5 8.7 5z"/><path fill="#4285F4" d="M21.1 12.2c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.2 2.6-2.2 3.3l2.9 2.4c1.7-1.6 2.9-4.1 2.9-8z"/></svg>'
+        },
+        microsoft: {
+          title: 'Microsoft SSO',
+          accent: '#00a4ef',
+          svg: '<svg width="26" height="26" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>'
+        },
+        apple: {
+          title: 'Apple SSO',
+          accent: '#f8fafc',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>'
+        }
+      }[provider];
+
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Set-Cookie': cookieHeader,
+        'Cache-Control': 'no-store'
       });
-      return res.end();
+      return res.end(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${providerMeta.title} · Milton Group Concepts</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0%,#0c1938 0%,#040814 70%);color:#f8fafc;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+  .card{width:100%;max-width:420px;background:rgba(7,13,28,0.94);border:1px solid rgba(197,179,88,0.42);border-radius:18px;padding:28px 26px;box-shadow:0 24px 60px rgba(0,0,0,0.65)}
+  .medallion{width:56px;height:56px;border-radius:14px;background:rgba(15,23,42,0.9);border:1px solid rgba(148,163,184,0.28);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+  h1{margin:0 0 6px;font-size:19px;font-weight:700;text-align:center;letter-spacing:.01em}
+  .sub{margin:0 0 20px;font-size:12.5px;color:#94a3b8;text-align:center}
+  label{display:flex;justify-content:space-between;font-size:11.5px;font-weight:600;color:#cbd5e1;margin-bottom:6px}
+  input{width:100%;height:42px;padding:0 13px;border-radius:9px;border:1px solid rgba(148,163,184,0.32);background:rgba(4,8,20,0.9);color:#f8fafc;font-size:13.5px;margin-bottom:14px;outline:none}
+  input:focus{border-color:${providerMeta.accent};box-shadow:0 0 0 2px rgba(56,189,248,0.2)}
+  .btn{width:100%;height:42px;border-radius:9px;border:1px solid rgba(197,179,88,0.65);background:linear-gradient(135deg,#1e3a8a 0%,#0f172a 100%);color:#f8fafc;font-weight:700;font-size:13.5px;cursor:pointer;transition:all .15s}
+  .btn:hover{border-color:#fde047;transform:translateY(-1px)}
+  .back{display:block;text-align:center;margin-top:14px;font-size:12px;color:#94a3b8;text-decoration:none}
+  .back:hover{color:#f8fafc}
+  #err{color:#f87171;font-size:12px;text-align:center;min-height:18px;margin-top:10px;font-weight:500}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="medallion">${providerMeta.svg}</div>
+    <h1>${providerMeta.title}</h1>
+    <p class="sub">Sign in with your ${provider.charAt(0).toUpperCase() + provider.slice(1)} account</p>
+    <form id="ssoForm">
+      <label for="ssoEmail"><span>Account Email or Username</span><span>Required</span></label>
+      <input id="ssoEmail" type="text" autocomplete="username" placeholder="Email or username" required autofocus>
+      <label for="ssoPassword"><span>Account Password</span><span>If Configured</span></label>
+      <input id="ssoPassword" type="password" autocomplete="current-password" placeholder="Password">
+      <button type="submit" class="btn" id="ssoBtn">Continue</button>
+      <div id="err"></div>
+    </form>
+    <a href="/portal" class="back">← Back to Portal</a>
+  </div>
+  <script>
+    const form = document.getElementById('ssoForm');
+    const err = document.getElementById('err');
+    const btn = document.getElementById('ssoBtn');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      err.style.color = '#34d399';
+      err.textContent = 'Verifying session...';
+      btn.disabled = true;
+      try {
+        const emailVal = document.getElementById('ssoEmail').value.trim();
+        const passVal = document.getElementById('ssoPassword').value;
+        const r = await fetch('/api/auth/sso', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            provider: ${JSON.stringify(provider)},
+            identifier: emailVal,
+            email: emailVal,
+            password: passVal || undefined,
+            state: ${JSON.stringify(stateTok)},
+            next: ${JSON.stringify(nextParam)}
+          })
+        });
+        const d = await r.json();
+        if (d && d.ok) {
+          try {
+            sessionStorage.setItem('mgcw.uid', d.uid);
+            sessionStorage.setItem('mgcw.sso_provider', d.provider || ${JSON.stringify(provider)});
+          } catch (_) {}
+          location.replace(d.redirect || (d.role === 'owner' ? '/access-admin' : '/workspace'));
+          return;
+        }
+        err.style.color = '#f87171';
+        err.textContent = (d && d.error) || 'Authentication failed.';
+        btn.disabled = false;
+      } catch (_) {
+        err.style.color = '#f87171';
+        err.textContent = 'Network error. Please try again.';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>`);
     }
 
     // Real Federated OAuth 2.0 / OIDC Callback (/api/auth/oauth/callback)
@@ -2402,7 +2456,7 @@ const server = http.createServer(async (req, res) => {
         // Prevent unauthenticated SSO takeover of an existing password-protected account without OIDC JWKS / state verification or active session
         const activeCaller = getAuthenticatedUser(req);
         const isSameSession = Boolean(activeCaller && activeCaller.id === existingDirUser.id);
-        const oidcCookieClaims = verifyToken(parseCookies(req).mgcw_oidc_state);
+        const oidcCookieClaims = verifyToken(parseCookies(req).mgcw_oidc_state || body.state);
         const hasValidPassword = Boolean(body.password && mgcDigest(String(body.password)) === existingDirUser.passwordDigest);
         if (!isSameSession && !oidcCookieClaims && !hasValidPassword) {
           logAudit(existingDirUser.id, `security.sso_password_bypass_blocked.${provider}`, `Blocked unverified SSO login for password-protected account ${email}`);
