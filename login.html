@@ -789,20 +789,24 @@
   </div>
 </main>
 
-<!-- Provider SSO Timed Redirect Dialog (Zero Input Fields) -->
+<!-- Provider SSO Timed Redirect Dialog (Zero Input Fields · 2.5s Animated Redirect & RBAC Verification) -->
 <div class="sso-modal-backdrop" id="ssoModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="ssoModalTitle">
-  <div class="sso-modal" style="max-width:370px;text-align:center;padding:26px 24px">
+  <div class="sso-modal" style="max-width:385px;text-align:center;padding:28px 26px">
     <div class="row" style="justify-content:flex-end;margin-bottom:4px">
       <span id="ssoModalChip" style="display:none"></span>
       <button type="button" class="btn" id="ssoModalClose" style="padding:4px 10px;font-size:11px">Cancel</button>
     </div>
-    <div id="ssoModalEmblem" style="width:56px;height:56px;border-radius:14px;background:rgba(15,23,42,0.92);border:1px solid rgba(197,179,88,0.45);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 0 24px rgba(56,189,248,0.16)"></div>
-    <h2 id="ssoModalTitle" style="margin:0 0 6px;font-size:18px;font-weight:700">Google SSO</h2>
-    <p id="ssoModalSub" style="margin:0 0 18px;font-size:12.5px;color:#94a3b8">Redirecting to Google Sign-In...</p>
-    <div style="width:100%;height:5px;border-radius:999px;background:rgba(30,41,59,0.88);overflow:hidden;margin-bottom:6px">
-      <div id="ssoRedirectBar" style="height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#fde047);border-radius:999px;transition:width 1.05s cubic-bezier(.4,0,.2,1)"></div>
+    <div style="position:relative;width:68px;height:68px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center">
+      <div id="ssoModalOrbRing" style="position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:#38bdf8;border-right-color:#fde047;animation:mgcSsoSpin 1.15s linear infinite"></div>
+      <div id="ssoModalEmblem" style="width:54px;height:54px;border-radius:14px;background:rgba(15,23,42,0.92);border:1px solid rgba(197,179,88,0.45);display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(56,189,248,0.16)"></div>
     </div>
-    <p id="modalAuthMsg" style="color:#94a3b8;margin-top:8px;font-weight:500;font-size:11.5px;min-height:16px"></p>
+    <h2 id="ssoModalTitle" style="margin:0 0 6px;font-size:18px;font-weight:700">Google SSO</h2>
+    <p id="ssoModalSub" style="margin:0 0 18px;font-size:12.5px;color:#cbd5e1;min-height:18px">Redirecting to Google Sign-In...</p>
+    <div style="width:100%;height:6px;border-radius:999px;background:rgba(30,41,59,0.88);overflow:hidden;margin-bottom:8px">
+      <div id="ssoRedirectBar" style="height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#fde047);border-radius:999px;transition:width 2.5s cubic-bezier(.4,0,.2,1)"></div>
+    </div>
+    <p id="modalAuthMsg" style="color:#94a3b8;margin-top:6px;font-weight:500;font-size:11.5px;min-height:16px"></p>
+    <style>@keyframes mgcSsoSpin{to{transform:rotate(360deg)}}</style>
   </div>
 </div>
 
@@ -931,6 +935,7 @@
   }
 
   let ssoRedirectTimer = null;
+  let ssoStageTimer = null;
   const ssoModalEmblem = document.getElementById('ssoModalEmblem');
   const ssoModalSub = document.getElementById('ssoModalSub');
   const ssoRedirectBar = document.getElementById('ssoRedirectBar');
@@ -950,10 +955,9 @@
   async function launchExternalOAuth(prov) {
     if (!PROVIDER_META[prov]) return;
     activeProvider = prov;
-    if (ssoRedirectTimer) {
-      clearTimeout(ssoRedirectTimer);
-      ssoRedirectTimer = null;
-    }
+    if (ssoRedirectTimer) { clearTimeout(ssoRedirectTimer); ssoRedirectTimer = null; }
+    if (ssoStageTimer) { clearTimeout(ssoStageTimer); ssoStageTimer = null; }
+
     document.querySelectorAll('.sso-provider-card').forEach(c => {
       c.classList.toggle('active', c.dataset.provider === prov);
     });
@@ -962,7 +966,7 @@
     if (document.getElementById('ssoModalTitle')) document.getElementById('ssoModalTitle').textContent = meta.name + ' SSO';
     if (ssoModalSub) ssoModalSub.textContent = 'Redirecting to ' + meta.name + ' Sign-In...';
     if (ssoModalEmblem) ssoModalEmblem.innerHTML = PROVIDER_SVGS[prov] || '';
-    if (modalMsg) modalMsg.textContent = '';
+    if (modalMsg) modalMsg.textContent = 'Preparing encrypted OIDC state...';
 
     if (ssoRedirectBar) {
       ssoRedirectBar.style.transition = 'none';
@@ -974,26 +978,52 @@
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (ssoRedirectBar) {
-          ssoRedirectBar.style.transition = 'width 1.05s cubic-bezier(.4,0,.2,1)';
+          ssoRedirectBar.style.transition = 'width 2.5s cubic-bezier(.4,0,.2,1)';
           ssoRedirectBar.style.width = '100%';
         }
       });
     });
 
+    // Pre-fetch signed OIDC state and check if an authenticated RBAC session is already present
+    let preResolvedUrl = '';
+    if (location.protocol === 'http:' || location.protocol === 'https:') {
+      fetch('/api/auth/oauth/start?provider=' + encodeURIComponent(prov) + '&format=json')
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.sessionActive && d.redirectUrl) {
+            preResolvedUrl = d.redirectUrl;
+          }
+        })
+        .catch(() => {});
+    }
+
+    ssoStageTimer = setTimeout(() => {
+      if (ssoModalSub) {
+        ssoModalSub.textContent = preResolvedUrl
+          ? 'Session verified · Routing to your RBAC view...'
+          : 'Connecting to ' + meta.name + ' identity service...';
+      }
+      if (modalMsg) {
+        modalMsg.textContent = 'Enforcing RBAC role boundary...';
+      }
+    }, 1300);
+
     ssoRedirectTimer = setTimeout(() => {
+      if (preResolvedUrl) {
+        location.href = preResolvedUrl;
+        return;
+      }
       if (location.protocol === 'file:') {
         location.href = PROVIDER_DIRECT_URLS[prov] || PROVIDER_DIRECT_URLS.google;
       } else {
         location.href = '/api/auth/oauth/start?provider=' + encodeURIComponent(prov) + '&direct=1';
       }
-    }, 1050);
+    }, 2500);
   }
 
   function closeProviderModal() {
-    if (ssoRedirectTimer) {
-      clearTimeout(ssoRedirectTimer);
-      ssoRedirectTimer = null;
-    }
+    if (ssoRedirectTimer) { clearTimeout(ssoRedirectTimer); ssoRedirectTimer = null; }
+    if (ssoStageTimer) { clearTimeout(ssoStageTimer); ssoStageTimer = null; }
     if (modalBackdrop) modalBackdrop.classList.remove('open');
   }
 

@@ -236,6 +236,9 @@ const CLEAN_ROUTE_TO_FILE = {
   '/client-portal':     'login.html',
   '/employee-login':    'employee-login.html',
   '/staff-login':       'employee-login.html',
+  '/employee-portal':   'member-portal.html',
+  '/employee-portal.html': 'member-portal.html',
+  '/staff-portal':      'member-portal.html',
   '/request-access':    'request-access.html',
   '/intake':            'request-access.html',
   '/onboarding':        'onboarding-portal.html',
@@ -625,10 +628,17 @@ function loadState() {
             u.role = 'member';
             u.ou = u.ou === 'internal' ? 'internal' : 'external';
             u.accessTier = u.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED';
-            const prov = String(u.ssoProvider || '').toLowerCase();
-            const hasWorkspaceSso = ['google', 'microsoft', 'apple'].includes(prov) || u.workspaceConnected === true || u.clientTier === 'workspace';
-            u.workspaceConnected = Boolean(hasWorkspaceSso);
-            u.clientTier = hasWorkspaceSso ? 'workspace' : 'access';
+            if (u.ou === 'internal') {
+              u.clientTier = 'employee';
+              u.workspaceConnected = true;
+            } else if (u.clientTier === 'access') {
+              u.workspaceConnected = false;
+            } else {
+              const prov = String(u.ssoProvider || '').toLowerCase();
+              const hasWorkspaceSso = ['google', 'microsoft', 'apple'].includes(prov) || u.workspaceConnected === true || u.clientTier === 'workspace';
+              u.workspaceConnected = Boolean(hasWorkspaceSso);
+              u.clientTier = hasWorkspaceSso ? 'workspace' : 'access';
+            }
             if (!Array.isArray(u.allowedApps)) {
               u.allowedApps = u.status === 'active' ? DEFAULT_CUSTOMER_APPS.slice() : [];
             }
@@ -721,11 +731,46 @@ function isOwnerUser(u) {
 function isEmployeeUser(u) {
   return Boolean(u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active');
 }
+
+function resolveAuthorizedRoleRedirect(user, requestedNext, mobileClient) {
+  if (mobileClient) return '/mobile';
+  const cleanNext = toCleanRoute(String(requestedNext || '').trim());
+  if (isOwnerUser(user)) {
+    if (cleanNext && (cleanNext.startsWith('/access-admin') || cleanNext.startsWith('/projects/'))) {
+      return cleanNext;
+    }
+    return '/access-admin';
+  }
+  if (isEmployeeUser(user) || (user && user.ou === 'internal')) {
+    return '/employee-portal';
+  }
+  // External Client (Workspace Partner or Showcase Member): strictly block Admin & Employee routes
+  const defaultClientView = (user && !user.onboardingCompleted) ? '/workspace?onboard=1' : '/workspace';
+  if (
+    !cleanNext ||
+    cleanNext === '/auth' ||
+    cleanNext === '/login' ||
+    cleanNext === '/portal' ||
+    cleanNext === '/employee-login' ||
+    cleanNext === '/staff-login' ||
+    cleanNext.startsWith('/employee-portal') ||
+    cleanNext.startsWith('/staff-portal') ||
+    cleanNext.startsWith('/access-admin') ||
+    cleanNext.startsWith('/command') ||
+    cleanNext.startsWith('/admin-command') ||
+    cleanNext.startsWith('/onboarding')
+  ) {
+    return defaultClientView;
+  }
+  return cleanNext;
+}
+
 function isClientUser(u) {
   return Boolean(u && u.role !== 'owner' && u.ou !== 'internal');
 }
 function isWorkspaceClientUser(u) {
   if (!u || isOwnerUser(u) || isEmployeeUser(u)) return false;
+  if (u.clientTier === 'access') return false;
   if (u.clientTier === 'workspace' || u.workspaceConnected === true) return true;
   const prov = String(u.ssoProvider || '').toLowerCase();
   return ['google', 'microsoft', 'apple'].includes(prov);
@@ -807,7 +852,7 @@ function getAllowedPortalsForUser(u) {
   if (isOwnerUser(u)) return ['*'];
   const portals = new Set(DEFAULT_CUSTOMER_PORTALS);
   if (isEmployeeUser(u)) {
-    portals.add('access-admin.html');
+    portals.add('employee-portal');
   }
   Object.entries(PORTAL_TO_CATALOG).forEach(([file, catId]) => {
     if (isEmployeeUser(u) && catId === 'finance') return;
@@ -1274,10 +1319,15 @@ function findOrCreateUserByEmail(email, name, method, providerKey) {
       return existing;
     }
     existing.accessTier = existing.ou === 'internal' ? 'INTERNAL_EMPLOYEE' : 'CUSTOMER_RESTRICTED';
-    if (isWorkspaceOAuth) {
+    if (existing.ou === 'internal') {
+      existing.workspaceConnected = true;
+      existing.clientTier = 'employee';
+    } else if (existing.clientTier === 'access' || existing.clientTier === 'workspace') {
+      existing.workspaceConnected = existing.clientTier === 'workspace';
+    } else if (isWorkspaceOAuth) {
       existing.workspaceConnected = true;
       existing.clientTier = 'workspace';
-    } else if (existing.clientTier !== 'workspace' && !existing.workspaceConnected) {
+    } else {
       existing.workspaceConnected = false;
       existing.clientTier = 'access';
     }
@@ -2185,18 +2235,27 @@ const server = http.createServer(async (req, res) => {
       const stateTok = signToken({ provider, nonce, next: nextParam }, 600);
       const cookieHeader = `mgcw_oidc_state=${encodeURIComponent(stateTok)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`;
 
+      // If caller already has an active authenticated session, verify RBAC role and route directly into their authorized portal view
+      const existingCaller = getAuthenticatedUser(req);
+      const mobileClient = isMobileRequest(req, parsedUrl);
+      const verifiedRbacTarget = existingCaller
+        ? resolveAuthorizedRoleRedirect(existingCaller, nextParam, mobileClient)
+        : null;
+
       const targetUrls = {
         google: 'https://accounts.google.com/ServiceLogin?hl=en',
         microsoft: 'https://login.live.com/',
         apple: 'https://account.apple.com/sign-in'
       };
-      const targetUrl = targetUrls[provider] || targetUrls.google;
+      const targetUrl = verifiedRbacTarget || targetUrls[provider] || targetUrls.google;
 
       if (parsedUrl.searchParams.get('format') === 'json' || String(req.headers.accept || '').includes('application/json')) {
         return sendJson(res, 200, {
           ok: true,
           provider,
           state: stateTok,
+          sessionActive: Boolean(existingCaller),
+          rbacRole: existingCaller ? (isOwnerUser(existingCaller) ? 'owner' : (isEmployeeUser(existingCaller) ? 'employee' : (existingCaller.clientTier || 'access'))) : null,
           redirectUrl: targetUrl
         }, {
           'Set-Cookie': cookieHeader
@@ -2215,19 +2274,19 @@ const server = http.createServer(async (req, res) => {
       const providerMeta = {
         google: {
           title: 'Google SSO',
-          sub: 'Redirecting to Google Sign-In...',
+          sub: existingCaller ? 'Session verified · Routing to your authorized portal view...' : 'Redirecting to Google Sign-In...',
           accent: '#38bdf8',
           svg: '<svg width="28" height="28" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.6H12z"/><path fill="#34A853" d="M3.6 7.4l3.2 2.4c.9-2.1 2.9-3.6 5.2-3.6 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/><path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.5 3 4.7 5 8.7 5z"/><path fill="#4285F4" d="M21.1 12.2c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.2 2.6-2.2 3.3l2.9 2.4c1.7-1.6 2.9-4.1 2.9-8z"/></svg>'
         },
         microsoft: {
           title: 'Microsoft SSO',
-          sub: 'Redirecting to Microsoft Sign-In...',
+          sub: existingCaller ? 'Session verified · Routing to your authorized portal view...' : 'Redirecting to Microsoft Sign-In...',
           accent: '#00a4ef',
           svg: '<svg width="26" height="26" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>'
         },
         apple: {
           title: 'Apple SSO',
-          sub: 'Redirecting to Apple Sign-In...',
+          sub: existingCaller ? 'Session verified · Routing to your authorized portal view...' : 'Redirecting to Apple Sign-In...',
           accent: '#f8fafc',
           svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>'
         }
@@ -2243,53 +2302,112 @@ const server = http.createServer(async (req, res) => {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="1;url=${targetUrl}">
 <title>${providerMeta.title} · Milton Group Concepts</title>
 <style>
   *{box-sizing:border-box}
   body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0%,#0c1938 0%,#040814 70%);color:#f8fafc;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
-  .card{width:100%;max-width:380px;background:rgba(7,13,28,0.94);border:1px solid rgba(197,179,88,0.42);border-radius:18px;padding:30px 26px;box-shadow:0 24px 60px rgba(0,0,0,0.65);text-align:center}
-  .medallion{width:58px;height:58px;border-radius:15px;background:rgba(15,23,42,0.92);border:1px solid rgba(148,163,184,0.28);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 0 24px rgba(56,189,248,0.16)}
+  .card{width:100%;max-width:390px;background:rgba(7,13,28,0.94);border:1px solid rgba(197,179,88,0.42);border-radius:18px;padding:30px 26px;box-shadow:0 24px 60px rgba(0,0,0,0.65);text-align:center}
+  .orb-wrap{position:relative;width:68px;height:68px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+  .orb-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:#38bdf8;border-right-color:#fde047;animation:spinOrb 1.15s linear infinite}
+  .medallion{width:54px;height:54px;border-radius:14px;background:rgba(15,23,42,0.92);border:1px solid rgba(148,163,184,0.28);display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(56,189,248,0.18)}
   h1{margin:0 0 6px;font-size:18.5px;font-weight:700;letter-spacing:.01em}
-  .sub{margin:0 0 20px;font-size:13px;color:#94a3b8}
-  .bar-track{width:100%;height:5px;border-radius:999px;background:rgba(30,41,59,0.85);overflow:hidden;margin-bottom:14px}
-  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#fde047);border-radius:999px;animation:fillBar 1.05s cubic-bezier(.4,0,.2,1) forwards}
-  @keyframes fillBar{0%{width:8%}100%{width:100%}}
+  .sub{margin:0 0 18px;font-size:13px;color:#cbd5e1;min-height:20px;transition:opacity .2s}
+  .bar-track{width:100%;height:6px;border-radius:999px;background:rgba(30,41,59,0.85);overflow:hidden;margin-bottom:8px}
+  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#fde047);border-radius:999px;animation:fillBar 2.5s cubic-bezier(.4,0,.2,1) forwards}
+  @keyframes fillBar{0%{width:6%}100%{width:100%}}
+  @keyframes spinOrb{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
   <div class="card">
-    <div class="medallion">${providerMeta.svg}</div>
+    <div class="orb-wrap">
+      <div class="orb-ring"></div>
+      <div class="medallion">${providerMeta.svg}</div>
+    </div>
     <h1>${providerMeta.title}</h1>
-    <p class="sub">${providerMeta.sub}</p>
+    <p class="sub" id="statusSub">${providerMeta.sub}</p>
     <div class="bar-track"><div class="bar-fill"></div></div>
   </div>
   <script>
-    setTimeout(function(){ location.replace(${JSON.stringify(targetUrl)}); }, 1050);
+    setTimeout(function(){
+      var el = document.getElementById('statusSub');
+      if (el) el.textContent = 'Verifying RBAC role & security boundary...';
+    }, 1300);
+    setTimeout(function(){
+      location.replace(${JSON.stringify(targetUrl)});
+    }, 2500);
   </script>
 </body>
 </html>`);
     }
 
-    // Real Federated OAuth 2.0 / OIDC Callback (/api/auth/oauth/callback)
+    // Real Federated OAuth 2.0 / OIDC Callback (/api/auth/oauth/callback) -> 2.5s Verified RBAC Landing
     if (pathname === '/api/auth/oauth/callback' && req.method === 'GET') {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      return res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Completing SSO...</title></head><body style="background:#040814;color:#f8fafc;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh"><div>Verifying Federated OIDC Token...</div><script>
-        (async function(){
-          const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
-          const qs = new URLSearchParams(location.search);
-          const idToken = hash.get('id_token') || qs.get('id_token') || '';
-          const state = hash.get('state') || qs.get('state') || '';
-          if (!idToken) { location.replace('/auth'); return; }
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+      return res.end(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verifying SSO Session · Milton Group Concepts</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0%,#0c1938 0%,#040814 70%);color:#f8fafc;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+  .card{width:100%;max-width:390px;background:rgba(7,13,28,0.94);border:1px solid rgba(197,179,88,0.42);border-radius:18px;padding:30px 26px;box-shadow:0 24px 60px rgba(0,0,0,0.65);text-align:center}
+  .orb-wrap{position:relative;width:64px;height:64px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+  .orb-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:#34d399;border-right-color:#fde047;animation:spinOrb 1.1s linear infinite}
+  h1{margin:0 0 6px;font-size:18px;font-weight:700}
+  .sub{margin:0 0 18px;font-size:13px;color:#cbd5e1}
+  .bar-track{width:100%;height:6px;border-radius:999px;background:rgba(30,41,59,0.85);overflow:hidden}
+  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#34d399,#38bdf8);border-radius:999px;animation:fillBar 2.4s cubic-bezier(.4,0,.2,1) forwards}
+  @keyframes fillBar{0%{width:8%}100%{width:100%}}
+  @keyframes spinOrb{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="orb-wrap"><div class="orb-ring"></div><img src="/assets/mgc-logo.png" alt="MGC" style="width:42px;height:42px;border-radius:10px"></div>
+    <h1>Verifying SSO Identity</h1>
+    <p class="sub" id="cbSub">Validating OIDC token &amp; RBAC role assignment...</p>
+    <div class="bar-track"><div class="bar-fill"></div></div>
+  </div>
+  <script>
+    (async function(){
+      const startTs = Date.now();
+      const hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+      const qs = new URLSearchParams(location.search);
+      const idToken = hash.get('id_token') || qs.get('id_token') || '';
+      const state = hash.get('state') || qs.get('state') || '';
+      let targetDest = '/portal';
+      if (idToken) {
+        try {
           const r = await fetch('/api/auth/sso', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idToken, state })
           });
           const d = await r.json();
-          location.replace(d && d.ok && d.redirect ? d.redirect : '/auth');
-        })();
-      </script></body></html>`);
+          if (d && d.ok && d.redirect) {
+            targetDest = d.redirect;
+            const subEl = document.getElementById('cbSub');
+            if (subEl) subEl.textContent = 'RBAC role verified · Opening authorized portal view...';
+          }
+        } catch (_) {}
+      } else {
+        try {
+          const sRes = await fetch('/api/auth/session');
+          const sData = await sRes.json();
+          if (sData && sData.authenticated && sData.user) {
+            targetDest = sData.user.role === 'owner' ? '/access-admin' : (sData.user.ou === 'internal' ? '/employee-portal' : '/workspace');
+          }
+        } catch (_) {}
+      }
+      const elapsed = Date.now() - startTs;
+      const waitMs = Math.max(400, 2400 - elapsed);
+      setTimeout(function(){ location.replace(targetDest); }, waitMs);
+    })();
+  </script>
+</body>
+</html>`);
     }
 
     // Explicitly block passwordless email-link methods
@@ -2447,9 +2565,14 @@ const server = http.createServer(async (req, res) => {
       if (user.role === 'owner') {
         user.clientTier = 'administrator';
         user.workspaceConnected = true;
-      } else if (['google', 'microsoft', 'apple'].includes(provider)) {
-        user.clientTier = 'workspace';
+      } else if (isEmployeeUser(user)) {
+        user.clientTier = 'employee';
         user.workspaceConnected = true;
+      } else if (['google', 'microsoft', 'apple'].includes(provider)) {
+        if (user.clientTier !== 'access' && user.clientTier !== 'workspace') {
+          user.clientTier = 'workspace';
+        }
+        user.workspaceConnected = user.clientTier === 'workspace';
       } else {
         // Explicit password login without external Workspace OAuth scopes to Access Client unless explicitly connected via OAuth
         user.clientTier = user.workspaceConnected === true ? 'workspace' : 'access';
@@ -2486,16 +2609,8 @@ const server = http.createServer(async (req, res) => {
       const reqCookies = parseCookies(req);
       const returnClaims = verifyToken(reqCookies.mgcw_return);
       const requestedNext = (body.next && String(body.next).trim()) || (returnClaims && returnClaims.next) || '';
-      const cleanNext = toCleanRoute(requestedNext);
-      const mobileClient = isMobileRequest(req, parsedUrl);
-      const defaultClean = mobileClient
-        ? '/mobile'
-        : (user.role === 'owner'
-            ? '/access-admin'
-            : (user.ou === 'internal'
-                ? '/employee-portal.html'
-                : (!user.onboardingCompleted ? '/workspace?onboard=1' : '/workspace')));
-      const target = mobileClient ? '/mobile' : ((cleanNext && cleanNext !== '/auth' && cleanNext !== '/login') ? cleanNext : defaultClean);
+            const mobileClient = isMobileRequest(req, parsedUrl);
+      const target = resolveAuthorizedRoleRedirect(user, requestedNext, mobileClient);
       const effectiveAllowedApps = user.role === 'owner'
         ? APPS_CATALOG.map(a => a.id)
         : APPS_CATALOG.filter(a => can(user, 'app', a.id, 'view')).map(a => a.id);
@@ -3535,9 +3650,7 @@ const server = http.createServer(async (req, res) => {
 
       const mobileClient = isMobileRequest(req, parsedUrl);
       const reqNext = d.next ? toCleanRoute(String(d.next).trim()) : '';
-      const targetRedirect = userOu === 'internal'
-        ? '/employee-portal.html'
-        : (mobileClient ? '/mobile' : ((reqNext && reqNext !== '/auth' && reqNext !== '/login') ? reqNext : '/workspace?onboard=1'));
+      const targetRedirect = resolveAuthorizedRoleRedirect(S.users[id], reqNext, mobileClient);
 
       const sessionToken = signToken({
         uid: id,
@@ -5863,10 +5976,25 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Gate member-portal.html (/workspace) and agile-board.html (/agile)
+    // Gate member-portal.html (/workspace & /employee-portal) and agile-board.html (/agile)
     if (baseName === 'member-portal.html' || baseName === 'agile-board.html') {
       if (!u) {
         return redirectToCleanAuth(baseName);
+      }
+      if (baseName === 'member-portal.html') {
+        const isEmployeePath = pathname === '/employee-portal' || pathname === '/employee-portal.html' || pathname === '/staff-portal';
+        if (isOwnerUser(u)) {
+          res.writeHead(302, { Location: '/access-admin', 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
+          return res.end();
+        }
+        if (isEmployeeUser(u) && !isEmployeePath) {
+          res.writeHead(302, { Location: '/employee-portal', 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
+          return res.end();
+        }
+        if (!isEmployeeUser(u) && isEmployeePath) {
+          res.writeHead(302, { Location: '/workspace', 'Cache-Control': 'no-store', ...SECURITY_HEADERS });
+          return res.end();
+        }
       }
       if (baseName === 'agile-board.html' && u.role !== 'owner' && !can(u, 'page', 'agile', 'view')) {
         res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -5891,7 +6019,7 @@ const server = http.createServer(async (req, res) => {
           u,
           'Administrator Authorization Required',
           'The MGC Directory, Security Groups & Access Matrix, and Authentication interfaces are strictly restricted to the Domain Administrator.',
-          '/workspace',
+          isEmployeeUser(u) ? '/employee-portal' : '/workspace',
           'Return to Portal →'
         ));
       }

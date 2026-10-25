@@ -208,8 +208,8 @@
           '</div>' +
           '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
             '<button type="button" class="btn" id="btnToggleGuidedPageMode" style="padding:5px 11px;font-size:11.5px;border-color:rgba(56,189,248,0.45);color:#bae6fd">' + (guidedSinglePageMode ? 'Show All Sections' : 'Guided Step Mode') + '</button>' +
-            (lockedApps.length > 0 ? '<button type="button" class="btn pri" data-open-paywall="' + esc(lockedApps[0].id) + '" style="padding:5px 12px;font-size:11.5px;background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">Unlock All 9 Apps ($49/mo)</button>' : '') +
-            '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 11px;font-size:11.5px">Customize Path</button>' +
+            (!isEmp() && lockedApps.length > 0 ? '<button type="button" class="btn pri" data-open-paywall="' + esc(lockedApps[0].id) + '" style="padding:5px 12px;font-size:11.5px;background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">Unlock All 9 Apps ($49/mo)</button>' : '') +
+            (!isEmp() ? '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 11px;font-size:11.5px">Customize Path</button>' : '') +
           '</div>' +
         '</div>' +
       '</div>';
