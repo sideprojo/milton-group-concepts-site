@@ -1859,7 +1859,7 @@ function renderLockedHtml(u, title, message, ctaHref, ctaLabel) {
 </style>
 </head>
 <body>
-  <main class="card" id="securityPaywallBoundaryCard">
+  <main class="card" id="securityPaywallBoundaryCard"><div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:12px"><img src="/assets/mgc-crest.png" alt="Milton Group Concepts Crest" style="width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,0.8))" /><span style="font-size:10px;font-weight:800;letter-spacing:.12em;color:#fde047;text-transform:uppercase">Commercial • Defense • Government • Public Sectors</span></div>
     <div class="badge-row">
       <span class="pill red">ACCESS RESTRICTED</span>
       <span class="pill gold">OTTO GUIDE</span>

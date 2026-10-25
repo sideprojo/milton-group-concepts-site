@@ -2681,7 +2681,7 @@
     const brandCode = (u && u.brand === 'FIX') ? 'FIX' : 'MGC';
     const brandTitle = (u && u.brand === 'FIX') ? 'F.I.X Solutions' : 'Milton Group Concepts';
     const subLabel = isNewsletterPage ? 'Executive Intelligence' : (u ? esc(u.name) : 'Not signed in');
-    el.innerHTML = '<a class="brand" id="mgcBrandHomeLink" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><span class="brand-mark">' + brandCode + '</span><div>' + brandTitle + '<small>' + subLabel + '</small></div></a>' + nav + right;
+    el.innerHTML = '<a class="brand" id="mgcBrandHomeLink" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><img src="assets/mgc-crest.png" alt="MGC Crest" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.75));flex-shrink:0" /><div>Milton Group Concepts<small>' + subLabel + '</small></div></a>' + nav + right;
     const host = document.querySelector('.wrap');
     if (host) host.prepend(el);
     const soEl = el.querySelector('#w-signout');
