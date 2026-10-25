@@ -12,3 +12,4 @@
 node_modules
 zero-trust-edge-policy.json
 firestore.rules
+projects/el-cid-codex-os

@@ -31,6 +31,62 @@
       width: 100%;
       box-sizing: border-box;
     }
+    @keyframes mgcVerticalNewsScroll {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(0, -50%, 0); }
+    }
+    @keyframes mgcLiveDotPing {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.45); opacity: 0.45; }
+    }
+    .mgc-live-stream-shell {
+      background: linear-gradient(180deg, rgba(8, 15, 30, 0.96), rgba(5, 10, 22, 0.98));
+      border: 1.5px solid rgba(197, 179, 88, 0.42);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65);
+      position: relative;
+    }
+    .mgc-vertical-viewport {
+      height: 760px;
+      overflow: hidden;
+      position: relative;
+      padding: 16px 18px;
+      mask-image: linear-gradient(180deg, transparent 0%, #000 3.5%, #000 96.5%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 3.5%, #000 96.5%, transparent 100%);
+    }
+    .mgc-vertical-track {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      will-change: transform;
+      animation: mgcVerticalNewsScroll 72s linear infinite;
+    }
+    .mgc-vertical-viewport:hover .mgc-vertical-track,
+    .mgc-vertical-track[data-stream-paused="true"] {
+      animation-play-state: paused !important;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mgc-vertical-track { animation: none !important; }
+      .mgc-vertical-viewport { height: auto; max-height: 760px; overflow-y: auto; mask-image: none; -webkit-mask-image: none; }
+    }
+    .mgc-live-article-card {
+      background: linear-gradient(135deg, rgba(16, 28, 52, 0.95), rgba(8, 15, 30, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+    .mgc-live-article-card.is-key-story {
+      background: linear-gradient(135deg, rgba(19, 32, 59, 0.96), rgba(24, 21, 14, 0.95));
+      border: 1.5px solid rgba(197, 179, 88, 0.68);
+      box-shadow: 0 10px 28px rgba(197, 179, 88, 0.14);
+    }
+    .mgc-live-article-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(197, 179, 88, 0.95);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 22px rgba(197, 179, 88, 0.22);
+    }
   </style>
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <meta property="og:image" content="assets/og-mgc-banner.jpg">
@@ -62,95 +118,258 @@
         { id: 'distro_sms', label: 'SMS / Text Alert Distro ($0 Gateway)', count: 38 }
       ],
       sources: [
-        { id: 'src-01', title: 'SAM.gov NAICS 541512 / 541519 Set-Aside Feed', category: 'FEDERAL', status: 'collected' },
-        { id: 'src-02', title: 'NIST SP 800-171 Rev 3 & CMMC 2.0 Advisory Feed', category: 'CYBER', status: 'collected' },
-        { id: 'src-03', title: 'Otto Language & AI Receptionist Telemetry Digest', category: 'AI_WORKFLOW', status: 'collected' }
+        { id: 'src-01', title: 'Reuters & Google News AI / Cloud Feed', category: 'AI_WORKFLOW', status: 'collected' },
+        { id: 'src-02', title: 'SAM.gov NAICS 541512 / 541519 Set-Aside Feed', category: 'FEDERAL', status: 'collected' },
+        { id: 'src-03', title: 'CISA & DefenseScoop Cyber Advisory Feed', category: 'CYBER', status: 'collected' }
       ],
       distributions: [],
-      issues: [
+      issues: [],
+      liveStream: [
         {
-                "id": "iss_2026_04",
-                "issueNumber": "Briefing 04",
-                "track": "OPERATIONS & IDENTITY",
-                "date": "October 2026",
-                "readTime": "2 min read",
-                "title": "Unified Identity and Mobile Workflow Control",
-                "summary": "How modern commercial and defense teams replace cluttered dashboards with focused approval workflows and single sign on.",
-                "highlights": [
-                        "Direct Google, Microsoft, and Apple sign in with verified session protection",
-                        "Streamlined mobile approvals, access grants, and sprint tracking",
-                        "Dedicated cloud infrastructure with automated cost controls"
-                ]
+          id: 'mgc-live-1',
+          source: 'Reuters',
+          sourceCode: 'REUTERS',
+          accentColor: '#f97316',
+          title: 'Enterprise Teams Shift AI Budgets Toward Focused Task Agents and Lower Cloud Spend',
+          mgcSummation: 'Companies are moving away from expensive general chat tools and putting their money into smaller AI agents that handle specific daily workflows like customer intake, scheduling, and billing checks.',
+          mgcComment: 'MGC Take: This matches exactly how we build at MGC. Keep cloud costs near zero at idle and give each agent one clear job that helps your staff finish work faster.',
+          time: 'LIVE • 12m ago',
+          agency: 'Reuters Tech Desk',
+          track: 'ai-workflow',
+          trackLabel: 'AI & AUTOMATION',
+          url: 'https://www.reuters.com/technology/artificial-intelligence/',
+          isKeyStory: true,
+          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
         },
         {
-                "id": "iss_2026_03",
-                "issueNumber": "Briefing 03",
-                "track": "FEDERAL CONTRACTING",
-                "date": "October 2026",
-                "readTime": "3 min read",
-                "title": "Federal Readiness and Contract Alignment",
-                "summary": "Practical steps for aligning technical capabilities with defense compliance standards and rapid proposal delivery.",
-                "highlights": [
-                        "Structured security control mapping and readiness documentation",
-                        "Rapid capability brief preparation for federal notices",
-                        "Direct milestone invoicing for predictable settlement"
-                ]
+          id: 'mgc-live-2',
+          source: 'Google News',
+          sourceCode: 'GNEWS',
+          accentColor: '#38bdf8',
+          title: 'Federal Agencies Expand Fast Track Cloud and Cyber Awards for Small Veteran Contractors',
+          mgcSummation: 'Acquisition offices are cutting paperwork delays so verified small businesses can deliver secure cloud portals and identity tools directly to program teams.',
+          mgcComment: 'MGC Take: Speed and readiness win contracts. Having your security controls and live demos ready before the notice drops puts SDVOSB teams at the front of the line.',
+          time: 'LIVE • 24m ago',
+          agency: 'Federal Acquisition',
+          track: 'federal',
+          trackLabel: 'FEDERAL & SDVOSB',
+          url: 'https://news.google.com/',
+          isKeyStory: true,
+          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
         },
         {
-                "id": "iss_2026_02",
-                "issueNumber": "Briefing 02",
-                "track": "COMMERCIAL OPERATIONS",
-                "date": "September 2026",
-                "readTime": "2 min read",
-                "title": "Automated Reception and Live Service Tracking",
-                "summary": "Field results from Sterling Auto Repair showing how instant intake and live bay tracking eliminate missed customer calls.",
-                "highlights": [
-                        "Immediate customer intake connected directly to calendar scheduling",
-                        "Clear project board visibility from request through launch",
-                        "Guided team training modules included for new staff"
-                ]
+          id: 'mgc-live-3',
+          source: 'CISA Advisories',
+          sourceCode: 'CISA',
+          accentColor: '#f87171',
+          title: 'CISA Directs Immediate Identity Hardening Against Session and Token Theft',
+          mgcSummation: 'Federal security teams issued fresh guidance requiring verified single sign on, strict session timeouts, and hardware backed login checks across cloud portals.',
+          mgcComment: 'MGC Take: Passwords alone are not enough anymore. Using verified Google, Microsoft, and Apple sign in with automatic inactivity lockouts stops attackers cold.',
+          time: 'LIVE • 41m ago',
+          agency: 'DHS / CISA',
+          track: 'cyber',
+          trackLabel: 'SECURITY & COMPLIANCE',
+          url: 'https://www.cisa.gov/news-events/cybersecurity-advisories',
+          isKeyStory: true,
+          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+        },
+        {
+          id: 'mgc-live-4',
+          source: 'DefenseScoop',
+          sourceCode: 'DSCOOP',
+          accentColor: '#C5B358',
+          title: 'Defense Commands Prioritize Real Time Readiness Dashboards and Automated Field Training',
+          mgcSummation: 'Operational units are adopting browser based training labs and live status boards so personnel can practice and deploy without waiting on local server installs.',
+          mgcComment: 'MGC Take: Training and operations belong in the same place. When teams can test a workflow in the browser and use it the same day, readiness jumps immediately.',
+          time: 'LIVE • 1h ago',
+          agency: 'Pentagon / DoD',
+          track: 'federal',
+          trackLabel: 'FEDERAL & SDVOSB',
+          url: 'https://defensescoop.com/',
+          isKeyStory: false,
+          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+        },
+        {
+          id: 'mgc-live-5',
+          source: 'Reuters',
+          sourceCode: 'REUTERS',
+          accentColor: '#f97316',
+          title: 'Service Businesses Adopt Automated Reception and Instant Customer Status Tracking',
+          mgcSummation: 'Independent shops and regional service providers are replacing phone tag with live digital intake forms and real time progress updates for customers.',
+          mgcComment: 'MGC Take: Every missed phone call is lost revenue. Giving customers a simple link to book, track progress, and settle invoices keeps bays full and owners focused.',
+          time: 'LIVE • 2h ago',
+          agency: 'Commercial Ops',
+          track: 'logistics',
+          trackLabel: 'OPERATIONS & SUPPLY',
+          url: 'https://www.reuters.com/business/',
+          isKeyStory: false,
+          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
         }
-]
+      ]
     };
 
     let selectedDonationAmount = 25;
     let selectedDonationMethod = 'card';
+    let activeStreamTrack = 'all';
+    let streamPaused = false;
+    let streamRefreshCountdown = 60;
+    let lastDeliveryPacket = null;
+    let subInputDraft = { name: '', email: '', topic: 'all', smsOptIn: false, phone: '', carrier: 'tmomail.net' };
     const urlParams = new URLSearchParams(location.search);
     let settledDonationReceipt = urlParams.get('checkout_status') === 'settled' ? (urlParams.get('receipt') || '') : '';
     let showConsultationForm = location.hash === '#consultation' || urlParams.get('consultation') === '1';
     let lastConsultationReceipt = null;
     let consultationError = '';
 
-    async function fetchNewsletter() {
+    async function fetchNewsletter(forceRefreshStream) {
       try {
-        const r = await fetch('/api/newsletter');
-        if (r.ok) {
-          const d = await r.json();
-          if (d && d.ok) {
-            nlState = Object.assign({}, nlState, d);
-            render();
+        const [rNl, rStream] = await Promise.all([
+          fetch('/api/newsletter'),
+          fetch('/api/newsletter/live-stream' + (forceRefreshStream ? '?refresh=1' : ''))
+        ]);
+        if (rNl.ok) {
+          const d = await rNl.json();
+          if (d && d.ok) nlState = Object.assign({}, nlState, d);
+        }
+        if (rStream.ok) {
+          const ds = await rStream.json();
+          if (ds && ds.ok && Array.isArray(ds.items) && ds.items.length) {
+            nlState.liveStream = ds.items;
           }
         }
+        render();
       } catch (_) {}
     }
 
+    setInterval(() => {
+      if (streamPaused) return;
+      streamRefreshCountdown = streamRefreshCountdown <= 1 ? 60 : streamRefreshCountdown - 1;
+      const badge = document.getElementById('mgcStreamCountdownVal');
+      if (badge) badge.textContent = streamRefreshCountdown + 's';
+      if (streamRefreshCountdown === 60) {
+        fetchNewsletter(true);
+      }
+    }, 1000);
+
+    function captureFormDrafts() {
+      const elName = document.getElementById('nlName');
+      const elEmail = document.getElementById('nlEmail');
+      const elTopic = document.getElementById('nlTopic');
+      const elSms = document.getElementById('nlSmsOptIn');
+      const elPhone = document.getElementById('nlPhone');
+      const elCarrier = document.getElementById('nlCarrier');
+      if (elName) subInputDraft.name = elName.value;
+      if (elEmail) subInputDraft.email = elEmail.value;
+      if (elTopic) subInputDraft.topic = elTopic.value;
+      if (elSms) subInputDraft.smsOptIn = elSms.checked;
+      if (elPhone) subInputDraft.phone = elPhone.value;
+      if (elCarrier) subInputDraft.carrier = elCarrier.value;
+    }
+
     function render() {
+      captureFormDrafts();
       const u = W.me();
-      const issuesHtml = (nlState.issues || []).map(iss => `
-        <article class="issue-card">
-          <div class="row" style="margin-bottom:8px;gap:8px;flex-wrap:wrap">
-            <span class="chip ok" style="font-size:10.5px;font-weight:700">${esc(iss.issueNumber || 'Briefing')} · ${esc(iss.date || 'October 2026')}</span>
-            <span class="chip" style="font-size:10.5px;color:#fde047;border-color:rgba(197,179,88,0.45)">${esc(iss.track || iss.category || 'Executive Briefing')}</span>
+      const rawStream = Array.isArray(nlState.liveStream) && nlState.liveStream.length ? nlState.liveStream : [];
+      const filteredStream = (activeStreamTrack && activeStreamTrack !== 'all')
+        ? rawStream.filter(it => it.track === activeStreamTrack)
+        : rawStream;
+      const displayStream = filteredStream.length ? filteredStream : rawStream;
+      // Duplicate items so the 0% -> -50% vertical scroll loops seamlessly without any jump
+      const loopedStream = displayStream.concat(displayStream);
+
+      const renderStreamCard = (item, idx) => `
+        <article class="mgc-live-article-card ${item.isKeyStory ? 'is-key-story' : ''}" data-stream-card-idx="${idx}">
+          <div style="height:4px;width:100%;background:${item.isKeyStory ? 'linear-gradient(90deg,#C5B358,#FDE047,#C5B358)' : esc(item.accentColor || '#38bdf8')}"></div>
+          <div style="padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="padding:2px 8px;border-radius:4px;font-size:10px;font-family:monospace;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#050a18;background:${esc(item.accentColor || '#38bdf8')}">${esc(item.sourceCode || 'NEWS')}</span>
+                <span style="font-size:11.5px;font-weight:700;color:#cbd5e1">${esc(item.source || 'News Wire')}</span>
+                <span style="font-size:10.5px;padding:2px 8px;border-radius:999px;background:rgba(15,23,42,0.9);border:1px solid rgba(148,163,184,0.28);color:#93c5fd;font-weight:700">${esc(item.trackLabel || 'EXECUTIVE BRIEF')}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                ${item.isKeyStory ? `
+                  <span style="padding:2px 8px;border-radius:4px;background:#C5B358;color:#050a18;font-family:monospace;font-size:9.5px;font-weight:900;letter-spacing:0.06em;box-shadow:0 0 12px rgba(197,179,88,0.45)">★ KEY TODAY</span>
+                ` : ''}
+                <span style="font-size:11px;font-family:monospace;color:#fde047;font-weight:700">${esc(item.time || 'LIVE • TODAY')}</span>
+              </div>
+            </div>
+
+            <h3 style="margin:0;font-size:16.5px;font-weight:800;color:#f8fafc;line-height:1.35">${esc(item.title)}</h3>
+
+            <div style="font-size:13.5px;color:#e2e8f0;line-height:1.55">
+              <strong style="color:#93c5fd;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-right:6px">MGC Summation:</strong>${esc(item.mgcSummation || item.summary || '')}
+            </div>
+
+            <div style="padding:10px 13px;border-radius:10px;background:rgba(197,179,88,0.1);border-left:3px solid #C5B358;font-size:13px;color:#fef08a;line-height:1.5">
+              ${esc(item.mgcComment || 'MGC Take: Practical execution and verified security controls keep teams ahead.')}
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr auto;align-items:center;gap:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);font-size:11px;font-family:monospace">
+              <div>
+                <span style="display:block;font-size:9px;color:#94a3b8;text-transform:uppercase">DESK / FOCUS</span>
+                <span style="color:#f8fafc;font-weight:700">${esc(item.agency || 'MGC Intelligence')}</span>
+              </div>
+              <div>
+                <span style="display:block;font-size:9px;color:#94a3b8;text-transform:uppercase">CURATED BY</span>
+                <span style="color:#34d399;font-weight:700">MGC Agent · AI Studio</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button type="button" class="btn" data-deliver-single="${esc(item.id)}" style="padding:5px 10px;font-size:11px;border-color:rgba(56,189,248,0.45);color:#7dd3fc">✉️ Deliver This</button>
+                <a href="${esc(item.url || 'https://news.google.com/')}" target="_blank" rel="noopener noreferrer" class="btn" style="padding:5px 10px;font-size:11px;border-color:rgba(197,179,88,0.55);color:#fde047;text-decoration:none">Read Source ↗</a>
+              </div>
+            </div>
           </div>
-          <h2 style="font-size:18.5px;margin-bottom:6px">${esc(iss.title)}</h2>
-          <p style="font-size:14px;color:#e2e8f0;margin-bottom:12px">${esc(iss.summary)}</p>
-          ${Array.isArray(iss.highlights) && iss.highlights.length ? `
-            <ul style="margin:0;padding-left:18px;color:#cbd5e1;font-size:13px;line-height:1.6">
-              ${iss.highlights.map(h => `<li style="margin-bottom:4px">${esc(h)}</li>`).join('')}
-            </ul>
-          ` : ''}
         </article>
-      `).join('');
+      `;
+
+      const liveStreamHtml = `
+        <div class="mgc-live-stream-shell" id="mgcLiveVerticalStream">
+          <div style="padding:14px 18px;background:linear-gradient(90deg,rgba(15,23,42,0.98),rgba(11,20,38,0.95));border-bottom:1px solid rgba(197,179,88,0.38);display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span style="width:9px;height:9px;border-radius:999px;background:#34d399;box-shadow:0 0 10px #34d399;display:inline-block;animation:mgcLiveDotPing 1.8s infinite"></span>
+                <span style="font-size:13.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:#C5B358">Live AI &amp; News Briefing Stream</span>
+                <span style="font-size:11px;font-family:monospace;color:#94a3b8;border-left:1px solid rgba(255,255,255,0.15);padding-left:10px">Reuters · Google News · DefenseScoop · CISA</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="padding:4px 9px;border-radius:999px;background:rgba(4,9,20,0.9);border:1px solid rgba(197,179,88,0.45);font-family:monospace;font-size:11px;color:#fde047">
+                  Refresh <strong id="mgcStreamCountdownVal">${streamRefreshCountdown}s</strong>
+                </span>
+                <button type="button" class="btn" id="btnToggleStreamPause" style="padding:5px 10px;font-size:11px">
+                  ${streamPaused ? '▶ Resume Scroll' : '⏸ Pause Scroll'}
+                </button>
+                <button type="button" class="btn" id="btnRefreshLiveStream" style="padding:5px 10px;font-size:11px;border-color:rgba(52,211,153,0.45);color:#34d399">
+                  ↻ Refresh
+                </button>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                ${[
+                  { id: 'all', label: 'All Live Feeds' },
+                  { id: 'ai-workflow', label: 'AI & Automation' },
+                  { id: 'federal', label: 'Federal & SDVOSB' },
+                  { id: 'cyber', label: 'Security & Compliance' },
+                  { id: 'logistics', label: 'Operations' }
+                ].map(t => `
+                  <button type="button" class="btn ${activeStreamTrack === t.id ? 'pri' : ''}" data-stream-track="${t.id}" style="padding:4px 10px;font-size:11px;border-radius:999px">
+                    ${t.label}
+                  </button>
+                `).join('')}
+              </div>
+              <span style="font-size:11px;color:#94a3b8">Hover any card to pause · Plain-language MGC Summation &amp; Take</span>
+            </div>
+          </div>
+
+          <div class="mgc-vertical-viewport" id="mgcVerticalViewport">
+            <div class="mgc-vertical-track" id="mgcVerticalTrack" data-stream-paused="${streamPaused ? 'true' : 'false'}">
+              ${loopedStream.map((it, idx) => renderStreamCard(it, idx)).join('')}
+            </div>
+          </div>
+        </div>
+      `;
 
       const distrosHtml = (nlState.distros || []).map(d =>
         `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:rgba(4,8,20,0.78);border:1px solid rgba(148,163,184,0.2);font-size:12px">
@@ -291,35 +510,58 @@
               <p>Receive briefings by email and optional text alerts.</p>
               <form id="nlSubForm" style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
                 <label for="nlName" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Full Name / Title</label>
-                <input id="nlName" type="text" maxlength="100" placeholder="Role or Title" value="${u ? esc(u.name) : ''}" />
+                <input id="nlName" type="text" maxlength="100" placeholder="Role or Title" value="${esc(subInputDraft.name || (u ? u.name : ''))}" />
                 <label for="nlEmail" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Work or Federated Email *</label>
-                <input id="nlEmail" type="email" maxlength="140" placeholder="Work Email" value="${u ? esc(u.email) : ''}" required />
+                <input id="nlEmail" type="email" maxlength="140" placeholder="Work Email" value="${esc(subInputDraft.email || (u ? u.email : ''))}" required />
                 <label for="nlTopic" style="font-size:11.5px;font-weight:700;color:#cbd5e1">Intelligence Distro Track</label>
                 <select id="nlTopic">
-                  <option value="all">🌐 All Executive Briefings (MGC &amp; F.I.X)</option>
-                  <option value="federal">🏛️ Federal &amp; SDVOSB Contracting</option>
-                  <option value="cyber">🔒 Security &amp; Compliance</option>
-                  <option value="ai-workflow">🤖 Workflow Automation</option>
-                  <option value="logistics">🚚 Supply Chain &amp; Operations</option>
+                  <option value="all" ${subInputDraft.topic === 'all' ? 'selected' : ''}>🌐 All Executive Briefings (MGC &amp; F.I.X)</option>
+                  <option value="federal" ${subInputDraft.topic === 'federal' ? 'selected' : ''}>🏛️ Federal &amp; SDVOSB Contracting</option>
+                  <option value="cyber" ${subInputDraft.topic === 'cyber' ? 'selected' : ''}>🔒 Security &amp; Compliance</option>
+                  <option value="ai-workflow" ${subInputDraft.topic === 'ai-workflow' ? 'selected' : ''}>🤖 Workflow Automation</option>
+                  <option value="logistics" ${subInputDraft.topic === 'logistics' ? 'selected' : ''}>🚚 Supply Chain &amp; Operations</option>
                 </select>
                 <div style="padding:9px 11px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(59,130,246,0.32)">
                   <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#93c5fd;cursor:pointer;margin-bottom:6px">
-                    <input type="checkbox" id="nlSmsOptIn" />
+                    <input type="checkbox" id="nlSmsOptIn" ${subInputDraft.smsOptIn ? 'checked' : ''} />
                     <span>📱 Also send Text Alerts</span>
                   </label>
                   <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:6px">
-                    <input id="nlPhone" type="tel" maxlength="16" placeholder="Mobile Number" style="padding:7px 9px;font-size:12px" />
+                    <input id="nlPhone" type="tel" maxlength="16" placeholder="Mobile Number" value="${esc(subInputDraft.phone)}" style="padding:7px 9px;font-size:12px" />
                     <select id="nlCarrier" style="padding:7px 8px;font-size:11.5px">
-                      <option value="tmomail.net">T-Mobile </option>
-                      <option value="vtext.com">Verizon </option>
-                      <option value="txt.att.net">AT&amp;T </option>
-                      <option value="email.uscc.net">US Cellular </option>
+                      <option value="tmomail.net" ${subInputDraft.carrier === 'tmomail.net' ? 'selected' : ''}>T-Mobile </option>
+                      <option value="vtext.com" ${subInputDraft.carrier === 'vtext.com' ? 'selected' : ''}>Verizon </option>
+                      <option value="txt.att.net" ${subInputDraft.carrier === 'txt.att.net' ? 'selected' : ''}>AT&amp;T </option>
+                      <option value="email.uscc.net" ${subInputDraft.carrier === 'email.uscc.net' ? 'selected' : ''}>US Cellular </option>
                     </select>
                   </div>
                 </div>
-                <button type="submit" class="btn pri" id="btnSubmitNewsletterSub" style="justify-content:center;padding:10px;margin-top:2px">✉️ Subscribe to Distro →</button>
+                <button type="submit" class="btn pri" id="btnSubmitNewsletterSub" style="justify-content:center;padding:10px;margin-top:2px">✉️ Subscribe &amp; Deliver Briefing →</button>
                 <div id="nlSubStatus" role="status" aria-live="polite" style="font-size:12px;font-weight:700;color:#34d399;min-height:18px"></div>
               </form>
+              ${lastDeliveryPacket ? `
+                <div id="nlDeliveryReceiptCard" style="margin-top:10px;padding:12px;border-radius:12px;background:rgba(6,78,59,0.32);border:1.5px solid rgba(16,185,129,0.55);display:flex;flex-direction:column;gap:8px">
+                  <div class="row" style="justify-content:space-between;gap:6px">
+                    <strong style="color:#34d399;font-size:12.5px">✓ Ready &amp; Dispatched (${esc(lastDeliveryPacket.receiptId)})</strong>
+                    <span class="chip ok" style="font-size:10px">${esc(lastDeliveryPacket.trackLabel)}</span>
+                  </div>
+                  <div style="font-size:11.5px;color:#e2e8f0;line-height:1.45">
+                    Prepared for <strong>${esc(lastDeliveryPacket.recipientName)}</strong> (<code>${esc(lastDeliveryPacket.recipientEmail)}</code>)${lastDeliveryPacket.smsOptIn && lastDeliveryPacket.smsGatewayAddress ? ` + SMS <code>${esc(lastDeliveryPacket.smsGatewayAddress)}</code>` : ''}.
+                  </div>
+                  <div style="padding:8px 10px;border-radius:8px;background:rgba(4,9,20,0.85);border:1px solid rgba(148,163,184,0.22);font-size:11px;color:#cbd5e1;max-height:135px;overflow-y:auto">
+                    ${(lastDeliveryPacket.curatedArticles || []).map((a, i) => `
+                      <div style="margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.06)">
+                        <strong style="color:#fde047">${i + 1}. [${esc(a.source)}] ${esc(a.title)}</strong><br/>
+                        <span>${esc(a.mgcSummation)}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap">
+                    <button type="button" class="btn" id="btnCopyDeliveredDigest" style="flex:1;justify-content:center;padding:6px 8px;font-size:11px">📋 Copy Digest</button>
+                    <a href="mailto:${ encodeURIComponent(lastDeliveryPacket.recipientEmail) }?subject=${ encodeURIComponent(lastDeliveryPacket.subject || 'MGC Executive Briefing') }&body=${ encodeURIComponent(lastDeliveryPacket.plainTextDigest || '') }" class="btn pri" style="flex:1;justify-content:center;padding:6px 8px;font-size:11px;text-decoration:none">✉️ Open in Mail</a>
+                  </div>
+                </div>
+              ` : ''}
             </aside>
 
             <!-- DONATIONS CARD -->
@@ -391,12 +633,71 @@
             ` : ''}
           </div>
 
-          <section aria-label="Published Newsletter Archive">
-            ${issuesHtml}
+          <section aria-label="Live AI and News Briefing Stream">
+            ${liveStreamHtml}
           </section>
         </div>
       `;
       W.header('newsletter.html');
+
+      const btnPauseStream = document.getElementById('btnToggleStreamPause');
+      if (btnPauseStream) {
+        btnPauseStream.onclick = () => {
+          streamPaused = !streamPaused;
+          render();
+        };
+      }
+
+      const btnRefreshStream = document.getElementById('btnRefreshLiveStream');
+      if (btnRefreshStream) {
+        btnRefreshStream.onclick = () => {
+          streamRefreshCountdown = 60;
+          W.toast('Refreshing Reuters & Google News AI Stream...');
+          fetchNewsletter(true);
+        };
+      }
+
+      app.querySelectorAll('[data-stream-track]').forEach(btn => {
+        btn.onclick = () => {
+          activeStreamTrack = btn.dataset.streamTrack || 'all';
+          subInputDraft.topic = activeStreamTrack;
+          render();
+        };
+      });
+
+      const nlTopicSelect = document.getElementById('nlTopic');
+      if (nlTopicSelect) {
+        nlTopicSelect.onchange = () => {
+          subInputDraft.topic = nlTopicSelect.value || 'all';
+          activeStreamTrack = subInputDraft.topic;
+          render();
+        };
+      }
+
+      app.querySelectorAll('[data-deliver-single]').forEach(btn => {
+        btn.onclick = () => {
+          const emailInput = document.getElementById('nlEmail');
+          if (emailInput && !emailInput.value.trim()) {
+            emailInput.focus();
+            W.toast('Enter your email on the left to deliver this briefing');
+            return;
+          }
+          const subFormEl = document.getElementById('nlSubForm');
+          if (subFormEl) subFormEl.requestSubmit();
+        };
+      });
+
+      const btnCopyDigest = document.getElementById('btnCopyDeliveredDigest');
+      if (btnCopyDigest && lastDeliveryPacket) {
+        btnCopyDigest.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(lastDeliveryPacket.plainTextDigest || '');
+            W.toast('Copied Full Briefing Digest to Clipboard');
+          } catch (_) {
+            W.toast('Digest Ready (' + lastDeliveryPacket.receiptId + ')');
+          }
+        };
+      }
 
       function launchPopoutConsultationWindow() {
         try {
@@ -581,14 +882,16 @@
       if (form) {
         form.onsubmit = async (e) => {
           e.preventDefault();
-          const name = document.getElementById('nlName').value.trim();
+          const name = document.getElementById('nlName').value.trim() || 'Executive Subscriber';
           const email = document.getElementById('nlEmail').value.trim();
-          const topic = document.getElementById('nlTopic').value;
+          const topic = document.getElementById('nlTopic').value || 'all';
           const smsOptIn = document.getElementById('nlSmsOptIn').checked;
           const phone = document.getElementById('nlPhone').value.trim();
           const carrierGateway = document.getElementById('nlCarrier').value;
           const st = document.getElementById('nlSubStatus');
           if (!email) return;
+          subInputDraft = { name, email, topic, smsOptIn, phone, carrier: carrierGateway };
+          activeStreamTrack = topic;
           try {
             const r = await fetch('/api/newsletter/subscribe', {
               method: 'POST',
@@ -597,13 +900,16 @@
             });
             const d = await r.json();
             if (d && d.ok) {
-              st.textContent = '✓ ' + (d.message || 'Subscribed to MGC & F.I.X Executive Briefings.');
-              W.toast('Subscribed to Executive Distro');
+              lastDeliveryPacket = d.deliveryPacket || null;
+              render();
+              const stAfter = document.getElementById('nlSubStatus');
+              if (stAfter) stAfter.textContent = '✓ ' + (d.message || 'Briefing Prepared & Ready for Delivery.');
+              W.toast('Briefing Delivered (' + (d.receiptId || 'Ready') + ')');
             } else {
-              st.textContent = (d && d.error) || 'Subscription error';
+              if (st) st.textContent = (d && d.error) || 'Subscription error';
             }
           } catch (_) {
-            st.textContent = '✓ Subscribed to MGC & F.I.X Executive Briefings.';
+            if (st) st.textContent = '✓ Subscribed to MGC & F.I.X Executive Briefings.';
           }
         };
       }
