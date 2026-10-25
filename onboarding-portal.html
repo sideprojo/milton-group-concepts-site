@@ -853,6 +853,13 @@
     alert('✓ SCORM 2004 4th Edition Completion committed (MGC_ONBOARDING_SCO)!');
   };
 </script>
+<script src="mgc-workspace-core.js"></script>
+<script>
+  if (window.MGCW) {
+    if (typeof window.MGCW.applyStaggerCascade === 'function') window.MGCW.applyStaggerCascade(document);
+    if (typeof window.MGCW.mountFloatingCompanion === 'function') window.MGCW.mountFloatingCompanion({ allowGuest: true });
+  }
+</script>
 
 </body>
 </html>

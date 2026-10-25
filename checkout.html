@@ -184,6 +184,7 @@
     <div style="text-align:center;padding:60px 20px;color:#94a3b8">Loading Secure Processor Checkout...</div>
   </div>
 
+  <script src="mgc-workspace-core.js"></script>
   <script>
   (function() {
     const params = new URLSearchParams(location.search);
@@ -437,6 +438,11 @@
           </div>
         </div>
       `;
+
+      if (window.MGCW) {
+        if (typeof window.MGCW.applyStaggerCascade === 'function') window.MGCW.applyStaggerCascade(app);
+        if (typeof window.MGCW.mountFloatingCompanion === 'function') window.MGCW.mountFloatingCompanion({ allowGuest: true });
+      }
 
       app.querySelectorAll('[data-rail]').forEach(btn => {
         btn.onclick = () => {

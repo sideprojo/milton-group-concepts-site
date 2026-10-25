@@ -2501,6 +2501,11 @@
     const st = document.createElement('style');
     st.id = 'mgc-fluid-agent-styles';
     st.textContent = `
+      @property --mgc-tour-pct {
+        syntax: '<number>';
+        inherits: false;
+        initial-value: 0;
+      }
       @keyframes mgcOrbFloat {
         0%, 100% { transform: translateY(0px) scale(1); }
         50% { transform: translateY(-6px) scale(1.03); }
@@ -2524,9 +2529,34 @@
         80% { transform: translate(2px, 2px); }
       }
       @keyframes mgcGuideSpotlightPulse {
-        0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.75), 0 0 28px rgba(253, 224, 71, 0.55); border-color: #fde047 !important; }
+        0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.78), 0 0 28px rgba(253, 224, 71, 0.55); border-color: #fde047 !important; }
         70% { box-shadow: 0 0 0 14px rgba(56, 189, 248, 0), 0 0 36px rgba(253, 224, 71, 0.25); border-color: #38bdf8 !important; }
         100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+      }
+      @keyframes mgcBentoStaggerReveal {
+        0% {
+          opacity: 0;
+          transform: translate3d(0, 10px, 0) scale(0.992);
+        }
+        100% {
+          opacity: 1;
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+      }
+      @keyframes mgcCompanionHeroReveal {
+        0% {
+          opacity: 0;
+          transform: translate3d(0, 22px, 0) scale(0.94);
+        }
+        100% {
+          opacity: 1;
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+      }
+      .mgc-stagger-card {
+        animation: mgcBentoStaggerReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation-delay: calc(var(--card-idx, 0) * 55ms);
+        will-change: transform, opacity;
       }
       .mgc-anim-avatar { display: inline-flex; align-items: center; justify-content: center; animation: mgcOrbFloat 3.4s ease-in-out infinite; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6)); flex-shrink: 0; }
       .mgc-ring-spin { animation: mgcRingSpin 10s linear infinite; transform-origin: 50px 50px; }
@@ -2542,10 +2572,11 @@
         z-index: 9950;
         display: flex;
         align-items: center;
-        gap: 12px;
-        max-width: 410px;
-        padding: 10px 15px;
+        gap: 11px;
+        max-width: 440px;
+        padding: 10px 15px 13px;
         border-radius: 999px;
+        overflow: hidden;
         background: linear-gradient(135deg, rgba(6, 12, 26, 0.96), rgba(12, 22, 44, 0.96));
         border: 1.5px solid rgba(56, 189, 248, 0.55);
         box-shadow: 0 18px 42px rgba(0, 0, 0, 0.75);
@@ -2553,13 +2584,80 @@
         transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
         pointer-events: auto;
       }
+      #mgcFluidFloatingCompanion.mgc-companion-entrance {
+        animation: mgcCompanionHeroReveal 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
       #mgcFluidFloatingCompanion.mgc-companion-acting {
-        transform: translateY(-10px) scale(1.03);
-        border-color: #fde047;
+        transform: translateY(-8px) scale(1.025);
+        border-color: #fde047 !important;
         box-shadow: 0 22px 50px rgba(253, 224, 71, 0.28);
+      }
+      .mgc-avatar-progress-wrap {
+        position: relative;
+        width: 52px;
+        height: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .mgc-avatar-progress-ring {
+        position: absolute;
+        inset: 0;
+        width: 52px;
+        height: 52px;
+        transform: rotate(-90deg);
+        pointer-events: none;
+      }
+      #mgcCompanionTimerBar {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 2px;
+        height: 3px;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.18);
+        overflow: hidden;
+        pointer-events: none;
+      }
+      #mgcCompanionTimerFill {
+        height: 100%;
+        width: calc(var(--mgc-tour-pct, 0) * 1%);
+        background: linear-gradient(90deg, #38bdf8, #fde047);
+        border-radius: 999px;
+        transition: width 0.08s linear;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mgc-stagger-card,
+        .mgc-anim-avatar,
+        .mgc-ring-spin,
+        .mgc-ring-rev,
+        .mgc-orbit-group,
+        .mgc-core-pulse,
+        .mgc-eye-shift,
+        .mgc-guided-highlight,
+        #mgcFluidFloatingCompanion.mgc-companion-entrance {
+          animation: none !important;
+          transition: none !important;
+          transform: none !important;
+        }
       }
     `;
     document.head.appendChild(st);
+  }
+
+  function applyStaggerCascade(rootEl) {
+    injectFluidAgentStyles();
+    const scope = rootEl || document;
+    const selector = '.card, .nf-card, .bento-card, .chk-panel, .rail-tab, .portal-item, .step, .stat-card, .kpi-card, .cols > div, #netflixSwimlanesContainer > div';
+    const nodes = Array.from(scope.querySelectorAll(selector));
+    nodes.forEach((node, idx) => {
+      node.style.setProperty('--card-idx', String(Math.min(idx, 14)));
+      node.classList.remove('mgc-stagger-card');
+      void node.offsetWidth;
+      node.classList.add('mgc-stagger-card');
+    });
+    return nodes.length;
   }
 
   function triggerGuidedHighlight(selector, speechText, agentObj) {
@@ -2583,15 +2681,42 @@
       document.querySelectorAll('.mgc-guided-highlight').forEach(x => x.classList.remove('mgc-guided-highlight'));
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       el.classList.add('mgc-guided-highlight');
-      setTimeout(() => el.classList.remove('mgc-guided-highlight'), 3600);
+      setTimeout(() => el.classList.remove('mgc-guided-highlight'), 3200);
     }
   }
 
-  function mountFloatingCompanion() {
+  let activeTourRaf = null;
+  let activeTourTimer = null;
+
+  function resolvePageTourSteps(ag) {
+    const p = (typeof location !== 'undefined' && location.pathname) ? location.pathname.toLowerCase() : '';
+    if (p.includes('checkout')) {
+      return [
+        { id: 'chk_step_1', label: '1. Summary & Legal Notice', targetSelector: '#statutoryTaxDisclosureBox, .chk-panel:first-child', speech: 'Step 1/3: Review your contribution summary and Official Legal Notice.' },
+        { id: 'chk_step_2', label: '2. Select Payment Rail', targetSelector: '.rail-tabs', speech: 'Step 2/3: Choose Card, Cash App, or Apple / Google Pay.' },
+        { id: 'chk_step_3', label: '3. Prefilled External Redirect', targetSelector: '#btnCompleteCheckout, #extRedirectLink', speech: 'Step 3/3: Continue with your details prefilled and return via verified authentication.' }
+      ];
+    }
+    if (p.includes('onboarding')) {
+      return [
+        { id: 'onb_step_1', label: '1. Federated Identity Gate', targetSelector: '.hero, .topbar, header, .card:first-of-type', speech: 'Step 1/3: Verify your federated identity or select your primary onboarding track.' },
+        { id: 'onb_step_2', label: '2. Associative Sequence', targetSelector: '.portal-grid, .main-grid, .stepper, .card:nth-of-type(2)', speech: 'Step 2/3: Explore your 3-stage associative progression and matched applications.' },
+        { id: 'onb_step_3', label: '3. Launch Workspace', targetSelector: '.portal-link, .btn, #mgc-scorm-floating-dock', speech: 'Step 3/3: Open your authorized workspace or commit your SCORM milestone.' }
+      ];
+    }
+    return (ag && Array.isArray(ag.steps) && ag.steps.length) ? ag.steps.slice(0, 3) : [
+      { id: 'def_step_1', label: '1. Explore Applications', targetSelector: '.card:first-of-type', speech: 'Step 1/3: Explore your ready-to-launch applications.' }
+    ];
+  }
+
+  function mountFloatingCompanion(opts) {
     injectFluidAgentStyles();
     const u = me();
-    if (!u) return;
+    const p = (typeof location !== 'undefined' && location.pathname) ? location.pathname.toLowerCase() : '';
+    const allowGuestCompanion = p.includes('checkout') || p.includes('onboarding') || (opts && opts.allowGuest);
+    if (!u && !allowGuestCompanion) return;
     const ag = getAssignedAnimatedAgent(u);
+    const tourSteps = resolvePageTourSteps(ag);
     let dock = document.getElementById('mgcFluidFloatingCompanion');
     if (!dock) {
       dock = document.createElement('aside');
@@ -2600,36 +2725,182 @@
       document.body.appendChild(dock);
     }
     dock.style.borderColor = ag.accent;
-    const nextStep = ag.steps && ag.steps[0];
+    const circumference = 144.5; // 2 * PI * 23
     dock.innerHTML =
-      renderAnimatedAvatarSvg(ag.id, 46) +
+      '<div class="mgc-avatar-progress-wrap">' +
+        '<svg class="mgc-avatar-progress-ring" viewBox="0 0 52 52" aria-hidden="true">' +
+          '<circle cx="26" cy="26" r="23" fill="none" stroke="rgba(148,163,184,0.22)" stroke-width="2.2"></circle>' +
+          '<circle id="mgcTourProgressRing" cx="26" cy="26" r="23" fill="none" stroke="#fde047" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + circumference + '"></circle>' +
+        '</svg>' +
+        renderAnimatedAvatarSvg(ag.id, 42) +
+      '</div>' +
       '<div style="min-width:0;flex:1">' +
         '<div style="display:flex;align-items:center;gap:6px">' +
           '<strong style="font-size:12px;color:#fff">' + esc(ag.name) + ' (' + esc(ag.callSign) + ')</strong>' +
-          '<span style="font-size:10px;padding:1px 7px;border-radius:999px;background:rgba(15,23,42,0.9);border:1px solid ' + ag.accent + ';color:' + ag.accent + ';font-weight:700">' + (ag.promptable ? 'SML Controller' : 'Guided Companion') + '</span>' +
+          '<span id="mgcCompanionStepCounter" style="font-size:10px;padding:1px 7px;border-radius:999px;background:rgba(15,23,42,0.9);border:1px solid ' + ag.accent + ';color:' + ag.accent + ';font-weight:700">' + (ag.promptable ? 'SML Controller' : 'Step 1/' + tourSteps.length) + '</span>' +
         '</div>' +
-        '<div id="mgcCompanionSpeechText" style="font-size:11px;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:265px">' + esc(ag.greeting) + '</div>' +
+        '<div id="mgcCompanionSpeechText" style="font-size:11px;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:255px">' + esc(ag.greeting) + '</div>' +
       '</div>' +
-      '<button type="button" class="btn pri" id="btnCompanionNextGuide" style="padding:5px 10px;font-size:11px;white-space:nowrap">' + (ag.promptable ? 'SML Console ↑' : 'Guide Me →') + '</button>';
+      '<div style="display:flex;align-items:center;gap:5px">' +
+        '<button type="button" class="btn" id="btnCompanionAutoPause" title="Pause or Resume Timed Walkthrough" style="padding:4px 8px;font-size:10.5px;min-width:30px">⏸</button>' +
+        '<button type="button" class="btn pri" id="btnCompanionNextGuide" style="padding:5px 10px;font-size:11px;white-space:nowrap">' + (ag.promptable ? 'SML Console ↑' : 'Guide Me →') + '</button>' +
+      '</div>' +
+      '<div id="mgcCompanionTimerBar"><div id="mgcCompanionTimerFill"></div></div>';
 
     let stepIdx = 0;
+    let tourPaused = false;
+    let tourRunning = false;
+    const stepDurationMs = 2200;
+    const totalDurationMs = tourSteps.length * stepDurationMs;
+    let elapsedMs = 0;
+    let lastFrameTs = 0;
+    let lastTriggeredStep = -1;
+
+    const ringEl = dock.querySelector('#mgcTourProgressRing');
+    const stepCounterEl = dock.querySelector('#mgcCompanionStepCounter');
+    const btnPause = dock.querySelector('#btnCompanionAutoPause');
     const btnNext = dock.querySelector('#btnCompanionNextGuide');
+
+    function updateProgressVisuals(pct0to100, currentStepZeroBased) {
+      const clamped = Math.max(0, Math.min(100, pct0to100));
+      dock.style.setProperty('--mgc-tour-pct', clamped.toFixed(1));
+      if (ringEl) {
+        const offset = circumference - (clamped / 100) * circumference;
+        ringEl.setAttribute('stroke-dashoffset', offset.toFixed(2));
+      }
+      if (stepCounterEl && !ag.promptable) {
+        stepCounterEl.textContent = (tourPaused ? '⏸ ' : 'Step ') + Math.min(tourSteps.length, currentStepZeroBased + 1) + '/' + tourSteps.length;
+      }
+    }
+
+    function stopAutoTour() {
+      tourRunning = false;
+      if (activeTourRaf) {
+        cancelAnimationFrame(activeTourRaf);
+        activeTourRaf = null;
+      }
+      if (activeTourTimer) {
+        clearTimeout(activeTourTimer);
+        activeTourTimer = null;
+      }
+      dock.setAttribute('data-tour-state', 'completed');
+      if (btnPause) btnPause.textContent = '↻';
+    }
+
+    function tickTour(nowTs) {
+      if (!tourRunning) return;
+      if (!lastFrameTs) lastFrameTs = nowTs;
+      const dt = nowTs - lastFrameTs;
+      lastFrameTs = nowTs;
+      if (!tourPaused) {
+        elapsedMs += dt;
+        const currentStep = Math.min(tourSteps.length - 1, Math.floor(elapsedMs / stepDurationMs));
+        const pct = (elapsedMs / totalDurationMs) * 100;
+        updateProgressVisuals(pct, currentStep);
+        if (currentStep !== lastTriggeredStep && tourSteps[currentStep]) {
+          lastTriggeredStep = currentStep;
+          stepIdx = currentStep + 1;
+          const stObj = tourSteps[currentStep];
+          triggerGuidedHighlight(stObj.targetSelector, stObj.speech || stObj.label, ag);
+        }
+        if (elapsedMs >= totalDurationMs) {
+          updateProgressVisuals(100, tourSteps.length - 1);
+          stopAutoTour();
+          return;
+        }
+      }
+      activeTourRaf = requestAnimationFrame(tickTour);
+    }
+
+    function startChoreographedTour() {
+      const reducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reducedMotion) {
+        dock.setAttribute('data-tour-state', 'reduced-motion');
+        return;
+      }
+      stopAutoTour();
+      elapsedMs = 0;
+      lastFrameTs = 0;
+      lastTriggeredStep = -1;
+      tourPaused = false;
+      dock.classList.add('mgc-companion-entrance');
+      dock.setAttribute('data-tour-state', 'hero-reveal');
+      if (btnPause) btnPause.textContent = '⏸';
+
+      // t = 400ms: Hero Reveal Pulse, t = 1800ms: Begin 3-Step Timed Spotlight Sequence
+      activeTourTimer = setTimeout(() => {
+        dock.classList.add('mgc-companion-acting');
+        setTimeout(() => dock.classList.remove('mgc-companion-acting'), 850);
+        activeTourTimer = setTimeout(() => {
+          tourRunning = true;
+          dock.setAttribute('data-tour-state', 'running');
+          activeTourRaf = requestAnimationFrame(tickTour);
+        }, 1400);
+      }, 400);
+    }
+
+    // Pause-on-interaction controller (hover / focus / button toggle)
+    dock.onmouseenter = () => {
+      if (tourRunning && !tourPaused) {
+        tourPaused = true;
+        dock.setAttribute('data-tour-paused', 'true');
+        if (btnPause) btnPause.textContent = '▶';
+        updateProgressVisuals((elapsedMs / totalDurationMs) * 100, Math.max(0, lastTriggeredStep));
+      }
+    };
+    dock.onmouseleave = () => {
+      if (tourRunning && tourPaused && dock.getAttribute('data-manual-pause') !== '1') {
+        tourPaused = false;
+        lastFrameTs = 0;
+        dock.setAttribute('data-tour-paused', 'false');
+        if (btnPause) btnPause.textContent = '⏸';
+      }
+    };
+
+    if (btnPause) {
+      btnPause.onclick = (e) => {
+        e.stopPropagation();
+        if (!tourRunning) {
+          dock.removeAttribute('data-manual-pause');
+          startChoreographedTour();
+          return;
+        }
+        tourPaused = !tourPaused;
+        dock.setAttribute('data-tour-paused', String(tourPaused));
+        dock.setAttribute('data-manual-pause', tourPaused ? '1' : '0');
+        lastFrameTs = 0;
+        btnPause.textContent = tourPaused ? '▶' : '⏸';
+        updateProgressVisuals((elapsedMs / totalDurationMs) * 100, Math.max(0, lastTriggeredStep));
+      };
+    }
+
     if (btnNext) {
       btnNext.onclick = () => {
         if (ag.promptable) {
-          const inp = document.getElementById('sovereignSmlPromptInput');
+          const inp = document.getElementById('sovereignSmlPromptInput') || document.getElementById('adminSmlPromptInput');
           if (inp) {
             inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
             inp.focus();
             return;
           }
         }
-        const st = ag.steps[stepIdx % ag.steps.length];
+        const st = tourSteps[stepIdx % tourSteps.length];
+        const curIdx = stepIdx % tourSteps.length;
         stepIdx++;
         if (st) {
-          triggerGuidedHighlight(st.targetSelector, st.speech, ag);
+          updateProgressVisuals(((curIdx + 1) / tourSteps.length) * 100, curIdx);
+          triggerGuidedHighlight(st.targetSelector, st.speech || st.label, ag);
         }
       };
+    }
+
+    // Automatically run choreographed entrance + 3-step spotlight tour on first visit per session on /workspace, /onboarding, or /checkout
+    const pageKey = (p.replace(/[^a-z0-9]/g, '_') || 'home');
+    const sessionFlag = 'mgc_autotour_v1_' + pageKey;
+    const isTargetAutoPage = p.includes('workspace') || p.includes('member-portal') || p.includes('onboarding') || p.includes('checkout') || (opts && opts.autoStart);
+    if (isTargetAutoPage && !sessionStorage.getItem(sessionFlag)) {
+      sessionStorage.setItem(sessionFlag, '1');
+      startChoreographedTour();
     }
   }
 
@@ -2746,6 +3017,7 @@
     }
     const soEl = el.querySelector('#w-signout');
     if (soEl) soEl.onclick = () => signOut();
+    applyStaggerCascade(document);
     mountFloatingCompanion();
 
     // Wire W3C WCAG 2.2 Disclosure Dropdowns (click, Escape, Arrow keys, outside click)
@@ -2807,5 +3079,5 @@
     }
   }
 
-  global.MGCW = { ANIMATED_AGENTS, getAssignedAnimatedAgent, renderAnimatedAvatarSvg, triggerGuidedHighlight, mountFloatingCompanion,  CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isTrueSoleAdmin, getAdminRoleView, setAdminRoleView, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, isMobileClientDevice, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { ANIMATED_AGENTS, getAssignedAnimatedAgent, renderAnimatedAvatarSvg, triggerGuidedHighlight, mountFloatingCompanion, applyStaggerCascade, CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isTrueSoleAdmin, getAdminRoleView, setAdminRoleView, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, isMobileClientDevice, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);
