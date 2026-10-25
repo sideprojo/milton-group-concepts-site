@@ -503,7 +503,6 @@
                 '<option value="card"' + (paywallMethod === 'card' || paywallMethod === 'card_tokenized' ? ' selected' : '') + '>💳 Credit / Debit Card (Stripe Checkout)</option>' +
                 '<option value="cashapp"' + (paywallMethod === 'cashapp' ? ' selected' : '') + '>🟩 Cash App Pay ($Cashtag / QR)</option>' +
                 '<option value="wallet"' + (paywallMethod === 'wallet' ? ' selected' : '') + '>🍎 Apple Pay / Google Pay</option>' +
-                '<option value="ach_nacha"' + (paywallMethod === 'ach_nacha' ? ' selected' : '') + '>🏦 Bank Transfer ($0 Processor Fee)</option>' +
                 '<option value="gpc_wawf"' + (paywallMethod === 'gpc_wawf' ? ' selected' : '') + '>🏛️ Government Invoice / EFT</option>' +
               '</select>' +
               '<input id="paywallLast4Input" type="hidden" value="' + esc(paywallLast4 || '4829') + '">' +
@@ -516,7 +515,7 @@
         '</div>' +
 
         '<div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:12px">' +
-          '<span style="font-size:11.5px;color:#cbd5e1">Route to Hosted Processor (Card, Cash App Pay, Apple/Google Pay, or Bank ACH) with $0 upfront fees.</span>' +
+          '<span style="font-size:11.5px;color:#cbd5e1">Route to Hosted Processor (Card, Cash App Pay, or Apple/Google Pay) with $0 upfront fees.</span>' +
           '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
             '<button type="button" class="btn" id="btnGoFullBillingTab" style="padding:9px 14px;font-size:12px">Full Billing Form</button>' +
             '<button type="button" class="btn" id="btnRoutePaywallProcessor" style="padding:9px 14px;font-size:12px;border-color:#3b82f6;color:#93c5fd">Hosted Processor Checkout →</button>' +
@@ -673,7 +672,6 @@
             '<option value="card"' + (prof && (prof.method === 'card' || prof.method === 'card_tokenized') ? ' selected' : '') + '>💳 Credit / Debit Card (Stripe Checkout)</option>' +
             '<option value="cashapp"' + (prof && prof.method === 'cashapp' ? ' selected' : '') + '>🟩 Cash App Pay ($Cashtag / QR)</option>' +
             '<option value="wallet"' + (prof && prof.method === 'wallet' ? ' selected' : '') + '>🍎 Apple Pay / Google Pay</option>' +
-            '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>🏦 ACH Direct Debit ($0 Processor Fee)</option>' +
             '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>🏛️ WAWF / PIEE Federal EFT</option>' +
           '</select>' +
           '<span id="valBadgeToken" style="display:none"></span>' +

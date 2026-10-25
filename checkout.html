@@ -64,12 +64,12 @@
     }
     .rail-tabs {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin-bottom: 18px;
     }
     @media (max-width: 560px) {
-      .rail-tabs { grid-template-columns: repeat(2, 1fr); }
+      .rail-tabs { grid-template-columns: repeat(3, 1fr); }
     }
     .rail-tab {
       display: flex;
@@ -206,8 +206,7 @@
       cashAppTag: '$MiltonGroupConcepts'
     };
 
-    let activeRail = ['card', 'cashapp', 'wallet', 'ach_nacha'].includes(session.method) ? session.method : 'card';
-    let selectedBank = 'Navy Federal Credit Union';
+    let activeRail = ['card', 'cashapp', 'wallet'].includes(session.method) ? session.method : 'card';
     let processing = false;
     let errorMsg = '';
 
@@ -220,8 +219,8 @@
     }
 
     async function loadSession() {
+      render();
       if (!sessionId) {
-        render();
         return;
       }
       try {
@@ -229,7 +228,7 @@
         const d = await r.json();
         if (d && d.ok && d.session) {
           session = Object.assign(session, d.session);
-          if (['card', 'cashapp', 'wallet', 'ach_nacha'].includes(session.method)) {
+          if (['card', 'cashapp', 'wallet'].includes(session.method)) {
             activeRail = session.method;
           }
         }
@@ -300,36 +299,6 @@
           </div>
           <button type="submit" class="chk-submit wallet-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
             <span>🍎 ${processing ? 'Authorizing Express Wallet...' : 'Pay ' + amtStr + ' with Apple Pay / Google Pay →'}</span>
-          </button>
-        `;
-      }
-
-      if (activeRail === 'ach_nacha') {
-        const banks = [
-          'Navy Federal Credit Union',
-          'Mercury Commercial Treasury',
-          'JPMorgan Chase',
-          'Bank of America',
-          'USAA Federal Savings Bank',
-          'Wells Fargo',
-          'Citibank / Capital One'
-        ];
-        return `
-          <div style="padding:14px 16px;border-radius:12px;background:rgba(197,179,88,0.09);border:1px solid rgba(197,179,88,0.35);margin-bottom:14px">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-              <span style="font-size:11.5px;font-weight:800;color:#fde047;text-transform:uppercase">🏦 Instant Bank Connection ($0.00 Processor Fee)</span>
-              <span style="font-size:11px;color:#34d399;font-weight:700">NACHA / Plaid Link</span>
-            </div>
-            <div class="chk-field" style="margin-bottom:6px">
-              <label for="chkBankSelect">Select Your Financial Institution</label>
-              <select id="chkBankSelect">
-                ${banks.map(b => `<option value="${esc(b)}" ${selectedBank === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
-              </select>
-            </div>
-            <div style="font-size:11.5px;color:#cbd5e1">Direct settlement to Milton Group Concepts LLC Mercury Commercial Checking.</div>
-          </div>
-          <button type="submit" class="chk-submit ach-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
-            <span>🏦 ${processing ? 'Connecting Bank & Settling...' : 'Authorize ' + amtStr + ' via Instant Bank Transfer →'}</span>
           </button>
         `;
       }
@@ -416,7 +385,6 @@
                 <strong style="color:#34d399">${
                   activeRail === 'cashapp' ? 'Cash App Pay' :
                   activeRail === 'wallet' ? 'Apple Pay / Google Pay' :
-                  activeRail === 'ach_nacha' ? 'Instant Bank Transfer (ACH)' :
                   'Stripe Hosted Card Checkout'
                 }</strong>
               </div>
@@ -427,7 +395,7 @@
             </div>
 
             <div style="font-size:12px;color:#94a3b8;line-height:1.55">
-              ✓ <strong style="color:#e2e8f0">Zero Upfront or Monthly Processor Costs</strong> — Routed via pay-as-you-go processor rails (Stripe Checkout, Cash App Pay, Apple/Google Pay, and Mercury ACH).<br/>
+              ✓ <strong style="color:#e2e8f0">Zero Upfront or Monthly Processor Costs</strong> — Routed via pay-as-you-go processor rails (Stripe Checkout, Cash App Pay, and Apple/Google Pay).<br/>
               ✓ <strong style="color:#e2e8f0">Instant Cryptographic Receipt</strong> — Automatically issued upon completion.
             </div>
           </div>
@@ -449,10 +417,6 @@
               <button type="button" class="rail-tab ${activeRail === 'wallet' ? 'active' : ''}" data-rail="wallet">
                 <span style="font-size:16px">🍎</span>
                 <span>Apple / GPay</span>
-              </button>
-              <button type="button" class="rail-tab ${activeRail === 'ach_nacha' ? 'active' : ''}" data-rail="ach_nacha">
-                <span style="font-size:16px">🏦</span>
-                <span>Bank ACH</span>
               </button>
             </div>
 
@@ -527,8 +491,7 @@
           const postalEl = document.getElementById('chkPostal');
           const cardBrand = brandEl ? brandEl.value : (
             activeRail === 'cashapp' ? 'Cash App Pay' :
-            activeRail === 'wallet' ? 'Apple Pay / Google Pay' :
-            activeRail === 'ach_nacha' ? selectedBank : 'Visa'
+            activeRail === 'wallet' ? 'Apple Pay / Google Pay' : 'Visa'
           );
           const postalCode = postalEl ? postalEl.value.trim() : '22202';
           render();

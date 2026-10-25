@@ -2942,10 +2942,10 @@ const server = http.createServer(async (req, res) => {
       }
       const amountUsd = Math.round(numAmt * 100) / 100;
       const note = sanitizeInput(body.note || 'Executive Briefing & Research Support', 200);
-      const method = ['card', 'cashapp', 'wallet', 'ach_nacha', 'card_tokenized', 'card_donation'].includes(body.method) ? body.method : 'card';
+      const method = ['card', 'cashapp', 'wallet', 'card_tokenized', 'card_donation'].includes(body.method) ? body.method : 'card';
       const last4 = /^\d{4}$/.test(rawPanCandidate)
         ? rawPanCandidate
-        : (method === 'cashapp' ? 'CASH' : method === 'wallet' ? 'WPAY' : method === 'ach_nacha' ? 'ACH0' : '4242');
+        : (method === 'cashapp' ? 'CASH' : method === 'wallet' ? 'WPAY' : '4242');
       const timestampIso = now();
 
       if (!S.newsletter) S.newsletter = seedState().newsletter;
@@ -3049,7 +3049,7 @@ const server = http.createServer(async (req, res) => {
       const type = body.type === 'subscription' ? 'subscription' : 'donation';
       const merchantEntity = String(body.merchantEntity || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
       const amountUsd = Math.max(1, Math.min(250000, Math.round((Number(body.amountUsd) || 25) * 100) / 100));
-      const method = ['card', 'cashapp', 'wallet', 'ach_nacha', 'gpc_wawf'].includes(body.method) ? body.method : 'card';
+      const method = ['card', 'cashapp', 'wallet', 'gpc_wawf'].includes(body.method) ? body.method : 'card';
       const customerName = sanitizeInput(body.donorName || body.customerName || (u && u.name) || 'Community Supporter', 100);
       const customerEmail = sanitizeInput(body.donorEmail || body.customerEmail || (u && u.email) || 'supporter@miltongroupsecurity.org', 140).toLowerCase();
       const title = sanitizeInput(body.title || (type === 'subscription' ? 'MGC & F.I.X Workspace Subscription' : 'Executive Briefings, Veteran Research & Community Support'), 160);
@@ -3110,11 +3110,11 @@ const server = http.createServer(async (req, res) => {
       const type = (body.type || sess.type) === 'subscription' ? 'subscription' : 'donation';
       const merchantEntity = String(body.merchantEntity || sess.merchantEntity || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
       const amountUsd = Math.max(1, Math.min(250000, Math.round((Number(body.amountUsd || sess.amountUsd) || 25) * 100) / 100));
-      const method = ['card', 'cashapp', 'wallet', 'ach_nacha', 'gpc_wawf'].includes(body.method || sess.method) ? (body.method || sess.method) : 'card';
+      const method = ['card', 'cashapp', 'wallet', 'gpc_wawf'].includes(body.method || sess.method) ? (body.method || sess.method) : 'card';
       const customerName = sanitizeInput(body.customerName || sess.customerName || (u && u.name) || 'Community Supporter', 100);
       const customerEmail = sanitizeInput(body.customerEmail || sess.customerEmail || (u && u.email) || 'supporter@miltongroupsecurity.org', 140).toLowerCase();
       const returnPath = sanitizeInput(body.returnPath || sess.returnPath || (type === 'subscription' ? '/workspace' : '/newsletter'), 120);
-      const refCode = method === 'cashapp' ? 'CASH' : method === 'wallet' ? 'WPAY' : method === 'ach_nacha' ? 'ACH0' : '4242';
+      const refCode = method === 'cashapp' ? 'CASH' : method === 'wallet' ? 'WPAY' : '4242';
 
       if (type === 'subscription' && u) {
         const payRes = processLegalSecurePayment(u, {

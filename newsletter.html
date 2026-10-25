@@ -322,13 +322,13 @@
               </form>
             </aside>
 
-            <!-- DONATIONS CARD (Hosted Processor Checkout: Card, Cash App Pay, Apple/Google Pay & Bank ACH) -->
+            <!-- DONATIONS CARD (Hosted Processor Checkout: Card, Cash App Pay & Apple/Google Pay) -->
             <aside class="card" id="donations" style="margin:0;border-color:rgba(197,179,88,0.55)">
               <div class="row" style="margin-bottom:6px">
                 <h2 style="margin:0;font-size:16px">💝 Support &amp; Donations</h2>
-                <span class="chip ok" style="font-size:10px">Card · Cash App · ACH</span>
+                <span class="chip ok" style="font-size:10px">Card · Cash App · Apple/GPay</span>
               </div>
-              <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support open executive briefings, veteran research, and community tools. Pay with Card, Cash App Pay, Apple/Google Pay, or Bank Transfer ($0 upfront processor fees).</p>
+              <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support open executive briefings, veteran research, and community tools. Pay with Card, Cash App Pay, or Apple/Google Pay ($0 upfront processor fees).</p>
               ${settledDonationReceipt ? `
                 <div id="nlDonSettledBanner" style="padding:10px 12px;border-radius:10px;background:rgba(6,78,59,0.42);border:1px solid rgba(16,185,129,0.55);color:#34d399;font-size:12px;font-weight:700;margin-bottom:10px">
                   ✓ Processor Checkout Complete · Receipt <code style="color:#a7f3d0">${esc(settledDonationReceipt)}</code>
@@ -344,12 +344,11 @@
                   <input id="donName" type="text" maxlength="100" placeholder="Your Name" value="${u ? esc(u.name) : ''}" style="padding:8px 10px;font-size:12px" />
                   <input id="donAmount" type="number" min="1" max="10000" value="${selectedDonationAmount}" placeholder="Amount ($)" style="padding:8px 10px;font-size:12px" />
                 </div>
-                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
                   ${[
                     { id: 'card', label: '💳 Card' },
                     { id: 'cashapp', label: '🟩 Cash App' },
-                    { id: 'wallet', label: '🍎 Pay / GPay' },
-                    { id: 'ach_nacha', label: '🏦 Bank ACH' }
+                    { id: 'wallet', label: '🍎 Pay / GPay' }
                   ].map(m =>
                     `<button type="button" class="btn ${selectedDonationMethod === m.id ? 'pri' : ''}" data-donate-method="${m.id}" style="justify-content:center;padding:6px 4px;font-size:11px;${selectedDonationMethod === 'cashapp' && m.id === 'cashapp' ? 'background:linear-gradient(135deg,#00d632,#00b82b);border-color:#00d632;color:#041208;font-weight:800;' : ''}">${m.label}</button>`
                   ).join('')}
@@ -358,7 +357,6 @@
                   <option value="card" ${selectedDonationMethod === 'card' ? 'selected' : ''}>💳 Credit or Debit Card (Stripe Hosted Checkout)</option>
                   <option value="cashapp" ${selectedDonationMethod === 'cashapp' ? 'selected' : ''}>🟩 Cash App Pay ($Cashtag / QR Instant Checkout)</option>
                   <option value="wallet" ${selectedDonationMethod === 'wallet' ? 'selected' : ''}>🍎 Apple Pay / Google Pay (Express Wallet)</option>
-                  <option value="ach_nacha" ${selectedDonationMethod === 'ach_nacha' ? 'selected' : ''}>🏦 Bank Transfer (ACH — $0 Processor Fee)</option>
                 </select>
                 <input id="donEmail" type="email" maxlength="140" placeholder="Email for donation receipt" value="${u ? esc(u.email) : ''}" required style="padding:8px 10px;font-size:12px" />
                 <button type="submit" class="btn pri" id="btnSubmitDonation" style="justify-content:center;padding:10px">💝 Continue to Processor Checkout →</button>
@@ -539,8 +537,7 @@
           const railNames = {
             card: 'Stripe Hosted Card Checkout',
             cashapp: 'Cash App Pay Checkout',
-            wallet: 'Apple Pay / Google Pay Checkout',
-            ach_nacha: 'Instant Bank Transfer (ACH)'
+            wallet: 'Apple Pay / Google Pay Checkout'
           };
           st.style.color = '#38bdf8';
           st.textContent = '⟳ Routing $' + amountUsd.toFixed(2) + ' to ' + (railNames[method] || 'Payment Processor') + '...';
