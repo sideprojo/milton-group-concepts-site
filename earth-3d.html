@@ -100,7 +100,7 @@
 
     function enableNative3D() {
       const key = document.getElementById('apiKeyInput').value.trim();
-      if (!key) return alert('Enter a Google Maps Platform API key from project gen-lang-client-0636792472');
+      if (!key) return alert('Enter a Google Maps Platform API key from your authorized Maps Platform project');
       const script = document.createElement('script');
       script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&v=alpha&libraries=maps3d`;
       script.async = true;

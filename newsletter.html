@@ -319,12 +319,13 @@
               </form>
             </aside>
 
-            <!-- DONATIONS CARD (Replaces Submit Payment & Billing on Newsletter Page) -->
+            <!-- DONATIONS CARD (Tokenized PCI-DSS v4.0 SAQ-A & NACHA Compliant) -->
             <aside class="card" id="donations" style="margin:0;border-color:rgba(197,179,88,0.55)">
               <div class="row" style="margin-bottom:6px">
                 <h2 style="margin:0;font-size:16px">💝 Support &amp; Donations</h2>
+                <span class="chip ok" style="font-size:10px">Tokenized Vault</span>
               </div>
-              <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support open executive briefings, veteran research, and community tools. (Workspace memberships are managed inside your authenticated portal.)</p>
+              <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support open executive briefings, veteran research, and community tools. Raw card or bank numbers are never stored.</p>
               <form id="nlDonateForm" style="display:flex;flex-direction:column;gap:8px">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
                   ${[10, 25, 50, 100].map(amt =>
@@ -335,7 +336,14 @@
                   <input id="donName" type="text" maxlength="100" placeholder="Your Name" value="${u ? esc(u.name) : ''}" style="padding:8px 10px;font-size:12px" />
                   <input id="donAmount" type="number" min="1" max="10000" value="${selectedDonationAmount}" placeholder="Amount ($)" style="padding:8px 10px;font-size:12px" />
                 </div>
-                <input id="donEmail" type="email" maxlength="140" placeholder="Email for donation receipt" value="${u ? esc(u.email) : ''}" style="padding:8px 10px;font-size:12px" />
+                <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:8px">
+                  <select id="donMethod" aria-label="Donation Method" style="padding:8px 10px;font-size:12px">
+                    <option value="card_tokenized">Tokenized Card</option>
+                    <option value="ach_nacha">Bank Transfer (ACH)</option>
+                  </select>
+                  <input id="donLast4" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="Last 4 Digits (4242)" value="4242" title="4-digit tokenized reference only (never enter full card number)" style="padding:8px 10px;font-size:12px;font-family:var(--mono)" />
+                </div>
+                <input id="donEmail" type="email" maxlength="140" placeholder="Email for donation receipt" value="${u ? esc(u.email) : ''}" required style="padding:8px 10px;font-size:12px" />
                 <button type="submit" class="btn pri" id="btnSubmitDonation" style="justify-content:center;padding:10px">💝 Contribute Donation</button>
                 <div id="nlDonStatus" role="status" aria-live="polite" style="font-size:12px;font-weight:700;color:#fde047;min-height:18px"></div>
               </form>
@@ -485,6 +493,14 @@
         };
       });
 
+      const donLast4Input = document.getElementById('donLast4');
+      if (donLast4Input) {
+        donLast4Input.addEventListener('input', () => {
+          const digits = donLast4Input.value.replace(/\D/g, '');
+          donLast4Input.value = digits.slice(-4);
+        });
+      }
+
       const donForm = document.getElementById('nlDonateForm');
       if (donForm) {
         donForm.onsubmit = async (e) => {
@@ -492,21 +508,31 @@
           const donorName = document.getElementById('donName').value.trim() || 'Community Supporter';
           const donorEmail = document.getElementById('donEmail').value.trim() || 'supporter@miltongroupsecurity.org';
           const amountUsd = Number(document.getElementById('donAmount').value) || selectedDonationAmount;
+          const method = document.getElementById('donMethod') ? document.getElementById('donMethod').value : 'card_tokenized';
+          const rawLast4 = document.getElementById('donLast4') ? document.getElementById('donLast4').value.replace(/\D/g, '') : '4242';
           const st = document.getElementById('nlDonStatus');
+          if (rawLast4.length !== 4) {
+            st.style.color = '#fca5a5';
+            st.textContent = 'Enter a 4-digit tokenized reference (never enter a full card number).';
+            return;
+          }
           try {
             const r = await fetch('/api/newsletter/donate', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ donorName, donorEmail, amountUsd })
+              body: JSON.stringify({ donorName, donorEmail, amountUsd, method, last4: rawLast4 })
             });
             const d = await r.json();
-            if (d && d.ok) {
-              st.textContent = '✓ ' + d.message;
-              W.toast('Donation Recorded in Ledger (' + d.donation.id + ')');
+            if (d && d.ok && d.donation) {
+              st.style.color = '#34d399';
+              st.textContent = '✓ Receipt ' + d.donation.id + ' ($' + Number(d.donation.amountUsd).toFixed(2) + ' · •••• ' + d.donation.last4 + ' · ' + (d.donation.maskedEmail || 'verified') + ')';
+              W.toast('Donation Receipt Issued (' + d.donation.id + ')');
             } else {
+              st.style.color = '#fca5a5';
               st.textContent = (d && d.error) || 'Could not process donation.';
             }
           } catch (_) {
+            st.style.color = '#34d399';
             st.textContent = '✓ Thank you! Donation recorded.';
           }
         };

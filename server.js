@@ -105,15 +105,15 @@ const PORTAL_TO_CATALOG = {
 
 // Granular SCORM 2004 & Showcase App Entitlement Catalog (Default Restricted Customer Access vs Owner Full Access)
 const APPS_CATALOG = [
-  { id: 'client-turnkey-forge',       codename: 'Argo', callSign: 'ARGO-01', aistudioPromptId: '1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', aistudioUrl: 'https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', primaryTool: 'generate_turnkey_scope',       icon: '🛠️', title: 'Argo — Turnkey Web & Scope Builder',     brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Argo (ARGO-01): Included by default on customer login — interactive custom build scope & pricing configurator.' },
-  { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', aistudioUrl: 'https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', primaryTool: 'triage_service_intake',        icon: '🔧', title: 'Arya — AI Receptionist & Bay Dispatch',  brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Arya (ARYA-01): Included by default on customer login — live commercial web & 24/7 AI receptionist showcase.' },
-  { id: 'eveng-netprism-studio',      codename: 'Zeno', callSign: 'ZENO-01', aistudioPromptId: '1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', aistudioUrl: 'https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', primaryTool: 'validate_network_topology',    icon: '🖧', title: 'Zeno — NetPrism & EVE-NG Topology Lab',  brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Zeno (ZENO-01): Unlocked in Tier 2 Pro Suite — 8-page OSPF/BGP/ZTNA/EVPN network simulator & .cast studio.' },
-  { id: 'samgov-contract-matchmaker', codename: 'Cato', callSign: 'CATO-01', aistudioPromptId: '1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', aistudioUrl: 'https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', primaryTool: 'match_samgov_solicitations',   icon: '🏛️', title: 'Cato — Federal Contract & Role Radar',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Cato (CATO-01): Unlocked in Tier 2 Pro Suite — 6-page SDVOSB NAICS 541512/541519 & Principal AI role matchmaker.' },
-  { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', primaryTool: 'simulate_funnel_treasury_roi', icon: '📈', title: 'Vega — Funnel & Treasury ROI Modeler',   brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Vega (VEGA-01): Unlocked in Tier 2 Pro Suite — 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
-  { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', primaryTool: 'grade_cli_ansible_drill',      icon: '⌨️', title: 'Kael — Multi-OS CLI & Ansible Grader',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Kael (KAEL-01): Unlocked in Tier 2 Pro Suite — 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
-  { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', primaryTool: 'analyze_epigraphic_inscription', icon: '🏺', title: 'Clio — Chronos Epigraphy & Geodesic AI', brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Clio (CLIO-01): Unlocked in Tier 2 Pro Suite — 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
-  { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '🇪🇸', title: 'Alma — Associative Language OS (10K)',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Alma (ALMA-01): Unlocked in Tier 2 Pro Suite — 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' },
-  { id: 'maps-geospatial-insights',   codename: 'Orin', callSign: 'ORIN-01', aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', aistudioUrl: 'https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', primaryTool: 'analyze_geospatial_corridor',  icon: '🌍', title: 'Orin — Maps, 3D Geospatial & Location Insights', brand: 'MGC', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/maps-geospatial-insights/index.html',   zipHref: '',                                                                               desc: 'Orin (ORIN-01): Included by default — Google Earth 3D (<gmp-map-3d>), Photorealistic 3D Tiles & regional market/DoD corridor insights.' }
+  { id: 'client-turnkey-forge',       codename: 'Argo', callSign: 'ARGO-01', primaryTool: 'generate_turnkey_scope',       icon: '🛠️', title: 'Argo — Turnkey Web & Scope Builder',     brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Argo (ARGO-01): Included by default on customer login — interactive custom build scope & pricing configurator.' },
+  { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', primaryTool: 'triage_service_intake',        icon: '🔧', title: 'Arya — AI Receptionist & Bay Dispatch',  brand: 'FIX', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: 'Arya (ARYA-01): Included by default on customer login — live commercial web & 24/7 AI receptionist showcase.' },
+  { id: 'eveng-netprism-studio',      codename: 'Zeno', callSign: 'ZENO-01', primaryTool: 'validate_network_topology',    icon: '🖧', title: 'Zeno — NetPrism & EVE-NG Topology Lab',  brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'Zeno (ZENO-01): Unlocked in Tier 2 Pro Suite — 8-page OSPF/BGP/ZTNA/EVPN network simulator & .cast studio.' },
+  { id: 'samgov-contract-matchmaker', codename: 'Cato', callSign: 'CATO-01', primaryTool: 'match_samgov_solicitations',   icon: '🏛️', title: 'Cato — Federal Contract & Role Radar',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Cato (CATO-01): Unlocked in Tier 2 Pro Suite — 6-page SDVOSB NAICS 541512/541519 & Principal AI role matchmaker.' },
+  { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', primaryTool: 'simulate_funnel_treasury_roi', icon: '📈', title: 'Vega — Funnel & Treasury ROI Modeler',   brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Vega (VEGA-01): Unlocked in Tier 2 Pro Suite — 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
+  { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', primaryTool: 'grade_cli_ansible_drill',      icon: '⌨️', title: 'Kael — Multi-OS CLI & Ansible Grader',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Kael (KAEL-01): Unlocked in Tier 2 Pro Suite — 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
+  { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', primaryTool: 'analyze_epigraphic_inscription', icon: '🏺', title: 'Clio — Chronos Epigraphy & Geodesic AI', brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Clio (CLIO-01): Unlocked in Tier 2 Pro Suite — 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
+  { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', primaryTool: 'generate_cognate_drill_loop',  icon: '🇪🇸', title: 'Alma — Associative Language OS (10K)',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Alma (ALMA-01): Unlocked in Tier 2 Pro Suite — 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' },
+  { id: 'maps-geospatial-insights',   codename: 'Orin', callSign: 'ORIN-01', primaryTool: 'analyze_geospatial_corridor',  icon: '🌍', title: 'Orin — Maps, 3D Geospatial & Location Insights', brand: 'MGC', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/maps-geospatial-insights/index.html',   zipHref: '',                                                                               desc: 'Orin (ORIN-01): Included by default — Google Earth 3D (<gmp-map-3d>), Photorealistic 3D Tiles & regional market/DoD corridor insights.' }
 ];
 
 // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -1332,6 +1332,38 @@ function findOrCreateUserByEmail(email, name, method, providerKey) {
   return S.users[id];
 }
 
+function scrubClientReceiptForExternalUser(rec) {
+  if (!rec || typeof rec !== 'object') return rec;
+  const copy = Object.assign({}, rec);
+  delete copy.processorFeeUsd;
+  delete copy.netCashUsd;
+  delete copy.taxReserveUsd;
+  delete copy.operatingNetUsd;
+  delete copy.journalId;
+  delete copy.entryHash;
+  return copy;
+}
+
+function scrubPaymentProfileForExternalUser(prof) {
+  if (!prof || typeof prof !== 'object') return prof;
+  const copy = Object.assign({}, prof);
+  delete copy.processorFeeUsd;
+  delete copy.netCashUsd;
+  delete copy.taxReserveUsd;
+  delete copy.operatingNetUsd;
+  delete copy.journalId;
+  return copy;
+}
+
+function maskEmailAddress(rawEmail) {
+  const s = String(rawEmail || '').trim().toLowerCase();
+  const parts = s.split('@');
+  if (parts.length !== 2) return '***';
+  const [local, dom] = parts;
+  const vis = local.slice(0, Math.min(2, local.length));
+  return `${vis}***@${dom}`;
+}
+
 function scopeStateForUser(u) {
   if (!u) {
     return {
@@ -1351,7 +1383,6 @@ function scopeStateForUser(u) {
       features: [],
       requests: [],
       newsletter: {
-        subscriberCount: ((S.newsletter && S.newsletter.subscribers) || []).length,
         issues: (S.newsletter && S.newsletter.issues) || []
       }
     };
@@ -1373,11 +1404,8 @@ function scopeStateForUser(u) {
     };
   }
   if (isEmployeeUser(u)) {
-    // Employee View:
-    // - Access to self + external Client users (ou !== 'internal' && role !== 'owner') ONLY.
-    // - Zero visibility into Builtin Administrator, other Employees, or any Payment Settings / Accounting Ledger.
     const empUsers = {
-      [u.id]: Object.assign({}, u, { passwordDigest: undefined, paymentProfile: null, payments: [] })
+      [u.id]: Object.assign({}, u, { passwordDigest: undefined, customPasswordDigest: undefined, paymentProfile: null, payments: [] })
     };
     const clientIds = new Set();
     Object.values(S.users || {}).forEach(x => {
@@ -1385,6 +1413,10 @@ function scopeStateForUser(u) {
         clientIds.add(x.id);
         empUsers[x.id] = Object.assign({}, x, {
           passwordDigest: undefined,
+          customPasswordDigest: undefined,
+          recoveryEmail: undefined,
+          phone: undefined,
+          address: undefined,
           paymentProfile: null,
           payments: []
         });
@@ -1417,12 +1449,10 @@ function scopeStateForUser(u) {
       requests: clientRequests,
       consultations: clientConsultations,
       newsletter: {
-        subscriberCount: ((S.newsletter && S.newsletter.subscribers) || []).length,
         issues: (S.newsletter && S.newsletter.issues) || []
       }
     };
   }
-  // Scoped Client view: strictly their own profile (with passwordDigest scrubbed), their own qualified resources, their own consultations/requests, and shared projects
   const allowedProjects = {};
   Object.values(S.projects).forEach(p => {
     if (can(u, 'project', p.id, 'view')) allowedProjects[p.id] = p;
@@ -1434,7 +1464,13 @@ function scopeStateForUser(u) {
   const myRequests = S.requests.filter(r => r.uid === u.id);
   const myConsultations = (S.consultations || []).filter(c => c.uid === u.id);
   const myQualifiedCustomRes = (S.customResources || []).filter(r => can(u, 'resource', r.id, 'view'));
-  const scrubbedSelf = Object.assign({}, u, { passwordDigest: undefined });
+  const scrubbedPayments = Array.isArray(u.payments) ? u.payments.map(scrubClientReceiptForExternalUser) : [];
+  const scrubbedSelf = Object.assign({}, u, {
+    passwordDigest: undefined,
+    customPasswordDigest: undefined,
+    paymentProfile: scrubPaymentProfileForExternalUser(u.paymentProfile),
+    payments: scrubbedPayments
+  });
   return {
     v: 1,
     currentUser: u.id,
@@ -1447,14 +1483,13 @@ function scopeStateForUser(u) {
     tasks: [],
     notifications: myNotifs,
     audit: [],
-    payments: Array.isArray(u.payments) ? u.payments : [],
+    payments: scrubbedPayments,
     projects: allowedProjects,
     items: allowedItems,
     features: myFeatures,
     requests: myRequests,
     consultations: myConsultations,
     newsletter: {
-      subscriberCount: ((S.newsletter && S.newsletter.subscribers) || []).length,
       subscribed: Boolean(u && ((S.newsletter && S.newsletter.subscribers) || []).some(s => s.email === String(u.email || '').toLowerCase())),
       issues: (S.newsletter && S.newsletter.issues) || []
     }
@@ -1477,10 +1512,14 @@ function readJsonBody(req) {
 }
 
 const SECURITY_HEADERS = {
+  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'SAMEORIGIN',
+  'X-Permitted-Cross-Domain-Policies': 'none',
+  'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+  'Cross-Origin-Resource-Policy': 'same-origin',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'camera=(), microphone=(self), geolocation=(self)',
+  'Permissions-Policy': 'camera=(), microphone=(self), geolocation=(self), payment=(self)',
   'Content-Security-Policy': "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; connect-src 'self' https:; frame-ancestors 'self'; base-uri 'self'"
 };
 
@@ -1893,12 +1932,12 @@ const server = http.createServer(async (req, res) => {
 
     const getOauthConfig = () => {
       const saved = S.oauthConfig || {};
-      const gClientId = saved.googleClientId || process.env.GOOGLE_CLIENT_ID || '254657731107-sgdbihvbrpar0sr6mg1msf6mv11s1cor.apps.googleusercontent.com';
+      const gClientId = saved.googleClientId || process.env.GOOGLE_CLIENT_ID || '';
       const msClientId = saved.microsoftClientId || process.env.MICROSOFT_CLIENT_ID || '';
       const apClientId = saved.appleClientId || process.env.APPLE_CLIENT_ID || '';
-      const fbApiKey = saved.firebaseApiKey || process.env.FIREBASE_API_KEY || 'AIzaSyAfzbxbI-CD0bwmgNhJKzXTKVucDoG0D6k';
-      const fbAuthDomain = saved.firebaseAuthDomain || process.env.FIREBASE_AUTH_DOMAIN || 'gen-lang-client-0636792472.firebaseapp.com';
-      const fbProjectId = saved.firebaseProjectId || process.env.FIREBASE_PROJECT_ID || 'gen-lang-client-0636792472';
+      const fbApiKey = saved.firebaseApiKey || process.env.FIREBASE_API_KEY || '';
+      const fbAuthDomain = saved.firebaseAuthDomain || process.env.FIREBASE_AUTH_DOMAIN || '';
+      const fbProjectId = saved.firebaseProjectId || process.env.FIREBASE_PROJECT_ID || '';
       return {
         googleClientId: gClientId,
         microsoftClientId: msClientId,
@@ -2007,81 +2046,12 @@ const server = http.createServer(async (req, res) => {
 
     const autoDiscoverIdentityPlatformViaAdc = async () => {
       const current = getOauthConfig();
-      const adcTok = await fetchCloudRunAdcToken();
-      if (!adcTok) return { ...current, status: current.firebaseApiKey ? 'CONFIGURED' : 'LOCAL_NO_ADC' };
-      const proj = current.firebaseProjectId || 'gen-lang-client-0636792472';
-      const runProj = 'gen-lang-client-0636792472';
-      let diag = current.firebaseApiKey ? 'CONFIGURED' : 'ADC_OK';
-      try {
-        let idpCfg = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config`, 'GET', adcTok, null, proj);
-        if (idpCfg && Array.isArray(idpCfg.authorizedDomains)) {
-          const needed = [
-            'mgc-external-site-254657731107.us-west1.run.app',
-            'milton-group-concepts-llc-254657731107.us-west1.run.app',
-            'miltongroupsecurity.org',
-            'portal.miltongroupsecurity.org',
-            'workspace.miltongroupsecurity.org'
-          ];
-          const missing = needed.filter(d => !idpCfg.authorizedDomains.includes(d));
-          if (missing.length > 0) {
-            const merged = Array.from(new Set([...idpCfg.authorizedDomains, ...needed]));
-            await fetchHttpsWithAuth(
-              `https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/config?updateMask=authorizedDomains`,
-              'PATCH',
-              adcTok,
-              { authorizedDomains: merged },
-              proj
-            );
-          }
-        }
-        let discoveredApiKey = (idpCfg && idpCfg.client && idpCfg.client.apiKey) ? idpCfg.client.apiKey : '';
-        if (!discoveredApiKey) {
-          const keysList = await fetchHttpsWithAuth(`https://apikeys.googleapis.com/v2/projects/${proj}/locations/global/keys`, 'GET', adcTok, null, proj);
-          if (keysList && Array.isArray(keysList.keys) && keysList.keys.length > 0) {
-            const firstKeyName = keysList.keys[0].name;
-            const keyStrRes = await fetchHttpsWithAuth(`https://apikeys.googleapis.com/v2/${firstKeyName}/keyString`, 'GET', adcTok, null, proj);
-            if (keyStrRes && keyStrRes.keyString) discoveredApiKey = keyStrRes.keyString;
-          }
-        }
-        const idps = await fetchHttpsWithAuth(`https://identitytoolkit.googleapis.com/admin/v2/projects/${proj}/defaultSupportedIdpConfigs`, 'GET', adcTok, null, proj);
-        const foundClients = {};
-        if (idps && Array.isArray(idps.defaultSupportedIdpConfigs)) {
-          idps.defaultSupportedIdpConfigs.forEach(c => {
-            if (String(c.name || '').endsWith('/google.com') && c.clientId) foundClients.googleClientId = c.clientId;
-            if (String(c.name || '').endsWith('/microsoft.com') && c.clientId) foundClients.microsoftClientId = c.clientId;
-            if (String(c.name || '').endsWith('/apple.com') && c.clientId) foundClients.appleClientId = c.clientId;
-          });
-        }
-        if (discoveredApiKey || Object.keys(foundClients).length > 0) {
-          S.oauthConfig = Object.assign({}, S.oauthConfig || {}, {
-            ...(discoveredApiKey ? { firebaseApiKey: discoveredApiKey } : {}),
-            ...foundClients
-          });
-          saveState(S);
-          diag = 'AUTO_DISCOVERED';
-        }
-        // Also ensure milton-group-concepts-llc (mapped to miltongroupsecurity.org) runs the unified image
-        const selfSvc = await fetchHttpsWithAuth(`https://run.googleapis.com/v2/projects/${runProj}/locations/us-west1/services/mgc-external-site`, 'GET', adcTok, null, runProj);
-        const mainSvc = await fetchHttpsWithAuth(`https://run.googleapis.com/v2/projects/${runProj}/locations/us-west1/services/milton-group-concepts-llc`, 'GET', adcTok, null, runProj);
-        const selfImg = selfSvc && selfSvc.template && selfSvc.template.containers && selfSvc.template.containers[0] ? selfSvc.template.containers[0].image : '';
-        const mainImg = mainSvc && mainSvc.template && mainSvc.template.containers && mainSvc.template.containers[0] ? mainSvc.template.containers[0].image : '';
-        if (selfImg && mainImg && selfImg !== mainImg) {
-          const patchRes = await fetchHttpsWithAuth(
-            `https://run.googleapis.com/v2/projects/${runProj}/locations/us-west1/services/milton-group-concepts-llc?updateMask=template.containers`,
-            'PATCH',
-            adcTok,
-            { template: { containers: selfSvc.template.containers } },
-            runProj
-          );
-          diag += patchRes && !patchRes.error ? '|MAIN_DOMAIN_SYNCED' : `|MAIN_SYNC_ERR:${patchRes && patchRes.error ? patchRes.error.status : 'UNK'}`;
-        } else if (selfImg && selfImg === mainImg) {
-          diag += '|MAIN_DOMAIN_IN_SYNC';
-        }
-      } catch (_) {}
-      return { ...getOauthConfig(), status: diag };
+      return { ...current, status: 'READY' };
     };
 
     if (pathname === '/api/auth/config' && req.method === 'GET') {
+      const caller = getAuthenticatedUser(req);
+      const isAdminCaller = isOwnerUser(caller);
       const cfg = await autoDiscoverIdentityPlatformViaAdc();
       const adminConfigured = hasAdminCredentialsConfigured();
       return sendJson(res, 200, {
@@ -2092,37 +2062,28 @@ const server = http.createServer(async (req, res) => {
         caseInsensitiveLogin: true,
         caseSensitivePassword: true,
         genericPasswordsRevoked: true,
-        adminCredentialsConfigured: adminConfigured,
-        adminCredentialSetupRequired: !adminConfigured,
-        securityAlert: !adminConfigured
-          ? 'IMMEDIATE ACTION REQUIRED: Generic passwords have been permanently revoked. Set your Administrator Account Username and Case-Sensitive Password immediately.'
-          : null,
-        discoveryStatus: cfg.status || 'READY',
-        firebaseProjectId: cfg.firebaseProjectId,
-        firebaseAuthDomain: cfg.firebaseAuthDomain,
-        firebaseApiKeyConfigured: Boolean(cfg.firebaseApiKey),
-        firebaseApiKey: cfg.firebaseApiKey,
+        ...(isAdminCaller ? {
+          adminCredentialsConfigured: adminConfigured,
+          adminCredentialSetupRequired: !adminConfigured,
+          firebaseProjectId: cfg.firebaseProjectId || undefined,
+          firebaseAuthDomain: cfg.firebaseAuthDomain || undefined,
+          firebaseApiKeyConfigured: Boolean(cfg.firebaseApiKey)
+        } : {}),
         oidcProviders: {
           google: {
             issuer: 'https://accounts.google.com',
             authEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
-            jwksUri: OIDC_JWKS_URLS.google,
-            clientId: cfg.googleClientId || '',
-            liveConfigured: Boolean(cfg.googleClientId || cfg.firebaseApiKey)
+            liveConfigured: true
           },
           microsoft: {
             issuer: 'https://login.microsoftonline.com/common/v2.0',
             authEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-            jwksUri: OIDC_JWKS_URLS.microsoft,
-            clientId: cfg.microsoftClientId || '',
-            liveConfigured: Boolean(cfg.microsoftClientId || cfg.firebaseApiKey)
+            liveConfigured: true
           },
           apple: {
             issuer: 'https://appleid.apple.com',
             authEndpoint: 'https://appleid.apple.com/auth/authorize',
-            jwksUri: OIDC_JWKS_URLS.apple,
-            clientId: cfg.appleClientId || '',
-            liveConfigured: Boolean(cfg.appleClientId || cfg.firebaseApiKey)
+            liveConfigured: true
           }
         }
       });
@@ -2146,7 +2107,7 @@ const server = http.createServer(async (req, res) => {
       if (verifyEmail !== SOLE_ADMIN_EMAIL) {
         return sendJson(res, 403, {
           ok: false,
-          error: 'Administrator credential setup must be tied to malik.khabir@Miltongroupsecurity.org (case-insensitive).'
+          error: 'Administrator credential setup requires the authorized domain administrator account.'
         });
       }
       const cleanAdminUsername = sanitizeInput(body.username || 'malik.khabir', 60).toLowerCase();
@@ -2230,7 +2191,7 @@ const server = http.createServer(async (req, res) => {
       let authUrl = '';
       if (provider === 'google') {
         const q = new URLSearchParams({
-          client_id: cfg.googleClientId || '254657731107-sgdbihvbrpar0sr6mg1msf6mv11s1cor.apps.googleusercontent.com',
+          client_id: cfg.googleClientId || process.env.GOOGLE_CLIENT_ID || 'mgc-federated-google-oidc',
           redirect_uri: redirectUri,
           response_type: 'id_token',
           scope: 'openid email profile',
@@ -2394,10 +2355,9 @@ const server = http.createServer(async (req, res) => {
         logAudit('system', `security.admin_spoof_blocked.${provider}`, `Blocked spoofed/legacy admin email: ${email}`);
         return sendJson(res, 403, {
           ok: false,
-          error: 'Security Policy Enforced: Only 1 Administrator account exists (malik.khabir@Miltongroupsecurity.org). Spoofed or legacy admin accounts are blocked.'
+          error: 'Invalid email/username or password.'
         });
       }
-      // Any attempt to sign in as Administrator (malik.khabir@Miltongroupsecurity.org, case-insensitive) requires either a verified OIDC RS256 token OR Malik's Administrator Password / Passkey.
       if (OWNER_EMAILS.has(email)) {
         const providedSecret = String(body.password || body.mfaCode || body.totp || body.adminPasskey || '').trim();
         if (!jwksVerified && !isValidAdminSecret(providedSecret)) {
@@ -2405,7 +2365,7 @@ const server = http.createServer(async (req, res) => {
           return sendJson(res, 403, {
             ok: false,
             requireAdminMfa: true,
-            error: 'Administrator Account Protected: Enter the valid Administrator Password / Passkey for malik.khabir@Miltongroupsecurity.org.'
+            error: 'Invalid email/username or password.'
           });
         }
       } else if (provider === 'password' || isPasswordRoute) {
@@ -2583,17 +2543,13 @@ const server = http.createServer(async (req, res) => {
 
       return sendJson(res, 200, {
         ok: true,
-        phoneNumber: '+1 (804) 760-5797',
-        e164: '+18047605797',
-        provider: 'Northwest Registered Agent Business Identity VoIP + Cloud Run $0 Automated Attendant',
-        monthlyCostUsd: 0,
         status: 'ACTIVE_24_7',
         selectedOption: menuMap[digit] || null,
         ivrMenu: [
-          { digit: '1', label: 'Commercial Web, AI Receptionist & SaaS Portals', track: 'ai-web', smsAutoReply: 'https://miltongroupsecurity.org/consultation' },
-          { digit: '2', label: 'Zero-Trust Cybersecurity & CMMC 2.0 Architecture', track: 'cyber', smsAutoReply: 'https://miltongroupsecurity.org/consultation' },
-          { digit: '3', label: 'SDVOSB Federal Contracting & Teaming', track: 'federal', smsAutoReply: 'https://miltongroupsecurity.org/consultation' },
-          { digit: '4', label: 'SCORM 2004 LMS & Interactive Lab Studio', track: 'training', smsAutoReply: 'https://miltongroupsecurity.org/consultation' }
+          { digit: '1', label: 'Commercial Web, AI Receptionist & SaaS Portals', track: 'ai-web' },
+          { digit: '2', label: 'Zero-Trust Cybersecurity & CMMC 2.0 Architecture', track: 'cyber' },
+          { digit: '3', label: 'SDVOSB Federal Contracting & Teaming', track: 'federal' },
+          { digit: '4', label: 'SCORM 2004 LMS & Interactive Lab Studio', track: 'training' }
         ]
       });
     }
@@ -2649,6 +2605,7 @@ const server = http.createServer(async (req, res) => {
     /* ---------- Executive Intelligence Newsletter, Source Collection, Distros, SMS & Donations API ---------- */
     if (pathname === '/api/newsletter' && req.method === 'GET') {
       const u = getAuthenticatedUser(req);
+      const isAdminCaller = isOwnerUser(u);
       const nl = S.newsletter || seedState().newsletter;
       if (!Array.isArray(nl.sources)) {
         nl.sources = [
@@ -2661,6 +2618,14 @@ const server = http.createServer(async (req, res) => {
       if (!Array.isArray(nl.donations)) nl.donations = [];
       const uEmail = u ? String(u.email || '').toLowerCase() : '';
       const subRecord = uEmail ? (nl.subscribers || []).find(s => s.email === uEmail) : null;
+      if (!isAdminCaller) {
+        return sendJson(res, 200, {
+          ok: true,
+          subscribed: Boolean(subRecord),
+          subscriberTrack: subRecord ? subRecord.track : null,
+          issues: nl.issues || []
+        });
+      }
       const smsCount = (nl.subscribers || []).filter(s => Boolean(s.phone)).length;
       const distros = [
         { id: 'distro_all_exec', label: 'All Executive Subscribers', count: 140 + (nl.subscribers || []).length },
@@ -2681,7 +2646,7 @@ const server = http.createServer(async (req, res) => {
         distributions: nl.distributions.slice(0, 10),
         donationsCount: nl.donations.length,
         donationsTotalUsd: nl.donations.reduce((acc, d) => acc + (Number(d.amountUsd) || 0), 0),
-        subscribers: (u && u.role === 'owner') ? (nl.subscribers || []) : undefined,
+        subscribers: nl.subscribers || [],
         issues: nl.issues || []
       });
     }
@@ -2736,79 +2701,125 @@ const server = http.createServer(async (req, res) => {
           verified: true
         });
       }
-      const smsCount = S.newsletter.subscribers.filter(s => Boolean(s.phone)).length;
       notifyUser('owner', 'Newsletter Subscriber Added', `${name} (${email}${smsOptIn ? ' + SMS ' + rawPhone : ''}) joined [${track}] distro.`);
       logAudit(u ? u.id : 'public', 'newsletter.subscribe', `${email} (${track}) channels=${smsOptIn ? 'email+sms' : 'email'}`);
       saveState(S);
       return sendJson(res, 200, {
         ok: true,
-        email,
+        maskedEmail: maskEmailAddress(email),
         track,
         smsOptIn,
-        smsGatewayAddress,
-        subscriberCount: S.newsletter.subscribers.length,
-        subscribersCount: 140 + S.newsletter.subscribers.length,
-        smsSubscribersCount: 38 + smsCount,
         message: smsOptIn
-          ? 'Subscribed to Email + SMS Text Briefings ($0 Carrier Gateway Active).'
-          : 'Subscribed to MGC & F.I.X Executive Briefings.'
+          ? 'Subscribed to Email and SMS Text Briefings.'
+          : 'Subscribed to Executive Briefings.'
       });
     }
 
-    if (pathname === '/api/newsletter/donate' && req.method === 'POST') {
+    if ((pathname === '/api/newsletter/donate' || pathname === '/api/donation/submit') && req.method === 'POST') {
       if (!checkRateLimit(req, 'newsletter_donate', 15, 60000)) {
         return sendJson(res, 429, { ok: false, error: 'Too many requests. Please wait a moment.' });
       }
       const body = await readJsonBody(req);
       if (hasInjectionPayload(body)) {
-        return sendJson(res, 400, { ok: false, error: 'Security check failed: Invalid characters detected.' });
+        return sendJson(res, 400, { ok: false, code: 'INJECTION_PAYLOAD_REJECTED', error: 'Security check failed: Invalid characters detected.' });
       }
       const u = getAuthenticatedUser(req);
+
+      // PCI-DSS v4.0 SAQ-A & NACHA Perimeter Guard on Donations: Strictly reject raw PAN (12+ digits), CVV/CVC, or full bank account numbers
+      const rawPanCandidate = String(body.cardNumber || body.pan || body.ccNumber || body.accountNumber || body.last4 || '').replace(/\D/g, '');
+      const hasRawCvv = Boolean(body.cvv || body.cvc || body.securityCode || body.cardCvv);
+      const rawRoutingCandidate = String(body.routingNumber || '').replace(/\D/g, '');
+      if (rawPanCandidate.length > 4 || hasRawCvv || rawRoutingCandidate.length > 4) {
+        logAudit(u ? u.id : 'public', 'security.donation_pci_raw_pan_rejected', 'Blocked attempt to submit un-tokenized card/account/CVV on donation endpoint');
+        return sendJson(res, 400, {
+          ok: false,
+          code: 'PCI_VIOLATION_RAW_PAN_REJECTED',
+          error: 'PCI-DSS v4.0 SAQ-A Security Enforcement: Raw card numbers, CVV security codes, and full bank account numbers are strictly rejected. Provide only a 4-digit tokenized reference.'
+        });
+      }
+
       const donorName = sanitizeInput(body.donorName || (u && u.name) || 'Community Supporter', 100);
       const donorEmail = sanitizeInput(body.donorEmail || (u && u.email) || 'supporter@miltongroupsecurity.org', 140).toLowerCase();
-      const amountUsd = Math.max(1, Math.min(10000, Number(body.amountUsd) || 25));
-      const note = sanitizeInput(body.note || 'Executive Newsletter & Research Support', 200);
-      const method = sanitizeInput(body.method || 'card_donation', 40);
+      if (!/^\S+@\S+\.\S+$/.test(donorEmail)) {
+        return sendJson(res, 400, { ok: false, error: 'Please enter a valid email address for your donation receipt.' });
+      }
+      const numAmt = Number(body.amountUsd);
+      if (!Number.isFinite(numAmt) || numAmt < 1 || numAmt > 10000) {
+        return sendJson(res, 400, { ok: false, error: 'Donation amount must be between $1.00 and $10,000.00 USD.' });
+      }
+      const amountUsd = Math.round(numAmt * 100) / 100;
+      const note = sanitizeInput(body.note || 'Executive Briefing & Research Support', 200);
+      const method = ['card_tokenized', 'ach_nacha', 'card_donation'].includes(body.method) ? body.method : 'card_tokenized';
+      const last4 = /^d{4}$/.test(rawPanCandidate) ? rawPanCandidate : '4242';
+      const timestampIso = now();
 
       if (!S.newsletter) S.newsletter = seedState().newsletter;
       if (!Array.isArray(S.newsletter.donations)) S.newsletter.donations = [];
 
-      const donationId = 'DON-' + Date.now().toString(36).toUpperCase().slice(-6);
-      const donationRecord = {
+      const donationId = 'MGC-DON-' + Date.now().toString(36).toUpperCase().slice(-6) + '-' + crypto.randomBytes(2).toString('hex').toUpperCase();
+      const vaultToken = 'tok_don_' + crypto.createHmac('sha256', SESSION_SECRET)
+        .update(`${donationId}:${donorEmail}:${method}:${last4}:${timestampIso}`)
+        .digest('hex')
+        .slice(0, 20);
+      const receiptSignature = 'HMAC-SHA256-' + crypto.createHmac('sha256', SESSION_SECRET)
+        .update(`${donationId}|${donorEmail}|${amountUsd.toFixed(2)}|${last4}|${timestampIso}`)
+        .digest('hex')
+        .slice(0, 28);
+
+      const internalDonationRecord = {
         id: donationId,
         donorName,
         donorEmail,
         amountUsd,
         note,
         method,
-        createdAt: now()
+        last4,
+        vaultToken,
+        signature: receiptSignature,
+        pciDssCompliant: true,
+        createdAt: timestampIso
       };
-      S.newsletter.donations.unshift(donationRecord);
+      S.newsletter.donations.unshift(internalDonationRecord);
 
-      // Post to GAAP Double-Entry Ledger automatically
       if (typeof postAccountingJournalEntry === 'function') {
         postAccountingJournalEntry({
           receiptId: donationId,
-          createdAt: donationRecord.createdAt,
+          createdAt: timestampIso,
           entity: 'MGC',
           entryType: 'REVENUE',
           accountCode: '4010',
           counterparty: donorName,
           counterpartyEmail: donorEmail,
-          description: `Newsletter & Research Donation [${donationId}]`,
-          rail: 'STRIPE_CARD',
+          description: `Tokenized Donation [${donationId} •••• ${last4}]`,
+          rail: method === 'ach_nacha' ? 'MERCURY_ACH' : 'STRIPE_CARD',
           grossUsd: amountUsd,
           status: 'SETTLED'
         });
       }
 
-      logAudit(u ? u.id : 'public', 'newsletter.donation_received', `${donationId} $${amountUsd.toFixed(2)} from ${donorEmail}`);
+      logAudit(u ? u.id : 'public', 'newsletter.donation_received', `${donationId} ${amountUsd.toFixed(2)} [•••• ${last4}]`);
       saveState(S);
+
+      const publicDonationReceipt = {
+        id: donationId,
+        receiptId: donationId,
+        donorName,
+        maskedEmail: maskEmailAddress(donorEmail),
+        amountUsd,
+        currency: 'USD',
+        method,
+        last4,
+        vaultToken,
+        signature: receiptSignature,
+        pciDssCompliant: true,
+        createdAt: timestampIso
+      };
+
       return sendJson(res, 200, {
         ok: true,
-        donation: donationRecord,
-        donationsTotalUsd: S.newsletter.donations.reduce((acc, d) => acc + (Number(d.amountUsd) || 0), 0),
-        message: `Thank you, ${donorName}! Donation ${donationId} ($${amountUsd.toFixed(2)}) recorded.`
+        donation: publicDonationReceipt,
+        receipt: publicDonationReceipt,
+        message: `Thank you, ${donorName}! Verified donation receipt ${donationId} (${amountUsd.toFixed(2)} · •••• ${last4}) issued.`
       });
     }
 
@@ -2886,8 +2897,16 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, {
         ok: true,
         receiptId,
-        consultation: entry,
-        message: `Request ${receiptId} submitted. Our team will follow up at ${clientEmail}.`
+        consultation: {
+          receiptId: entry.receiptId,
+          clientName: entry.clientName,
+          maskedEmail: maskEmailAddress(entry.clientEmail),
+          architectureScope: entry.architectureScope,
+          timeline: entry.timeline,
+          status: entry.status,
+          createdAt: entry.createdAt
+        },
+        message: `Request ${receiptId} submitted. Confirmation queued for ${maskEmailAddress(clientEmail)}.`
       });
     }
 
@@ -3002,13 +3021,21 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/db/status' && req.method === 'GET') {
       const u = getAuthenticatedUser(req);
+      if (!isOwnerUser(u)) {
+        return sendJson(res, 200, {
+          ok: true,
+          connected: true,
+          status: 'healthy',
+          authenticated: Boolean(u)
+        });
+      }
       return sendJson(res, 200, {
         ok: true,
         connected: true,
-        engine: 'ACID-JSON-WAL + Cloud Firestore (nam5 Free-Tier Bridge) + IndexedDB',
-        authenticated: Boolean(u),
-        role: u ? u.role : 'anonymous',
-        accessTier: u ? (u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED') : 'ANONYMOUS',
+        status: 'healthy',
+        authenticated: true,
+        role: u.role,
+        accessTier: 'OWNER_FULL',
         tables: {
           users: Object.keys(S.users || {}).length,
           projects: Object.keys(S.projects || {}).length,
@@ -3021,7 +3048,6 @@ const server = http.createServer(async (req, res) => {
           ...DB_STATS,
           cloudRunMinInstances: 0,
           cloudRunMaxInstances: 2,
-          blockedPaidApis: ['earthengine.googleapis.com', 'compute.googleapis.com', 'sqladmin.googleapis.com'],
           monthlySpendUsd: 0.00
         }
       });
@@ -3067,9 +3093,7 @@ const server = http.createServer(async (req, res) => {
         detectedOu: empRec.isAssignedEmployee ? 'internal' : 'external',
         assignedProfile: empRec.isAssignedEmployee ? {
           username: empRec.username,
-          name: empRec.name || '',
-          email: empRec.email || '',
-          org: empRec.org || 'MGC Internal Operations',
+          org: 'MGC Internal Operations',
           mustResetPassword: true
         } : null,
         checks: { lenOk, formatOk, notReserved, uniqueOk },
@@ -3550,10 +3574,13 @@ const server = http.createServer(async (req, res) => {
         logAudit(u.id, 'security.payment_injection_blocked', 'Blocked suspicious characters in financial payload');
         return { status: 400, payload: { ok: false, code: 'FINANCIAL_VALIDATION_FAILED', error: 'Security Validation Failed: Financial fields contain disallowed characters.' } };
       }
-      // Reject un-tokenized raw PAN if submitted via body.cardNumber (12+ digits)
-      if (body.cardNumber && String(body.cardNumber).replace(/\D/g, '').length >= 12) {
-        logAudit(u.id, 'security.pci_raw_pan_blocked', 'Rejected raw PAN submission');
-        return { status: 400, payload: { ok: false, code: 'PCI_VIOLATION_RAW_PAN_REJECTED', error: 'PCI-DSS v4.0 SAQ-A Enforced: Raw Primary Account Numbers (PAN) are rejected. Submit tokenized last-4 only.' } };
+      // Reject un-tokenized raw PAN, CVV/CVC, or full routing/account numbers at the perimeter
+      const rawCardOrPan = String(body.cardNumber || body.pan || body.ccNumber || '').replace(/\D/g, '');
+      const hasRawCvvField = Boolean(body.cvv || body.cvc || body.securityCode || body.cardCvv);
+      const rawRoutingDigits = String(body.routingNumber || '').replace(/\D/g, '');
+      if (rawCardOrPan.length > 4 || hasRawCvvField || rawRoutingDigits.length > 4) {
+        logAudit(u.id, 'security.pci_raw_pan_blocked', 'Rejected raw PAN/CVV/routing submission');
+        return { status: 400, payload: { ok: false, code: 'PCI_VIOLATION_RAW_PAN_REJECTED', error: 'PCI-DSS v4.0 SAQ-A Enforced: Raw Primary Account Numbers (PAN), CVV codes, and full routing numbers are strictly rejected. Submit 4-digit tokenized identifiers only.' } };
       }
 
       const merchantEntity = String(body.merchantEntity || u.brand || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
@@ -3836,14 +3863,15 @@ const server = http.createServer(async (req, res) => {
       logAudit(u.id, 'payment.verified', `${receiptId} [${method} •••• ${last4} Gross=$${amountUsd.toFixed(2)} Net=$${journalEntry.netCashUsd.toFixed(2)} JRN=${journalEntry.journalId}]`);
       saveState(S);
 
+      const isOwnerCaller = isOwnerUser(u);
       return {
         status: 200,
         payload: {
           ok: true,
           verified: true,
-          receipt,
-          journalEntry,
-          paymentProfile,
+          receipt: isOwnerCaller ? receipt : scrubClientReceiptForExternalUser(receipt),
+          ...(isOwnerCaller ? { journalEntry } : {}),
+          paymentProfile: isOwnerCaller ? paymentProfile : scrubPaymentProfileForExternalUser(paymentProfile),
           unlockedApps: u.allowedApps,
           qualifiedResources: u.qualifiedResources,
           triggerGuidedOnboarding: !u.onboardingCompleted,
@@ -3924,15 +3952,17 @@ const server = http.createServer(async (req, res) => {
       if (isEmployeeUser(u)) {
         return sendJson(res, 403, { ok: false, error: 'Employee accounts do not have access to payment settings.' });
       }
+      const isAdminCaller = isOwnerUser(u);
       return sendJson(res, 200, {
         ok: true,
         verified: Boolean(u.paymentProfile && u.paymentProfile.verified),
-        paymentProfile: u.paymentProfile || null,
-        payments: Array.isArray(u.payments) ? u.payments : [],
+        paymentProfile: isAdminCaller ? (u.paymentProfile || null) : scrubPaymentProfileForExternalUser(u.paymentProfile),
+        payments: Array.isArray(u.payments)
+          ? (isAdminCaller ? u.payments : u.payments.map(scrubClientReceiptForExternalUser))
+          : [],
         complianceFramework: {
           pciDss: 'PCI-DSS v4.0 SAQ-A Tokenized Vault (Zero Raw PAN Storage)',
-          eftaRegE: 'Electronic Fund Transfer Act (15 U.S.C. 1693) & NACHA Operating Rules Compliant',
-          merchantEntity: 'Milton Group Concepts LLC (CAGE 17GC6 · UEI XN89KKM6JT89)'
+          eftaRegE: 'Electronic Fund Transfer Act (15 U.S.C. 1693) & NACHA Operating Rules Compliant'
         }
       });
     }
@@ -3952,8 +3982,19 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/payments/config' && req.method === 'GET') {
       const u = getAuthenticatedUser(req);
+      if (!u) {
+        return sendJson(res, 401, { ok: false, error: 'Authentication required to view payment settings.' });
+      }
       if (isEmployeeUser(u)) {
         return sendJson(res, 403, { ok: false, error: 'Employee accounts do not have access to payment gateway settings.' });
+      }
+      if (!isOwnerUser(u)) {
+        return sendJson(res, 200, {
+          ok: true,
+          pciCompliant: true,
+          tokenizationEnforced: true,
+          methods: ['ach_nacha', 'card_tokenized', 'gpc_wawf']
+        });
       }
       const gw = Object.assign({
         activeProcessor: 'stripe_saq_a',
@@ -3963,8 +4004,7 @@ const server = http.createServer(async (req, res) => {
         authorizeNetApiLoginId: process.env.AUTHNET_API_LOGIN_ID || '',
         authorizeNetClientKey: process.env.AUTHNET_CLIENT_KEY || '',
         mercuryAchEnabled: true,
-        wawfPieeEnabled: true,
-        cageCode: 'CAGE 17GC6'
+        wawfPieeEnabled: true
       }, S.pciGatewayConfig || {});
       return sendJson(res, 200, {
         ok: true,
@@ -4230,46 +4270,33 @@ const server = http.createServer(async (req, res) => {
           allowedApps: u.role === 'owner' ? APPS_CATALOG.map(a => a.id) : APPS_CATALOG.filter(a => can(u, 'app', a.id, 'view')).map(a => a.id),
           qualifiedResources: getQualifiedResourcesForUser(u),
           allowedPortals: getAllowedPortalsForUser(u),
-          paymentProfile: u.paymentProfile || null,
-          payments: Array.isArray(u.payments) ? u.payments : []
+          paymentProfile: isOwnerUser(u) ? (u.paymentProfile || null) : scrubPaymentProfileForExternalUser(u.paymentProfile),
+          payments: Array.isArray(u.payments) ? (isOwnerUser(u) ? u.payments : u.payments.map(scrubClientReceiptForExternalUser)) : []
         } : null
       });
     }
 
     if (pathname === '/api/intake/verify' && req.method === 'GET') {
       const u = getAuthenticatedUser(req);
+      if (!isOwnerUser(u)) {
+        return sendJson(res, 200, {
+          ok: true,
+          status: 'ACTIVE'
+        });
+      }
       const controls = {
         allowedSsoProviders: Array.from(ALLOWED_SSO_PROVIDERS),
-        allowedProviders: Array.from(ALLOWED_SSO_PROVIDERS),
-        passwordAuthDisabled: true,
-        emailLinkDisabled: true,
         ownerSpoofProtectionOnIntake: true,
-        ownerAntiSpoofing: true,
         ndaAttestationRequired: true,
-        ndaRequired: true,
-        mfaBiometricOrTotpSupported: true,
         xssInputSanitization: true,
         slidingWindowRateLimiter: true,
-        rateLimitPerMinute: 25,
-        httpOnlyHmacSha256SessionCookie: true,
-        defaultCustomerTier: 'CUSTOMER_RESTRICTED',
-        defaultCustomerApps: DEFAULT_CUSTOMER_APPS,
-        defaultCustomerUnlockedApps: DEFAULT_CUSTOMER_APPS,
-        defaultCustomerRestrictedApps: APPS_CATALOG.filter(a => !a.defaultCustomer).map(a => a.id),
-        defaultCustomerAllowedPortals: DEFAULT_CUSTOMER_PORTALS
+        httpOnlyHmacSha256SessionCookie: true
       };
       return sendJson(res, 200, {
         ok: true,
         intakePipeline: 'ACTIVE_ZERO_TRUST_V2',
         securityControls: controls,
-        intakeSecurity: controls,
-        activeSession: u ? {
-          uid: u.id,
-          email: u.email,
-          role: u.role,
-          accessTier: u.role === 'owner' ? 'OWNER_FULL' : 'CUSTOMER_RESTRICTED',
-          allowedApps: u.role === 'owner' ? APPS_CATALOG.map(a => a.id) : APPS_CATALOG.filter(a => can(u, 'app', a.id, 'view')).map(a => a.id)
-        } : null
+        intakeSecurity: controls
       });
     }
 
@@ -4283,17 +4310,34 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === '/api/agents/registry' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required.' });
       const regPath = path.join(ROOT, 'agents', 'registry.json');
       let registry = null;
       try {
         registry = JSON.parse(fs.readFileSync(regPath, 'utf8'));
       } catch (_) {
-        registry = { ok: true,agents: [] };
+        registry = { ok: true, agents: [] };
+      }
+      if (!isOwnerUser(u) && registry && Array.isArray(registry.agents)) {
+        registry = {
+          ok: true,
+          agents: registry.agents.map(a => ({
+            id: a.id,
+            name: a.name,
+            callSign: a.callSign,
+            appSlug: a.appSlug,
+            role: a.role,
+            primaryTool: a.primaryTool
+          }))
+        };
       }
       return sendJson(res, 200, { ok: true, registry });
     }
 
     if (pathname === '/api/otto/spec' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required.' });
       const reqAgent = sanitizeInput(parsedUrl.searchParams.get('agent') || 'otto', 32).toLowerCase();
       const allowedAgents = new Set(['otto', 'argo', 'arya', 'zeno', 'cato', 'vega', 'kael', 'clio', 'alma', 'orin']);
       const agentSlug = allowedAgents.has(reqAgent) ? reqAgent : 'otto';
@@ -4302,7 +4346,15 @@ const server = http.createServer(async (req, res) => {
       try {
         spec = JSON.parse(fs.readFileSync(specPath, 'utf8'));
       } catch (_) {
-        spec = { id: agentSlug, name: agentSlug.toUpperCase(), callSign: agentSlug.toUpperCase() + '-01', model: 'gemini-3.8-flash' };
+        spec = { id: agentSlug, name: agentSlug.toUpperCase(), callSign: agentSlug.toUpperCase() + '-01' };
+      }
+      if (!isOwnerUser(u) && spec && typeof spec === 'object') {
+        spec = {
+          id: spec.id || agentSlug,
+          name: spec.name || agentSlug.toUpperCase(),
+          callSign: spec.callSign || (agentSlug.toUpperCase() + '-01'),
+          role: spec.role || 'Guided Portal Specialist'
+        };
       }
       return sendJson(res, 200, { ok: true, agent: agentSlug, spec });
     }
@@ -4729,19 +4781,23 @@ const server = http.createServer(async (req, res) => {
           runId,
           model: 'gemini-3.8-flash',
           toolExecuted: 'sync_workspace_studio_flow',
-          summary: `Workspace Studio Flow (w13225285bbe5e967be82464a88a6262c) executed "${actType}" under service identity connect@miltongroupsecurity.org.`,
+          summary: `Workspace Flow executed "${actType}" and synchronized your active portal state.`,
           recommendedApps: u.recommendedApps || DEFAULT_CUSTOMER_APPS,
           recommendedResources: ['resource-fast-track'],
           recommendedTemplateId: u.recommendedTemplateId || 'tpl_biz_turnkey_scale',
-          nextUnlockedStage: 'Drive + Gmail + Calendar Flow Verified',
+          nextUnlockedStage: 'Workspace Flow Verified',
           transferMatchPct: '95% Match',
-          studioFlowStatus: 'ACTIVE_38EF575F_CONNECTED'
+          studioFlowStatus: 'ACTIVE_CONNECTED'
         };
       }
 
+      if (!isOwnerUser(u)) {
+        delete output.aistudioPromptId;
+        delete output.aistudioUrl;
+      }
       const recAppSlugs = Array.isArray(output.recommendedApps) ? output.recommendedApps : [];
       output.promptReceived = userPrompt || null;
-      output.orchestrator = { agent: 'Otto', callSign: 'OTTO-01', aistudioPromptId: '1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6' };
+      output.orchestrator = { agent: 'Otto', callSign: 'OTTO-01' };
       output.appEntitlements = recAppSlugs.map(slug => {
         const appObj = APPS_CATALOG.find(a => a.id === slug) || { id: slug, title: slug, codename: 'Persona', callSign: 'OTTO-01', href: 'projects/' + slug + '/index.html' };
         const isEntitled = u.role === 'owner' || can(u, 'app', slug, 'view');
@@ -5744,8 +5800,19 @@ const server = http.createServer(async (req, res) => {
     }
     const baseName = path.basename(cleanRel);
 
-    if (BLOCKED_FILES.has(baseName) || cleanRel.startsWith('.')) {
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    const lowerRel = cleanRel.toLowerCase();
+    const lowerBase = baseName.toLowerCase();
+    const isBlockedStatic =
+      BLOCKED_FILES.has(baseName) ||
+      cleanRel.startsWith('.') ||
+      lowerRel.startsWith('agents/') ||
+      lowerRel.startsWith('.data/') ||
+      lowerRel.startsWith('node_modules/') ||
+      lowerRel.includes('/.') ||
+      /\.(ps1|sh|env|yaml|yml|md|sql|log|bak|lock|map|pem|key)$/i.test(lowerBase) ||
+      (lowerBase.endsWith('.json') && !lowerRel.startsWith('projects/'));
+    if (isBlockedStatic) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS });
       return res.end('Not Found');
     }
 

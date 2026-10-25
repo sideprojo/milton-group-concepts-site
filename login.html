@@ -920,8 +920,8 @@
       if (!firebase.apps || !firebase.apps.length) {
         firebase.initializeApp({
           apiKey: cfg.firebaseApiKey,
-          authDomain: cfg.firebaseAuthDomain || 'gen-lang-client-0636792472.firebaseapp.com',
-          projectId: cfg.firebaseProjectId || 'gen-lang-client-0636792472'
+          authDomain: cfg.firebaseAuthDomain || '',
+          projectId: cfg.firebaseProjectId || ''
         });
       }
       firebaseAuthReady = true;
@@ -1103,7 +1103,7 @@
       if (normalizedEmail === 'malik.khabir@miltongroupsecurity.org') {
         if (!W.isValidAdminSecret || !W.isValidAdminSecret(password)) {
           msg.style.color = '#f87171';
-          msg.textContent = 'Administrator Authentication Failed: Invalid password for malik.khabir@Miltongroupsecurity.org.';
+          msg.textContent = 'Invalid email/username or password.';
           return;
         }
         W.signInAs('owner', 'password', password);
@@ -1113,7 +1113,7 @@
       }
       if ((normalizedEmail.endsWith('@miltongroupsecurity.org') && normalizedEmail !== 'malik.khabir@miltongroupsecurity.org') || normalizedEmail.startsWith('owner@') || normalizedEmail.startsWith('admin@')) {
         msg.style.color = '#f87171';
-        msg.textContent = 'Security Policy Enforced: Only 1 Administrator account exists (malik.khabir@Miltongroupsecurity.org).';
+        msg.textContent = 'Invalid email/username or password.';
         return;
       }
       const existing = Object.values(W.S.users || {}).find(u => u.id !== 'owner' && (String(u.email || '').toLowerCase() === normalizedEmail || String(u.username || '').toLowerCase() === rawId.toLowerCase()));

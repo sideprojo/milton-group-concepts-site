@@ -120,7 +120,7 @@
 
       <div class="housing-card selected" id="house-google" onclick="selectHousing('google')">
         <h4>Google Cloud Run + Vertex AI <span class="cost-tag">$0 Idle</span></h4>
-        <p><strong>Project:</strong> MGC Site (<code>gen-lang-client-0636792472</code>)<br/>
+        <p><strong>Project:</strong> MGC Site (<code>mgc-cloud-workspace</code>)<br/>
         <strong>Engine:</strong> LangGraph FastAPI Container (<code>min-instances=0, max=2</code>) + Gemini 2.5 Flash.<br/>
         <strong>Visual UI:</strong> Google AI Studio / Vertex Agent Builder.</p>
       </div>
@@ -242,7 +242,7 @@
       }
       if (node === 'all' || node === 'cost') {
         document.getElementById('node-cost').classList.add('running');
-        logTelemetry(`[CLOUD COST SENTINEL] Checked Billing 01FC46-CB35A7-37BC98:\n- MGC Site (gen-lang-client-0636792472): min=0, max=2 ($0.00 idle)\n- FixSolutionsLLC (gen-lang-client-0869658530): min=0, max=2 ($0.00 idle)\n- FIX Solutions LLC: min=0, max=2 ($0.00 idle)\n- Paid APIs Blocked: earthengine, compute, sqladmin.`);
+        logTelemetry(`[CLOUD COST SENTINEL] Checked Billing VERIFIED-BILLING-GUARD:\n- MGC Site (mgc-cloud-workspace): min=0, max=2 ($0.00 idle)\n- FixSolutionsLLC (mgc-cloud-workspace): min=0, max=2 ($0.00 idle)\n- FIX Solutions LLC: min=0, max=2 ($0.00 idle)\n- Paid APIs Blocked: earthengine, compute, sqladmin.`);
       }
       if (node === 'all' || node === 'cipp') {
         document.getElementById('node-cipp').classList.add('running');

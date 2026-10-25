@@ -330,7 +330,7 @@
       document.getElementById('btnEnableGmp3d').addEventListener('click', () => {
         const key = document.getElementById('gmpApiKeyInput').value.trim();
         if (!key) {
-          consoleLines.innerHTML = `[GUARDRAIL] Enter a Google Maps Platform API key from project gen-lang-client-0636792472 to stream native <gmp-map-3d> 3D Tiles, or use the live Satellite Viewport above at $0.00 cost.`;
+          consoleLines.innerHTML = `[GUARDRAIL] Enter a Google Maps Platform API key from your authorized Maps Platform project to stream native <gmp-map-3d> 3D Tiles, or use the live Satellite Viewport above at $0.00 cost.`;
           return;
         }
         const s = document.createElement('script');

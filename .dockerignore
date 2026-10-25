@@ -1,7 +1,14 @@
 .git
 .gitignore
-node_modules
+.gitguardian.yaml
 .data
-*.log
 .env
 .env.*
+*.ps1
+*.sh
+*.md
+*.log
+*.bak
+node_modules
+zero-trust-edge-policy.json
+firestore.rules
