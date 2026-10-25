@@ -983,12 +983,12 @@
 
       '<div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)">' +
         '<div class="row" style="margin-bottom:12px">' +
-          '<h2 style="margin:0;font-size:15px;font-weight:600">Payment Gateways (MGC &amp; F.I.X)</h2>' +
+          '<h2 style="margin:0;font-size:15px;font-weight:600">Payment Gateways &amp; Hosted Processors ($0 Upfront)</h2><span class="chip ok">Card · Cash App · Apple/GPay · ACH</span>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px">' +
           '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">Default Rail</label>' +
             '<select id="pciActiveProcessor" style="width:100%;padding:8px 10px;font-size:12.5px">' +
-              '<option value="stripe_saq_a"' + (gw.activeProcessor === 'stripe_saq_a' ? ' selected' : '') + '>Option 1: Stripe SAQ-A (MGC &amp; FIX)</option>' +
+              '<option value="stripe_saq_a"' + (gw.activeProcessor === 'stripe_saq_a' ? ' selected' : '') + '>Option 1: Stripe Hosted Checkout (Card + Cash App + ACH · $0/mo)</option><option value="cashapp_direct"' + (gw.activeProcessor === 'cashapp_direct' ? ' selected' : '') + '>Option 2: Cash App Pay / Square Checkout ($0/mo)</option>' +
               '<option value="wawf_piee_eft"' + (gw.activeProcessor === 'wawf_piee_eft' ? ' selected' : '') + '>Option 4: DoD WAWF / PIEE EFT (FIX)</option>' +
               '<option value="mercury_plaid_ach"' + (gw.activeProcessor === 'mercury_plaid_ach' ? ' selected' : '') + '>Option 3: Mercury + Plaid ACH</option>' +
               '<option value="authorizenet_accept_js"' + (gw.activeProcessor === 'authorizenet_accept_js' ? ' selected' : '') + '>Option 2: Authorize.Net Accept.js</option>' +
@@ -1003,7 +1003,7 @@
         '</div>' +
         '<button type="button" class="btn pri" id="btnSavePciGateway" style="padding:8px 16px;font-size:12.5px">Save Gateways</button>' +
       '</div>' +
-      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">PCI-DSS Tokenized Receipts (' + list.length + ')</h2>' +
+      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Processor Payment &amp; Contribution Receipts (' + list.length + ')</h2>' +
       (list.length
         ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Entity</th><th>Customer</th><th>Gross / Net</th><th>Instrument</th><th>Status</th><th>Date</th></tr></thead><tbody>' +
           list.map(p => '<tr style="cursor:default"><td><code style="font-size:11px;color:#34d399">' + esc(p.receiptId) + '</code></td><td><b style="color:' + (p.merchantEntity === 'FIX' ? '#93c5fd' : '#34d399') + '">' + esc(p.merchantEntity || 'MGC') + '</b></td><td><b>' + esc(p.billingName || name(p.uid)) + '</b></td><td>$' + Number(p.amountUsd || 0).toFixed(2) + (p.netCashUsd !== undefined ? ' <small style="color:#34d399">(Net $' + Number(p.netCashUsd).toFixed(2) + ')</small>' : '') + '</td><td><b>' + esc(p.cardBrand || p.method) + ' · ' + esc(p.last4) + '</b></td><td><span style="color:#34d399;font-weight:600">' + esc(p.reconciliationStatus || 'VERIFIED') + '</span></td><td style="font-size:11.5px;color:var(--mut)">' + new Date(p.createdAt || Date.now()).toLocaleDateString() + '</td></tr>').join('') +

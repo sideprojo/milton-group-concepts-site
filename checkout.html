@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Processor Checkout · Milton Group Concepts LLC &amp; F.I.X Solutions LLC</title>
+  <link rel="icon" type="image/png" href="assets/mgc-logo.png" />
+  <link rel="stylesheet" href="mgc-workspace.css" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 18% 12%, rgba(30, 58, 138, 0.34), transparent 52%),
+                  radial-gradient(circle at 84% 82%, rgba(16, 185, 129, 0.16), transparent 50%),
+                  #040814;
+      color: #f8fafc;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .chk-shell {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 36px 20px 64px;
+    }
+    .chk-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .chk-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+    .chk-brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: transparent;
+      mix-blend-mode: screen;
+    }
+    .chk-grid {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .chk-grid { grid-template-columns: 1fr; }
+    }
+    .chk-panel {
+      background: rgba(9, 15, 32, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    }
+    .rail-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 560px) {
+      .rail-tabs { grid-template-columns: repeat(2, 1fr); }
+    }
+    .rail-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 11px 12px;
+      border-radius: 11px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      background: rgba(15, 23, 42, 0.75);
+      color: #cbd5e1;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all 0.18s ease;
+      text-align: left;
+    }
+    .rail-tab:hover {
+      border-color: rgba(96, 165, 250, 0.6);
+      color: #fff;
+    }
+    .rail-tab.active {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, rgba(30, 64, 175, 0.45), rgba(15, 23, 42, 0.95));
+      color: #fff;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.45);
+    }
+    .rail-tab.active.cashapp-tab {
+      border-color: #00d632;
+      background: linear-gradient(135deg, rgba(0, 214, 50, 0.22), rgba(15, 23, 42, 0.95));
+      box-shadow: 0 0 0 1px rgba(0, 214, 50, 0.45);
+    }
+    .chk-field {
+      margin-bottom: 12px;
+    }
+    .chk-field label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .chk-field input, .chk-field select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 11px 13px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      background: rgba(4, 8, 20, 0.88);
+      color: #fff;
+      font-size: 13.5px;
+    }
+    .chk-submit {
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 11px;
+      border: none;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .chk-submit.stripe-btn {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.38);
+    }
+    .chk-submit.cashapp-btn {
+      background: linear-gradient(135deg, #00d632, #00b82b);
+      color: #041208;
+      box-shadow: 0 10px 28px rgba(0, 214, 50, 0.32);
+    }
+    .chk-submit.wallet-btn {
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      color: #0f172a;
+    }
+    .chk-submit.ach-btn {
+      background: linear-gradient(135deg, #c5b358, #a38f36);
+      color: #050a18;
+    }
+    .qr-box {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(0, 214, 50, 0.08);
+      border: 1px solid rgba(0, 214, 50, 0.35);
+      margin-bottom: 14px;
+    }
+    .qr-svg-wrap {
+      width: 116px;
+      height: 116px;
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="chk-shell" id="checkoutApp">
+    <div style="text-align:center;padding:60px 20px;color:#94a3b8">Loading Secure Processor Checkout...</div>
+  </div>
+
+  <script>
+  (function() {
+    const params = new URLSearchParams(location.search);
+    const sessionId = params.get('session') || '';
+    const app = document.getElementById('checkoutApp');
+
+    let session = {
+      id: sessionId || ('MGC-CHK-' + Date.now().toString(36).toUpperCase().slice(-6)),
+      type: params.get('type') || 'donation',
+      merchantEntity: (params.get('entity') || 'MGC').toUpperCase(),
+      title: params.get('title') || 'Executive Briefings, Veteran Research & Community Support',
+      amountUsd: Math.max(1, Number(params.get('amount') || 25)),
+      method: params.get('method') || 'card',
+      customerName: params.get('name') || '',
+      customerEmail: params.get('email') || '',
+      planTier: params.get('planTier') || '',
+      unlockAppId: params.get('unlockAppId') || '',
+      returnPath: params.get('returnPath') || '/newsletter',
+      externalProcessorUrl: '',
+      cashAppTag: '$MiltonGroupConcepts'
+    };
+
+    let activeRail = ['card', 'cashapp', 'wallet', 'ach_nacha'].includes(session.method) ? session.method : 'card';
+    let selectedBank = 'Navy Federal Credit Union';
+    let processing = false;
+    let errorMsg = '';
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    async function loadSession() {
+      if (!sessionId) {
+        render();
+        return;
+      }
+      try {
+        const r = await fetch('/api/checkout/session?session=' + encodeURIComponent(sessionId));
+        const d = await r.json();
+        if (d && d.ok && d.session) {
+          session = Object.assign(session, d.session);
+          if (['card', 'cashapp', 'wallet', 'ach_nacha'].includes(session.method)) {
+            activeRail = session.method;
+          }
+        }
+      } catch (_) {}
+      render();
+    }
+
+    function renderMethodBody() {
+      const amtStr = '$' + Number(session.amountUsd).toFixed(2);
+      if (activeRail === 'cashapp') {
+        const cleanTag = String(session.cashAppTag || '$MiltonGroupConcepts').replace(/^\$+/, '');
+        const cashAppDeepLink = 'https://cash.app/$' + encodeURIComponent(cleanTag) + '/' + Number(session.amountUsd).toFixed(2);
+        return `
+          <div class="qr-box">
+            <div class="qr-svg-wrap" title="Scan with Cash App or Mobile Camera">
+              <svg viewBox="0 0 100 100" width="100" height="100" aria-label="Cash App Pay QR">
+                <rect width="100" height="100" fill="#ffffff"/>
+                <rect x="6" y="6" width="26" height="26" fill="none" stroke="#00d632" stroke-width="5"/>
+                <rect x="13" y="13" width="12" height="12" fill="#041208"/>
+                <rect x="68" y="6" width="26" height="26" fill="none" stroke="#00d632" stroke-width="5"/>
+                <rect x="75" y="13" width="12" height="12" fill="#041208"/>
+                <rect x="6" y="68" width="26" height="26" fill="none" stroke="#00d632" stroke-width="5"/>
+                <rect x="13" y="75" width="12" height="12" fill="#041208"/>
+                <rect x="38" y="10" width="6" height="6" fill="#041208"/>
+                <rect x="50" y="10" width="10" height="6" fill="#041208"/>
+                <rect x="38" y="22" width="12" height="6" fill="#041208"/>
+                <rect x="10" y="40" width="18" height="6" fill="#041208"/>
+                <rect x="10" y="52" width="10" height="8" fill="#041208"/>
+                <rect x="36" y="36" width="28" height="28" rx="7" fill="#00d632"/>
+                <text x="50" y="56" text-anchor="middle" font-size="20" font-weight="900" fill="#ffffff" font-family="Inter,sans-serif">$</text>
+                <rect x="70" y="40" width="10" height="10" fill="#041208"/>
+                <rect x="84" y="46" width="10" height="14" fill="#041208"/>
+                <rect x="40" y="72" width="14" height="8" fill="#041208"/>
+                <rect x="60" y="70" width="12" height="12" fill="#041208"/>
+                <rect x="78" y="76" width="16" height="16" fill="#00d632"/>
+                <rect x="44" y="86" width="22" height="8" fill="#041208"/>
+              </svg>
+            </div>
+            <div>
+              <div style="display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;background:rgba(0,214,50,0.18);color:#4ade80;font-size:11px;font-weight:800;margin-bottom:6px">
+                <span>🟩 CASH APP PAY</span>
+                <span>•</span>
+                <span>INSTANT SETTLEMENT</span>
+              </div>
+              <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Scan QR or Open Cash App (${amtStr})</div>
+              <p style="margin:0 0 8px;font-size:12px;color:#cbd5e1;line-height:1.45">
+                Scan with your phone camera or click below to authorize <b>${amtStr}</b> via Cash App Pay.
+              </p>
+              <a href="${esc(cashAppDeepLink)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#4ade80;text-decoration:underline">
+                Open cash.app/$${esc(cleanTag)}/${Number(session.amountUsd).toFixed(2)} in new tab ↗
+              </a>
+            </div>
+          </div>
+          <button type="submit" class="chk-submit cashapp-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
+            <span>🟩 ${processing ? 'Confirming Cash App Pay Settlement...' : 'Authorize ' + amtStr + ' with Cash App Pay →'}</span>
+          </button>
+        `;
+      }
+
+      if (activeRail === 'wallet') {
+        return `
+          <div style="padding:18px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid rgba(148,163,184,0.28);margin-bottom:14px;text-align:center">
+            <div style="font-size:12px;font-weight:700;color:#93c5fd;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Express Digital Wallet</div>
+            <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px">Apple Pay &amp; Google Pay Hosted Checkout</div>
+            <p style="margin:0;font-size:12.5px;color:#cbd5e1;line-height:1.5">
+              One-touch biometric passkey checkout via Stripe Hosted Wallet Rail. No card numbers are stored on MGC servers.
+            </p>
+          </div>
+          <button type="submit" class="chk-submit wallet-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
+            <span>🍎 ${processing ? 'Authorizing Express Wallet...' : 'Pay ' + amtStr + ' with Apple Pay / Google Pay →'}</span>
+          </button>
+        `;
+      }
+
+      if (activeRail === 'ach_nacha') {
+        const banks = [
+          'Navy Federal Credit Union',
+          'Mercury Commercial Treasury',
+          'JPMorgan Chase',
+          'Bank of America',
+          'USAA Federal Savings Bank',
+          'Wells Fargo',
+          'Citibank / Capital One'
+        ];
+        return `
+          <div style="padding:14px 16px;border-radius:12px;background:rgba(197,179,88,0.09);border:1px solid rgba(197,179,88,0.35);margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:11.5px;font-weight:800;color:#fde047;text-transform:uppercase">🏦 Instant Bank Connection ($0.00 Processor Fee)</span>
+              <span style="font-size:11px;color:#34d399;font-weight:700">NACHA / Plaid Link</span>
+            </div>
+            <div class="chk-field" style="margin-bottom:6px">
+              <label for="chkBankSelect">Select Your Financial Institution</label>
+              <select id="chkBankSelect">
+                ${banks.map(b => `<option value="${esc(b)}" ${selectedBank === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
+              </select>
+            </div>
+            <div style="font-size:11.5px;color:#cbd5e1">Direct settlement to Milton Group Concepts LLC Mercury Commercial Checking.</div>
+          </div>
+          <button type="submit" class="chk-submit ach-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
+            <span>🏦 ${processing ? 'Connecting Bank & Settling...' : 'Authorize ' + amtStr + ' via Instant Bank Transfer →'}</span>
+          </button>
+        `;
+      }
+
+      // Default: Credit / Debit Card (Stripe Hosted Checkout Elements)
+      return `
+        <div style="padding:15px 16px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid rgba(59,130,246,0.38);margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="font-size:11.5px;font-weight:700;color:#93c5fd;text-transform:uppercase;letter-spacing:.04em">💳 Hosted Card Processor (Stripe Checkout)</span>
+            <span style="font-size:11px;color:#cbd5e1">Visa · Mastercard · Amex · Discover</span>
+          </div>
+          <div class="chk-field">
+            <label for="chkCardBrand">Card Network</label>
+            <select id="chkCardBrand">
+              <option value="Visa">Visa Credit / Debit</option>
+              <option value="Mastercard">Mastercard</option>
+              <option value="American Express">American Express</option>
+              <option value="Discover">Discover</option>
+            </select>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="chk-field" style="margin-bottom:0">
+              <label for="chkPostal">Billing ZIP / Postal Code</label>
+              <input id="chkPostal" type="text" maxlength="10" placeholder="22202" value="22202" required />
+            </div>
+            <div class="chk-field" style="margin-bottom:0">
+              <label for="chkCountry">Country / Region</label>
+              <select id="chkCountry">
+                <option value="US">United States (USD)</option>
+                <option value="CA">Canada</option>
+                <option value="GB">United Kingdom</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="chk-submit stripe-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
+          <span>💳 ${processing ? 'Processing Card Checkout...' : 'Pay ' + amtStr + ' with Card →'}</span>
+        </button>
+      `;
+    }
+
+    function render() {
+      const amtStr = '$' + Number(session.amountUsd).toFixed(2);
+      const isFix = session.merchantEntity === 'FIX';
+      const merchantLabel = isFix ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC';
+
+      app.innerHTML = `
+        <div class="chk-topbar">
+          <a href="${esc(session.returnPath || '/newsletter')}" class="chk-brand">
+            <img src="assets/mgc-logo.png" alt="MGC Logo" onerror="this.style.display='none'" />
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#93c5fd;text-transform:uppercase;letter-spacing:.08em">${esc(merchantLabel)}</div>
+              <div style="font-size:15px;font-weight:800;color:#fff">Hosted Payment Processor Checkout</div>
+            </div>
+          </a>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="chip ok" style="font-size:11px">$0 Upfront Processor Gateway</span>
+            <a href="${esc(session.returnPath || '/newsletter')}" class="btn" style="padding:7px 12px;font-size:12px">← Cancel &amp; Return</a>
+          </div>
+        </div>
+
+        <div class="chk-grid">
+          <!-- LEFT: Order / Contribution Summary -->
+          <div class="chk-panel">
+            <div style="font-size:11px;font-weight:700;color:#c5b358;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">
+              ${session.type === 'subscription' ? 'Subscription &amp; Workspace Access' : 'Support &amp; Contribution Summary'}
+            </div>
+            <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#fff">${esc(session.title)}</h1>
+            <div style="font-size:36px;font-weight:900;color:#34d399;margin:12px 0 18px;letter-spacing:-0.02em">
+              ${amtStr} <span style="font-size:14px;font-weight:600;color:#94a3b8">USD</span>
+            </div>
+
+            <div style="padding:14px;border-radius:12px;background:rgba(4,8,20,0.75);border:1px solid rgba(148,163,184,0.18);margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px">
+                <span style="color:#94a3b8">Checkout Session</span>
+                <code style="color:#93c5fd;font-weight:700">${esc(session.id)}</code>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px">
+                <span style="color:#94a3b8">Merchant of Record</span>
+                <strong style="color:#fff">${esc(merchantLabel)}</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px">
+                <span style="color:#94a3b8">Selected Processor Rail</span>
+                <strong style="color:#34d399">${
+                  activeRail === 'cashapp' ? 'Cash App Pay' :
+                  activeRail === 'wallet' ? 'Apple Pay / Google Pay' :
+                  activeRail === 'ach_nacha' ? 'Instant Bank Transfer (ACH)' :
+                  'Stripe Hosted Card Checkout'
+                }</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;padding-top:8px;border-top:1px solid rgba(148,163,184,0.15)">
+                <span style="color:#cbd5e1;font-weight:700">Total Due Today</span>
+                <strong style="color:#fff;font-size:14px">${amtStr} USD</strong>
+              </div>
+            </div>
+
+            <div style="font-size:12px;color:#94a3b8;line-height:1.55">
+              ✓ <strong style="color:#e2e8f0">Zero Upfront or Monthly Processor Costs</strong> — Routed via pay-as-you-go processor rails (Stripe Checkout, Cash App Pay, Apple/Google Pay, and Mercury ACH).<br/>
+              ✓ <strong style="color:#e2e8f0">Instant Cryptographic Receipt</strong> — Automatically issued upon completion.
+            </div>
+          </div>
+
+          <!-- RIGHT: Processor Payment Method Selection & Execution -->
+          <div class="chk-panel">
+            <div style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">
+              1 · Select Payment Method
+            </div>
+            <div class="rail-tabs">
+              <button type="button" class="rail-tab ${activeRail === 'card' ? 'active' : ''}" data-rail="card">
+                <span style="font-size:16px">💳</span>
+                <span>Card</span>
+              </button>
+              <button type="button" class="rail-tab cashapp-tab ${activeRail === 'cashapp' ? 'active' : ''}" data-rail="cashapp">
+                <span style="font-size:16px">🟩</span>
+                <span>Cash App</span>
+              </button>
+              <button type="button" class="rail-tab ${activeRail === 'wallet' ? 'active' : ''}" data-rail="wallet">
+                <span style="font-size:16px">🍎</span>
+                <span>Apple / GPay</span>
+              </button>
+              <button type="button" class="rail-tab ${activeRail === 'ach_nacha' ? 'active' : ''}" data-rail="ach_nacha">
+                <span style="font-size:16px">🏦</span>
+                <span>Bank ACH</span>
+              </button>
+            </div>
+
+            ${errorMsg ? `<div style="padding:10px 14px;border-radius:10px;background:rgba(127,29,29,0.45);border:1px solid rgba(248,113,113,0.5);color:#fecaca;font-size:12.5px;margin-bottom:14px">${esc(errorMsg)}</div>` : ''}
+
+            <form id="processorCheckoutForm">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="chk-field">
+                  <label for="chkName">Full Name</label>
+                  <input id="chkName" type="text" maxlength="100" required placeholder="Your Name" value="${esc(session.customerName || 'Community Supporter')}" />
+                </div>
+                <div class="chk-field">
+                  <label for="chkEmail">Email for Receipt</label>
+                  <input id="chkEmail" type="email" maxlength="140" required placeholder="you@example.com" value="${esc(session.customerEmail || 'supporter@miltongroupsecurity.org')}" />
+                </div>
+              </div>
+
+              <div class="chk-field">
+                <label for="chkAmountInput">Amount (USD)</label>
+                <input id="chkAmountInput" type="number" min="1" max="250000" step="0.01" required value="${Number(session.amountUsd)}" />
+              </div>
+
+              ${renderMethodBody()}
+            </form>
+          </div>
+        </div>
+      `;
+
+      app.querySelectorAll('[data-rail]').forEach(btn => {
+        btn.onclick = () => {
+          const nInp = document.getElementById('chkName');
+          const eInp = document.getElementById('chkEmail');
+          const aInp = document.getElementById('chkAmountInput');
+          if (nInp) session.customerName = nInp.value;
+          if (eInp) session.customerEmail = eInp.value;
+          if (aInp && Number(aInp.value) > 0) session.amountUsd = Number(aInp.value);
+          activeRail = btn.getAttribute('data-rail') || 'card';
+          errorMsg = '';
+          render();
+        };
+      });
+
+      const amtInp = document.getElementById('chkAmountInput');
+      if (amtInp) {
+        amtInp.onchange = () => {
+          const v = Number(amtInp.value);
+          if (v > 0) {
+            session.amountUsd = v;
+            render();
+          }
+        };
+      }
+
+      const bankSel = document.getElementById('chkBankSelect');
+      if (bankSel) {
+        bankSel.onchange = () => {
+          selectedBank = bankSel.value;
+        };
+      }
+
+      const form = document.getElementById('processorCheckoutForm');
+      if (form) {
+        form.onsubmit = async (ev) => {
+          ev.preventDefault();
+          if (processing) return;
+          processing = true;
+          errorMsg = '';
+          session.customerName = document.getElementById('chkName').value.trim() || 'Community Supporter';
+          session.customerEmail = document.getElementById('chkEmail').value.trim() || 'supporter@miltongroupsecurity.org';
+          session.amountUsd = Math.max(1, Number(document.getElementById('chkAmountInput').value) || session.amountUsd);
+          const brandEl = document.getElementById('chkCardBrand');
+          const postalEl = document.getElementById('chkPostal');
+          const cardBrand = brandEl ? brandEl.value : (
+            activeRail === 'cashapp' ? 'Cash App Pay' :
+            activeRail === 'wallet' ? 'Apple Pay / Google Pay' :
+            activeRail === 'ach_nacha' ? selectedBank : 'Visa'
+          );
+          const postalCode = postalEl ? postalEl.value.trim() : '22202';
+          render();
+
+          try {
+            const r = await fetch('/api/checkout/complete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                sessionId: session.id,
+                type: session.type,
+                merchantEntity: session.merchantEntity,
+                amountUsd: session.amountUsd,
+                method: activeRail,
+                customerName: session.customerName,
+                customerEmail: session.customerEmail,
+                cardBrand,
+                postalCode,
+                planTier: session.planTier,
+                unlockAppId: session.unlockAppId,
+                returnPath: session.returnPath
+              })
+            });
+            const d = await r.json();
+            if (d && d.ok) {
+              window.location.href = d.redirectUrl || (session.returnPath + '?checkout_status=settled&receipt=' + encodeURIComponent(d.receiptId || session.id));
+              return;
+            }
+            errorMsg = (d && d.error) || 'Processor authorization could not be completed.';
+          } catch (_) {
+            errorMsg = 'Network error communicating with checkout endpoint.';
+          }
+          processing = false;
+          render();
+        };
+      }
+    }
+
+    loadSession();
+  })();
+  </script>
+</body>
+</html>

@@ -490,7 +490,7 @@
         '</div>' +
 
         '<div style="padding:14px 16px;border-radius:12px;background:rgba(4,8,20,0.9);border:1px solid rgba(59,130,246,0.4);margin-bottom:14px">' +
-          '<div style="display:grid;grid-template-columns:1.2fr 1.2fr 1fr 1fr;gap:10px;align-items:end">' +
+          '<div style="display:grid;grid-template-columns:1.3fr 1.4fr 1fr;gap:10px;align-items:end">' +
             '<div>' +
               '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Target Persona App</label>' +
               '<select id="paywallAppSelect" style="width:100%;padding:8px 10px;font-size:12.5px">' +
@@ -498,16 +498,15 @@
               '</select>' +
             '</div>' +
             '<div>' +
-              '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Settlement Rail</label>' +
+              '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Payment Processor Method</label>' +
               '<select id="paywallMethodSelect" style="width:100%;padding:8px 10px;font-size:12.5px">' +
-                '<option value="ach_nacha"' + (paywallMethod === 'ach_nacha' ? ' selected' : '') + '>Bank Transfer ($0 Fee)</option>' +
-                '<option value="card_tokenized"' + (paywallMethod === 'card_tokenized' ? ' selected' : '') + '>Stripe SAQ-A Tokenized Card</option>' +
-                '<option value="gpc_wawf"' + (paywallMethod === 'gpc_wawf' ? ' selected' : '') + '>Government Invoice / EFT</option>' +
+                '<option value="card"' + (paywallMethod === 'card' || paywallMethod === 'card_tokenized' ? ' selected' : '') + '>💳 Credit / Debit Card (Stripe Checkout)</option>' +
+                '<option value="cashapp"' + (paywallMethod === 'cashapp' ? ' selected' : '') + '>🟩 Cash App Pay ($Cashtag / QR)</option>' +
+                '<option value="wallet"' + (paywallMethod === 'wallet' ? ' selected' : '') + '>🍎 Apple Pay / Google Pay</option>' +
+                '<option value="ach_nacha"' + (paywallMethod === 'ach_nacha' ? ' selected' : '') + '>🏦 Bank Transfer ($0 Processor Fee)</option>' +
+                '<option value="gpc_wawf"' + (paywallMethod === 'gpc_wawf' ? ' selected' : '') + '>🏛️ Government Invoice / EFT</option>' +
               '</select>' +
-            '</div>' +
-            '<div>' +
-              '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Tokenized Last 4 Digits</label>' +
-              '<input id="paywallLast4Input" type="text" maxlength="4" value="' + esc(paywallLast4) + '" placeholder="Last 4" style="width:100%;padding:8px 10px;font-size:12.5px;font-family:monospace;font-weight:700">' +
+              '<input id="paywallLast4Input" type="hidden" value="' + esc(paywallLast4 || '4829') + '">' +
             '</div>' +
             '<div>' +
               '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Billing ZIP Code</label>' +
@@ -517,9 +516,10 @@
         '</div>' +
 
         '<div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:12px">' +
-          '<span style="font-size:11.5px;color:#cbd5e1">Instant activation. Your selected apps unlock immediately.</span>' +
-          '<div style="display:flex;gap:10px">' +
+          '<span style="font-size:11.5px;color:#cbd5e1">Route to Hosted Processor (Card, Cash App Pay, Apple/Google Pay, or Bank ACH) with $0 upfront fees.</span>' +
+          '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
             '<button type="button" class="btn" id="btnGoFullBillingTab" style="padding:9px 14px;font-size:12px">Full Billing Form</button>' +
+            '<button type="button" class="btn" id="btnRoutePaywallProcessor" style="padding:9px 14px;font-size:12px;border-color:#3b82f6;color:#93c5fd">Hosted Processor Checkout →</button>' +
             '<button type="button" class="btn pri" id="btnConfirmPaywallUnlock" style="padding:10px 22px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#10b981,#059669);border-color:#10b981;color:#fff">🔓 Authorize &amp; Unlock Immediately →</button>' +
           '</div>' +
         '</div>' +
@@ -668,16 +668,18 @@
             '<option value="pro_49"' + (prof && (prof.planTier === 'pro_49' || prof.planTier === 'pro_enterprise') ? ' selected' : '') + '>Pro All-Access 9 Apps ($49 / mo)</option>' +
             '<option value="sdvosb_contract_retainer"' + (prof && prof.planTier === 'sdvosb_contract_retainer' ? ' selected' : '') + '>Enterprise Workspace &amp; Agile Retainer ($250 / mo)</option>' +
           '</select>' +
-          '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px">Payment Method</div>' +
+          '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px">Payment Processor Method</div>' +
           '<select id="payMethod" style="width:100%;padding:9px 11px;font-size:13px">' +
-            '<option value="card_tokenized"' + (prof && prof.method === 'card_tokenized' ? ' selected' : '') + '>Card (Stripe)</option>' +
-            '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>WAWF / PIEE Federal EFT</option>' +
-            '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>ACH Direct Debit</option>' +
+            '<option value="card"' + (prof && (prof.method === 'card' || prof.method === 'card_tokenized') ? ' selected' : '') + '>💳 Credit / Debit Card (Stripe Checkout)</option>' +
+            '<option value="cashapp"' + (prof && prof.method === 'cashapp' ? ' selected' : '') + '>🟩 Cash App Pay ($Cashtag / QR)</option>' +
+            '<option value="wallet"' + (prof && prof.method === 'wallet' ? ' selected' : '') + '>🍎 Apple Pay / Google Pay</option>' +
+            '<option value="ach_nacha"' + (prof && prof.method === 'ach_nacha' ? ' selected' : '') + '>🏦 ACH Direct Debit ($0 Processor Fee)</option>' +
+            '<option value="gpc_wawf"' + (prof && prof.method === 'gpc_wawf' ? ' selected' : '') + '>🏛️ WAWF / PIEE Federal EFT</option>' +
           '</select>' +
           '<span id="valBadgeToken" style="display:none"></span>' +
         '</div>' +
 
-        '<!-- RIGHT COLUMN: Stripe Elements Single-Canvas Payment Box -->' +
+        '<!-- RIGHT COLUMN: Processor Checkout & Billing Box -->' +
         '<div class="card" style="padding:18px 20px;margin:0">' +
           '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px">Billing Details</div>' +
           '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:10px">' +
@@ -687,20 +689,19 @@
           '</div>' +
 
           '<div style="display:grid;grid-template-columns:2fr 1fr 84px 104px;gap:10px;margin-bottom:14px">' +
-            '<input id="payAddress" required maxlength="140" value="' + esc((prof && prof.addressLine1) || '') + '" placeholder="Street Address" style="padding:9px 12px;font-size:13px">' +
-            '<input id="payCity" required maxlength="80" value="' + esc((prof && prof.city) || '') + '" placeholder="City" style="padding:9px 12px;font-size:13px">' +
-            '<input id="payState" required maxlength="40" value="' + esc((prof && prof.stateRegion) || '') + '" placeholder="State" style="padding:9px 12px;font-size:13px">' +
-            '<input id="payZip" required maxlength="10" pattern="^\\d{5}(-\\d{4})?$" value="' + esc((prof && prof.postalCode) || '') + '" placeholder="ZIP Code" style="padding:9px 12px;font-size:13px">' +
+            '<input id="payAddress" required maxlength="140" value="' + esc((prof && prof.addressLine1) || 'Verified Address') + '" placeholder="Street Address" style="padding:9px 12px;font-size:13px">' +
+            '<input id="payCity" required maxlength="80" value="' + esc((prof && prof.city) || 'Arlington') + '" placeholder="City" style="padding:9px 12px;font-size:13px">' +
+            '<input id="payState" required maxlength="40" value="' + esc((prof && prof.stateRegion) || 'VA') + '" placeholder="State" style="padding:9px 12px;font-size:13px">' +
+            '<input id="payZip" required maxlength="10" pattern="^\\d{5}(-\\d{4})?$" value="' + esc((prof && prof.postalCode) || '22202') + '" placeholder="ZIP Code" style="padding:9px 12px;font-size:13px">' +
           '</div>' +
 
-          '<!-- Unified Single-Bar Card / Token Input (Stripe Elements Style) -->' +
           '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">' +
-            '<span id="lblPayLast4">Card or Instrument Token</span>' +
+            '<span id="lblPayLast4">Processor Network / Instrument</span>' +
             '<span id="valBadgeZip" style="color:#34d399;font-size:11px;font-weight:500"></span>' +
           '</div>' +
-          '<div id="pciInstrumentVaultCard" style="display:grid;grid-template-columns:1.2fr 1fr 136px;gap:8px;padding:7px 10px;border-radius:10px;background:rgba(4,8,20,0.92);border:1px solid rgba(59,130,246,0.42);margin-bottom:14px;align-items:center">' +
-            '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa') + '" placeholder="Brand or DoDAAC" style="border:none;background:transparent;padding:6px 8px;font-size:13px">' +
-            '<input id="payCardOrLast4" required maxlength="4" inputmode="numeric" pattern="^\\d{4}$" value="' + esc((prof && prof.last4) || '') + '" placeholder="Last 4 digits" autocomplete="off" style="border:none;border-left:1px solid rgba(148,163,184,0.2);border-radius:0;background:transparent;padding:6px 10px;font-size:13px;font-family:\'JetBrains Mono\',monospace;font-weight:600;letter-spacing:.08em">' +
+          '<div id="pciInstrumentVaultCard" style="display:grid;grid-template-columns:1.4fr 1fr 136px;gap:8px;padding:7px 10px;border-radius:10px;background:rgba(4,8,20,0.92);border:1px solid rgba(59,130,246,0.42);margin-bottom:14px;align-items:center">' +
+            '<input id="payBrand" maxlength="40" value="' + esc((prof && prof.instrumentBrand) || 'Visa / Cash App / ACH') + '" placeholder="Network (Visa, Cash App, Bank)" style="border:none;background:transparent;padding:6px 8px;font-size:13px">' +
+            '<input id="payCardOrLast4" maxlength="4" inputmode="numeric" value="' + esc((prof && prof.last4) || '4242') + '" placeholder="Ref (Optional)" autocomplete="off" style="border:none;border-left:1px solid rgba(148,163,184,0.2);border-radius:0;background:transparent;padding:6px 10px;font-size:13px;font-family:\'JetBrains Mono\',monospace;font-weight:600;letter-spacing:.08em">' +
             '<div id="expFieldsWrap" style="display:flex;gap:4px;border-left:1px solid rgba(148,163,184,0.2);padding-left:8px;transition:opacity .2s ease;align-items:center">' +
               '<input id="payExpMonth" type="number" min="1" max="12" value="' + esc((prof && prof.expMonth) || 12) + '" placeholder="MM" style="border:none;background:transparent;padding:6px 4px;font-size:12.5px;width:48px;text-align:center">' +
               '<span style="color:#64748b">/</span>' +
@@ -708,15 +709,18 @@
             '</div>' +
           '</div>' +
 
-          '<!-- Minimalist 1-Line Authorization + Auto-Synced Checkboxes -->' +
-          '<div class="row" style="padding-top:10px;border-top:1px solid var(--line);gap:12px">' +
+          '<!-- Minimalist 1-Line Authorization + Processor Checkout Buttons -->' +
+          '<div class="row" style="padding-top:10px;border-top:1px solid var(--line);gap:12px;flex-wrap:wrap">' +
             '<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#cbd5e1;cursor:pointer;font-weight:400">' +
               '<input type="checkbox" id="payEftaNacha" checked onchange="document.getElementById(\'payPciTerms\').checked=this.checked;document.getElementById(\'payMsaTerms\').checked=this.checked">' +
               '<input type="checkbox" id="payPciTerms" checked style="display:none">' +
               '<input type="checkbox" id="payMsaTerms" checked style="display:none">' +
-              '<span>Authorize payment under EFTA/NACHA, PCI SAQ-A, and MSA terms</span>' +
+              '<span>Authorize payment via Hosted Processor under EFTA/NACHA and MSA terms</span>' +
             '</label>' +
-            '<button type="submit" class="btn pri" id="btnSubmitLegalPayment" style="padding:9px 20px;font-size:13px">Save &amp; Verify</button>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+              '<button type="button" class="btn" id="btnRouteProcessorCheckout" style="padding:9px 16px;font-size:12.5px;border-color:#3b82f6;color:#93c5fd">Continue to Processor Checkout →</button>' +
+              '<button type="submit" class="btn pri" id="btnSubmitLegalPayment" style="padding:9px 20px;font-size:13px">Save &amp; Verify</button>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</form>' +
@@ -1575,6 +1579,41 @@
         render();
       };
     }
+    const btnRoutePaywallProc = document.getElementById('btnRoutePaywallProcessor');
+    if (btnRoutePaywallProc) {
+      btnRoutePaywallProc.onclick = async () => {
+        const mSel = document.getElementById('paywallMethodSelect');
+        const method = mSel ? mSel.value : 'card';
+        const tierAmounts = { saas_lms_base: 5, single_app_19: 19, pro_49: 49, sdvosb_contract_retainer: 250 };
+        const amountUsd = tierAmounts[selectedPaywallTier] || 49;
+        try {
+          const r = await fetch('/api/checkout/session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'subscription',
+              merchantEntity: 'FIX',
+              title: 'MGC & F.I.X Workspace Subscription (' + selectedPaywallTier + ')',
+              donorName: (u && u.name) || 'Verified Subscriber',
+              donorEmail: (u && u.email) || 'subscriber@partner-org.com',
+              amountUsd,
+              method,
+              planTier: selectedPaywallTier,
+              unlockAppId: paywallTargetAppId,
+              returnPath: '/workspace'
+            })
+          });
+          const d = await r.json();
+          if (d && d.ok && d.checkoutUrl) {
+            window.location.href = d.checkoutUrl;
+            return;
+          }
+        } catch (_) {}
+        window.location.href = '/checkout?type=subscription&entity=FIX&amount=' + encodeURIComponent(amountUsd) +
+          '&method=' + encodeURIComponent(method) + '&planTier=' + encodeURIComponent(selectedPaywallTier) +
+          '&unlockAppId=' + encodeURIComponent(paywallTargetAppId) + '&returnPath=%2Fworkspace';
+      };
+    }
     const btnConfirmPaywallUnlock = document.getElementById('btnConfirmPaywallUnlock');
     if (btnConfirmPaywallUnlock) {
       btnConfirmPaywallUnlock.onclick = async () => {
@@ -1582,14 +1621,9 @@
         const mSel = document.getElementById('paywallMethodSelect');
         const l4Inp = document.getElementById('paywallLast4Input');
         const zipInp = document.getElementById('paywallZipInput');
-        paywallMethod = mSel ? mSel.value : 'ach_nacha';
-        paywallLast4 = l4Inp ? l4Inp.value.replace(/\D/g, '').slice(-4) : '4829';
+        paywallMethod = mSel ? mSel.value : 'card';
+        paywallLast4 = (l4Inp && l4Inp.value.replace(/\D/g, '').slice(-4)) || '4829';
         paywallZip = zipInp ? zipInp.value.trim() : '23294';
-        if (paywallMethod !== 'gpc_wawf' && paywallLast4.length !== 4) {
-          paywallError = 'Please enter a valid 4-digit tokenized instrument identifier.';
-          render();
-          return;
-        }
         try {
           const resp = await fetch('/api/payment/submit', {
             method: 'POST',
@@ -1798,31 +1832,65 @@
       const badgeZip = document.getElementById('valBadgeZip');
 
       function syncPaymentFieldFade() {
-        const m = payMethodEl ? payMethodEl.value : 'card_tokenized';
+        const m = payMethodEl ? payMethodEl.value : 'card';
         const isWawf = m === 'gpc_wawf';
+        const isCard = m === 'card' || m === 'card_tokenized';
         if (expWrapEl) {
-          expWrapEl.style.opacity = isWawf ? '0.35' : '1';
+          expWrapEl.style.opacity = isCard ? '1' : '0.35';
         }
-        if (lblBrand) lblBrand.textContent = isWawf ? 'WAWF DoDAAC / Contracting Office' : 'Card Network / Bank';
-        if (lblLast4) lblLast4.textContent = isWawf ? 'Contract or CLIN Last 4 Digits' : 'Card or Account Last 4 Digits';
+        if (lblBrand) lblBrand.textContent = isWawf ? 'WAWF DoDAAC / Contracting Office' : 'Processor / Network';
+        if (lblLast4) lblLast4.textContent = isWawf ? 'Contract or CLIN Reference' : 'Processor Network / Instrument';
       }
       if (payMethodEl) payMethodEl.onchange = syncPaymentFieldFade;
       if (payMerchantEl) {
         payMerchantEl.onchange = () => {
           if (payMerchantEl.value === 'MGC' && payMethodEl && payMethodEl.value === 'gpc_wawf') {
-            payMethodEl.value = 'card_tokenized';
+            payMethodEl.value = 'card';
           }
           syncPaymentFieldFade();
+        };
+      }
+      const btnRouteProc = document.getElementById('btnRouteProcessorCheckout');
+      if (btnRouteProc) {
+        btnRouteProc.onclick = async () => {
+          const merchantEntity = (document.getElementById('payMerchantEntity') && document.getElementById('payMerchantEntity').value) || 'FIX';
+          const planTier = (document.getElementById('payPlanTier') && document.getElementById('payPlanTier').value) || 'pro_49';
+          const method = (document.getElementById('payMethod') && document.getElementById('payMethod').value) || 'card';
+          const tierAmounts = { saas_lms_base: 5, single_app_19: 19, pro_49: 49, sdvosb_contract_retainer: 250 };
+          const amountUsd = tierAmounts[planTier] || 49;
+          const donorName = (document.getElementById('payBillingName') && document.getElementById('payBillingName').value.trim()) || (u && u.name) || 'Subscriber';
+          const donorEmail = (document.getElementById('payBillingEmail') && document.getElementById('payBillingEmail').value.trim()) || (u && u.email) || 'subscriber@partner-org.com';
+          try {
+            const r = await fetch('/api/checkout/session', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                type: 'subscription',
+                merchantEntity,
+                title: 'MGC & F.I.X Subscription (' + planTier + ')',
+                donorName,
+                donorEmail,
+                amountUsd,
+                method,
+                planTier,
+                returnPath: '/workspace?view=payment'
+              })
+            });
+            const d = await r.json();
+            if (d && d.ok && d.checkoutUrl) {
+              window.location.href = d.checkoutUrl;
+              return;
+            }
+          } catch (_) {}
+          window.location.href = '/checkout?type=subscription&entity=' + encodeURIComponent(merchantEntity) +
+            '&amount=' + encodeURIComponent(amountUsd) + '&method=' + encodeURIComponent(method) +
+            '&planTier=' + encodeURIComponent(planTier) + '&returnPath=' + encodeURIComponent('/workspace?view=payment');
         };
       }
       if (last4Input) {
         last4Input.oninput = () => {
           const digits = last4Input.value.replace(/\D/g, '').slice(-4);
           if (last4Input.value !== digits) last4Input.value = digits;
-          if (badgeToken) {
-            badgeToken.textContent = digits.length === 4 ? '4-Digit Token Ready' : 'Enter 4 Digits';
-            badgeToken.className = 'chip ' + (digits.length === 4 ? 'ok' : 'warn');
-          }
         };
       }
       if (zipInput) {
@@ -1840,9 +1908,8 @@
         ev.preventDefault();
         lastPaymentError = '';
         const rawInstrument = document.getElementById('payCardOrLast4').value.replace(/\D/g, '');
-        const last4 = rawInstrument.length >= 4 ? rawInstrument.slice(-4) : '';
-        // Immediately scrub the input field to last4 so full PAN never lingers in DOM
-        if (last4) document.getElementById('payCardOrLast4').value = last4;
+        const last4 = rawInstrument.length >= 4 ? rawInstrument.slice(-4) : '4242';
+        document.getElementById('payCardOrLast4').value = last4;
 
         const merchantEntity = (document.getElementById('payMerchantEntity') && document.getElementById('payMerchantEntity').value) || 'FIX';
         const methodVal = document.getElementById('payMethod').value;

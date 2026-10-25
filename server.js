@@ -264,6 +264,7 @@ const CLEAN_ROUTE_TO_FILE = {
   '/sam-radar':         'sdvosb-contract-radar.html',
   '/trust-center':      'compliance-trust-center.html',
   '/newsletter':        'newsletter.html',
+  '/checkout':          'checkout.html',
   '/consultation':      'consultation.html',
   '/consultation-form': 'consultation.html',
   '/mobile':            'mobile-control.html',
@@ -293,6 +294,7 @@ const FILE_TO_CLEAN_ROUTE = {
   'sdvosb-contract-radar.html':          '/sam-radar',
   'compliance-trust-center.html':        '/trust-center',
   'newsletter.html':                     '/newsletter',
+  'checkout.html':                       '/checkout',
   'consultation.html':                   '/consultation',
   'mobile-control.html':                 '/mobile'
 };
@@ -884,9 +886,17 @@ function computeRailEconomics(grossUsd, railOrMethod) {
     railCode = 'STRIPE_ACH';
     railLabel = 'Stripe ACH Direct Debit (0.8% capped at $5.00)';
     feeUsd = Math.min(5.00, Math.round(gross * 0.008 * 100) / 100);
+  } else if (r.includes('CASHAPP') || r.includes('CASH_APP')) {
+    railCode = 'CASHAPP_PAY';
+    railLabel = 'Cash App Pay Hosted Checkout (2.9% + $0.30)';
+    feeUsd = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
+  } else if (r.includes('WALLET') || r.includes('APPLE') || r.includes('GOOGLE')) {
+    railCode = 'EXPRESS_WALLET';
+    railLabel = 'Apple Pay / Google Pay Hosted Checkout (2.9% + $0.30)';
+    feeUsd = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
   } else if (r.includes('CARD') || r === 'STRIPE_CARD') {
     railCode = 'STRIPE_CARD';
-    railLabel = 'Stripe SAQ-A Tokenized Card (2.9% + $0.30)';
+    railLabel = 'Stripe Hosted Card Checkout (2.9% + $0.30)';
     feeUsd = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
   } else if (r === 'EXPENSE_ACH') {
     railCode = 'EXPENSE_ACH';
@@ -2932,8 +2942,10 @@ const server = http.createServer(async (req, res) => {
       }
       const amountUsd = Math.round(numAmt * 100) / 100;
       const note = sanitizeInput(body.note || 'Executive Briefing & Research Support', 200);
-      const method = ['card_tokenized', 'ach_nacha', 'card_donation'].includes(body.method) ? body.method : 'card_tokenized';
-      const last4 = /^d{4}$/.test(rawPanCandidate) ? rawPanCandidate : '4242';
+      const method = ['card', 'cashapp', 'wallet', 'ach_nacha', 'card_tokenized', 'card_donation'].includes(body.method) ? body.method : 'card';
+      const last4 = /^\d{4}$/.test(rawPanCandidate)
+        ? rawPanCandidate
+        : (method === 'cashapp' ? 'CASH' : method === 'wallet' ? 'WPAY' : method === 'ach_nacha' ? 'ACH0' : '4242');
       const timestampIso = now();
 
       if (!S.newsletter) S.newsletter = seedState().newsletter;
@@ -2965,6 +2977,7 @@ const server = http.createServer(async (req, res) => {
       S.newsletter.donations.unshift(internalDonationRecord);
 
       if (typeof postAccountingJournalEntry === 'function') {
+        const railCode = method === 'ach_nacha' ? 'MERCURY_ACH' : method === 'cashapp' ? 'CASHAPP_PAY' : method === 'wallet' ? 'EXPRESS_WALLET' : 'STRIPE_CARD';
         postAccountingJournalEntry({
           receiptId: donationId,
           createdAt: timestampIso,
@@ -2973,14 +2986,14 @@ const server = http.createServer(async (req, res) => {
           accountCode: '4010',
           counterparty: donorName,
           counterpartyEmail: donorEmail,
-          description: `Tokenized Donation [${donationId} •••• ${last4}]`,
-          rail: method === 'ach_nacha' ? 'MERCURY_ACH' : 'STRIPE_CARD',
+          description: `Processor Contribution [${donationId} · ${method.toUpperCase()}]`,
+          rail: railCode,
           grossUsd: amountUsd,
           status: 'SETTLED'
         });
       }
 
-      logAudit(u ? u.id : 'public', 'newsletter.donation_received', `${donationId} ${amountUsd.toFixed(2)} [•••• ${last4}]`);
+      logAudit(u ? u.id : 'public', 'newsletter.donation_received', `${donationId} ${amountUsd.toFixed(2)} [${method}]`);
       saveState(S);
 
       const publicDonationReceipt = {
@@ -3002,7 +3015,189 @@ const server = http.createServer(async (req, res) => {
         ok: true,
         donation: publicDonationReceipt,
         receipt: publicDonationReceipt,
-        message: `Thank you, ${donorName}! Verified donation receipt ${donationId} (${amountUsd.toFixed(2)} · •••• ${last4}) issued.`
+        message: `Thank you, ${donorName}! Verified donation receipt ${donationId} ($${amountUsd.toFixed(2)}) issued.`
+      });
+    }
+
+    /* ---------- Hosted Payment Processor Checkout Session & Completion Endpoints ---------- */
+    if (pathname === '/api/checkout/session' && req.method === 'GET') {
+      const sid = sanitizeInput(parsedUrl.searchParams.get('session') || '', 64);
+      const list = Array.isArray(S.checkoutSessions) ? S.checkoutSessions : [];
+      const found = list.find(x => x.id === sid);
+      const gw = S.pciGatewayConfig || {};
+      if (!found) {
+        return sendJson(res, 404, { ok: false, error: 'Checkout session not found.' });
+      }
+      return sendJson(res, 200, {
+        ok: true,
+        session: Object.assign({}, found, {
+          cashAppTag: gw.cashAppTag || process.env.MGC_CASHAPP_TAG || '$MiltonGroupConcepts',
+          externalProcessorUrl: gw.stripeCheckoutHostedUrl || process.env.STRIPE_CHECKOUT_URL || ''
+        })
+      });
+    }
+
+    if (pathname === '/api/checkout/session' && req.method === 'POST') {
+      if (!checkRateLimit(req, 'checkout_session', 20, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'Too many checkout requests. Please wait a moment.' });
+      }
+      const body = await readJsonBody(req);
+      if (hasInjectionPayload(body)) {
+        return sendJson(res, 400, { ok: false, error: 'Invalid characters in checkout payload.' });
+      }
+      const u = getAuthenticatedUser(req);
+      const type = body.type === 'subscription' ? 'subscription' : 'donation';
+      const merchantEntity = String(body.merchantEntity || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
+      const amountUsd = Math.max(1, Math.min(250000, Math.round((Number(body.amountUsd) || 25) * 100) / 100));
+      const method = ['card', 'cashapp', 'wallet', 'ach_nacha', 'gpc_wawf'].includes(body.method) ? body.method : 'card';
+      const customerName = sanitizeInput(body.donorName || body.customerName || (u && u.name) || 'Community Supporter', 100);
+      const customerEmail = sanitizeInput(body.donorEmail || body.customerEmail || (u && u.email) || 'supporter@miltongroupsecurity.org', 140).toLowerCase();
+      const title = sanitizeInput(body.title || (type === 'subscription' ? 'MGC & F.I.X Workspace Subscription' : 'Executive Briefings, Veteran Research & Community Support'), 160);
+      const planTier = sanitizeInput(body.planTier || '', 60);
+      const unlockAppId = sanitizeInput(body.unlockAppId || '', 64);
+      const returnPath = sanitizeInput(body.returnPath || (type === 'subscription' ? '/workspace' : '/newsletter'), 120);
+
+      const sessionId = 'MGC-CHK-' + Date.now().toString(36).toUpperCase().slice(-6) + '-' + crypto.randomBytes(2).toString('hex').toUpperCase();
+      if (!Array.isArray(S.checkoutSessions)) S.checkoutSessions = [];
+      const sessionObj = {
+        id: sessionId,
+        type,
+        merchantEntity,
+        title,
+        amountUsd,
+        method,
+        customerName,
+        customerEmail,
+        planTier,
+        unlockAppId,
+        returnPath,
+        uid: u ? u.id : null,
+        status: 'OPEN',
+        createdAt: now()
+      };
+      S.checkoutSessions.unshift(sessionObj);
+      if (S.checkoutSessions.length > 200) S.checkoutSessions.length = 200;
+      saveState(S);
+
+      const gw = S.pciGatewayConfig || {};
+      const hostedStripeLink = gw.stripeCheckoutHostedUrl || process.env.STRIPE_CHECKOUT_URL || '';
+      let checkoutUrl = `/checkout?session=${encodeURIComponent(sessionId)}`;
+      if (hostedStripeLink && /^https:\/\/(buy|checkout)\.stripe\.com\//i.test(hostedStripeLink) && method !== 'cashapp') {
+        const sep = hostedStripeLink.includes('?') ? '&' : '?';
+        checkoutUrl = `${hostedStripeLink}${sep}client_reference_id=${encodeURIComponent(sessionId)}&prefilled_email=${encodeURIComponent(customerEmail)}`;
+      }
+      return sendJson(res, 200, {
+        ok: true,
+        sessionId,
+        checkoutUrl,
+        session: sessionObj
+      });
+    }
+
+    if (pathname === '/api/checkout/complete' && req.method === 'POST') {
+      if (!checkRateLimit(req, 'checkout_complete', 20, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'Too many requests. Please wait a moment.' });
+      }
+      const body = await readJsonBody(req);
+      if (hasInjectionPayload(body)) {
+        return sendJson(res, 400, { ok: false, error: 'Invalid characters detected.' });
+      }
+      const u = getAuthenticatedUser(req);
+      const sid = sanitizeInput(body.sessionId || '', 64);
+      const list = Array.isArray(S.checkoutSessions) ? S.checkoutSessions : [];
+      const sess = list.find(x => x.id === sid) || {};
+
+      const type = (body.type || sess.type) === 'subscription' ? 'subscription' : 'donation';
+      const merchantEntity = String(body.merchantEntity || sess.merchantEntity || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
+      const amountUsd = Math.max(1, Math.min(250000, Math.round((Number(body.amountUsd || sess.amountUsd) || 25) * 100) / 100));
+      const method = ['card', 'cashapp', 'wallet', 'ach_nacha', 'gpc_wawf'].includes(body.method || sess.method) ? (body.method || sess.method) : 'card';
+      const customerName = sanitizeInput(body.customerName || sess.customerName || (u && u.name) || 'Community Supporter', 100);
+      const customerEmail = sanitizeInput(body.customerEmail || sess.customerEmail || (u && u.email) || 'supporter@miltongroupsecurity.org', 140).toLowerCase();
+      const returnPath = sanitizeInput(body.returnPath || sess.returnPath || (type === 'subscription' ? '/workspace' : '/newsletter'), 120);
+      const refCode = method === 'cashapp' ? 'CASH' : method === 'wallet' ? 'WPAY' : method === 'ach_nacha' ? 'ACH0' : '4242';
+
+      if (type === 'subscription' && u) {
+        const payRes = processLegalSecurePayment(u, {
+          merchantEntity,
+          planTier: body.planTier || sess.planTier || 'pro_49',
+          unlockAppId: body.unlockAppId || sess.unlockAppId || '',
+          amountUsd,
+          method,
+          billingName: customerName,
+          billingEmail: customerEmail,
+          postalCode: sanitizeInput(body.postalCode || '22202', 12),
+          cardBrand: sanitizeInput(body.cardBrand || (method === 'cashapp' ? 'Cash App Pay' : method === 'wallet' ? 'Apple / Google Pay' : method === 'ach_nacha' ? 'Bank Transfer ACH' : 'Visa'), 40),
+          last4: '4242',
+          expMonth: 12,
+          expYear: 2029,
+          eftaNachaAccepted: true,
+          pciTermsAccepted: true,
+          msaAccepted: true
+        });
+        if (sess.id) sess.status = 'SETTLED';
+        saveState(S);
+        const rId = (payRes.payload && payRes.payload.receipt && payRes.payload.receipt.receiptId) || sid;
+        const sep = returnPath.includes('?') ? '&' : '?';
+        return sendJson(res, 200, {
+          ok: true,
+          receiptId: rId,
+          redirectUrl: `${returnPath}${sep}checkout_status=settled&receipt=${encodeURIComponent(rId)}`
+        });
+      }
+
+      // Donation completion
+      const timestampIso = now();
+      const donationId = 'MGC-DON-' + Date.now().toString(36).toUpperCase().slice(-6) + '-' + crypto.randomBytes(2).toString('hex').toUpperCase();
+      const vaultToken = 'tok_don_' + crypto.createHmac('sha256', SESSION_SECRET)
+        .update(`${donationId}:${customerEmail}:${method}:${refCode}:${timestampIso}`)
+        .digest('hex')
+        .slice(0, 20);
+      const receiptSignature = 'HMAC-SHA256-' + crypto.createHmac('sha256', SESSION_SECRET)
+        .update(`${donationId}|${customerEmail}|${amountUsd.toFixed(2)}|${refCode}|${timestampIso}`)
+        .digest('hex')
+        .slice(0, 28);
+
+      if (!S.newsletter) S.newsletter = seedState().newsletter;
+      if (!Array.isArray(S.newsletter.donations)) S.newsletter.donations = [];
+      S.newsletter.donations.unshift({
+        id: donationId,
+        donorName: customerName,
+        donorEmail: customerEmail,
+        amountUsd,
+        note: sess.title || 'Executive Briefing & Research Support',
+        method,
+        last4: refCode,
+        vaultToken,
+        signature: receiptSignature,
+        pciDssCompliant: true,
+        createdAt: timestampIso
+      });
+
+      if (typeof postAccountingJournalEntry === 'function') {
+        const railCode = method === 'ach_nacha' ? 'MERCURY_ACH' : method === 'cashapp' ? 'CASHAPP_PAY' : method === 'wallet' ? 'EXPRESS_WALLET' : 'STRIPE_CARD';
+        postAccountingJournalEntry({
+          receiptId: donationId,
+          createdAt: timestampIso,
+          entity: merchantEntity,
+          entryType: 'REVENUE',
+          accountCode: '4010',
+          counterparty: customerName,
+          counterpartyEmail: customerEmail,
+          description: `Processor Contribution [${donationId} · ${method.toUpperCase()}]`,
+          rail: railCode,
+          grossUsd: amountUsd,
+          status: 'SETTLED'
+        });
+      }
+      if (sess.id) sess.status = 'SETTLED';
+      logAudit(u ? u.id : 'public', 'checkout.completed', `${donationId} $${amountUsd.toFixed(2)} [${method}]`);
+      saveState(S);
+
+      const sep = returnPath.includes('?') ? '&' : '?';
+      return sendJson(res, 200, {
+        ok: true,
+        receiptId: donationId,
+        redirectUrl: `${returnPath}${sep}checkout_status=settled&receipt=${encodeURIComponent(donationId)}`
       });
     }
 
@@ -3765,8 +3960,8 @@ const server = http.createServer(async (req, res) => {
       }
 
       const merchantEntity = String(body.merchantEntity || u.brand || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
-      const method = ['card_tokenized', 'ach_nacha', 'gpc_wawf'].includes(body.method) ? body.method : 'card_tokenized';
-      const gatewayOption = method === 'gpc_wawf' ? 'OPTION_4_WAWF_PIEE_EFT' : 'OPTION_1_STRIPE_SAQ_A';
+      const method = ['card', 'cashapp', 'wallet', 'card_tokenized', 'ach_nacha', 'gpc_wawf'].includes(body.method) ? body.method : 'card';
+      const gatewayOption = method === 'gpc_wawf' ? 'OPTION_4_WAWF_PIEE_EFT' : method === 'cashapp' ? 'OPTION_2_CASHAPP_PAY' : 'OPTION_1_STRIPE_SAQ_A';
       const billingName = sanitizeInput(body.billingName || u.name || '', 100);
       const billingEmail = sanitizeInput(body.billingEmail || u.email || '', 120).toLowerCase();
       const billingOrg = sanitizeInput(body.billingOrg || u.org || '', 120);
@@ -3830,16 +4025,15 @@ const server = http.createServer(async (req, res) => {
           }
         };
       }
-      const last4 = rawAccountOrCard.length === 4 ? rawAccountOrCard : (method === 'gpc_wawf' ? 'WAWF' : '');
-      if (method !== 'gpc_wawf' && !/^\d{4}$/.test(last4)) {
-        return { status: 400, payload: { ok: false, error: 'Valid 4-digit tokenized instrument identifier required.' } };
-      }
+      const last4 = rawAccountOrCard.length === 4
+        ? rawAccountOrCard
+        : (method === 'gpc_wawf' ? 'WAWF' : method === 'cashapp' ? 'CASH' : method === 'wallet' ? 'WPAY' : method === 'ach_nacha' ? 'ACH0' : '4242');
 
       const expMonthNum = Number(body.expMonth || 12);
       const expYearNum = Number(body.expYear || 2029);
       const fullExpYear = expYearNum < 100 ? 2000 + expYearNum : expYearNum;
       const nowDate = new Date();
-      if (method === 'card_tokenized') {
+      if (method === 'card' || method === 'card_tokenized') {
         if (expMonthNum < 1 || expMonthNum > 12 || fullExpYear < nowDate.getFullYear() || (fullExpYear === nowDate.getFullYear() && expMonthNum < (nowDate.getMonth() + 1))) {
           return { status: 400, payload: { ok: false, error: 'Card expiration date is invalid or expired.' } };
         }
@@ -3849,6 +4043,8 @@ const server = http.createServer(async (req, res) => {
       if (!instrumentBrand) {
         if (method === 'ach_nacha') instrumentBrand = 'Mercury / NACHA Commercial ACH';
         else if (method === 'gpc_wawf') instrumentBrand = 'US Gov GPC / PIEE WAWF (CAGE 17GC6)';
+        else if (method === 'cashapp') instrumentBrand = 'Cash App Pay';
+        else if (method === 'wallet') instrumentBrand = 'Apple Pay / Google Pay';
         else if (rawAccountOrCard.startsWith('4')) instrumentBrand = 'VISA';
         else if (rawAccountOrCard.startsWith('5')) instrumentBrand = 'MASTERCARD';
         else if (rawAccountOrCard.startsWith('3')) instrumentBrand = 'AMEX';
@@ -3881,7 +4077,7 @@ const server = http.createServer(async (req, res) => {
       // Automatically post Double-Entry GAAP Journal Entry (Option A + Option B Rail Fee & 25% Tax Reserve Split)
       const railForAccounting = method === 'ach_nacha'
         ? 'MERCURY_ACH'
-        : (method === 'gpc_wawf' ? 'WAWF_EFT' : 'STRIPE_CARD');
+        : (method === 'gpc_wawf' ? 'WAWF_EFT' : method === 'cashapp' ? 'CASHAPP_PAY' : method === 'wallet' ? 'EXPRESS_WALLET' : 'STRIPE_CARD');
       const revenueAccountCode = method === 'gpc_wawf'
         ? '4020'
         : (planTier === 'custom_retainer' ? '4030' : '4010');
@@ -3907,12 +4103,12 @@ const server = http.createServer(async (req, res) => {
         merchantEntityName,
         gatewayOption,
         method,
-        methodLabel: method === 'ach_nacha' ? 'NACHA Commercial ACH ($0.00 Fee)' : method === 'gpc_wawf' ? 'Option 4 · Federal WAWF / PIEE EFT ($0.00 Fee)' : 'Option 1 · Stripe SAQ-A Tokenized Card (2.9% + $0.30)',
+        methodLabel: method === 'ach_nacha' ? 'NACHA Commercial ACH ($0.00 Fee)' : method === 'gpc_wawf' ? 'Option 4 · Federal WAWF / PIEE EFT ($0.00 Fee)' : method === 'cashapp' ? 'Cash App Pay Hosted Checkout (2.9% + $0.30)' : method === 'wallet' ? 'Apple Pay / Google Pay Hosted Checkout (2.9% + $0.30)' : 'Stripe Hosted Card Checkout (2.9% + $0.30)',
         instrumentBrand,
         cardBrand: instrumentBrand,
         last4,
-        expMonth: method === 'card_tokenized' ? expMonth : null,
-        expYear: method === 'card_tokenized' ? expYear : null,
+        expMonth: (method === 'card' || method === 'card_tokenized') ? expMonth : null,
+        expYear: (method === 'card' || method === 'card_tokenized') ? expYear : null,
         routingLast4,
         contractOrPo,
         vaultToken,
@@ -4233,6 +4429,7 @@ const server = http.createServer(async (req, res) => {
         activeProcessor: sanitizeInput(body.activeProcessor || 'stripe_saq_a', 60),
         stripePublishableKey: sanitizeInput(body.stripePublishableKey || '', 160),
         stripeCheckoutHostedUrl: sanitizeInput(body.stripeCheckoutHostedUrl || '', 240),
+        cashAppTag: sanitizeInput(body.cashAppTag || '$MiltonGroupConcepts', 80),
         authorizeNetApiLoginId: sanitizeInput(body.authorizeNetApiLoginId || '', 120),
         authorizeNetClientKey: sanitizeInput(body.authorizeNetClientKey || '', 160),
         mercuryAchEnabled: body.mercuryAchEnabled !== false,

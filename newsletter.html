@@ -114,7 +114,10 @@
     };
 
     let selectedDonationAmount = 25;
-    let showConsultationForm = location.hash === '#consultation' || new URLSearchParams(location.search).get('consultation') === '1';
+    let selectedDonationMethod = 'card';
+    const urlParams = new URLSearchParams(location.search);
+    let settledDonationReceipt = urlParams.get('checkout_status') === 'settled' ? (urlParams.get('receipt') || '') : '';
+    let showConsultationForm = location.hash === '#consultation' || urlParams.get('consultation') === '1';
     let lastConsultationReceipt = null;
     let consultationError = '';
 
@@ -319,13 +322,18 @@
               </form>
             </aside>
 
-            <!-- DONATIONS CARD (Tokenized PCI-DSS v4.0 SAQ-A & NACHA Compliant) -->
+            <!-- DONATIONS CARD (Hosted Processor Checkout: Card, Cash App Pay, Apple/Google Pay & Bank ACH) -->
             <aside class="card" id="donations" style="margin:0;border-color:rgba(197,179,88,0.55)">
               <div class="row" style="margin-bottom:6px">
                 <h2 style="margin:0;font-size:16px">💝 Support &amp; Donations</h2>
-                <span class="chip ok" style="font-size:10px">Tokenized Vault</span>
+                <span class="chip ok" style="font-size:10px">Card · Cash App · ACH</span>
               </div>
-              <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support open executive briefings, veteran research, and community tools. Raw card or bank numbers are never stored.</p>
+              <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:10px">Support open executive briefings, veteran research, and community tools. Pay with Card, Cash App Pay, Apple/Google Pay, or Bank Transfer ($0 upfront processor fees).</p>
+              ${settledDonationReceipt ? `
+                <div id="nlDonSettledBanner" style="padding:10px 12px;border-radius:10px;background:rgba(6,78,59,0.42);border:1px solid rgba(16,185,129,0.55);color:#34d399;font-size:12px;font-weight:700;margin-bottom:10px">
+                  ✓ Processor Checkout Complete · Receipt <code style="color:#a7f3d0">${esc(settledDonationReceipt)}</code>
+                </div>
+              ` : ''}
               <form id="nlDonateForm" style="display:flex;flex-direction:column;gap:8px">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
                   ${[10, 25, 50, 100].map(amt =>
@@ -336,15 +344,24 @@
                   <input id="donName" type="text" maxlength="100" placeholder="Your Name" value="${u ? esc(u.name) : ''}" style="padding:8px 10px;font-size:12px" />
                   <input id="donAmount" type="number" min="1" max="10000" value="${selectedDonationAmount}" placeholder="Amount ($)" style="padding:8px 10px;font-size:12px" />
                 </div>
-                <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:8px">
-                  <select id="donMethod" aria-label="Donation Method" style="padding:8px 10px;font-size:12px">
-                    <option value="card_tokenized">Tokenized Card</option>
-                    <option value="ach_nacha">Bank Transfer (ACH)</option>
-                  </select>
-                  <input id="donLast4" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="Last 4 Digits" value="" title="4-digit tokenized reference only (never enter full card number)" style="padding:8px 10px;font-size:12px;font-family:var(--mono)" />
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+                  ${[
+                    { id: 'card', label: '💳 Card' },
+                    { id: 'cashapp', label: '🟩 Cash App' },
+                    { id: 'wallet', label: '🍎 Pay / GPay' },
+                    { id: 'ach_nacha', label: '🏦 Bank ACH' }
+                  ].map(m =>
+                    `<button type="button" class="btn ${selectedDonationMethod === m.id ? 'pri' : ''}" data-donate-method="${m.id}" style="justify-content:center;padding:6px 4px;font-size:11px;${selectedDonationMethod === 'cashapp' && m.id === 'cashapp' ? 'background:linear-gradient(135deg,#00d632,#00b82b);border-color:#00d632;color:#041208;font-weight:800;' : ''}">${m.label}</button>`
+                  ).join('')}
                 </div>
+                <select id="donMethod" aria-label="Payment Processor Method" style="padding:8px 10px;font-size:12px;width:100%">
+                  <option value="card" ${selectedDonationMethod === 'card' ? 'selected' : ''}>💳 Credit or Debit Card (Stripe Hosted Checkout)</option>
+                  <option value="cashapp" ${selectedDonationMethod === 'cashapp' ? 'selected' : ''}>🟩 Cash App Pay ($Cashtag / QR Instant Checkout)</option>
+                  <option value="wallet" ${selectedDonationMethod === 'wallet' ? 'selected' : ''}>🍎 Apple Pay / Google Pay (Express Wallet)</option>
+                  <option value="ach_nacha" ${selectedDonationMethod === 'ach_nacha' ? 'selected' : ''}>🏦 Bank Transfer (ACH — $0 Processor Fee)</option>
+                </select>
                 <input id="donEmail" type="email" maxlength="140" placeholder="Email for donation receipt" value="${u ? esc(u.email) : ''}" required style="padding:8px 10px;font-size:12px" />
-                <button type="submit" class="btn pri" id="btnSubmitDonation" style="justify-content:center;padding:10px">💝 Contribute Donation</button>
+                <button type="submit" class="btn pri" id="btnSubmitDonation" style="justify-content:center;padding:10px">💝 Continue to Processor Checkout →</button>
                 <div id="nlDonStatus" role="status" aria-live="polite" style="font-size:12px;font-weight:700;color:#fde047;min-height:18px"></div>
               </form>
             </aside>
@@ -493,12 +510,21 @@
         };
       });
 
-      const donLast4Input = document.getElementById('donLast4');
-      if (donLast4Input) {
-        donLast4Input.addEventListener('input', () => {
-          const digits = donLast4Input.value.replace(/\D/g, '');
-          donLast4Input.value = digits.slice(-4);
-        });
+      app.querySelectorAll('[data-donate-method]').forEach(btn => {
+        btn.onclick = () => {
+          selectedDonationMethod = btn.dataset.donateMethod || 'card';
+          const sel = document.getElementById('donMethod');
+          if (sel) sel.value = selectedDonationMethod;
+          render();
+        };
+      });
+
+      const donMethodSelect = document.getElementById('donMethod');
+      if (donMethodSelect) {
+        donMethodSelect.onchange = () => {
+          selectedDonationMethod = donMethodSelect.value || 'card';
+          render();
+        };
       }
 
       const donForm = document.getElementById('nlDonateForm');
@@ -507,34 +533,51 @@
           e.preventDefault();
           const donorName = document.getElementById('donName').value.trim() || 'Community Supporter';
           const donorEmail = document.getElementById('donEmail').value.trim() || 'supporter@miltongroupsecurity.org';
-          const amountUsd = Number(document.getElementById('donAmount').value) || selectedDonationAmount;
-          const method = document.getElementById('donMethod') ? document.getElementById('donMethod').value : 'card_tokenized';
-          const rawLast4 = document.getElementById('donLast4') ? document.getElementById('donLast4').value.replace(/\D/g, '') : '4242';
+          const amountUsd = Math.max(1, Number(document.getElementById('donAmount').value) || selectedDonationAmount);
+          const method = document.getElementById('donMethod') ? document.getElementById('donMethod').value : selectedDonationMethod;
           const st = document.getElementById('nlDonStatus');
-          if (rawLast4.length !== 4) {
-            st.style.color = '#fca5a5';
-            st.textContent = 'Enter a 4-digit tokenized reference (never enter a full card number).';
-            return;
-          }
+          const railNames = {
+            card: 'Stripe Hosted Card Checkout',
+            cashapp: 'Cash App Pay Checkout',
+            wallet: 'Apple Pay / Google Pay Checkout',
+            ach_nacha: 'Instant Bank Transfer (ACH)'
+          };
+          st.style.color = '#38bdf8';
+          st.textContent = '⟳ Routing $' + amountUsd.toFixed(2) + ' to ' + (railNames[method] || 'Payment Processor') + '...';
+
           try {
-            const r = await fetch('/api/newsletter/donate', {
+            const r = await fetch('/api/checkout/session', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ donorName, donorEmail, amountUsd, method, last4: rawLast4 })
+              body: JSON.stringify({
+                type: 'donation',
+                merchantEntity: 'MGC',
+                title: 'Executive Briefings, Veteran Research & Community Support',
+                donorName,
+                donorEmail,
+                amountUsd,
+                method,
+                returnPath: '/newsletter'
+              })
             });
             const d = await r.json();
-            if (d && d.ok && d.donation) {
-              st.style.color = '#34d399';
-              st.textContent = '✓ Receipt ' + d.donation.id + ' ($' + Number(d.donation.amountUsd).toFixed(2) + ' · •••• ' + d.donation.last4 + ' · ' + (d.donation.maskedEmail || 'verified') + ')';
-              W.toast('Donation Receipt Issued (' + d.donation.id + ')');
-            } else {
-              st.style.color = '#fca5a5';
-              st.textContent = (d && d.error) || 'Could not process donation.';
+            if (d && d.ok && d.checkoutUrl) {
+              setTimeout(() => {
+                window.location.href = d.checkoutUrl;
+              }, 850);
+              return;
             }
-          } catch (_) {
-            st.style.color = '#34d399';
-            st.textContent = '✓ Thank you! Donation recorded.';
-          }
+          } catch (_) {}
+
+          // Fallback direct route to hosted processor checkout page
+          const fallbackUrl = '/checkout?type=donation&entity=MGC&amount=' + encodeURIComponent(amountUsd) +
+            '&method=' + encodeURIComponent(method) +
+            '&name=' + encodeURIComponent(donorName) +
+            '&email=' + encodeURIComponent(donorEmail) +
+            '&returnPath=' + encodeURIComponent('/newsletter');
+          setTimeout(() => {
+            window.location.href = fallbackUrl;
+          }, 850);
         };
       }
 
