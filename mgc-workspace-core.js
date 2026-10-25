@@ -82,7 +82,7 @@
     }
   ];
 
-  const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge'];
+  const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge', 'maps-geospatial-insights'];
   const DEFAULT_CUSTOMER_RESOURCES = [];
   const DEFAULT_CUSTOMER_PAGES = { saasapps: 'ready' };
 

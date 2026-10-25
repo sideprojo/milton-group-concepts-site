@@ -223,6 +223,9 @@ if (typeof window !== 'undefined') {
           '<a href="/workspace" style="padding:5px 10px;border-radius:7px;border:1px solid rgba(148,163,184,0.3);background:rgba(15,23,42,0.85);color:#cbd5e1;font-size:11.5px;font-weight:500;text-decoration:none">← Workspace</a>' +
         '</div>';
       document.body.insertBefore(bar, document.body.firstChild);
+      document.body.style.paddingBottom = "96px";
+      var vp = document.getElementById("app-viewport");
+      if (vp) vp.style.paddingBottom = "64px";
 
       var btn = document.getElementById('btnRunPersonaAgentTool');
       var statusEl = document.getElementById('mgc-persona-tool-status');

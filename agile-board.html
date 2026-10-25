@@ -95,7 +95,37 @@
       (isEmp() ? '<a class="ws-nav-btn" href="access-admin.html?tab=users&amp;ou=external" style="border-color:rgba(59,130,246,0.42);color:#93c5fd"><span>Client Directory</span></a>' : '') +
       '</aside>';
 
+    const pItems = pid ? S().items.filter(i => i.project === pid) : [];
+    const totalPts = pItems.reduce((a, i) => a + (Number(i.points) || 0), 0);
+    const donePts = pItems.filter(i => i.col === 'done').reduce((a, i) => a + (Number(i.points) || 0), 0);
+    const progPts = pItems.filter(i => i.col === 'progress' || i.col === 'review').reduce((a, i) => a + (Number(i.points) || 0), 0);
+    const pctDone = totalPts ? Math.round((donePts / totalPts) * 100) : 0;
+    const roleBadge = isSoleAdmin() ? 'OU=Builtin · DOMAIN_ADMIN (Full Control)' : (isEmp() ? 'OU=Internal · INTERNAL_ANALYST (Client Delivery Scope)' : 'OU=External · EXTERNAL_CLIENT_PARTNER (Workspace Unlocked)');
+    const telemetryRibbon =
+      '<div id="agileTelemetryRibbon" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px">' +
+        '<div class="card" style="padding:10px 12px;border-color:rgba(16,185,129,0.4);background:rgba(6,20,34,0.88)">' +
+          '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#34d399">Workspace Security Tier</div>' +
+          '<div style="font-size:12.5px;font-weight:800;color:#fff;margin-top:3px">' + esc(roleBadge) + '</div>' +
+          '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">Zero-Trust Project ACL Verified</div>' +
+        '</div>' +
+        '<div class="card" style="padding:10px 12px;border-color:rgba(59,130,246,0.4);background:rgba(6,16,34,0.88)">' +
+          '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#60a5fa">Sprint Velocity &amp; Scope</div>' +
+          '<div style="font-size:15px;font-weight:900;color:#fff;margin-top:3px">' + donePts + ' / ' + totalPts + ' pts <span style="font-size:11px;color:#34d399">(' + pctDone + '%)</span></div>' +
+          '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">' + pItems.length + ' Active Deliverable Stories</div>' +
+        '</div>' +
+        '<div class="card" style="padding:10px 12px;border-color:rgba(197,179,88,0.42);background:rgba(18,16,8,0.85)">' +
+          '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#fde047">In-Flight &amp; Review</div>' +
+          '<div style="font-size:15px;font-weight:900;color:#fff;margin-top:3px">' + progPts + ' pts Active</div>' +
+          '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">SLA Target: 99.4% On-Schedule</div>' +
+        '</div>' +
+        '<div class="card" style="padding:10px 12px;border-color:rgba(168,85,247,0.4);background:rgba(16,10,30,0.88)">' +
+          '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#c084fc">Otto Delivery Sync</div>' +
+          '<div style="font-size:12.5px;font-weight:800;color:#fff;margin-top:3px">● OTTO-01 Linked</div>' +
+          '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">9 Specialist Persona Deliverables</div>' +
+        '</div>' +
+      '</div>';
     const mainContent =
+      telemetryRibbon +
       '<div class="card" style="margin-bottom:12px">' +
         '<div class="row">' +
           '<div><h1 style="margin:0 0 2px;font-size:18px;font-weight:700">Agile Projects &amp; Deliverables</h1><p style="font-size:12px;margin:0">Manage sprint backlog, client deliverables, and feature votes.</p></div>' +

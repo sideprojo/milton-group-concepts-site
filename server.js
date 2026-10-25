@@ -578,6 +578,19 @@ function loadState() {
         ['client', 'ana', 'ben', 'cara'].forEach(fakeId => {
           if (parsed.users && parsed.users[fakeId]) delete parsed.users[fakeId];
         });
+        const seenNameOrg = new Set();
+        Object.keys(parsed.users || {}).forEach(uidKey => {
+          const usr = parsed.users[uidKey];
+          if (!usr || uidKey === 'owner') return;
+          const em = String(usr.email || '').toLowerCase();
+          const isTimestampedTest = /\.\d{4,}@/.test(em);
+          const sig = String(usr.name || '').toLowerCase() + '|' + String(usr.org || '').toLowerCase();
+          if (isTimestampedTest && seenNameOrg.has(sig)) {
+            delete parsed.users[uidKey];
+          } else if (usr.name) {
+            seenNameOrg.add(sig);
+          }
+        });
         if (Array.isArray(parsed.requests)) {
           parsed.requests = parsed.requests.filter(r => !['ana', 'ben', 'cara', 'client'].includes(r.uid) && !['r1', 'r2'].includes(r.id));
         }
@@ -1819,30 +1832,53 @@ function sendJson(res, status, data, extraHeaders = {}) {
 }
 
 function renderLockedHtml(u, title, message, ctaHref, ctaLabel) {
-  const isFix = u && u.brand === 'FIX';
+  const ouLabel = u ? (u.ou === 'internal' ? 'OU=Internal (Staff)' : (u.ou === 'builtin' ? 'OU=Builtin (Admin)' : 'OU=External (Client)')) : 'OU=Anonymous';
+  const grpLabel = u ? (u.securityGroup || (u.ou === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS')) : 'UNAUTHENTICATED';
+  const tierLabel = u ? (u.accessTier || 'CUSTOMER_RESTRICTED') : 'RESTRICTED';
+  const allowedCount = (u && Array.isArray(u.allowedApps)) ? u.allowedApps.length : 3;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${title} | MGC / F.I.X</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<title>${title} | MGC / F.I.X Security & Paywall Boundary</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box}
-  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,sans-serif;
-    background:${isFix ? '#0B1426' : '#09090B'};color:${isFix ? '#F8FAFC' : '#FAFAFA'}}
-  .card{max-width:540px;width:100%;background:${isFix ? '#111d36' : '#141519'};border:1px solid ${isFix ? 'rgba(197,179,88,.4)' : '#27272A'};border-radius:16px;padding:28px;text-align:center}
-  h1{font-size:22px;margin:0 0 8px}
-  p{color:${isFix ? '#94A3B8' : '#A1A1AA'};font-size:14px;line-height:1.6;margin:0 0 18px}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;font-weight:800;font-size:13px;text-decoration:none;
-    background:${isFix ? '#FDE047' : '#FFFFFF'};color:${isFix ? '#0B1426' : '#09090B'}}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,sans-serif;background:radial-gradient(circle at 50% 0%,rgba(197,179,88,0.16),#050914 70%);color:#F8FAFC}
+  .card{max-width:640px;width:100%;background:rgba(10,17,34,0.96);border:1px solid rgba(197,179,88,0.55);border-radius:18px;padding:30px;box-shadow:0 24px 60px rgba(0,0,0,0.75)}
+  .badge-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
+  .pill{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;border:1px solid rgba(148,163,184,0.3);background:rgba(15,23,42,0.9);color:#93c5fd}
+  .pill.gold{border-color:rgba(197,179,88,0.55);color:#fde047;background:rgba(197,179,88,0.14)}
+  .pill.red{border-color:rgba(239,68,68,0.55);color:#fca5a5;background:rgba(127,29,29,0.28)}
+  h1{font-size:22px;font-weight:800;margin:0 0 10px;text-align:center;color:#fff}
+  p{color:#cbd5e1;font-size:13.5px;line-height:1.6;margin:0 0 18px;text-align:center}
+  .sec-box{background:rgba(4,8,20,0.88);border:1px solid rgba(59,130,246,0.35);border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:12px;color:#94a3b8;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .sec-box strong{color:#f8fafc;display:block;font-size:12.5px;margin-top:2px}
+  .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:10px;font-weight:800;font-size:13px;text-decoration:none;background:#2563eb;color:#fff;border:1px solid #3b82f6}
+  .btn.gold{background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047}
+  .btn.sec{background:rgba(15,23,42,0.9);color:#cbd5e1;border-color:rgba(148,163,184,0.35)}
 </style>
 </head>
 <body>
-  <main class="card">
-    <div style="font-size:32px;margin-bottom:8px">🔒</div>
-    <h1>${title}</h1>
+  <main class="card" id="securityPaywallBoundaryCard">
+    <div class="badge-row">
+      <span class="pill red">HTTP 403 · ZERO-TRUST BOUNDARY</span>
+      <span class="pill gold">OTTO-01 RBAC & PAYWALL GATE</span>
+      <span class="pill">${grpLabel}</span>
+    </div>
+    <h1>🔒 ${title}</h1>
     <p>${message}</p>
-    <a class="btn" href="${ctaHref || '/member-portal.html'}">${ctaLabel || 'Return to My Workspace →'}</a>
+    <div class="sec-box">
+      <div>Identity &amp; Directory OU<strong>${u ? (u.email || u.name) : 'Guest'} · ${ouLabel}</strong></div>
+      <div>Active Security Scope<strong>${grpLabel} (${tierLabel})</strong></div>
+      <div>Entitled Persona SaaS Apps<strong>${allowedCount} / 9 Unlocked</strong></div>
+      <div>Instant Unlock Options<strong>$19 Single App · $49 All 9 Apps · $250 Enterprise</strong></div>
+    </div>
+    <div class="actions">
+      <a class="btn gold" href="${ctaHref || '/workspace?view=payment'}">${ctaLabel || '🔓 Instant Unlock / Upgrade Tier →'}</a>
+      <a class="btn sec" href="/workspace">← Return to Netflix SaaS Showcase</a>
+    </div>
   </main>
 </body>
 </html>`;
@@ -3575,13 +3611,17 @@ const server = http.createServer(async (req, res) => {
       const postalCode = sanitizeInput(body.postalCode || body.billingZip || body.zip || '', 24);
       const country = sanitizeInput(body.country || 'US', 8).toUpperCase();
       const rawPlanKey = String(body.planId || body.planTier || 'pro_99');
+      const unlockAppId = sanitizeInput(body.unlockAppId || '', 64);
+      const targetUnlockApp = unlockAppId ? APPS_CATALOG.find(a => a.id === unlockAppId) : null;
       const PLAN_AMOUNTS = {
         base_5: { amountUsd: 5.00, label: 'Base SaaS & LMS Access ($5/mo)' },
         saas_lms_base: { amountUsd: 5.00, label: 'Base SaaS & LMS Access ($5/mo)' },
+        single_app_19: { amountUsd: 19.00, label: targetUnlockApp ? `Single Persona SaaS Unlock: ${targetUnlockApp.title} ($19/mo)` : 'Single Specialist Persona SaaS Pass ($19/mo)' },
+        pro_49: { amountUsd: 49.00, label: 'Pro All-Access 9 Persona SaaS & LMS Pass ($49/mo)' },
         pro_99: { amountUsd: 99.00, label: 'Pro App & Course LMS Subscriber ($99/mo)' },
-        pro_enterprise: { amountUsd: 99.00, label: 'Pro App & Course LMS Subscriber ($99/mo)' },
-        enterprise_499: { amountUsd: 499.00, label: 'Enterprise Custom Build & Seat License ($499/mo)' },
-        sdvosb_contract_retainer: { amountUsd: 250.00, label: 'SDVOSB Federal / Commercial Retainer ($250/mo)' },
+        pro_enterprise: { amountUsd: 49.00, label: 'Pro All-Access 9 Persona SaaS & LMS Pass ($49/mo)' },
+        enterprise_499: { amountUsd: 499.00, label: 'Enterprise Custom Build & Full Workspace Suite ($499/mo)' },
+        sdvosb_contract_retainer: { amountUsd: 250.00, label: 'Enterprise Workspace & SDVOSB/Commercial Retainer ($250/mo)' },
         custom_retainer: { amountUsd: Math.max(1, Math.min(250000, Number(body.amountUsd) || 2500.00)), label: 'Custom Commercial / Federal Milestone Retainer ($2,500)' },
         custom_invoice: { amountUsd: Math.max(1, Math.min(250000, Number(body.amountUsd) || 99.00)), label: 'Authorized Invoice / Custom Engagement Settlement' }
       };
@@ -3792,13 +3832,14 @@ const server = http.createServer(async (req, res) => {
 
       // Scalable Tiered Membership Gate: Automatically unlock apps & workspace modules based on verified planTier
       const isTier3Enterprise = ['enterprise_499', 'sdvosb_contract_retainer', 'custom_retainer'].includes(planTier) || amountUsd >= 250;
-      const isTier2Pro = isTier3Enterprise || ['pro_99', 'pro_enterprise'].includes(planTier) || amountUsd >= 49;
+      const isTier2Pro = isTier3Enterprise || ['pro_49', 'pro_99', 'pro_enterprise'].includes(planTier) || amountUsd >= 49;
       const unlockedTierApps = APPS_CATALOG.filter(a => {
         if (isTier3Enterprise || isTier2Pro) return true;
+        if (targetUnlockApp && a.id === targetUnlockApp.id) return true;
         return a.minTier === 'tier_1_starter' || a.defaultCustomer;
       }).map(a => a.id);
       const currentApps = Array.isArray(u.allowedApps) ? u.allowedApps : [];
-      u.allowedApps = Array.from(new Set([...currentApps, ...unlockedTierApps]));
+      u.allowedApps = Array.from(new Set([...currentApps, ...unlockedTierApps, ...(targetUnlockApp ? [targetUnlockApp.id] : [])]));
       const currentRes = Array.isArray(u.qualifiedResources) ? u.qualifiedResources : [];
       if (!currentRes.includes('resource-fast-track')) {
         u.qualifiedResources = [...currentRes, 'resource-fast-track'];
@@ -3806,11 +3847,20 @@ const server = http.createServer(async (req, res) => {
       u.pages = Object.assign({}, u.pages || {}, { saasapps: 'ready', resources: 'ready' });
       if (isTier3Enterprise) {
         u.accessTier = 'ENTERPRISE_RETAINER';
+        u.securityGroup = 'EXTERNAL_CLIENT_PARTNER';
+        u.clientTier = 'workspace';
+        u.workspaceConnected = true;
         u.pages = Object.assign({}, u.pages, { agile: 'ready', contracts: 'ready', compliance: 'ready', academy: 'ready', chronos: 'ready' });
         u.adminGrantedPages = Array.from(new Set([...(u.adminGrantedPages || []), 'resources', 'agile', 'contracts', 'compliance', 'academy', 'chronos']));
+        if (!S.shares.some(s => s.type === 'project' && s.resource === 'p_sterling' && s.grantee === u.id)) {
+          S.shares.unshift({ id: `project_p_sterling_${u.id}`, type: 'project', resource: 'p_sterling', grantee: u.id, perms: ['view', 'edit'], created: timestampIso });
+        }
+        if (!S.shares.some(s => s.type === 'project' && s.resource === 'p1' && s.grantee === u.id)) {
+          S.shares.push({ id: `project_p1_${u.id}`, type: 'project', resource: 'p1', grantee: u.id, perms: ['view', 'edit'], created: timestampIso });
+        }
       } else if (isTier2Pro) {
         u.accessTier = 'PRO_SUBSCRIBER';
-        u.pages = Object.assign({}, u.pages, { academy: 'ready' });
+        u.pages = Object.assign({}, u.pages, { academy: 'ready', resources: 'ready' });
         u.adminGrantedPages = Array.from(new Set([...(u.adminGrantedPages || []), 'resources', 'academy']));
       }
       u.allowedApps.forEach(appId => {
@@ -4300,15 +4350,30 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, agent: agentSlug, spec });
     }
 
-    if (pathname === '/api/otto/execute' && req.method === 'POST') {
+    if ((pathname === '/api/otto/execute' || pathname === '/api/otto/orchestrate') && req.method === 'POST') {
       const u = getAuthenticatedUser(req);
       if (!u) return sendJson(res, 401, { ok: false, error: 'Authentication required to execute Otto or Specialist Persona tools.' });
       const body = await readJsonBody(req);
       if (hasInjectionPayload(body)) {
         return sendJson(res, 400, { ok: false, code: 'INJECTION_PAYLOAD_REJECTED', error: 'Security Validation Failed: Disallowed input characters detected.' });
       }
-      const toolName = sanitizeInput(body.tool || body.toolName || 'route_client_workspace', 64);
       const args = body.args || body.data || {};
+      const userPrompt = sanitizeInput(body.prompt || args.prompt || '', 320);
+      let inferredTool = sanitizeInput(body.tool || body.toolName || '', 64);
+      if (!inferredTool && userPrompt) {
+        const lp = userPrompt.toLowerCase();
+        if (/(map|geospatial|corridor|3d|earth|kml|location|richmond|belvoir|norfolk|orin)/.test(lp)) inferredTool = 'analyze_geospatial_corridor';
+        else if (/(sam\.gov|contract|sdvosb|naics|wawf|federal|cato|proposal)/.test(lp)) inferredTool = 'match_samgov_solicitations';
+        else if (/(ospf|bgp|eve-ng|netprism|topology|vlan|ztna|zeno)/.test(lp)) inferredTool = 'validate_network_topology';
+        else if (/(cli|ansible|cisco|linux|terminal|kael|ghost)/.test(lp)) inferredTool = 'grade_cli_ansible_drill';
+        else if (/(spanish|farsi|arabic|language|cognate|vocabulary|alma)/.test(lp)) inferredTool = 'generate_cognate_drill_loop';
+        else if (/(epigraph|inscription|latin|greek|chronos|clio|ancient)/.test(lp)) inferredTool = 'analyze_epigraphic_inscription';
+        else if (/(roi|funnel|traffic|treasury|conversion|vega|revenue)/.test(lp)) inferredTool = 'simulate_funnel_treasury_roi';
+        else if (/(auto|receptionist|bay|repair|sterling|triage|arya)/.test(lp)) inferredTool = 'triage_service_intake';
+        else if (/(turnkey|website|scope|sow|build|argo)/.test(lp)) inferredTool = 'generate_turnkey_scope';
+        else inferredTool = 'route_client_workspace';
+      }
+      const toolName = inferredTool || 'route_client_workspace';
       const runId = 'OTTO-' + Date.now().toString(36).toUpperCase().slice(-5);
 
       const SPECIALIST_TOOL_MAP = {
@@ -4529,9 +4594,37 @@ const server = http.createServer(async (req, res) => {
         };
       }
 
+      const recAppSlugs = Array.isArray(output.recommendedApps) ? output.recommendedApps : [];
+      output.promptReceived = userPrompt || null;
+      output.orchestrator = { agent: 'Otto', callSign: 'OTTO-01', aistudioPromptId: '1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6' };
+      output.appEntitlements = recAppSlugs.map(slug => {
+        const appObj = APPS_CATALOG.find(a => a.id === slug) || { id: slug, title: slug, codename: 'Persona', callSign: 'OTTO-01', href: 'projects/' + slug + '/index.html' };
+        const isEntitled = u.role === 'owner' || can(u, 'app', slug, 'view');
+        return {
+          appId: appObj.id,
+          title: appObj.title,
+          codename: appObj.codename || 'Persona',
+          callSign: appObj.callSign || 'OTTO-01',
+          primaryTool: appObj.primaryTool || '',
+          href: appObj.href,
+          entitled: isEntitled,
+          paywallStatus: isEntitled ? 'UNLOCKED_READY' : 'PAYWALL_LOCKED',
+          singleAppUnlockUsd: 19,
+          allAccessProUsd: 49
+        };
+      });
+      output.securityBoundary = {
+        uid: u.id,
+        email: u.email,
+        ou: u.ou || 'external',
+        securityGroup: u.securityGroup || (u.role === 'owner' ? 'DOMAIN_ADMIN' : (u.ou === 'internal' ? 'INTERNAL_ANALYST' : (u.clientTier === 'workspace' ? 'EXTERNAL_CLIENT_PARTNER' : 'EXTERNAL_SAAS_LMS'))),
+        accessTier: u.accessTier || 'CUSTOMER_RESTRICTED',
+        entitledAppsCount: u.role === 'owner' ? APPS_CATALOG.length : APPS_CATALOG.filter(a => can(u, 'app', a.id, 'view')).length,
+        totalAppsCount: APPS_CATALOG.length
+      };
       logAudit(u.id, `otto.tool.${toolName}`, `${output.runId} -> ${output.summary}`);
       saveState(S);
-      return sendJson(res, 200, { ok: true, result: output });
+      return sendJson(res, 200, { ok: true, result: output, state: scopeStateForUser(u) });
     }
 
     if (pathname === '/api/onboarding/categories' && req.method === 'GET') {
@@ -5527,10 +5620,10 @@ const server = http.createServer(async (req, res) => {
           res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
           return res.end(renderLockedHtml(
             u,
-            `Restricted App · ${gatedApp.title}`,
-            `Your account has access to SaaS Apps & LMS (Client Turnkey Forge & Sterling Auto Showcase). Access to "${gatedApp.title}" requires Administrator grant or a verified payment upgrade.`,
-            '/workspace?view=payment',
-            'Submit Payment / Request Unlock →'
+            `Paywall & Entitlement Boundary · ${gatedApp.title} (${gatedApp.callSign || 'PERSONA'})`,
+            `Your current membership scope (${u.securityGroup || 'EXTERNAL_SAAS_LMS'}) includes ${(u.allowedApps || []).length}/9 Persona SaaS apps. Unlock "${gatedApp.title}" instantly via Single-App Pass ($19/mo) or All-Access Pro Pass ($49/mo).`,
+            `/workspace?paywall=${encodeURIComponent(appSlug)}`,
+            `🔓 Unlock ${gatedApp.codename || gatedApp.title} Instantly ($19/mo) →`
           ));
         }
       }

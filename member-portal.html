@@ -44,6 +44,15 @@
   let showAssociativeGraph = true;
   let selectedLiveOttoTool = 'route_client_workspace';
   let liveOttoResult = null;
+  let ottoNaturalPrompt = '';
+  let featuredSpotlightAppId = qs.get('spotlight') || 'maps-geospatial-insights';
+  let showPaywallModal = Boolean(qs.get('paywall'));
+  let paywallTargetAppId = qs.get('paywall') || '';
+  let selectedPaywallTier = qs.get('paywall') && qs.get('paywall') !== 'pro' && qs.get('paywall') !== 'enterprise' ? 'single_app_19' : 'pro_49';
+  let paywallMethod = 'ach_nacha';
+  let paywallLast4 = '4829';
+  let paywallZip = '23294';
+  let paywallError = '';
 
   const isSoleAdmin = () => Boolean(W.isOwner ? W.isOwner(u) : (u && u.role === 'owner' && u.id === 'owner'));
   const isEmp = () => Boolean(W.isEmployee ? W.isEmployee(u) : (u && u.role !== 'owner' && u.ou === 'internal' && u.status === 'active'));
@@ -117,27 +126,42 @@
     const recAppIds = new Set(Array.isArray(u && u.recommendedApps) ? u.recommendedApps : []);
     matchedCatObjs.forEach(c => (c.associatedApps || []).forEach(aid => recAppIds.add(aid)));
 
-    // Strict Zero-Leakage Policy: Only render applications the user actually has access to, sorted by Netflix-category match first
+    const isEntitledApp = (appId) => Boolean(isSoleAdmin() || W.can(u, 'app', appId, 'view'));
+
     const unlockedApps = apps
-      .filter(a => W.can(u, 'app', a.id, 'view'))
+      .filter(a => isEntitledApp(a.id))
       .slice()
       .sort((a, b) => (recAppIds.has(b.id) ? 1 : 0) - (recAppIds.has(a.id) ? 1 : 0));
 
-    const renderAppCard = (a) => {
+    const lockedApps = apps.filter(a => !isEntitledApp(a.id));
+
+    const featuredApp = apps.find(a => a.id === featuredSpotlightAppId) || unlockedApps[0] || apps[0];
+    const featuredEntitled = featuredApp ? isEntitledApp(featuredApp.id) : true;
+
+    const renderAppCard = (a, showLockedOverlay) => {
+      const entitled = isEntitledApp(a.id);
       const matchingTrack = matchedCatObjs.find(c => (c.associatedApps || []).includes(a.id));
       const trackLine = matchingTrack
         ? '<div class="it-meta" style="margin-top:6px;color:#34d399;font-weight:600">Matched Track · ' + esc(matchingTrack.title) + '</div>'
         : '';
+      const statusPill = entitled
+        ? '<span style="padding:2px 8px;border-radius:999px;background:rgba(16,185,129,0.18);border:1px solid rgba(16,185,129,0.52);color:#6ee7b7;font-size:10px;font-weight:800">✓ ENTITLED</span>'
+        : '<span style="padding:2px 8px;border-radius:999px;background:rgba(234,179,8,0.18);border:1px solid rgba(234,179,8,0.58);color:#fde047;font-size:10px;font-weight:800">🔒 PAYWALL · $19/mo</span>';
       const personaBadge = a.callSign
         ? '<div class="row" style="margin-bottom:6px;gap:6px;flex-wrap:wrap">' +
             '<span style="padding:2px 8px;border-radius:999px;background:rgba(197,179,88,0.16);border:1px solid rgba(197,179,88,0.48);color:#fde047;font-size:10.5px;font-weight:800">Persona · ' + esc(a.codename || a.callSign) + ' (' + esc(a.callSign) + ')</span>' +
+            statusPill +
             (a.primaryTool ? '<code style="font-size:10.5px;color:#93c5fd">' + esc(a.primaryTool) + '</code>' : '') +
           '</div>'
         : '';
-      const act = '<a class="btn pri" data-launch-handoff-app="' + esc(a.id) + '" data-handoff-callsign="' + esc(a.callSign || 'ARGO-01') + '" data-handoff-tool="' + esc(a.primaryTool || '') + '" href="' + esc(a.href) + '" target="_blank" rel="noopener">Launch with ' + esc(a.codename || 'Persona') + ' ↗</a>' +
-        (a.primaryTool ? ' <button type="button" class="btn" data-run-persona-tool="' + esc(a.primaryTool) + '" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Run ' + esc(a.codename || 'Agent') + ' Tool</button>' : '') +
-        (a.aistudioUrl ? ' <a class="btn" href="' + esc(a.aistudioUrl) + '" target="_blank" rel="noopener" style="font-size:11px">AI Studio ↗</a>' : '');
-      return '<div class="compact-card" data-app-card="' + esc(a.id) + '" style="border-color:' + (matchingTrack ? 'rgba(16,185,129,0.55)' : 'rgba(16,185,129,0.38)') + ';padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px">' +
+      const act = entitled
+        ? '<a class="btn pri" data-launch-handoff-app="' + esc(a.id) + '" data-handoff-callsign="' + esc(a.callSign || 'ARGO-01') + '" data-handoff-tool="' + esc(a.primaryTool || '') + '" href="' + esc(a.href) + '" target="_blank" rel="noopener">Launch with ' + esc(a.codename || 'Persona') + ' ↗</a>' +
+          (a.primaryTool ? ' <button type="button" class="btn" data-run-persona-tool="' + esc(a.primaryTool) + '" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Run ' + esc(a.codename || 'Agent') + ' Tool</button>' : '') +
+          (a.aistudioUrl ? ' <a class="btn" href="' + esc(a.aistudioUrl) + '" target="_blank" rel="noopener" style="font-size:11px">AI Studio ↗</a>' : '')
+        : '<button type="button" class="btn pri" data-open-paywall="' + esc(a.id) + '" style="background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">🔓 Unlock ' + esc(a.codename || 'App') + ' ($19/mo)</button>' +
+          ' <button type="button" class="btn" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(a.id) + '" style="border-color:rgba(16,185,129,0.5);color:#6ee7b7">All 9 Apps ($49/mo)</button>' +
+          (a.primaryTool ? ' <button type="button" class="btn" data-run-persona-tool="' + esc(a.primaryTool) + '" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Preview via Otto</button>' : '');
+      return '<div class="compact-card" data-app-card="' + esc(a.id) + '" data-app-entitled="' + String(entitled) + '" style="border-color:' + (entitled ? (matchingTrack ? 'rgba(16,185,129,0.55)' : 'rgba(16,185,129,0.38)') : 'rgba(234,179,8,0.45)') + ';background:' + (entitled ? 'rgba(8,15,30,0.92)' : 'linear-gradient(135deg,rgba(30,24,10,0.52),rgba(8,14,28,0.95))') + ';padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px">' +
         '<div>' + personaBadge + '<h3>' + esc(a.title) + '</h3><p>' + esc(a.desc || '') + '</p>' + trackLine + '</div>' +
         '<div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap">' + act + '</div></div>';
     };
@@ -149,22 +173,53 @@
       : '';
 
     const personalizeBtnHtml = '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Otto Setup</button>';
+    const paywallBtnHtml = (!isSoleAdmin() && !isEmp())
+      ? '<button type="button" class="btn" data-open-paywall="' + esc((lockedApps[0] && lockedApps[0].id) || 'eveng-netprism-studio') + '" style="border-color:rgba(234,179,8,0.55);color:#fde047">' + (lockedApps.length > 0 ? ('🔓 Unlock Pro Apps (' + lockedApps.length + ' Locked)') : '✓ All 9 Apps Unlocked') + '</button>'
+      : '<button type="button" class="btn" data-open-paywall="eveng-netprism-studio" style="border-color:rgba(234,179,8,0.55);color:#fde047">💳 Preview Paywall Modal</button>';
 
     const topRightActions = isEmp()
       ? '<div style="display:flex;gap:8px;flex-wrap:wrap">' + resBtnHtml + personalizeBtnHtml + '<a class="btn pri" href="access-admin.html?tab=users&amp;ou=external">Client Directory</a></div>'
-      : '<div style="display:flex;gap:8px;flex-wrap:wrap">' + resBtnHtml + personalizeBtnHtml + '</div>';
+      : '<div style="display:flex;gap:8px;flex-wrap:wrap">' + paywallBtnHtml + resBtnHtml + personalizeBtnHtml + '</div>';
 
     const bridges = W.DIVERGENT_BRIDGES || {};
     const activeBaselineKey = (u && u.divergentBaseline && bridges[u.divergentBaseline]) ? u.divergentBaseline : selectedDivergentBaseline;
     const activeBridge = bridges[activeBaselineKey] || Object.values(bridges)[0];
     const assocTelem = (u && u.associativeTelemetry) || { completedStages: {}, weightBoosts: {}, scenarioSelections: {}, events: [] };
 
+    // Security Boundary & Membership Tier Ribbon
+    const ouCode = isSoleAdmin() ? 'OU=Builtin (Sole Admin)' : (isEmp() ? 'OU=Internal (Staff Analyst)' : 'OU=External (Client)');
+    const isFullPartner = isSoleAdmin() || isEmp() || (u && u.securityGroup === 'EXTERNAL_CLIENT_PARTNER') || (u && u.plan && u.plan.planTier === 'sdvosb_contract_retainer');
+    const secGroup = isSoleAdmin() ? 'DOMAIN_ADMIN' : (isEmp() ? 'INTERNAL_ANALYST' : (isFullPartner ? 'EXTERNAL_CLIENT_PARTNER' : 'EXTERNAL_SAAS_LMS'));
+    const tierBadgeText = isSoleAdmin()
+      ? 'Full Domain & 10-Agent Governance'
+      : isEmp()
+        ? 'Internal Staff Scope (Client OU Only · Zero Finance Access)'
+        : isFullPartner
+          ? 'Full Workspace Partner (Netflix Showcase + Agile + Otto Studio)'
+          : 'SaaS / Showcase Member (' + unlockedApps.length + '/9 Apps Entitled · Paywall Guard Active)';
+
+    const securityBoundaryRibbon =
+      '<div class="card" id="securityBoundaryRibbon" style="padding:12px 18px;margin-bottom:14px;border-color:rgba(59,130,246,0.48);background:linear-gradient(135deg,rgba(10,18,36,0.96),rgba(6,11,24,0.98))">' +
+        '<div class="row" style="flex-wrap:wrap;gap:10px">' +
+          '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+            '<span style="padding:3px 9px;border-radius:999px;background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.5);color:#93c5fd;font-size:10.5px;font-weight:800">' + esc(ouCode) + '</span>' +
+            '<span style="padding:3px 9px;border-radius:999px;background:rgba(197,179,88,0.16);border:1px solid rgba(197,179,88,0.5);color:#fde047;font-size:10.5px;font-weight:800">' + esc(secGroup) + '</span>' +
+            '<span style="padding:3px 9px;border-radius:999px;background:rgba(16,185,129,0.16);border:1px solid rgba(16,185,129,0.48);color:#6ee7b7;font-size:10.5px;font-weight:800">Entitled SaaS: ' + unlockedApps.length + ' / ' + apps.length + '</span>' +
+            '<span style="font-size:12px;color:#e2e8f0;font-weight:600">' + esc(tierBadgeText) + '</span>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
+            (!isSoleAdmin() ? '<span style="font-size:11px;color:#fca5a5;padding:3px 8px;border-radius:6px;background:rgba(127,29,29,0.28);border:1px solid rgba(239,68,68,0.4)">🛡️ Admin Console: 403 Isolated</span>' : '<span style="font-size:11px;color:#fde047;padding:3px 8px;border-radius:6px;background:rgba(197,179,88,0.15);border:1px solid rgba(197,179,88,0.4)">⚡ TrustSec 5×7 Admin Active</span>') +
+            (lockedApps.length > 0 ? '<button type="button" class="btn pri" data-open-paywall="' + esc(lockedApps[0].id) + '" style="padding:5px 11px;font-size:11.5px;background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">🔓 Unlock All 9 Apps ($49/mo)</button>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
     const accessClientBoundaryBanner = accessOnly
       ? '<div class="card" id="accessClientBoundaryBanner" style="padding:16px 20px;margin-bottom:14px;border-color:rgba(59,130,246,0.45);background:linear-gradient(135deg,rgba(15,23,42,0.95),rgba(10,16,32,0.98))">' +
           '<div class="row" style="margin-bottom:8px;flex-wrap:wrap;gap:8px">' +
             '<div>' +
-              '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd">Standard Portal Logon</span>' +
-              '<h3 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">Application Access &amp; Operational Insights</h3>' +
+              '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd">Standard Portal Logon · SaaS Showcase Membership</span>' +
+              '<h3 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">Netflix SaaS Showcase &amp; Instant Paywall Upgrade</h3>' +
             '</div>' +
             '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
               '<button type="button" class="btn" data-connect-workspace="google" style="padding:6px 12px;font-size:11.5px">🌐 Connect Google</button>' +
@@ -172,7 +227,92 @@
               '<button type="button" class="btn" data-connect-workspace="apple" style="padding:6px 12px;font-size:11.5px">🌐 Connect Apple</button>' +
             '</div>' +
           '</div>' +
-          '<p style="margin:0;font-size:12.5px;color:#cbd5e1;line-height:1.5">Launch your authorized applications below or connect your Google, Microsoft, or Apple Workspace above to unlock Otto Agent workflows.</p>' +
+          '<p style="margin:0;font-size:12.5px;color:#cbd5e1;line-height:1.5">Launch your ' + unlockedApps.length + ' entitled starter apps below, unlock any locked Specialist Persona SaaS app instantly ($19/mo single app or $49/mo All-Access), or connect your Workspace OIDC to unlock full Enterprise collaboration.</p>' +
+        '</div>'
+      : '';
+
+    // Otto (OTTO-01) Central Orchestrator Command Studio (Available to all authenticated users so Otto can route & enforce paywall boundaries!)
+    const ottoCommandBarHtml =
+      '<div class="card" id="ottoLiveCommandBar" style="padding:16px 20px;margin-bottom:14px;border-color:rgba(197,179,88,0.58);background:linear-gradient(135deg,rgba(15,23,42,0.97),rgba(6,11,24,0.99))">' +
+        '<div class="row" style="gap:10px;flex-wrap:wrap;margin-bottom:10px">' +
+          '<div>' +
+            '<span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Otto (OTTO-01) Central AI Orchestrator · 10 Live Google AI Studio Agents</span>' +
+            '<h3 style="margin:2px 0 0;font-size:15px;font-weight:800;color:#fff">Ask Otto in Natural Language or Dispatch a Specialist Persona Function Tool</h3>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
+            '<select id="portalOttoToolSelect" style="padding:7px 10px;font-size:12px">' +
+              '<option value="route_client_workspace"' + (selectedLiveOttoTool === 'route_client_workspace' ? ' selected' : '') + '>OTTO-01 · route_client_workspace (Categories → Apps)</option>' +
+              '<option value="evaluate_associative_mastery"' + (selectedLiveOttoTool === 'evaluate_associative_mastery' ? ' selected' : '') + '>OTTO-01 · evaluate_associative_mastery (SCORM Boost)</option>' +
+              '<option value="generate_turnkey_scope"' + (selectedLiveOttoTool === 'generate_turnkey_scope' ? ' selected' : '') + '>ARGO-01 · generate_turnkey_scope (Turnkey Forge)</option>' +
+              '<option value="triage_service_intake"' + (selectedLiveOttoTool === 'triage_service_intake' ? ' selected' : '') + '>ARYA-01 · triage_service_intake (Sterling Auto)</option>' +
+              '<option value="validate_network_topology"' + (selectedLiveOttoTool === 'validate_network_topology' ? ' selected' : '') + '>ZENO-01 · validate_network_topology (NetPrism Lab)</option>' +
+              '<option value="match_samgov_solicitations"' + (selectedLiveOttoTool === 'match_samgov_solicitations' ? ' selected' : '') + '>CATO-01 · match_samgov_solicitations (SAM.gov Radar)</option>' +
+              '<option value="simulate_funnel_treasury_roi"' + (selectedLiveOttoTool === 'simulate_funnel_treasury_roi' ? ' selected' : '') + '>VEGA-01 · simulate_funnel_treasury_roi (Traffic ROI)</option>' +
+              '<option value="grade_cli_ansible_drill"' + (selectedLiveOttoTool === 'grade_cli_ansible_drill' ? ' selected' : '') + '>KAEL-01 · grade_cli_ansible_drill (Ghost-CLI)</option>' +
+              '<option value="analyze_epigraphic_inscription"' + (selectedLiveOttoTool === 'analyze_epigraphic_inscription' ? ' selected' : '') + '>CLIO-01 · analyze_epigraphic_inscription (Chronos OS)</option>' +
+              '<option value="generate_cognate_drill_loop"' + (selectedLiveOttoTool === 'generate_cognate_drill_loop' ? ' selected' : '') + '>ALMA-01 · generate_cognate_drill_loop (Spanish OS)</option>' +
+              '<option value="analyze_geospatial_corridor"' + (selectedLiveOttoTool === 'analyze_geospatial_corridor' ? ' selected' : '') + '>ORIN-01 · analyze_geospatial_corridor (Maps &amp; Geospatial Insights)</option>' +
+            '</select>' +
+            '<button type="button" class="btn pri" id="btnPortalRunOttoTool" style="padding:7px 14px;font-size:12px">Execute Agent Tool</button>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px">' +
+          '<input id="portalOttoPromptInput" type="text" value="' + esc(ottoNaturalPrompt) + '" placeholder="Tell Otto your mission (e.g., &quot;Map our Richmond to Fort Belvoir DoD corridor and match SAM.gov contracts&quot; or &quot;Fast-track Spanish from Arabic&quot;)..." style="width:100%;padding:9px 12px;font-size:12.5px;border-radius:9px;background:rgba(4,8,20,0.9);border:1px solid rgba(59,130,246,0.42);color:#fff">' +
+          '<button type="button" class="btn" id="btnAskOttoNatural" style="padding:9px 16px;font-size:12.5px;border-color:rgba(197,179,88,0.6);color:#fde047;font-weight:800;white-space:nowrap">⚡ Ask Otto (OTTO-01)</button>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:' + (liveOttoResult ? '12px' : '0') + '">' +
+          '<button type="button" class="btn" data-otto-quick-prompt="Map our Richmond to Fort Belvoir DoD corridor with 3D Tiles and match NAICS 541512 contracts" style="padding:4px 9px;font-size:11px">🛰️ Orin + Cato: DoD Corridor &amp; Contracts</button>' +
+          '<button type="button" class="btn" data-otto-quick-prompt="Validate Dual-Homed BGP + OSPF Area 0 topology in EVE-NG and auto-grade Cisco IOS-XE CLI" style="padding:4px 9px;font-size:11px">🛡️ Zeno + Kael: NetPrism &amp; CLI Lab</button>' +
+          '<button type="button" class="btn" data-otto-quick-prompt="Activate Spanish and Chronos epigraphy cognate loop from English and Arabic roots" style="padding:4px 9px;font-size:11px">🧠 Alma + Clio: Associative Language OS</button>' +
+          '<button type="button" class="btn" data-otto-quick-prompt="Generate a turnkey web + AI receptionist scope and model funnel treasury ROI" style="padding:4px 9px;font-size:11px">💼 Argo + Arya + Vega: Turnkey &amp; ROI</button>' +
+        '</div>' +
+        (liveOttoResult
+          ? '<div id="ottoLiveOutputBanner" style="padding:13px 16px;border-radius:12px;background:rgba(6,78,59,0.32);border:1px solid rgba(16,185,129,0.55);font-size:12px">' +
+              '<div class="row" style="margin-bottom:6px;flex-wrap:wrap;gap:8px">' +
+                '<strong style="color:#fff">✓ Orchestrated by Otto (OTTO-01) → ' + esc(liveOttoResult.agent) + ' (' + esc(liveOttoResult.callSign) + ') · <code>' + esc(liveOttoResult.toolExecuted) + '</code></strong>' +
+                '<code style="color:#34d399;font-size:11px">' + esc(liveOttoResult.runId) + ' · ' + esc(liveOttoResult.transferMatchPct || '') + ' · AI Studio Prompt ' + esc(liveOttoResult.aistudioPromptId || '') + '</code>' +
+              '</div>' +
+              '<div style="color:#d1fae5;margin-bottom:8px;line-height:1.5">' + esc(liveOttoResult.summary) + '</div>' +
+              (Array.isArray(liveOttoResult.appEntitlements) && liveOttoResult.appEntitlements.length
+                ? '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(16,185,129,0.3)">' +
+                    '<span style="font-size:11px;font-weight:700;color:#93c5fd">Otto Security &amp; Paywall Check:</span>' +
+                    liveOttoResult.appEntitlements.map(ae =>
+                      ae.entitled
+                        ? '<a class="btn pri" href="' + esc(ae.href) + '" target="_blank" rel="noopener" style="padding:5px 10px;font-size:11px">✓ Launch ' + esc(ae.codename) + ' (' + esc(ae.callSign) + ') ↗</a>'
+                        : '<button type="button" class="btn" data-open-paywall="' + esc(ae.appId) + '" style="padding:5px 10px;font-size:11px;border-color:#fde047;color:#fde047;background:rgba(234,179,8,0.16);font-weight:800">🔒 Unlock ' + esc(ae.codename) + ' (' + esc(ae.callSign) + ' · $19/mo) →</button>'
+                    ).join('') +
+                  '</div>'
+                : '<div style="font-size:11px;color:#93c5fd">Recommended Apps: <code>' + esc((liveOttoResult.recommendedApps || []).join(', ')) + '</code> · Next Stage: <b>' + esc(liveOttoResult.nextUnlockedStage || '') + '</b></div>') +
+            '</div>'
+          : '') +
+      '</div>';
+
+    // Netflix-Style Featured Spotlight Hero
+    const netflixSpotlightHtml = featuredApp
+      ? '<div class="card" id="netflixSpotlightHero" style="padding:20px 22px;margin-bottom:14px;border:1.5px solid rgba(197,179,88,0.55);background:radial-gradient(circle at 85% 20%,rgba(59,130,246,0.24),rgba(197,179,88,0.12) 45%,rgba(5,10,22,0.97) 85%);box-shadow:0 20px 50px rgba(0,0,0,0.65)">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px">' +
+            '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+              '<span style="padding:3px 10px;border-radius:999px;background:#e11d48;color:#fff;font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase">NETFLIX SAAS SHOWCASE SPOTLIGHT</span>' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.55);color:#6ee7b7;font-size:10.5px;font-weight:800">98% Otto Match</span>' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(197,179,88,0.18);border:1px solid rgba(197,179,88,0.55);color:#fde047;font-size:10.5px;font-weight:800">Persona · ' + esc(featuredApp.codename || 'Orin') + ' (' + esc(featuredApp.callSign || 'ORIN-01') + ')</span>' +
+              (featuredEntitled
+                ? '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.2);border:1px solid #10b981;color:#a7f3d0;font-size:10.5px;font-weight:800">✓ INCLUDED IN YOUR MEMBERSHIP</span>'
+                : '<span style="padding:3px 10px;border-radius:999px;background:rgba(234,179,8,0.22);border:1px solid #fde047;color:#fde047;font-size:10.5px;font-weight:800">🔒 PRO PAYWALL · $19/MO SINGLE OR $49/MO ALL 9 APPS</span>') +
+            '</div>' +
+            '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
+              apps.map(a => '<button type="button" class="btn" data-select-spotlight="' + esc(a.id) + '" style="padding:4px 9px;font-size:10.5px;border-color:' + (a.id === featuredApp.id ? '#fde047' : 'rgba(148,163,184,0.28)') + ';background:' + (a.id === featuredApp.id ? 'rgba(197,179,88,0.22)' : 'rgba(15,23,42,0.85)') + ';color:' + (a.id === featuredApp.id ? '#fde047' : '#cbd5e1') + '">' + (isEntitledApp(a.id) ? '✓ ' : '🔒 ') + esc(a.codename || a.title.split(' ')[0]) + '</button>').join('') +
+            '</div>' +
+          '</div>' +
+          '<h2 style="margin:4px 0 6px;font-size:21px;font-weight:900;color:#fff;letter-spacing:-0.01em">' + esc(featuredApp.title) + '</h2>' +
+          '<p style="margin:0 0 14px;font-size:13px;color:#cbd5e1;max-width:860px;line-height:1.55">' + esc(featuredApp.desc || '') + ' Powered by Google AI Studio Prompt <code>' + esc(featuredApp.aistudioPromptId || '') + '</code> and live function tool <code>' + esc(featuredApp.primaryTool || '') + '</code>.</p>' +
+          '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">' +
+            (featuredEntitled
+              ? '<a class="btn pri" data-launch-handoff-app="' + esc(featuredApp.id) + '" data-handoff-callsign="' + esc(featuredApp.callSign || 'ORIN-01') + '" data-handoff-tool="' + esc(featuredApp.primaryTool || '') + '" href="' + esc(featuredApp.href) + '" target="_blank" rel="noopener" style="padding:9px 18px;font-size:13px;font-weight:800">▶ Launch ' + esc(featuredApp.codename || 'Experience') + ' Full OS ↗</a>'
+              : '<button type="button" class="btn pri" data-open-paywall="' + esc(featuredApp.id) + '" style="padding:9px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047">🔓 Unlock ' + esc(featuredApp.codename || 'App') + ' Instantly ($19/mo) →</button>' +
+                '<button type="button" class="btn" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(featuredApp.id) + '" style="padding:9px 16px;font-size:12.5px;border-color:#10b981;color:#6ee7b7">🌟 Unlock All 9 Persona Apps ($49/mo)</button>') +
+            (featuredApp.primaryTool ? '<button type="button" class="btn" data-run-persona-tool="' + esc(featuredApp.primaryTool) + '" style="padding:9px 15px;font-size:12.5px;border-color:rgba(59,130,246,0.5);color:#93c5fd">⚡ Run ' + esc(featuredApp.codename || 'Persona') + ' Tool via Otto</button>' : '') +
+            (featuredApp.aistudioUrl ? '<a class="btn" href="' + esc(featuredApp.aistudioUrl) + '" target="_blank" rel="noopener" style="padding:9px 14px;font-size:12px">✦ Open in Google AI Studio ↗</a>' : '') +
+          '</div>' +
         '</div>'
       : '';
 
@@ -217,54 +357,164 @@
         '</div>'
       : '';
 
-    const ottoCommandBarHtml = !accessOnly
-      ? '<div class="card" id="ottoLiveCommandBar" style="padding:14px 18px;margin-bottom:14px;border-color:rgba(197,179,88,0.52);background:linear-gradient(135deg,rgba(15,23,42,0.96),rgba(6,11,24,0.98))">' +
-          '<div class="row" style="gap:10px;flex-wrap:wrap;margin-bottom:' + (liveOttoResult ? '10px' : '0') + '">' +
+    const swimlaneCommercial = apps.filter(a => ['client-turnkey-forge', 'sterling-auto-repair', 'traffic-roi-simulator', 'samgov-contract-matchmaker'].includes(a.id));
+    const swimlaneCyberGeo = apps.filter(a => ['eveng-netprism-studio', 'ghost-cli-trainer', 'maps-geospatial-insights'].includes(a.id));
+    const swimlaneCognitive = apps.filter(a => ['spanish-acquisition-os', 'chronos-aetheria-scorm'].includes(a.id));
+
+    const netflixSwimlanesHtml =
+      '<div id="netflixSwimlanesContainer" style="display:flex;flex-direction:column;gap:14px">' +
+        '<div class="card" style="padding:18px 20px;margin-top:0">' +
+          '<div class="row" style="margin-bottom:14px;flex-wrap:wrap;gap:8px">' +
             '<div>' +
-              '<span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Otto (OTTO-01) &amp; 9 Specialist Personas · Live AI Studio Runtime</span>' +
-              '<h3 style="margin:2px 0 0;font-size:14.5px;font-weight:700;color:#fff">Execute Orchestrator or Specialist Persona Function Tool</h3>' +
+              '<span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#34d399">SWIMLANE 1 · ENTITLED &amp; READY TO LAUNCH</span>' +
+              '<h2 style="margin:2px 0 0;font-size:15.5px;font-weight:700">Authorized Applications (' + unlockedApps.length + ')</h2>' +
             '</div>' +
-            '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
-              '<select id="portalOttoToolSelect" style="padding:7px 10px;font-size:12px">' +
-                '<option value="route_client_workspace"' + (selectedLiveOttoTool === 'route_client_workspace' ? ' selected' : '') + '>OTTO-01 · route_client_workspace (Categories → Apps)</option>' +
-                '<option value="evaluate_associative_mastery"' + (selectedLiveOttoTool === 'evaluate_associative_mastery' ? ' selected' : '') + '>OTTO-01 · evaluate_associative_mastery (SCORM Boost)</option>' +
-                '<option value="generate_turnkey_scope"' + (selectedLiveOttoTool === 'generate_turnkey_scope' ? ' selected' : '') + '>ARGO-01 · generate_turnkey_scope (Turnkey Forge)</option>' +
-                '<option value="triage_service_intake"' + (selectedLiveOttoTool === 'triage_service_intake' ? ' selected' : '') + '>ARYA-01 · triage_service_intake (Sterling Auto)</option>' +
-                '<option value="validate_network_topology"' + (selectedLiveOttoTool === 'validate_network_topology' ? ' selected' : '') + '>ZENO-01 · validate_network_topology (NetPrism Lab)</option>' +
-                '<option value="match_samgov_solicitations"' + (selectedLiveOttoTool === 'match_samgov_solicitations' ? ' selected' : '') + '>CATO-01 · match_samgov_solicitations (SAM.gov Radar)</option>' +
-                '<option value="simulate_funnel_treasury_roi"' + (selectedLiveOttoTool === 'simulate_funnel_treasury_roi' ? ' selected' : '') + '>VEGA-01 · simulate_funnel_treasury_roi (Traffic ROI)</option>' +
-                '<option value="grade_cli_ansible_drill"' + (selectedLiveOttoTool === 'grade_cli_ansible_drill' ? ' selected' : '') + '>KAEL-01 · grade_cli_ansible_drill (Ghost-CLI)</option>' +
-                '<option value="analyze_epigraphic_inscription"' + (selectedLiveOttoTool === 'analyze_epigraphic_inscription' ? ' selected' : '') + '>CLIO-01 · analyze_epigraphic_inscription (Chronos OS)</option>' +
-                '<option value="generate_cognate_drill_loop"' + (selectedLiveOttoTool === 'generate_cognate_drill_loop' ? ' selected' : '') + '>ALMA-01 · generate_cognate_drill_loop (Spanish OS)</option>' +
-                '<option value="analyze_geospatial_corridor"' + (selectedLiveOttoTool === 'analyze_geospatial_corridor' ? ' selected' : '') + '>ORIN-01 · analyze_geospatial_corridor (Maps &amp; Geospatial Insights)</option>' +
-              '</select>' +
-              '<button type="button" class="btn pri" id="btnPortalRunOttoTool" style="padding:7px 14px;font-size:12px">Execute Agent Tool</button>' +
+            topRightActions +
+          '</div>' +
+          '<div class="bento-2">' + unlockedApps.map(a => renderAppCard(a, false)).join('') + '</div>' +
+        '</div>' +
+
+        (lockedApps.length > 0
+          ? '<div class="card" id="netflixPaywallCatalogRow" style="padding:18px 20px;margin-top:0;border-color:rgba(234,179,8,0.48)">' +
+              '<div class="row" style="margin-bottom:14px;flex-wrap:wrap;gap:8px">' +
+                '<div>' +
+                  '<span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#fde047">SWIMLANE 2 · PRO &amp; ENTERPRISE PAYWALL SHOWCASE (' + lockedApps.length + ' LOCKED APPS)</span>' +
+                  '<h2 style="margin:2px 0 0;font-size:15.5px;font-weight:700;color:#fff">Unlock Additional Specialist Persona SaaS Applications Instantly</h2>' +
+                '</div>' +
+                '<button type="button" class="btn pri" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(lockedApps[0].id) + '" style="background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">🌟 Unlock All 9 Apps ($49/mo)</button>' +
+              '</div>' +
+              '<div class="bento-2">' + lockedApps.map(a => renderAppCard(a, true)).join('') + '</div>' +
+            '</div>'
+          : '') +
+
+        '<div class="card" style="padding:16px 20px;margin-top:0;border-color:rgba(59,130,246,0.35)">' +
+          '<div class="row" style="margin-bottom:10px;flex-wrap:wrap;gap:8px">' +
+            '<span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd">NETFLIX DOMAIN CHANNELS · ALL 9 SPECIALIST PERSONA SAAS SUITE</span>' +
+            '<span style="font-size:11px;color:#94a3b8"> Commercial (' + swimlaneCommercial.length + ') · Cyber &amp; 3D Geo (' + swimlaneCyberGeo.length + ') · Language &amp; Epigraphy (' + swimlaneCognitive.length + ')</span>' +
+          '</div>' +
+          '<div class="bento-3" style="gap:10px">' +
+            '<div class="compact-card" style="padding:12px 14px;border-color:rgba(197,179,88,0.4)">' +
+              '<div style="font-size:11px;font-weight:800;color:#fde047;margin-bottom:6px">💼 Commercial, Revenue &amp; Federal</div>' +
+              swimlaneCommercial.map(a => '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(148,163,184,0.14);font-size:11.5px"><span><b>' + esc(a.codename) + '</b> (' + esc(a.callSign) + ')</span>' + (isEntitledApp(a.id) ? '<a href="' + esc(a.href) + '" target="_blank" style="color:#34d399;text-decoration:none;font-weight:700">✓ Launch ↗</a>' : '<button type="button" class="btn" data-open-paywall="' + esc(a.id) + '" style="padding:2px 7px;font-size:10px;border-color:#fde047;color:#fde047">🔒 $19 Unlock</button>') + '</div>').join('') +
+            '</div>' +
+            '<div class="compact-card" style="padding:12px 14px;border-color:rgba(6,182,212,0.4)">' +
+              '<div style="font-size:11px;font-weight:800;color:#67e8f9;margin-bottom:6px">🛡️ NetPrism, Ghost-CLI &amp; 3D Maps</div>' +
+              swimlaneCyberGeo.map(a => '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(148,163,184,0.14);font-size:11.5px"><span><b>' + esc(a.codename) + '</b> (' + esc(a.callSign) + ')</span>' + (isEntitledApp(a.id) ? '<a href="' + esc(a.href) + '" target="_blank" style="color:#34d399;text-decoration:none;font-weight:700">✓ Launch ↗</a>' : '<button type="button" class="btn" data-open-paywall="' + esc(a.id) + '" style="padding:2px 7px;font-size:10px;border-color:#fde047;color:#fde047">🔒 $19 Unlock</button>') + '</div>').join('') +
+            '</div>' +
+            '<div class="compact-card" style="padding:12px 14px;border-color:rgba(16,185,129,0.4)">' +
+              '<div style="font-size:11px;font-weight:800;color:#6ee7b7;margin-bottom:6px">🧠 Associative Language &amp; Chronos</div>' +
+              swimlaneCognitive.map(a => '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(148,163,184,0.14);font-size:11.5px"><span><b>' + esc(a.codename) + '</b> (' + esc(a.callSign) + ')</span>' + (isEntitledApp(a.id) ? '<a href="' + esc(a.href) + '" target="_blank" style="color:#34d399;text-decoration:none;font-weight:700">✓ Launch ↗</a>' : '<button type="button" class="btn" data-open-paywall="' + esc(a.id) + '" style="padding:2px 7px;font-size:10px;border-color:#fde047;color:#fde047">🔒 $19 Unlock</button>') + '</div>').join('') +
             '</div>' +
           '</div>' +
-          (liveOttoResult
-            ? '<div id="ottoLiveOutputBanner" style="padding:11px 14px;border-radius:10px;background:rgba(6,78,59,0.32);border:1px solid rgba(16,185,129,0.52);font-size:12px">' +
-                '<div class="row" style="margin-bottom:4px;flex-wrap:wrap;gap:8px">' +
-                  '<strong style="color:#fff">✓ ' + esc(liveOttoResult.agent) + ' (' + esc(liveOttoResult.callSign) + ') · <code>' + esc(liveOttoResult.toolExecuted) + '</code></strong>' +
-                  '<code style="color:#34d399;font-size:11px">' + esc(liveOttoResult.runId) + ' · ' + esc(liveOttoResult.transferMatchPct || '') + '</code>' +
-                '</div>' +
-                '<div style="color:#d1fae5;margin-bottom:4px">' + esc(liveOttoResult.summary) + '</div>' +
-                '<div style="font-size:11px;color:#93c5fd">Recommended Apps: <code>' + esc((liveOttoResult.recommendedApps || []).join(', ')) + '</code> · Next Stage: <b>' + esc(liveOttoResult.nextUnlockedStage || '') + '</b></div>' +
-              '</div>'
-            : '') +
-        '</div>'
+        '</div>' +
+      '</div>';
+
+    return securityBoundaryRibbon +
+      accessClientBoundaryBanner +
+      ottoCommandBarHtml +
+      netflixSpotlightHtml +
+      divergentSummaryStrip +
+      netflixSwimlanesHtml +
+      (accessOnly ? ('<div style="margin-top:14px">' + resourcesPanel() + '</div>') : '');
+  }
+
+  function livePaywallModalHtml() {
+    if (!showPaywallModal) return '';
+    const apps = W.APPS_CATALOG || [];
+    const targetApp = apps.find(a => a.id === paywallTargetAppId) || apps.find(a => a.id === 'eveng-netprism-studio') || apps[0];
+    const errBox = paywallError
+      ? '<div id="paywallModalError" style="padding:10px 14px;margin-bottom:12px;border-radius:10px;background:rgba(127,29,29,0.35);border:1px solid rgba(239,68,68,0.55);color:#fecaca;font-size:12.5px">' + esc(paywallError) + '</div>'
       : '';
 
-    return accessClientBoundaryBanner +
-      ottoCommandBarHtml +
-      divergentSummaryStrip +
-      '<div class="card" style="padding:18px 20px;margin-top:0">' +
-        '<div class="row" style="margin-bottom:14px">' +
-          '<h2 style="margin:0;font-size:15px;font-weight:600">Authorized Applications (' + unlockedApps.length + ')</h2>' +
-          topRightActions +
+    const tierCard = (tierKey, badge, title, price, desc, highlights) => {
+      const sel = selectedPaywallTier === tierKey;
+      return '<div class="compact-card" data-select-paywall-tier="' + esc(tierKey) + '" style="cursor:pointer;padding:14px 16px;border-radius:12px;border:2px solid ' + (sel ? '#fde047' : 'rgba(148,163,184,0.28)') + ';background:' + (sel ? 'linear-gradient(135deg,rgba(197,179,88,0.22),rgba(15,23,42,0.96))' : 'rgba(8,14,28,0.9)') + '">' +
+        '<div class="row" style="margin-bottom:4px"><span style="font-size:10px;font-weight:800;color:' + (sel ? '#fde047' : '#93c5fd') + ';text-transform:uppercase">' + esc(badge) + '</span><span style="font-size:11px;font-weight:800;color:' + (sel ? '#34d399' : '#64748b') + '">' + (sel ? '✓ SELECTED' : 'Select') + '</span></div>' +
+        '<div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:2px">' + esc(title) + '</div>' +
+        '<div style="font-size:18px;font-weight:900;color:#fde047;margin-bottom:6px">' + esc(price) + '</div>' +
+        '<p style="font-size:11.5px;color:#cbd5e1;margin:0 0 8px;line-height:1.4">' + esc(desc) + '</p>' +
+        '<div style="font-size:11px;color:#a7f3d0;line-height:1.45">' + highlights.map(h => '<div>✓ ' + esc(h) + '</div>').join('') + '</div>' +
+      '</div>';
+    };
+
+    return '<div id="mgcLivePaywallModal" role="dialog" aria-modal="true" style="position:fixed;inset:0;z-index:2200;background:rgba(2,5,14,0.92);backdrop-filter:blur(22px);overflow-y:auto;padding:20px;display:flex;align-items:center;justify-content:center">' +
+      '<div class="card" style="width:min(1040px,100%);padding:22px 26px;border:1.5px solid rgba(197,179,88,0.65);border-radius:18px;background:rgba(6,11,24,0.98) !important;box-shadow:0 36px 96px rgba(0,0,0,0.92)">' +
+        '<div class="row" style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(148,163,184,0.2)">' +
+          '<div>' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(234,179,8,0.2);border:1px solid #fde047;color:#fde047;font-size:10.5px;font-weight:800">🔒 ZERO-TRUST PAYWALL &amp; INSTANT ENTITLEMENT ENGINE</span>' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.18);border:1px solid #10b981;color:#6ee7b7;font-size:10.5px;font-weight:800">PCI-DSS v4.0 SAQ-A · NACHA ACH · WAWF</span>' +
+            '</div>' +
+            '<h2 style="margin:2px 0 0;font-size:20px;font-weight:900;color:#fff">Unlock ' + esc(targetApp ? (targetApp.title + ' (' + (targetApp.callSign || 'PERSONA') + ')') : 'Specialist Persona Suite') + '</h2>' +
+          '</div>' +
+          '<button type="button" class="btn" id="btnClosePaywallModal" style="padding:6px 12px;font-size:12px">Close ✕</button>' +
         '</div>' +
-        '<div class="bento-2">' + unlockedApps.map(renderAppCard).join('') + '</div>' +
+
+        errBox +
+
+        '<div class="bento-3" style="gap:12px;margin-bottom:16px">' +
+          tierCard(
+            'single_app_19',
+            'Single Persona Pass',
+            'Unlock ' + ((targetApp && targetApp.codename) || 'Selected App') + ' Only',
+            '$19 / mo',
+            'Immediate entitlement for ' + ((targetApp && targetApp.title) || 'this application') + ' + starter apps.',
+            ['Unlocks ' + ((targetApp && targetApp.codename) || 'Persona') + ' (' + ((targetApp && targetApp.callSign) || 'APP') + ')', 'Live AI Studio Function Tool Access', 'SCORM 2004 Telemetry & ZIP Export']
+          ) +
+          tierCard(
+            'pro_49',
+            'Recommended · Best Value',
+            'Pro All-Access SaaS & LMS Pass',
+            '$49 / mo',
+            'Unlocks all 9 Specialist Persona SaaS Applications + Otto Fast-Track Templates.',
+            ['All 9 Persona SaaS Apps (Argo–Orin)', 'Full Otto (OTTO-01) Orchestration Studio', 'All SCORM 2004 Labs & Geospatial Insights']
+          ) +
+          tierCard(
+            'sdvosb_contract_retainer',
+            'Full Enterprise Workspace',
+            'Workspace Partner & Agile Retainer',
+            '$250 / mo',
+            'Upgrades account to EXTERNAL_CLIENT_PARTNER with Dedicated Agile Sprint Board.',
+            ['All 9 Persona SaaS Apps + Resources', 'Dedicated Agile Delivery & Kanban Board', 'Priority Executive Architecture Briefings']
+          ) +
+        '</div>' +
+
+        '<div style="padding:14px 16px;border-radius:12px;background:rgba(4,8,20,0.9);border:1px solid rgba(59,130,246,0.4);margin-bottom:14px">' +
+          '<div style="display:grid;grid-template-columns:1.2fr 1.2fr 1fr 1fr;gap:10px;align-items:end">' +
+            '<div>' +
+              '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Target Persona App</label>' +
+              '<select id="paywallAppSelect" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+                apps.map(a => '<option value="' + esc(a.id) + '"' + (targetApp && a.id === targetApp.id ? ' selected' : '') + '>' + esc((a.codename || a.id) + ' — ' + a.title) + '</option>').join('') +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Settlement Rail</label>' +
+              '<select id="paywallMethodSelect" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+                '<option value="ach_nacha"' + (paywallMethod === 'ach_nacha' ? ' selected' : '') + '>Mercury / NACHA ACH ($0.00 Fee)</option>' +
+                '<option value="card_tokenized"' + (paywallMethod === 'card_tokenized' ? ' selected' : '') + '>Stripe SAQ-A Tokenized Card</option>' +
+                '<option value="gpc_wawf"' + (paywallMethod === 'gpc_wawf' ? ' selected' : '') + '>Federal WAWF / PIEE EFT ($0.00 Fee)</option>' +
+              '</select>' +
+            '</div>' +
+            '<div>' +
+              '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Tokenized Last 4 Digits</label>' +
+              '<input id="paywallLast4Input" type="text" maxlength="4" value="' + esc(paywallLast4) + '" placeholder="4829" style="width:100%;padding:8px 10px;font-size:12.5px;font-family:monospace;font-weight:700">' +
+            '</div>' +
+            '<div>' +
+              '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Billing ZIP Code</label>' +
+              '<input id="paywallZipInput" type="text" maxlength="10" value="' + esc(paywallZip) + '" placeholder="23294" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:12px">' +
+          '<span style="font-size:11.5px;color:#cbd5e1">✓ EFTA / NACHA Reg E, PCI-DSS v4.0 SAQ-A Zero-PAN, and MGC/F.I.X MSA attested. Posts directly to GAAP General Ledger.</span>' +
+          '<div style="display:flex;gap:10px">' +
+            '<button type="button" class="btn" id="btnGoFullBillingTab" style="padding:9px 14px;font-size:12px">Full Billing Form</button>' +
+            '<button type="button" class="btn pri" id="btnConfirmPaywallUnlock" style="padding:10px 22px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#10b981,#059669);border-color:#10b981;color:#fff">🔓 Authorize &amp; Unlock Immediately →</button>' +
+          '</div>' +
+        '</div>' +
       '</div>' +
-      (accessOnly ? ('<div style="margin-top:14px">' + resourcesPanel() + '</div>') : '');
+    '</div>';
   }
 
   function consultationPanel() {
@@ -404,8 +654,9 @@
           '</select>' +
           '<select id="payPlanTier" style="width:100%;margin-bottom:14px;padding:9px 11px;font-size:13px">' +
             '<option value="saas_lms_base"' + (prof && prof.planTier === 'saas_lms_base' ? ' selected' : '') + '>Starter SaaS &amp; LMS ($5 / mo)</option>' +
-            '<option value="pro_enterprise"' + (prof && prof.planTier === 'pro_enterprise' ? ' selected' : '') + '>Pro Suite ($49 / mo)</option>' +
-            '<option value="sdvosb_contract_retainer"' + (prof && prof.planTier === 'sdvosb_contract_retainer' ? ' selected' : '') + '>Enterprise Retainer ($250 / mo)</option>' +
+            '<option value="single_app_19"' + (prof && prof.planTier === 'single_app_19' ? ' selected' : '') + '>Single Persona SaaS Unlock ($19 / mo)</option>' +
+            '<option value="pro_49"' + (prof && (prof.planTier === 'pro_49' || prof.planTier === 'pro_enterprise') ? ' selected' : '') + '>Pro All-Access 9 Apps ($49 / mo)</option>' +
+            '<option value="sdvosb_contract_retainer"' + (prof && prof.planTier === 'sdvosb_contract_retainer' ? ' selected' : '') + '>Enterprise Workspace &amp; Agile Retainer ($250 / mo)</option>' +
           '</select>' +
           '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:8px">Payment Method</div>' +
           '<select id="payMethod" style="width:100%;padding:9px 11px;font-size:13px">' +
@@ -865,9 +1116,8 @@
       return;
     }
     syncOnboardingStateFromUser();
-    if (!isSoleAdmin() && !isEmp() && !u.onboardingCompleted && (qs.get('onboard') === '1' || sessionStorage.getItem('mgc_nf_prompted_' + u.id) !== '1')) {
+    if (!isSoleAdmin() && !isEmp() && !u.onboardingCompleted && qs.get('onboard') === '1') {
       showNetflixOnboarding = true;
-      sessionStorage.setItem('mgc_nf_prompted_' + u.id, '1');
     }
 
     const availableTabs = getAvailableTabsForUser();
@@ -880,12 +1130,14 @@
     const sideNav = '<aside class="ws-side" aria-label="Authorized User Navigation">' +
       '<div class="ws-side-title">' + (isAccessClientUser() ? 'Access Portal' : 'Workspace') + '</div>' +
       availableTabs.map(t => '<button type="button" class="ws-nav-btn' + (t[0] === tab ? ' active' : '') + '" data-tab="' + t[0] + '"><span>' + t[1] + '</span></button>').join('') +
-      ((!isAccessClientUser() && (isSoleAdmin() || W.can(u, 'page', 'agile', 'view'))) ? '<a class="ws-nav-btn" href="agile-board.html" style="text-decoration:none"><span>Agile Delivery</span></a>' : '') +
+      ((isSoleAdmin() || W.can(u, 'page', 'agile', 'view'))
+        ? '<a class="ws-nav-btn" href="agile-board.html" style="text-decoration:none"><span>Agile Delivery</span></a>'
+        : '<button type="button" class="ws-nav-btn" data-open-paywall-tier="sdvosb_contract_retainer" data-open-paywall="client-turnkey-forge" style="color:#fde047;border-color:rgba(234,179,8,0.35)"><span>🔒 Agile Delivery (Pro/Ent)</span></button>') +
       (isSoleAdmin() ? '<a class="ws-nav-btn" href="access-admin.html" style="text-decoration:none;border-color:rgba(197,179,88,0.42);color:#fde047"><span>Directory &amp; Console</span></a>' : '') +
       (isEmp() ? '<a class="ws-nav-btn" href="access-admin.html?tab=users&amp;ou=external" style="text-decoration:none;border-color:rgba(59,130,246,0.42);color:#93c5fd"><span>Client Directory</span></a>' : '') +
       '</aside>';
 
-    app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + body + '</div></div>' + netflixOnboardingModalHtml();
+    app.innerHTML = '<div class="ws-layout">' + sideNav + '<div class="ws-main">' + body + '</div></div>' + netflixOnboardingModalHtml() + livePaywallModalHtml();
     W.header(tab === 'payment' ? 'member-portal.html?view=payment' : tab === 'consultation' ? 'member-portal.html?view=consultation' : tab === 'resources' ? 'member-portal.html?view=resources' : 'member-portal.html');
     bind();
   }
@@ -1180,6 +1432,146 @@
     const btnPortalRunOtto = document.getElementById('btnPortalRunOttoTool');
     if (btnPortalRunOtto) {
       btnPortalRunOtto.onclick = () => executePortalOttoTool(selectedLiveOttoTool);
+    }
+    const executeOttoNaturalPrompt = async (promptText) => {
+      ottoNaturalPrompt = promptText;
+      try {
+        const resp = await fetch('/api/otto/execute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: promptText })
+        });
+        const data = await resp.json();
+        if (data && data.ok && data.result) {
+          liveOttoResult = data.result;
+          selectedLiveOttoTool = data.result.toolExecuted || selectedLiveOttoTool;
+          W.toast('Otto (OTTO-01) routed to ' + data.result.agent + ' (' + data.result.callSign + ')');
+          render();
+        }
+      } catch (_) {}
+    };
+    const btnAskOttoNatural = document.getElementById('btnAskOttoNatural');
+    if (btnAskOttoNatural) {
+      btnAskOttoNatural.onclick = () => {
+        const inp = document.getElementById('portalOttoPromptInput');
+        const val = inp ? inp.value.trim() : '';
+        if (val) executeOttoNaturalPrompt(val);
+        else executePortalOttoTool(selectedLiveOttoTool);
+      };
+    }
+    app.querySelectorAll('[data-otto-quick-prompt]').forEach(btn => {
+      btn.onclick = () => executeOttoNaturalPrompt(btn.getAttribute('data-otto-quick-prompt'));
+    });
+    app.querySelectorAll('[data-select-spotlight]').forEach(btn => {
+      btn.onclick = () => {
+        featuredSpotlightAppId = btn.getAttribute('data-select-spotlight') || 'maps-geospatial-insights';
+        render();
+      };
+    });
+    app.querySelectorAll('[data-open-paywall]').forEach(btn => {
+      btn.onclick = () => {
+        paywallTargetAppId = btn.getAttribute('data-open-paywall') || 'eveng-netprism-studio';
+        const tierAttr = btn.getAttribute('data-open-paywall-tier');
+        selectedPaywallTier = tierAttr || 'single_app_19';
+        paywallError = '';
+        showPaywallModal = true;
+        render();
+      };
+    });
+    const btnClosePaywall = document.getElementById('btnClosePaywallModal');
+    if (btnClosePaywall) {
+      btnClosePaywall.onclick = () => {
+        showPaywallModal = false;
+        render();
+      };
+    }
+    app.querySelectorAll('[data-select-paywall-tier]').forEach(card => {
+      card.onclick = () => {
+        selectedPaywallTier = card.getAttribute('data-select-paywall-tier') || 'pro_49';
+        render();
+      };
+    });
+    const paywallAppSel = document.getElementById('paywallAppSelect');
+    if (paywallAppSel) {
+      paywallAppSel.onchange = () => {
+        paywallTargetAppId = paywallAppSel.value;
+        render();
+      };
+    }
+    const btnGoFullBilling = document.getElementById('btnGoFullBillingTab');
+    if (btnGoFullBilling) {
+      btnGoFullBilling.onclick = () => {
+        showPaywallModal = false;
+        tab = 'payment';
+        render();
+      };
+    }
+    const btnConfirmPaywallUnlock = document.getElementById('btnConfirmPaywallUnlock');
+    if (btnConfirmPaywallUnlock) {
+      btnConfirmPaywallUnlock.onclick = async () => {
+        paywallError = '';
+        const mSel = document.getElementById('paywallMethodSelect');
+        const l4Inp = document.getElementById('paywallLast4Input');
+        const zipInp = document.getElementById('paywallZipInput');
+        paywallMethod = mSel ? mSel.value : 'ach_nacha';
+        paywallLast4 = l4Inp ? l4Inp.value.replace(/\D/g, '').slice(-4) : '4829';
+        paywallZip = zipInp ? zipInp.value.trim() : '23294';
+        if (paywallMethod !== 'gpc_wawf' && paywallLast4.length !== 4) {
+          paywallError = 'Please enter a valid 4-digit tokenized instrument identifier.';
+          render();
+          return;
+        }
+        try {
+          const resp = await fetch('/api/payment/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              merchantEntity: 'FIX',
+              planTier: selectedPaywallTier,
+              unlockAppId: paywallTargetAppId,
+              method: paywallMethod,
+              billingName: (u && u.name) || 'Verified Subscriber',
+              billingEmail: (u && u.email) || 'subscriber@partner-org.com',
+              billingOrg: (u && u.org) || 'Partner Organization',
+              postalCode: paywallZip || '23294',
+              last4: paywallLast4 || '4829',
+              expMonth: 12,
+              expYear: 2029,
+              eftaNachaAccepted: true,
+              pciTermsAccepted: true,
+              msaAccepted: true
+            })
+          });
+          const data = await resp.json();
+          if (!data || !data.ok) {
+            paywallError = (data && data.error) || 'Paywall authorization failed.';
+            render();
+            return;
+          }
+          lastPaymentReceipt = data;
+          if (u) {
+            u.paymentProfile = data.paymentProfile;
+            u.payments = [data.receipt].concat(u.payments || []);
+            if (Array.isArray(data.unlockedApps)) u.allowedApps = data.unlockedApps;
+            if (Array.isArray(data.qualifiedResources)) u.qualifiedResources = data.qualifiedResources;
+            if (selectedPaywallTier === 'sdvosb_contract_retainer') {
+              u.clientTier = 'workspace';
+              u.workspaceConnected = true;
+              u.securityGroup = 'EXTERNAL_CLIENT_PARTNER';
+              u.pages = Object.assign({}, u.pages || {}, { saasapps: 'ready', resources: 'ready', agile: 'ready' });
+            }
+          }
+          if (data.state && W.S) {
+            Object.assign(W.S, data.state);
+          }
+          showPaywallModal = false;
+          W.toast('Unlocked! Receipt ' + data.receipt.receiptId + ' (' + (u.allowedApps || []).length + '/9 Apps Active)');
+          render();
+        } catch (_) {
+          paywallError = 'Network error while processing instant unlock.';
+          render();
+        }
+      };
     }
     app.querySelectorAll('[data-run-persona-tool]').forEach(btn => {
       btn.onclick = () => executePortalOttoTool(btn.getAttribute('data-run-persona-tool'));

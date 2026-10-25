@@ -299,10 +299,10 @@
   const name = (id) => (S().users[id] || {}).name || id;
 
   const SECURITY_GROUPS = [
-    { id: 'EXTERNAL_SAAS_LMS',     ou: 'external', label: 'External · SaaS & LMS Subscribers (Default)', desc: 'Scoped strictly to SaaS Apps & LMS (2/8 default apps) + PCI Payment Submission.' },
+    { id: 'EXTERNAL_SAAS_LMS',     ou: 'external', label: 'External · SaaS & LMS Subscribers (Default)', desc: 'Scoped strictly to SaaS Apps & LMS (3/9 default apps) + PCI Payment Submission.' },
     { id: 'EXTERNAL_FULL_CLIENT',  ou: 'external', label: 'External · Turnkey Enterprise Client',        desc: 'SaaS Apps & LMS + Agile Board + Curated Resources + SCORM Academy + Invoicing.' },
     { id: 'INTERNAL_ANALYST',      ou: 'internal', label: 'Internal · Operations & Cyber Analyst',       desc: 'Internal staff access to Agile Board, Contract Radar, Compliance, Academy & Apps.' },
-    { id: 'INTERNAL_OPERATIONS',   ou: 'internal', label: 'Internal · Full Operations Officer',          desc: 'All 10 Workspace Views & all 8 SCORM / SaaS Applications (Non-Admin).' }
+    { id: 'INTERNAL_OPERATIONS',   ou: 'internal', label: 'Internal · Full Operations Officer',          desc: 'All 10 Workspace Views & all 9 SCORM / SaaS Applications (Non-Admin).' }
   ];
   const visibleSecurityGroups = () => isEmp ? SECURITY_GROUPS.filter(g => g.ou === 'external') : SECURITY_GROUPS;
 
@@ -542,7 +542,7 @@
         }).join('');
     } else if (propTab === 'apps') {
       bodyHtml =
-        '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#cbd5e1;margin-bottom:6px">Application Entitlements (8)</div>' +
+        '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#cbd5e1;margin-bottom:6px">Application Entitlements (' + apps.length + ')</div>' +
         apps.map(a => {
           const on = W.can(sel, 'app', a.id, 'view');
           return '<div class="ad-check-row ' + (on ? 'granted' : '') + '">' +
@@ -657,8 +657,8 @@
     }
 
     const propTabsList = isOwner
-      ? [['rbac', 'RBAC'], ['agents', 'Agents (Otto)'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account'], ['billing', 'PCI']]
-      : [['rbac', 'RBAC'], ['agents', 'Agents (Otto)'], ['apps', 'Apps (8)'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account']];
+      ? [['rbac', 'RBAC'], ['agents', 'Agents (Otto)'], ['apps', 'Apps (' + apps.length + ')'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account'], ['billing', 'PCI']]
+      : [['rbac', 'RBAC'], ['agents', 'Agents (Otto)'], ['apps', 'Apps (' + apps.length + ')'], ['resources', 'Resources (' + resCatalog.length + ')'], ['account', 'Account']];
 
     const grantedPagesCnt = cols.filter(c => W.can(sel, 'page', c.id, 'view')).length;
     const grantedAppsCnt = apps.filter(a => W.can(sel, 'app', a.id, 'view')).length;
