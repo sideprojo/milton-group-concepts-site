@@ -273,6 +273,10 @@
   let accEntityFilter = 'ALL';
   let activeOttoTool = 'route_client_workspace';
   let lastOttoToolResult = null;
+  let adminSmlOutput = null;
+  let adminSmlPrompt = "";
+  let adminSmlTarget = "all";
+  let sentinelSpeech = "Sentinel active. Guiding you through external client accounts and open requests.";
 
   const getResourcesList = () => W.getResourcesCatalog ? W.getResourcesCatalog() : (W.RESOURCES_CATALOG || []);
 
@@ -352,7 +356,7 @@
         '<button class="btn pri" id="admRegGo" type="button" style="padding:7px 12px;font-size:12px;justify-content:center">Create Directory User</button>' +
       '</div>' +
       '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(148,163,184,0.16)">' +
-        '<span style="font-size:11px;font-weight:600;color:#fde047;text-transform:uppercase;letter-spacing:.04em">Note Qualified Resources at Onboarding (Includes Milton UI/UX + AI Fast-Track):</span>' +
+        '<span style="font-size:11px;font-weight:600;color:#fde047;text-transform:uppercase;letter-spacing:.04em">Note Qualified Resources at Onboarding (Includes Milton UI/UX + Fast-Track):</span>' +
         resCatalog.map(r =>
           '<label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#e2e8f0;cursor:pointer;padding:4px 10px;border-radius:8px;background:rgba(15,23,42,0.85);border:1px solid rgba(197,179,88,0.35)">' +
             '<input type="checkbox" data-onboard-res="' + esc(r.id) + '">' +
@@ -554,14 +558,14 @@
         }).join('');
     } else if (propTab === 'resources') {
       bodyHtml =
-        '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#fde047;margin-bottom:6px">Qualified Resources &amp; AI Fast-Track (' + resCatalog.length + ')</div>' +
-        '<p style="font-size:11px;color:#94a3b8;margin:0 0 8px">Qualifying a user unlocks the resource plus its associated Milton UI/UX enhancements and AI Fast-Track tools in their Resources section. Unqualified resources do not appear in their portal.</p>' +
+        '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#fde047;margin-bottom:6px">Qualified Resources &amp; Fast-Track (' + resCatalog.length + ')</div>' +
+        '<p style="font-size:11px;color:#94a3b8;margin:0 0 8px">Qualifying a user unlocks the resource plus its associated Milton UI/UX enhancements and Fast-Track tools in their Resources section. Unqualified resources do not appear in their portal.</p>' +
         resCatalog.map(r => {
           const on = W.can(sel, 'resource', r.id, 'view');
           const toolCount = Array.isArray(r.aiTools) ? r.aiTools.length : 1;
           return '<div class="ad-check-row ' + (on ? 'granted' : '') + '" style="flex-direction:column;align-items:stretch;gap:6px">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px">' +
-              '<div><b>' + esc(r.title) + '</b><div style="font-size:10.5px;color:#93c5fd">Milton UI/UX + ' + toolCount + ' AI Fast-Track Tool(s)</div></div>' +
+              '<div><b>' + esc(r.title) + '</b><div style="font-size:10.5px;color:#93c5fd">Milton UI/UX + ' + toolCount + ' Fast-Track Template(s)</div></div>' +
               '<button type="button" class="btn ' + (on ? 'ok' : '') + '" data-toggle-resource="' + esc(sel.id) + '|' + esc(r.id) + '|' + (!on) + '" style="padding:4px 9px;font-size:11px">' +
                 (on ? 'Qualified' : 'Qualify') +
               '</button>' +
@@ -573,7 +577,7 @@
               '<div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:6px">Register New Resource (Extensible Catalog)</div>' +
               '<input id="admNewResTitle" placeholder="Resource Name (e.g. Sovereign Vault)" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:5px">' +
               '<input id="admNewResCategory" placeholder="Category + Milton UI/UX &amp; AI Suite" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:5px">' +
-              '<input id="admNewResAiTool" placeholder="Associated AI Fast-Track Tool Title" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:6px">' +
+              '<input id="admNewResAiTool" placeholder="Associated Fast-Track Tool Title" style="width:100%;padding:6px 8px;font-size:11.5px;margin-bottom:6px">' +
               '<button type="button" class="btn pri" id="btnAddCustomRes" style="width:100%;justify-content:center;padding:6px 10px;font-size:11.5px">+ Add Resource to Catalog</button>' +
             '</div>'
           : '');
@@ -612,7 +616,7 @@
               ? '<div style="display:flex;flex-direction:column;gap:4px;font-size:11.5px;padding:8px 10px;border-radius:8px;background:rgba(4,8,20,0.85);border:1px solid rgba(16,185,129,0.35)">' +
                   '<div><span style="color:#94a3b8">Role / Sector:</span> <b>' + esc(op.roleTitle || '—') + '</b> · ' + esc(op.industrySector || '—') + '</div>' +
                   '<div><span style="color:#94a3b8">Team / Resource:</span> ' + esc(op.orgSize || '—') + ' · <code>' + esc(op.resourceInterest || '—') + '</code></div>' +
-                  '<div><span style="color:#94a3b8">Data-Sharing Opt-In:</span> <b style="color:' + (op.dataSharingOptIn ? '#34d399' : '#cbd5e1') + '">' + (op.dataSharingOptIn ? 'Opted In (CCPA/GDPR)' : 'Workspace Only') + '</b></div>' +
+                  '<div><span style="color:#94a3b8">Data-Sharing Opt-In:</span> <b style="color:' + (op.dataSharingOptIn ? '#34d399' : '#cbd5e1') + '">' + (op.dataSharingOptIn ? 'Opted In ' : 'Workspace Only') + '</b></div>' +
                 '</div>'
               : '<div style="font-size:11.5px;color:#94a3b8">Otto guided setup not yet completed by user.</div>') +
           '</div>' +
@@ -938,7 +942,7 @@
               '<option value="4010">4010 · SaaS &amp; LMS Revenue</option>' +
               '<option value="4020">4020 · SDVOSB WAWF Revenue</option>' +
               '<option value="4030">4030 · Consultation Revenue</option>' +
-              '<option value="4040">4040 · Qualified Resource &amp; AI Fast-Track</option>' +
+              '<option value="4040">4040 · Qualified Resource &amp; Fast-Track</option>' +
               '<option value="5010">5010 · Cloud &amp; Infra Expense</option>' +
               '<option value="5020">5020 · Subcontractor COGS</option>' +
             '</select>' +
@@ -1126,7 +1130,7 @@
                 '<td>' +
                   '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
                     '<button type="button" class="btn ' + (isAct ? '' : 'pri') + '" data-toggle-agent-status="' + esc(ag.id) + '|' + (isAct ? 'Paused' : 'Active') + '" style="padding:5px 10px;font-size:11px">' + (isAct ? 'Pause' : 'Activate') + '</button>' +
-                    '<a class="btn pri" href="' + esc(ag.aistudioUrl || ag.studioUrl) + '" target="_blank" rel="noopener noreferrer" style="padding:5px 10px;font-size:11px">AI Studio ↗</a>' +
+                    '<a class="btn pri" href="' + esc(ag.aistudioUrl || ag.studioUrl) + '" target="_blank" rel="noopener noreferrer" style="padding:5px 10px;font-size:11px">Studio ↗</a>' +
                     '<a class="btn" href="/api/otto/spec?agent=' + esc(ag.id) + '" target="_blank" rel="noopener noreferrer" style="padding:5px 10px;font-size:11px">Spec ↗</a>' +
                   '</div>' +
                 '</td>' +
@@ -1165,12 +1169,12 @@
         '</div>' +
       '</div>' +
 
-      '<!-- OTTO MULTI-PLATFORM STUDIO & TOOL EXECUTOR (1. Google AI Studio · 2. Google Workspace Studio · 3. Native Portal Runtime) -->' +
+      '<!-- OTTO MULTI-PLATFORM STUDIO & TOOL EXECUTOR (1. Google Studio · 2. Google Workspace Studio · 3. Native Portal Runtime) -->' +
       '<div id="ottoMultiPlatformStudioCard" style="margin-top:14px;padding:16px 18px;border-radius:12px;background:rgba(4,8,20,0.92);border:1.5px solid rgba(197,179,88,0.48)">' +
         '<div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:10px">' +
           '<div>' +
             '<span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Otto (OTTO-01) · 3-Platform Agent Architecture</span>' +
-            '<h3 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">1. Google AI Studio · 2. Workspace Studio · 3. MGC Native Runtime</h3>' +
+            '<h3 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">1. Google Studio · 2. Workspace Studio · 3. MGC Native Runtime</h3>' +
           '</div>' +
           '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
             '<select id="ottoToolSelect" style="padding:6px 10px;font-size:12px">' +
@@ -1189,14 +1193,14 @@
               '<option value="analyze_geospatial_corridor"' + (activeOttoTool === 'analyze_geospatial_corridor' ? ' selected' : '') + '>ORIN-01 · analyze_geospatial_corridor (Maps &amp; Geospatial Insights)</option>' +
             '</select>' +
             '<button type="button" class="btn pri" id="btnRunOttoTool" style="padding:7px 14px;font-size:12px">Run Otto Tool</button>' +
-            '<a class="btn" href="https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6" target="_blank" rel="noopener" style="padding:7px 12px;font-size:12px">Open Otto in AI Studio ↗</a>' +
-            '<a class="btn" href="/api/otto/spec" target="_blank" rel="noopener" style="padding:7px 12px;font-size:12px">AI Studio JSON Spec ↗</a>' +
+            '<a class="btn" href="https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6" target="_blank" rel="noopener" style="padding:7px 12px;font-size:12px">Open Otto in Studio ↗</a>' +
+            '<a class="btn" href="/api/otto/spec" target="_blank" rel="noopener" style="padding:7px 12px;font-size:12px">Studio JSON Spec ↗</a>' +
           '</div>' +
         '</div>' +
 
         '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:' + (lastOttoToolResult ? '12px' : '0') + '">' +
           '<div style="padding:10px 12px;border-radius:9px;background:rgba(15,23,42,0.85);border:1px solid rgba(59,130,246,0.35)">' +
-            '<div style="font-size:10.5px;font-weight:700;color:#93c5fd;text-transform:uppercase;margin-bottom:4px">1 · Google AI Studio (Live Prompt)</div>' +
+            '<div style="font-size:10.5px;font-weight:700;color:#93c5fd;text-transform:uppercase;margin-bottom:4px">1 · Google Studio (Live Prompt)</div>' +
             '<div style="font-size:12px;color:#fff;font-weight:600">Prompt: <code>1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6</code></div>' +
             '<div style="font-size:11px;color:#94a3b8;margin-top:3px">Model: <code>gemini-3.8-flash</code> · 4 Function Tools + Validated OpenAPI Schema</div>' +
           '</div>' +
@@ -1276,12 +1280,98 @@
     if (!inspectorHtml) cls.push('no-inspector');
     if (treeCollapsed) cls.push('tree-collapsed');
 
-    app.innerHTML = '<div class="' + cls.join(' ') + '">' + treeHtml + centerHtml + inspectorHtml + '</div>';
+    const adminOrEmpBanner = isOwner
+      ? '<div class="card" id="sovereignAdminControlBar" style="padding:14px 18px;margin-bottom:12px;border:1.5px solid #fde047;background:radial-gradient(circle at 8% 50%,rgba(253,224,71,0.16),rgba(6,11,24,0.98) 70%)">' +
+          '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:10px">' +
+            (W.renderAnimatedAvatarSvg ? W.renderAnimatedAvatarSvg('sovereign', 62) : '') +
+            '<div style="flex:1;min-width:250px">' +
+              '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+                '<span style="padding:2px 9px;border-radius:999px;background:rgba(253,224,71,0.18);border:1px solid #fde047;color:#fde047;font-size:10.5px;font-weight:800">SOVEREIGN (SOVEREIGN-01) · MASTER CONTROLLER &amp; SML</span>' +
+                '<span style="padding:2px 9px;border-radius:999px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:#7dd3fc;font-size:10px;font-weight:700">● Otto (Showcase)</span>' +
+                '<span style="padding:2px 9px;border-radius:999px;background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#6ee7b7;font-size:10px;font-weight:700">● Atlas (Workspace)</span>' +
+                '<span style="padding:2px 9px;border-radius:999px;background:rgba(96,165,250,0.15);border:1px solid #60a5fa;color:#93c5fd;font-size:10px;font-weight:700">● Sentinel (Staff)</span>' +
+              '</div>' +
+              '<div style="font-size:13px;font-weight:700;color:#fff;margin-top:4px">Sovereign SML Command Console — Direct &amp; Reprogram All Subordinate Portal Agents</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="display:grid;grid-template-columns:190px 1fr auto;gap:8px;align-items:center">' +
+            '<select id="adminSmlTargetSelect" style="padding:7px 10px;font-size:12px">' +
+              '<option value="all"' + (adminSmlTarget === 'all' ? ' selected' : '') + '>Command: All Agents</option>' +
+              '<option value="otto"' + (adminSmlTarget === 'otto' ? ' selected' : '') + '>Command: Otto (Showcase)</option>' +
+              '<option value="atlas"' + (adminSmlTarget === 'atlas' ? ' selected' : '') + '>Command: Atlas (Workspace)</option>' +
+              '<option value="sentinel"' + (adminSmlTarget === 'sentinel' ? ' selected' : '') + '>Command: Sentinel (Staff)</option>' +
+            '</select>' +
+            '<input id="adminSmlPromptInput" type="text" value="' + esc(adminSmlPrompt) + '" placeholder="Enter SML command for Sovereign (e.g., &quot;Direct Otto to highlight Zeno &amp; Cato for Showcase users&quot;)..." style="width:100%;padding:8px 12px;font-size:12px;border-radius:8px;background:rgba(4,8,20,0.92);border:1px solid rgba(253,224,71,0.45);color:#fff">' +
+            '<button type="button" class="btn pri" id="btnAdminExecuteSml" style="padding:8px 14px;font-size:12px;font-weight:800;white-space:nowrap">⚡ Run SML Command</button>' +
+          '</div>' +
+          (adminSmlOutput
+            ? '<div id="adminSmlResultBox" style="margin-top:8px;padding:9px 12px;border-radius:8px;background:rgba(6,78,59,0.32);border:1px solid rgba(16,185,129,0.5);font-size:11.5px;color:#d1fae5">' +
+                '<strong>✓ ' + esc(adminSmlOutput.engine || 'Sovereign-SML-4B') + ' [' + esc(adminSmlOutput.runId || '') + ']:</strong> ' + esc(adminSmlOutput.summary || '') +
+              '</div>'
+            : '') +
+        '</div>'
+      : '<div class="card" id="sentinelEmployeeGuideBar" style="padding:14px 18px;margin-bottom:12px;border:1.5px solid #60a5fa;background:radial-gradient(circle at 8% 50%,rgba(59,130,246,0.16),rgba(6,11,24,0.98) 70%)">' +
+          '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">' +
+            (W.renderAnimatedAvatarSvg ? W.renderAnimatedAvatarSvg('sentinel', 56) : '') +
+            '<div style="flex:1;min-width:240px">' +
+              '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">' +
+                '<span style="padding:2px 9px;border-radius:999px;background:rgba(59,130,246,0.18);border:1px solid #60a5fa;color:#93c5fd;font-size:10.5px;font-weight:800">SENTINEL (SENTINEL-01) · STAFF OPERATIONS GUIDE</span>' +
+                '<span style="font-size:10.5px;color:#6ee7b7;font-weight:700">● Guided Mode (Managed by Sovereign)</span>' +
+              '</div>' +
+              '<div id="sentinelGuideSpeech" style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px">' + esc(sentinelSpeech) + '</div>' +
+              '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+                '<button type="button" class="btn pri" data-sentinel-step="clients" style="padding:5px 11px;font-size:11.5px">1. Guide: Client Directory</button>' +
+                '<button type="button" class="btn" data-sentinel-step="requests" style="padding:5px 11px;font-size:11.5px">2. Guide: Client Consultations</button>' +
+                '<a class="btn" href="agile-board.html" style="padding:5px 11px;font-size:11.5px">3. Guide: Client Sprint Board ↗</a>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    app.innerHTML = adminOrEmpBanner + '<div class="' + cls.join(' ') + '">' + treeHtml + centerHtml + inspectorHtml + '</div>';
     W.header('access-admin.html');
     bind();
   }
 
   function bind() {
+    const btnAdminSml = document.getElementById('btnAdminExecuteSml');
+    if (btnAdminSml) {
+      btnAdminSml.onclick = async () => {
+        const inp = document.getElementById('adminSmlPromptInput');
+        const sel = document.getElementById('adminSmlTargetSelect');
+        const val = inp ? inp.value.trim() : '';
+        adminSmlTarget = sel ? sel.value : 'all';
+        if (!val) return;
+        adminSmlPrompt = val;
+        try {
+          const r = await fetch('/api/admin/sml', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: val, targetAgent: adminSmlTarget })
+          });
+          const d = await r.json();
+          if (d && d.ok) {
+            adminSmlOutput = d;
+            W.toast('Sovereign SML updated ' + (d.updatedAgents || []).join(', '));
+          }
+        } catch (_) {}
+        render();
+      };
+    }
+    app.querySelectorAll('[data-sentinel-step]').forEach(btn => {
+      btn.onclick = () => {
+        const st = btn.getAttribute('data-sentinel-step');
+        if (st === 'requests') {
+          tab = 'requests';
+          sentinelSpeech = 'Viewing open client consultations and account requests.';
+        } else {
+          tab = 'users';
+          ouFilter = 'external';
+          sentinelSpeech = 'Inspecting external client accounts in your directory scope.';
+        }
+        render();
+      };
+    });
+
     const btnAdvFilters = document.getElementById('btnToggleAdvFilters');
     if (btnAdvFilters) {
       btnAdvFilters.onclick = () => {
@@ -1523,7 +1613,7 @@
         W.addCustomResource({
           title,
           category: cat,
-          aiTools: aiName ? [{ id: 'ai-' + Date.now(), name: aiName, desc: 'Milton UI/UX & AI Fast-Track workflow for ' + title }] : undefined
+          aiTools: aiName ? [{ id: 'ai-' + Date.now(), name: aiName, desc: 'Milton UI/UX & Fast-Track workflow for ' + title }] : undefined
         });
         W.toast('Added ' + title + ' to Resources Catalog');
         render();

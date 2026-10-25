@@ -45,6 +45,10 @@
   let selectedLiveOttoTool = 'route_client_workspace';
   let liveOttoResult = null;
   let ottoNaturalPrompt = '';
+  let activeGuideSpeech = '';
+  let activeGuideStepIdx = 0;
+  let sovereignSmlResult = null;
+  let sovereignTargetSub = 'all';
   let featuredSpotlightAppId = qs.get('spotlight') || 'maps-geospatial-insights';
   let showPaywallModal = Boolean(qs.get('paywall'));
   let paywallTargetAppId = qs.get('paywall') || '';
@@ -92,7 +96,7 @@
   const CONSULTATION_TRACKS = [
     {
       id: 'ai-web',
-      scope: 'Turnkey Web, Autonomous AI Receptionist & SaaS Portal',
+      scope: 'Turnkey Web, Autonomous Automated Receptionist & SaaS Portal',
       badge: 'Commercial & SaaS',
       desc: 'Full-stack web presence, 24/7 AI lead intake, calendar booking, and customer portal.'
     },
@@ -157,7 +161,7 @@
       const act = entitled
         ? '<a class="btn pri" data-launch-handoff-app="' + esc(a.id) + '" data-handoff-callsign="' + esc(a.callSign || 'ARGO-01') + '" data-handoff-tool="' + esc(a.primaryTool || '') + '" href="' + esc(a.href) + '" target="_blank" rel="noopener">Launch with ' + esc(a.codename || 'Persona') + ' ↗</a>' +
           (a.primaryTool ? ' <button type="button" class="btn" data-run-persona-tool="' + esc(a.primaryTool) + '" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Run ' + esc(a.codename || 'Agent') + ' Tool</button>' : '') +
-          (a.aistudioUrl ? ' <a class="btn" href="' + esc(a.aistudioUrl) + '" target="_blank" rel="noopener" style="font-size:11px">AI Studio ↗</a>' : '')
+          (a.aistudioUrl ? ' <a class="btn" href="' + esc(a.aistudioUrl) + '" target="_blank" rel="noopener" style="font-size:11px">Studio ↗</a>' : '')
         : '<button type="button" class="btn pri" data-open-paywall="' + esc(a.id) + '" style="background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">🔓 Unlock ' + esc(a.codename || 'App') + ' ($19/mo)</button>' +
           ' <button type="button" class="btn" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(a.id) + '" style="border-color:rgba(16,185,129,0.5);color:#6ee7b7">All 9 Apps ($49/mo)</button>' +
           (a.primaryTool ? ' <button type="button" class="btn" data-run-persona-tool="' + esc(a.primaryTool) + '" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Preview via Otto</button>' : '');
@@ -196,7 +200,7 @@
         ? 'Internal Staff Scope (Client OU Only · Zero Finance Access)'
         : isFullPartner
           ? 'Full Workspace Partner (Netflix Showcase + Agile + Otto Studio)'
-          : 'SaaS / Showcase Member (' + unlockedApps.length + '/9 Apps Entitled · Paywall Guard Active)';
+          : 'SaaS / Showcase Member (' + unlockedApps.length + '/9 Apps Entitled · 3 Included Starter Apps)';
 
     const securityBoundaryRibbon =
       '<div class="card" id="securityBoundaryRibbon" style="padding:12px 18px;margin-bottom:14px;border-color:rgba(59,130,246,0.48);background:linear-gradient(135deg,rgba(10,18,36,0.96),rgba(6,11,24,0.98))">' +
@@ -208,7 +212,7 @@
             '<span style="font-size:12px;color:#e2e8f0;font-weight:600">' + esc(tierBadgeText) + '</span>' +
           '</div>' +
           '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
-            (!isSoleAdmin() ? '<span style="font-size:11px;color:#fca5a5;padding:3px 8px;border-radius:6px;background:rgba(127,29,29,0.28);border:1px solid rgba(239,68,68,0.4)">🛡️ Admin Console: 403 Isolated</span>' : '<span style="font-size:11px;color:#fde047;padding:3px 8px;border-radius:6px;background:rgba(197,179,88,0.15);border:1px solid rgba(197,179,88,0.4)">⚡ TrustSec 5×7 Admin Active</span>') +
+            (!isSoleAdmin() ? '<span style="font-size:11px;color:#fca5a5;padding:3px 8px;border-radius:6px;background:rgba(127,29,29,0.28);border:1px solid rgba(239,68,68,0.4)">🔒 Standard Member Scope</span>' : '<span style="font-size:11px;color:#fde047;padding:3px 8px;border-radius:6px;background:rgba(197,179,88,0.15);border:1px solid rgba(197,179,88,0.4)">⚡ Administrator Scope</span>') +
             (lockedApps.length > 0 ? '<button type="button" class="btn pri" data-open-paywall="' + esc(lockedApps[0].id) + '" style="padding:5px 11px;font-size:11.5px;background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">🔓 Unlock All 9 Apps ($49/mo)</button>' : '') +
           '</div>' +
         '</div>' +
@@ -231,61 +235,81 @@
         '</div>'
       : '';
 
-    // Otto (OTTO-01) Central Orchestrator Command Studio (Available to all authenticated users so Otto can route & enforce paywall boundaries!)
-    const ottoCommandBarHtml =
-      '<div class="card" id="ottoLiveCommandBar" style="padding:16px 20px;margin-bottom:14px;border-color:rgba(197,179,88,0.58);background:linear-gradient(135deg,rgba(15,23,42,0.97),rgba(6,11,24,0.99))">' +
-        '<div class="row" style="gap:10px;flex-wrap:wrap;margin-bottom:10px">' +
-          '<div>' +
-            '<span style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#fde047">Otto (OTTO-01) Central AI Orchestrator · 10 Live Google AI Studio Agents</span>' +
-            '<h3 style="margin:2px 0 0;font-size:15px;font-weight:800;color:#fff">Ask Otto in Natural Language or Dispatch a Specialist Persona Function Tool</h3>' +
+    // 4-Tier Fluid Animated Companion Stage (Otto for Showcase · Atlas for Workspace · Sentinel for Staff · Sovereign + SML for Admin)
+    const assignedCompanion = W.getAssignedAnimatedAgent ? W.getAssignedAnimatedAgent(u) : {
+      id: isSoleAdmin() ? 'sovereign' : (isEmp() ? 'sentinel' : (isFullPartner ? 'atlas' : 'otto')),
+      name: isSoleAdmin() ? 'Sovereign' : (isEmp() ? 'Sentinel' : (isFullPartner ? 'Atlas' : 'Otto')),
+      callSign: isSoleAdmin() ? 'SOVEREIGN-01' : (isEmp() ? 'SENTINEL-01' : (isFullPartner ? 'ATLAS-01' : 'OTTO-01')),
+      tierLabel: isSoleAdmin() ? 'Master Command Core + SML' : (isEmp() ? 'Internal Staff Guide' : (isFullPartner ? 'Workspace Partner Guide' : 'Showcase Guide')),
+      roleBadge: isSoleAdmin() ? 'Supreme Controller · Commands Otto, Atlas & Sentinel' : 'Guided Companion',
+      promptable: isSoleAdmin(),
+      accent: isSoleAdmin() ? '#fde047' : (isEmp() ? '#60a5fa' : (isFullPartner ? '#10b981' : '#38bdf8')),
+      greeting: 'Hi! Follow my guided steps below to navigate your portal.',
+      steps: []
+    };
+    const avatarHtml = W.renderAnimatedAvatarSvg ? W.renderAnimatedAvatarSvg(assignedCompanion.id, 74) : '';
+    const speechToDisplay = activeGuideSpeech || assignedCompanion.greeting;
+
+    constottoCommandBarHtml =
+      '<div class="card" id="mgcFluidAgentStage" data-agent-id="' + esc(assignedCompanion.id) + '" data-promptable="' + String(Boolean(assignedCompanion.promptable)) + '" style="padding:18px 22px;margin-bottom:14px;border:1.5px solid ' + assignedCompanion.accent + ';background:radial-gradient(circle at 10% 50%,rgba(56,189,248,0.14),rgba(10,16,32,0.98) 70%);box-shadow:0 16px 40px rgba(0,0,0,0.55)">' +
+        '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">' +
+          avatarHtml +
+          '<div style="flex:1;min-width:260px">' +
+            '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(15,23,42,0.92);border:1px solid ' + assignedCompanion.accent + ';color:' + assignedCompanion.accent + ';font-size:10.5px;font-weight:800;letter-spacing:.04em">' + esc(assignedCompanion.name.toUpperCase()) + ' (' + esc(assignedCompanion.callSign) + ') · ' + esc(assignedCompanion.tierLabel.toUpperCase()) + '</span>' +
+              (assignedCompanion.promptable
+                ? '<span style="padding:3px 10px;border-radius:999px;background:rgba(244,63,94,0.18);border:1px solid #f43f5e;color:#fda4af;font-size:10.5px;font-weight:800">⚡ SML PROMPT CONSOLE ACTIVE · CONTROLS OTTO, ATLAS &amp; SENTINEL</span>'
+                : '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.16);border:1px solid rgba(16,185,129,0.45);color:#6ee7b7;font-size:10.5px;font-weight:700">● Guided Mode (Managed by Sovereign)</span>') +
+            '</div>' +
+            '<div id="mgcStageSpeechText" style="font-size:14px;font-weight:700;color:#fff;line-height:1.45;margin:4px 0 10px">' + esc(speechToDisplay) + '</div>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
+              (assignedCompanion.steps || []).map((st, idx) =>
+                '<button type="button" class="btn' + (idx === activeGuideStepIdx ? ' pri' : '') + '" data-fluid-guide-idx="' + idx + '" style="padding:6px 12px;font-size:11.5px;font-weight:700">' + esc(st.label) + '</button>'
+              ).join('') +
+            '</div>' +
           '</div>' +
-          '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
-            '<select id="portalOttoToolSelect" style="padding:7px 10px;font-size:12px">' +
-              '<option value="route_client_workspace"' + (selectedLiveOttoTool === 'route_client_workspace' ? ' selected' : '') + '>OTTO-01 · route_client_workspace (Categories → Apps)</option>' +
-              '<option value="evaluate_associative_mastery"' + (selectedLiveOttoTool === 'evaluate_associative_mastery' ? ' selected' : '') + '>OTTO-01 · evaluate_associative_mastery (SCORM Boost)</option>' +
-              '<option value="generate_turnkey_scope"' + (selectedLiveOttoTool === 'generate_turnkey_scope' ? ' selected' : '') + '>ARGO-01 · generate_turnkey_scope (Turnkey Forge)</option>' +
-              '<option value="triage_service_intake"' + (selectedLiveOttoTool === 'triage_service_intake' ? ' selected' : '') + '>ARYA-01 · triage_service_intake (Sterling Auto)</option>' +
-              '<option value="validate_network_topology"' + (selectedLiveOttoTool === 'validate_network_topology' ? ' selected' : '') + '>ZENO-01 · validate_network_topology (NetPrism Lab)</option>' +
-              '<option value="match_samgov_solicitations"' + (selectedLiveOttoTool === 'match_samgov_solicitations' ? ' selected' : '') + '>CATO-01 · match_samgov_solicitations (SAM.gov Radar)</option>' +
-              '<option value="simulate_funnel_treasury_roi"' + (selectedLiveOttoTool === 'simulate_funnel_treasury_roi' ? ' selected' : '') + '>VEGA-01 · simulate_funnel_treasury_roi (Traffic ROI)</option>' +
-              '<option value="grade_cli_ansible_drill"' + (selectedLiveOttoTool === 'grade_cli_ansible_drill' ? ' selected' : '') + '>KAEL-01 · grade_cli_ansible_drill (Ghost-CLI)</option>' +
-              '<option value="analyze_epigraphic_inscription"' + (selectedLiveOttoTool === 'analyze_epigraphic_inscription' ? ' selected' : '') + '>CLIO-01 · analyze_epigraphic_inscription (Chronos OS)</option>' +
-              '<option value="generate_cognate_drill_loop"' + (selectedLiveOttoTool === 'generate_cognate_drill_loop' ? ' selected' : '') + '>ALMA-01 · generate_cognate_drill_loop (Spanish OS)</option>' +
-              '<option value="analyze_geospatial_corridor"' + (selectedLiveOttoTool === 'analyze_geospatial_corridor' ? ' selected' : '') + '>ORIN-01 · analyze_geospatial_corridor (Maps &amp; Geospatial Insights)</option>' +
-            '</select>' +
-            '<button type="button" class="btn pri" id="btnPortalRunOttoTool" style="padding:7px 14px;font-size:12px">Execute Agent Tool</button>' +
-          '</div>' +
         '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px">' +
-          '<input id="portalOttoPromptInput" type="text" value="' + esc(ottoNaturalPrompt) + '" placeholder="Tell Otto your mission (e.g., &quot;Map our Richmond to Fort Belvoir DoD corridor and match SAM.gov contracts&quot; or &quot;Fast-track Spanish from Arabic&quot;)..." style="width:100%;padding:9px 12px;font-size:12.5px;border-radius:9px;background:rgba(4,8,20,0.9);border:1px solid rgba(59,130,246,0.42);color:#fff">' +
-          '<button type="button" class="btn" id="btnAskOttoNatural" style="padding:9px 16px;font-size:12.5px;border-color:rgba(197,179,88,0.6);color:#fde047;font-weight:800;white-space:nowrap">⚡ Ask Otto (OTTO-01)</button>' +
-        '</div>' +
-        '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:' + (liveOttoResult ? '12px' : '0') + '">' +
-          '<button type="button" class="btn" data-otto-quick-prompt="Map our Richmond to Fort Belvoir DoD corridor with 3D Tiles and match NAICS 541512 contracts" style="padding:4px 9px;font-size:11px">🛰️ Orin + Cato: DoD Corridor &amp; Contracts</button>' +
-          '<button type="button" class="btn" data-otto-quick-prompt="Validate Dual-Homed BGP + OSPF Area 0 topology in EVE-NG and auto-grade Cisco IOS-XE CLI" style="padding:4px 9px;font-size:11px">🛡️ Zeno + Kael: NetPrism &amp; CLI Lab</button>' +
-          '<button type="button" class="btn" data-otto-quick-prompt="Activate Spanish and Chronos epigraphy cognate loop from English and Arabic roots" style="padding:4px 9px;font-size:11px">🧠 Alma + Clio: Associative Language OS</button>' +
-          '<button type="button" class="btn" data-otto-quick-prompt="Generate a turnkey web + AI receptionist scope and model funnel treasury ROI" style="padding:4px 9px;font-size:11px">💼 Argo + Arya + Vega: Turnkey &amp; ROI</button>' +
-        '</div>' +
+        (assignedCompanion.promptable
+          ? '<div id="sovereignAdminSmlConsole" style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(253,224,71,0.28)">' +
+              '<div style="display:grid;grid-template-columns:190px 1fr auto;gap:8px;align-items:center">' +
+                '<select id="sovereignTargetSelect" style="padding:8px 10px;font-size:12px">' +
+                  '<option value="all"' + (sovereignTargetSub === 'all' ? ' selected' : '') + '>Target: All Subordinate Agents</option>' +
+                  '<option value="otto"' + (sovereignTargetSub === 'otto' ? ' selected' : '') + '>Target: Otto (Showcase Clients)</option>' +
+                  '<option value="atlas"' + (sovereignTargetSub === 'atlas' ? ' selected' : '') + '>Target: Atlas (Workspace Partners)</option>' +
+                  '<option value="sentinel"' + (sovereignTargetSub === 'sentinel' ? ' selected' : '') + '>Target: Sentinel (Internal Staff)</option>' +
+                '</select>' +
+                '<input id="sovereignSmlPromptInput" type="text" value="' + esc(ottoNaturalPrompt) + '" placeholder="Prompt Sovereign SML to command Otto, Atlas, or Sentinel..." style="width:100%;padding:8px 12px;font-size:12.5px;border-radius:9px;background:rgba(4,8,20,0.92);border:1px solid rgba(253,224,71,0.5);color:#fff">' +
+                '<button type="button" class="btn pri" id="btnRunSovereignSml" style="padding:8px 16px;font-size:12px;font-weight:800;white-space:nowrap">⚡ Execute SML Command</button>' +
+              '</div>' +
+              (sovereignSmlResult
+                ? '<div id="sovereignSmlOutputBanner" style="margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(6,78,59,0.32);border:1px solid rgba(16,185,129,0.55);font-size:12px;color:#d1fae5">' +
+                    '<div class="row" style="margin-bottom:4px"><strong>✓ Sovereign SML (' + esc(sovereignSmlResult.engine || 'Sovereign-SML-4B') + ')</strong><code style="color:#fde047">' + esc(sovereignSmlResult.runId || '') + '</code></div>' +
+                    '<div>' + esc(sovereignSmlResult.summary || '') + '</div>' +
+                  '</div>'
+                : '') +
+            '</div>'
+          : '') +
         (liveOttoResult
-          ? '<div id="ottoLiveOutputBanner" style="padding:13px 16px;border-radius:12px;background:rgba(6,78,59,0.32);border:1px solid rgba(16,185,129,0.55);font-size:12px">' +
-              '<div class="row" style="margin-bottom:6px;flex-wrap:wrap;gap:8px">' +
-                '<strong style="color:#fff">✓ Orchestrated by Otto (OTTO-01) → ' + esc(liveOttoResult.agent) + ' (' + esc(liveOttoResult.callSign) + ') · <code>' + esc(liveOttoResult.toolExecuted) + '</code></strong>' +
-                '<code style="color:#34d399;font-size:11px">' + esc(liveOttoResult.runId) + ' · ' + esc(liveOttoResult.transferMatchPct || '') + ' · AI Studio Prompt ' + esc(liveOttoResult.aistudioPromptId || '') + '</code>' +
+          ? '<div id="ottoLiveOutputBanner" style="margin-top:12px;padding:12px 15px;border-radius:11px;background:rgba(6,78,59,0.28);border:1px solid rgba(16,185,129,0.5);font-size:12px">' +
+              '<div class="row" style="margin-bottom:5px;flex-wrap:wrap;gap:8px">' +
+                '<strong style="color:#fff">✓ ' + esc(assignedCompanion.name) + ' Previewed ' + esc(liveOttoResult.agent) + ' (' + esc(liveOttoResult.callSign) + ')</strong>' +
+                '<code style="color:#34d399;font-size:11px">' + esc(liveOttoResult.runId) + ' · ' + esc(liveOttoResult.transferMatchPct || '') + '</code>' +
               '</div>' +
               '<div style="color:#d1fae5;margin-bottom:8px;line-height:1.5">' + esc(liveOttoResult.summary) + '</div>' +
               (Array.isArray(liveOttoResult.appEntitlements) && liveOttoResult.appEntitlements.length
                 ? '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(16,185,129,0.3)">' +
-                    '<span style="font-size:11px;font-weight:700;color:#93c5fd">Otto Security &amp; Paywall Check:</span>' +
+                    '<span style="font-size:11px;font-weight:700;color:#93c5fd">App Access:</span>' +
                     liveOttoResult.appEntitlements.map(ae =>
                       ae.entitled
-                        ? '<a class="btn pri" href="' + esc(ae.href) + '" target="_blank" rel="noopener" style="padding:5px 10px;font-size:11px">✓ Launch ' + esc(ae.codename) + ' (' + esc(ae.callSign) + ') ↗</a>'
-                        : '<button type="button" class="btn" data-open-paywall="' + esc(ae.appId) + '" style="padding:5px 10px;font-size:11px;border-color:#fde047;color:#fde047;background:rgba(234,179,8,0.16);font-weight:800">🔒 Unlock ' + esc(ae.codename) + ' (' + esc(ae.callSign) + ' · $19/mo) →</button>'
+                        ? '<a class="btn pri" href="' + esc(ae.href) + '" target="_blank" rel="noopener" style="padding:5px 10px;font-size:11px">✓ Launch ' + esc(ae.codename) + ' ↗</a>'
+                        : '<button type="button" class="btn" data-open-paywall="' + esc(ae.appId) + '" style="padding:5px 10px;font-size:11px;border-color:#fde047;color:#fde047;background:rgba(234,179,8,0.16);font-weight:800">🔒 Unlock ' + esc(ae.codename) + ' ($19/mo) →</button>'
                     ).join('') +
                   '</div>'
-                : '<div style="font-size:11px;color:#93c5fd">Recommended Apps: <code>' + esc((liveOttoResult.recommendedApps || []).join(', ')) + '</code> · Next Stage: <b>' + esc(liveOttoResult.nextUnlockedStage || '') + '</b></div>') +
+                : '') +
             '</div>'
           : '') +
       '</div>';
+    const ottoCommandBarHtml = constottoCommandBarHtml;
 
     // Netflix-Style Featured Spotlight Hero
     const netflixSpotlightHtml = featuredApp
@@ -304,14 +328,14 @@
             '</div>' +
           '</div>' +
           '<h2 style="margin:4px 0 6px;font-size:21px;font-weight:900;color:#fff;letter-spacing:-0.01em">' + esc(featuredApp.title) + '</h2>' +
-          '<p style="margin:0 0 14px;font-size:13px;color:#cbd5e1;max-width:860px;line-height:1.55">' + esc(featuredApp.desc || '') + ' Powered by Google AI Studio Prompt <code>' + esc(featuredApp.aistudioPromptId || '') + '</code> and live function tool <code>' + esc(featuredApp.primaryTool || '') + '</code>.</p>' +
+          '<p style="margin:0 0 14px;font-size:13px;color:#cbd5e1;max-width:860px;line-height:1.55">' + esc(featuredApp.desc || '') + ' Powered by Studio Blueprint <code>' + esc(featuredApp.aistudioPromptId || '') + '</code> and live function tool <code>' + esc(featuredApp.primaryTool || '') + '</code>.</p>' +
           '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">' +
             (featuredEntitled
               ? '<a class="btn pri" data-launch-handoff-app="' + esc(featuredApp.id) + '" data-handoff-callsign="' + esc(featuredApp.callSign || 'ORIN-01') + '" data-handoff-tool="' + esc(featuredApp.primaryTool || '') + '" href="' + esc(featuredApp.href) + '" target="_blank" rel="noopener" style="padding:9px 18px;font-size:13px;font-weight:800">▶ Launch ' + esc(featuredApp.codename || 'Experience') + ' Full OS ↗</a>'
               : '<button type="button" class="btn pri" data-open-paywall="' + esc(featuredApp.id) + '" style="padding:9px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047">🔓 Unlock ' + esc(featuredApp.codename || 'App') + ' Instantly ($19/mo) →</button>' +
                 '<button type="button" class="btn" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(featuredApp.id) + '" style="padding:9px 16px;font-size:12.5px;border-color:#10b981;color:#6ee7b7">🌟 Unlock All 9 Persona Apps ($49/mo)</button>') +
-            (featuredApp.primaryTool ? '<button type="button" class="btn" data-run-persona-tool="' + esc(featuredApp.primaryTool) + '" style="padding:9px 15px;font-size:12.5px;border-color:rgba(59,130,246,0.5);color:#93c5fd">⚡ Run ' + esc(featuredApp.codename || 'Persona') + ' Tool via Otto</button>' : '') +
-            (featuredApp.aistudioUrl ? '<a class="btn" href="' + esc(featuredApp.aistudioUrl) + '" target="_blank" rel="noopener" style="padding:9px 14px;font-size:12px">✦ Open in Google AI Studio ↗</a>' : '') +
+            (featuredApp.primaryTool ? '<button type="button" class="btn" data-run-persona-tool="' + esc(featuredApp.primaryTool) + '" style="padding:9px 15px;font-size:12.5px;border-color:rgba(59,130,246,0.5);color:#93c5fd">⚡ Preview ' + esc(featuredApp.codename || 'App') + '</button>' : '') +
+            (featuredApp.aistudioUrl ? '<a class="btn" href="' + esc(featuredApp.aistudioUrl) + '" target="_blank" rel="noopener" style="padding:9px 14px;font-size:12px">✦ Open in Studio ↗</a>' : '') +
           '</div>' +
         '</div>'
       : '';
@@ -320,13 +344,13 @@
       ? '<div class="card" id="divergentLearningSummaryBanner" style="padding:14px 18px;margin-bottom:14px;border-color:rgba(16,185,129,0.42);background:linear-gradient(135deg,rgba(6,78,59,0.26),rgba(10,15,28,0.96))">' +
           '<div class="row" style="margin-bottom:' + (showAssociativeGraph ? '10px' : '0') + ';flex-wrap:wrap;gap:8px">' +
             '<div>' +
-              '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Otto Agent &amp; Learning Path</span>' +
+              '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Guided Learning Path</span>' +
               '<h3 style="margin:3px 0 0;font-size:14.5px;font-weight:600;color:#fff">' + esc(activeBridge.label) + '</h3>' +
             '</div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">' +
               (isSoleAdmin() ? '<a class="btn" href="access-admin.html?tab=agents" style="padding:5px 10px;font-size:11.5px;border-color:rgba(197,179,88,0.5);color:#fde047">Agent Access Console</a>' : '') +
               '<button type="button" class="btn" id="btnToggleAssociativeGraph" style="padding:5px 10px;font-size:11.5px">' + (showAssociativeGraph ? 'Collapse' : 'Expand') + '</button>' +
-              '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 10px;font-size:11.5px">Edit Otto</button>' +
+              '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 10px;font-size:11.5px">Customize Path</button>' +
             '</div>' +
           '</div>' +
           (showAssociativeGraph ? ('<div class="bento-3">' +
@@ -442,8 +466,8 @@
         '<div class="row" style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(148,163,184,0.2)">' +
           '<div>' +
             '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">' +
-              '<span style="padding:3px 10px;border-radius:999px;background:rgba(234,179,8,0.2);border:1px solid #fde047;color:#fde047;font-size:10.5px;font-weight:800">🔒 ZERO-TRUST PAYWALL &amp; INSTANT ENTITLEMENT ENGINE</span>' +
-              '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.18);border:1px solid #10b981;color:#6ee7b7;font-size:10.5px;font-weight:800">PCI-DSS v4.0 SAQ-A · NACHA ACH · WAWF</span>' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(234,179,8,0.2);border:1px solid #fde047;color:#fde047;font-size:10.5px;font-weight:800">🔒 Instant App Unlock &amp; Membership Upgrade</span>' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.18);border:1px solid #10b981;color:#6ee7b7;font-size:10.5px;font-weight:800">Bank Transfer · Card · Invoice</span>' +
             '</div>' +
             '<h2 style="margin:2px 0 0;font-size:20px;font-weight:900;color:#fff">Unlock ' + esc(targetApp ? (targetApp.title + ' (' + (targetApp.callSign || 'PERSONA') + ')') : 'Specialist Persona Suite') + '</h2>' +
           '</div>' +
@@ -459,7 +483,7 @@
             'Unlock ' + ((targetApp && targetApp.codename) || 'Selected App') + ' Only',
             '$19 / mo',
             'Immediate entitlement for ' + ((targetApp && targetApp.title) || 'this application') + ' + starter apps.',
-            ['Unlocks ' + ((targetApp && targetApp.codename) || 'Persona') + ' (' + ((targetApp && targetApp.callSign) || 'APP') + ')', 'Live AI Studio Function Tool Access', 'SCORM 2004 Telemetry & ZIP Export']
+            ['Unlocks ' + ((targetApp && targetApp.codename) || 'Persona') + ' (' + ((targetApp && targetApp.callSign) || 'APP') + ')', 'Live Studio Function Tool Access', 'SCORM 2004 Telemetry & ZIP Export']
           ) +
           tierCard(
             'pro_49',
@@ -490,9 +514,9 @@
             '<div>' +
               '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px">Settlement Rail</label>' +
               '<select id="paywallMethodSelect" style="width:100%;padding:8px 10px;font-size:12.5px">' +
-                '<option value="ach_nacha"' + (paywallMethod === 'ach_nacha' ? ' selected' : '') + '>Mercury / NACHA ACH ($0.00 Fee)</option>' +
+                '<option value="ach_nacha"' + (paywallMethod === 'ach_nacha' ? ' selected' : '') + '>Bank Transfer ($0 Fee)</option>' +
                 '<option value="card_tokenized"' + (paywallMethod === 'card_tokenized' ? ' selected' : '') + '>Stripe SAQ-A Tokenized Card</option>' +
-                '<option value="gpc_wawf"' + (paywallMethod === 'gpc_wawf' ? ' selected' : '') + '>Federal WAWF / PIEE EFT ($0.00 Fee)</option>' +
+                '<option value="gpc_wawf"' + (paywallMethod === 'gpc_wawf' ? ' selected' : '') + '>Government Invoice / EFT</option>' +
               '</select>' +
             '</div>' +
             '<div>' +
@@ -507,7 +531,7 @@
         '</div>' +
 
         '<div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:12px">' +
-          '<span style="font-size:11.5px;color:#cbd5e1">✓ EFTA / NACHA Reg E, PCI-DSS v4.0 SAQ-A Zero-PAN, and MGC/F.I.X MSA attested. Posts directly to GAAP General Ledger.</span>' +
+          '<span style="font-size:11.5px;color:#cbd5e1">Instant activation. Your selected apps unlock immediately.</span>' +
           '<div style="display:flex;gap:10px">' +
             '<button type="button" class="btn" id="btnGoFullBillingTab" style="padding:9px 14px;font-size:12px">Full Billing Form</button>' +
             '<button type="button" class="btn pri" id="btnConfirmPaywallUnlock" style="padding:10px 22px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#10b981,#059669);border-color:#10b981;color:#fff">🔓 Authorize &amp; Unlock Immediately →</button>' +
@@ -743,7 +767,7 @@
             '<a class="btn pri" href="projects/client-turnkey-forge/index.html" target="_blank" rel="noopener" style="width:100%;justify-content:center;font-size:11.5px">Launch Turnkey Forge ↗</a>' +
           '</div>' +
           '<div class="compact-card" style="padding:14px 16px;border-color:rgba(16,185,129,0.35)">' +
-            '<h3 style="font-size:13.5px;color:#fff;margin-bottom:4px">Commercial Web &amp; AI Receptionist</h3>' +
+            '<h3 style="font-size:13.5px;color:#fff;margin-bottom:4px">Commercial Web &amp; Automated Receptionist</h3>' +
             '<p style="font-size:11.5px;color:#94a3b8;margin-bottom:10px">Benchmark how automated scheduling and customer intake operate in production.</p>' +
             '<a class="btn pri" href="projects/sterling-auto-repair/index.html" target="_blank" rel="noopener" style="width:100%;justify-content:center;font-size:11.5px">Launch Sterling Auto ↗</a>' +
           '</div>' +
@@ -1092,7 +1116,7 @@
             '</label>' +
             '<label style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:#cbd5e1;cursor:' + (step2Done ? 'pointer' : 'not-allowed') + ';font-weight:400">' +
               '<input type="checkbox" id="ottoConsentDataSharing" ' + (!step2Done ? 'disabled ' : '') + (ottoConsentDataSharing ? 'checked ' : '') + '>' +
-              '<span>Join Qualified Partner &amp; Data-Sharing Programs (CCPA/GDPR; opt out anytime)</span>' +
+              '<span>Join Qualified Partner &amp; Data-Sharing Programs (Opt out anytime)</span>' +
             '</label>' +
           '</div>' +
         '</div>' +

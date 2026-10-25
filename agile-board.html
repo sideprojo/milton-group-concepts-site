@@ -106,7 +106,7 @@
         '<div class="card" style="padding:10px 12px;border-color:rgba(16,185,129,0.4);background:rgba(6,20,34,0.88)">' +
           '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#34d399">Workspace Security Tier</div>' +
           '<div style="font-size:12.5px;font-weight:800;color:#fff;margin-top:3px">' + esc(roleBadge) + '</div>' +
-          '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">Zero-Trust Project ACL Verified</div>' +
+          '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">Project Access Active</div>' +
         '</div>' +
         '<div class="card" style="padding:10px 12px;border-color:rgba(59,130,246,0.4);background:rgba(6,16,34,0.88)">' +
           '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#60a5fa">Sprint Velocity &amp; Scope</div>' +
@@ -118,10 +118,10 @@
           '<div style="font-size:15px;font-weight:900;color:#fff;margin-top:3px">' + progPts + ' pts Active</div>' +
           '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">SLA Target: 99.4% On-Schedule</div>' +
         '</div>' +
-        '<div class="card" style="padding:10px 12px;border-color:rgba(168,85,247,0.4);background:rgba(16,10,30,0.88)">' +
-          '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#c084fc">Otto Delivery Sync</div>' +
-          '<div style="font-size:12.5px;font-weight:800;color:#fff;margin-top:3px">● OTTO-01 Linked</div>' +
-          '<div style="font-size:10.5px;color:#94a3b8;margin-top:2px">9 Specialist Persona Deliverables</div>' +
+        '<div class="card" id="agileCompanionCard" style="padding:10px 12px;border-color:rgba(16,185,129,0.45);background:rgba(6,20,34,0.92);display:flex;align-items:center;gap:10px">' +
+          (W.renderAnimatedAvatarSvg ? W.renderAnimatedAvatarSvg(isSoleAdmin() ? 'sovereign' : (isEmp() ? 'sentinel' : 'atlas'), 42) : '') +
+          '<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#34d399">' + (isSoleAdmin() ? 'Sovereign Core' : (isEmp() ? 'Sentinel Guide' : 'Atlas Guide')) + '</div>' +
+          '<div style="font-size:12px;font-weight:800;color:#fff;margin-top:2px">● ' + (isSoleAdmin() ? 'SML Controller' : 'Guided Companion') + '</div></div>' +
         '</div>' +
       '</div>';
     const mainContent =

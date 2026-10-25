@@ -25,12 +25,12 @@
 
   const APPS_CATALOG = [
     { id: 'client-turnkey-forge',       codename: 'Argo', callSign: 'ARGO-01', aistudioPromptId: '1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', aistudioUrl: 'https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia', primaryTool: 'generate_turnkey_scope',       icon: '', title: 'Argo — Turnkey Web & Scope Builder',        brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/client-turnkey-forge/index.html',       zipHref: 'projects/client-turnkey-forge/exports/turnkey_forge_scorm_2004_4th_edition.zip', desc: 'Interactive custom build scope, intake, and pricing configurator powered by Argo.' },
-    { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', aistudioUrl: 'https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', primaryTool: 'triage_service_intake',        icon: '', title: 'Arya — AI Receptionist & Bay Dispatch',     brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: '24/7 commercial web, voice triage, and live bay dispatch powered by Arya.' },
+    { id: 'sterling-auto-repair',       codename: 'Arya', callSign: 'ARYA-01', aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', aistudioUrl: 'https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD', primaryTool: 'triage_service_intake',        icon: '', title: 'Arya — Automated Receptionist & Bay Dispatch',     brand: 'FIX', defaultCustomer: true,  price: 0,  href: 'projects/sterling-auto-repair/index.html',       zipHref: '',                                                                               desc: '24/7 commercial web, voice triage, and live bay dispatch powered by Arya.' },
     { id: 'eveng-netprism-studio',      codename: 'Zeno', callSign: 'ZENO-01', aistudioPromptId: '1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', aistudioUrl: 'https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv', primaryTool: 'validate_network_topology',    icon: '', title: 'Zeno — NetPrism & EVE-NG Topology Lab',     brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/eveng-netprism-studio/index.html',      zipHref: 'projects/eveng-netprism-studio/exports/eveng_scorm_2004_4th_edition.zip',        desc: 'OSPF, BGP, ZTNA, and EVPN network topology simulator powered by Zeno.' },
     { id: 'samgov-contract-matchmaker', codename: 'Cato', callSign: 'CATO-01', aistudioPromptId: '1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', aistudioUrl: 'https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx', primaryTool: 'match_samgov_solicitations',   icon: '', title: 'Cato — Federal Contract & Role Radar',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/samgov-contract-matchmaker/index.html', zipHref: 'projects/samgov-contract-matchmaker/exports/samgov_scorm_2004_4th_edition.zip',  desc: 'Federal NAICS 541512/541519 SDVOSB opportunity matchmaker powered by Cato.' },
     { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc', primaryTool: 'simulate_funnel_treasury_roi', icon: '', title: 'Vega — Funnel & Treasury ROI Modeler',      brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Conversion funnel and multi-rail revenue simulator powered by Vega.' },
     { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr', primaryTool: 'grade_cli_ansible_drill',      icon: '', title: 'Kael — Multi-OS CLI & Ansible Auto-Grader', brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'IOS-XE, Linux, SQL, KQL, and Ansible terminal lab powered by Kael.' },
-    { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', primaryTool: 'analyze_epigraphic_inscription',icon: '', title: 'Clio — Chronos Epigraphy & Geodesic AI',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Ancient text restoration, epigraphy, and geodesic discovery powered by Clio.' },
+    { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H', primaryTool: 'analyze_epigraphic_inscription',icon: '', title: 'Clio — Chronos Epigraphy & Geodesic Lab',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Ancient text restoration, epigraphy, and geodesic discovery powered by Clio.' },
     { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR', primaryTool: 'generate_cognate_drill_loop',  icon: '', title: 'Alma — Associative Language OS (10K)',      brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: '10-module associative language training application powered by Alma.' },
     { id: 'maps-geospatial-insights',   codename: 'Orin', callSign: 'ORIN-01', aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', aistudioUrl: 'https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng', primaryTool: 'analyze_geospatial_corridor',  icon: '', title: 'Orin — Maps, 3D Geospatial & Location Insights', brand: 'MGC', defaultCustomer: true,  price: 0,  href: 'projects/maps-geospatial-insights/index.html', zipHref: '',                                                                               desc: 'Google Earth 3D (<gmp-map-3d>), Photorealistic 3D Tiles, and regional market/DoD corridor insights powered by Orin.' }
   ];
@@ -44,7 +44,7 @@
       shortTitle: 'Resource Fast-Track',
       brand: 'MGC',
       defaultCustomer: false,
-      category: 'Guided Interactive AI Templates & Workspace Accelerator',
+      category: 'Guided Interactive Templates & Workspace Accelerator',
       href: 'member-portal.html?view=resources',
       desc: 'Structured, template-driven Resource Fast-Track suite across Languages, Business Endeavors, Schooling, and Technical Upskilling (zero free-form prompting).',
       uiUxEnhancements: [
@@ -86,14 +86,14 @@
   const DEFAULT_CUSTOMER_RESOURCES = [];
   const DEFAULT_CUSTOMER_PAGES = { saasapps: 'ready' };
 
-  // Google Workspace Admin Console & AI Studio Agents Catalog (Otto Orchestrator + 8 Specialist Personas)
+  // Google Workspace Admin Console & Studio Agents Catalog (Otto Orchestrator + 8 Specialist Personas)
   const AGENTS_CATALOG = [
     {
       id: 'otto',
       name: 'Otto',
       callSign: 'OTTO-01',
       title: 'Otto (OTTO-01) — Autonomous Orchestrator & Associative Router',
-      type: 'AI Studio + Workspace Studio Flow',
+      type: 'Studio + Workspace Studio Flow',
       agentId: '38ef575f-bce0-4895-bf93-36605220e1ca',
       aistudioPromptId: '1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
       aistudioUrl: 'https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6',
@@ -107,7 +107,7 @@
       accessPolicy: 'Default (Allow flow & Workspace Client access)',
       studioAttributionVisibility: 'ON',
       status: 'On (Active)',
-      schedule: 'Every weekday (Mon-Fri 7:45 AM) + On-Demand AI Studio & Portal Agent',
+      schedule: 'Every weekday (Mon-Fri 7:45 AM) + On-Demand Studio & Portal Agent',
       boundaryRule: 'Administrator: Full Agent Governance & Actionable Controls · Workspace Clients: Interactive Otto Agent & Studio Flows · Access Clients: Showcase & Insights Only (Connect Workspace Required)'
     },
     {
@@ -116,7 +116,7 @@
       callSign: 'ARGO-01',
       appSlug: 'client-turnkey-forge',
       title: 'Argo (ARGO-01) — Turnkey Web & Scope Builder',
-      type: 'AI Studio Specialist Persona',
+      type: 'Studio Specialist Persona',
       agentId: 'argo-01-turnkey-scope',
       aistudioPromptId: '1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia',
       aistudioUrl: 'https://aistudio.google.com/prompts/1GCaBjznuPPV5tuKH_Zdx_8SHmKeIYCia',
@@ -132,8 +132,8 @@
       name: 'Arya',
       callSign: 'ARYA-01',
       appSlug: 'sterling-auto-repair',
-      title: 'Arya (ARYA-01) — AI Receptionist & Bay Dispatch',
-      type: 'AI Studio Specialist Persona',
+      title: 'Arya (ARYA-01) — Automated Receptionist & Bay Dispatch',
+      type: 'Studio Specialist Persona',
       agentId: 'arya-01-bay-dispatch',
       aistudioPromptId: '1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD',
       aistudioUrl: 'https://aistudio.google.com/prompts/1bHeoJjR6G3Ox9x2iHBoFn2Y_tckS1JSD',
@@ -150,7 +150,7 @@
       callSign: 'ZENO-01',
       appSlug: 'eveng-netprism-studio',
       title: 'Zeno (ZENO-01) — NetPrism & EVE-NG Topology Lab',
-      type: 'AI Studio Specialist Persona',
+      type: 'Studio Specialist Persona',
       agentId: 'zeno-01-netprism-topology',
       aistudioPromptId: '1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv',
       aistudioUrl: 'https://aistudio.google.com/prompts/1GGKVublVJS77HxsSGzi2H3fFrcUKXHQv',
@@ -167,7 +167,7 @@
       callSign: 'CATO-01',
       appSlug: 'samgov-contract-matchmaker',
       title: 'Cato (CATO-01) — Federal Contract & Role Radar',
-      type: 'AI Studio Specialist Persona',
+      type: 'Studio Specialist Persona',
       agentId: 'cato-01-samgov-radar',
       aistudioPromptId: '1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx',
       aistudioUrl: 'https://aistudio.google.com/prompts/1sQ70T6-7mpNn8GnoH9IcEBaOXOr7k9bx',
@@ -184,7 +184,7 @@
       callSign: 'VEGA-01',
       appSlug: 'traffic-roi-simulator',
       title: 'Vega (VEGA-01) — Funnel & Treasury ROI Modeler',
-      type: 'AI Studio Specialist Persona',
+      type: 'Studio Specialist Persona',
       agentId: 'vega-01-treasury-roi',
       aistudioPromptId: '1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc',
       aistudioUrl: 'https://aistudio.google.com/prompts/1IrjJxPZEqOjgmkapRhqkMOsANo5qfMMc',
@@ -201,7 +201,7 @@
       callSign: 'KAEL-01',
       appSlug: 'ghost-cli-trainer',
       title: 'Kael (KAEL-01) — Multi-OS CLI & Ansible Auto-Grader',
-      type: 'AI Studio Specialist Persona',
+      type: 'Studio Specialist Persona',
       agentId: 'kael-01-cli-autograder',
       aistudioPromptId: '1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr',
       aistudioUrl: 'https://aistudio.google.com/prompts/1YVU1qCtiROOcwe-ONr7yTFo4eaQSLEEr',
@@ -217,8 +217,8 @@
       name: 'Clio',
       callSign: 'CLIO-01',
       appSlug: 'chronos-aetheria-scorm',
-      title: 'Clio (CLIO-01) — Chronos Epigraphy & Geodesic AI',
-      type: 'AI Studio Specialist Persona',
+      title: 'Clio (CLIO-01) — Chronos Epigraphy & Geodesic Lab',
+      type: 'Studio Specialist Persona',
       agentId: 'clio-01-chronos-epigraphy',
       aistudioPromptId: '1sppmnXHairFFdAd6K9yeg-Hxn0webB4H',
       aistudioUrl: 'https://aistudio.google.com/prompts/1sppmnXHairFFdAd6K9yeg-Hxn0webB4H',
@@ -235,7 +235,7 @@
       callSign: 'ALMA-01',
       appSlug: 'spanish-acquisition-os',
       title: 'Alma (ALMA-01) — Associative Language OS (10K)',
-      type: 'AI Studio Specialist Persona',
+      type: 'Studio Specialist Persona',
       agentId: 'alma-01-language-os',
       aistudioPromptId: '1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR',
       aistudioUrl: 'https://aistudio.google.com/prompts/1suI38jPB8qH3dBNOWhfRdVjhwZVCD4rR',
@@ -252,7 +252,7 @@
       callSign: 'ORIN-01',
       appSlug: 'maps-geospatial-insights',
       title: 'Orin (ORIN-01) — Maps, 3D Geospatial & Location Insights AI',
-      type: 'AI Studio Specialist Persona',
+      type: 'Studio Specialist Persona',
       agentId: 'orin-01-maps-geospatial',
       aistudioPromptId: '1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng',
       aistudioUrl: 'https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng',
@@ -312,8 +312,8 @@
       workflows: ['Control gap → POA&M item → owner → due date → evidence → closed', 'Quarterly access review → remove stale accounts'] },
     'training': { label: 'Skills & certification', pages: ['training', 'aistudio', 'saasapps'],
       actions: ['Pick one target certification', 'Block 5 study sessions this week', 'Complete diagnostic quiz', 'Book exam date'],
-      resources: [['Cisco Learning Network', 'https://learningnetwork.cisco.com/'], ['Microsoft Learn', 'https://learn.microsoft.com/training/'], ['Google Cloud Skills Boost', 'https://www.cloudskillsboost.google/'], ['Google NotebookLM', 'https://notebooklm.google.com/'], ['Google AI Studio Apps', 'https://aistudio.google.com/apps?source=user&tag=created-by-you']],
-      workflows: ['Diagnostic → weak domains → targeted SCORM EVE-NG labs → AI Studio simulators → practice exam'] }
+      resources: [['Cisco Learning Network', 'https://learningnetwork.cisco.com/'], ['Microsoft Learn', 'https://learn.microsoft.com/training/'], ['Google Cloud Skills Boost', 'https://www.cloudskillsboost.google/'], ['Google NotebookLM', 'https://notebooklm.google.com/'], ['Google Studio Apps', 'https://aistudio.google.com/apps?source=user&tag=created-by-you']],
+      workflows: ['Diagnostic → weak domains → targeted SCORM EVE-NG labs → Studio simulators → practice exam'] }
   };
 
   /* ---------- Seed (Sole Administrator = Malik A. Khabir; zero fake/placeholder accounts) ---------- */
@@ -344,7 +344,7 @@
       accountingLedger: [],
       tasks: [], notifications: [], audit: [], payments: [], consultations: [],
       projects: {
-        p_sterling: { id: 'p_sterling', name: 'Client Project: Sterling Auto Repair (Web + AI Receptionist)', owner: 'owner', brand: 'FIX', demoUrl: 'projects/sterling-auto-repair/index.html', budget: '$1,500 setup + $497/mo' },
+        p_sterling: { id: 'p_sterling', name: 'Client Project: Sterling Auto Repair (Web + Automated Receptionist)', owner: 'owner', brand: 'FIX', demoUrl: 'projects/sterling-auto-repair/index.html', budget: '$1,500 setup + $497/mo' },
         p1: { id: 'p1', name: 'Shared: Website launch', owner: 'owner', brand: 'FIX' },
         p2: { id: 'p2', name: 'Internal: Q4 platform', owner: 'owner', brand: 'MGC' }
       },
@@ -1184,7 +1184,7 @@
   const ONBOARDING_CATEGORIES = [
     {
       id: 'cat_ai_saas',
-      title: 'AI Receptionist & Web Portals (Arya & Argo)',
+      title: 'Automated Receptionist & Web Portals (Arya & Argo)',
       tag: 'Business & SaaS',
       accent: '#3b82f6',
       gradient: 'linear-gradient(135deg, rgba(30,58,138,0.85), rgba(15,23,42,0.96))',
@@ -1503,7 +1503,7 @@
       reachedThreshold,
       activeEngine: 'Option A1 (Deterministic Matrix) + Option A2 (Weighted SCORM/Quiz Telemetry Graph)',
       phase3Status: reachedThreshold
-        ? 'THRESHOLD REACHED (50+): Ready to activate Option A3 (Vertex AI / AI Studio Batch Embedding Re-Ranker)'
+        ? 'THRESHOLD REACHED (50+): Ready to activate Option A3 (Vertex AI / Studio Batch Embedding Re-Ranker)'
         : 'Armed · Will auto-notify Owner at 50 catalog modules (' + totalCatalogCount + ' / ' + OPTION_A3_APP_THRESHOLD + ' active)'
     };
   }
@@ -1560,7 +1560,7 @@
     const thresholdInfo = getCatalogThresholdStatus();
     if (thresholdInfo.reachedThreshold && !S.optionA3ThresholdNotified) {
       S.optionA3ThresholdNotified = true;
-      notify('owner', 'Option A3 Threshold Reached (50+ Catalog Modules)', 'Catalog size reached ' + thresholdInfo.currentCount + ' modules. Option A3 (Vertex AI / AI Studio Batch Embedding Re-Ranker) is ready for evaluation.');
+      notify('owner', 'Option A3 Threshold Reached (50+ Catalog Modules)', 'Catalog size reached ' + thresholdInfo.currentCount + ' modules. Option A3 (Vertex AI / Studio Batch Embedding Re-Ranker) is ready for evaluation.');
     }
     commit();
     return {
@@ -1926,13 +1926,13 @@
       category: sanitizeField(payload && payload.category, 80) || 'Qualified Partner Resource + Milton UI/UX & AI Tools',
       href: sanitizeField(payload && payload.href, 200) || ('member-portal.html?view=resources&resource=' + id),
       communityUrl: sanitizeField(payload && payload.communityUrl, 200) || '',
-      desc: sanitizeField(payload && payload.desc, 300) || 'Qualified partner resource enhanced with Milton UI/UX and AI Fast-Track tools.',
+      desc: sanitizeField(payload && payload.desc, 300) || 'Qualified partner resource enhanced with Milton UI/UX and Fast-Track tools.',
       uiUxEnhancements: [
         'Milton Executive UI/UX Companion & Progress Workspace',
         'Guided Milestone Checklist & Fast-Track Synthesis'
       ],
       aiTools: [
-        { id: id + '-ai-fasttrack', title: title + ' AI Fast-Track Synthesizer', badge: 'Fast-Track AI', desc: 'Accelerates resource execution, workflow blueprints, and deliverable synthesis.' }
+        { id: id + '-ai-fasttrack', title: title + ' Fast-Track Synthesizer', badge: 'Fast-Track AI', desc: 'Accelerates resource execution, workflow blueprints, and deliverable synthesis.' }
       ]
     };
     S.customResources = S.customResources.filter(r => r.id !== id).concat([entry]);
@@ -2301,6 +2301,319 @@
    * - Client (isClient): Strictly SaaS & LMS Showcases, Submit Request & Guided Consultation, and Billing & Payment.
    *   Locked/ungranted modules do NOT appear at all.
    */
+
+  /* ---------- 4-Tier Fluid Animated Companion & Hierarchy Engine (Otto, Atlas, Sentinel, Sovereign + SML) ---------- */
+  const ANIMATED_AGENTS = {
+    otto: {
+      id: 'otto',
+      name: 'Otto',
+      callSign: 'OTTO-01',
+      tierLabel: 'Showcase Guide',
+      roleBadge: 'SaaS & Showcase Companion',
+      promptable: false,
+      controlledBy: 'Sovereign (Admin)',
+      accent: '#38bdf8',
+      secondary: '#fde047',
+      greeting: 'Hi! I am Otto. I will guide you through your 3 included apps and show you what you can unlock next.',
+      steps: [
+        { id: 'otto_step_entitled', label: '1. Tour Included Apps (3)', targetSelector: '#swimlaneEntitled, #netflixSpotlightHero', speech: 'Here are your 3 ready-to-launch applications: Argo, Arya, and Orin. Click any card to open it immediately.' },
+        { id: 'otto_step_spotlight', label: '2. Cycle Spotlight Preview', targetSelector: '#netflixSpotlightHero', action: 'cycleSpotlight', speech: 'I switched the Spotlight preview so you can inspect each application and its capabilities.' },
+        { id: 'otto_step_path', label: '3. Next Learning Step', targetSelector: '#divergentLearningSummaryBanner, #netflixSwimlanesContainer', speech: 'Complete your current step in the sequence below to advance your progress.' },
+        { id: 'otto_step_unlock', label: '4. Preview Unlock Options', targetSelector: '#swimlaneLocked', action: 'openPaywall', speech: 'Ready for more? You can unlock any individual app for $19/mo or all 9 apps for $49/mo.' }
+      ]
+    },
+    atlas: {
+      id: 'atlas',
+      name: 'Atlas',
+      callSign: 'ATLAS-01',
+      tierLabel: 'Workspace Partner Guide',
+      roleBadge: 'Full Workspace & Sprint Companion',
+      promptable: false,
+      controlledBy: 'Sovereign (Admin)',
+      accent: '#10b981',
+      secondary: '#60a5fa',
+      greeting: 'Welcome back! I am Atlas, your Workspace guide. All 9 applications and your Agile delivery board are active.',
+      steps: [
+        { id: 'atlas_step_apps', label: '1. Review All 9 Apps', targetSelector: '#swimlaneEntitled, #netflixSpotlightHero, #agileTelemetryRibbon', speech: 'All 9 applications are unlocked for your workspace. Select any card to launch.' },
+        { id: 'atlas_step_templates', label: '2. Open Fast-Track Templates', targetSelector: '[data-tab="resources"], #rftTemplateSelect', action: 'goResources', speech: 'Opening your guided Fast-Track templates to organize your current milestone.' },
+        { id: 'atlas_step_sprint', label: '3. Inspect Active Sprint', targetSelector: '#agileTelemetryRibbon, .cols, [href="agile-board.html"]', action: 'goAgile', speech: 'Here is your live sprint progress. Review active stories or add a new item to the backlog.' },
+        { id: 'atlas_step_briefing', label: '4. Schedule Briefing', targetSelector: '[data-tab="consultation"], #guidedConsultationForm', action: 'goConsultation', speech: 'Use this view to schedule your next architecture or milestone review.' }
+      ]
+    },
+    sentinel: {
+      id: 'sentinel',
+      name: 'Sentinel',
+      callSign: 'SENTINEL-01',
+      tierLabel: 'Internal Staff Guide',
+      roleBadge: 'Operations & Client Directory Companion',
+      promptable: false,
+      controlledBy: 'Sovereign (Admin)',
+      accent: '#60a5fa',
+      secondary: '#e2e8f0',
+      greeting: 'Sentinel online. Guiding you through external client accounts, open requests, and sprint deliverables.',
+      steps: [
+        { id: 'sentinel_step_clients', label: '1. Inspect Client Accounts', targetSelector: '.ad-console, #securityBoundaryRibbon, #agileTelemetryRibbon', action: 'goClientDir', speech: 'Highlighting external client accounts in your assigned directory scope.' },
+        { id: 'sentinel_step_requests', label: '2. Review Client Requests', targetSelector: '[data-tab="requests"], .ad-console', action: 'goRequests', speech: 'Checking open client consultation and access requests.' },
+        { id: 'sentinel_step_agile', label: '3. Client Sprint Board', targetSelector: '#agileTelemetryRibbon, .cols, [href="agile-board.html"]', action: 'goAgile', speech: 'Reviewing active client deliverables and sprint progress.' }
+      ]
+    },
+    sovereign: {
+      id: 'sovereign',
+      name: 'Sovereign',
+      callSign: 'SOVEREIGN-01',
+      tierLabel: 'Master Command Core + SML',
+      roleBadge: 'Supreme Controller · Commands Otto, Atlas & Sentinel',
+      promptable: true,
+      smlModel: 'Sovereign-SML-4B (Local Small Language Model)',
+      accent: '#fde047',
+      secondary: '#f43f5e',
+      greeting: 'Sovereign Master Core active. SML prompt console unlocked. Commanding Otto (Showcase), Atlas (Workspace), and Sentinel (Staff).',
+      steps: [
+        { id: 'sov_cmd_otto', label: 'Command Otto (Showcase)', smlPrompt: 'Direct Otto to highlight locked pro applications and guide showcase members to the $49 all-access pass', targetAgent: 'otto' },
+        { id: 'sov_cmd_atlas', label: 'Command Atlas (Workspace)', smlPrompt: 'Direct Atlas to prioritize Sprint 1 deliverables and fast-track templates for workspace partners', targetAgent: 'atlas' },
+        { id: 'sov_cmd_sentinel', label: 'Command Sentinel (Staff)', smlPrompt: 'Direct Sentinel to triage external client directory accounts and open consultation requests', targetAgent: 'sentinel' },
+        { id: 'sov_cmd_status', label: 'Run Full Fleet Sync', smlPrompt: 'Synchronize Otto, Atlas, and Sentinel guidance states and verify all 9 application gates', targetAgent: 'all' }
+      ]
+    }
+  };
+
+  function getAssignedAnimatedAgent(u) {
+    if (!u) return ANIMATED_AGENTS.otto;
+    if (isOwner(u)) return ANIMATED_AGENTS.sovereign;
+    if (isEmployee(u)) return ANIMATED_AGENTS.sentinel;
+    const isFullPartner = u.securityGroup === 'EXTERNAL_CLIENT_PARTNER' || (u.plan && u.plan.planTier === 'sdvosb_contract_retainer') || (Array.isArray(u.allowedApps) && u.allowedApps.length >= 9);
+    return isFullPartner ? ANIMATED_AGENTS.atlas : ANIMATED_AGENTS.otto;
+  }
+
+  function renderAnimatedAvatarSvg(agentId, sizePx) {
+    const sz = sizePx || 68;
+    if (agentId === 'sovereign') {
+      // Master Solar Command Core with 3 orbiting subordinate agent nodes (Otto, Atlas, Sentinel)
+      return '<div class="mgc-anim-avatar mgc-avatar-sovereign" style="width:' + sz + 'px;height:' + sz + 'px">' +
+        '<svg viewBox="0 0 100 100" width="100%" height="100%">' +
+          '<defs>' +
+            '<radialGradient id="sovCore" cx="50%" cy="50%" r="50%">' +
+              '<stop offset="0%" stop-color="#fffbeb"/>' +
+              '<stop offset="45%" stop-color="#fde047"/>' +
+              '<stop offset="80%" stop-color="#e11d48"/>' +
+              '<stop offset="100%" stop-color="#4c0519" stop-opacity="0"/>' +
+            '</radialGradient>' +
+          '</defs>' +
+          '<circle cx="50" cy="50" r="44" fill="none" stroke="rgba(253,224,71,0.35)" stroke-width="1.5" stroke-dasharray="6 4" class="mgc-ring-spin"/>' +
+          '<circle cx="50" cy="50" r="35" fill="none" stroke="rgba(244,63,94,0.55)" stroke-width="2" stroke-dasharray="18 8" class="mgc-ring-rev"/>' +
+          '<g class="mgc-orbit-group">' +
+            '<line x1="50" y1="50" x2="50" y2="8" stroke="rgba(56,189,248,0.55)" stroke-width="1.2"/>' +
+            '<circle cx="50" cy="8" r="5" fill="#38bdf8" stroke="#fff" stroke-width="1"><title>Otto (Showcase)</title></circle>' +
+            '<line x1="50" y1="50" x2="86" y2="72" stroke="rgba(16,185,129,0.55)" stroke-width="1.2"/>' +
+            '<circle cx="86" cy="72" r="5" fill="#10b981" stroke="#fff" stroke-width="1"><title>Atlas (Workspace)</title></circle>' +
+            '<line x1="50" y1="50" x2="14" y2="72" stroke="rgba(96,165,250,0.55)" stroke-width="1.2"/>' +
+            '<circle cx="14" cy="72" r="5" fill="#60a5fa" stroke="#fff" stroke-width="1"><title>Sentinel (Staff)</title></circle>' +
+          '</g>' +
+          '<circle cx="50" cy="50" r="22" fill="url(#sovCore)" class="mgc-core-pulse"/>' +
+          '<polygon points="50,32 56,44 68,46 58,54 61,66 50,59 39,66 42,54 32,46 44,44" fill="#fff" opacity="0.92" class="mgc-eye-shift"/>' +
+        '</svg>' +
+      '</div>';
+    }
+    if (agentId === 'atlas') {
+      // Emerald & Cobalt Geometric Gyroscope for Workspace Partners
+      return '<div class="mgc-anim-avatar mgc-avatar-atlas" style="width:' + sz + 'px;height:' + sz + 'px">' +
+        '<svg viewBox="0 0 100 100" width="100%" height="100%">' +
+          '<defs>' +
+            '<radialGradient id="atlasCore" cx="50%" cy="50%" r="50%">' +
+              '<stop offset="0%" stop-color="#d1fae5"/>' +
+              '<stop offset="55%" stop-color="#10b981"/>' +
+              '<stop offset="100%" stop-color="#064e3b" stop-opacity="0"/>' +
+            '</radialGradient>' +
+          '</defs>' +
+          '<circle cx="50" cy="50" r="42" fill="none" stroke="rgba(16,185,129,0.45)" stroke-width="2" stroke-dasharray="14 6" class="mgc-ring-spin"/>' +
+          '<ellipse cx="50" cy="50" rx="38" ry="18" fill="none" stroke="rgba(96,165,250,0.65)" stroke-width="2" class="mgc-ring-rev"/>' +
+          '<ellipse cx="50" cy="50" rx="18" ry="38" fill="none" stroke="rgba(52,211,153,0.65)" stroke-width="2" class="mgc-ring-spin"/>' +
+          '<circle cx="50" cy="50" r="20" fill="url(#atlasCore)" class="mgc-core-pulse"/>' +
+          '<polygon points="50,33 65,50 50,67 35,50" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5" class="mgc-eye-shift"/>' +
+        '</svg>' +
+      '</div>';
+    }
+    if (agentId === 'sentinel') {
+      // Sapphire & Silver Tactical Radar Shield for Internal Staff
+      return '<div class="mgc-anim-avatar mgc-avatar-sentinel" style="width:' + sz + 'px;height:' + sz + 'px">' +
+        '<svg viewBox="0 0 100 100" width="100%" height="100%">' +
+          '<defs>' +
+            '<radialGradient id="sentCore" cx="50%" cy="50%" r="50%">' +
+              '<stop offset="0%" stop-color="#eff6ff"/>' +
+              '<stop offset="55%" stop-color="#3b82f6"/>' +
+              '<stop offset="100%" stop-color="#1e3a8a" stop-opacity="0"/>' +
+            '</radialGradient>' +
+          '</defs>' +
+          '<polygon points="50,6 88,24 88,64 50,94 12,64 12,24" fill="rgba(15,23,42,0.85)" stroke="#60a5fa" stroke-width="2.2"/>' +
+          '<circle cx="50" cy="50" r="30" fill="none" stroke="rgba(148,163,184,0.4)" stroke-width="1.5" stroke-dasharray="5 5"/>' +
+          '<g class="mgc-ring-spin">' +
+            '<path d="M50,50 L50,20 A30,30 0 0,1 76,35 Z" fill="rgba(56,189,248,0.32)"/>' +
+          '</g>' +
+          '<circle cx="50" cy="50" r="14" fill="url(#sentCore)" class="mgc-core-pulse"/>' +
+          '<circle cx="50" cy="50" r="5" fill="#fff" class="mgc-eye-shift"/>' +
+        '</svg>' +
+      '</div>';
+    }
+    // Default: Otto (Fluid Cyan & Gold Kinetic Companion for SaaS Showcase Clients)
+    return '<div class="mgc-anim-avatar mgc-avatar-otto" style="width:' + sz + 'px;height:' + sz + 'px">' +
+      '<svg viewBox="0 0 100 100" width="100%" height="100%">' +
+        '<defs>' +
+          '<radialGradient id="ottoCore" cx="50%" cy="50%" r="50%">' +
+            '<stop offset="0%" stop-color="#f0f9ff"/>' +
+            '<stop offset="45%" stop-color="#38bdf8"/>' +
+            '<stop offset="85%" stop-color="#0284c7"/>' +
+            '<stop offset="100%" stop-color="#0c4a6e" stop-opacity="0"/>' +
+          '</radialGradient>' +
+        '</defs>' +
+        '<circle cx="50" cy="50" r="44" fill="none" stroke="rgba(56,189,248,0.45)" stroke-width="2" stroke-dasharray="12 7" class="mgc-ring-spin"/>' +
+        '<circle cx="50" cy="50" r="35" fill="none" stroke="rgba(253,224,71,0.65)" stroke-width="2" stroke-dasharray="20 10" class="mgc-ring-rev"/>' +
+        '<circle cx="50" cy="50" r="25" fill="url(#ottoCore)" class="mgc-core-pulse"/>' +
+        '<g class="mgc-eye-shift">' +
+          '<ellipse cx="43" cy="47" rx="3.2" ry="5.5" fill="#fff"/>' +
+          '<ellipse cx="57" cy="47" rx="3.2" ry="5.5" fill="#fff"/>' +
+          '<path d="M42,58 Q50,64 58,58" fill="none" stroke="#fde047" stroke-width="2.4" stroke-linecap="round"/>' +
+        '</g>' +
+      '</svg>' +
+    '</div>';
+  }
+
+  function injectFluidAgentStyles() {
+    if (document.getElementById('mgc-fluid-agent-styles')) return;
+    const st = document.createElement('style');
+    st.id = 'mgc-fluid-agent-styles';
+    st.textContent = `
+      @keyframes mgcOrbFloat {
+        0%, 100% { transform: translateY(0px) scale(1); }
+        50% { transform: translateY(-6px) scale(1.03); }
+      }
+      @keyframes mgcRingSpin {
+        0% { transform: rotate(0deg); transform-origin: 50% 50%; }
+        100% { transform: rotate(360deg); transform-origin: 50% 50%; }
+      }
+      @keyframes mgcRingRev {
+        0% { transform: rotate(360deg); transform-origin: 50% 50%; }
+        100% { transform: rotate(0deg); transform-origin: 50% 50%; }
+      }
+      @keyframes mgcCorePulse {
+        0%, 100% { opacity: 0.92; transform: scale(0.97); transform-origin: 50% 50%; }
+        50% { opacity: 1; transform: scale(1.06); transform-origin: 50% 50%; }
+      }
+      @keyframes mgcEyeShift {
+        0%, 100% { transform: translate(0px, 0px); }
+        25% { transform: translate(3px, -2px); }
+        60% { transform: translate(-3px, 1px); }
+        80% { transform: translate(2px, 2px); }
+      }
+      @keyframes mgcGuideSpotlightPulse {
+        0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.75), 0 0 28px rgba(253, 224, 71, 0.55); border-color: #fde047 !important; }
+        70% { box-shadow: 0 0 0 14px rgba(56, 189, 248, 0), 0 0 36px rgba(253, 224, 71, 0.25); border-color: #38bdf8 !important; }
+        100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+      }
+      .mgc-anim-avatar { display: inline-flex; align-items: center; justify-content: center; animation: mgcOrbFloat 3.4s ease-in-out infinite; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6)); flex-shrink: 0; }
+      .mgc-ring-spin { animation: mgcRingSpin 10s linear infinite; transform-origin: 50px 50px; }
+      .mgc-ring-rev { animation: mgcRingRev 7s linear infinite; transform-origin: 50px 50px; }
+      .mgc-orbit-group { animation: mgcRingSpin 14s linear infinite; transform-origin: 50px 50px; }
+      .mgc-core-pulse { animation: mgcCorePulse 2.4s ease-in-out infinite; transform-origin: 50px 50px; }
+      .mgc-eye-shift { animation: mgcEyeShift 4.2s ease-in-out infinite; transform-origin: 50px 50px; }
+      .mgc-guided-highlight { animation: mgcGuideSpotlightPulse 1.8s ease-out 2; outline: 2px solid #fde047 !important; outline-offset: 3px; transition: all 0.35s ease !important; }
+      #mgcFluidFloatingCompanion {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
+        z-index: 9950;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        max-width: 410px;
+        padding: 10px 15px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(6, 12, 26, 0.96), rgba(12, 22, 44, 0.96));
+        border: 1.5px solid rgba(56, 189, 248, 0.55);
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.75);
+        color: #f8fafc;
+        transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+        pointer-events: auto;
+      }
+      #mgcFluidFloatingCompanion.mgc-companion-acting {
+        transform: translateY(-10px) scale(1.03);
+        border-color: #fde047;
+        box-shadow: 0 22px 50px rgba(253, 224, 71, 0.28);
+      }
+    `;
+    document.head.appendChild(st);
+  }
+
+  function triggerGuidedHighlight(selector, speechText, agentObj) {
+    const companion = document.getElementById('mgcFluidFloatingCompanion');
+    const bubble = document.getElementById('mgcCompanionSpeechText');
+    const stageBubble = document.getElementById('mgcStageSpeechText');
+    if (bubble && speechText) bubble.textContent = speechText;
+    if (stageBubble && speechText) stageBubble.textContent = speechText;
+    if (companion) {
+      companion.classList.add('mgc-companion-acting');
+      setTimeout(() => companion.classList.remove('mgc-companion-acting'), 1200);
+    }
+    if (!selector) return;
+    const targets = selector.split(',').map(s => s.trim()).filter(Boolean);
+    let el = null;
+    for (let i = 0; i < targets.length; i++) {
+      el = document.querySelector(targets[i]);
+      if (el) break;
+    }
+    if (el) {
+      document.querySelectorAll('.mgc-guided-highlight').forEach(x => x.classList.remove('mgc-guided-highlight'));
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('mgc-guided-highlight');
+      setTimeout(() => el.classList.remove('mgc-guided-highlight'), 3600);
+    }
+  }
+
+  function mountFloatingCompanion() {
+    injectFluidAgentStyles();
+    const u = me();
+    if (!u) return;
+    const ag = getAssignedAnimatedAgent(u);
+    let dock = document.getElementById('mgcFluidFloatingCompanion');
+    if (!dock) {
+      dock = document.createElement('aside');
+      dock.id = 'mgcFluidFloatingCompanion';
+      dock.setAttribute('aria-label', ag.name + ' Animated Portal Companion');
+      document.body.appendChild(dock);
+    }
+    dock.style.borderColor = ag.accent;
+    const nextStep = ag.steps && ag.steps[0];
+    dock.innerHTML =
+      renderAnimatedAvatarSvg(ag.id, 46) +
+      '<div style="min-width:0;flex:1">' +
+        '<div style="display:flex;align-items:center;gap:6px">' +
+          '<strong style="font-size:12px;color:#fff">' + esc(ag.name) + ' (' + esc(ag.callSign) + ')</strong>' +
+          '<span style="font-size:10px;padding:1px 7px;border-radius:999px;background:rgba(15,23,42,0.9);border:1px solid ' + ag.accent + ';color:' + ag.accent + ';font-weight:700">' + (ag.promptable ? 'SML Controller' : 'Guided Companion') + '</span>' +
+        '</div>' +
+        '<div id="mgcCompanionSpeechText" style="font-size:11px;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:265px">' + esc(ag.greeting) + '</div>' +
+      '</div>' +
+      '<button type="button" class="btn pri" id="btnCompanionNextGuide" style="padding:5px 10px;font-size:11px;white-space:nowrap">' + (ag.promptable ? 'SML Console ↑' : 'Guide Me →') + '</button>';
+
+    let stepIdx = 0;
+    const btnNext = dock.querySelector('#btnCompanionNextGuide');
+    if (btnNext) {
+      btnNext.onclick = () => {
+        if (ag.promptable) {
+          const inp = document.getElementById('sovereignSmlPromptInput');
+          if (inp) {
+            inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            inp.focus();
+            return;
+          }
+        }
+        const st = ag.steps[stepIdx % ag.steps.length];
+        stepIdx++;
+        if (st) {
+          triggerGuidedHighlight(st.targetSelector, st.speech, ag);
+        }
+      };
+    }
+  }
+
   function header(active) {
     injectCss();
     const u = me();
@@ -2373,6 +2686,7 @@
     if (host) host.prepend(el);
     const soEl = el.querySelector('#w-signout');
     if (soEl) soEl.onclick = () => signOut();
+    mountFloatingCompanion();
 
     // Wire W3C WCAG 2.2 Disclosure Dropdowns (click, Escape, Arrow keys, outside click)
     const dropdowns = el.querySelectorAll('.wgw-dropdown');
@@ -2433,5 +2747,5 @@
     }
   }
 
-  global.MGCW = { CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, isMobileClientDevice, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  global.MGCW = { ANIMATED_AGENTS, getAssignedAnimatedAgent, renderAnimatedAvatarSvg, triggerGuidedHighlight, mountFloatingCompanion,  CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, isMobileClientDevice, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

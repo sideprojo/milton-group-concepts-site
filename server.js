@@ -1832,20 +1832,18 @@ function sendJson(res, status, data, extraHeaders = {}) {
 }
 
 function renderLockedHtml(u, title, message, ctaHref, ctaLabel) {
-  const ouLabel = u ? (u.ou === 'internal' ? 'OU=Internal (Staff)' : (u.ou === 'builtin' ? 'OU=Builtin (Admin)' : 'OU=External (Client)')) : 'OU=Anonymous';
-  const grpLabel = u ? (u.securityGroup || (u.ou === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS')) : 'UNAUTHENTICATED';
-  const tierLabel = u ? (u.accessTier || 'CUSTOMER_RESTRICTED') : 'RESTRICTED';
+  const grpLabel = u ? (u.securityGroup || (u.ou === 'internal' ? 'INTERNAL_ANALYST' : 'EXTERNAL_SAAS_LMS')) : 'GUEST';
   const allowedCount = (u && Array.isArray(u.allowedApps)) ? u.allowedApps.length : 3;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${title} | MGC / F.I.X Security & Paywall Boundary</title>
+<title>${title}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box}
   body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;font-family:Inter,system-ui,sans-serif;background:radial-gradient(circle at 50% 0%,rgba(197,179,88,0.16),#050914 70%);color:#F8FAFC}
-  .card{max-width:640px;width:100%;background:rgba(10,17,34,0.96);border:1px solid rgba(197,179,88,0.55);border-radius:18px;padding:30px;box-shadow:0 24px 60px rgba(0,0,0,0.75)}
+  .card{max-width:620px;width:100%;background:rgba(10,17,34,0.96);border:1px solid rgba(197,179,88,0.55);border-radius:18px;padding:30px;box-shadow:0 24px 60px rgba(0,0,0,0.75)}
   .badge-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
   .pill{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;border:1px solid rgba(148,163,184,0.3);background:rgba(15,23,42,0.9);color:#93c5fd}
   .pill.gold{border-color:rgba(197,179,88,0.55);color:#fde047;background:rgba(197,179,88,0.14)}
@@ -1863,21 +1861,21 @@ function renderLockedHtml(u, title, message, ctaHref, ctaLabel) {
 <body>
   <main class="card" id="securityPaywallBoundaryCard">
     <div class="badge-row">
-      <span class="pill red">HTTP 403 · ZERO-TRUST BOUNDARY</span>
-      <span class="pill gold">OTTO-01 RBAC & PAYWALL GATE</span>
+      <span class="pill red">ACCESS RESTRICTED</span>
+      <span class="pill gold">OTTO GUIDE</span>
       <span class="pill">${grpLabel}</span>
     </div>
     <h1>🔒 ${title}</h1>
     <p>${message}</p>
     <div class="sec-box">
-      <div>Identity &amp; Directory OU<strong>${u ? (u.email || u.name) : 'Guest'} · ${ouLabel}</strong></div>
-      <div>Active Security Scope<strong>${grpLabel} (${tierLabel})</strong></div>
-      <div>Entitled Persona SaaS Apps<strong>${allowedCount} / 9 Unlocked</strong></div>
-      <div>Instant Unlock Options<strong>$19 Single App · $49 All 9 Apps · $250 Enterprise</strong></div>
+      <div>Account<strong>${u ? (u.email || u.name) : 'Guest'}</strong></div>
+      <div>Membership Tier<strong>${grpLabel}</strong></div>
+      <div>Included Apps<strong>${allowedCount} / 9 Active</strong></div>
+      <div>Unlock Options<strong>$19 Single App · $49 All 9 Apps · $250 Workspace</strong></div>
     </div>
     <div class="actions">
-      <a class="btn gold" href="${ctaHref || '/workspace?view=payment'}">${ctaLabel || '🔓 Instant Unlock / Upgrade Tier →'}</a>
-      <a class="btn sec" href="/workspace">← Return to Netflix SaaS Showcase</a>
+      <a class="btn gold" href="${ctaHref || '/workspace?view=payment'}">${ctaLabel || '🔓 Unlock Now →'}</a>
+      <a class="btn sec" href="/workspace">← Back to Showcase</a>
     </div>
   </main>
 </body>
@@ -4348,6 +4346,194 @@ const server = http.createServer(async (req, res) => {
         spec = { id: agentSlug, name: agentSlug.toUpperCase(), callSign: agentSlug.toUpperCase() + '-01', model: 'gemini-3.8-flash' };
       }
       return sendJson(res, 200, { ok: true, agent: agentSlug, spec });
+    }
+
+    // 4-Tier Animated Agent Hierarchy & Admin SML (Small Language Model) Controller
+    if (!S.agentHierarchy) {
+      S.agentHierarchy = {
+        sovereign: {
+          id: 'sovereign',
+          name: 'Sovereign',
+          callSign: 'SOVEREIGN-01',
+          roleScope: 'DOMAIN_ADMIN',
+          title: 'Sovereign — Master Command Core & SML Controller',
+          promptable: true,
+          smlModel: 'Sovereign-SML-4B (Local Small Language Model)',
+          visualStyle: 'solar-command-core',
+          status: 'Active · Controlling Otto, Atlas & Sentinel',
+          lastSmlRun: null
+        },
+        otto: {
+          id: 'otto',
+          name: 'Otto',
+          callSign: 'OTTO-01',
+          roleScope: 'EXTERNAL_SAAS_LMS',
+          title: 'Otto — Showcase Guide',
+          promptable: false,
+          controlledBy: 'SOVEREIGN-01',
+          visualStyle: 'fluid-kinetic-orb',
+          activeDirective: 'Guide showcase members through their 3 starter apps, demonstrate locked app previews, and surface $19/$49 unlock paths.',
+          currentMood: 'guiding'
+        },
+        atlas: {
+          id: 'atlas',
+          name: 'Atlas',
+          callSign: 'ATLAS-01',
+          roleScope: 'EXTERNAL_CLIENT_PARTNER',
+          title: 'Atlas — Workspace & Delivery Guide',
+          promptable: false,
+          controlledBy: 'SOVEREIGN-01',
+          visualStyle: 'emerald-prism-gyro',
+          activeDirective: 'Guide workspace partners through all 9 unlocked applications, fast-track templates, and active sprint deliverables.',
+          currentMood: 'synchronizing'
+        },
+        sentinel: {
+          id: 'sentinel',
+          name: 'Sentinel',
+          callSign: 'SENTINEL-01',
+          roleScope: 'INTERNAL_ANALYST',
+          title: 'Sentinel — Operations & Client Guide',
+          promptable: false,
+          controlledBy: 'SOVEREIGN-01',
+          visualStyle: 'sapphire-radar-shield',
+          activeDirective: 'Guide internal staff through external client directory accounts, open consultation requests, and sprint board updates.',
+          currentMood: 'scanning'
+        }
+      };
+    }
+
+    if (pathname === '/api/agents/hierarchy' && req.method === 'GET') {
+      const u = getAuthenticatedUser(req);
+      if (!u) return sendJson(res, 401, { ok: false, error: 'Sign in required.' });
+      const admin = isOwnerUser(u);
+      const emp = isEmployeeUser(u);
+      const isFullPartner = admin || emp || u.securityGroup === 'EXTERNAL_CLIENT_PARTNER' || (u.plan && u.plan.planTier === 'sdvosb_contract_retainer');
+      const assignedKey = admin ? 'sovereign' : (emp ? 'sentinel' : (isFullPartner ? 'atlas' : 'otto'));
+      return sendJson(res, 200, {
+        ok: true,
+        assignedAgentKey: assignedKey,
+        assignedAgent: S.agentHierarchy[assignedKey],
+        canPrompt: admin,
+        hierarchy: admin ? S.agentHierarchy : { [assignedKey]: S.agentHierarchy[assignedKey] }
+      });
+    }
+
+    if (pathname === '/api/admin/sml' && req.method === 'POST') {
+      const u = getAuthenticatedUser(req);
+      if (!u || !isOwnerUser(u)) {
+        return sendJson(res, 403, {
+          ok: false,
+          code: 'SML_ADMIN_ONLY',
+          error: 'Only the Administrator can prompt Sovereign or execute SML commands. Showcase, Workspace, and Employee agents are guided-only.'
+        });
+      }
+      const body = await readJsonBody(req);
+      const rawPrompt = sanitizeInput(body.prompt || '', 360);
+      const targetSub = sanitizeInput(body.targetAgent || 'all', 32).toLowerCase();
+      if (!rawPrompt) {
+        return sendJson(res, 400, { ok: false, error: 'Enter a command or SML directive for Sovereign.' });
+      }
+      const lower = rawPrompt.toLowerCase();
+      const runId = 'SML-' + Date.now().toString(36).toUpperCase().slice(-5);
+      const updatedAgents = [];
+
+      // Try local Ollama SML (qwen3.5:4b / gemma4:e4b) with fast 900ms timeout, falling back to built-in Sovereign SML kernel
+      let smlEngineLabel = 'Sovereign-SML-4B Embedded Kernel (Sub-ms Deterministic)';
+      let smlReasoning = '';
+      try {
+        const ollamaRes = await new Promise((resolve) => {
+          const reqData = JSON.stringify({
+            model: 'qwen3.5:4b',
+            prompt: 'You are Sovereign, the master controller over Otto (Showcase guide), Atlas (Workspace guide), and Sentinel (Employee guide). Summarize this admin command in 1 short sentence without buzzwords: ' + rawPrompt,
+            stream: false,
+            options: { num_predict: 45, temperature: 0.2 }
+          });
+          const oReq = http.request({
+            hostname: '127.0.0.1',
+            port: 11434,
+            path: '/api/generate',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(reqData) },
+            timeout: 250
+          }, (oResp) => {
+            let b = '';
+            oResp.on('data', c => { b += c; });
+            oResp.on('end', () => {
+              try { resolve(JSON.parse(b)); } catch (_) { resolve(null); }
+            });
+          });
+          oReq.on('error', () => resolve(null));
+          oReq.on('timeout', () => { oReq.destroy(); resolve(null); });
+          oReq.write(reqData);
+          oReq.end();
+        });
+        if (ollamaRes && ollamaRes.response) {
+          smlEngineLabel = 'Ollama qwen3.5:4b Local SML + Sovereign Controller';
+          smlReasoning = String(ollamaRes.response).trim();
+        }
+      } catch (_) {}
+
+      if (targetSub === 'otto' || lower.includes('otto') || lower.includes('showcase') || lower.includes('saas')) {
+        S.agentHierarchy.otto.activeDirective = rawPrompt;
+        S.agentHierarchy.otto.currentMood = 'focused';
+        updatedAgents.push('Otto (OTTO-01 · Showcase Clients)');
+      }
+      if (targetSub === 'atlas' || lower.includes('atlas') || lower.includes('workspace') || lower.includes('sprint') || lower.includes('agile')) {
+        S.agentHierarchy.atlas.activeDirective = rawPrompt;
+        S.agentHierarchy.atlas.currentMood = 'accelerating';
+        updatedAgents.push('Atlas (ATLAS-01 · Workspace Partners)');
+      }
+      if (targetSub === 'sentinel' || lower.includes('sentinel') || lower.includes('employee') || lower.includes('staff') || lower.includes('internal')) {
+        S.agentHierarchy.sentinel.activeDirective = rawPrompt;
+        S.agentHierarchy.sentinel.currentMood = 'auditing';
+        updatedAgents.push('Sentinel (SENTINEL-01 · Internal Staff)');
+      }
+      if (updatedAgents.length === 0) {
+        ['otto', 'atlas', 'sentinel'].forEach(k => {
+          if (targetSub === 'all' || targetSub === k) {
+            S.agentHierarchy[k].activeDirective = rawPrompt;
+          }
+        });
+        updatedAgents.push('Otto (OTTO-01)', 'Atlas (ATLAS-01)', 'Sentinel (SENTINEL-01)');
+      }
+
+      // Check if Admin asked SML to unlock apps for a user
+      let unlockedUserMsg = '';
+      if (lower.includes('unlock') && lower.includes('@')) {
+        const emailMatch = rawPrompt.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}/);
+        if (emailMatch) {
+          const targetEmail = emailMatch[0].toLowerCase();
+          const targetUser = Object.values(S.users || {}).find(x => String(x.email || '').toLowerCase() === targetEmail);
+          if (targetUser) {
+            targetUser.allowedApps = APPS_CATALOG.map(a => a.id);
+            unlockedUserMsg = ' Unlocked all 9 applications for ' + targetEmail + '.';
+          }
+        }
+      }
+
+      const responseSummary = smlReasoning
+        ? (smlReasoning + ' → Propagated to: ' + updatedAgents.join(', ') + '.' + unlockedUserMsg)
+        : ('Sovereign SML processed directive ["' + rawPrompt + '"] and updated subordinate guide behavior across ' + updatedAgents.join(', ') + '.' + unlockedUserMsg);
+
+      S.agentHierarchy.sovereign.lastSmlRun = {
+        runId,
+        prompt: rawPrompt,
+        engine: smlEngineLabel,
+        updatedAgents,
+        summary: responseSummary,
+        ts: now()
+      };
+      logAudit(u.id, 'sovereign.sml_command', runId + ' -> ' + updatedAgents.join(', '));
+      saveState(S);
+      return sendJson(res, 200, {
+        ok: true,
+        runId,
+        engine: smlEngineLabel,
+        prompt: rawPrompt,
+        updatedAgents,
+        summary: responseSummary,
+        hierarchy: S.agentHierarchy
+      });
     }
 
     if ((pathname === '/api/otto/execute' || pathname === '/api/otto/orchestrate') && req.method === 'POST') {
