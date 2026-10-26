@@ -180,7 +180,7 @@ const RESOURCES_CATALOG = [
 // Double-Entry Management Accounting Chart of Accounts (GAAP / DCAA / CPA Ready)
 // Corporate Entities: MGC (Milton Group Concepts LLC) and FIX (F.I.X Solutions LLC)
 const CHART_OF_ACCOUNTS = [
-  { code: '1010', name: 'Operating Cash — Mercury Checking',           type: 'ASSET',     normalBalance: 'DEBIT' },
+  { code: '1010', name: 'Operating Cash — 3rd-Party Processor Settlement', type: 'ASSET', normalBalance: 'DEBIT' },
   { code: '1020', name: 'Tax Reserve Vault (25% Auto-Allocation)',     type: 'ASSET',     normalBalance: 'DEBIT' },
   { code: '1100', name: 'Accounts Receivable — Commercial & Federal',  type: 'ASSET',     normalBalance: 'DEBIT' },
   { code: '1150', name: 'Contract Milestone Escrow Receivable',        type: 'ASSET',     normalBalance: 'DEBIT' },
@@ -904,43 +904,42 @@ function getAllowedPagesForUser(u) {
 /* ---------- Double-Entry Management Accounting & Rail Economics Engine ---------- */
 function computeRailEconomics(grossUsd, railOrMethod) {
   const gross = Math.round((Number(grossUsd) || 0) * 100) / 100;
-  const r = String(railOrMethod || 'MERCURY_ACH').toUpperCase();
-  let railCode = 'MERCURY_ACH';
-  let railLabel = 'Mercury Commercial ACH / Wire ($0.00 Fee)';
-  let feeUsd = 0;
+  const r = String(railOrMethod || 'STRIPE_CARD').toUpperCase();
+  let railCode = 'STRIPE_CARD';
+  let railLabel = 'Stripe Payment Link Redirect (2.9% + $0.30)';
+  let feeUsd = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
   if (r.includes('WAWF') || r.includes('PIEE') || r === 'GPC_WAWF') {
     railCode = 'WAWF_EFT';
     railLabel = 'DoD WAWF / PIEE Treasury EFT ($0.00 Fee)';
     feeUsd = 0;
-  } else if (r === 'STRIPE_ACH') {
-    railCode = 'STRIPE_ACH';
-    railLabel = 'Stripe ACH Direct Debit (0.8% capped at $5.00)';
-    feeUsd = Math.min(5.00, Math.round(gross * 0.008 * 100) / 100);
+  } else if (r.includes('GOFUNDME')) {
+    railCode = 'GOFUNDME';
+    railLabel = 'GoFundMe Public Fundraiser Redirect (2.9% + $0.30)';
+    feeUsd = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
+  } else if (r.includes('PAYPAL')) {
+    railCode = 'PAYPAL';
+    railLabel = 'PayPal Hosted Donate / PayPal.Me Redirect (2.89% + $0.49)';
+    feeUsd = gross > 0 ? Math.round((gross * 0.0289 + 0.49) * 100) / 100 : 0;
   } else if (r.includes('CASHAPP') || r.includes('CASH_APP')) {
     railCode = 'CASHAPP_PAY';
-    railLabel = 'Cash App Pay Hosted Checkout (2.9% + $0.30)';
+    railLabel = 'Stripe Cash App Pay Redirect (2.9% + $0.30)';
     feeUsd = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
   } else if (r.includes('WALLET') || r.includes('APPLE') || r.includes('GOOGLE')) {
     railCode = 'EXPRESS_WALLET';
-    railLabel = 'Apple Pay / Google Pay Hosted Checkout (2.9% + $0.30)';
+    railLabel = 'Stripe Apple Pay / Google Pay Redirect (2.9% + $0.30)';
     feeUsd = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
-  } else if (r.includes('CARD') || r === 'STRIPE_CARD') {
+  } else if (r.includes('CARD') || r.includes('STRIPE')) {
     railCode = 'STRIPE_CARD';
-    railLabel = 'Stripe Hosted Card Checkout (2.9% + $0.30)';
+    railLabel = 'Stripe Payment Link Redirect (2.9% + $0.30)';
     feeUsd = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
-  } else if (r === 'EXPENSE_ACH') {
-    railCode = 'EXPENSE_ACH';
-    railLabel = 'Operating Expense Outflow ($0.00 ACH)';
-    feeUsd = 0;
-  } else {
-    railCode = 'MERCURY_ACH';
-    railLabel = 'Mercury Commercial ACH / Wire ($0.00 Fee)';
+  } else if (r === 'EXPENSE_ACH' || r === 'EXPENSE' || r === 'EXPENSE_OUTFLOW') {
+    railCode = 'EXPENSE_OUTFLOW';
+    railLabel = 'Operating Expense Outflow ($0.00 Fee)';
     feeUsd = 0;
   }
   const netCashUsd = Math.max(0, Math.round((gross - feeUsd) * 100) / 100);
   const taxReserveUsd = Math.round(netCashUsd * 0.25 * 100) / 100;
   const operatingNetUsd = Math.round((netCashUsd - taxReserveUsd) * 100) / 100;
-  // Compare against card fee to surface fee savings when using $0 ACH/WAWF
   const hypotheticalCardFee = gross > 0 ? Math.round((gross * 0.029 + 0.30) * 100) / 100 : 0;
   const feeSavedVsCardUsd = Math.max(0, Math.round((hypotheticalCardFee - feeUsd) * 100) / 100);
   return {
@@ -967,7 +966,7 @@ function postAccountingJournalEntry(d) {
   const grossUsd = Math.max(0.01, Math.min(10000000, Math.round((Number(d.grossUsd || d.grossAmount || d.amountUsd || d.amount) || 0) * 100) / 100));
   const econ = computeRailEconomics(
     grossUsd,
-    (entryType === 'EXPENSE' || entryType === 'INVOICE_AR') ? 'EXPENSE_ACH' : (d.rail || d.method || 'MERCURY_ACH')
+    (entryType === 'EXPENSE' || entryType === 'INVOICE_AR') ? 'EXPENSE_OUTFLOW' : (d.rail || d.method || 'STRIPE_CARD')
   );
   const defaultCode = entryType === 'EXPENSE'
     ? '5010'
@@ -4029,7 +4028,9 @@ const server = http.createServer(async (req, res) => {
       const rawTag = gw.cashAppTag || process.env.MGC_CASHAPP_TAG || '$MiltonGroupConcepts';
       const cashAppTag = rawTag.startsWith('$') ? rawTag : ('$' + rawTag);
       const hostedStripeLink = gw.stripeCheckoutHostedUrl || process.env.STRIPE_CHECKOUT_URL || '';
-      const hostedFundraiserLink = gw.fundraiserHostedUrl || process.env.MGC_FUNDRAISER_URL || hostedStripeLink || '';
+      const hostedGofundmeLink = gw.gofundmeHostedUrl || gw.fundraiserHostedUrl || process.env.GOFUNDME_CAMPAIGN_URL || process.env.MGC_FUNDRAISER_URL || '';
+      const hostedPaypalLink = gw.paypalHostedUrl || process.env.PAYPAL_DONATE_URL || '';
+      const hostedFundraiserLink = hostedStripeLink || hostedGofundmeLink || hostedPaypalLink || '';
       const amtStr = Number(sess.amountUsd || 25).toFixed(2);
       const sig = computeCheckoutCallbackSig(sess);
       const callbackUrl = `/api/checkout/callback?session=${encodeURIComponent(sess.id)}&sig=${encodeURIComponent(sig)}`;
@@ -4044,15 +4045,34 @@ const server = http.createServer(async (req, res) => {
       };
       const prefillQuery = `amount=${encodeURIComponent(amtStr)}&prefilled_email=${encodeURIComponent(prefillParams.prefilled_email)}&donor_name=${encodeURIComponent(prefillParams.donor_name)}&client_reference_id=${encodeURIComponent(sess.id)}&return_url=${encodeURIComponent(callbackUrl)}`;
       const cashAppPrefilledUrl = `https://cash.app/${cashAppTag}/${encodeURIComponent(amtStr)}`;
-      let externalRedirectUrl = cashAppPrefilledUrl;
-      if (sess.method !== 'cashapp' && hostedFundraiserLink && /^https:\/\//i.test(hostedFundraiserLink)) {
-        const sep = hostedFundraiserLink.includes('?') ? '&' : '?';
-        externalRedirectUrl = `${hostedFundraiserLink}${sep}${prefillQuery}`;
+      const stripeRedirectUrl = (hostedStripeLink && /^https:\/\//i.test(hostedStripeLink))
+        ? `${hostedStripeLink}${hostedStripeLink.includes('?') ? '&' : '?'}${prefillQuery}`
+        : 'https://dashboard.stripe.com/payment-links';
+      const gofundmeRedirectUrl = (hostedGofundmeLink && /^https:\/\//i.test(hostedGofundmeLink))
+        ? hostedGofundmeLink
+        : 'https://www.gofundme.com/';
+      const paypalRedirectUrl = (hostedPaypalLink && /^https:\/\//i.test(hostedPaypalLink))
+        ? (hostedPaypalLink.includes('paypal.me') ? `${hostedPaypalLink.replace(/\/+$/, '')}/${encodeURIComponent(amtStr)}USD` : `${hostedPaypalLink}${hostedPaypalLink.includes('?') ? '&' : '?'}amount=${encodeURIComponent(amtStr)}&currency_code=USD`)
+        : 'https://www.paypal.com/donate/buttons';
+
+      let externalRedirectUrl = stripeRedirectUrl;
+      if (sess.method === 'gofundme') {
+        externalRedirectUrl = gofundmeRedirectUrl;
+      } else if (sess.method === 'paypal') {
+        externalRedirectUrl = paypalRedirectUrl;
+      } else if (sess.method === 'cashapp') {
+        externalRedirectUrl = (hostedStripeLink && /^https:\/\//i.test(hostedStripeLink)) ? stripeRedirectUrl : cashAppPrefilledUrl;
       }
       return {
         sig,
         cashAppTag,
         cashAppPrefilledUrl,
+        hostedStripeLink,
+        hostedGofundmeLink,
+        hostedPaypalLink,
+        stripeRedirectUrl,
+        gofundmeRedirectUrl,
+        paypalRedirectUrl,
         hostedFundraiserLink,
         externalRedirectUrl,
         prefillQuery,
@@ -4068,8 +4088,12 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/checkout/verify-compliance' && req.method === 'GET') {
       const gw = S.pciGatewayConfig || {};
       const hostedStripeLink = gw.stripeCheckoutHostedUrl || process.env.STRIPE_CHECKOUT_URL || '';
+      const hostedGofundmeLink = gw.gofundmeHostedUrl || gw.fundraiserHostedUrl || process.env.GOFUNDME_CAMPAIGN_URL || process.env.MGC_FUNDRAISER_URL || '';
+      const hostedPaypalLink = gw.paypalHostedUrl || process.env.PAYPAL_DONATE_URL || '';
       const cashAppTag = gw.cashAppTag || process.env.MGC_CASHAPP_TAG || '$MiltonGroupConcepts';
       const liveStripeUrlConfigured = Boolean(hostedStripeLink && /^https:\/\//i.test(hostedStripeLink));
+      const liveGofundmeUrlConfigured = Boolean(hostedGofundmeLink && /^https:\/\//i.test(hostedGofundmeLink));
+      const livePaypalUrlConfigured = Boolean(hostedPaypalLink && /^https:\/\//i.test(hostedPaypalLink));
       return sendJson(res, 200, {
         ok: true,
         verifiedAt: now(),
@@ -4083,13 +4107,14 @@ const server = http.createServer(async (req, res) => {
         },
         redirectOnlyArchitecture: {
           noOnSitePaymentProcessing: true,
+          thirdPartyPlatforms: ['Stripe Payment Links', 'GoFundMe Public Fundraiser', 'PayPal Hosted Donate / PayPal.Me'],
           prefillParametersSupported: ['amount', 'prefilled_email', 'donor_name', 'client_reference_id', 'return_url'],
           authenticatedReturnCallback: '/api/checkout/callback',
           hmacSignatureVerification: 'HMAC-SHA256',
           openRedirectProtection: 'STRICT_INTERNAL_ROLE_VALIDATED'
         },
-        allowedPaymentRails: ['card', 'cashapp', 'wallet'],
-        disabledVulnerableRails: ['ach_nacha'],
+        allowedPaymentRails: ['stripe', 'gofundme', 'paypal', 'card', 'cashapp', 'wallet'],
+        disabledVulnerableRails: ['ach_nacha', 'mercury_ach'],
         achDisabledOnCustomerCheckout: true,
         legalComplianceMatrix: {
           pciDssV4SaqA: {
@@ -4117,9 +4142,10 @@ const server = http.createServer(async (req, res) => {
           }
         },
         processorReadiness: {
-          cashAppPayActive: true,
-          cashAppTag,
-          liveExternalRedirectConfigured: liveStripeUrlConfigured
+          stripePaymentLinkConfigured: liveStripeUrlConfigured,
+          gofundmeCampaignConfigured: liveGofundmeUrlConfigured,
+          paypalDonateConfigured: livePaypalUrlConfigured,
+          liveExternalRedirectConfigured: Boolean(liveStripeUrlConfigured || liveGofundmeUrlConfigured || livePaypalUrlConfigured)
         }
       });
     }
@@ -4141,6 +4167,12 @@ const server = http.createServer(async (req, res) => {
         session: Object.assign({}, found, {
           cashAppTag: bundle.cashAppTag,
           cashAppPrefilledUrl: bundle.cashAppPrefilledUrl,
+          stripeHostedUrl: bundle.hostedStripeLink,
+          gofundmeHostedUrl: bundle.hostedGofundmeLink,
+          paypalHostedUrl: bundle.hostedPaypalLink,
+          stripeRedirectUrl: bundle.stripeRedirectUrl,
+          gofundmeRedirectUrl: bundle.gofundmeRedirectUrl,
+          paypalRedirectUrl: bundle.paypalRedirectUrl,
           externalProcessorUrl: bundle.hostedFundraiserLink,
           externalRedirectUrl: bundle.externalRedirectUrl,
           prefillQuery: bundle.prefillQuery,
@@ -4163,18 +4195,18 @@ const server = http.createServer(async (req, res) => {
       if (hasInjectionPayload(body)) {
         return sendJson(res, 400, { ok: false, error: 'Invalid characters in checkout payload.' });
       }
-      if (['ach_nacha', 'ach', 'bank_ach', 'bank'].includes(String(body.method || '').toLowerCase())) {
+      if (['ach_nacha', 'ach', 'bank_ach', 'bank', 'mercury', 'mercury_ach'].includes(String(body.method || '').toLowerCase())) {
         return sendJson(res, 400, {
           ok: false,
           code: 'ACH_RAIL_DISABLED_BY_POLICY',
-          error: 'Security Policy Enforced: Bank ACH is disabled on customer checkout. Please select Card, Cash App Pay, or Apple Pay / Google Pay.'
+          error: 'Security Policy Enforced: Bank ACH is disabled on customer checkout. Please select Stripe Payment Link, GoFundMe, or PayPal.'
         });
       }
       const u = getAuthenticatedUser(req);
       const type = body.type === 'subscription' ? 'subscription' : 'donation';
       const merchantEntity = String(body.merchantEntity || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
       const amountUsd = Math.max(1, Math.min(250000, Math.round((Number(body.amountUsd) || 25) * 100) / 100));
-      const method = ['card', 'cashapp', 'wallet', 'gpc_wawf'].includes(body.method) ? body.method : 'card';
+      const method = ['stripe', 'gofundme', 'paypal', 'card', 'cashapp', 'wallet', 'gpc_wawf'].includes(body.method) ? body.method : 'stripe';
       const customerName = sanitizeInput(body.donorName || body.customerName || (u && u.name) || 'Community Supporter', 100);
       const customerEmail = sanitizeInput(body.donorEmail || body.customerEmail || (u && u.email) || 'supporter@miltongroupsecurity.org', 140).toLowerCase();
       const title = sanitizeInput(body.title || (type === 'subscription' ? 'MGC & F.I.X Workspace Subscription' : 'Veteran-Owned Disabled Support'), 160);
@@ -4258,8 +4290,8 @@ const server = http.createServer(async (req, res) => {
 
       // User is authenticated & HMAC signature is verified — apply entitlement/receipt within RBAC security controls
       const timestampIso = now();
-      const method = ['card', 'cashapp', 'wallet', 'gpc_wawf'].includes(sess.method) ? sess.method : 'card';
-      const refCode = method === 'cashapp' ? 'CASH' : method === 'wallet' ? 'WPAY' : 'REDIR';
+      const method = ['stripe', 'gofundme', 'paypal', 'card', 'cashapp', 'wallet', 'gpc_wawf'].includes(sess.method) ? sess.method : 'stripe';
+      const refCode = method === 'gofundme' ? 'GFME' : method === 'paypal' ? 'PPAL' : method === 'cashapp' ? 'CASH' : method === 'wallet' ? 'WPAY' : 'STRP';
       let receiptId = sess.receiptId || sess.id;
 
       if (sess.status !== 'SETTLED') {
@@ -4381,7 +4413,7 @@ const server = http.createServer(async (req, res) => {
       const type = (body.type || (sess && sess.type)) === 'subscription' ? 'subscription' : 'donation';
       const merchantEntity = String(body.merchantEntity || (sess && sess.merchantEntity) || 'MGC').toUpperCase() === 'FIX' ? 'FIX' : 'MGC';
       const amountUsd = Math.max(1, Math.min(250000, Math.round((Number(body.amountUsd || (sess && sess.amountUsd)) || 25) * 100) / 100));
-      const method = ['card', 'cashapp', 'wallet', 'gpc_wawf'].includes(body.method || (sess && sess.method)) ? (body.method || sess.method) : 'card';
+      const method = ['stripe', 'gofundme', 'paypal', 'card', 'cashapp', 'wallet', 'gpc_wawf'].includes(body.method || (sess && sess.method)) ? (body.method || sess.method) : 'stripe';
       const customerName = sanitizeInput(body.customerName || (sess && sess.customerName) || (u && u.name) || 'Community Supporter', 100);
       const customerEmail = sanitizeInput(body.customerEmail || (sess && sess.customerEmail) || (u && u.email) || 'supporter@miltongroupsecurity.org', 140).toLowerCase();
       const rawReturn = sanitizeInput(body.returnPath || (sess && sess.returnPath) || (type === 'subscription' ? '/workspace' : '/newsletter'), 120);
@@ -5840,17 +5872,16 @@ const server = http.createServer(async (req, res) => {
           ok: true,
           pciCompliant: true,
           tokenizationEnforced: true,
-          methods: ['card', 'cashapp', 'wallet', 'gpc_wawf']
+          methods: ['stripe', 'gofundme', 'paypal', 'card', 'cashapp', 'wallet', 'gpc_wawf']
         });
       }
       const gw = Object.assign({
         activeProcessor: 'stripe_saq_a',
-        complianceLevel: 'PCI-DSS v4.0 SAQ-A + EFTA Reg E + NACHA + DFARS 252.232-7003',
+        complianceLevel: 'PCI-DSS v4.0 SAQ-A + 3rd-Party Hosted Redirects + DFARS 252.232-7003',
         stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
         stripeCheckoutHostedUrl: process.env.STRIPE_CHECKOUT_URL || '',
-        authorizeNetApiLoginId: process.env.AUTHNET_API_LOGIN_ID || '',
-        authorizeNetClientKey: process.env.AUTHNET_CLIENT_KEY || '',
-        mercuryAchEnabled: true,
+        gofundmeHostedUrl: process.env.GOFUNDME_CAMPAIGN_URL || process.env.MGC_FUNDRAISER_URL || '',
+        paypalHostedUrl: process.env.PAYPAL_DONATE_URL || '',
         wawfPieeEnabled: true
       }, S.pciGatewayConfig || {});
       return sendJson(res, 200, {
@@ -5859,30 +5890,30 @@ const server = http.createServer(async (req, res) => {
         processors: [
           {
             id: 'stripe_saq_a',
-            title: 'Stripe Checkout & Payment Element (PCI-DSS v4.0 SAQ-A)',
-            scope: 'Commercial Card, Apple Pay, Google Pay & Stripe ACH',
+            title: 'Stripe Payment Links (Card, Apple Pay, Google Pay, Cash App Pay)',
+            scope: 'Hosted 3rd-Party Redirect + Auto-Callback to /api/checkout/callback',
             saqType: 'SAQ-A (Zero Cardholder Data on MGC Servers)',
-            feeStructure: '2.9% + $0.30 (Cards) | 0.8% capped at $5.00 (ACH Direct Debit)'
+            feeStructure: '2.9% + $0.30 ($0/mo)'
           },
           {
-            id: 'authorizenet_accept_js',
-            title: 'Authorize.Net / Visa Cybersource Accept.js (B2B & Gov)',
-            scope: 'Enterprise & Government Procurement Cards (P-Card / GSA SmartPay)',
-            saqType: 'SAQ-A-EP (Client-Side Nonce Tokenization via Accept.js)',
-            feeStructure: 'Interchange-Plus / Level 2 & Level 3 Gov P-Card Rates'
+            id: 'gofundme_campaign',
+            title: 'GoFundMe Public Fundraiser Redirect (gofundme.com)',
+            scope: 'Public Community & Veteran Support Campaign Page',
+            saqType: 'Hosted 3rd-Party Fundraiser Redirect',
+            feeStructure: '2.9% + $0.30 ($0/mo)'
           },
           {
-            id: 'mercury_plaid_ach',
-            title: 'Mercury Commercial Treasury + Plaid Link ACH (NACHA / Reg E)',
-            scope: 'Direct B2B ACH Debit & Wire into Milton Group Concepts LLC Mercury Account',
-            saqType: 'NACHA Operating Rules + EFTA 12 CFR Part 1005 (Zero Card Scope)',
-            feeStructure: '$0.00 Domestic ACH & Wire Receiving via Mercury'
+            id: 'paypal_hosted',
+            title: 'PayPal Hosted Donate / PayPal.Me Redirect (paypal.com)',
+            scope: 'PayPal Balance, Venmo & Major Cards',
+            saqType: 'Hosted 3rd-Party PayPal Redirect',
+            feeStructure: '2.89% + $0.49 ($0/mo)'
           },
           {
             id: 'wawf_piee_eft',
             title: 'DoD WAWF / PIEE & SAM.gov Federal EFT (DFARS 252.232-7003)',
             scope: 'Federal Prime & Subcontract Invoicing (SDVOSB / NAICS 541512)',
-            saqType: 'Federal Treasury EFT / Automated Clearing House',
+            saqType: 'Federal Treasury EFT',
             feeStructure: '$0.00 Treasury EFT Settlement'
           }
         ]
@@ -5899,10 +5930,9 @@ const server = http.createServer(async (req, res) => {
         activeProcessor: sanitizeInput(body.activeProcessor || 'stripe_saq_a', 60),
         stripePublishableKey: sanitizeInput(body.stripePublishableKey || '', 160),
         stripeCheckoutHostedUrl: sanitizeInput(body.stripeCheckoutHostedUrl || '', 240),
+        gofundmeHostedUrl: sanitizeInput(body.gofundmeHostedUrl || body.fundraiserHostedUrl || '', 240),
+        paypalHostedUrl: sanitizeInput(body.paypalHostedUrl || '', 240),
         cashAppTag: sanitizeInput(body.cashAppTag || '$MiltonGroupConcepts', 80),
-        authorizeNetApiLoginId: sanitizeInput(body.authorizeNetApiLoginId || '', 120),
-        authorizeNetClientKey: sanitizeInput(body.authorizeNetClientKey || '', 160),
-        mercuryAchEnabled: body.mercuryAchEnabled !== false,
         wawfPieeEnabled: body.wawfPieeEnabled !== false
       });
       logAudit('owner', 'pci.gateway_config_updated', S.pciGatewayConfig.activeProcessor);
@@ -7498,9 +7528,8 @@ const server = http.createServer(async (req, res) => {
           activeProcessor: sanitizeInput(body.activeProcessor || 'stripe_saq_a', 60),
           stripePublishableKey: sanitizeInput(body.stripePublishableKey || '', 160),
           stripeCheckoutHostedUrl: sanitizeInput(body.stripeCheckoutHostedUrl || '', 240),
-          authorizeNetApiLoginId: sanitizeInput(body.authorizeNetApiLoginId || '', 120),
-          authorizeNetClientKey: sanitizeInput(body.authorizeNetClientKey || '', 160),
-          mercuryAchEnabled: body.mercuryAchEnabled !== false,
+          gofundmeHostedUrl: sanitizeInput(body.gofundmeHostedUrl || body.fundraiserHostedUrl || '', 240),
+          paypalHostedUrl: sanitizeInput(body.paypalHostedUrl || '', 240),
           wawfPieeEnabled: body.wawfPieeEnabled !== false
         });
         logAudit('owner', 'pci.gateway_config_updated', S.pciGatewayConfig.activeProcessor);

@@ -207,7 +207,9 @@
       cashAppTag: '$MiltonGroupConcepts'
     };
 
-    let activeRail = ['card', 'cashapp', 'wallet'].includes(session.method) ? session.method : 'card';
+    let activeRail = ['stripe', 'gofundme', 'paypal', 'card', 'cashapp', 'wallet'].includes(session.method)
+      ? (['card', 'cashapp', 'wallet'].includes(session.method) ? 'stripe' : session.method)
+      : 'stripe';
     let legalConsentAccepted = true;
     let processing = false;
     let errorMsg = '';
@@ -230,8 +232,8 @@
         const d = await r.json();
         if (d && d.ok && d.session) {
           session = Object.assign(session, d.session);
-          if (['card', 'cashapp', 'wallet'].includes(session.method)) {
-            activeRail = session.method;
+          if (['stripe', 'gofundme', 'paypal', 'card', 'cashapp', 'wallet'].includes(session.method)) {
+            activeRail = ['card', 'cashapp', 'wallet'].includes(session.method) ? 'stripe' : session.method;
           }
         }
       } catch (_) {}
@@ -241,98 +243,83 @@
     function renderMethodBody() {
       const amtStr = '$' + Number(session.amountUsd).toFixed(2);
       const amtNum = Number(session.amountUsd || 25).toFixed(2);
-      const cleanTag = String(session.cashAppTag || '$MiltonGroupConcepts').replace(/^\$+/, '');
-      const cashAppDeepLink = 'https://cash.app/$' + encodeURIComponent(cleanTag) + '/' + amtNum;
       const returnCallbackPath = session.callbackUrl || ('/api/checkout/callback?session=' + encodeURIComponent(session.id));
       const prefillQuery = 'amount=' + encodeURIComponent(amtNum) +
         '&prefilled_email=' + encodeURIComponent(session.customerEmail || '') +
         '&donor_name=' + encodeURIComponent(session.customerName || '') +
         '&client_reference_id=' + encodeURIComponent(session.id) +
         '&return_url=' + encodeURIComponent(returnCallbackPath);
-      const externalHostedLink = (session.externalProcessorUrl && /^https:\/\//i.test(session.externalProcessorUrl))
-        ? (session.externalProcessorUrl + (session.externalProcessorUrl.includes('?') ? '&' : '?') + prefillQuery)
-        : (cashAppDeepLink + '?' + prefillQuery);
+      const stripeLink = (session.stripeHostedUrl && /^https:\/\//i.test(session.stripeHostedUrl))
+        ? (session.stripeHostedUrl + (session.stripeHostedUrl.includes('?') ? '&' : '?') + prefillQuery)
+        : ((session.externalProcessorUrl && /^https:\/\//i.test(session.externalProcessorUrl))
+          ? (session.externalProcessorUrl + (session.externalProcessorUrl.includes('?') ? '&' : '?') + prefillQuery)
+          : ('https://buy.stripe.com/?' + prefillQuery));
+      const gofundmeLink = (session.gofundmeHostedUrl && /^https:\/\//i.test(session.gofundmeHostedUrl))
+        ? session.gofundmeHostedUrl
+        : 'https://www.gofundme.com/';
+      const paypalLink = (session.paypalHostedUrl && /^https:\/\//i.test(session.paypalHostedUrl))
+        ? (session.paypalHostedUrl.includes('paypal.me')
+          ? (session.paypalHostedUrl.replace(/\/+$/, '') + '/' + amtNum + 'USD')
+          : (session.paypalHostedUrl + (session.paypalHostedUrl.includes('?') ? '&' : '?') + 'amount=' + encodeURIComponent(amtNum) + '&currency_code=USD'))
+        : ('https://www.paypal.com/donate/?amount=' + encodeURIComponent(amtNum) + '&currency_code=USD');
 
-      if (activeRail === 'cashapp') {
+      if (activeRail === 'gofundme') {
         return `
-          <div class="qr-box">
-            <div class="qr-svg-wrap" title="Scan with Cash App or Mobile Camera">
-              <svg viewBox="0 0 100 100" width="100" height="100" aria-label="Cash App Pay QR">
-                <rect width="100" height="100" fill="#ffffff"/>
-                <rect x="6" y="6" width="26" height="26" fill="none" stroke="#00d632" stroke-width="5"/>
-                <rect x="13" y="13" width="12" height="12" fill="#041208"/>
-                <rect x="68" y="6" width="26" height="26" fill="none" stroke="#00d632" stroke-width="5"/>
-                <rect x="75" y="13" width="12" height="12" fill="#041208"/>
-                <rect x="6" y="68" width="26" height="26" fill="none" stroke="#00d632" stroke-width="5"/>
-                <rect x="13" y="75" width="12" height="12" fill="#041208"/>
-                <rect x="38" y="10" width="6" height="6" fill="#041208"/>
-                <rect x="50" y="10" width="10" height="6" fill="#041208"/>
-                <rect x="38" y="22" width="12" height="6" fill="#041208"/>
-                <rect x="10" y="40" width="18" height="6" fill="#041208"/>
-                <rect x="10" y="52" width="10" height="8" fill="#041208"/>
-                <rect x="36" y="36" width="28" height="28" rx="7" fill="#00d632"/>
-                <text x="50" y="56" text-anchor="middle" font-size="20" font-weight="900" fill="#ffffff" font-family="Inter,sans-serif">$</text>
-                <rect x="70" y="40" width="10" height="10" fill="#041208"/>
-                <rect x="84" y="46" width="10" height="14" fill="#041208"/>
-                <rect x="40" y="72" width="14" height="8" fill="#041208"/>
-                <rect x="60" y="70" width="12" height="12" fill="#041208"/>
-                <rect x="78" y="76" width="16" height="16" fill="#00d632"/>
-                <rect x="44" y="86" width="22" height="8" fill="#041208"/>
-              </svg>
+          <div style="padding:16px;border-radius:12px;background:rgba(6,78,59,0.22);border:1px solid rgba(16,185,129,0.45);margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:12.5px;font-weight:800;color:#34d399">💚 GoFundMe Public Fundraiser</span>
+              <span style="font-size:11px;color:#a7f3d0">Card · Apple Pay · Google Pay · PayPal</span>
             </div>
-            <div>
-              <div style="display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;background:rgba(0,214,50,0.18);color:#4ade80;font-size:11px;font-weight:800;margin-bottom:6px">
-                <span>🟩 CASH APP</span>
-              </div>
-              <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">Cash App (${amtStr})</div>
-              <p style="margin:0 0 8px;font-size:12px;color:#cbd5e1;line-height:1.45">
-                Scan with your phone camera or open the prefilled Cash App link below.
-              </p>
-              <a id="extRedirectLink" href="${esc(cashAppDeepLink)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#4ade80;text-decoration:underline">
-                Open cash.app/$${esc(cleanTag)}/${amtNum} ↗
-              </a>
-            </div>
-          </div>
-          <button type="submit" class="chk-submit cashapp-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
-            <span>🟩 ${processing ? 'Continuing...' : 'Continue with Cash App (' + amtStr + ') →'}</span>
-          </button>
-        `;
-      }
-
-      if (activeRail === 'wallet') {
-        return `
-          <div style="padding:16px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid rgba(148,163,184,0.28);margin-bottom:14px">
-            <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:5px">🍎 Apple Pay &amp; Google Pay</div>
-            <p style="margin:0 0 8px;font-size:12.5px;color:#cbd5e1;line-height:1.5">
-              Continue to external checkout with <strong>${amtStr}</strong> prefilled.
+            <p style="margin:0 0 10px;font-size:12.5px;color:#cbd5e1;line-height:1.5">
+              Redirect to our official <strong>GoFundMe Public Fundraiser</strong> page to contribute <strong>${amtStr} USD</strong> and receive an automated confirmation receipt from <code>connect@miltongroupsecurity.org</code>.
             </p>
-            <a id="extRedirectLink" href="${esc(externalHostedLink)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#93c5fd;text-decoration:underline">
-              Open Express Checkout (${amtStr}) ↗
+            <a id="extRedirectLink" href="${esc(gofundmeLink)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#34d399;text-decoration:underline">
+              Open GoFundMe Campaign Page (${amtStr}) ↗
             </a>
           </div>
-          <button type="submit" class="chk-submit wallet-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
-            <span>🍎 ${processing ? 'Continuing...' : 'Continue with Apple Pay / Google Pay (' + amtStr + ') →'}</span>
+          <button type="submit" class="chk-submit cashapp-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
+            <span>💚 ${processing ? 'Redirecting to GoFundMe...' : 'Continue to GoFundMe (' + amtStr + ') →'}</span>
           </button>
         `;
       }
 
-      // Default: External Hosted Card / Fundraiser Redirect (Prefilled)
+      if (activeRail === 'paypal') {
+        return `
+          <div style="padding:16px;border-radius:12px;background:rgba(15,23,42,0.88);border:1px solid rgba(56,189,248,0.45);margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:12.5px;font-weight:800;color:#38bdf8">🅿️ PayPal Donate &amp; PayPal.Me</span>
+              <span style="font-size:11px;color:#bae6fd">PayPal · Venmo · Major Cards</span>
+            </div>
+            <p style="margin:0 0 10px;font-size:12.5px;color:#cbd5e1;line-height:1.5">
+              Redirect to <strong>PayPal Hosted Checkout</strong> with <strong>${amtStr} USD</strong> prefilled and receive your confirmation receipt from <code>connect@miltongroupsecurity.org</code>.
+            </p>
+            <a id="extRedirectLink" href="${esc(paypalLink)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#38bdf8;text-decoration:underline">
+              Open PayPal Checkout (${amtStr}) ↗
+            </a>
+          </div>
+          <button type="submit" class="chk-submit stripe-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
+            <span>🅿️ ${processing ? 'Redirecting to PayPal...' : 'Continue with PayPal (' + amtStr + ') →'}</span>
+          </button>
+        `;
+      }
+
+      // Default: Stripe Payment Link (Card, Apple Pay, Google Pay, Cash App Pay + Auto-Redirect Callback)
       return `
         <div style="padding:15px 16px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid rgba(59,130,246,0.38);margin-bottom:14px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-size:12px;font-weight:700;color:#93c5fd">💳 Credit or Debit Card</span>
-            <span style="font-size:11px;color:#cbd5e1">Visa · Mastercard · Amex · Discover</span>
+            <span style="font-size:12.5px;font-weight:800;color:#93c5fd">💳 Stripe Payment Link (Recommended)</span>
+            <span style="font-size:11px;color:#cbd5e1">Card · Apple Pay · Google Pay · Cash App Pay</span>
           </div>
           <p style="margin:0 0 10px;font-size:12.5px;color:#cbd5e1;line-height:1.5">
-            Continue to external checkout with <strong>${amtStr} USD</strong> and your contact details prefilled.
+            Continue to <strong>Stripe Hosted Checkout</strong> with <strong>${amtStr} USD</strong> and your email prefilled, then automatically return to MGC with a confirmation receipt from <code>connect@miltongroupsecurity.org</code>.
           </p>
           <div style="display:none" id="prefillUrlPreview">?${esc(prefillQuery)}</div>
-          <a id="extRedirectLink" href="${esc(externalHostedLink)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#60a5fa;text-decoration:underline">
-            Open External Checkout (${amtStr}) ↗
+          <a id="extRedirectLink" href="${esc(stripeLink)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#60a5fa;text-decoration:underline">
+            Open Stripe Payment Link (${amtStr}) ↗
           </a>
         </div>
         <button type="submit" class="chk-submit stripe-btn" id="btnCompleteCheckout" ${processing ? 'disabled' : ''}>
-          <span>💳 ${processing ? 'Continuing...' : 'Continue to Checkout (' + amtStr + ') →'}</span>
+          <span>💳 ${processing ? 'Continuing...' : 'Continue to Stripe Checkout (' + amtStr + ') →'}</span>
         </button>
       `;
     }
@@ -393,20 +380,20 @@
           <!-- RIGHT: Processor Payment Method Selection & Execution -->
           <div class="chk-panel">
             <div style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">
-              Select Payment Method
+              Select 3rd-Party Redirect Platform
             </div>
             <div class="rail-tabs">
-              <button type="button" class="rail-tab ${activeRail === 'card' ? 'active' : ''}" data-rail="card">
+              <button type="button" class="rail-tab ${activeRail === 'stripe' ? 'active' : ''}" data-rail="stripe">
                 <span style="font-size:16px">💳</span>
-                <span>Card</span>
+                <span>Stripe Link</span>
               </button>
-              <button type="button" class="rail-tab cashapp-tab ${activeRail === 'cashapp' ? 'active' : ''}" data-rail="cashapp">
-                <span style="font-size:16px">🟩</span>
-                <span>Cash App</span>
+              <button type="button" class="rail-tab cashapp-tab ${activeRail === 'gofundme' ? 'active' : ''}" data-rail="gofundme">
+                <span style="font-size:16px">💚</span>
+                <span>GoFundMe</span>
               </button>
-              <button type="button" class="rail-tab ${activeRail === 'wallet' ? 'active' : ''}" data-rail="wallet">
-                <span style="font-size:16px">🍎</span>
-                <span>Apple / GPay</span>
+              <button type="button" class="rail-tab ${activeRail === 'paypal' ? 'active' : ''}" data-rail="paypal">
+                <span style="font-size:16px">🅿️</span>
+                <span>PayPal</span>
               </button>
             </div>
 

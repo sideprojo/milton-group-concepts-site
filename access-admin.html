@@ -905,7 +905,7 @@
         taxVault = Math.round((taxVault + (Number(e.taxReserveUsd) || 0)) * 100) / 100;
       }
     });
-    const gw = S().pciGatewayConfig || { activeProcessor: 'stripe_saq_a', mgcOption: 'stripe_saq_a', fixOptions: ['stripe_saq_a', 'wawf_piee_eft'], mercuryAchEnabled: true, wawfPieeEnabled: true };
+    const gw = S().pciGatewayConfig || { activeProcessor: 'stripe_saq_a', mgcOption: 'stripe_saq_a', fixOptions: ['stripe_saq_a', 'wawf_piee_eft'], wawfPieeEnabled: true };
 
     return '<div class="ad-center" style="padding:18px 20px">' +
       '<!-- Management Accounting & Double-Entry Back End (Option A + Option B + One-Click CPA Export) -->' +
@@ -949,10 +949,10 @@
               '<option value="5020">5020 · Subcontractor COGS</option>' +
             '</select>' +
             '<select id="accPostRail" style="padding:7px 9px;font-size:12px">' +
-              '<option value="MERCURY_ACH">Mercury ACH ($0 Fee)</option>' +
+              '<option value="STRIPE_CARD">Stripe Payment Link (2.9%+$0.30)</option>' +
+              '<option value="GOFUNDME">GoFundMe Campaign (2.9%+$0.30)</option>' +
+              '<option value="PAYPAL">PayPal Donate (2.89%+$0.49)</option>' +
               '<option value="WAWF_EFT">DoD WAWF EFT ($0 Fee)</option>' +
-              '<option value="STRIPE_ACH">Stripe ACH (0.8% cap $5)</option>' +
-              '<option value="STRIPE_CARD">Stripe Card (2.9%+$0.30)</option>' +
             '</select>' +
             '<input id="accPostCounterparty" placeholder="Client / Vendor Name" style="padding:7px 9px;font-size:12px">' +
             '<input id="accPostAmount" type="number" step="0.01" min="0.01" placeholder="Amount (USD)" style="padding:7px 9px;font-size:12px">' +
@@ -983,25 +983,28 @@
 
       '<div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)">' +
         '<div class="row" style="margin-bottom:12px">' +
-          '<h2 style="margin:0;font-size:15px;font-weight:600">Payment Gateways &amp; Hosted Processors ($0 Upfront)</h2><span class="chip ok">Card · Cash App · Apple/GPay · ACH</span>' +
+          '<h2 style="margin:0;font-size:15px;font-weight:600">3rd-Party Redirect Payment Gateways ($0 Upfront)</h2><span class="chip ok">Stripe Link · GoFundMe · PayPal</span>' +
         '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px">' +
-          '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">Default Rail</label>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px">' +
+          '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">Default 3rd-Party Redirect Rail</label>' +
             '<select id="pciActiveProcessor" style="width:100%;padding:8px 10px;font-size:12.5px">' +
-              '<option value="stripe_saq_a"' + (gw.activeProcessor === 'stripe_saq_a' ? ' selected' : '') + '>Option 1: Stripe Hosted Checkout (Card + Cash App + ACH · $0/mo)</option><option value="cashapp_direct"' + (gw.activeProcessor === 'cashapp_direct' ? ' selected' : '') + '>Option 2: Cash App Pay / Square Checkout ($0/mo)</option>' +
-              '<option value="wawf_piee_eft"' + (gw.activeProcessor === 'wawf_piee_eft' ? ' selected' : '') + '>Option 4: DoD WAWF / PIEE EFT (FIX)</option>' +
-              '<option value="mercury_plaid_ach"' + (gw.activeProcessor === 'mercury_plaid_ach' ? ' selected' : '') + '>Option 3: Mercury + Plaid ACH</option>' +
-              '<option value="authorizenet_accept_js"' + (gw.activeProcessor === 'authorizenet_accept_js' ? ' selected' : '') + '>Option 2: Authorize.Net Accept.js</option>' +
+              '<option value="stripe_saq_a"' + (gw.activeProcessor === 'stripe_saq_a' ? ' selected' : '') + '>1 · Stripe Payment Link (Card + Apple/Google/CashApp Pay)</option>' +
+              '<option value="gofundme_campaign"' + (gw.activeProcessor === 'gofundme_campaign' ? ' selected' : '') + '>2 · GoFundMe Public Fundraiser (gofundme.com)</option>' +
+              '<option value="paypal_hosted"' + (gw.activeProcessor === 'paypal_hosted' ? ' selected' : '') + '>3 · PayPal Hosted Donate / PayPal.Me</option>' +
+              '<option value="wawf_piee_eft"' + (gw.activeProcessor === 'wawf_piee_eft' ? ' selected' : '') + '>4 · DoD WAWF / PIEE EFT (Federal Only)</option>' +
             '</select>' +
           '</div>' +
-          '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">MGC Stripe Key</label>' +
-            '<input id="pciStripePk" value="' + esc(gw.stripePublishableKey || '') + '" placeholder="Publishable Key" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+          '<div><label style="display:block;font-size:11px;font-weight:600;color:#93c5fd;margin-bottom:5px">💳 Stripe Payment Link URL</label>' +
+            '<input id="pciStripeUrl" value="' + esc(gw.stripeCheckoutHostedUrl || '') + '" placeholder="https://buy.stripe.com/..." style="width:100%;padding:8px 10px;font-size:12.5px">' +
           '</div>' +
-          '<div><label style="display:block;font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:5px">FIX Key / CAGE</label>' +
-            '<input id="pciAuthNetKey" value="' + esc(gw.authorizeNetClientKey || '') + '" placeholder="Client Key" style="width:100%;padding:8px 10px;font-size:12.5px">' +
+          '<div><label style="display:block;font-size:11px;font-weight:600;color:#34d399;margin-bottom:5px">💚 GoFundMe Campaign URL</label>' +
+            '<input id="pciGofundmeUrl" value="' + esc(gw.gofundmeHostedUrl || '') + '" placeholder="https://www.gofundme.com/f/..." style="width:100%;padding:8px 10px;font-size:12.5px">' +
+          '</div>' +
+          '<div><label style="display:block;font-size:11px;font-weight:600;color:#38bdf8;margin-bottom:5px">🅿️ PayPal Donate / PayPal.Me URL</label>' +
+            '<input id="pciPaypalUrl" value="' + esc(gw.paypalHostedUrl || '') + '" placeholder="https://www.paypal.com/donate/... or paypal.me/..." style="width:100%;padding:8px 10px;font-size:12.5px">' +
           '</div>' +
         '</div>' +
-        '<button type="button" class="btn pri" id="btnSavePciGateway" style="padding:8px 16px;font-size:12.5px">Save Gateways</button>' +
+        '<button type="button" class="btn pri" id="btnSavePciGateway" style="padding:8px 16px;font-size:12.5px">Save 3rd-Party Redirect URLs</button>' +
       '</div>' +
       '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Processor Payment &amp; Contribution Receipts (' + list.length + ')</h2>' +
       (list.length
@@ -1750,10 +1753,11 @@
     if (btnSavePci && isOwner) {
       btnSavePci.onclick = () => {
         const activeProcessor = document.getElementById('pciActiveProcessor').value;
-        const stripePublishableKey = document.getElementById('pciStripePk').value.trim();
-        const authorizeNetClientKey = document.getElementById('pciAuthNetKey').value.trim();
-        W.savePciGatewayConfig({ activeProcessor, stripePublishableKey, authorizeNetClientKey });
-        W.toast('Saved PCI-DSS Gateway Configuration (' + activeProcessor + ')');
+        const stripeCheckoutHostedUrl = (document.getElementById('pciStripeUrl') && document.getElementById('pciStripeUrl').value || '').trim();
+        const gofundmeHostedUrl = (document.getElementById('pciGofundmeUrl') && document.getElementById('pciGofundmeUrl').value || '').trim();
+        const paypalHostedUrl = (document.getElementById('pciPaypalUrl') && document.getElementById('pciPaypalUrl').value || '').trim();
+        W.savePciGatewayConfig({ activeProcessor, stripeCheckoutHostedUrl, gofundmeHostedUrl, paypalHostedUrl });
+        W.toast('Saved 3rd-Party Redirect URLs (' + activeProcessor + ')');
         render();
       };
     }

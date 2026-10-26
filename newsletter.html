@@ -510,7 +510,7 @@
     };
 
     let selectedDonationAmount = 25;
-    let selectedDonationMethod = 'card';
+    let selectedDonationMethod = 'stripe';
     let activeStreamTrack = 'all';
     let streamPaused = false;
     let streamRefreshCountdown = 60;
@@ -1252,17 +1252,17 @@
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
                   ${[
-                    { id: 'card', label: '💳 Card' },
-                    { id: 'cashapp', label: '🟩 Cash App' },
-                    { id: 'wallet', label: '🍎 Pay / GPay' }
+                    { id: 'stripe', label: '💳 Stripe Link' },
+                    { id: 'gofundme', label: '💚 GoFundMe' },
+                    { id: 'paypal', label: '🅿️ PayPal' }
                   ].map(m =>
-                    `<button type="button" class="btn ${selectedDonationMethod === m.id ? 'pri' : ''}" data-donate-method="${m.id}" style="justify-content:center;padding:6px 4px;font-size:11px;${selectedDonationMethod === 'cashapp' && m.id === 'cashapp' ? 'background:linear-gradient(135deg,#00d632,#00b82b);border-color:#00d632;color:#041208;font-weight:800;' : ''}">${m.label}</button>`
+                    `<button type="button" class="btn ${selectedDonationMethod === m.id ? 'pri' : ''}" data-donate-method="${m.id}" style="justify-content:center;padding:6px 4px;font-size:11px;${selectedDonationMethod === 'gofundme' && m.id === 'gofundme' ? 'background:linear-gradient(135deg,#00d632,#00b82b);border-color:#00d632;color:#041208;font-weight:800;' : ''}">${m.label}</button>`
                   ).join('')}
                 </div>
                 <select id="donMethod" aria-label="Payment Method" style="padding:8px 10px;font-size:12px;width:100%">
-                  <option value="card" ${selectedDonationMethod === 'card' ? 'selected' : ''}>💳 Credit or Debit Card</option>
-                  <option value="cashapp" ${selectedDonationMethod === 'cashapp' ? 'selected' : ''}>🟩 Cash App Pay</option>
-                  <option value="wallet" ${selectedDonationMethod === 'wallet' ? 'selected' : ''}>🍎 Apple Pay / Google Pay</option>
+                  <option value="stripe" ${selectedDonationMethod === 'stripe' ? 'selected' : ''}>💳 Stripe Payment Link (Card / Apple Pay / Google Pay / Cash App)</option>
+                  <option value="gofundme" ${selectedDonationMethod === 'gofundme' ? 'selected' : ''}>💚 GoFundMe Public Fundraiser</option>
+                  <option value="paypal" ${selectedDonationMethod === 'paypal' ? 'selected' : ''}>🅿️ PayPal Donate / PayPal.Me</option>
                 </select>
                 <input id="donEmail" type="email" maxlength="140" placeholder="Email for receipt" value="${u ? esc(u.email) : ''}" required style="padding:8px 10px;font-size:12px" />
                 <div id="nlStatutoryTaxNotice" style="padding:7px 9px;border-radius:8px;background:rgba(15,23,42,0.85);border:1px solid rgba(148,163,184,0.25);font-size:10.5px;color:#94a3b8;line-height:1.4">
@@ -1654,7 +1654,10 @@
           const method = document.getElementById('donMethod') ? document.getElementById('donMethod').value : selectedDonationMethod;
           const st = document.getElementById('nlDonStatus');
           const railNames = {
-            card: 'Stripe Hosted Card Checkout',
+            stripe: 'Stripe Payment Link Checkout',
+            gofundme: 'GoFundMe Public Fundraiser',
+            paypal: 'PayPal Hosted Checkout',
+            card: 'Stripe Payment Link Checkout',
             cashapp: 'Cash App Pay Checkout',
             wallet: 'Apple Pay / Google Pay Checkout'
           };
