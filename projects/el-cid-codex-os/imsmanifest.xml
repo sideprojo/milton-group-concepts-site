@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="SAOS_SCORM_2004_4TH_EDITION" version="2.0"
+          xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
+          xmlns:adlseq="http://www.adlnet.org/xsd/adlseq_v1p3"
+          xmlns:adlnav="http://www.adlnet.org/xsd/adlnav_v1p3"
+          xmlns:imsss="http://www.imsglobal.org/xsd/imsss"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd
+                              http://www.adlnet.org/xsd/adlcp_v1p3 adlcp_v1p3.xsd
+                              http://www.adlnet.org/xsd/adlseq_v1p3 adlseq_v1p3.xsd
+                              http://www.adlnet.org/xsd/adlnav_v1p3 adlnav_v1p3.xsd
+                              http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>2004 4th Edition</schemaversion>
+  </metadata>
+  <organizations default="SAOS_CURRICULUM_ORG">
+    <organization identifier="SAOS_CURRICULUM_ORG">
+      <title>Spanish Acquisition OS — Complete Root Family Curriculum</title>
+      <imsss:sequencing>
+        <imsss:controlMode choice="true" flow="true"/>
+        <imsss:rollupRules>
+          <imsss:rollupRule childActivitySet="all">
+            <imsss:rollupConditions>
+              <imsss:rollupCondition condition="satisfied"/>
+            </imsss:rollupConditions>
+            <imsss:rollupAction action="satisfied"/>
+          </imsss:rollupRule>
+          <imsss:rollupRule childActivitySet="all">
+            <imsss:rollupConditions>
+              <imsss:rollupCondition condition="completed"/>
+            </imsss:rollupConditions>
+            <imsss:rollupAction action="completed"/>
+          </imsss:rollupRule>
+        </imsss:rollupRules>
+      </imsss:sequencing>
+
+      <item identifier="SAOS_SCO_PORTAL" identifierref="RES_SAOS_PORTAL">
+        <title>Spanish Acquisition OS — Full Unified Portal</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+        </imsss:sequencing>
+      </item>
+      
+      <item identifier="SCO_DASHBOARDS" identifierref="RES_SCO_DASHBOARDS">
+        <title>Module 1: Telemetry & Acquisition Dashboards</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_DASHBOARDS" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_DIAGNOSTICS" identifierref="RES_SCO_DIAGNOSTICS">
+        <title>Module 2: Dynamic Diagnostic Assessment Lab</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_DIAGNOSTICS" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_VOCABULARY" identifierref="RES_SCO_VOCABULARY">
+        <title>Module 3: Vocabulary Explorer & Etymological Decoder</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_VOCABULARY" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_ROOTS" identifierref="RES_SCO_ROOTS">
+        <title>Module 4: Root Families & Derivational Network</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_ROOTS" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_LISTENING" identifierref="RES_SCO_LISTENING">
+        <title>Module 5: Listening Acquisition & Shadowing Lab</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_LISTENING" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_READING" identifierref="RES_SCO_READING">
+        <title>Module 6: Authentic Reading Immersion & Context Inspector</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_READING" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_PRONUNCIATION" identifierref="RES_SCO_PRONUNCIATION">
+        <title>Module 7: Articulatory Phonetics Lab</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_PRONUNCIATION" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_DERIVATION" identifierref="RES_SCO_DERIVATION">
+        <title>Module 8: Derivation Forge & Affix Synthesizer</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_DERIVATION" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_TRANSLATION" identifierref="RES_SCO_TRANSLATION">
+        <title>Module 9: 5-Layer Translation Ladder</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_TRANSLATION" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+      <item identifier="SCO_REVIEW" identifierref="RES_SCO_REVIEW">
+        <title>Module 10: Adaptive Spaced Repetition Queue</title>
+        <imsss:sequencing>
+          <imsss:deliveryControls completionSetByContent="true" objectiveSetByContent="true"/>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="OBJ_SCO_REVIEW" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.700000</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+    </organization>
+  </organizations>
+
+  <resources>
+    <resource identifier="RES_SAOS_PORTAL" type="webcontent" adlcp:scormType="sco" href="index.html">
+      <file href="index.html"/>
+      <file href="src/data/master_corpus.json"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+    </resource>
+    
+    <resource identifier="RES_SCO_DASHBOARDS" type="webcontent" adlcp:scormType="sco" href="pages/dashboards.html">
+      <file href="pages/dashboards.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+    <resource identifier="RES_SCO_DIAGNOSTICS" type="webcontent" adlcp:scormType="sco" href="pages/diagnostics.html">
+      <file href="pages/diagnostics.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+    <resource identifier="RES_SCO_VOCABULARY" type="webcontent" adlcp:scormType="sco" href="pages/vocabulary.html">
+      <file href="pages/vocabulary.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+    <resource identifier="RES_SCO_ROOTS" type="webcontent" adlcp:scormType="sco" href="pages/roots.html">
+      <file href="pages/roots.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+    <resource identifier="RES_SCO_LISTENING" type="webcontent" adlcp:scormType="sco" href="pages/listening.html">
+      <file href="pages/listening.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+    <resource identifier="RES_SCO_READING" type="webcontent" adlcp:scormType="sco" href="pages/reading.html">
+      <file href="pages/reading.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+    <resource identifier="RES_SCO_PRONUNCIATION" type="webcontent" adlcp:scormType="sco" href="pages/pronunciation.html">
+      <file href="pages/pronunciation.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+    <resource identifier="RES_SCO_DERIVATION" type="webcontent" adlcp:scormType="sco" href="pages/derivation.html">
+      <file href="pages/derivation.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+    <resource identifier="RES_SCO_TRANSLATION" type="webcontent" adlcp:scormType="sco" href="pages/translation.html">
+      <file href="pages/translation.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+    <resource identifier="RES_SCO_REVIEW" type="webcontent" adlcp:scormType="sco" href="pages/review.html">
+      <file href="pages/review.html"/>
+      <file href="src/modules/scorm_adapter.js"/>
+      <file href="src/modules/srs_engine.js"/>
+      <file href="src/modules/learning_modes.js"/>
+      <file href="src/dashboards/dashboard_engine.js"/>
+      <file href="src/data/master_corpus.json"/>
+    </resource>
+  </resources>
+</manifest>

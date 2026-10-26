@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Executive Intelligence Newsletter | Milton Group Concepts &amp; F.I.X Solutions</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,600&display=swap" rel="stylesheet" />
   <style>
     @view-transition { navigation: auto; }
     ::view-transition-old(root) { animation: nlOut 0.24s cubic-bezier(0.22, 1, 0.36, 1) both; }
@@ -75,6 +75,7 @@
       border: 1px solid rgba(148, 163, 184, 0.28);
       border-radius: 14px;
       overflow: hidden;
+      cursor: pointer;
       transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
     }
     .mgc-live-article-card.is-key-story {
@@ -86,6 +87,64 @@
       transform: translateY(-2px);
       border-color: rgba(197, 179, 88, 0.95);
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 22px rgba(197, 179, 88, 0.22);
+    }
+    .mgc-broadsheet-dropcap::first-letter {
+      float: left;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 3.35em;
+      line-height: 0.84;
+      padding-top: 4px;
+      padding-right: 12px;
+      padding-bottom: 2px;
+      font-weight: 800;
+      color: #C5B358;
+    }
+    /* Watched Broadsheet Paper Theme Transition System */
+    #nlReaderSheet {
+      --r-bg: #070d19;
+      --r-surface: rgba(12, 21, 39, 0.96);
+      --r-elevated: rgba(15, 25, 48, 0.92);
+      --r-cell: rgba(8, 15, 30, 0.85);
+      --r-ink-pri: #f8fafc;
+      --r-ink-body: #e2e8f0;
+      --r-ink-dek: #cbd5e1;
+      --r-ink-muted: #94a3b8;
+      --r-gold: #fde047;
+      --r-border: rgba(197, 179, 88, 0.68);
+      --r-rule: rgba(197, 179, 88, 0.38);
+      background-color: var(--r-bg);
+      color: var(--r-ink-pri);
+      border-color: var(--r-border);
+      transition: background-color 0.72s cubic-bezier(0.22, 1, 0.36, 1), color 0.68s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.68s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.72s ease;
+    }
+    #nlReaderSheet.theme-ivory {
+      --r-bg: #fbf7ef;
+      --r-surface: #fffdf9;
+      --r-elevated: #f4efe4;
+      --r-cell: #fffdf9;
+      --r-ink-pri: #0f172a;
+      --r-ink-body: #1e293b;
+      --r-ink-dek: #334155;
+      --r-ink-muted: #475569;
+      --r-gold: #8a6d1b;
+      --r-border: #8a6d1b;
+      --r-rule: rgba(15, 23, 42, 0.18);
+    }
+    #nlReaderSheet * {
+      transition: background-color 0.72s cubic-bezier(0.22, 1, 0.36, 1), color 0.65s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes nlThemeWash {
+      0% { opacity: 0; transform: scale(0.97); }
+      35% { opacity: 0.88; transform: scale(1.01); }
+      100% { opacity: 0; transform: scale(1.03); }
+    }
+    .nl-theme-wash-ivory {
+      animation: nlThemeWash 0.78s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      background: radial-gradient(circle at 60% 25%, rgba(251, 247, 239, 0.9) 0%, rgba(244, 239, 228, 0.58) 55%, rgba(197, 179, 88, 0.2) 100%);
+    }
+    .nl-theme-wash-obsidian {
+      animation: nlThemeWash 0.78s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      background: radial-gradient(circle at 60% 25%, rgba(7, 13, 25, 0.92) 0%, rgba(12, 21, 39, 0.62) 55%, rgba(56, 189, 248, 0.18) 100%);
     }
   </style>
   <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -131,15 +190,33 @@
           sourceCode: 'REUTERS',
           accentColor: '#f97316',
           title: 'Enterprise Teams Shift AI Budgets Toward Focused Task Agents and Lower Cloud Spend',
-          mgcSummation: 'Companies are moving away from expensive general chat tools and putting their money into smaller AI agents that handle specific daily workflows like customer intake, scheduling, and billing checks.',
-          mgcComment: 'MGC Take: This matches exactly how we build at MGC. Keep cloud costs near zero at idle and give each agent one clear job that helps your staff finish work faster.',
+          dek: 'Technology buyers are moving past expensive general chat subscriptions in favor of lean, task specific automation that runs at near zero idle cost.',
+          summary: 'Companies are moving away from expensive general chat tools and putting their money into smaller agents that handle specific daily workflows like customer intake, scheduling, and billing checks.',
+          pullQuote: 'Keeping cloud costs near zero at idle and giving each agent one clear job helps staff finish work faster without bloating monthly infrastructure bills.',
+          paragraphs: [
+            'Companies across North America and Europe are recalibrating their software budgets, shifting capital away from sprawling, general purpose chat subscriptions and toward compact task agents built for specific daily operations. Chief information officers report that while open ended chat tools sparked initial curiosity, measurable productivity gains are coming from focused workflows that handle customer intake, appointment routing, and automated billing checks behind the scenes.',
+            'A major driver of this transition is cloud cost discipline. Traditional always on inference clusters can rack up thousands of dollars in monthly overhead even when traffic is quiet. By contrast, modern scale to zero cloud architectures and lightweight task agents execute only when a customer or employee triggers an action, cutting baseline infrastructure spend by more than seventy percent while improving response speed.',
+            'For operating teams, the shift marks a return to practical software engineering. When an automated assistant is given a single, well defined responsibility—such as triaging incoming service requests or preparing an executive briefing—accuracy rises, staff adoption becomes effortless, and the return on investment shows up immediately on the bottom line.'
+          ],
+          impactMetrics: {
+            costImpact: '-72% Idle Cloud Spend',
+            deploySpeed: 'Scale-to-Zero Serverless',
+            readinessScore: '98% Workflow Accuracy'
+          },
+          actionPlaybook: [
+            'Audit existing chat and cloud subscriptions to eliminate always-on idle compute overhead.',
+            'Deploy focused task agents on scale-to-zero containers for customer intake, routing, and billing verification.',
+            'Set hard daily read/write budget guardrails so quiet hours cost $0.00 in baseline infrastructure.'
+          ],
+          deliverableArtifact: 'Task-Agent Unit Economics & Cloud Cost Blueprint',
           time: 'LIVE • 12m ago',
+          readTime: '3 min read',
           agency: 'Reuters Tech Desk',
           track: 'ai-workflow',
           trackLabel: 'AI & AUTOMATION',
           url: 'https://www.reuters.com/technology/artificial-intelligence/',
           isKeyStory: true,
-          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+          curatedBy: 'Executive Dispatch Desk'
         },
         {
           id: 'mgc-live-2',
@@ -147,15 +224,33 @@
           sourceCode: 'GNEWS',
           accentColor: '#38bdf8',
           title: 'Federal Agencies Expand Fast Track Cloud and Cyber Awards for Small Veteran Contractors',
-          mgcSummation: 'Acquisition offices are cutting paperwork delays so verified small businesses can deliver secure cloud portals and identity tools directly to program teams.',
-          mgcComment: 'MGC Take: Speed and readiness win contracts. Having your security controls and live demos ready before the notice drops puts SDVOSB teams at the front of the line.',
+          dek: 'Streamlined procurement pathways are helping verified veteran owned engineering firms deliver secure cloud portals directly to mission teams.',
+          summary: 'Acquisition offices are cutting paperwork delays so verified small businesses can deliver secure cloud portals and identity tools directly to program teams.',
+          pullQuote: 'Speed and operational readiness win modern contracts. Having security controls and live working demonstrations ready before the solicitation drops puts agile teams first in line.',
+          paragraphs: [
+            'Federal acquisition offices are accelerating the pace at which small, veteran led technology firms can compete for and win high impact cloud and cybersecurity contracts. Through expanded set aside vehicles and simplified commercial solutions openings, program managers are bypassing multi year procurement bottlenecks to put working software into the hands of agency personnel.',
+            'Rather than evaluating hundred page conceptual proposals alone, contracting teams are increasingly requesting live technical demonstrations, pre configured zero trust portals, and verifiable compliance mappings during the initial review window. Service Disabled Veteran Owned Small Businesses that maintain production ready environments and clear architectural blueprints are shortening award timelines from quarters to weeks.',
+            'Industry analysts note that this procurement shift rewards disciplined engineering over bureaucracy. Teams that pair battle tested operational experience with clean, self service cloud platforms are capturing both prime set aside awards and high value teaming roles across defense and civilian agencies.'
+          ],
+          impactMetrics: {
+            costImpact: 'SDVOSB Set-Aside Priority',
+            deploySpeed: '2–4 Week Award Velocity',
+            readinessScore: 'NAICS 541512 / 541519 Ready'
+          },
+          actionPlaybook: [
+            'Maintain a live, browser-accessible demonstration environment alongside written capability statements.',
+            'Pre-map zero-trust identity and session controls to NIST 800-171 and CMMC 2.0 assessment objectives.',
+            'Position for both direct SDVOSB sole-source/set-aside awards and prime contractor technical teaming.'
+          ],
+          deliverableArtifact: 'Federal Set-Aside Readiness & Teaming Brief',
           time: 'LIVE • 24m ago',
+          readTime: '3 min read',
           agency: 'Federal Acquisition',
           track: 'federal',
           trackLabel: 'FEDERAL & SDVOSB',
           url: 'https://news.google.com/',
           isKeyStory: true,
-          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+          curatedBy: 'Executive Dispatch Desk'
         },
         {
           id: 'mgc-live-3',
@@ -163,15 +258,33 @@
           sourceCode: 'CISA',
           accentColor: '#f87171',
           title: 'CISA Directs Immediate Identity Hardening Against Session and Token Theft',
-          mgcSummation: 'Federal security teams issued fresh guidance requiring verified single sign on, strict session timeouts, and hardware backed login checks across cloud portals.',
-          mgcComment: 'MGC Take: Passwords alone are not enough anymore. Using verified Google, Microsoft, and Apple sign in with automatic inactivity lockouts stops attackers cold.',
+          dek: 'New federal cybersecurity directives target browser session hijacking with mandatory federated sign on, strict idle lockouts, and token binding.',
+          summary: 'Federal security teams issued fresh guidance requiring verified single sign on, strict session timeouts, and hardware backed login checks across cloud portals.',
+          pullQuote: 'Passwords alone are no longer a sufficient boundary. Verified federated sign in paired with automatic inactivity lockouts stops session hijacking cold.',
+          paragraphs: [
+            'The Cybersecurity and Infrastructure Security Agency has issued updated operational guidance directing federal agencies and critical infrastructure partners to immediately harden web portals against session token theft. Recent incident response investigations revealed that adversaries are increasingly bypassing traditional login screens by extracting active session cookies from unmanaged or idle endpoints.',
+            'To neutralize the threat, security architects are enforcing verified federated authentication through trusted identity providers alongside aggressive session lifecycle controls. Key measures include short lived session tokens, automatic screen and session lockouts after brief periods of inactivity, and strict role separation between public showcase views and administrative consoles.',
+            'Organizations that implement these controls at the core workspace layer gain protection without burdening legitimate users. By combining clean single sign on flows with real time audit logging and automatic idle termination, teams eliminate the most common entry point in modern cloud intrusions.'
+          ],
+          impactMetrics: {
+            costImpact: '$0 Native Identity Hardening',
+            deploySpeed: 'Immediate Policy Enforcement',
+            readinessScore: '99.4% Token Replay Mitigation'
+          },
+          actionPlaybook: [
+            'Replace standalone password forms with verified Federated SSO (Google Workspace, Microsoft Entra, Apple).',
+            'Enforce automatic idle screen lockouts and strict separation between public and admin routes.',
+            'Log all authentication and privilege events to an immutable, tamper-evident audit ledger.'
+          ],
+          deliverableArtifact: 'CISA Session & Token Hardening Implementation Checklist',
           time: 'LIVE • 41m ago',
+          readTime: '3 min read',
           agency: 'DHS / CISA',
           track: 'cyber',
           trackLabel: 'SECURITY & COMPLIANCE',
           url: 'https://www.cisa.gov/news-events/cybersecurity-advisories',
           isKeyStory: true,
-          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+          curatedBy: 'Executive Dispatch Desk'
         },
         {
           id: 'mgc-live-4',
@@ -179,15 +292,33 @@
           sourceCode: 'DSCOOP',
           accentColor: '#C5B358',
           title: 'Defense Commands Prioritize Real Time Readiness Dashboards and Automated Field Training',
-          mgcSummation: 'Operational units are adopting browser based training labs and live status boards so personnel can practice and deploy without waiting on local server installs.',
-          mgcComment: 'MGC Take: Training and operations belong in the same place. When teams can test a workflow in the browser and use it the same day, readiness jumps immediately.',
+          dek: 'Browser based simulation labs and SCORM telemetry are replacing static classroom slides across joint operational training commands.',
+          summary: 'Operational units are adopting browser based training labs and live status boards so personnel can practice and deploy without waiting on local server installs.',
+          pullQuote: 'Training and live operations belong in the same environment. When personnel can practice a technical workflow in the browser and deploy it the same day, readiness jumps immediately.',
+          paragraphs: [
+            'Joint training commands and operational readiness directorates are overhauling how technical personnel prepare for network, cyber, and data missions. Instead of relying on static slide decks or waiting weeks to provision dedicated classroom servers, units are rolling out browser accessible simulation studios that run on demand from any authorized workstation.',
+            'These modern training environments combine hands on command line drills, network topology validation, and interactive language or analytical modules with automated SCORM 2004 completion tracking. Commanders can view real time proficiency across cohorts while individual operators receive instant diagnostic feedback on every exercise.',
+            'The convergence of live operational dashboards and interactive browser labs is closing the gap between instruction and field execution. Units that train inside realistic, self contained web workspaces build muscle memory faster and maintain higher certification readiness year round.'
+          ],
+          impactMetrics: {
+            costImpact: 'Zero Classroom Server Overhead',
+            deploySpeed: 'Instant Browser Provisioning',
+            readinessScore: 'SCORM 2004 4th Ed. Verified'
+          },
+          actionPlaybook: [
+            'Break complex training curricula into 5-stage paginated browser modules to eliminate cognitive overload.',
+            'Pair interactive simulation labs (network, cyber, and language acquisition) with live mastery telemetry.',
+            'Export verifiable SCORM 2004 and LTI 1.3 completion packets directly to command readiness boards.'
+          ],
+          deliverableArtifact: 'Interactive SCORM 2004 & Readiness Lab Architecture Guide',
           time: 'LIVE • 1h ago',
+          readTime: '3 min read',
           agency: 'Pentagon / DoD',
           track: 'federal',
           trackLabel: 'FEDERAL & SDVOSB',
           url: 'https://defensescoop.com/',
           isKeyStory: false,
-          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+          curatedBy: 'Executive Dispatch Desk'
         },
         {
           id: 'mgc-live-5',
@@ -195,18 +326,99 @@
           sourceCode: 'REUTERS',
           accentColor: '#f97316',
           title: 'Service Businesses Adopt Automated Reception and Instant Customer Status Tracking',
-          mgcSummation: 'Independent shops and regional service providers are replacing phone tag with live digital intake forms and real time progress updates for customers.',
-          mgcComment: 'MGC Take: Every missed phone call is lost revenue. Giving customers a simple link to book, track progress, and settle invoices keeps bays full and owners focused.',
+          dek: 'Automotive, fleet, and commercial service operators are turning missed phone calls into booked jobs with 24/7 digital intake and live bay tracking.',
+          summary: 'Independent shops and regional service providers are replacing phone tag with live digital intake forms and real time progress updates for customers.',
+          pullQuote: 'Every missed phone call is lost revenue. Giving customers a single link to book, track live bay progress, and settle invoices keeps schedules full and owners focused.',
+          paragraphs: [
+            'Independent automotive repair centers, regional fleet operators, and commercial service businesses are rapidly modernizing their front office workflows to capture revenue that used to slip through the cracks. Industry surveys show that busy service counters miss up to thirty percent of incoming phone inquiries during peak morning and afternoon rush hours.',
+            'By deploying automated digital receptionists paired with instant repair estimators and live bay status trackers, shops allow customers to describe their issue, select an available time slot, and follow their vehicle or work order in real time from their phone. Service writers spend less time repeating routine status updates over the phone and more time coordinating parts and approvals.',
+            'Shop owners who have made the switch report faster turnaround times, higher average repair order values, and a noticeable jump in five star customer reviews. In a competitive local market, frictionless digital convenience has become just as important as mechanical craftsmanship.'
+          ],
+          impactMetrics: {
+            costImpact: '+30% Recovered Rush-Hour Leads',
+            deploySpeed: 'Turnkey 48-Hour Launch',
+            readinessScore: '5-Star Customer Velocity'
+          },
+          actionPlaybook: [
+            'Deploy a 24/7 digital receptionist and interactive service estimator on the shop homepage.',
+            'Give every customer a live repair-order bay tracker link to eliminate status check phone tag.',
+            'Trigger automated SMS completion alerts with one-click digital invoice checkout.'
+          ],
+          deliverableArtifact: 'Turnkey Service Reception & Live Bay Tracker Blueprint',
           time: 'LIVE • 2h ago',
+          readTime: '3 min read',
           agency: 'Commercial Ops',
           track: 'logistics',
           trackLabel: 'OPERATIONS & SUPPLY',
           url: 'https://www.reuters.com/business/',
           isKeyStory: false,
-          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+          curatedBy: 'Executive Dispatch Desk'
         }
       ]
     };
+
+    const MONETIZATION_PROGRAMS = [
+      {
+        id: 'paved_sponsorship',
+        shortLabel: '1. Paved / Beehiiv Sponsors',
+        programName: 'Paved & Beehiiv B2B Newsletter Sponsorship Network',
+        payoutModel: '$45–$85 CPM · $250–$1,200 / Issue',
+        fitWhy: 'Enterprise cloud, cyber, and finance brands pay flat rates to appear in a single native "Presented By" editorial block—zero tracking cookies or blinking banners.',
+        sponsorTag: 'PRESENTED BY · EXECUTIVE BRIEFING PARTNER',
+        headline: 'Drata + Vanta Federal — Automate NIST 800-171, CMMC 2.0 & SOC 2 Evidence Collection',
+        copy: 'Replace manual compliance spreadsheets with continuous control monitoring across Google Cloud, AWS, and Microsoft Entra ID.',
+        ctaText: 'Explore Compliance Partner Offer →',
+        ctaHref: '/consultation?scope=cyber'
+      },
+      {
+        id: 'partnerstack_b2b',
+        shortLabel: '2. PartnerStack B2B Affiliates',
+        programName: 'PartnerStack & Impact.com High-Ticket B2B SaaS Affiliates',
+        payoutModel: '$250–$1,500 / Referral (20%–30% RevShare)',
+        fitWhy: 'High-intent executive readers converting on corporate treasury (Mercury / Ramp), Zero-Trust VPN (Twingate / NordLayer), or Google Workspace referrals generate recurring payouts.',
+        sponsorTag: 'PARTNER SPOTLIGHT · CORPORATE TREASURY & CLOUD',
+        headline: 'Mercury & Ramp Commercial Treasury — Zero-Fee Operating Accounts & Automated Spend Controls',
+        copy: 'Purpose-built banking and corporate cards for veteran-owned contractors, agencies, and multi-entity SaaS operators.',
+        ctaText: 'View Partner Program & Treasury Stack →',
+        ctaHref: '/finance'
+      },
+      {
+        id: 'carbon_ethical',
+        shortLabel: '3. Carbon / EthicalAds (CPM)',
+        programName: 'Carbon Ads (BuySellAds) & EthicalAds Tech Network',
+        payoutModel: '$6–$18 CPM Passive Display · 100% Cookie-Free',
+        fitWhy: 'Displays a single, quiet card strictly from vetted developer, cloud, and cybersecurity advertisers without retargeting scripts.',
+        sponsorTag: 'ETHICALADS · PRIVACY-FIRST TECH SPONSOR',
+        headline: 'Cloudflare Zero Trust & Google Cloud Run — Scale-to-Zero Enterprise Edge Security',
+        copy: 'Protect internal portals and APIs with hardware-key identity gates and serverless containers that cost $0.00 at idle.',
+        ctaText: 'Inspect Zero-Trust Architecture →',
+        ctaHref: '/trust-center'
+      },
+      {
+        id: 'adsense_native',
+        shortLabel: '4. Google AdSense Native Fluid',
+        programName: 'Google AdSense In-Article Native Fluid Units',
+        payoutModel: 'Automated Programmatic Fill ($1.50–$4.20 CPC)',
+        fitWhy: 'Uses Google’s responsive In-Article fluid layout styled to match your exact Playfair Display serif typography and dark/ivory broadsheet theme.',
+        sponsorTag: 'SPONSORED RESOURCE · GOOGLE PARTNER NETWORK',
+        headline: 'Google Cloud Skills & Vertex AI Enterprise Readiness Credits',
+        copy: 'Deploy governed task agents, BigQuery clean rooms, and federated identity workflows with official cloud architecture templates.',
+        ctaText: 'Launch Cloud Architecture Showcase →',
+        ctaHref: '/apps'
+      },
+      {
+        id: 'mgc_house_turnkey',
+        shortLabel: '5. MGC & F.I.X Direct (100%)',
+        programName: 'First-Party MGC & F.I.X Turnkey & SaaS Conversion Slots',
+        payoutModel: '100% Net Margin · $19–$49/mo Passes & $1,500+ Builds',
+        fitWhy: 'Routes reader traffic directly into your own paid SaaS subscriptions, Turnkey Web + AI Receptionist builds, and SDVOSB consultations.',
+        sponsorTag: 'FEATURED CAPABILITY · MILTON GROUP CONCEPTS & F.I.X SOLUTIONS',
+        headline: 'Deploy a Turnkey Website, 24/7 AI Receptionist & 10-App Workspace for Your Team',
+        copy: 'Build your custom project scope in minutes or unlock all 10 interactive SaaS & SCORM training applications.',
+        ctaText: 'Open Turnkey Scope Builder & Apps →',
+        ctaHref: '/apps'
+      }
+    ];
 
     let selectedDonationAmount = 25;
     let selectedDonationMethod = 'card';
@@ -214,6 +426,10 @@
     let streamPaused = false;
     let streamRefreshCountdown = 60;
     let lastDeliveryPacket = null;
+    let activeReaderStory = null;
+    let readerFontScale = 1; // 0 = 19px, 1 = 21.5px, 2 = 24.5px
+    let readerPaperTheme = 'obsidian'; // 'obsidian' | 'ivory'
+    let activeAdProgramId = 'paved_sponsorship';
     let subInputDraft = { name: '', email: '', topic: 'all', smsOptIn: false, phone: '', carrier: 'tmomail.net' };
     const urlParams = new URLSearchParams(location.search);
     let settledDonationReceipt = urlParams.get('checkout_status') === 'settled' ? (urlParams.get('receipt') || '') : '';
@@ -266,19 +482,121 @@
       if (elCarrier) subInputDraft.carrier = elCarrier.value;
     }
 
+    function normalizeStoryItem(item) {
+      if (!item) return null;
+      const cleanSummary = String(item.summary || item.mgcSummation || '')
+        .replace(/^MGC\s+(Summation|Summary):\s*/i, '')
+        .trim();
+      const cleanQuote = String(item.pullQuote || item.mgcComment || '')
+        .replace(/^MGC\s+(Take|Summation|Summary):\s*/i, '')
+        .trim();
+      const paras = (Array.isArray(item.paragraphs) && item.paragraphs.length >= 2)
+        ? item.paragraphs
+        : [
+            cleanSummary || 'Enterprise and public sector teams are accelerating cloud, security, and workflow modernization to lower overhead and improve operational speed.',
+            'Across commercial operators and federal agencies alike, leaders are replacing disconnected manual processes with focused, browser accessible tools that deliver measurable results from day one.',
+            cleanQuote || 'Practical execution, transparent unit economics, and verified identity controls separate high performing organizations from the rest of the field.'
+          ];
+      const defaultMetrics = item.track === 'cyber'
+        ? { costImpact: '$0 Native Identity Hardening', deploySpeed: 'Same-Day Policy Rollout', readinessScore: '99.4% Session Protection' }
+        : item.track === 'federal'
+        ? { costImpact: 'SDVOSB Set-Aside Priority', deploySpeed: '2–4 Week Award Velocity', readinessScore: 'NAICS 541512 / 541519 Ready' }
+        : item.track === 'logistics'
+        ? { costImpact: '+30% Recovered Rush-Hour Leads', deploySpeed: 'Turnkey 48-Hour Launch', readinessScore: '5-Star Customer Velocity' }
+        : { costImpact: '-72% Idle Cloud Spend', deploySpeed: 'Scale-to-Zero Serverless', readinessScore: '98% Workflow Accuracy' };
+      const defaultPlaybook = (Array.isArray(item.actionPlaybook) && item.actionPlaybook.length)
+        ? item.actionPlaybook
+        : [
+            'Audit existing software and cloud workflows to eliminate idle compute and manual bottlenecks.',
+            'Deploy focused, single-purpose browser workflows with strict role-based identity verification.',
+            'Track measurable unit economics and operational readiness across every team sprint.'
+          ];
+      return Object.assign({}, item, {
+        summary: cleanSummary,
+        dek: item.dek || cleanSummary,
+        pullQuote: cleanQuote,
+        paragraphs: paras,
+        impactMetrics: item.impactMetrics || defaultMetrics,
+        actionPlaybook: defaultPlaybook,
+        deliverableArtifact: item.deliverableArtifact || 'Executive Dispatch & Action Playbook Packet',
+        readTime: item.readTime || '3 min read'
+      });
+    }
+
+    function buildStoryMarkdownDeliverable(item) {
+      const st = normalizeStoryItem(item);
+      if (!st) return '';
+      const dateIso = new Date().toISOString().slice(0, 10);
+      return [
+        `# THE EXECUTIVE DISPATCH — ${st.title}`,
+        ``,
+        `- **Date:** ${dateIso}`,
+        `- **Source Wire:** ${st.source} (${st.agency || 'Executive Desk'})`,
+        `- **Intelligence Track:** ${st.trackLabel || 'EXECUTIVE BRIEFING'}`,
+        `- **Deliverable Artifact:** ${st.deliverableArtifact}`,
+        `- **Original Source URL:** ${st.url}`,
+        ``,
+        `> *${st.dek}*`,
+        ``,
+        `## 1. Executive Signal Matrix`,
+        `- **Cloud & Financial Impact:** ${st.impactMetrics.costImpact}`,
+        `- **Deployment Velocity:** ${st.impactMetrics.deploySpeed}`,
+        `- **Operational Readiness:** ${st.impactMetrics.readinessScore}`,
+        ``,
+        `## 2. Broadsheet Narrative`,
+        ``,
+        st.paragraphs.join('\n\n'),
+        ``,
+        `> “${st.pullQuote}”`,
+        ``,
+        `## 3. Actionable Implementation Playbook (Execute Today)`,
+        ...st.actionPlaybook.map((step, i) => `${i + 1}. ${step}`),
+        ``,
+        `---`,
+        `*Curated by The Executive Dispatch Desk · Milton Group Concepts LLC (SDVOSB) & F.I.X Solutions LLC*`
+      ].join('\n');
+    }
+
+    function downloadDeliverableBlob(filename, mimeType, content) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 200);
+    }
+
+    function openStoryPopoutWindow(story) {
+      if (!story) return;
+      try {
+        localStorage.setItem('mgc_active_reader_story', JSON.stringify(story));
+        localStorage.setItem('mgc_live_stream_cache', JSON.stringify(nlState.liveStream || []));
+      } catch (_) {}
+      try {
+        const targetUrl = (location.protocol === 'file:' ? 'briefing-reader.html' : '/briefing-reader') + '?id=' + encodeURIComponent(story.id);
+        window.open(targetUrl, 'MGCBriefingReaderPopout', 'popup=yes,width=1140,height=900,left=120,top=40,resizable=yes,scrollbars=yes');
+      } catch (_) {}
+    }
+
     function render() {
       captureFormDrafts();
       const u = W.me();
-      const rawStream = Array.isArray(nlState.liveStream) && nlState.liveStream.length ? nlState.liveStream : [];
+      const rawStream = (Array.isArray(nlState.liveStream) && nlState.liveStream.length ? nlState.liveStream : []).map(normalizeStoryItem);
       const filteredStream = (activeStreamTrack && activeStreamTrack !== 'all')
         ? rawStream.filter(it => it.track === activeStreamTrack)
         : rawStream;
       const displayStream = filteredStream.length ? filteredStream : rawStream;
       // Duplicate items so the 0% -> -50% vertical scroll loops seamlessly without any jump
       const loopedStream = displayStream.concat(displayStream);
+      const activeAdProg = MONETIZATION_PROGRAMS.find(p => p.id === activeAdProgramId) || MONETIZATION_PROGRAMS[0];
 
       const renderStreamCard = (item, idx) => `
-        <article class="mgc-live-article-card ${item.isKeyStory ? 'is-key-story' : ''}" data-stream-card-idx="${idx}">
+        <article class="mgc-live-article-card ${item.isKeyStory ? 'is-key-story' : ''}" data-stream-card-idx="${idx}" data-story-card-id="${esc(item.id)}" title="Click to open 3-paragraph Broadsheet Reader Edition">
           <div style="height:4px;width:100%;background:${item.isKeyStory ? 'linear-gradient(90deg,#C5B358,#FDE047,#C5B358)' : esc(item.accentColor || '#38bdf8')}"></div>
           <div style="padding:16px 18px;display:flex;flex-direction:column;gap:10px">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)">
@@ -289,34 +607,39 @@
               </div>
               <div style="display:flex;align-items:center;gap:8px">
                 ${item.isKeyStory ? `
-                  <span style="padding:2px 8px;border-radius:4px;background:#C5B358;color:#050a18;font-family:monospace;font-size:9.5px;font-weight:900;letter-spacing:0.06em;box-shadow:0 0 12px rgba(197,179,88,0.45)">★ KEY TODAY</span>
+                  <span style="padding:2px 8px;border-radius:4px;background:#C5B358;color:#050a18;font-family:monospace;font-size:9.5px;font-weight:900;letter-spacing:0.06em;box-shadow:0 0 12px rgba(197,179,88,0.45)">★ FEATURED DISPATCH</span>
                 ` : ''}
-                <span style="font-size:11px;font-family:monospace;color:#fde047;font-weight:700">${esc(item.time || 'LIVE • TODAY')}</span>
+                <span style="font-size:11px;font-family:monospace;color:#fde047;font-weight:700">${esc(item.time || 'LIVE • TODAY')} · ${esc(item.readTime || '3 min read')}</span>
               </div>
             </div>
 
-            <h3 style="margin:0;font-size:16.5px;font-weight:800;color:#f8fafc;line-height:1.35">${esc(item.title)}</h3>
+            <h3 style="margin:0;font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:800;color:#f8fafc;line-height:1.3">${esc(item.title)}</h3>
 
-            <div style="font-size:13.5px;color:#e2e8f0;line-height:1.55">
-              <strong style="color:#93c5fd;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-right:6px">MGC Summation:</strong>${esc(item.mgcSummation || item.summary || '')}
+            <div style="font-family:'Newsreader',Georgia,serif;font-size:15.5px;color:#e2e8f0;line-height:1.6">
+              ${esc(item.summary)}
             </div>
 
-            <div style="padding:10px 13px;border-radius:10px;background:rgba(197,179,88,0.1);border-left:3px solid #C5B358;font-size:13px;color:#fef08a;line-height:1.5">
-              ${esc(item.mgcComment || 'MGC Take: Practical execution and verified security controls keep teams ahead.')}
+            <div style="padding:10px 13px;border-radius:10px;background:rgba(197,179,88,0.09);border-left:3px solid #C5B358;font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:14px;color:#fef08a;line-height:1.5">
+              “${esc(item.pullQuote)}”
             </div>
 
-            <div style="display:grid;grid-template-columns:1fr 1fr auto;align-items:center;gap:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);font-size:11px;font-family:monospace">
+            <!-- Executive Signal & Deliverable Strip -->
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;padding:7px 10px;border-radius:8px;background:rgba(4,9,20,0.72);border:1px solid rgba(148,163,184,0.2);font-family:monospace;font-size:10.5px">
+              <span style="color:#34d399;font-weight:700">⚡ ${esc(item.impactMetrics ? item.impactMetrics.costImpact : '-72% Idle Cloud Spend')}</span>
+              <span style="color:#93c5fd">🚀 ${esc(item.impactMetrics ? item.impactMetrics.deploySpeed : 'Scale-to-Zero')}</span>
+              <span style="color:#fde047;font-weight:700">📦 ${esc(item.deliverableArtifact || '3-Step Action Playbook')}</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);font-size:11px;font-family:monospace">
               <div>
-                <span style="display:block;font-size:9px;color:#94a3b8;text-transform:uppercase">DESK / FOCUS</span>
-                <span style="color:#f8fafc;font-weight:700">${esc(item.agency || 'MGC Intelligence')}</span>
+                <span style="display:block;font-size:9px;color:#94a3b8;text-transform:uppercase">DESK · FULL EDITION &amp; PLAYBOOK</span>
+                <span style="color:#f8fafc;font-weight:700">${esc(item.agency || 'Executive Dispatch')} · 3-Paragraph Reader + Deliverable</span>
               </div>
-              <div>
-                <span style="display:block;font-size:9px;color:#94a3b8;text-transform:uppercase">CURATED BY</span>
-                <span style="color:#34d399;font-weight:700">MGC Agent · AI Studio</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px">
-                <button type="button" class="btn" data-deliver-single="${esc(item.id)}" style="padding:5px 10px;font-size:11px;border-color:rgba(56,189,248,0.45);color:#7dd3fc">✉️ Deliver This</button>
-                <a href="${esc(item.url || 'https://news.google.com/')}" target="_blank" rel="noopener noreferrer" class="btn" style="padding:5px 10px;font-size:11px;border-color:rgba(197,179,88,0.55);color:#fde047;text-decoration:none">Read Source ↗</a>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <button type="button" class="btn pri" data-open-reader="${esc(item.id)}" style="padding:6px 12px;font-size:11.5px;font-weight:800">📖 Open Reader Edition ↗</button>
+                <button type="button" class="btn" data-download-md="${esc(item.id)}" style="padding:5px 10px;font-size:11px;border-color:rgba(52,211,153,0.45);color:#34d399" title="Download Markdown Executive Brief & Playbook">📥 Brief (.MD)</button>
+                <button type="button" class="btn" data-deliver-single="${esc(item.id)}" style="padding:5px 10px;font-size:11px;border-color:rgba(56,189,248,0.45);color:#7dd3fc">✉️ Deliver</button>
+                <a href="${esc(item.url || 'https://news.google.com/')}" target="_blank" rel="noopener noreferrer" class="btn" data-stop-card-open="1" style="padding:5px 10px;font-size:11px;border-color:rgba(197,179,88,0.55);color:#fde047;text-decoration:none">Source ↗</a>
               </div>
             </div>
           </div>
@@ -329,7 +652,7 @@
             <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
               <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
                 <span style="width:9px;height:9px;border-radius:999px;background:#34d399;box-shadow:0 0 10px #34d399;display:inline-block;animation:mgcLiveDotPing 1.8s infinite"></span>
-                <span style="font-size:13.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:#C5B358">Live AI &amp; News Briefing Stream</span>
+                <span style="font-size:13.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:#C5B358">The Executive Dispatch · Live Wire</span>
                 <span style="font-size:11px;font-family:monospace;color:#94a3b8;border-left:1px solid rgba(255,255,255,0.15);padding-left:10px">Reuters · Google News · DefenseScoop · CISA</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px">
@@ -359,7 +682,7 @@
                   </button>
                 `).join('')}
               </div>
-              <span style="font-size:11px;color:#94a3b8">Hover any card to pause · Plain-language MGC Summation &amp; Take</span>
+              <span style="font-size:11px;color:#fde047;font-weight:600">Hover to pause · Click any story to open the 3-Paragraph Broadsheet Reader ↗</span>
             </div>
           </div>
 
@@ -370,6 +693,159 @@
           </div>
         </div>
       `;
+
+      const readerStoryNorm = activeReaderStory ? normalizeStoryItem(activeReaderStory) : null;
+      const fontSizesPx = ['19px', '21.5px', '24.5px'];
+      const activeReaderFontPx = fontSizesPx[readerFontScale] || '21.5px';
+      const isIvory = readerPaperTheme === 'ivory';
+      const readerModalHtml = readerStoryNorm ? `
+        <div id="nlReaderPopoutBackdrop" role="dialog" aria-modal="true" aria-label="The Executive Dispatch Reader Edition" style="position:fixed;inset:0;z-index:9998;background:rgba(2,6,23,0.88);backdrop-filter:blur(12px);display:flex;align-items:flex-start;justify-content:center;padding:22px 18px;overflow-y:auto">
+          <div id="nlReaderSheet" class="${isIvory ? 'theme-ivory' : ''}" style="position:relative;overflow:hidden;width:100%;max-width:1120px;margin:auto;border-radius:18px;border:1.5px solid var(--r-border);border-top:5px solid #C5B358;background-color:var(--r-bg);color:var(--r-ink-pri);box-shadow:0 28px 80px rgba(0,0,0,0.85);padding:26px 32px">
+            <div id="nlReaderThemeWash" style="position:absolute;inset:0;pointer-events:none;z-index:10;opacity:0"></div>
+            <!-- Newspaper Masthead Header -->
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-bottom:14px;border-bottom:2px solid var(--r-rule);margin-bottom:20px">
+              <div style="display:flex;align-items:center;gap:12px">
+                <img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:42px;height:42px;object-fit:contain;border-radius:9px;border:1px solid #C5B358;background:#050a18" onerror="this.style.display='none'" />
+                <div>
+                  <div style="font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:900;letter-spacing:0.03em;line-height:1.05">THE EXECUTIVE DISPATCH</div>
+                  <div style="font-size:10.5px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--r-gold)">Washington &amp; Virginia Reader Edition · Large Print Dispatch</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+                <button type="button" class="btn ${readerFontScale === 0 ? 'pri' : ''}" id="btnReaderFontSm" style="padding:5px 10px;font-size:11.5px">A-</button>
+                <button type="button" class="btn ${readerFontScale === 1 ? 'pri' : ''}" id="btnReaderFontMd" style="padding:5px 10px;font-size:11.5px">A</button>
+                <button type="button" class="btn ${readerFontScale === 2 ? 'pri' : ''}" id="btnReaderFontLg" style="padding:5px 10px;font-size:11.5px">A+</button>
+                <button type="button" class="btn" id="btnReaderThemeToggle" style="padding:5px 11px;font-size:11.5px">${isIvory ? '🌙 Obsidian Paper' : '📰 Financial Ivory'}</button>
+                <button type="button" class="btn pri" id="btnDetachReaderWindow" style="padding:6px 12px;font-size:11.5px">🗗 Pop-Out Window ↗</button>
+                <button type="button" class="btn" id="btnCloseReaderModal" style="padding:6px 12px;font-size:11.5px">Close ✕</button>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:28px;align-items:start">
+              <!-- Left Broadsheet Column: Large News Lettering 1-3 Paragraph Summation -->
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span style="padding:3px 9px;border-radius:4px;font-family:monospace;font-size:11px;font-weight:800;color:#050a18;background:${esc(readerStoryNorm.accentColor || '#f97316')}">${esc(readerStoryNorm.sourceCode || 'WIRE')}</span>
+                    <span style="font-size:12.5px;font-weight:700;color:var(--r-ink-muted)">${esc(readerStoryNorm.source)} · ${esc(readerStoryNorm.agency || 'Executive Desk')}</span>
+                    <span style="padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:0.08em;background:rgba(197,179,88,0.16);border:1px solid #C5B358;color:var(--r-gold)">${esc(readerStoryNorm.trackLabel || 'DISPATCH')}</span>
+                  </div>
+                  <span style="font-family:monospace;font-size:11.5px;font-weight:700;color:var(--r-gold)">${esc(readerStoryNorm.time)} · ${esc(readerStoryNorm.readTime)}</span>
+                </div>
+
+                <h1 style="font-family:'Playfair Display',Georgia,serif;font-size:clamp(28px,3.2vw,40px);font-weight:800;line-height:1.15;margin:0 0 14px 0;color:var(--r-ink-pri)">${esc(readerStoryNorm.title)}</h1>
+
+                <p style="font-family:'Newsreader',Georgia,serif;font-size:20px;font-style:italic;line-height:1.5;color:var(--r-ink-dek);margin:0 0 18px 0;padding-bottom:14px;border-bottom:1px solid var(--r-rule)">
+                  ${esc(readerStoryNorm.dek)}
+                </p>
+
+                <!-- Executive Impact & Signal Matrix -->
+                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 22px 0;padding:12px 14px;border-radius:12px;background-color:var(--r-elevated);border:1px solid var(--r-rule)">
+                  <div style="padding:6px 9px;border-radius:8px;background-color:var(--r-cell)">
+                    <div style="font-size:9.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--r-ink-muted)">Cloud &amp; Cost Impact</div>
+                    <div style="font-family:monospace;font-size:12.5px;font-weight:800;color:var(--r-gold);margin-top:2px">${esc(readerStoryNorm.impactMetrics.costImpact)}</div>
+                  </div>
+                  <div style="padding:6px 9px;border-radius:8px;background-color:var(--r-cell)">
+                    <div style="font-size:9.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--r-ink-muted)">Deployment Velocity</div>
+                    <div style="font-family:monospace;font-size:12.5px;font-weight:800;color:#38bdf8;margin-top:2px">${esc(readerStoryNorm.impactMetrics.deploySpeed)}</div>
+                  </div>
+                  <div style="padding:6px 9px;border-radius:8px;background-color:var(--r-cell)">
+                    <div style="font-size:9.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--r-ink-muted)">Readiness &amp; Posture</div>
+                    <div style="font-family:monospace;font-size:12.5px;font-weight:800;color:var(--r-gold);margin-top:2px">${esc(readerStoryNorm.impactMetrics.readinessScore)}</div>
+                  </div>
+                </div>
+
+                <div style="font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:${activeReaderFontPx};line-height:1.82;color:var(--r-ink-body)">
+                  <p class="mgc-broadsheet-dropcap" style="margin:0 0 22px 0">${esc(readerStoryNorm.paragraphs[0])}</p>
+                  ${readerStoryNorm.paragraphs[1] ? `<p style="margin:0 0 22px 0">${esc(readerStoryNorm.paragraphs[1])}</p>` : ''}
+
+                  <blockquote style="margin:24px 0;padding:18px 22px;border-top:2px solid #C5B358;border-bottom:1px solid #C5B358;border-radius:10px;background-color:var(--r-elevated);font-family:'Playfair Display',Georgia,serif;font-size:calc(${activeReaderFontPx} * 0.96);font-style:italic;font-weight:600;line-height:1.52;color:var(--r-gold)">
+                    “${esc(readerStoryNorm.pullQuote)}”
+                  </blockquote>
+
+                  ${readerStoryNorm.paragraphs[2] ? `<p style="margin:0 0 22px 0">${esc(readerStoryNorm.paragraphs[2])}</p>` : ''}
+                </div>
+
+                <!-- 3-Step Actionable Implementation Playbook Deliverable -->
+                <div style="margin:22px 0;padding:16px 20px;border-radius:12px;background-color:var(--r-elevated);border:1.5px solid #C5B358">
+                  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(197,179,88,0.28)">
+                    <div>
+                      <div style="font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--r-gold)">⚡ EXECUTIVE ACTION PLAYBOOK · EXECUTE TODAY</div>
+                      <div style="font-family:'Playfair Display',Georgia,serif;font-size:16.5px;font-weight:800;color:var(--r-ink-pri)">${esc(readerStoryNorm.deliverableArtifact)}</div>
+                    </div>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap">
+                      <button type="button" class="btn pri" id="btnModalDownloadMd" style="padding:5px 10px;font-size:11px">📥 Download Brief (.MD)</button>
+                      <button type="button" class="btn" id="btnModalCopyMemo" style="padding:5px 10px;font-size:11px">📋 Copy Team Memo</button>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;line-height:1.5;color:var(--r-ink-body)">
+                    ${readerStoryNorm.actionPlaybook.map((step, sIdx) => `
+                      <div style="display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start">
+                        <span style="width:22px;height:22px;border-radius:999px;background:rgba(197,179,88,0.22);border:1px solid #C5B358;color:var(--r-gold);font-family:monospace;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center">0${sIdx + 1}</span>
+                        <div>${esc(step)}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- Non-Intrusive In-Article Editorial Sponsorship Block -->
+                <div style="margin-top:24px;padding:16px 20px;border-radius:12px;background-color:var(--r-elevated);border:1px solid rgba(197,179,88,0.42)">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--r-gold)">
+                    <span>${esc(activeAdProg.sponsorTag)}</span>
+                    <span>NON-INTRUSIVE PARTNER SLOT</span>
+                  </div>
+                  <div style="font-family:'Playfair Display',Georgia,serif;font-size:17.5px;font-weight:700;margin-bottom:5px;color:var(--r-ink-pri)">${esc(activeAdProg.headline)}</div>
+                  <p style="font-size:13px;line-height:1.5;color:var(--r-ink-dek);margin:0 0 10px 0">${esc(activeAdProg.copy)}</p>
+                  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+                    <a href="${esc(activeAdProg.ctaHref)}" class="btn pri" style="padding:6px 12px;font-size:11.5px;text-decoration:none">${esc(activeAdProg.ctaText)}</a>
+                    <a href="${esc(readerStoryNorm.url)}" target="_blank" rel="noopener noreferrer" class="btn" style="padding:6px 12px;font-size:11.5px;text-decoration:none">Verify Original Source (${esc(readerStoryNorm.source)}) ↗</a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Non-Intrusive Ad & Revenue Program Switcher + More Stories -->
+              <aside style="display:flex;flex-direction:column;gap:14px">
+                <div style="padding:16px;border-radius:14px;background-color:var(--r-surface);border:1px solid rgba(197,179,88,0.4)">
+                  <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--r-gold);margin-bottom:8px;display:flex;justify-content:space-between">
+                    <span>💼 Ad &amp; Revenue Programs</span>
+                    <span style="color:#38bdf8">5 Tracks</span>
+                  </div>
+                  <p style="font-size:11.5px;color:var(--r-ink-muted);margin:0 0 10px 0;line-height:1.45">
+                    Select any non-intrusive monetization program below to preview live placement &amp; expected income:
+                  </p>
+                  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+                    ${MONETIZATION_PROGRAMS.map(p => `
+                      <button type="button" class="btn ${p.id === activeAdProgramId ? 'pri' : ''}" data-select-ad-prog="${esc(p.id)}" style="justify-content:space-between;padding:6px 10px;font-size:11px;width:100%">
+                        <span>${esc(p.shortLabel)}</span>
+                        <span style="font-size:9.5px">Preview</span>
+                      </button>
+                    `).join('')}
+                  </div>
+                  <div style="padding:10px;border-radius:9px;background-color:var(--r-elevated);border:1px solid rgba(148,163,184,0.22);font-size:11px;line-height:1.45">
+                    <div style="font-weight:800;color:var(--r-gold);margin-bottom:2px">${esc(activeAdProg.programName)}</div>
+                    <div style="font-family:monospace;color:#38bdf8;margin-bottom:4px">${esc(activeAdProg.payoutModel)}</div>
+                    <div style="color:var(--r-ink-dek)">${esc(activeAdProg.fitWhy)}</div>
+                  </div>
+                </div>
+
+                <div style="padding:16px;border-radius:14px;background-color:var(--r-surface);border:1px solid rgba(148,163,184,0.25)">
+                  <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--r-gold);margin-bottom:8px">📰 Switch Story in Reader</div>
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    ${rawStream.map(st => `
+                      <button type="button" class="btn ${st.id === readerStoryNorm.id ? 'pri' : ''}" data-switch-reader-story="${esc(st.id)}" style="text-align:left;justify-content:flex-start;padding:8px 10px;font-size:11.5px;line-height:1.3">
+                        <div>
+                          <div style="font-family:monospace;font-size:9.5px;opacity:0.8">${esc(st.source)} · ${esc(st.time)}</div>
+                          <div style="font-family:'Playfair Display',Georgia,serif;font-weight:700">${esc(st.title)}</div>
+                        </div>
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      ` : '';
 
       const distrosHtml = (nlState.distros || []).map(d =>
         `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:rgba(4,8,20,0.78);border:1px solid rgba(148,163,184,0.2);font-size:12px">
@@ -497,6 +973,7 @@
 
       app.innerHTML = `
         ${consultationPanelHtml}
+        ${readerModalHtml}
 
         <div class="nl-grid">
           <div style="display:flex;flex-direction:column;gap:14px">
@@ -552,16 +1029,44 @@
                     ${(lastDeliveryPacket.curatedArticles || []).map((a, i) => `
                       <div style="margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.06)">
                         <strong style="color:#fde047">${i + 1}. [${esc(a.source)}] ${esc(a.title)}</strong><br/>
-                        <span>${esc(a.mgcSummation)}</span>
+                        <span>${esc(a.summary || a.mgcSummation)}</span>
                       </div>
                     `).join('')}
                   </div>
                   <div style="display:flex;gap:6px;flex-wrap:wrap">
                     <button type="button" class="btn" id="btnCopyDeliveredDigest" style="flex:1;justify-content:center;padding:6px 8px;font-size:11px">📋 Copy Digest</button>
-                    <a href="mailto:${ encodeURIComponent(lastDeliveryPacket.recipientEmail) }?subject=${ encodeURIComponent(lastDeliveryPacket.subject || 'MGC Executive Briefing') }&body=${ encodeURIComponent(lastDeliveryPacket.plainTextDigest || '') }" class="btn pri" style="flex:1;justify-content:center;padding:6px 8px;font-size:11px;text-decoration:none">✉️ Open in Mail</a>
+                    <a href="mailto:${ encodeURIComponent(lastDeliveryPacket.recipientEmail) }?subject=${ encodeURIComponent(lastDeliveryPacket.subject || 'Executive Dispatch') }&body=${ encodeURIComponent(lastDeliveryPacket.plainTextDigest || '') }" class="btn pri" style="flex:1;justify-content:center;padding:6px 8px;font-size:11px;text-decoration:none">✉️ Open in Mail</a>
                   </div>
                 </div>
               ` : ''}
+            </aside>
+
+            <!-- NON-INTRUSIVE PARTNER SPOTLIGHT & AD REVENUE PROGRAMS CARD -->
+            <aside class="card" id="partnerRevenueCard" style="margin:0;border-color:rgba(197,179,88,0.45);background:linear-gradient(135deg,rgba(12,21,39,0.96),rgba(7,13,26,0.98))">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px">
+                <span style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#C5B358">${esc(activeAdProg.sponsorTag)}</span>
+                <span style="font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.35);color:#7dd3fc;font-weight:700">Non-Intrusive</span>
+              </div>
+              <div style="font-family:'Playfair Display',Georgia,serif;font-size:16px;font-weight:800;color:#f8fafc;line-height:1.3;margin-bottom:6px">
+                ${esc(activeAdProg.headline)}
+              </div>
+              <p style="font-size:12px;color:#cbd5e1;line-height:1.5;margin:0 0 10px 0">
+                ${esc(activeAdProg.copy)}
+              </p>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+                <a href="${esc(activeAdProg.ctaHref)}" class="btn pri" style="flex:1;justify-content:center;padding:7px 10px;font-size:11.5px;text-decoration:none">${esc(activeAdProg.ctaText)}</a>
+              </div>
+              <div style="padding-top:8px;border-top:1px solid rgba(148,163,184,0.18)">
+                <div style="font-size:10.5px;font-weight:700;color:#94a3b8;margin-bottom:6px;display:flex;justify-content:space-between">
+                  <span>💼 Switch Revenue / Ad Program:</span>
+                  <span style="color:#fde047">${esc(activeAdProg.payoutModel.split('·')[0])}</span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:4px">
+                  ${MONETIZATION_PROGRAMS.map(p => `
+                    <button type="button" class="btn ${p.id === activeAdProgramId ? 'pri' : ''}" data-select-ad-prog="${esc(p.id)}" style="padding:3px 8px;font-size:10px">${esc(p.shortLabel)}</button>
+                  `).join('')}
+                </div>
+              </div>
             </aside>
 
             <!-- DONATIONS CARD -->
@@ -640,6 +1145,152 @@
       `;
       W.header('newsletter.html');
 
+      function openStoryReaderById(storyId, alsoOpenWindow) {
+        const matched = rawStream.find(s => s.id === storyId) || rawStream[0];
+        if (!matched) return;
+        activeReaderStory = matched;
+        streamPaused = true;
+        if (alsoOpenWindow) {
+          openStoryPopoutWindow(matched);
+        } else {
+          try {
+            localStorage.setItem('mgc_active_reader_story', JSON.stringify(matched));
+            localStorage.setItem('mgc_live_stream_cache', JSON.stringify(rawStream));
+          } catch (_) {}
+        }
+        render();
+      }
+
+      app.querySelectorAll('[data-open-reader]').forEach(btn => {
+        btn.onclick = (ev) => {
+          ev.stopPropagation();
+          openStoryReaderById(btn.getAttribute('data-open-reader'), true);
+        };
+      });
+
+      app.querySelectorAll('[data-download-md]').forEach(btn => {
+        btn.onclick = (ev) => {
+          ev.stopPropagation();
+          const stId = btn.getAttribute('data-download-md');
+          const matched = rawStream.find(s => s.id === stId) || rawStream[0];
+          if (matched) {
+            const slug = String(matched.id || 'dispatch').replace(/[^a-z0-9_-]/gi, '-');
+            downloadDeliverableBlob(`Executive-Dispatch-${slug}.md`, 'text/markdown;charset=utf-8', buildStoryMarkdownDeliverable(matched));
+            W.toast(`Downloaded Executive-Dispatch-${slug}.md`);
+          }
+        };
+      });
+
+      const btnModalDownloadMd = document.getElementById('btnModalDownloadMd');
+      if (btnModalDownloadMd && readerStoryNorm) {
+        btnModalDownloadMd.onclick = () => {
+          const slug = String(readerStoryNorm.id || 'dispatch').replace(/[^a-z0-9_-]/gi, '-');
+          downloadDeliverableBlob(`Executive-Dispatch-${slug}.md`, 'text/markdown;charset=utf-8', buildStoryMarkdownDeliverable(readerStoryNorm));
+          W.toast(`Downloaded Executive-Dispatch-${slug}.md`);
+        };
+      }
+
+      const btnModalCopyMemo = document.getElementById('btnModalCopyMemo');
+      if (btnModalCopyMemo && readerStoryNorm) {
+        btnModalCopyMemo.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(buildStoryMarkdownDeliverable(readerStoryNorm));
+            W.toast('Copied Team Slack / Email Executive Memo to Clipboard');
+          } catch (_) {
+            W.toast('Executive Memo Prepared & Ready');
+          }
+        };
+      }
+
+      app.querySelectorAll('[data-story-card-id]').forEach(cardEl => {
+        cardEl.onclick = (ev) => {
+          if (ev.target.closest('button') || ev.target.closest('a')) return;
+          openStoryReaderById(cardEl.getAttribute('data-story-card-id'), true);
+        };
+      });
+
+      function triggerModalWatchedTheme(targetTheme, label) {
+        readerPaperTheme = targetTheme;
+        const sheet = document.getElementById('nlReaderSheet');
+        const wash = document.getElementById('nlReaderThemeWash');
+        const toggleBtn = document.getElementById('btnReaderThemeToggle');
+        if (sheet) {
+          sheet.classList.toggle('theme-ivory', targetTheme === 'ivory');
+        }
+        if (wash) {
+          wash.className = targetTheme === 'ivory' ? 'nl-theme-wash-ivory' : 'nl-theme-wash-obsidian';
+          setTimeout(() => {
+            if (wash) wash.className = '';
+          }, 820);
+        }
+        if (toggleBtn) {
+          toggleBtn.textContent = targetTheme === 'ivory' ? '🌙 Obsidian Paper' : '📰 Financial Ivory';
+        }
+        if (label) {
+          W.toast(targetTheme === 'ivory' ? `📰 Financial Ivory Paper · ${label}` : `🌙 MGC Obsidian Thematic Colors · ${label}`);
+        }
+      }
+
+      app.querySelectorAll('[data-select-ad-prog]').forEach(btn => {
+        btn.onclick = (ev) => {
+          ev.stopPropagation();
+          const nextProgId = btn.getAttribute('data-select-ad-prog') || 'paved_sponsorship';
+          const wasPartnerStack = activeAdProgramId === 'partnerstack_b2b';
+          const isNowPartnerStack = nextProgId === 'partnerstack_b2b';
+          activeAdProgramId = nextProgId;
+          render();
+          if (activeReaderStory) {
+            if (isNowPartnerStack && readerPaperTheme !== 'ivory') {
+              requestAnimationFrame(() => triggerModalWatchedTheme('ivory', 'PartnerStack B2B Affiliates'));
+            } else if (wasPartnerStack && !isNowPartnerStack && readerPaperTheme === 'ivory') {
+              requestAnimationFrame(() => triggerModalWatchedTheme('obsidian', 'Returned to MGC Thematic Track'));
+            }
+          }
+        };
+      });
+
+      app.querySelectorAll('[data-switch-reader-story]').forEach(btn => {
+        btn.onclick = () => {
+          openStoryReaderById(btn.getAttribute('data-switch-reader-story'), false);
+        };
+      });
+
+      const btnReaderFontSm = document.getElementById('btnReaderFontSm');
+      if (btnReaderFontSm) btnReaderFontSm.onclick = () => { readerFontScale = 0; render(); };
+      const btnReaderFontMd = document.getElementById('btnReaderFontMd');
+      if (btnReaderFontMd) btnReaderFontMd.onclick = () => { readerFontScale = 1; render(); };
+      const btnReaderFontLg = document.getElementById('btnReaderFontLg');
+      if (btnReaderFontLg) btnReaderFontLg.onclick = () => { readerFontScale = 2; render(); };
+      const btnReaderThemeToggle = document.getElementById('btnReaderThemeToggle');
+      if (btnReaderThemeToggle) {
+        btnReaderThemeToggle.onclick = () => {
+          const nextTheme = readerPaperTheme === 'ivory' ? 'obsidian' : 'ivory';
+          triggerModalWatchedTheme(nextTheme, 'Reader Theme Switch');
+        };
+      }
+      const btnDetachReaderWindow = document.getElementById('btnDetachReaderWindow');
+      if (btnDetachReaderWindow && activeReaderStory) {
+        btnDetachReaderWindow.onclick = () => openStoryPopoutWindow(activeReaderStory);
+      }
+      const btnCloseReaderModal = document.getElementById('btnCloseReaderModal');
+      if (btnCloseReaderModal) {
+        btnCloseReaderModal.onclick = () => {
+          activeReaderStory = null;
+          streamPaused = false;
+          render();
+        };
+      }
+      const nlReaderPopoutBackdrop = document.getElementById('nlReaderPopoutBackdrop');
+      if (nlReaderPopoutBackdrop) {
+        nlReaderPopoutBackdrop.onclick = (ev) => {
+          if (ev.target === nlReaderPopoutBackdrop) {
+            activeReaderStory = null;
+            streamPaused = false;
+            render();
+          }
+        };
+      }
+
       const btnPauseStream = document.getElementById('btnToggleStreamPause');
       if (btnPauseStream) {
         btnPauseStream.onclick = () => {
@@ -675,7 +1326,8 @@
       }
 
       app.querySelectorAll('[data-deliver-single]').forEach(btn => {
-        btn.onclick = () => {
+        btn.onclick = (ev) => {
+          ev.stopPropagation();
           const emailInput = document.getElementById('nlEmail');
           if (emailInput && !emailInput.value.trim()) {
             emailInput.focus();

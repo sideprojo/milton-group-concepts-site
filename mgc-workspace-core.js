@@ -31,8 +31,9 @@
     { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', primaryTool: 'simulate_funnel_treasury_roi', icon: '', title: 'Vega · Revenue & Growth Modeler',    brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Model customer conversion funnels and projected revenue growth.' },
     { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', primaryTool: 'grade_cli_ansible_drill',      icon: '', title: 'Kael · Command Line & Automation',   brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Hands on system administration and automation terminal practice.' },
     { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', primaryTool: 'analyze_epigraphic_inscription',icon: '', title: 'Clio · Historical Text & Archive Lab',brand: 'FIX', defaultCustomer: false, price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Explore primary historical archives and geographical alignments.' },
-    { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', primaryTool: 'generate_cognate_drill_loop',  icon: '', title: 'Alma · Language Learning Studio',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Acquire new languages rapidly through shared word roots.' },
-    { id: 'maps-geospatial-insights',   codename: 'Orin', callSign: 'ORIN-01', primaryTool: 'analyze_geospatial_corridor',  icon: '', title: 'Orin · 3D Maps & Location Insights', brand: 'MGC', defaultCustomer: true,  price: 0,  href: 'projects/maps-geospatial-insights/index.html', zipHref: '',                                                                               desc: 'Interactive 3D map visualization and regional corridor analysis.' }
+    { id: 'spanish-acquisition-os',     codename: 'Alma',   callSign: 'ALMA-01', primaryTool: 'generate_cognate_drill_loop',  icon: '', title: 'Alma · Language Learning Studio',    brand: 'MGC', defaultCustomer: false, price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Acquire new languages rapidly through shared word roots.' },
+    { id: 'el-cid-codex-os',            codename: 'El Cid', callSign: 'CID-01',  primaryTool: 'generate_cognate_drill_loop',  icon: '⚔️', title: 'El Cid · Códice Español & AI Reader', brand: 'MGC', defaultCustomer: true,  price: 0,  href: 'projects/el-cid-codex-os/index.html',            zipHref: 'projects/el-cid-codex-os/exports/saos_scorm_2004_4th_edition.zip',               desc: '5-Stage Paginated Spanish Immersion Reader uniting Kindle/Scribd e-reading, TruAccent speech, Pimsleur recall, Mavis Beacon WPM & Canvas SCORM 2004.' },
+    { id: 'maps-geospatial-insights',   codename: 'Orin',   callSign: 'ORIN-01', primaryTool: 'analyze_geospatial_corridor',  icon: '', title: 'Orin · 3D Maps & Location Insights', brand: 'MGC', defaultCustomer: true,  price: 0,  href: 'projects/maps-geospatial-insights/index.html', zipHref: '',                                                                               desc: 'Interactive 3D map visualization and regional corridor analysis.' }
   ];
 
   // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -82,7 +83,7 @@
     }
   ];
 
-  const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge', 'maps-geospatial-insights'];
+  const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge', 'maps-geospatial-insights', 'el-cid-codex-os'];
   const DEFAULT_CUSTOMER_RESOURCES = [];
   const DEFAULT_CUSTOMER_PAGES = { saasapps: 'ready' };
 
@@ -1208,12 +1209,12 @@
     },
     {
       id: 'cat_divergent_lang',
-      title: 'Associative Language Studio (Alma & Clio)',
+      title: 'Associative Language & Codex Studio (El Cid, Alma & Clio)',
       tag: 'Languages',
       accent: '#10b981',
       gradient: 'linear-gradient(135deg, rgba(6,78,59,0.85), rgba(15,23,42,0.96))',
-      summary: 'Fast-track new languages using roots you already know with Alma and Clio.',
-      associatedApps: ['spanish-acquisition-os', 'chronos-aetheria-scorm'],
+      summary: '5-Stage Spanish Immersion Codex (El Cid) & root acquisition with Alma and Clio.',
+      associatedApps: ['el-cid-codex-os', 'spanish-acquisition-os', 'chronos-aetheria-scorm'],
       associatedResources: [],
       learningTrack: 'training'
     },
@@ -2243,6 +2244,7 @@
         pathLower.includes('portal') ||
         pathLower.includes('consultation') ||
         pathLower.includes('newsletter') ||
+        pathLower.includes('briefing-reader') ||
         pathLower.includes('apps') ||
         pathLower.includes('access-admin') ||
         pathLower.includes('command') ||

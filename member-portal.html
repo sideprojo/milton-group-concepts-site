@@ -138,9 +138,9 @@
     const isEntitledApp = (appId) => {
       if (isTrueAdminAccount()) {
         const av = getActiveAdminView();
-        if (av === 'access') return (W.DEFAULT_CUSTOMER_APPS || ['sterling-auto-repair', 'client-turnkey-forge', 'maps-geospatial-insights']).includes(appId);
-        if (av === 'employee') return ['sterling-auto-repair', 'client-turnkey-forge', 'eveng-netprism-studio', 'samgov-contract-matchmaker', 'ghost-cli-trainer', 'maps-geospatial-insights'].includes(appId);
-        return true; // 'owner' and 'workspace' have all 9 apps unlocked
+        if (av === 'access') return (W.DEFAULT_CUSTOMER_APPS || ['sterling-auto-repair', 'client-turnkey-forge', 'maps-geospatial-insights', 'el-cid-codex-os']).includes(appId);
+        if (av === 'employee') return ['sterling-auto-repair', 'client-turnkey-forge', 'eveng-netprism-studio', 'samgov-contract-matchmaker', 'ghost-cli-trainer', 'maps-geospatial-insights', 'el-cid-codex-os'].includes(appId);
+        return true; // 'owner' and 'workspace' have all 10 apps unlocked
       }
       return Boolean(W.can(u, 'app', appId, 'view'));
     };

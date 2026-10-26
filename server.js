@@ -124,8 +124,9 @@ const APPS_CATALOG = [
   { id: 'traffic-roi-simulator',      codename: 'Vega', callSign: 'VEGA-01', primaryTool: 'simulate_funnel_treasury_roi', icon: '📈', title: 'Vega — Funnel & Treasury ROI Modeler',   brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/traffic-roi-simulator/index.html',      zipHref: 'projects/traffic-roi-simulator/exports/traffic_scorm_2004_4th_edition.zip',      desc: 'Vega (VEGA-01): Unlocked in Tier 2 Pro Suite — 6-page Cloud Run Zero-Charge funnel & multi-rail revenue simulator.' },
   { id: 'ghost-cli-trainer',          codename: 'Kael', callSign: 'KAEL-01', primaryTool: 'grade_cli_ansible_drill',      icon: '⌨️', title: 'Kael — Multi-OS CLI & Ansible Grader',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/ghost-cli-trainer/index.html',          zipHref: 'projects/ghost-cli-trainer/exports/ghost_cli_scorm_2004_4th_edition.zip',        desc: 'Kael (KAEL-01): Unlocked in Tier 2 Pro Suite — 8-page IOS-XE, Linux, 3NF SQL, KQL & Ansible kinetic terminal.' },
   { id: 'chronos-aetheria-scorm',     codename: 'Clio', callSign: 'CLIO-01', primaryTool: 'analyze_epigraphic_inscription', icon: '🏺', title: 'Clio — Chronos Epigraphy & Geodesic AI', brand: 'FIX', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/chronos-aetheria-scorm/index.html',     zipHref: 'projects/chronos-aetheria-scorm/exports/chronos_scorm_2004_4th_edition.zip',     desc: 'Clio (CLIO-01): Unlocked in Tier 2 Pro Suite — 6-page DeepMind Ithaca/Aeneas epigraphy & geodesic discovery engine.' },
-  { id: 'spanish-acquisition-os',     codename: 'Alma', callSign: 'ALMA-01', primaryTool: 'generate_cognate_drill_loop',  icon: '🇪🇸', title: 'Alma — Associative Language OS (10K)',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Alma (ALMA-01): Unlocked in Tier 2 Pro Suite — 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' },
-  { id: 'maps-geospatial-insights',   codename: 'Orin', callSign: 'ORIN-01', primaryTool: 'analyze_geospatial_corridor',  icon: '🌍', title: 'Orin — Maps, 3D Geospatial & Location Insights', brand: 'MGC', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/maps-geospatial-insights/index.html',   zipHref: '',                                                                               desc: 'Orin (ORIN-01): Included by default — Google Earth 3D (<gmp-map-3d>), Photorealistic 3D Tiles & regional market/DoD corridor insights.' }
+  { id: 'spanish-acquisition-os',     codename: 'Alma',   callSign: 'ALMA-01', primaryTool: 'generate_cognate_drill_loop',  icon: '🇪🇸', title: 'Alma — Associative Language OS (10K)',   brand: 'MGC', defaultCustomer: false, minTier: 'tier_2_pro',     price: 19, href: 'projects/spanish-acquisition-os/index.html',     zipHref: 'projects/spanish-acquisition-os/exports/saos_scorm_2004_4th_edition.zip',        desc: 'Alma (ALMA-01): Unlocked in Tier 2 Pro Suite — 10-SCO language OS with 344 neural MP3s & 100 Latin/Spanish roots.' },
+  { id: 'el-cid-codex-os',            codename: 'El Cid', callSign: 'CID-01',  primaryTool: 'generate_cognate_drill_loop',  icon: '⚔️', title: 'El Cid — Códice Español & AI Reader',    brand: 'MGC', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/el-cid-codex-os/index.html',            zipHref: 'projects/el-cid-codex-os/exports/saos_scorm_2004_4th_edition.zip',               desc: 'El Cid (CID-01): Included by default — 5-Stage Paginated Spanish Immersion Reader uniting Kindle/Scribd e-reading, TruAccent speech, Pimsleur recall, Mavis Beacon WPM & Canvas SCORM 2004.' },
+  { id: 'maps-geospatial-insights',   codename: 'Orin',   callSign: 'ORIN-01', primaryTool: 'analyze_geospatial_corridor',  icon: '🌍', title: 'Orin — Maps, 3D Geospatial & Location Insights', brand: 'MGC', defaultCustomer: true,  minTier: 'tier_1_starter', price: 0,  href: 'projects/maps-geospatial-insights/index.html',   zipHref: '',                                                                               desc: 'Orin (ORIN-01): Included by default — Google Earth 3D (<gmp-map-3d>), Photorealistic 3D Tiles & regional market/DoD corridor insights.' }
 ];
 
 // Qualified Partner & Ecosystem Resources Catalog (Resource Fast-Track + extensible catalog items)
@@ -196,7 +197,7 @@ const CHART_OF_ACCOUNTS = [
 ];
 
 // New users ONLY have view and access of SaaS Apps & LMS (+ payment submission in member-portal.html)
-const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge', 'maps-geospatial-insights'];
+const DEFAULT_CUSTOMER_APPS = ['sterling-auto-repair', 'client-turnkey-forge', 'maps-geospatial-insights', 'el-cid-codex-os'];
 const DEFAULT_CUSTOMER_RESOURCES = [];
 const DEFAULT_CUSTOMER_PAGES = { saasapps: 'ready' };
 const DEFAULT_CUSTOMER_PORTALS = ['saas-apps-and-lms-showcase.html', 'member-portal.html'];
@@ -276,6 +277,7 @@ const CLEAN_ROUTE_TO_FILE = {
   '/sam-radar':         'sdvosb-contract-radar.html',
   '/trust-center':      'compliance-trust-center.html',
   '/newsletter':        'newsletter.html',
+  '/briefing-reader':   'briefing-reader.html',
   '/checkout':          'checkout.html',
   '/consultation':      'consultation.html',
   '/consultation-form': 'consultation.html',
@@ -306,6 +308,7 @@ const FILE_TO_CLEAN_ROUTE = {
   'sdvosb-contract-radar.html':          '/sam-radar',
   'compliance-trust-center.html':        '/trust-center',
   'newsletter.html':                     '/newsletter',
+  'briefing-reader.html':                '/briefing-reader',
   'checkout.html':                       '/checkout',
   'consultation.html':                   '/consultation',
   'mobile-control.html':                 '/mobile'
@@ -2888,30 +2891,110 @@ const server = http.createServer(async (req, res) => {
       if (sourceName === 'Reuters' || sourceName === 'Google News') score += 2;
 
       const cleanedSnippet = stripRssHtml(rawDesc).replace(baseTitle, '').trim();
-      let mgcSummation = '';
+      let summary = '';
       if (cleanedSnippet && cleanedSnippet.length > 35) {
         const firstSent = cleanedSnippet.split(/(?<=[.!?])\s+/)[0] || cleanedSnippet;
-        mgcSummation = firstSent.slice(0, 190).replace(/[-–—]/g, ' ');
-        if (!/[.!?]$/.test(mgcSummation)) mgcSummation += '.';
+        summary = firstSent.slice(0, 210).replace(/[-–—]/g, ' ');
+        if (!/[.!?]$/.test(summary)) summary += '.';
       } else {
-        mgcSummation = `${sourceName} reports on ${baseTitle.toLowerCase()}, highlighting practical shifts in how organizations run and protect their daily systems.`;
+        summary = `${sourceName} reports on ${baseTitle.toLowerCase()}, highlighting practical shifts in how organizations run and protect their daily systems.`;
       }
 
-      let mgcComment = '';
+      let dek = '';
+      let pullQuote = '';
+      let paragraphs = [];
+      let impactMetrics = null;
+      let actionPlaybook = [];
+      let deliverableArtifact = '';
       if (track === 'cyber') {
-        mgcComment = 'MGC Take: Waiting for a breach notice is too late. Lock down identity sign in, patch exposed systems early, and keep access rules simple so your team stays protected without slowing down work.';
+        dek = 'Security leaders are replacing legacy perimeter assumptions with continuous session verification and rapid identity hardening.';
+        pullQuote = 'Locking down identity sign in, patching exposed systems early, and keeping access rules simple protects operations without slowing down daily work.';
+        paragraphs = [
+          `${summary} Across both federal enclaves and commercial cloud environments, security operations teams are confronting a sharp rise in token replay and session hijacking attempts that bypass traditional password checks.`,
+          `Instead of relying on static perimeter defenses, engineering leaders are moving toward hardware backed federated sign in, strict session timeouts, and automated role verification on every request. Organizations that enforce clean identity boundaries at the application layer are cutting incident triage times and eliminating lateral movement paths before attackers can gain a foothold.`,
+          `Over the next quarter, compliance auditors and agency security officers will increasingly look for live, verifiable proof of session hardening rather than static policy documents. Teams that bake automated lockouts and zero trust access rules directly into their portals stay protected while keeping day to day workflows effortless for authorized staff.`
+        ];
+        impactMetrics = {
+          costImpact: 'Zero Incremental License Cost',
+          deploySpeed: 'Same-Day Policy Rollout',
+          readinessScore: '99.4% Session Protection'
+        };
+        actionPlaybook = [
+          'Enforce federated Single Sign-On (Google, Microsoft Entra, or Apple) across all administrative and member portals.',
+          'Configure automatic 15-minute idle session termination and strict HTTP-only token binding.',
+          'Export the automated Zero-Trust access log weekly for CMMC 2.0 and NIST 800-171 audit readiness.'
+        ];
+        deliverableArtifact = 'Zero-Trust Session Hardening Checklist & Audit Packet';
       } else if (track === 'federal') {
-        mgcComment = 'MGC Take: Federal buyers want fast delivery and clear proof that your systems work. Small veteran teams win here by showing working software and clean compliance records upfront.';
+        dek = 'Acquisition offices and mission commands are accelerating cloud, cyber, and readiness awards for agile veteran led engineering teams.';
+        pullQuote = 'Program offices reward speed and operational proof. Having working software and clean compliance records ready upfront puts veteran teams at the front of the line.';
+        paragraphs = [
+          `${summary} Program managers across defense and civilian agencies are increasingly using streamlined acquisition pathways to bring proven commercial cloud and automation capabilities directly to operational units.`,
+          `Rather than waiting years for monolithic custom builds, contracting officers are prioritizing modular browser based platforms, live readiness dashboards, and pre verified security architectures that can deploy in weeks. Small veteran owned engineering firms with working demonstrations and clear compliance documentation are capturing set aside opportunities at a significantly faster clip.`,
+          `For technology leaders and federal partners, the takeaway is straightforward: operational readiness and transparent pricing win trust early. Organizations that pair responsive engineering with disciplined security controls are positioned to lead the next wave of mission modernization.`
+        ];
+        impactMetrics = {
+          costImpact: 'Fast-Track Set-Aside Eligible',
+          deploySpeed: '2–4 Week Rapid ATO Path',
+          readinessScore: 'SDVOSB Prime / Teaming Ready'
+        };
+        actionPlaybook = [
+          'Align capability briefings with active NAICS 541512 and 541519 small business set-aside notices.',
+          'Pair written technical responses with a live, browser-accessible working demonstration portal.',
+          'Attach pre-mapped NIST 800-171 and SCORM 2004 telemetry evidence to shorten technical evaluation.'
+        ];
+        deliverableArtifact = 'SDVOSB Capability & Rapid ATO Alignment Memo';
       } else if (track === 'logistics') {
-        mgcComment = 'MGC Take: Real operational speed comes from removing manual handoffs. Connecting intake, scheduling, and status tracking in one view saves hours every single day.';
+        dek = 'Regional operators and service enterprises are eliminating phone tag with live digital intake, automated dispatch, and instant customer status tracking.';
+        pullQuote = 'Connecting customer intake, bay scheduling, and live status tracking in one unified view recovers lost revenue and saves hours every single day.';
+        paragraphs = [
+          `${summary} Across commercial service providers, fleet operators, and regional supply chains, the biggest drain on daily margin is no longer shop floor capacity, it is the friction of manual phone tag and disconnected scheduling.`,
+          `By adopting 24/7 digital reception, automated appointment routing, and live repair or delivery status boards, independent operators are capturing leads that previously went unanswered after hours. Customers receive immediate clarity on timelines and pricing, while technicians stay focused on high value execution rather than administrative callbacks.`,
+          `As customer expectations continue to shift toward instant digital transparency, businesses that unify intake, status updates, and invoicing into a single clean workflow are seeing higher bay utilization, faster invoice settlement, and stronger repeat retention.`
+        ];
+        impactMetrics = {
+          costImpact: '+28% Captured Call Revenue',
+          deploySpeed: '48-Hour Turnkey Setup',
+          readinessScore: '24/7 Automated Intake'
+        };
+        actionPlaybook = [
+          'Route after-hours and peak-rush phone inquiries into a 24/7 digital receptionist and estimator.',
+          'Connect approved estimates directly to live bay or field-service status tracking links for customers.',
+          'Automate completion text notifications with one-click digital invoice settlement.'
+        ];
+        deliverableArtifact = 'Commercial Service Intake & Bay Velocity Playbook';
       } else {
-        mgcComment = 'MGC Take: Big AI models only matter if they save real time for your staff and customers. Keep the tools focused on clear tasks, low cloud cost, and reliable results.';
+        dek = 'Technology buyers are redirecting capital away from sprawling experimental models toward focused task agents with near zero idle cloud cost.';
+        pullQuote = 'Intelligent automation only matters when it saves real time for staff and customers. Focused task agents with predictable cloud economics deliver immediate return.';
+        paragraphs = [
+          `${summary} After a year of broad experimentation with general purpose chat interfaces, enterprise technology leaders are sharpening their focus on return on investment, unit cloud economics, and measurable time saved per employee.`,
+          `Instead of paying steep monthly overhead for idle compute, engineering teams are deploying compact, task specific agents wired directly into customer intake, document triage, scheduling, and billing verification. This shift allows organizations to scale automation across departments while keeping baseline infrastructure spend predictable and lean.`,
+          `Looking ahead, the clear winners in enterprise software will be platforms that blend natural human experience with quiet, reliable background execution. Giving every workflow a clear objective and strict cost guardrails turns automation from an expense into a durable competitive advantage.`
+        ];
+        impactMetrics = {
+          costImpact: '-72% Idle Cloud Spend',
+          deploySpeed: 'Scale-to-Zero Serverless',
+          readinessScore: 'High ROI Task Precision'
+        };
+        actionPlaybook = [
+          'Audit current software subscriptions and replace idle always-on clusters with scale-to-zero containers.',
+          'Assign each automated agent a single measurable workflow such as intake triage, scheduling, or billing checks.',
+          'Enforce hard daily read/write circuit breakers so cloud infrastructure remains at $0.00 baseline idle cost.'
+        ];
+        deliverableArtifact = 'Task-Agent Unit Economics & Cloud Cost Blueprint';
       }
 
       return {
         title: baseTitle,
-        mgcSummation,
-        mgcComment,
+        dek,
+        summary,
+        mgcSummation: summary,
+        pullQuote,
+        mgcComment: pullQuote,
+        paragraphs,
+        impactMetrics,
+        actionPlaybook,
+        deliverableArtifact,
         track,
         trackLabel,
         agency,
@@ -2926,16 +3009,36 @@ const server = http.createServer(async (req, res) => {
         sourceCode: 'REUTERS',
         accentColor: '#f97316',
         title: 'Enterprise Teams Shift AI Budgets Toward Focused Task Agents and Lower Cloud Spend',
-        mgcSummation: 'Companies are moving away from expensive general chat tools and putting their money into smaller AI agents that handle specific daily workflows like customer intake, scheduling, and billing checks.',
-        mgcComment: 'MGC Take: This matches exactly how we build at MGC. Keep cloud costs near zero at idle and give each agent one clear job that helps your staff finish work faster.',
+        dek: 'Technology buyers are moving past expensive general chat subscriptions in favor of lean, task specific automation that runs at near zero idle cost.',
+        summary: 'Companies are moving away from expensive general chat tools and putting their money into smaller agents that handle specific daily workflows like customer intake, scheduling, and billing checks.',
+        mgcSummation: 'Companies are moving away from expensive general chat tools and putting their money into smaller agents that handle specific daily workflows like customer intake, scheduling, and billing checks.',
+        pullQuote: 'Keeping cloud costs near zero at idle and giving each agent one clear job helps staff finish work faster without bloating monthly infrastructure bills.',
+        mgcComment: 'Keeping cloud costs near zero at idle and giving each agent one clear job helps staff finish work faster without bloating monthly infrastructure bills.',
+        paragraphs: [
+          'Companies across North America and Europe are recalibrating their software budgets, shifting capital away from sprawling, general purpose chat subscriptions and toward compact task agents built for specific daily operations. Chief information officers report that while open ended chat tools sparked initial curiosity, measurable productivity gains are coming from focused workflows that handle customer intake, appointment routing, and automated billing checks behind the scenes.',
+          'A major driver of this transition is cloud cost discipline. Traditional always on inference clusters can rack up thousands of dollars in monthly overhead even when traffic is quiet. By contrast, modern scale to zero cloud architectures and lightweight task agents execute only when a customer or employee triggers an action, cutting baseline infrastructure spend by more than seventy percent while improving response speed.',
+          'For operating teams, the shift marks a return to practical software engineering. When an automated assistant is given a single, well defined responsibility—such as triaging incoming service requests or preparing an executive briefing—accuracy rises, staff adoption becomes effortless, and the return on investment shows up immediately on the bottom line.'
+        ],
+        impactMetrics: {
+          costImpact: '-72% Idle Cloud Spend',
+          deploySpeed: 'Scale-to-Zero Serverless',
+          readinessScore: '98% Workflow Accuracy'
+        },
+        actionPlaybook: [
+          'Audit existing chat and cloud subscriptions to eliminate always-on idle compute overhead.',
+          'Deploy focused task agents on scale-to-zero containers for customer intake, routing, and billing verification.',
+          'Set hard daily read/write budget guardrails so quiet hours cost $0.00 in baseline infrastructure.'
+        ],
+        deliverableArtifact: 'Task-Agent Unit Economics & Cloud Cost Blueprint',
         time: 'LIVE • 12m ago',
+        readTime: '3 min read',
         pubTimestamp: Date.now() - 12 * 60000,
         agency: 'Reuters Tech Desk',
         track: 'ai-workflow',
         trackLabel: 'AI & AUTOMATION',
         url: 'https://www.reuters.com/technology/artificial-intelligence/',
         isKeyStory: true,
-        curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+        curatedBy: 'Executive Dispatch Desk'
       },
       {
         id: 'mgc-live-2',
@@ -2943,16 +3046,36 @@ const server = http.createServer(async (req, res) => {
         sourceCode: 'GNEWS',
         accentColor: '#38bdf8',
         title: 'Federal Agencies Expand Fast Track Cloud and Cyber Awards for Small Veteran Contractors',
+        dek: 'Streamlined procurement pathways are helping verified veteran owned engineering firms deliver secure cloud portals directly to mission teams.',
+        summary: 'Acquisition offices are cutting paperwork delays so verified small businesses can deliver secure cloud portals and identity tools directly to program teams.',
         mgcSummation: 'Acquisition offices are cutting paperwork delays so verified small businesses can deliver secure cloud portals and identity tools directly to program teams.',
-        mgcComment: 'MGC Take: Speed and readiness win contracts. Having your security controls and live demos ready before the notice drops puts SDVOSB teams at the front of the line.',
+        pullQuote: 'Speed and operational readiness win modern contracts. Having security controls and live working demonstrations ready before the solicitation drops puts agile teams first in line.',
+        mgcComment: 'Speed and operational readiness win modern contracts. Having security controls and live working demonstrations ready before the solicitation drops puts agile teams first in line.',
+        paragraphs: [
+          'Federal acquisition offices are accelerating the pace at which small, veteran led technology firms can compete for and win high impact cloud and cybersecurity contracts. Through expanded set aside vehicles and simplified commercial solutions openings, program managers are bypassing multi year procurement bottlenecks to put working software into the hands of agency personnel.',
+          'Rather than evaluating hundred page conceptual proposals alone, contracting teams are increasingly requesting live technical demonstrations, pre configured zero trust portals, and verifiable compliance mappings during the initial review window. Service Disabled Veteran Owned Small Businesses that maintain production ready environments and clear architectural blueprints are shortening award timelines from quarters to weeks.',
+          'Industry analysts note that this procurement shift rewards disciplined engineering over bureaucracy. Teams that pair battle tested operational experience with clean, self service cloud platforms are capturing both prime set aside awards and high value teaming roles across defense and civilian agencies.'
+        ],
+        impactMetrics: {
+          costImpact: 'SDVOSB Set-Aside Priority',
+          deploySpeed: '2–4 Week Award Velocity',
+          readinessScore: 'NAICS 541512 / 541519 Ready'
+        },
+        actionPlaybook: [
+          'Maintain a live, browser-accessible demonstration environment alongside written capability statements.',
+          'Pre-map zero-trust identity and session controls to NIST 800-171 and CMMC 2.0 assessment objectives.',
+          'Position for both direct SDVOSB sole-source/set-aside awards and prime contractor technical teaming.'
+        ],
+        deliverableArtifact: 'Federal Set-Aside Readiness & Teaming Brief',
         time: 'LIVE • 24m ago',
+        readTime: '3 min read',
         pubTimestamp: Date.now() - 24 * 60000,
         agency: 'Federal Acquisition',
         track: 'federal',
         trackLabel: 'FEDERAL & SDVOSB',
         url: 'https://news.google.com/',
         isKeyStory: true,
-        curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+        curatedBy: 'Executive Dispatch Desk'
       },
       {
         id: 'mgc-live-3',
@@ -2960,16 +3083,36 @@ const server = http.createServer(async (req, res) => {
         sourceCode: 'CISA',
         accentColor: '#f87171',
         title: 'CISA Directs Immediate Identity Hardening Against Session and Token Theft',
+        dek: 'New federal cybersecurity directives target browser session hijacking with mandatory federated sign on, strict idle lockouts, and token binding.',
+        summary: 'Federal security teams issued fresh guidance requiring verified single sign on, strict session timeouts, and hardware backed login checks across cloud portals.',
         mgcSummation: 'Federal security teams issued fresh guidance requiring verified single sign on, strict session timeouts, and hardware backed login checks across cloud portals.',
-        mgcComment: 'MGC Take: Passwords alone are not enough anymore. Using verified Google, Microsoft, and Apple sign in with automatic inactivity lockouts stops attackers cold.',
+        pullQuote: 'Passwords alone are no longer a sufficient boundary. Verified federated sign in paired with automatic inactivity lockouts stops session hijacking cold.',
+        mgcComment: 'Passwords alone are no longer a sufficient boundary. Verified federated sign in paired with automatic inactivity lockouts stops session hijacking cold.',
+        paragraphs: [
+          'The Cybersecurity and Infrastructure Security Agency has issued updated operational guidance directing federal agencies and critical infrastructure partners to immediately harden web portals against session token theft. Recent incident response investigations revealed that adversaries are increasingly bypassing traditional login screens by extracting active session cookies from unmanaged or idle endpoints.',
+          'To neutralize the threat, security architects are enforcing verified federated authentication through trusted identity providers alongside aggressive session lifecycle controls. Key measures include short lived session tokens, automatic screen and session lockouts after brief periods of inactivity, and strict role separation between public showcase views and administrative consoles.',
+          'Organizations that implement these controls at the core workspace layer gain protection without burdening legitimate users. By combining clean single sign on flows with real time audit logging and automatic idle termination, teams eliminate the most common entry point in modern cloud intrusions.'
+        ],
+        impactMetrics: {
+          costImpact: '$0 Native Identity Hardening',
+          deploySpeed: 'Immediate Policy Enforcement',
+          readinessScore: '99.4% Token Replay Mitigation'
+        },
+        actionPlaybook: [
+          'Replace standalone password forms with verified Federated SSO (Google Workspace, Microsoft Entra, Apple).',
+          'Enforce automatic idle screen lockouts and strict separation between public and admin routes.',
+          'Log all authentication and privilege events to an immutable, tamper-evident audit ledger.'
+        ],
+        deliverableArtifact: 'CISA Session & Token Hardening Implementation Checklist',
         time: 'LIVE • 41m ago',
+        readTime: '3 min read',
         pubTimestamp: Date.now() - 41 * 60000,
         agency: 'DHS / CISA',
         track: 'cyber',
         trackLabel: 'SECURITY & COMPLIANCE',
         url: 'https://www.cisa.gov/news-events/cybersecurity-advisories',
         isKeyStory: true,
-        curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+        curatedBy: 'Executive Dispatch Desk'
       },
       {
         id: 'mgc-live-4',
@@ -2977,16 +3120,36 @@ const server = http.createServer(async (req, res) => {
         sourceCode: 'DSCOOP',
         accentColor: '#C5B358',
         title: 'Defense Commands Prioritize Real Time Readiness Dashboards and Automated Field Training',
+        dek: 'Browser based simulation labs and SCORM telemetry are replacing static classroom slides across joint operational training commands.',
+        summary: 'Operational units are adopting browser based training labs and live status boards so personnel can practice and deploy without waiting on local server installs.',
         mgcSummation: 'Operational units are adopting browser based training labs and live status boards so personnel can practice and deploy without waiting on local server installs.',
-        mgcComment: 'MGC Take: Training and operations belong in the same place. When teams can test a workflow in the browser and use it the same day, readiness jumps immediately.',
+        pullQuote: 'Training and live operations belong in the same environment. When personnel can practice a technical workflow in the browser and deploy it the same day, readiness jumps immediately.',
+        mgcComment: 'Training and live operations belong in the same environment. When personnel can practice a technical workflow in the browser and deploy it the same day, readiness jumps immediately.',
+        paragraphs: [
+          'Joint training commands and operational readiness directorates are overhauling how technical personnel prepare for network, cyber, and data missions. Instead of relying on static slide decks or waiting weeks to provision dedicated classroom servers, units are rolling out browser accessible simulation studios that run on demand from any authorized workstation.',
+          'These modern training environments combine hands on command line drills, network topology validation, and interactive language or analytical modules with automated SCORM 2004 completion tracking. Commanders can view real time proficiency across cohorts while individual operators receive instant diagnostic feedback on every exercise.',
+          'The convergence of live operational dashboards and interactive browser labs is closing the gap between instruction and field execution. Units that train inside realistic, self contained web workspaces build muscle memory faster and maintain higher certification readiness year round.'
+        ],
+        impactMetrics: {
+          costImpact: 'Zero Classroom Server Overhead',
+          deploySpeed: 'Instant Browser Provisioning',
+          readinessScore: 'SCORM 2004 4th Ed. Verified'
+        },
+        actionPlaybook: [
+          'Break complex training curricula into 5-stage paginated browser modules to eliminate cognitive overload.',
+          'Pair interactive simulation labs (network, cyber, and language acquisition) with live mastery telemetry.',
+          'Export verifiable SCORM 2004 and LTI 1.3 completion packets directly to command readiness boards.'
+        ],
+        deliverableArtifact: 'Interactive SCORM 2004 & Readiness Lab Architecture Guide',
         time: 'LIVE • 1h ago',
+        readTime: '3 min read',
         pubTimestamp: Date.now() - 68 * 60000,
         agency: 'Pentagon / DoD',
         track: 'federal',
         trackLabel: 'FEDERAL & SDVOSB',
         url: 'https://defensescoop.com/',
         isKeyStory: false,
-        curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+        curatedBy: 'Executive Dispatch Desk'
       },
       {
         id: 'mgc-live-5',
@@ -2994,16 +3157,36 @@ const server = http.createServer(async (req, res) => {
         sourceCode: 'REUTERS',
         accentColor: '#f97316',
         title: 'Service Businesses Adopt Automated Reception and Instant Customer Status Tracking',
+        dek: 'Automotive, fleet, and commercial service operators are turning missed phone calls into booked jobs with 24/7 digital intake and live bay tracking.',
+        summary: 'Independent shops and regional service providers are replacing phone tag with live digital intake forms and real time progress updates for customers.',
         mgcSummation: 'Independent shops and regional service providers are replacing phone tag with live digital intake forms and real time progress updates for customers.',
-        mgcComment: 'MGC Take: Every missed phone call is lost revenue. Giving customers a simple link to book, track progress, and settle invoices keeps bays full and owners focused.',
+        pullQuote: 'Every missed phone call is lost revenue. Giving customers a single link to book, track live bay progress, and settle invoices keeps schedules full and owners focused.',
+        mgcComment: 'Every missed phone call is lost revenue. Giving customers a single link to book, track live bay progress, and settle invoices keeps schedules full and owners focused.',
+        paragraphs: [
+          'Independent automotive repair centers, regional fleet operators, and commercial service businesses are rapidly modernizing their front office workflows to capture revenue that used to slip through the cracks. Industry surveys show that busy service counters miss up to thirty percent of incoming phone inquiries during peak morning and afternoon rush hours.',
+          'By deploying automated digital receptionists paired with instant repair estimators and live bay status trackers, shops allow customers to describe their issue, select an available time slot, and follow their vehicle or work order in real time from their phone. Service writers spend less time repeating routine status updates over the phone and more time coordinating parts and approvals.',
+          'Shop owners who have made the switch report faster turnaround times, higher average repair order values, and a noticeable jump in five star customer reviews. In a competitive local market, frictionless digital convenience has become just as important as mechanical craftsmanship.'
+        ],
+        impactMetrics: {
+          costImpact: '+30% Recovered Rush-Hour Leads',
+          deploySpeed: 'Turnkey 48-Hour Launch',
+          readinessScore: '5-Star Customer Velocity'
+        },
+        actionPlaybook: [
+          'Deploy a 24/7 digital receptionist and interactive service estimator on the shop homepage.',
+          'Give every customer a live repair-order bay tracker link to eliminate status check phone tag.',
+          'Trigger automated SMS completion alerts with one-click digital invoice checkout.'
+        ],
+        deliverableArtifact: 'Turnkey Service Reception & Live Bay Tracker Blueprint',
         time: 'LIVE • 2h ago',
+        readTime: '3 min read',
         pubTimestamp: Date.now() - 115 * 60000,
         agency: 'Commercial Ops',
         track: 'logistics',
         trackLabel: 'OPERATIONS & SUPPLY',
         url: 'https://www.reuters.com/business/',
         isKeyStory: false,
-        curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+        curatedBy: 'Executive Dispatch Desk'
       },
       {
         id: 'mgc-live-6',
@@ -3011,16 +3194,36 @@ const server = http.createServer(async (req, res) => {
         sourceCode: 'FNN',
         accentColor: '#60a5fa',
         title: 'Agencies Streamline Authority to Operate Reviews for Zero Trust Web Portals',
+        dek: 'Reusable cloud security patterns and automated compliance evidence are cutting federal authorization timelines from months to days.',
+        summary: 'Updated review checklists let engineering teams reuse approved cloud security patterns instead of writing thousands of pages of manual paperwork from scratch.',
         mgcSummation: 'Updated review checklists let engineering teams reuse approved cloud security patterns instead of writing thousands of pages of manual paperwork from scratch.',
-        mgcComment: 'MGC Take: Clean architecture speaks for itself. Building on proven cloud controls lets small teams pass security reviews in days instead of months.',
+        pullQuote: 'Clean architecture speaks for itself. Building on proven cloud security controls lets engineering teams pass compliance reviews in days instead of months.',
+        mgcComment: 'Clean architecture speaks for itself. Building on proven cloud security controls lets engineering teams pass compliance reviews in days instead of months.',
+        paragraphs: [
+          'Federal chief information security officers are revamping the Authority to Operate process to eliminate duplicative paperwork and speed up the deployment of secure web applications. Under new reciprocity guidelines, engineering teams that build on pre validated zero trust patterns and hardened cloud containers can inherit baseline security controls automatically.',
+          'Historically, preparing a complete authorization package required months of manual documentation even for lightweight portals. Today, automated security headers, strict role based access boundaries, and continuous audit logs provide live, machine readable proof that controls are operating as intended.',
+          'This modernization benefits both agency mission owners and the small technology contractors supporting them. When security is engineered directly into the application template from day one, compliance becomes a natural byproduct of good architecture rather than a roadblock to launch.'
+        ],
+        impactMetrics: {
+          costImpact: '-65% Compliance Prep Hours',
+          deploySpeed: 'Reciprocity-Ready Controls',
+          readinessScore: 'Automated Evidence Export'
+        },
+        actionPlaybook: [
+          'Standardize web deployments on hardened container templates with strict CSP and HSTS headers.',
+          'Maintain machine-readable control inheritance matrices for rapid ISSO review.',
+          'Provide continuous read-only telemetry views so auditors can verify posture in real time.'
+        ],
+        deliverableArtifact: 'Rapid ATO Control Inheritance & Telemetry Packet',
         time: 'LIVE • 3h ago',
+        readTime: '3 min read',
         pubTimestamp: Date.now() - 175 * 60000,
         agency: 'GSA / DoD',
         track: 'cyber',
         trackLabel: 'SECURITY & COMPLIANCE',
         url: 'https://federalnewsnetwork.com/',
         isKeyStory: false,
-        curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+        curatedBy: 'Executive Dispatch Desk'
       }
     ];
 
@@ -3048,16 +3251,24 @@ const server = http.createServer(async (req, res) => {
           sourceCode: feedMeta.code,
           accentColor: feedMeta.accent,
           title: synth.title,
-          mgcSummation: synth.mgcSummation,
-          mgcComment: synth.mgcComment,
+          dek: synth.dek,
+          summary: synth.summary,
+          mgcSummation: synth.summary,
+          pullQuote: synth.pullQuote,
+          mgcComment: synth.pullQuote,
+          paragraphs: synth.paragraphs,
+          impactMetrics: synth.impactMetrics,
+          actionPlaybook: synth.actionPlaybook,
+          deliverableArtifact: synth.deliverableArtifact,
           time: formatLiveRelTime(rawPub),
+          readTime: '3 min read',
           pubTimestamp,
           agency: synth.agency,
           track: synth.track,
           trackLabel: synth.trackLabel,
           url: /^https?:\/\//i.test(rawLink) ? rawLink : feedMeta.homeUrl,
           isKeyStory: synth.score >= 6,
-          curatedBy: 'MGC Cloud Briefing Agent (AI Studio)'
+          curatedBy: 'Executive Dispatch Desk'
         });
         idx++;
       }
@@ -3302,9 +3513,12 @@ const server = http.createServer(async (req, res) => {
       const resolvedTrackLabel = trackLabels[track] || 'All Executive Briefings (MGC & F.I.X)';
       const deliveryId = 'MGC-DLV-' + Date.now().toString(36).toUpperCase().slice(-6);
 
-      const digestLines = curatedSelection.map((it, idx) =>
-        `${idx + 1}. [${it.source}] ${it.title}\n   MGC Summary: ${it.mgcSummation}\n   ${it.mgcComment}\n   Source: ${it.url}`
-      ).join('\n\n');
+      const digestLines = curatedSelection.map((it, idx) => {
+        const steps = Array.isArray(it.actionPlaybook) && it.actionPlaybook.length
+          ? '\n   Action Playbook:\n' + it.actionPlaybook.map((st, sIdx) => `     ${sIdx + 1}) ${st}`).join('\n')
+          : '';
+        return `${idx + 1}. [${it.source}] ${it.title}\n   ${it.summary || it.mgcSummation}\n   “${it.pullQuote || it.mgcComment}”${steps}\n   Deliverable: ${it.deliverableArtifact || 'Executive Dispatch Packet'}\n   Source: ${it.url}`;
+      }).join('\n\n');
 
       const deliveryPacket = {
         receiptId: deliveryId,
@@ -3318,21 +3532,26 @@ const server = http.createServer(async (req, res) => {
         smsOptIn,
         smsGatewayAddress,
         deliveredAt: now(),
-        subject: `MGC Executive Briefing [${resolvedTrackLabel}] for ${name}`,
+        subject: `Executive Dispatch [${resolvedTrackLabel}] for ${name}`,
         curatedArticles: curatedSelection.map(it => ({
           id: it.id,
           source: it.source,
           sourceCode: it.sourceCode,
           title: it.title,
-          mgcSummation: it.mgcSummation,
-          mgcComment: it.mgcComment,
+          dek: it.dek,
+          summary: it.summary || it.mgcSummation,
+          pullQuote: it.pullQuote || it.mgcComment,
+          paragraphs: it.paragraphs || [],
+          impactMetrics: it.impactMetrics || null,
+          actionPlaybook: it.actionPlaybook || [],
+          deliverableArtifact: it.deliverableArtifact || 'Executive Dispatch Packet',
           trackLabel: it.trackLabel,
           url: it.url
         })),
-        plainTextDigest: `Hello ${name},\n\nHere is your MGC Executive Briefing (${resolvedTrackLabel}):\n\n${digestLines}\n\nMilton Group Concepts LLC (SDVOSB) · https://miltongroupsecurity.org/newsletter`,
+        plainTextDigest: `Hello ${name},\n\nHere is your Executive Dispatch (${resolvedTrackLabel}):\n\n${digestLines}\n\nMilton Group Concepts LLC (SDVOSB) · https://miltongroupsecurity.org/newsletter`,
         smsDigestText: curatedSelection[0]
-          ? `MGC Briefing (${resolvedTrackLabel}): ${curatedSelection[0].title} - ${curatedSelection[0].mgcComment}`
-          : 'MGC Briefing subscription confirmed.'
+          ? `Executive Dispatch (${resolvedTrackLabel}): ${curatedSelection[0].title} - ${curatedSelection[0].pullQuote || curatedSelection[0].mgcComment}`
+          : 'Executive Dispatch subscription confirmed.'
       };
 
       S.newsletter.distributions.unshift({
@@ -7202,7 +7421,7 @@ const server = http.createServer(async (req, res) => {
 
     // Enforce Mobile-Only Minimalist Control & Workflow Experience AFTER all authentication & RBAC gates pass
     const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
-    const isStandaloneMobilePage = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html' || pathname === '/newsletter' || pathname === '/newsletter.html' || pathname === '/apps' || pathname === '/saas-apps-and-lms-showcase.html' || baseName === 'access-admin.html' || baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html' || parsedUrl.searchParams.get('onboard') === '1';
+    const isStandaloneMobilePage = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html' || pathname === '/newsletter' || pathname === '/newsletter.html' || pathname === '/briefing-reader' || pathname === '/briefing-reader.html' || pathname === '/apps' || pathname === '/saas-apps-and-lms-showcase.html' || baseName === 'access-admin.html' || baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html' || parsedUrl.searchParams.get('onboard') === '1';
     if (isHtmlRoute && !isStandaloneMobilePage && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
       cleanRel = 'mobile-control.html';
     }

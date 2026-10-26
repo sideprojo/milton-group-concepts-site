@@ -701,8 +701,24 @@
           </div>
         </div>
 
-        <!-- App 7: Custom Project & Client Turnkey Forge (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
-        <div class="app-card" data-app-id="client-turnkey-forge" style="grid-column: 1 / -1;">
+        <!-- App 7: Project EL CID — Códice Español (5-Stage Paginated AI Reader & Fluency Lab) -->
+        <div class="app-card" data-app-id="el-cid-codex-os" style="border-color:rgba(16,185,129,0.55);box-shadow:0 18px 45px -12px rgba(16,185,129,0.28);">
+          <div>
+            <span class="app-tag" style="background:rgba(16,185,129,0.2);color:#34d399;">⚔️ NEW • CID-01 • 5-STAGE PAGINATED CODEX</span>
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:600;">Project EL CID — Códice Español (AI Reader &amp; Oral Lab)</h3>
+            <p style="font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:0 0 14px;">
+              5-Stage Spanish Immersion Codex fusing Kindle/Scribd book reading, Rosetta TruAccent speech, Pimsleur 3s recall, Mavis Beacon WPM, and Canvas SCORM 2004.
+            </p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="projects/el-cid-codex-os/index.html" class="btn-gold">Launch EL CID Codex</a>
+            <button class="btn-primary" onclick="selectAppWorkbench('elcid'); switchShowcaseCityscape('mgc-emerald');">Inline Codex Preview</button>
+            <a href="projects/el-cid-codex-os/exports/saos_scorm_2004_4th_edition.zip" download class="btn-secondary">Download .ZIP</a>
+          </div>
+        </div>
+
+        <!-- App 8: Custom Project & Client Turnkey Forge (miltongroupsecurity.org Cityscape + F.I.X. Colors) -->
+        <div class="app-card" data-app-id="client-turnkey-forge" style="grid-column: span 2;">
           <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;">
             <div style="max-width:780px;">
               <h3 style="margin:0 0 6px;font-size:17px;font-weight:600;">Client Turnkey Forge &amp; Custom Project Experience Builder (Includes Sterling Auto Repair OS)</h3>
@@ -736,6 +752,7 @@
             <button class="btn-secondary" onclick="selectAppWorkbench('eve')">EVE-NG Cast &amp; Packet App</button>
             <button class="btn-secondary" onclick="selectAppWorkbench('contracts')">Tailored Job/Contract App</button>
             <button class="btn-secondary" onclick="selectAppWorkbench('cli')">Ghost-CLI Auto-Grader</button>
+            <button class="btn-primary" onclick="selectAppWorkbench('elcid')">⚔️ EL CID Codex App</button>
           </div>
         </div>
 
@@ -930,6 +947,25 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
               <button class="btn-secondary" onclick="runGhostCmd('SELECT contract_id, agency, obligation FROM sdvosb_awards WHERE state = \'VA\' ORDER BY obligation DESC;')">SDC200: 3NF SQL Query</button>
             </div>
             <pre id="ghost-cli-out" style="margin:0;padding:12px;background:#091024;border-radius:12px;color:#34d399;font-size:12px;min-height:90px;">root@mgc-netprism:~# Ready for kinetic command execution...</pre>
+          </div>
+        </div>
+
+        <!-- WORKBENCH MODE E: PROJECT EL CID — CÓDICE ESPAÑOL (5-STAGE PAGINATED READER) -->
+        <div id="wb-pane-elcid" style="display:none;">
+          <div style="background:#050b18;border:1px solid rgba(16,185,129,0.5);border-radius:16px;padding:18px;">
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;">
+              <div>
+                <span style="font-size:11px;font-weight:800;color:#34d399;text-transform:uppercase;">⚔️ CID-01 • 5-Stage Paginated Spanish Immersion Codex</span>
+                <p style="margin:4px 0 0;font-size:12.5px;color:#cbd5e1;">
+                  1. 🏛️ Módulos Canvas → 2. 📖 Sala de Lectura (Página por Párrafo) → 3. 📑 Síntesis y Glosario → 4. 🎙️ Laboratorio Oral (TruAccent + Pimsleur 3s + Mavis Beacon) → 5. 📊 Telemetría SCORM 2004
+                </p>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="projects/el-cid-codex-os/index.html" target="_blank" class="btn-gold">Open Full Screen EL CID Codex ↗</a>
+                <button class="btn-primary" onclick="awardUserXP(250, 'Completed EL CID Codex Stage Preview')">+250 XP Codex Check-In</button>
+              </div>
+            </div>
+            <iframe src="projects/el-cid-codex-os/index.html" title="Project EL CID — Códice Español" style="width:100%;height:640px;border:1px solid rgba(16,185,129,0.35);border-radius:14px;background:#040814;"></iframe>
           </div>
         </div>
       </div>
@@ -1410,14 +1446,16 @@ Neighbor ID     Pri   State           Dead Time   Address         Interface
     }
 
     function selectAppWorkbench(mode) {
-      ['traffic', 'eve', 'contracts', 'cli'].forEach(m => {
-        document.getElementById('wb-pane-' + m).style.display = (m === mode) ? 'block' : 'none';
+      ['traffic', 'eve', 'contracts', 'cli', 'elcid'].forEach(m => {
+        const el = document.getElementById('wb-pane-' + m);
+        if (el) el.style.display = (m === mode) ? 'block' : 'none';
       });
       const titles = {
         traffic: 'Site Architecture, Current vs. Expected Traffic & Subscriber Revenue Simulator',
         eve: 'Local EVE-NG Network Studio, .cast Terminal Replay & Live Packet Animator',
         contracts: 'Tailored Job, Federal Contract (SDVOSB) & Commercial Build Matchmaker',
-        cli: 'Ghost-CLI Kinetic Muscle-Memory Trainer & Ansible Playbook Auto-Grader'
+        cli: 'Ghost-CLI Kinetic Muscle-Memory Trainer & Ansible Playbook Auto-Grader',
+        elcid: 'Project EL CID (CID-01) — 5-Stage Paginated Spanish Immersion Codex & Oral Fluency Lab'
       };
       document.getElementById('wb-title').textContent = titles[mode] || titles.traffic;
       if (userCredits > 0) {

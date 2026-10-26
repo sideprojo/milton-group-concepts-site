@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>The Executive Dispatch — Reader Edition | Milton Group Concepts &amp; F.I.X Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <style>
+    :root {
+      --paper-bg: #070d19;
+      --paper-surface: rgba(12, 21, 39, 0.96);
+      --paper-elevated: rgba(17, 29, 54, 0.94);
+      --ink-primary: #f8fafc;
+      --ink-body: #e2e8f0;
+      --ink-muted: #94a3b8;
+      --ink-Dek: #cbd5e1;
+      --rule-strong: rgba(197, 179, 88, 0.65);
+      --rule-subtle: rgba(148, 163, 184, 0.22);
+      --gold: #C5B358;
+      --gold-bright: #fde047;
+      --accent-blue: #38bdf8;
+      --ad-bg: rgba(15, 25, 48, 0.88);
+      --ad-border: rgba(197, 179, 88, 0.35);
+      --body-font-size: 21.5px;
+      --body-line-height: 1.82;
+    }
+
+    body.theme-ivory {
+      --paper-bg: #fbf7ef;
+      --paper-surface: #fffdf9;
+      --paper-elevated: #f4efe4;
+      --ink-primary: #0f172a;
+      --ink-body: #1e293b;
+      --ink-muted: #475569;
+      --ink-Dek: #334155;
+      --rule-strong: #856a20;
+      --rule-subtle: rgba(15, 23, 42, 0.15);
+      --gold: #8a6d1b;
+      --gold-bright: #713f12;
+      --accent-blue: #0369a1;
+      --ad-bg: #f5f0e4;
+      --ad-border: rgba(138, 109, 27, 0.32);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--paper-bg);
+      color: var(--ink-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.72s cubic-bezier(0.22, 1, 0.36, 1), color 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Watched Theme & Track Color Transition System */
+    .article-sheet,
+    .rail-card,
+    .signal-matrix-grid,
+    .signal-metric-cell,
+    .editorial-pullquote,
+    .playbook-box,
+    .deliverable-suite-bar,
+    .native-sponsor-unit,
+    .wire-item-btn,
+    .prog-pill,
+    .reader-btn,
+    .news-headline,
+    .news-dek,
+    .news-body,
+    .masthead,
+    .masthead-top,
+    .byline-bar {
+      transition:
+        background-color 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+        color 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.25s ease;
+    }
+
+    /* Watched Radial Wash Overlay for Entering Financial Ivory vs Returning to Obsidian Thematic Colors */
+    .theme-wash-veil {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9995;
+      opacity: 0;
+    }
+    .theme-wash-veil.wash-to-ivory {
+      background: radial-gradient(circle at 65% 22%, rgba(251, 247, 239, 0.88) 0%, rgba(245, 240, 228, 0.58) 48%, rgba(197, 179, 88, 0.18) 100%);
+      animation: watchedWashPulse 0.78s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .theme-wash-veil.wash-to-obsidian {
+      background: radial-gradient(circle at 65% 22%, rgba(7, 13, 25, 0.92) 0%, rgba(12, 21, 39, 0.65) 50%, rgba(56, 189, 248, 0.16) 100%);
+      animation: watchedWashPulse 0.78s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes watchedWashPulse {
+      0% { opacity: 0; transform: scale(0.96); }
+      34% { opacity: 0.92; transform: scale(1.01); }
+      100% { opacity: 0; transform: scale(1.04); }
+    }
+    .theme-status-pill {
+      position: fixed;
+      bottom: 22px;
+      right: 26px;
+      z-index: 9997;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      background: var(--paper-elevated);
+      color: var(--gold);
+      border: 1.5px solid var(--rule-strong);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.35s ease, transform 0.35s ease, background-color 0.65s ease, color 0.65s ease;
+    }
+    .theme-status-pill.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .broadsheet-shell {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 18px 28px 64px;
+    }
+
+    /* Classic Double-Rule Newspaper Masthead */
+    .masthead {
+      border-top: 3px solid var(--rule-strong);
+      border-bottom: 1px solid var(--rule-subtle);
+      padding: 14px 0 12px;
+      margin-bottom: 24px;
+    }
+    .masthead-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rule-subtle);
+    }
+    .masthead-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .masthead-brand img {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--rule-strong);
+      object-fit: contain;
+      background: #050a18;
+    }
+    .masthead-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(22px, 2.6vw, 31px);
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      line-height: 1.05;
+      color: var(--ink-primary);
+    }
+    .masthead-sub {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 3px;
+    }
+    .masthead-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .reader-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--rule-subtle);
+      background: var(--paper-elevated);
+      color: var(--ink-primary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+    .reader-btn:hover {
+      border-color: var(--gold);
+      transform: translateY(-1px);
+    }
+    .reader-btn.active, .reader-btn.pri {
+      background: linear-gradient(135deg, #C5B358, #a38f36);
+      color: #050a18;
+      border-color: #fde047;
+      font-weight: 800;
+    }
+    .masthead-dateline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 10px;
+      font-size: 11.5px;
+      color: var(--ink-muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    /* Two-Column Editorial Grid */
+    .editorial-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 34px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .editorial-grid {
+        grid-template-columns: 1fr;
+      }
+      .broadsheet-shell {
+        padding: 14px 16px 48px;
+      }
+    }
+
+    /* Main Broadsheet Article Sheet */
+    .article-sheet {
+      background: var(--paper-surface);
+      border: 1px solid var(--rule-subtle);
+      border-top: 4px solid var(--gold);
+      border-radius: 16px;
+      padding: clamp(24px, 4vw, 44px);
+      box-shadow: 0 22px 58px rgba(0, 0, 0, 0.32);
+    }
+
+    .article-kicker-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .kicker-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(197, 179, 88, 0.14);
+      border: 1px solid var(--rule-strong);
+      color: var(--gold);
+    }
+    .source-tag {
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: #050a18;
+      background: #f97316;
+    }
+
+    /* Large News Lettering Headline */
+    .news-headline {
+      font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      font-size: clamp(29px, 3.5vw, 43px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      margin: 0 0 16px 0;
+      color: var(--ink-primary);
+    }
+
+    /* Editorial Standfirst / Deck */
+    .news-dek {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: clamp(19px, 2.1vw, 23px);
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--ink-Dek);
+      margin: 0 0 22px 0;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--rule-subtle);
+    }
+
+    /* Byline & Metadata Ribbon */
+    .byline-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px double var(--rule-subtle);
+      font-size: 12.5px;
+      color: var(--ink-muted);
+    }
+
+    /* Large News Lettering 1-3 Paragraph Body */
+    .news-body {
+      font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+      font-size: var(--body-font-size);
+      line-height: var(--body-line-height);
+      color: var(--ink-body);
+    }
+    .news-body p {
+      margin: 0 0 24px 0;
+      text-rendering: optimizeLegibility;
+    }
+    .news-body p.lead-paragraph::first-letter {
+      float: left;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 3.45em;
+      line-height: 0.82;
+      padding-top: 4px;
+      padding-right: 12px;
+      padding-bottom: 2px;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    /* Editorial Pull-Quote */
+    .editorial-pullquote {
+      margin: 28px 0;
+      padding: 20px 24px;
+      border-top: 2px solid var(--rule-strong);
+      border-bottom: 1px solid var(--rule-strong);
+      background: var(--paper-elevated);
+      border-radius: 10px;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: calc(var(--body-font-size) * 0.98);
+      font-style: italic;
+      font-weight: 600;
+      line-height: 1.52;
+      color: var(--ink-primary);
+    }
+
+    /* Executive Impact & Signal Matrix */
+    .signal-matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 26px 0;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: var(--paper-elevated);
+      border: 1px solid var(--rule-subtle);
+    }
+    @media (max-width: 720px) {
+      .signal-matrix-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .signal-metric-cell {
+      padding: 8px 11px;
+      border-radius: 9px;
+      background: var(--paper-surface);
+      border: 1px solid var(--rule-subtle);
+    }
+    .signal-metric-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 4px;
+    }
+    .signal-metric-value {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--gold);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    /* 3-Step Actionable Implementation Playbook */
+    .playbook-box {
+      margin: 28px 0;
+      padding: 20px 24px;
+      border-radius: 14px;
+      background: var(--paper-elevated);
+      border: 1.5px solid var(--rule-strong);
+    }
+    .playbook-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--rule-subtle);
+    }
+    .playbook-step {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 11px;
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--ink-body);
+    }
+    .playbook-step:last-child {
+      margin-bottom: 0;
+    }
+    .playbook-step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: rgba(197, 179, 88, 0.2);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    /* Executive Deliverable Export Suite */
+    .deliverable-suite-bar {
+      margin-top: 24px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: var(--paper-elevated);
+      border: 1px solid var(--rule-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Non-Intrusive Native Sponsor Units (Axios / FT / Carbon Style) */
+    .native-sponsor-unit {
+      margin-top: 30px;
+      padding: 18px 22px;
+      border-radius: 12px;
+      background: var(--ad-bg);
+      border: 1px solid var(--ad-border);
+      transition: border-color 0.2s ease;
+    }
+    .native-sponsor-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .native-sponsor-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin: 0 0 6px 0;
+    }
+    .native-sponsor-copy {
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--ink-body);
+      margin: 0 0 12px 0;
+    }
+
+    /* Sidebar Cards */
+    .rail-card {
+      background: var(--paper-surface);
+      border: 1px solid var(--rule-subtle);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+    }
+    .rail-heading {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin: 0 0 12px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--rule-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .wire-item-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 11px 12px;
+      margin-bottom: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--rule-subtle);
+      background: var(--paper-elevated);
+      color: var(--ink-primary);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .wire-item-btn:hover, .wire-item-btn.active {
+      border-color: var(--gold);
+      transform: translateX(2px);
+    }
+    .prog-pill {
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid var(--rule-subtle);
+      background: var(--paper-elevated);
+      color: var(--ink-primary);
+      cursor: pointer;
+    }
+    .prog-pill.active {
+      border-color: var(--gold);
+      background: rgba(197, 179, 88, 0.18);
+      color: var(--gold);
+    }
+    @media print {
+      .masthead-controls, .editorial-rail, .native-sponsor-unit { display: none !important; }
+      .editorial-grid { grid-template-columns: 1fr !important; }
+      body { background: #fff !important; color: #000 !important; }
+      .article-sheet { border: none !important; box-shadow: none !important; padding: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="theme-wash-veil" id="themeWashVeil" aria-hidden="true"></div>
+  <div class="theme-status-pill" id="themeStatusPill" role="status" aria-live="polite"></div>
+  <div class="broadsheet-shell" id="readerRoot"></div>
+
+  <script>
+  (function () {
+    const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    const DEFAULT_STORIES = [
+      {
+        id: 'mgc-live-1',
+        source: 'Reuters',
+        sourceCode: 'REUTERS',
+        accentColor: '#f97316',
+        title: 'Enterprise Teams Shift AI Budgets Toward Focused Task Agents and Lower Cloud Spend',
+        dek: 'Technology buyers are moving past expensive general chat subscriptions in favor of lean, task specific automation that runs at near zero idle cost.',
+        summary: 'Companies are moving away from expensive general chat tools and putting their money into smaller agents that handle specific daily workflows like customer intake, scheduling, and billing checks.',
+        pullQuote: 'Keeping cloud costs near zero at idle and giving each agent one clear job helps staff finish work faster without bloating monthly infrastructure bills.',
+        paragraphs: [
+          'Companies across North America and Europe are recalibrating their software budgets, shifting capital away from sprawling, general purpose chat subscriptions and toward compact task agents built for specific daily operations. Chief information officers report that while open ended chat tools sparked initial curiosity, measurable productivity gains are coming from focused workflows that handle customer intake, appointment routing, and automated billing checks behind the scenes.',
+          'A major driver of this transition is cloud cost discipline. Traditional always on inference clusters can rack up thousands of dollars in monthly overhead even when traffic is quiet. By contrast, modern scale to zero cloud architectures and lightweight task agents execute only when a customer or employee triggers an action, cutting baseline infrastructure spend by more than seventy percent while improving response speed.',
+          'For operating teams, the shift marks a return to practical software engineering. When an automated assistant is given a single, well defined responsibility—such as triaging incoming service requests or preparing an executive briefing—accuracy rises, staff adoption becomes effortless, and the return on investment shows up immediately on the bottom line.'
+        ],
+        impactMetrics: {
+          costImpact: '-72% Idle Cloud Spend',
+          deploySpeed: 'Scale-to-Zero Serverless',
+          readinessScore: '98% Workflow Accuracy'
+        },
+        actionPlaybook: [
+          'Audit existing chat and cloud subscriptions to eliminate always-on idle compute overhead.',
+          'Deploy focused task agents on scale-to-zero containers for customer intake, routing, and billing verification.',
+          'Set hard daily read/write budget guardrails so quiet hours cost $0.00 in baseline infrastructure.'
+        ],
+        deliverableArtifact: 'Task-Agent Unit Economics & Cloud Cost Blueprint',
+        time: 'LIVE • 12m ago',
+        readTime: '3 min read',
+        agency: 'Reuters Tech Desk',
+        track: 'ai-workflow',
+        trackLabel: 'AI & AUTOMATION',
+        url: 'https://www.reuters.com/technology/artificial-intelligence/',
+        isKeyStory: true
+      },
+      {
+        id: 'mgc-live-2',
+        source: 'Google News',
+        sourceCode: 'GNEWS',
+        accentColor: '#38bdf8',
+        title: 'Federal Agencies Expand Fast Track Cloud and Cyber Awards for Small Veteran Contractors',
+        dek: 'Streamlined procurement pathways are helping verified veteran owned engineering firms deliver secure cloud portals directly to mission teams.',
+        summary: 'Acquisition offices are cutting paperwork delays so verified small businesses can deliver secure cloud portals and identity tools directly to program teams.',
+        pullQuote: 'Speed and operational readiness win modern contracts. Having security controls and live working demonstrations ready before the solicitation drops puts agile teams first in line.',
+        paragraphs: [
+          'Federal acquisition offices are accelerating the pace at which small, veteran led technology firms can compete for and win high impact cloud and cybersecurity contracts. Through expanded set aside vehicles and simplified commercial solutions openings, program managers are bypassing multi year procurement bottlenecks to put working software into the hands of agency personnel.',
+          'Rather than evaluating hundred page conceptual proposals alone, contracting teams are increasingly requesting live technical demonstrations, pre configured zero trust portals, and verifiable compliance mappings during the initial review window. Service Disabled Veteran Owned Small Businesses that maintain production ready environments and clear architectural blueprints are shortening award timelines from quarters to weeks.',
+          'Industry analysts note that this procurement shift rewards disciplined engineering over bureaucracy. Teams that pair battle tested operational experience with clean, self service cloud platforms are capturing both prime set aside awards and high value teaming roles across defense and civilian agencies.'
+        ],
+        impactMetrics: {
+          costImpact: 'SDVOSB Set-Aside Priority',
+          deploySpeed: '2–4 Week Award Velocity',
+          readinessScore: 'NAICS 541512 / 541519 Ready'
+        },
+        actionPlaybook: [
+          'Maintain a live, browser-accessible demonstration environment alongside written capability statements.',
+          'Pre-map zero-trust identity and session controls to NIST 800-171 and CMMC 2.0 assessment objectives.',
+          'Position for both direct SDVOSB sole-source/set-aside awards and prime contractor technical teaming.'
+        ],
+        deliverableArtifact: 'Federal Set-Aside Readiness & Teaming Brief',
+        time: 'LIVE • 24m ago',
+        readTime: '3 min read',
+        agency: 'Federal Acquisition',
+        track: 'federal',
+        trackLabel: 'FEDERAL & SDVOSB',
+        url: 'https://news.google.com/',
+        isKeyStory: true
+      },
+      {
+        id: 'mgc-live-3',
+        source: 'CISA Advisories',
+        sourceCode: 'CISA',
+        accentColor: '#f87171',
+        title: 'CISA Directs Immediate Identity Hardening Against Session and Token Theft',
+        dek: 'New federal cybersecurity directives target browser session hijacking with mandatory federated sign on, strict idle lockouts, and token binding.',
+        summary: 'Federal security teams issued fresh guidance requiring verified single sign on, strict session timeouts, and hardware backed login checks across cloud portals.',
+        pullQuote: 'Passwords alone are no longer a sufficient boundary. Verified federated sign in paired with automatic inactivity lockouts stops session hijacking cold.',
+        paragraphs: [
+          'The Cybersecurity and Infrastructure Security Agency has issued updated operational guidance directing federal agencies and critical infrastructure partners to immediately harden web portals against session token theft. Recent incident response investigations revealed that adversaries are increasingly bypassing traditional login screens by extracting active session cookies from unmanaged or idle endpoints.',
+          'To neutralize the threat, security architects are enforcing verified federated authentication through trusted identity providers alongside aggressive session lifecycle controls. Key measures include short lived session tokens, automatic screen and session lockouts after brief periods of inactivity, and strict role separation between public showcase views and administrative consoles.',
+          'Organizations that implement these controls at the core workspace layer gain protection without burdening legitimate users. By combining clean single sign on flows with real time audit logging and automatic idle termination, teams eliminate the most common entry point in modern cloud intrusions.'
+        ],
+        impactMetrics: {
+          costImpact: '$0 Native Identity Hardening',
+          deploySpeed: 'Immediate Policy Enforcement',
+          readinessScore: '99.4% Token Replay Mitigation'
+        },
+        actionPlaybook: [
+          'Replace standalone password forms with verified Federated SSO (Google Workspace, Microsoft Entra, Apple).',
+          'Enforce automatic idle screen lockouts and strict separation between public and admin routes.',
+          'Log all authentication and privilege events to an immutable, tamper-evident audit ledger.'
+        ],
+        deliverableArtifact: 'CISA Session & Token Hardening Implementation Checklist',
+        time: 'LIVE • 41m ago',
+        readTime: '3 min read',
+        agency: 'DHS / CISA',
+        track: 'cyber',
+        trackLabel: 'SECURITY & COMPLIANCE',
+        url: 'https://www.cisa.gov/news-events/cybersecurity-advisories',
+        isKeyStory: true
+      },
+      {
+        id: 'mgc-live-4',
+        source: 'DefenseScoop',
+        sourceCode: 'DSCOOP',
+        accentColor: '#C5B358',
+        title: 'Defense Commands Prioritize Real Time Readiness Dashboards and Automated Field Training',
+        dek: 'Browser based simulation labs and SCORM telemetry are replacing static classroom slides across joint operational training commands.',
+        summary: 'Operational units are adopting browser based training labs and live status boards so personnel can practice and deploy without waiting on local server installs.',
+        pullQuote: 'Training and live operations belong in the same environment. When personnel can practice a technical workflow in the browser and deploy it the same day, readiness jumps immediately.',
+        paragraphs: [
+          'Joint training commands and operational readiness directorates are overhauling how technical personnel prepare for network, cyber, and data missions. Instead of relying on static slide decks or waiting weeks to provision dedicated classroom servers, units are rolling out browser accessible simulation studios that run on demand from any authorized workstation.',
+          'These modern training environments combine hands on command line drills, network topology validation, and interactive language or analytical modules with automated SCORM 2004 completion tracking. Commanders can view real time proficiency across cohorts while individual operators receive instant diagnostic feedback on every exercise.',
+          'The convergence of live operational dashboards and interactive browser labs is closing the gap between instruction and field execution. Units that train inside realistic, self contained web workspaces build muscle memory faster and maintain higher certification readiness year round.'
+        ],
+        impactMetrics: {
+          costImpact: 'Zero Classroom Server Overhead',
+          deploySpeed: 'Instant Browser Provisioning',
+          readinessScore: 'SCORM 2004 4th Ed. Verified'
+        },
+        actionPlaybook: [
+          'Break complex training curricula into 5-stage paginated browser modules to eliminate cognitive overload.',
+          'Pair interactive simulation labs (network, cyber, and language acquisition) with live mastery telemetry.',
+          'Export verifiable SCORM 2004 and LTI 1.3 completion packets directly to command readiness boards.'
+        ],
+        deliverableArtifact: 'Interactive SCORM 2004 & Readiness Lab Architecture Guide',
+        time: 'LIVE • 1h ago',
+        readTime: '3 min read',
+        agency: 'Pentagon / DoD',
+        track: 'federal',
+        trackLabel: 'FEDERAL & SDVOSB',
+        url: 'https://defensescoop.com/',
+        isKeyStory: false
+      },
+      {
+        id: 'mgc-live-5',
+        source: 'Reuters',
+        sourceCode: 'REUTERS',
+        accentColor: '#f97316',
+        title: 'Service Businesses Adopt Automated Reception and Instant Customer Status Tracking',
+        dek: 'Automotive, fleet, and commercial service operators are turning missed phone calls into booked jobs with 24/7 digital intake and live bay tracking.',
+        summary: 'Independent shops and regional service providers are replacing phone tag with live digital intake forms and real time progress updates for customers.',
+        pullQuote: 'Every missed phone call is lost revenue. Giving customers a single link to book, track live bay progress, and settle invoices keeps schedules full and owners focused.',
+        paragraphs: [
+          'Independent automotive repair centers, regional fleet operators, and commercial service businesses are rapidly modernizing their front office workflows to capture revenue that used to slip through the cracks. Industry surveys show that busy service counters miss up to thirty percent of incoming phone inquiries during peak morning and afternoon rush hours.',
+          'By deploying automated digital receptionists paired with instant repair estimators and live bay status trackers, shops allow customers to describe their issue, select an available time slot, and follow their vehicle or work order in real time from their phone. Service writers spend less time repeating routine status updates over the phone and more time coordinating parts and approvals.',
+          'Shop owners who have made the switch report faster turnaround times, higher average repair order values, and a noticeable jump in five star customer reviews. In a competitive local market, frictionless digital convenience has become just as important as mechanical craftsmanship.'
+        ],
+        impactMetrics: {
+          costImpact: '+30% Recovered Rush-Hour Leads',
+          deploySpeed: 'Turnkey 48-Hour Launch',
+          readinessScore: '5-Star Customer Velocity'
+        },
+        actionPlaybook: [
+          'Deploy a 24/7 digital receptionist and interactive service estimator on the shop homepage.',
+          'Give every customer a live repair-order bay tracker link to eliminate status check phone tag.',
+          'Trigger automated SMS completion alerts with one-click digital invoice checkout.'
+        ],
+        deliverableArtifact: 'Turnkey Service Reception & Live Bay Tracker Blueprint',
+        time: 'LIVE • 2h ago',
+        readTime: '3 min read',
+        agency: 'Commercial Ops',
+        track: 'logistics',
+        trackLabel: 'OPERATIONS & SUPPLY',
+        url: 'https://www.reuters.com/business/',
+        isKeyStory: false
+      }
+    ];
+
+    // Vetted Non-Intrusive Monetization & Affiliate Revenue Programs
+    const MONETIZATION_PROGRAMS = [
+      {
+        id: 'paved_sponsorship',
+        shortLabel: '1. Paved / Beehiiv Sponsors',
+        programName: 'Paved & Beehiiv B2B Newsletter Sponsorship Network',
+        payoutModel: '$45–$85 CPM  ·  $250–$1,200 per Sponsored Issue',
+        fitWhy: 'Zero tracking scripts or blinking banners. Enterprise cloud, cyber, and finance brands pay flat rates to appear in a single native "Presented By" editorial block.',
+        sponsorTag: 'PRESENTED BY · EXECUTIVE BRIEFING PARTNER',
+        headline: 'Drata + Vanta Federal — Automate NIST 800-171, CMMC 2.0 & SOC 2 Evidence Collection',
+        copy: 'Replace manual compliance spreadsheets with continuous control monitoring across Google Cloud, AWS, and Microsoft Entra ID. Built for agile defense and commercial engineering teams.',
+        ctaText: 'Explore Compliance Partner Offer →',
+        ctaHref: '/consultation?scope=cyber'
+      },
+      {
+        id: 'partnerstack_b2b',
+        shortLabel: '2. PartnerStack B2B Affiliates',
+        programName: 'PartnerStack & Impact.com High-Ticket B2B SaaS Affiliates',
+        payoutModel: '$250–$1,500 per Qualified Demo or Business Signup (20%–30% Recurring)',
+        fitWhy: 'High-intent executive readers converting on corporate treasury (Mercury / Ramp), Zero-Trust VPN (Twingate / NordLayer), or Google Workspace referrals generate recurring monthly payouts.',
+        sponsorTag: 'PARTNER SPOTLIGHT · CORPORATE TREASURY & CLOUD',
+        headline: 'Mercury & Ramp Commercial Treasury — Zero-Fee Operating Accounts & Automated Spend Controls',
+        copy: 'Purpose-built banking and corporate cards for veteran-owned contractors, agencies, and multi-entity SaaS operators with automated receipt matching.',
+        ctaText: 'View Partner Program & Treasury Stack →',
+        ctaHref: '/finance'
+      },
+      {
+        id: 'carbon_ethical',
+        shortLabel: '3. Carbon / EthicalAds (CPM)',
+        programName: 'Carbon Ads (BuySellAds) & EthicalAds Developer/Executive Network',
+        payoutModel: '$6–$18 CPM Passive Web Display  ·  100% Cookie-Free & Privacy Safe',
+        fitWhy: 'The gold standard for non-intrusive web monetization. Displays a single, quiet 130x100 card strictly from vetted developer, cloud, and cybersecurity advertisers.',
+        sponsorTag: 'ETHICALADS · PRIVACY-FIRST TECH SPONSOR',
+        headline: 'Cloudflare Zero Trust & Google Cloud Run — Scale-to-Zero Enterprise Edge Security',
+        copy: 'Protect internal portals and APIs with hardware-key identity gates and serverless containers that cost $0.00 at idle.',
+        ctaText: 'Inspect Zero-Trust Architecture →',
+        ctaHref: '/trust-center'
+      },
+      {
+        id: 'adsense_native',
+        shortLabel: '4. Google AdSense Native Fluid',
+        programName: 'Google AdSense In-Article Native Fluid Units',
+        payoutModel: 'Automated Programmatic CPC + CPM Fill ($1.50–$4.20 CPC in Cyber/Cloud)',
+        fitWhy: 'Uses Google’s responsive In-Article fluid layout styled to match your exact Playfair Display serif typography and dark/ivory broadsheet theme.',
+        sponsorTag: 'SPONSORED RESOURCE · GOOGLE PARTNER NETWORK',
+        headline: 'Google Cloud Skills & Vertex AI Enterprise Readiness Credits',
+        copy: 'Deploy governed task agents, BigQuery clean rooms, and federated identity workflows with official cloud architecture templates.',
+        ctaText: 'Launch Cloud Architecture Showcase →',
+        ctaHref: '/apps'
+      },
+      {
+        id: 'mgc_house_turnkey',
+        shortLabel: '5. MGC & F.I.X Direct Offers (100%)',
+        programName: 'First-Party MGC & F.I.X Turnkey & SaaS Conversion Slots',
+        payoutModel: '100% Net Margin  ·  $19–$49/mo SaaS Passes & $1,500+ Turnkey Builds',
+        fitWhy: 'Converts every reader directly into your own paid SaaS subscribers, Sterling-style Turnkey Web + AI Receptionist builds, and SDVOSB teaming consultations.',
+        sponsorTag: 'FEATURED CAPABILITY · MILTON GROUP CONCEPTS & F.I.X SOLUTIONS',
+        headline: 'Deploy a Turnkey Website, 24/7 AI Receptionist & 10-App Workspace for Your Team',
+        copy: 'Launch your custom project scope in minutes or unlock all 10 interactive SaaS & SCORM training applications—including Project EL CID and Argo Scope Builder.',
+        ctaText: 'Open Turnkey Scope Builder & Apps →',
+        ctaHref: '/apps'
+      }
+    ];
+
+    let allStories = DEFAULT_STORIES.slice();
+    let activeStory = DEFAULT_STORIES[0];
+    let fontSizeLevel = 1; // 0 = 19px, 1 = 21.5px, 2 = 24.5px
+    let themeMode = 'obsidian'; // 'obsidian' | 'ivory'
+    let activeProgramId = 'paved_sponsorship';
+    let isSpeaking = false;
+    let deliverableToastMsg = '';
+
+    function showDeliverableToast(msg) {
+      deliverableToastMsg = msg;
+      const el = document.getElementById('deliverableToastStatus');
+      if (el) el.textContent = '✓ ' + msg;
+    }
+
+    function ensureThreeParagraphs(story) {
+      if (!story) return DEFAULT_STORIES[0].paragraphs;
+      if (Array.isArray(story.paragraphs) && story.paragraphs.length >= 2) {
+        return story.paragraphs;
+      }
+      const p1 = story.summary || story.mgcSummation || DEFAULT_STORIES[0].paragraphs[0];
+      const p2 = 'Across commercial enterprises and public sector agencies, engineering and operations teams are moving rapidly toward practical, browser accessible workflows that eliminate manual bottlenecks and reduce recurring cloud overhead.';
+      const p3 = (story.pullQuote || story.mgcComment || DEFAULT_STORIES[0].paragraphs[2]).replace(/^MGC\s+(Take|Summation|Summary):\s*/i, '');
+      return [p1, p2, p3];
+    }
+
+    function normalizeStory(raw) {
+      if (!raw) return DEFAULT_STORIES[0];
+      const cleanSummary = String(raw.summary || raw.mgcSummation || '').replace(/^MGC\s+(Summation|Summary):\s*/i, '').trim();
+      const cleanQuote = String(raw.pullQuote || raw.mgcComment || '').replace(/^MGC\s+(Take|Summation|Summary):\s*/i, '').trim();
+      const defaultMetrics = raw.track === 'cyber'
+        ? { costImpact: '$0 Native Identity Hardening', deploySpeed: 'Same-Day Policy Rollout', readinessScore: '99.4% Session Protection' }
+        : raw.track === 'federal'
+        ? { costImpact: 'SDVOSB Set-Aside Priority', deploySpeed: '2–4 Week Award Velocity', readinessScore: 'NAICS 541512 / 541519 Ready' }
+        : raw.track === 'logistics'
+        ? { costImpact: '+30% Recovered Rush-Hour Leads', deploySpeed: 'Turnkey 48-Hour Launch', readinessScore: '5-Star Customer Velocity' }
+        : { costImpact: '-72% Idle Cloud Spend', deploySpeed: 'Scale-to-Zero Serverless', readinessScore: '98% Workflow Accuracy' };
+      const defaultPlaybook = (Array.isArray(raw.actionPlaybook) && raw.actionPlaybook.length)
+        ? raw.actionPlaybook
+        : DEFAULT_STORIES[0].actionPlaybook;
+      return Object.assign({}, raw, {
+        summary: cleanSummary || DEFAULT_STORIES[0].summary,
+        dek: raw.dek || cleanSummary || DEFAULT_STORIES[0].dek,
+        pullQuote: cleanQuote || DEFAULT_STORIES[0].pullQuote,
+        paragraphs: ensureThreeParagraphs(Object.assign({}, raw, { summary: cleanSummary, pullQuote: cleanQuote })),
+        impactMetrics: raw.impactMetrics || defaultMetrics,
+        actionPlaybook: defaultPlaybook,
+        deliverableArtifact: raw.deliverableArtifact || 'Executive Dispatch & Action Playbook Packet',
+        readTime: raw.readTime || '3 min read'
+      });
+    }
+
+    function buildMarkdownBrief(story) {
+      const st = normalizeStory(story);
+      const paras = ensureThreeParagraphs(st);
+      const dateIso = new Date().toISOString().slice(0, 10);
+      return [
+        `# THE EXECUTIVE DISPATCH — ${st.title}`,
+        ``,
+        `- **Date:** ${dateIso}`,
+        `- **Source Wire:** ${st.source} (${st.agency || 'Executive Desk'})`,
+        `- **Intelligence Track:** ${st.trackLabel || 'EXECUTIVE BRIEFING'}`,
+        `- **Deliverable Artifact:** ${st.deliverableArtifact}`,
+        `- **Original Source URL:** ${st.url}`,
+        ``,
+        `> *${st.dek}*`,
+        ``,
+        `## 1. Executive Signal Matrix`,
+        `- **Cloud & Financial Impact:** ${st.impactMetrics.costImpact}`,
+        `- **Deployment Velocity:** ${st.impactMetrics.deploySpeed}`,
+        `- **Operational Readiness:** ${st.impactMetrics.readinessScore}`,
+        ``,
+        `## 2. Broadsheet Narrative`,
+        ``,
+        paras.join('\n\n'),
+        ``,
+        `> “${st.pullQuote}”`,
+        ``,
+        `## 3. Actionable Implementation Playbook (Execute Today)`,
+        ...st.actionPlaybook.map((step, i) => `${i + 1}. ${step}`),
+        ``,
+        `---`,
+        `*Curated by The Executive Dispatch Desk · Milton Group Concepts LLC (SDVOSB) & F.I.X Solutions LLC*`
+      ].join('\n');
+    }
+
+    function downloadFileBlob(filename, mimeType, content) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 200);
+    }
+
+    function loadInitialStory() {
+      const qs = new URLSearchParams(location.search);
+      const targetId = qs.get('id') || (location.hash ? location.hash.replace('#', '') : '');
+      try {
+        const cachedList = JSON.parse(localStorage.getItem('mgc_live_stream_cache') || 'null');
+        if (Array.isArray(cachedList) && cachedList.length) {
+          allStories = cachedList.map(normalizeStory);
+        }
+      } catch (_) {}
+      try {
+        const savedStory = JSON.parse(localStorage.getItem('mgc_active_reader_story') || 'null');
+        if (savedStory && (!targetId || savedStory.id === targetId)) {
+          activeStory = normalizeStory(savedStory);
+          if (!allStories.some(s => s.id === activeStory.id)) {
+            allStories.unshift(activeStory);
+          }
+          return;
+        }
+      } catch (_) {}
+      if (targetId) {
+        const found = allStories.find(s => s.id === targetId);
+        if (found) activeStory = normalizeStory(found);
+      }
+    }
+
+    async function syncLiveWire() {
+      try {
+        const r = await fetch('/api/newsletter/live-stream');
+        if (r.ok) {
+          const d = await r.json();
+          if (d && d.ok && Array.isArray(d.items) && d.items.length) {
+            allStories = d.items.map(normalizeStory);
+            const qs = new URLSearchParams(location.search);
+            const targetId = qs.get('id');
+            if (targetId) {
+              const matched = allStories.find(s => s.id === targetId);
+              if (matched) activeStory = matched;
+            }
+            render();
+          }
+        }
+      } catch (_) {}
+    }
+
+    function applyTypographyAndTheme() {
+      const sizes = ['19px', '21.5px', '24.5px'];
+      document.documentElement.style.setProperty('--body-font-size', sizes[fontSizeLevel] || '21.5px');
+      document.body.classList.toggle('theme-ivory', themeMode === 'ivory');
+      const toggleBtn = document.getElementById('btnToggleTheme');
+      if (toggleBtn) {
+        toggleBtn.innerHTML = themeMode === 'ivory' ? '🌙 Obsidian Paper' : '📰 Financial Ivory';
+      }
+    }
+
+    let themeStatusTimer = null;
+    function triggerWatchedThemeTransition(targetTheme, reasonLabel) {
+      const prevTheme = themeMode;
+      themeMode = targetTheme;
+      const veil = document.getElementById('themeWashVeil');
+      if (veil && prevTheme !== targetTheme) {
+        veil.className = 'theme-wash-veil ' + (targetTheme === 'ivory' ? 'wash-to-ivory' : 'wash-to-obsidian');
+        setTimeout(() => {
+          if (veil) veil.className = 'theme-wash-veil';
+        }, 820);
+      }
+      applyTypographyAndTheme();
+      const pill = document.getElementById('themeStatusPill');
+      if (pill) {
+        pill.textContent = targetTheme === 'ivory'
+          ? '📰 Transitioned to Financial Ivory Broadsheet Paper' + (reasonLabel ? ' · ' + reasonLabel : '')
+          : '🌙 Returned to MGC Obsidian Thematic Colors' + (reasonLabel ? ' · ' + reasonLabel : '');
+        pill.classList.add('visible');
+        if (themeStatusTimer) clearTimeout(themeStatusTimer);
+        themeStatusTimer = setTimeout(() => {
+          pill.classList.remove('visible');
+        }, 2800);
+      }
+    }
+
+    function toggleSpeech() {
+      if (!('speechSynthesis' in window)) return;
+      if (isSpeaking) {
+        window.speechSynthesis.cancel();
+        isSpeaking = false;
+        render();
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const paras = ensureThreeParagraphs(activeStory);
+      const utter = new SpeechSynthesisUtterance(
+        activeStory.title + '. ' + (activeStory.dek || '') + '. ' + paras.join(' ')
+      );
+      utter.rate = 0.98;
+      utter.onend = () => { isSpeaking = false; render(); };
+      utter.onerror = () => { isSpeaking = false; render(); };
+      isSpeaking = true;
+      window.speechSynthesis.speak(utter);
+      render();
+    }
+
+    function render() {
+      applyTypographyAndTheme();
+      const root = document.getElementById('readerRoot');
+      const paras = ensureThreeParagraphs(activeStory);
+      const activeProg = MONETIZATION_PROGRAMS.find(p => p.id === activeProgramId) || MONETIZATION_PROGRAMS[0];
+      const secondaryProg = MONETIZATION_PROGRAMS[(MONETIZATION_PROGRAMS.indexOf(activeProg) + 1) % MONETIZATION_PROGRAMS.length];
+      const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+      root.innerHTML = `
+        <header class="masthead">
+          <div class="masthead-top">
+            <a href="/newsletter" class="masthead-brand" title="Return to Executive Newsletter Feed">
+              <img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" onerror="this.style.display='none'" />
+              <div>
+                <div class="masthead-title">THE EXECUTIVE DISPATCH</div>
+                <div class="masthead-sub">Commercial · Federal · Cyber &amp; Cloud Reader Edition</div>
+              </div>
+            </a>
+
+            <div class="masthead-controls" role="toolbar" aria-label="Reader Typography and Appearance Controls">
+              <button type="button" class="reader-btn ${fontSizeLevel === 0 ? 'active' : ''}" id="btnFontSm" title="Standard Newspaper Size">A-</button>
+              <button type="button" class="reader-btn ${fontSizeLevel === 1 ? 'active' : ''}" id="btnFontMd" title="Large Newspaper Size (Default)">A</button>
+              <button type="button" class="reader-btn ${fontSizeLevel === 2 ? 'active' : ''}" id="btnFontLg" title="Extra Large Executive Print">A+</button>
+              <button type="button" class="reader-btn" id="btnToggleTheme">
+                ${themeMode === 'ivory' ? '🌙 Obsidian Paper' : '📰 Financial Ivory'}
+              </button>
+              <button type="button" class="reader-btn ${isSpeaking ? 'pri' : ''}" id="btnSpeakArticle">
+                ${isSpeaking ? '⏹ Stop Audio' : '🔊 Listen'}
+              </button>
+              <button type="button" class="reader-btn" id="btnPrintArticle">🖨️ Print</button>
+              <a href="/newsletter" class="reader-btn">← Full Wire</a>
+            </div>
+          </div>
+
+          <div class="masthead-dateline">
+            <span>WASHINGTON, D.C. &amp; RICHMOND, VA · ${esc(dateStr.toUpperCase())}</span>
+            <span>NATURAL EDITORIAL EDITION · ZERO INTRUSIVE POPUPS</span>
+            <span>DESK: ${esc(activeStory.agency || 'Executive Intelligence')} · ${esc(activeStory.readTime || '3 min read')}</span>
+          </div>
+        </header>
+
+        <div class="editorial-grid">
+          <article class="article-sheet" aria-labelledby="readerHeadline">
+            <div class="article-kicker-row">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span class="source-tag" style="background:${esc(activeStory.accentColor || '#f97316')}">${esc(activeStory.sourceCode || 'WIRE')}</span>
+                <span style="font-size:13px;font-weight:700;color:var(--ink-muted)">${esc(activeStory.source || 'News Wire')}</span>
+                <span class="kicker-pill">${esc(activeStory.trackLabel || 'EXECUTIVE BRIEFING')}</span>
+              </div>
+              <span style="font-family:monospace;font-size:12px;font-weight:700;color:var(--gold)">${esc(activeStory.time || 'LIVE EDITION')} · ${esc(activeStory.readTime || '3 min read')}</span>
+            </div>
+
+            <h1 class="news-headline" id="readerHeadline">${esc(activeStory.title)}</h1>
+
+            <p class="news-dek">${esc(activeStory.dek || activeStory.summary)}</p>
+
+            <div class="byline-bar">
+              <div>
+                By <strong style="color:var(--ink-primary)">Executive Dispatch Editorial Desk</strong> · Curated from <strong>${esc(activeStory.source)}</strong> (${esc(activeStory.agency || 'Sector Wire')})
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <a href="${esc(activeStory.url || 'https://news.google.com/')}" target="_blank" rel="noopener noreferrer" class="reader-btn" style="padding:4px 10px;font-size:11.5px">Verify Original Source ↗</a>
+              </div>
+            </div>
+
+            <!-- Executive Impact & Signal Matrix -->
+            <section class="signal-matrix-grid" aria-label="Executive Signal and Impact Matrix">
+              <div class="signal-metric-cell">
+                <div class="signal-metric-label">Cloud &amp; Cost Impact</div>
+                <div class="signal-metric-value">${esc((activeStory.impactMetrics && activeStory.impactMetrics.costImpact) || '-72% Idle Cloud Spend')}</div>
+              </div>
+              <div class="signal-metric-cell">
+                <div class="signal-metric-label">Deployment Velocity</div>
+                <div class="signal-metric-value">${esc((activeStory.impactMetrics && activeStory.impactMetrics.deploySpeed) || 'Scale-to-Zero Serverless')}</div>
+              </div>
+              <div class="signal-metric-cell">
+                <div class="signal-metric-label">Readiness &amp; Posture</div>
+                <div class="signal-metric-value">${esc((activeStory.impactMetrics && activeStory.impactMetrics.readinessScore) || '98% Workflow Accuracy')}</div>
+              </div>
+            </section>
+
+            <div class="news-body">
+              <p class="lead-paragraph">${esc(paras[0])}</p>
+              ${paras[1] ? `<p>${esc(paras[1])}</p>` : ''}
+
+              ${activeStory.pullQuote ? `
+                <blockquote class="editorial-pullquote">
+                  “${esc(activeStory.pullQuote)}”
+                </blockquote>
+              ` : ''}
+
+              ${paras[2] ? `<p>${esc(paras[2])}</p>` : ''}
+            </div>
+
+            <!-- 3-Step Actionable Implementation Playbook Deliverable -->
+            <section class="playbook-box" id="readerActionPlaybook" aria-label="3-Step Actionable Implementation Playbook">
+              <div class="playbook-header">
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold)">⚡ EXECUTIVE ACTION PLAYBOOK · EXECUTE TODAY</div>
+                  <div style="font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:800;color:var(--ink-primary);margin-top:2px">${esc(activeStory.deliverableArtifact || 'Implementation Playbook & Deliverable Checklist')}</div>
+                </div>
+                <span class="kicker-pill">3 Action Steps</span>
+              </div>
+              <div>
+                ${(activeStory.actionPlaybook || DEFAULT_STORIES[0].actionPlaybook).map((step, idx) => `
+                  <div class="playbook-step">
+                    <span class="playbook-step-num">0${idx + 1}</span>
+                    <div>${esc(step)}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+
+            <!-- Multi-Format Executive Deliverable Export Suite -->
+            <section class="deliverable-suite-bar" id="readerDeliverableSuite" aria-label="Executive Deliverable Export Bar">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+                <span style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold)">📦 EXPORT EXECUTIVE DELIVERABLE PACKET</span>
+                <span id="deliverableToastStatus" role="status" aria-live="polite" style="font-family:monospace;font-size:11.5px;font-weight:700;color:#34d399">${deliverableToastMsg ? '✓ ' + esc(deliverableToastMsg) : '100% Original Synthesis · Ready for Team Distribution'}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <button type="button" class="reader-btn pri" id="btnExportMarkdown">📥 Download Executive Brief (.MD)</button>
+                <button type="button" class="reader-btn" id="btnExportHtmlBrief">📄 Download Standalone Report (.HTML)</button>
+                <button type="button" class="reader-btn" id="btnCopyTeamMemo">📋 Copy Team Slack / Email Memo</button>
+                <button type="button" class="reader-btn" id="btnPrintDeliverablePdf">🖨️ Print / Save Broadsheet PDF</button>
+              </div>
+            </section>
+
+            <!-- Non-Intrusive In-Article Editorial Sponsorship Unit (Axios / Financial Times Style) -->
+            <aside class="native-sponsor-unit" aria-label="Sponsored Executive Partner Brief">
+              <div class="native-sponsor-header">
+                <span>${esc(activeProg.sponsorTag)}</span>
+                <span style="font-weight:500;opacity:0.8">Non-Intrusive Editorial Placement</span>
+              </div>
+              <h3 class="native-sponsor-title">${esc(activeProg.headline)}</h3>
+              <p class="native-sponsor-copy">${esc(activeProg.copy)}</p>
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+                <a href="${esc(activeProg.ctaHref)}" class="reader-btn pri">${esc(activeProg.ctaText)}</a>
+                <span style="font-size:11px;color:var(--ink-muted)">Active Program: <strong>${esc(activeProg.programName)}</strong> (${esc(activeProg.payoutModel)})</span>
+              </div>
+            </aside>
+          </article>
+
+          <aside class="editorial-rail" aria-label="Partner Spotlight, Monetization Options, and Related Stories">
+            <!-- 1. Quiet Right-Rail Native Ad Card -->
+            <div class="rail-card" style="border-color:var(--ad-border);background:var(--ad-bg)">
+              <div class="rail-heading">
+                <span>${esc(secondaryProg.sponsorTag.split('·')[0])}</span>
+                <span style="font-size:9.5px;opacity:0.75">PARTNER</span>
+              </div>
+              <div style="font-family:'Playfair Display',Georgia,serif;font-size:16.5px;font-weight:700;color:var(--ink-primary);margin-bottom:6px;line-height:1.35">
+                ${esc(secondaryProg.headline)}
+              </div>
+              <p style="font-size:12.5px;line-height:1.5;color:var(--ink-body);margin:0 0 12px 0">
+                ${esc(secondaryProg.copy)}
+              </p>
+              <a href="${esc(secondaryProg.ctaHref)}" class="reader-btn" style="width:100%;justify-content:center">${esc(secondaryProg.ctaText)}</a>
+            </div>
+
+            <!-- 2. Interactive Non-Intrusive Ad & Revenue Program Explorer -->
+            <div class="rail-card">
+              <div class="rail-heading">
+                <span>💼 Revenue &amp; Ad Programs</span>
+                <span style="font-size:10px;color:var(--accent-blue)">5 Income Tracks</span>
+              </div>
+              <p style="font-size:12px;color:var(--ink-muted);margin:0 0 10px 0;line-height:1.45">
+                Preview vetted, non-intrusive ad and partner programs that monetize reader traffic while preserving a clean editorial experience:
+              </p>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+                ${MONETIZATION_PROGRAMS.map(p => `
+                  <button type="button" class="prog-pill ${p.id === activeProgramId ? 'active' : ''}" data-prog-id="${esc(p.id)}" style="text-align:left;display:flex;justify-content:space-between;align-items:center">
+                    <span>${esc(p.shortLabel)}</span>
+                    <span style="font-size:10px;opacity:0.8">Preview →</span>
+                  </button>
+                `).join('')}
+              </div>
+              <div style="padding:10px 12px;border-radius:10px;background:var(--paper-elevated);border:1px solid var(--rule-subtle);font-size:11.5px;line-height:1.45">
+                <div style="font-weight:800;color:var(--gold);margin-bottom:3px">${esc(activeProg.programName)}</div>
+                <div style="font-family:monospace;font-size:11px;color:var(--accent-blue);margin-bottom:5px">${esc(activeProg.payoutModel)}</div>
+                <div style="color:var(--ink-body)">${esc(activeProg.fitWhy)}</div>
+              </div>
+            </div>
+
+            <!-- 3. More Dispatches on the Live Wire -->
+            <div class="rail-card">
+              <div class="rail-heading">
+                <span>📰 More on the Live Wire</span>
+                <span>${allStories.length} Dispatches</span>
+              </div>
+              <div>
+                ${allStories.map(st => `
+                  <button type="button" class="wire-item-btn ${st.id === activeStory.id ? 'active' : ''}" data-story-id="${esc(st.id)}">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px">
+                      <span style="font-family:monospace;font-size:10px;font-weight:800;color:${esc(st.accentColor || '#38bdf8')}">${esc(st.source)} · ${esc(st.trackLabel || 'BRIEF')}</span>
+                      <span style="font-family:monospace;font-size:10px;color:var(--ink-muted)">${esc(st.time || 'LIVE')}</span>
+                    </div>
+                    <div style="font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:700;line-height:1.3">${esc(st.title)}</div>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </aside>
+        </div>
+      `;
+
+      document.getElementById('btnFontSm').onclick = () => { fontSizeLevel = 0; applyTypographyAndTheme(); render(); };
+      document.getElementById('btnFontMd').onclick = () => { fontSizeLevel = 1; applyTypographyAndTheme(); render(); };
+      document.getElementById('btnFontLg').onclick = () => { fontSizeLevel = 2; applyTypographyAndTheme(); render(); };
+      document.getElementById('btnToggleTheme').onclick = () => {
+        const nextTheme = themeMode === 'ivory' ? 'obsidian' : 'ivory';
+        triggerWatchedThemeTransition(nextTheme, 'Manual Reader Theme Switch');
+      };
+      document.getElementById('btnSpeakArticle').onclick = toggleSpeech;
+      document.getElementById('btnPrintArticle').onclick = () => window.print();
+
+      const btnExportMd = document.getElementById('btnExportMarkdown');
+      if (btnExportMd) {
+        btnExportMd.onclick = () => {
+          const slug = String(activeStory.id || 'dispatch').replace(/[^a-z0-9_-]/gi, '-');
+          downloadFileBlob(`Executive-Dispatch-${slug}.md`, 'text/markdown;charset=utf-8', buildMarkdownBrief(activeStory));
+          showDeliverableToast(`Downloaded Executive-Dispatch-${slug}.md`);
+        };
+      }
+
+      const btnExportHtml = document.getElementById('btnExportHtmlBrief');
+      if (btnExportHtml) {
+        btnExportHtml.onclick = () => {
+          const slug = String(activeStory.id || 'dispatch').replace(/[^a-z0-9_-]/gi, '-');
+          const htmlDoc = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+          downloadFileBlob(`Executive-Dispatch-${slug}.html`, 'text/html;charset=utf-8', htmlDoc);
+          showDeliverableToast(`Downloaded Standalone Report (${slug}.html)`);
+        };
+      }
+
+      const btnCopyTeam = document.getElementById('btnCopyTeamMemo');
+      if (btnCopyTeam) {
+        btnCopyTeam.onclick = async () => {
+          const memo = buildMarkdownBrief(activeStory);
+          try {
+            await navigator.clipboard.writeText(memo);
+            showDeliverableToast('Copied Team Slack / Email Executive Memo to Clipboard');
+          } catch (_) {
+            showDeliverableToast('Executive Memo Prepared & Ready');
+          }
+        };
+      }
+
+      const btnPrintPdf = document.getElementById('btnPrintDeliverablePdf');
+      if (btnPrintPdf) {
+        btnPrintPdf.onclick = () => window.print();
+      }
+
+      root.querySelectorAll('[data-prog-id]').forEach(btn => {
+        btn.onclick = () => {
+          const nextProgId = btn.getAttribute('data-prog-id');
+          const wasPartnerStack = activeProgramId === 'partnerstack_b2b';
+          const isNowPartnerStack = nextProgId === 'partnerstack_b2b';
+          activeProgramId = nextProgId;
+          render();
+          if (isNowPartnerStack && themeMode !== 'ivory') {
+            requestAnimationFrame(() => {
+              triggerWatchedThemeTransition('ivory', 'PartnerStack B2B Affiliate Track');
+            });
+          } else if (wasPartnerStack && !isNowPartnerStack && themeMode === 'ivory') {
+            requestAnimationFrame(() => {
+              triggerWatchedThemeTransition('obsidian', 'Returned to MGC Thematic Track');
+            });
+          }
+        };
+      });
+
+      root.querySelectorAll('[data-story-id]').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute('data-story-id');
+          const found = allStories.find(s => s.id === id);
+          if (found) {
+            if (isSpeaking && 'speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              isSpeaking = false;
+            }
+            activeStory = normalizeStory(found);
+            try {
+              localStorage.setItem('mgc_active_reader_story', JSON.stringify(activeStory));
+              history.replaceState(null, '', '?id=' + encodeURIComponent(activeStory.id));
+            } catch (_) {}
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            render();
+          }
+        };
+      });
+    }
+
+    loadInitialStory();
+    render();
+    syncLiveWire();
+  })();
+  </script>
+</body>
+</html>
