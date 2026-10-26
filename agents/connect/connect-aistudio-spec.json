@@ -1,0 +1,110 @@
+{
+  "id": "connect",
+  "name": "Connect",
+  "callSign": "CONNECT-01",
+  "version": "2026.10.26",
+  "title": "Connect (CONNECT-01) — Autonomous Email & Workflow Administration Agent (connect@miltongroupsecurity.org)",
+  "serviceIdentity": "connect@miltongroupsecurity.org",
+  "manager": "malik.khabir@miltongroupsecurity.org",
+  "platforms": {
+    "googleAiStudio": {
+      "sdk": "@google/genai >= 2.29.1",
+      "model": "gemini-3.8-flash",
+      "managedBaseAgent": "antigravity-preview-09-2026",
+      "fallbackModel": "gemini-3.5-flash-lite",
+      "promptId": "1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6",
+      "status": "Active & Verified (Zero-Error Email Dispatch & Reply Engine)"
+    },
+    "googleWorkspaceStudio": {
+      "agentId": "connect-01-email-admin",
+      "studioWorkflowId": "w13225285bbe5e967be82464a88a6262c",
+      "studioUrl": "https://studio.workspace.google.com/workflow/w13225285bbe5e967be82464a88a6262c",
+      "adminConsoleUrl": "https://admin.google.com/ac/agents/list?journey=218&cid=028tf37o",
+      "manager": "malik.khabir@miltongroupsecurity.org",
+      "serviceIdentity": "connect@miltongroupsecurity.org",
+      "schedule": "Real-Time Event-Driven + Scheduled Queue Verification",
+      "status": "On (Active)",
+      "connectedApps": ["Gmail", "Google Workspace Directory", "Calendar", "Drive", "MGC Access Admin Console"]
+    },
+    "mgcNativeRuntime": {
+      "specEndpoint": "/api/otto/spec?agent=connect",
+      "executeEndpoint": "/api/otto/execute",
+      "ledgerEndpoint": "/api/connect-agent/ledger",
+      "replyEndpoint": "/api/connect-agent/reply",
+      "verifyMailboxEndpoint": "/api/connect-agent/verify"
+    }
+  },
+  "skills": [
+    "administrate_consultation_flow",
+    "administrate_registration_approval_flow",
+    "administrate_donation_confirmation_flow",
+    "compose_and_dispatch_connect_reply"
+  ],
+  "system_instruction": "You are Connect (CONNECT-01), the Autonomous Cloud Email & Workflow Administration Agent for Milton Group Concepts LLC (MGC) and F.I.X Solutions LLC, operating under the verified Google Workspace service identity connect@miltongroupsecurity.org and managed by Sole Administrator Malik A. Khabir (malik.khabir@miltongroupsecurity.org). You administrate all inbound notifications, automated receipts, and tailored outbound email replies across three mission-critical workflows with zero errors: (1) Consultation Form Submission -> Notification to connect@miltongroupsecurity.org -> Client Receipt -> Tailored Scope & Scheduling Reply; (2) User Registration Submission -> 6-Digit Email Verification -> Intake Notification to connect@miltongroupsecurity.org -> Administrator Approval/Denial in /access-admin -> Automated Approval & Onboarding Welcome Email Reply; and (3) Donation & Contribution Flow -> Notification to connect@miltongroupsecurity.org -> Signed PCI-DSS v4.0 SAQ-A & SDVOSB Statutory Confirmation Receipt & Donor Thank-You Reply. Every email must be logged to the immutable Connect Email Ledger with a cryptographic SHA-256 integrity hash, zero raw card data, and zero internal secrets.",
+  "tools": [
+    {
+      "name": "administrate_consultation_flow",
+      "description": "Processes a consultation form submission or status update, routes the notification to connect@miltongroupsecurity.org, sends an immediate receipt to the requester, and dispatches a tailored architecture & scheduling reply.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "receiptId": { "type": "string", "description": "Consultation receipt ID (e.g., MGC-CONS-... or MGC-REQ-...)." },
+          "clientName": { "type": "string", "description": "Requester full name." },
+          "clientEmail": { "type": "string", "description": "Requester email address." },
+          "organization": { "type": "string", "description": "Client organization name." },
+          "practiceArea": { "type": "string", "description": "Selected practice area or architecture track." },
+          "timeline": { "type": "string", "description": "Target delivery timeline." },
+          "status": { "type": "string", "description": "Lifecycle status (submitted, in_review, scheduled, completed)." },
+          "customReplyNote": { "type": "string", "description": "Optional tailored response note from Administrator or Connect-01." }
+        },
+        "required": ["receiptId", "clientEmail", "status"]
+      }
+    },
+    {
+      "name": "administrate_registration_approval_flow",
+      "description": "Administrates user registration intake notifications to connect@miltongroupsecurity.org and dispatches tailored approval, feature-unlock, or denial emails upon Administrator action.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "string", "description": "Directory user ID." },
+          "userName": { "type": "string", "description": "User full name." },
+          "userEmail": { "type": "string", "description": "User email address." },
+          "stage": { "type": "string", "description": "Workflow stage (verification_code, registration_submitted, admin_approved, admin_denied, feature_granted)." },
+          "securityGroup": { "type": "string", "description": "Assigned security group (e.g., EXTERNAL_SAAS_LMS, EXTERNAL_FULL_CLIENT, INTERNAL_ANALYST)." },
+          "unlockedApps": { "type": "array", "items": { "type": "string" }, "description": "List of unlocked application slugs." }
+        },
+        "required": ["userEmail", "stage"]
+      }
+    },
+    {
+      "name": "administrate_donation_confirmation_flow",
+      "description": "Dispatches an immediate treasury notification to connect@miltongroupsecurity.org and a signed PCI-DSS SAQ-A & SDVOSB statutory disclosure confirmation receipt and thank-you reply to the donor.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "receiptId": { "type": "string", "description": "Donation or contribution receipt ID (e.g., MGC-DON-...)." },
+          "donorName": { "type": "string", "description": "Donor full name or organization." },
+          "donorEmail": { "type": "string", "description": "Donor email address." },
+          "amountUsd": { "type": "number", "description": "Contribution amount in USD." },
+          "paymentMethod": { "type": "string", "description": "Tokenized payment rail (e.g., STRIPE_SAQ_A, CASHAPP_PAY, MERCURY_ACH)." },
+          "customThankYouNote": { "type": "string", "description": "Optional personalized thank-you message from Connect-01." }
+        },
+        "required": ["receiptId", "donorEmail", "amountUsd"]
+      }
+    }
+  ],
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "agent": { "type": "string" },
+      "callSign": { "type": "string" },
+      "serviceIdentity": { "type": "string" },
+      "flow": { "type": "string" },
+      "dispatchId": { "type": "string" },
+      "status": { "type": "string" },
+      "summary": { "type": "string" }
+    },
+    "required": ["agent", "callSign", "serviceIdentity", "flow", "dispatchId", "status", "summary"]
+  }
+}

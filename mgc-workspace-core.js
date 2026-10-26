@@ -210,6 +210,21 @@
       manager: 'malik.khabir@miltongroupsecurity.org',      workspaceApps: ['Maps & 3D Geospatial Insights', 'Google Earth 3D', 'MGC Workspace'],
       access: 'Default',
       status: 'On (Active)'
+    },
+    {
+      id: 'connect',
+      name: 'Connect',
+      callSign: 'CONNECT-01',
+      appSlug: 'access-admin',
+      title: 'Connect (CONNECT-01) — Autonomous Email & Workflow Administration Agent (connect@miltongroupsecurity.org)',
+      type: 'Cloud Email & Workflow Agent',
+      agentId: 'connect-01-email-admin',
+      primaryTool: 'administrate_connect_email_workflows',
+      manager: 'malik.khabir@miltongroupsecurity.org',
+      serviceIdentity: 'connect@miltongroupsecurity.org',
+      workspaceApps: ['Gmail (connect@miltongroupsecurity.org)', 'Consultations', 'User Registration & Approval', 'Donations & Receipts'],
+      access: 'Default',
+      status: 'On (Active)'
     }
   ];
 
@@ -224,12 +239,12 @@
       agentRole: 'Agent Manager & Owner (Full Governance)'
     },
     {
-      email: 'workspace-flow',
-      name: 'MGC admin',
-      roleLabel: 'Connect & Autonomous Agent Operations Identity',
+      email: 'connect@miltongroupsecurity.org',
+      name: 'Connect-01 (MGC Connect)',
+      roleLabel: 'Autonomous Cloud Email & Workflow Administration Identity',
       status: 'Active',
-      storageUsed: '0.001 GB',
-      agentRole: 'Otto Connect Service Identity'
+      storageUsed: '0.02 GB',
+      agentRole: 'Connect-01 & Otto Service Identity (Consultations, Approvals, Donations)'
     },
     {
       email: 'mustafa.khabir@miltongroupsecurity.org',

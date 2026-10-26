@@ -386,7 +386,7 @@
 
             <div id="statutoryTaxDisclosureBox" style="padding:13px 15px;border-radius:11px;background:rgba(15,23,42,0.72);border:1px solid rgba(148,163,184,0.22);font-size:11.5px;color:#cbd5e1;line-height:1.55">
               <div style="font-weight:700;color:#e2e8f0;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Official Legal Notice</div>
-              Contributions and payments are made to <strong>${esc(merchantLabel)}</strong>, a Service-Disabled Veteran-Owned Small Business. Contributions are not tax-deductible as charitable contributions for federal income tax purposes. Transactions are processed subject to our <a href="/terms-of-service.html" target="_blank" style="color:#93c5fd;text-decoration:underline">Terms of Service</a> and <a href="/privacy-policy.html" target="_blank" style="color:#93c5fd;text-decoration:underline">Privacy Policy</a>. For billing support, refunds, or cancellations, contact <a href="mailto:contact@miltongroupsecurity.org" style="color:#93c5fd">contact@miltongroupsecurity.org</a>.
+              Contributions and payments are made to <strong>${esc(merchantLabel)}</strong>, a Service-Disabled Veteran-Owned Small Business. Contributions are not tax-deductible as charitable contributions for federal income tax purposes. Transactions are processed subject to our <a href="/terms-of-service.html" target="_blank" style="color:#93c5fd;text-decoration:underline">Terms of Service</a> and <a href="/privacy-policy.html" target="_blank" style="color:#93c5fd;text-decoration:underline">Privacy Policy</a>. For billing support, refunds, or cancellations, contact <a href="mailto:connect@miltongroupsecurity.org" style="color:#93c5fd">connect@miltongroupsecurity.org</a>.
             </div>
           </div>
 
@@ -518,9 +518,12 @@
             });
             const d = await r.json();
             if (d && d.ok) {
-              // Route through the HMAC-signed authenticated callback (/api/checkout/callback?session=...&sig=...)
-              // which directs unauthenticated users to /auth?next=... and then securely returns them within RBAC controls.
-              window.location.href = d.callbackUrl || d.redirectUrl || (session.returnPath + '?checkout_status=settled&receipt=' + encodeURIComponent(d.receiptId || session.id));
+              // For public donations, return directly to the settled receipt banner on /newsletter while connect@miltongroupsecurity.org dispatches the confirmation email.
+              // For subscriptions or authenticated flows, route through the HMAC-signed authenticated callback.
+              const targetLoc = session.type === 'donation'
+                ? (d.redirectUrl || (session.returnPath + '?checkout_status=settled&receipt=' + encodeURIComponent(d.receiptId || session.id)))
+                : (d.callbackUrl || d.redirectUrl || (session.returnPath + '?checkout_status=settled&receipt=' + encodeURIComponent(d.receiptId || session.id)));
+              window.location.href = targetLoc;
               return;
             }
             errorMsg = (d && d.error) || 'Redirect verification could not be completed.';

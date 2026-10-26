@@ -139,6 +139,25 @@
       "aistudioUrl": "https://aistudio.google.com/prompts/1yihXNi6CRZhEY8iW4_5SvbAXEN6HoRng",
       "primaryTool": "analyze_geospatial_corridor",
       "specPath": "agents/orin/orin-aistudio-spec.json"
+    },
+    {
+      "id": "connect",
+      "name": "Connect",
+      "callSign": "CONNECT-01",
+      "appSlug": "access-admin",
+      "title": "Connect (CONNECT-01) — Autonomous Email & Workflow Administration Agent (connect@miltongroupsecurity.org)",
+      "category": "Cloud Email, Intake & Workflow Governance",
+      "serviceIdentity": "connect@miltongroupsecurity.org",
+      "model": "gemini-3.8-flash",
+      "aistudioPromptId": "1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6",
+      "aistudioUrl": "https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6",
+      "primaryTool": "administrate_connect_email_workflows",
+      "skills": [
+        "administrate_consultation_flow",
+        "administrate_registration_approval_flow",
+        "administrate_donation_confirmation_flow"
+      ],
+      "specPath": "agents/connect/connect-aistudio-spec.json"
     }
   ]
 }

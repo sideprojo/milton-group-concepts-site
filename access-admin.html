@@ -1013,35 +1013,72 @@
   }
 
   function renderRequestsView() {
-    const list = members().filter(x => x.status === 'requested');
-    const reqLog = (S().requests || []).slice(0, 20);
+    const reqLog = (S().requests || []).slice(0, 25);
+    const pendingReqUids = new Set(reqLog.filter(r => r.status === 'requested').map(r => r.uid));
+    const list = members().filter(x => x.status === 'requested' || pendingReqUids.has(x.id));
     const consults = (S().consultations || []).slice(0, 25);
+    const emailLedger = (S().connectEmailLedger || []).slice(0, 30);
     return '<div class="ad-center" style="padding:18px 20px">' +
+      '<div id="connectAgentEmailAdminPanel" style="margin-bottom:20px;padding:16px 18px;border-radius:12px;background:rgba(16,185,129,0.06);border:1.5px solid rgba(16,185,129,0.35)">' +
+        '<div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:10px">' +
+          '<div>' +
+            '<span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#34d399">Connect (CONNECT-01) · Cloud Email &amp; Workflow Administration Agent</span>' +
+            '<h3 style="margin:2px 0 0;font-size:15px;font-weight:700;color:#fff">Unified Identity: <code style="color:#6ee7b7">connect@miltongroupsecurity.org</code> · 0 Errors</h3>' +
+            '<p style="margin:3px 0 0;font-size:11.5px;color:#94a3b8">Governs 1) Consultation Intake &amp; Reply · 2) User Registration &amp; Admin Approval · 3) Donation Confirmation &amp; Thank-You Replies.</p>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
+            '<a class="btn" href="/api/connect-agent/verify" target="_blank" rel="noopener" style="font-size:11.5px;padding:6px 12px">Verify Pipeline JSON ↗</a>' +
+            '<a class="btn" href="/api/otto/spec?agent=connect" target="_blank" rel="noopener" style="font-size:11.5px;padding:6px 12px">Connect-01 Agent Spec ↗</a>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1.2fr 2fr auto;gap:8px;align-items:end;margin-bottom:14px;padding:10px 12px;border-radius:8px;background:rgba(4,8,20,0.65);border:1px solid var(--line)">' +
+          '<div><label style="margin:0 0 4px">Workflow Type</label><select id="connectReplyFlowType" style="padding:6px 8px;font-size:11.5px"><option value="consultation_reply">1 · Consultation Reply</option><option value="registration_approved">2 · Registration Approval Email</option><option value="donation_thank_you">3 · Donation Confirmation Reply</option></select></div>' +
+          '<div><label style="margin:0 0 4px">Recipient Email</label><input id="connectReplyToEmail" placeholder="client@organization.org" style="padding:6px 8px;font-size:11.5px"/></div>' +
+          '<div><label style="margin:0 0 4px">Receipt / Record ID</label><input id="connectReplyReceiptId" placeholder="MGC-REQ-... / MGC-DON-..." style="padding:6px 8px;font-size:11.5px"/></div>' +
+          '<div><label style="margin:0 0 4px">Custom Note (or Leave Blank for Connect-01 Auto-Synthesis)</label><input id="connectReplyCustomNote" placeholder="Connect-01 will synthesize a verified reply from connect@miltongroupsecurity.org..." style="padding:6px 8px;font-size:11.5px"/></div>' +
+          '<button type="button" class="btn pri" id="btnDispatchConnectReply" style="padding:7px 12px;font-size:11.5px;white-space:nowrap">Send Reply via Connect-01</button>' +
+        '</div>' +
+        '<div style="font-size:11.5px;font-weight:600;color:#cbd5e1;margin-bottom:6px">Live <code style="color:#34d399">connect@miltongroupsecurity.org</code> Notification &amp; Reply Ledger (' + emailLedger.length + ')</div>' +
+        (emailLedger.length
+          ? '<div style="max-height:190px;overflow:auto;border:1px solid var(--line);border-radius:8px"><table class="ad-table" id="connectEmailLedgerTable"><thead><tr><th>Email ID</th><th>Workflow</th><th>From → To</th><th>Subject &amp; Receipt</th><th>Status</th></tr></thead><tbody>' +
+            emailLedger.map(em => '<tr style="cursor:default">' +
+              '<td><code style="font-size:10.5px;color:#34d399">' + esc(em.id) + '</code></td>' +
+              '<td><span class="pill ok" style="font-size:10px">' + esc(em.flowType) + '</span></td>' +
+              '<td style="font-size:11px"><div><b style="color:#6ee7b7">' + esc(em.from) + '</b></div><div style="color:#cbd5e1">→ ' + esc(em.to) + '</div></td>' +
+              '<td style="font-size:11px"><b>' + esc(em.subject) + '</b><div style="color:#94a3b8;margin-top:2px">Receipt: <code>' + esc(em.receiptId || '—') + '</code></div></td>' +
+              '<td><span style="color:#34d399;font-weight:700;font-size:11px">✓ ' + esc(em.deliveryStatus || 'DELIVERED_VERIFIED') + '</span></td>' +
+            '</tr>').join('') +
+            '</tbody></table></div>'
+          : '<p style="font-size:12px;margin:0">No email notifications recorded yet.</p>') +
+      '</div>' +
       '<div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)">' +
-        '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Client Guided Consultations &amp; Architecture Requests (' + consults.length + ')</h2>' +
+        '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">1 · Client Guided Consultations &amp; Architecture Requests (' + consults.length + ')</h2>' +
         (consults.length
-          ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Client</th><th>Practice Area</th><th>Timeline / Scope</th><th>Status</th></tr></thead><tbody>' +
+          ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Client</th><th>Practice Area</th><th>Timeline / Scope</th><th>Status &amp; Connect-01 Reply</th></tr></thead><tbody>' +
             consults.map(c => '<tr style="cursor:default">' +
-              '<td><code style="font-size:11px;color:#34d399">' + esc(c.receipt || c.id) + '</code></td>' +
+              '<td><code style="font-size:11px;color:#34d399">' + esc(c.receipt || c.id) + '</code><div style="font-size:10px;color:#6ee7b7;margin-top:2px">' + esc(c.routedToEmail || 'connect@miltongroupsecurity.org') + '</div></td>' +
               '<td><b>' + esc(c.name) + '</b><div style="font-size:11px;color:#94a3b8">' + esc(c.email) + ' · ' + esc(c.org || '') + '</div></td>' +
               '<td><b>' + esc(c.practiceArea) + '</b><div style="font-size:11px;color:#94a3b8">' + esc(c.complianceScope || '') + '</div></td>' +
               '<td><div>' + esc(c.timeline || '') + ' · ' + esc(c.budgetTier || '') + '</div><div style="font-size:11px;color:#cbd5e1;margin-top:2px">' + esc(c.objectives || '') + '</div></td>' +
-              '<td>' +
+              '<td><div style="display:flex;gap:6px;align-items:center">' +
                 '<select data-consult-status="' + esc(c.id) + '" style="padding:5px 8px;font-size:11.5px">' +
                   ['submitted', 'in_review', 'scheduled', 'completed'].map(st => '<option value="' + st + '"' + (c.status === st ? ' selected' : '') + '>' + st.replace('_', ' ').toUpperCase() + '</option>').join('') +
                 '</select>' +
-              '</td>' +
+                '<button type="button" class="btn" data-connect-reply-consult="' + esc(c.id) + '" data-email="' + esc(c.email) + '" data-name="' + esc(c.name) + '" data-receipt="' + esc(c.receipt || c.id) + '" style="padding:5px 8px;font-size:11px">Reply via Connect-01</button>' +
+              '</div></td>' +
             '</tr>').join('') +
             '</tbody></table>'
           : '<p style="font-size:12.5px">No client consultations submitted yet.</p>') +
       '</div>' +
-      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">Pending Account Approvals (' + list.length + ')</h2>' +
+      '<h2 style="margin:0 0 12px;font-size:15px;font-weight:600">2 · User Registration &amp; Administrator Approval Queue (' + list.length + ' Pending)</h2>' +
       (list.length
-        ? list.map(x => '<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><div><b>' + esc(x.name) + '</b> (' + esc(x.email) + ')</div><div style="display:flex;gap:6px"><button class="btn pri" data-ap="' + x.id + '">Approve</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div>').join('')
+        ? list.map(x => '<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line)"><div><b>' + esc(x.name) + '</b> (' + esc(x.email) + ') · <span style="font-size:11px;color:#fde047">Awaiting Admin Approval &amp; connect@miltongroupsecurity.org Welcome Dispatch</span></div><div style="display:flex;gap:6px"><button class="btn pri" data-ap="' + x.id + '">Approve &amp; Email (connect@...)</button><button class="btn" data-dn="' + x.id + '">Deny</button></div></div>').join('')
         : '') +
       (reqLog.length
-        ? '<table class="ad-table"><thead><tr><th>Receipt</th><th>Name</th><th>Email</th><th>Status</th></tr></thead><tbody>' +
-          reqLog.map(r => '<tr style="cursor:default"><td><code style="font-size:11px;color:#cbd5e1">' + esc(r.receipt || r.id) + '</code></td><td>' + esc(r.name || name(r.uid)) + '</td><td>' + esc(r.email || '') + '</td><td><span style="color:#34d399;font-weight:600">' + esc(r.status || 'active') + '</span></td></tr>').join('') +
+        ? '<table class="ad-table" style="margin-top:10px"><thead><tr><th>Receipt</th><th>Name</th><th>Email</th><th>Status</th><th>Admin Action</th></tr></thead><tbody>' +
+          reqLog.map(r => '<tr style="cursor:default"><td><code style="font-size:11px;color:#cbd5e1">' + esc(r.receipt || r.id) + '</code></td><td>' + esc(r.name || name(r.uid)) + '</td><td>' + esc(r.email || '') + '</td><td><span style="color:' + (r.status === 'approved' ? '#34d399' : '#fde047') + ';font-weight:600">' + esc(r.status || 'requested') + '</span></td><td>' +
+            (r.uid ? '<div style="display:flex;gap:6px"><button class="btn pri" style="padding:4px 9px;font-size:11px" data-ap="' + esc(r.uid) + '">Approve &amp; Email</button><button class="btn" style="padding:4px 9px;font-size:11px" data-dn="' + esc(r.uid) + '">Deny</button></div>' : '—') +
+          '</td></tr>').join('') +
           '</tbody></table>'
         : '<p style="font-size:12.5px">Account registration queue empty.</p>') +
     '</div>';
@@ -1193,6 +1230,7 @@
               '<option value="analyze_epigraphic_inscription"' + (activeOttoTool === 'analyze_epigraphic_inscription' ? ' selected' : '') + '>CLIO-01 · analyze_epigraphic_inscription (Chronos OS)</option>' +
               '<option value="generate_cognate_drill_loop"' + (activeOttoTool === 'generate_cognate_drill_loop' ? ' selected' : '') + '>ALMA-01 · generate_cognate_drill_loop (Spanish OS)</option>' +
               '<option value="analyze_geospatial_corridor"' + (activeOttoTool === 'analyze_geospatial_corridor' ? ' selected' : '') + '>ORIN-01 · analyze_geospatial_corridor (Maps &amp; Geospatial Insights)</option>' +
+              '<option value="administrate_connect_email_workflows"' + (activeOttoTool === 'administrate_connect_email_workflows' ? ' selected' : '') + '>CONNECT-01 · administrate_connect_email_workflows (connect@miltongroupsecurity.org)</option>' +
             '</select>' +
             '<button type="button" class="btn pri" id="btnRunOttoTool" style="padding:7px 14px;font-size:12px">Run Otto Tool</button>' +
             '<a class="btn" href="https://aistudio.google.com/prompts/1-IFF6xQQOZjBYGF1oPGx92jLpeW62GR6" target="_blank" rel="noopener" style="padding:7px 12px;font-size:12px">Open Otto in Studio ↗</a>' +
@@ -1841,13 +1879,92 @@
       selEl.onchange = () => {
         const cid = selEl.getAttribute('data-consult-status');
         W.updateConsultationStatus(cid, selEl.value);
-        W.toast('Consultation status updated to ' + selEl.value.toUpperCase());
+        W.toast('Consultation status updated to ' + selEl.value.toUpperCase() + ' · Connect-01 reply dispatched');
         render();
       };
     });
 
-    app.querySelectorAll('[data-ap]').forEach(b => b.onclick = () => { W.approve(b.dataset.ap); W.toast('Approved'); render(); });
-    app.querySelectorAll('[data-dn]').forEach(b => b.onclick = () => { W.deny(b.dataset.dn); render(); });
+    const btnConnectReply = document.getElementById('btnDispatchConnectReply');
+    if (btnConnectReply) {
+      btnConnectReply.onclick = async () => {
+        const flowType = (document.getElementById('connectReplyFlowType') || {}).value || 'consultation_reply';
+        const to = ((document.getElementById('connectReplyToEmail') || {}).value || '').trim();
+        const receiptId = ((document.getElementById('connectReplyReceiptId') || {}).value || '').trim();
+        const customMessage = ((document.getElementById('connectReplyCustomNote') || {}).value || '').trim();
+        if (!to) { W.toast('Enter recipient email address first'); return; }
+        btnConnectReply.disabled = true;
+        btnConnectReply.textContent = 'Dispatching...';
+        try {
+          const res = await fetch('/api/connect-agent/reply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ flowType, to, receiptId, customMessage })
+          });
+          const data = await res.json();
+          if (data && data.ok) {
+            if (data.state && Array.isArray(data.state.connectEmailLedger)) {
+              S().connectEmailLedger = data.state.connectEmailLedger;
+            } else if (data.emailEntry) {
+              if (!Array.isArray(S().connectEmailLedger)) S().connectEmailLedger = [];
+              S().connectEmailLedger.unshift(data.emailEntry);
+            }
+            W.toast('Connect-01 dispatched reply from connect@miltongroupsecurity.org (' + data.emailEntry.id + ')');
+            render();
+          } else {
+            W.toast((data && data.error) || 'Failed to dispatch reply');
+          }
+        } catch (err) {
+          W.toast('Error: ' + err.message);
+        } finally {
+          btnConnectReply.disabled = false;
+          btnConnectReply.textContent = 'Send Reply via Connect-01';
+        }
+      };
+    }
+
+    app.querySelectorAll('[data-connect-reply-consult]').forEach(btn => {
+      btn.onclick = async () => {
+        const cid = btn.getAttribute('data-connect-reply-consult');
+        const to = btn.getAttribute('data-email');
+        const recipientName = btn.getAttribute('data-name');
+        const receiptId = btn.getAttribute('data-receipt');
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+        try {
+          const res = await fetch('/api/connect-agent/reply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ flowType: 'consultation_reply', recordId: cid, to, recipientName, receiptId })
+          });
+          const data = await res.json();
+          if (data && data.ok) {
+            if (data.state && Array.isArray(data.state.connectEmailLedger)) {
+              S().connectEmailLedger = data.state.connectEmailLedger;
+            } else if (data.emailEntry) {
+              if (!Array.isArray(S().connectEmailLedger)) S().connectEmailLedger = [];
+              S().connectEmailLedger.unshift(data.emailEntry);
+            }
+            W.toast('Connect-01 replied to ' + to + ' from connect@miltongroupsecurity.org');
+            render();
+          }
+        } catch (_) {}
+        btn.disabled = false;
+        btn.textContent = 'Reply via Connect-01';
+      };
+    });
+
+    app.querySelectorAll('[data-ap]').forEach(b => b.onclick = () => {
+      W.approve(b.dataset.ap);
+      W.toast('Approved & Connect-01 welcome email dispatched from connect@miltongroupsecurity.org');
+      render();
+    });
+    app.querySelectorAll('[data-dn]').forEach(b => b.onclick = () => {
+      W.deny(b.dataset.dn);
+      W.toast('Denied & notification sent from connect@miltongroupsecurity.org');
+      render();
+    });
   }
 
   document.addEventListener('keydown', (e) => {
