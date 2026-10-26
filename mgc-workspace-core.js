@@ -2932,13 +2932,15 @@
     }
 
     const isNewsletterPage = String(active || '').includes('newsletter') || (typeof location !== 'undefined' && /newsletter/i.test(location.pathname || ''));
+    const dockLogoTabHtml =
+      '<a class="btn" id="mgcBrandHomeLink" href="/" title="Milton Group Concepts Home" aria-label="Milton Group Concepts Home" style="width:68px;height:34px;padding:0;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid rgba(197,179,88,0.65);border-radius:8px;background:linear-gradient(135deg,#152952 0%,#283862 45%,#7e1f2e 100%);box-shadow:0 3px 10px rgba(0,0,0,0.4)">' +
+        '<img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:100%;height:100%;object-fit:cover;object-position:center 52%;transform:scale(1.38);filter:saturate(1.18) contrast(1.08);flex-shrink:0" />' +
+      '</a>' +
+      '<a class="btn" href="/" style="padding:7px 12px;font-size:12.5px">Home</a>';
     let navInner = '';
     if (isNewsletterPage) {
       navInner =
-        '<a class="btn" id="mgcBrandHomeLink" href="/" title="Milton Group Concepts Home" aria-label="Milton Group Concepts Home" style="width:68px;height:34px;padding:0;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid rgba(197,179,88,0.65);border-radius:8px;background:linear-gradient(135deg,#152952 0%,#283862 45%,#7e1f2e 100%);box-shadow:0 3px 10px rgba(0,0,0,0.4)">' +
-          '<img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:100%;height:100%;object-fit:cover;object-position:center 52%;transform:scale(1.38);filter:saturate(1.18) contrast(1.08);flex-shrink:0" />' +
-        '</a>' +
-        '<a class="btn" href="/" style="padding:7px 12px;font-size:12.5px">Home</a>' +
+        dockLogoTabHtml +
         '<a class="btn" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Client Workspace</a>' +
         '<button type="button" class="btn pri" id="btnNavSubmitConsultation" data-open-nl-consultation="1" style="padding:7px 14px;font-size:12.5px">Submit Consultation</button>';
     } else {
@@ -2960,7 +2962,7 @@
       if (admin || emp) {
         links.push(['access-admin.html', admin ? 'Directory & Console' : 'Client Directory']);
       }
-      navInner = links.map(l => {
+      navInner = dockLogoTabHtml + links.map(l => {
         const isAct = l[0] === active || (l[0] === 'member-portal.html' && active === 'member-portal.html') || (l[0] === 'agile-board.html' && String(active).includes('agile-board')) || (l[0] === 'access-admin.html' && String(active).includes('access-admin'));
         return '<a class="btn' + (isAct ? ' pri' : '') + '" href="' + l[0] + '" style="padding:7px 12px;font-size:12.5px">' + l[1] + '</a>';
       }).join('');
@@ -2981,9 +2983,7 @@
     const brandCode = (u && u.brand === 'FIX') ? 'FIX' : 'MGC';
     const brandTitle = (u && u.brand === 'FIX') ? 'F.I.X Solutions' : 'Milton Group Concepts';
     const subLabel = isNewsletterPage ? 'Executive Intelligence' : (u ? esc(u.name) : 'Not signed in');
-    const brandLeftHtml = isNewsletterPage
-      ? '<a class="brand" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><div>Milton Group Concepts<small>' + subLabel + '</small></div></a>'
-      : '<a class="brand" id="mgcBrandHomeLink" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:40px;height:40px;object-fit:contain;flex-shrink:0" /><div>Milton Group Concepts<small>' + subLabel + '</small></div></a>';
+    const brandLeftHtml = '<a class="brand" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><div>Milton Group Concepts<small>' + subLabel + '</small></div></a>';
     el.innerHTML = brandLeftHtml + nav + right;
     const host = document.querySelector('.wrap');
     if (host) {
