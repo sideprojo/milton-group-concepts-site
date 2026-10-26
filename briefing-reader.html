@@ -728,75 +728,10 @@
       }
     ];
 
-    // Vetted Non-Intrusive Monetization & Affiliate Revenue Programs
-    const MONETIZATION_PROGRAMS = [
-      {
-        id: 'paved_sponsorship',
-        shortLabel: '1. Paved / Beehiiv Sponsors',
-        programName: 'Paved & Beehiiv B2B Newsletter Sponsorship Network',
-        payoutModel: '$45–$85 CPM  ·  $250–$1,200 per Sponsored Issue',
-        fitWhy: 'Zero tracking scripts or blinking banners. Enterprise cloud, cyber, and finance brands pay flat rates to appear in a single native "Presented By" editorial block.',
-        sponsorTag: 'PRESENTED BY · EXECUTIVE BRIEFING PARTNER',
-        headline: 'Drata + Vanta Federal — Automate NIST 800-171, CMMC 2.0 & SOC 2 Evidence Collection',
-        copy: 'Replace manual compliance spreadsheets with continuous control monitoring across Google Cloud, AWS, and Microsoft Entra ID. Built for agile defense and commercial engineering teams.',
-        ctaText: 'Explore Compliance Partner Offer →',
-        ctaHref: '/consultation?scope=cyber'
-      },
-      {
-        id: 'partnerstack_b2b',
-        shortLabel: '2. PartnerStack B2B Affiliates',
-        programName: 'PartnerStack & Impact.com High-Ticket B2B SaaS Affiliates',
-        payoutModel: '$250–$1,500 per Qualified Demo or Business Signup (20%–30% Recurring)',
-        fitWhy: 'High-intent executive readers converting on corporate treasury (Mercury / Ramp), Zero-Trust VPN (Twingate / NordLayer), or Google Workspace referrals generate recurring monthly payouts.',
-        sponsorTag: 'PARTNER SPOTLIGHT · CORPORATE TREASURY & CLOUD',
-        headline: 'Mercury & Ramp Commercial Treasury — Zero-Fee Operating Accounts & Automated Spend Controls',
-        copy: 'Purpose-built banking and corporate cards for veteran-owned contractors, agencies, and multi-entity SaaS operators with automated receipt matching.',
-        ctaText: 'View Partner Program & Treasury Stack →',
-        ctaHref: '/finance'
-      },
-      {
-        id: 'carbon_ethical',
-        shortLabel: '3. Carbon / EthicalAds (CPM)',
-        programName: 'Carbon Ads (BuySellAds) & EthicalAds Developer/Executive Network',
-        payoutModel: '$6–$18 CPM Passive Web Display  ·  100% Cookie-Free & Privacy Safe',
-        fitWhy: 'The gold standard for non-intrusive web monetization. Displays a single, quiet 130x100 card strictly from vetted developer, cloud, and cybersecurity advertisers.',
-        sponsorTag: 'ETHICALADS · PRIVACY-FIRST TECH SPONSOR',
-        headline: 'Cloudflare Zero Trust & Google Cloud Run — Scale-to-Zero Enterprise Edge Security',
-        copy: 'Protect internal portals and APIs with hardware-key identity gates and serverless containers that cost $0.00 at idle.',
-        ctaText: 'Inspect Zero-Trust Architecture →',
-        ctaHref: '/trust-center'
-      },
-      {
-        id: 'adsense_native',
-        shortLabel: '4. Google AdSense Native Fluid',
-        programName: 'Google AdSense In-Article Native Fluid Units',
-        payoutModel: 'Automated Programmatic CPC + CPM Fill ($1.50–$4.20 CPC in Cyber/Cloud)',
-        fitWhy: 'Uses Google’s responsive In-Article fluid layout styled to match your exact Playfair Display serif typography and dark/ivory broadsheet theme.',
-        sponsorTag: 'SPONSORED RESOURCE · GOOGLE PARTNER NETWORK',
-        headline: 'Google Cloud Skills & Vertex AI Enterprise Readiness Credits',
-        copy: 'Deploy governed task agents, BigQuery clean rooms, and federated identity workflows with official cloud architecture templates.',
-        ctaText: 'Launch Cloud Architecture Showcase →',
-        ctaHref: '/apps'
-      },
-      {
-        id: 'mgc_house_turnkey',
-        shortLabel: '5. MGC & F.I.X Direct Offers (100%)',
-        programName: 'First-Party MGC & F.I.X Turnkey & SaaS Conversion Slots',
-        payoutModel: '100% Net Margin  ·  $19–$49/mo SaaS Passes & $1,500+ Turnkey Builds',
-        fitWhy: 'Converts every reader directly into your own paid SaaS subscribers, Sterling-style Turnkey Web + AI Receptionist builds, and SDVOSB teaming consultations.',
-        sponsorTag: 'FEATURED CAPABILITY · MILTON GROUP CONCEPTS & F.I.X SOLUTIONS',
-        headline: 'Deploy a Turnkey Website, 24/7 AI Receptionist & 10-App Workspace for Your Team',
-        copy: 'Launch your custom project scope in minutes or unlock all 10 interactive SaaS & SCORM training applications—including Project EL CID and Argo Scope Builder.',
-        ctaText: 'Open Turnkey Scope Builder & Apps →',
-        ctaHref: '/apps'
-      }
-    ];
-
     let allStories = DEFAULT_STORIES.slice();
     let activeStory = DEFAULT_STORIES[0];
     let fontSizeLevel = 1; // 0 = 19px, 1 = 21.5px, 2 = 24.5px
     let themeMode = 'obsidian'; // 'obsidian' | 'ivory'
-    let activeProgramId = 'paved_sponsorship';
     let isSpeaking = false;
     let deliverableToastMsg = '';
 
@@ -995,8 +930,6 @@
       applyTypographyAndTheme();
       const root = document.getElementById('readerRoot');
       const paras = ensureThreeParagraphs(activeStory);
-      const activeProg = MONETIZATION_PROGRAMS.find(p => p.id === activeProgramId) || MONETIZATION_PROGRAMS[0];
-      const secondaryProg = MONETIZATION_PROGRAMS[(MONETIZATION_PROGRAMS.indexOf(activeProg) + 1) % MONETIZATION_PROGRAMS.length];
       const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
       root.innerHTML = `
@@ -1118,62 +1051,10 @@
               </div>
             </section>
 
-            <!-- Non-Intrusive In-Article Editorial Sponsorship Unit (Axios / Financial Times Style) -->
-            <aside class="native-sponsor-unit" aria-label="Sponsored Executive Partner Brief">
-              <div class="native-sponsor-header">
-                <span>${esc(activeProg.sponsorTag)}</span>
-                <span style="font-weight:500;opacity:0.8">Non-Intrusive Editorial Placement</span>
-              </div>
-              <h3 class="native-sponsor-title">${esc(activeProg.headline)}</h3>
-              <p class="native-sponsor-copy">${esc(activeProg.copy)}</p>
-              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-                <a href="${esc(activeProg.ctaHref)}" class="reader-btn pri">${esc(activeProg.ctaText)}</a>
-                <span style="font-size:11px;color:var(--ink-muted)">Active Program: <strong>${esc(activeProg.programName)}</strong> (${esc(activeProg.payoutModel)})</span>
-              </div>
-            </aside>
           </article>
 
-          <aside class="editorial-rail" aria-label="Partner Spotlight, Monetization Options, and Related Stories">
-            <!-- 1. Quiet Right-Rail Native Ad Card -->
-            <div class="rail-card" style="border-color:var(--ad-border);background:var(--ad-bg)">
-              <div class="rail-heading">
-                <span>${esc(secondaryProg.sponsorTag.split('·')[0])}</span>
-                <span style="font-size:9.5px;opacity:0.75">PARTNER</span>
-              </div>
-              <div style="font-family:'Playfair Display',Georgia,serif;font-size:16.5px;font-weight:700;color:var(--ink-primary);margin-bottom:6px;line-height:1.35">
-                ${esc(secondaryProg.headline)}
-              </div>
-              <p style="font-size:12.5px;line-height:1.5;color:var(--ink-body);margin:0 0 12px 0">
-                ${esc(secondaryProg.copy)}
-              </p>
-              <a href="${esc(secondaryProg.ctaHref)}" class="reader-btn" style="width:100%;justify-content:center">${esc(secondaryProg.ctaText)}</a>
-            </div>
-
-            <!-- 2. Interactive Non-Intrusive Ad & Revenue Program Explorer -->
-            <div class="rail-card">
-              <div class="rail-heading">
-                <span>💼 Revenue &amp; Ad Programs</span>
-                <span style="font-size:10px;color:var(--accent-blue)">5 Income Tracks</span>
-              </div>
-              <p style="font-size:12px;color:var(--ink-muted);margin:0 0 10px 0;line-height:1.45">
-                Preview vetted, non-intrusive ad and partner programs that monetize reader traffic while preserving a clean editorial experience:
-              </p>
-              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
-                ${MONETIZATION_PROGRAMS.map(p => `
-                  <button type="button" class="prog-pill ${p.id === activeProgramId ? 'active' : ''}" data-prog-id="${esc(p.id)}" style="text-align:left;display:flex;justify-content:space-between;align-items:center">
-                    <span>${esc(p.shortLabel)}</span>
-                    <span style="font-size:10px;opacity:0.8">Preview →</span>
-                  </button>
-                `).join('')}
-              </div>
-              <div style="padding:10px 12px;border-radius:10px;background:var(--paper-elevated);border:1px solid var(--rule-subtle);font-size:11.5px;line-height:1.45">
-                <div style="font-weight:800;color:var(--gold);margin-bottom:3px">${esc(activeProg.programName)}</div>
-                <div style="font-family:monospace;font-size:11px;color:var(--accent-blue);margin-bottom:5px">${esc(activeProg.payoutModel)}</div>
-                <div style="color:var(--ink-body)">${esc(activeProg.fitWhy)}</div>
-              </div>
-            </div>
-
-            <!-- 3. More Dispatches on the Live Wire -->
+          <aside class="editorial-rail" aria-label="Related Dispatches and Reader Navigation">
+            <!-- 1. More Dispatches on the Live Wire -->
             <div class="rail-card">
               <div class="rail-heading">
                 <span>📰 More on the Live Wire</span>
@@ -1191,6 +1072,21 @@
                 `).join('')}
               </div>
             </div>
+
+            <!-- 2. Executive Briefing & Workspace Navigation -->
+            <div class="rail-card">
+              <div class="rail-heading">
+                <span>🏛️ Executive Dispatch Desk</span>
+                <span>Edition</span>
+              </div>
+              <p style="font-size:12.5px;line-height:1.55;color:var(--ink-body);margin:0 0 12px 0">
+                Each dispatch is distilled into a three-paragraph broadsheet briefing paired with an actionable three-step implementation playbook and downloadable executive memo.
+              </p>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <a href="/newsletter" class="reader-btn pri" style="width:100%;justify-content:center">← Return to Live Newsletter Stream</a>
+                <a href="/apps" class="reader-btn" style="width:100%;justify-content:center">⚡ Explore SaaS Apps &amp; LMS</a>
+              </div>
+            </div>
           </aside>
         </div>
       `;
@@ -1200,7 +1096,7 @@
       document.getElementById('btnFontLg').onclick = () => { fontSizeLevel = 2; applyTypographyAndTheme(); render(); };
       document.getElementById('btnToggleTheme').onclick = () => {
         const nextTheme = themeMode === 'ivory' ? 'obsidian' : 'ivory';
-        triggerWatchedThemeTransition(nextTheme, 'Manual Reader Theme Switch');
+        triggerWatchedThemeTransition(nextTheme, '');
       };
       document.getElementById('btnSpeakArticle').onclick = toggleSpeech;
       document.getElementById('btnPrintArticle').onclick = () => window.print();
@@ -1241,25 +1137,6 @@
       if (btnPrintPdf) {
         btnPrintPdf.onclick = () => window.print();
       }
-
-      root.querySelectorAll('[data-prog-id]').forEach(btn => {
-        btn.onclick = () => {
-          const nextProgId = btn.getAttribute('data-prog-id');
-          const wasPartnerStack = activeProgramId === 'partnerstack_b2b';
-          const isNowPartnerStack = nextProgId === 'partnerstack_b2b';
-          activeProgramId = nextProgId;
-          render();
-          if (isNowPartnerStack && themeMode !== 'ivory') {
-            requestAnimationFrame(() => {
-              triggerWatchedThemeTransition('ivory', 'PartnerStack B2B Affiliate Track');
-            });
-          } else if (wasPartnerStack && !isNowPartnerStack && themeMode === 'ivory') {
-            requestAnimationFrame(() => {
-              triggerWatchedThemeTransition('obsidian', 'Returned to MGC Thematic Track');
-            });
-          }
-        };
-      });
 
       root.querySelectorAll('[data-story-id]').forEach(btn => {
         btn.onclick = () => {

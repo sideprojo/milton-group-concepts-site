@@ -357,69 +357,6 @@
       ]
     };
 
-    const MONETIZATION_PROGRAMS = [
-      {
-        id: 'paved_sponsorship',
-        shortLabel: '1. Paved / Beehiiv Sponsors',
-        programName: 'Paved & Beehiiv B2B Newsletter Sponsorship Network',
-        payoutModel: '$45–$85 CPM · $250–$1,200 / Issue',
-        fitWhy: 'Enterprise cloud, cyber, and finance brands pay flat rates to appear in a single native "Presented By" editorial block—zero tracking cookies or blinking banners.',
-        sponsorTag: 'PRESENTED BY · EXECUTIVE BRIEFING PARTNER',
-        headline: 'Drata + Vanta Federal — Automate NIST 800-171, CMMC 2.0 & SOC 2 Evidence Collection',
-        copy: 'Replace manual compliance spreadsheets with continuous control monitoring across Google Cloud, AWS, and Microsoft Entra ID.',
-        ctaText: 'Explore Compliance Partner Offer →',
-        ctaHref: '/consultation?scope=cyber'
-      },
-      {
-        id: 'partnerstack_b2b',
-        shortLabel: '2. PartnerStack B2B Affiliates',
-        programName: 'PartnerStack & Impact.com High-Ticket B2B SaaS Affiliates',
-        payoutModel: '$250–$1,500 / Referral (20%–30% RevShare)',
-        fitWhy: 'High-intent executive readers converting on corporate treasury (Mercury / Ramp), Zero-Trust VPN (Twingate / NordLayer), or Google Workspace referrals generate recurring payouts.',
-        sponsorTag: 'PARTNER SPOTLIGHT · CORPORATE TREASURY & CLOUD',
-        headline: 'Mercury & Ramp Commercial Treasury — Zero-Fee Operating Accounts & Automated Spend Controls',
-        copy: 'Purpose-built banking and corporate cards for veteran-owned contractors, agencies, and multi-entity SaaS operators.',
-        ctaText: 'View Partner Program & Treasury Stack →',
-        ctaHref: '/finance'
-      },
-      {
-        id: 'carbon_ethical',
-        shortLabel: '3. Carbon / EthicalAds (CPM)',
-        programName: 'Carbon Ads (BuySellAds) & EthicalAds Tech Network',
-        payoutModel: '$6–$18 CPM Passive Display · 100% Cookie-Free',
-        fitWhy: 'Displays a single, quiet card strictly from vetted developer, cloud, and cybersecurity advertisers without retargeting scripts.',
-        sponsorTag: 'ETHICALADS · PRIVACY-FIRST TECH SPONSOR',
-        headline: 'Cloudflare Zero Trust & Google Cloud Run — Scale-to-Zero Enterprise Edge Security',
-        copy: 'Protect internal portals and APIs with hardware-key identity gates and serverless containers that cost $0.00 at idle.',
-        ctaText: 'Inspect Zero-Trust Architecture →',
-        ctaHref: '/trust-center'
-      },
-      {
-        id: 'adsense_native',
-        shortLabel: '4. Google AdSense Native Fluid',
-        programName: 'Google AdSense In-Article Native Fluid Units',
-        payoutModel: 'Automated Programmatic Fill ($1.50–$4.20 CPC)',
-        fitWhy: 'Uses Google’s responsive In-Article fluid layout styled to match your exact Playfair Display serif typography and dark/ivory broadsheet theme.',
-        sponsorTag: 'SPONSORED RESOURCE · GOOGLE PARTNER NETWORK',
-        headline: 'Google Cloud Skills & Vertex AI Enterprise Readiness Credits',
-        copy: 'Deploy governed task agents, BigQuery clean rooms, and federated identity workflows with official cloud architecture templates.',
-        ctaText: 'Launch Cloud Architecture Showcase →',
-        ctaHref: '/apps'
-      },
-      {
-        id: 'mgc_house_turnkey',
-        shortLabel: '5. MGC & F.I.X Direct (100%)',
-        programName: 'First-Party MGC & F.I.X Turnkey & SaaS Conversion Slots',
-        payoutModel: '100% Net Margin · $19–$49/mo Passes & $1,500+ Builds',
-        fitWhy: 'Routes reader traffic directly into your own paid SaaS subscriptions, Turnkey Web + AI Receptionist builds, and SDVOSB consultations.',
-        sponsorTag: 'FEATURED CAPABILITY · MILTON GROUP CONCEPTS & F.I.X SOLUTIONS',
-        headline: 'Deploy a Turnkey Website, 24/7 AI Receptionist & 10-App Workspace for Your Team',
-        copy: 'Build your custom project scope in minutes or unlock all 10 interactive SaaS & SCORM training applications.',
-        ctaText: 'Open Turnkey Scope Builder & Apps →',
-        ctaHref: '/apps'
-      }
-    ];
-
     let selectedDonationAmount = 25;
     let selectedDonationMethod = 'card';
     let activeStreamTrack = 'all';
@@ -429,7 +366,6 @@
     let activeReaderStory = null;
     let readerFontScale = 1; // 0 = 19px, 1 = 21.5px, 2 = 24.5px
     let readerPaperTheme = 'obsidian'; // 'obsidian' | 'ivory'
-    let activeAdProgramId = 'paved_sponsorship';
     let subInputDraft = { name: '', email: '', topic: 'all', smsOptIn: false, phone: '', carrier: 'tmomail.net' };
     const urlParams = new URLSearchParams(location.search);
     let settledDonationReceipt = urlParams.get('checkout_status') === 'settled' ? (urlParams.get('receipt') || '') : '';
@@ -593,7 +529,6 @@
       const displayStream = filteredStream.length ? filteredStream : rawStream;
       // Duplicate items so the 0% -> -50% vertical scroll loops seamlessly without any jump
       const loopedStream = displayStream.concat(displayStream);
-      const activeAdProg = MONETIZATION_PROGRAMS.find(p => p.id === activeAdProgramId) || MONETIZATION_PROGRAMS[0];
 
       const renderStreamCard = (item, idx) => `
         <article class="mgc-live-article-card ${item.isKeyStory ? 'is-key-story' : ''}" data-stream-card-idx="${idx}" data-story-card-id="${esc(item.id)}" title="Click to open 3-paragraph Broadsheet Reader Edition">
@@ -788,46 +723,17 @@
                   </div>
                 </div>
 
-                <!-- Non-Intrusive In-Article Editorial Sponsorship Block -->
-                <div style="margin-top:24px;padding:16px 20px;border-radius:12px;background-color:var(--r-elevated);border:1px solid rgba(197,179,88,0.42)">
-                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--r-gold)">
-                    <span>${esc(activeAdProg.sponsorTag)}</span>
-                    <span>NON-INTRUSIVE PARTNER SLOT</span>
-                  </div>
-                  <div style="font-family:'Playfair Display',Georgia,serif;font-size:17.5px;font-weight:700;margin-bottom:5px;color:var(--r-ink-pri)">${esc(activeAdProg.headline)}</div>
-                  <p style="font-size:13px;line-height:1.5;color:var(--r-ink-dek);margin:0 0 10px 0">${esc(activeAdProg.copy)}</p>
-                  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-                    <a href="${esc(activeAdProg.ctaHref)}" class="btn pri" style="padding:6px 12px;font-size:11.5px;text-decoration:none">${esc(activeAdProg.ctaText)}</a>
+                <!-- Source Verification & Standalone Reader Footer -->
+                <div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--r-rule);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+                  <span style="font-size:12px;color:var(--r-ink-muted)">Curated from <strong>${esc(readerStoryNorm.source)}</strong> (${esc(readerStoryNorm.agency || 'Executive Desk')})</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                     <a href="${esc(readerStoryNorm.url)}" target="_blank" rel="noopener noreferrer" class="btn" style="padding:6px 12px;font-size:11.5px;text-decoration:none">Verify Original Source (${esc(readerStoryNorm.source)}) ↗</a>
                   </div>
                 </div>
               </div>
 
-              <!-- Right Column: Non-Intrusive Ad & Revenue Program Switcher + More Stories -->
+              <!-- Right Column: More Stories on the Live Wire -->
               <aside style="display:flex;flex-direction:column;gap:14px">
-                <div style="padding:16px;border-radius:14px;background-color:var(--r-surface);border:1px solid rgba(197,179,88,0.4)">
-                  <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--r-gold);margin-bottom:8px;display:flex;justify-content:space-between">
-                    <span>💼 Ad &amp; Revenue Programs</span>
-                    <span style="color:#38bdf8">5 Tracks</span>
-                  </div>
-                  <p style="font-size:11.5px;color:var(--r-ink-muted);margin:0 0 10px 0;line-height:1.45">
-                    Select any non-intrusive monetization program below to preview live placement &amp; expected income:
-                  </p>
-                  <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
-                    ${MONETIZATION_PROGRAMS.map(p => `
-                      <button type="button" class="btn ${p.id === activeAdProgramId ? 'pri' : ''}" data-select-ad-prog="${esc(p.id)}" style="justify-content:space-between;padding:6px 10px;font-size:11px;width:100%">
-                        <span>${esc(p.shortLabel)}</span>
-                        <span style="font-size:9.5px">Preview</span>
-                      </button>
-                    `).join('')}
-                  </div>
-                  <div style="padding:10px;border-radius:9px;background-color:var(--r-elevated);border:1px solid rgba(148,163,184,0.22);font-size:11px;line-height:1.45">
-                    <div style="font-weight:800;color:var(--r-gold);margin-bottom:2px">${esc(activeAdProg.programName)}</div>
-                    <div style="font-family:monospace;color:#38bdf8;margin-bottom:4px">${esc(activeAdProg.payoutModel)}</div>
-                    <div style="color:var(--r-ink-dek)">${esc(activeAdProg.fitWhy)}</div>
-                  </div>
-                </div>
-
                 <div style="padding:16px;border-radius:14px;background-color:var(--r-surface);border:1px solid rgba(148,163,184,0.25)">
                   <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--r-gold);margin-bottom:8px">📰 Switch Story in Reader</div>
                   <div style="display:flex;flex-direction:column;gap:6px">
@@ -1041,34 +947,6 @@
               ` : ''}
             </aside>
 
-            <!-- NON-INTRUSIVE PARTNER SPOTLIGHT & AD REVENUE PROGRAMS CARD -->
-            <aside class="card" id="partnerRevenueCard" style="margin:0;border-color:rgba(197,179,88,0.45);background:linear-gradient(135deg,rgba(12,21,39,0.96),rgba(7,13,26,0.98))">
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px">
-                <span style="font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#C5B358">${esc(activeAdProg.sponsorTag)}</span>
-                <span style="font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.35);color:#7dd3fc;font-weight:700">Non-Intrusive</span>
-              </div>
-              <div style="font-family:'Playfair Display',Georgia,serif;font-size:16px;font-weight:800;color:#f8fafc;line-height:1.3;margin-bottom:6px">
-                ${esc(activeAdProg.headline)}
-              </div>
-              <p style="font-size:12px;color:#cbd5e1;line-height:1.5;margin:0 0 10px 0">
-                ${esc(activeAdProg.copy)}
-              </p>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-                <a href="${esc(activeAdProg.ctaHref)}" class="btn pri" style="flex:1;justify-content:center;padding:7px 10px;font-size:11.5px;text-decoration:none">${esc(activeAdProg.ctaText)}</a>
-              </div>
-              <div style="padding-top:8px;border-top:1px solid rgba(148,163,184,0.18)">
-                <div style="font-size:10.5px;font-weight:700;color:#94a3b8;margin-bottom:6px;display:flex;justify-content:space-between">
-                  <span>💼 Switch Revenue / Ad Program:</span>
-                  <span style="color:#fde047">${esc(activeAdProg.payoutModel.split('·')[0])}</span>
-                </div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  ${MONETIZATION_PROGRAMS.map(p => `
-                    <button type="button" class="btn ${p.id === activeAdProgramId ? 'pri' : ''}" data-select-ad-prog="${esc(p.id)}" style="padding:3px 8px;font-size:10px">${esc(p.shortLabel)}</button>
-                  `).join('')}
-                </div>
-              </div>
-            </aside>
-
             <!-- DONATIONS CARD -->
             <aside class="card" id="donations" style="margin:0;border-color:rgba(197,179,88,0.55)">
               <p style="font-size:12.5px;color:#cbd5e1;margin:0 0 10px 0">Support our SDVOSB initiatives and community programs.</p>
@@ -1230,24 +1108,6 @@
           W.toast(targetTheme === 'ivory' ? `📰 Financial Ivory Paper · ${label}` : `🌙 MGC Obsidian Thematic Colors · ${label}`);
         }
       }
-
-      app.querySelectorAll('[data-select-ad-prog]').forEach(btn => {
-        btn.onclick = (ev) => {
-          ev.stopPropagation();
-          const nextProgId = btn.getAttribute('data-select-ad-prog') || 'paved_sponsorship';
-          const wasPartnerStack = activeAdProgramId === 'partnerstack_b2b';
-          const isNowPartnerStack = nextProgId === 'partnerstack_b2b';
-          activeAdProgramId = nextProgId;
-          render();
-          if (activeReaderStory) {
-            if (isNowPartnerStack && readerPaperTheme !== 'ivory') {
-              requestAnimationFrame(() => triggerModalWatchedTheme('ivory', 'PartnerStack B2B Affiliates'));
-            } else if (wasPartnerStack && !isNowPartnerStack && readerPaperTheme === 'ivory') {
-              requestAnimationFrame(() => triggerModalWatchedTheme('obsidian', 'Returned to MGC Thematic Track'));
-            }
-          }
-        };
-      });
 
       app.querySelectorAll('[data-switch-reader-story]').forEach(btn => {
         btn.onclick = () => {
