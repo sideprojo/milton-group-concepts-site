@@ -2935,8 +2935,8 @@
     let navInner = '';
     if (isNewsletterPage) {
       navInner =
-        '<a class="btn" id="mgcBrandHomeLink" href="/" title="Milton Group Concepts Home" aria-label="Milton Group Concepts Home" style="padding:4px 10px;display:inline-flex;align-items:center;justify-content:center;border-color:rgba(197,179,88,0.45);background:rgba(15,23,42,0.92)">' +
-          '<img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:28px;height:28px;object-fit:contain;flex-shrink:0;filter:none" />' +
+        '<a class="btn" id="mgcBrandHomeLink" href="/" title="Milton Group Concepts Home" aria-label="Milton Group Concepts Home" style="width:68px;height:34px;padding:0;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid rgba(197,179,88,0.65);border-radius:8px;background:linear-gradient(135deg,#152952 0%,#283862 45%,#7e1f2e 100%);box-shadow:0 3px 10px rgba(0,0,0,0.4)">' +
+          '<img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:100%;height:100%;object-fit:cover;object-position:center 52%;transform:scale(1.38);filter:saturate(1.18) contrast(1.08);flex-shrink:0" />' +
         '</a>' +
         '<a class="btn" href="/" style="padding:7px 12px;font-size:12.5px">Home</a>' +
         '<a class="btn" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Client Workspace</a>' +
