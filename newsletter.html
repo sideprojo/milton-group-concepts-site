@@ -505,12 +505,9 @@
       const safeUrl = String(targetUrl || 'https://news.google.com/').trim();
       const label = cleanEditorialText(sourceLabel || 'Verified News Source') || 'Verified News Source';
       const banner = document.getElementById('nlRedirectNoticeBanner');
-      const bannerText = document.getElementById('nlRedirectNoticeText');
-      if (bannerText) {
-        bannerText.textContent = `↗ Redirecting to verified source (${label})...`;
-      }
       if (banner) {
-        banner.classList.add('is-active');
+        banner.innerHTML = `<span>↗ Redirecting to verified source (<strong>${esc(label)}</strong>)...</span>`;
+        banner.classList.add('visible');
       }
       if (W && W.toast) {
         W.toast(`↗ Redirecting to verified source (${label})...`);
@@ -523,8 +520,8 @@
           window.location.href = safeUrl;
         }
         setTimeout(() => {
-          if (banner) banner.classList.remove('is-active');
-        }, 1200);
+          if (banner) banner.classList.remove('visible');
+        }, 1400);
       }, 650);
     }
 
