@@ -2935,6 +2935,9 @@
     let navInner = '';
     if (isNewsletterPage) {
       navInner =
+        '<a class="btn" id="mgcBrandHomeLink" href="/" title="Milton Group Concepts Home" aria-label="Milton Group Concepts Home" style="padding:4px 10px;display:inline-flex;align-items:center;justify-content:center;border-color:rgba(197,179,88,0.45);background:rgba(15,23,42,0.92)">' +
+          '<img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:28px;height:28px;object-fit:contain;flex-shrink:0;filter:none" />' +
+        '</a>' +
         '<a class="btn" href="/" style="padding:7px 12px;font-size:12.5px">Home</a>' +
         '<a class="btn" href="member-portal.html" style="padding:7px 12px;font-size:12.5px">Client Workspace</a>' +
         '<button type="button" class="btn pri" id="btnNavSubmitConsultation" data-open-nl-consultation="1" style="padding:7px 14px;font-size:12.5px">Submit Consultation</button>';
@@ -2978,7 +2981,10 @@
     const brandCode = (u && u.brand === 'FIX') ? 'FIX' : 'MGC';
     const brandTitle = (u && u.brand === 'FIX') ? 'F.I.X Solutions' : 'Milton Group Concepts';
     const subLabel = isNewsletterPage ? 'Executive Intelligence' : (u ? esc(u.name) : 'Not signed in');
-    el.innerHTML = '<a class="brand" id="mgcBrandHomeLink" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:40px;height:40px;object-fit:contain;flex-shrink:0" /><div>Milton Group Concepts<small>' + subLabel + '</small></div></a>' + nav + right;
+    const brandLeftHtml = isNewsletterPage
+      ? '<a class="brand" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><div>Milton Group Concepts<small>' + subLabel + '</small></div></a>'
+      : '<a class="brand" id="mgcBrandHomeLink" href="/" title="Return to Homepage" style="cursor:pointer;text-decoration:none"><img src="assets/mgc-crest.png?v=flag2026" alt="MGC Crest" style="width:40px;height:40px;object-fit:contain;flex-shrink:0" /><div>Milton Group Concepts<small>' + subLabel + '</small></div></a>';
+    el.innerHTML = brandLeftHtml + nav + right;
     const host = document.querySelector('.wrap');
     if (host) {
       host.prepend(el);
