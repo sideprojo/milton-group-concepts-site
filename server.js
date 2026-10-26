@@ -1773,13 +1773,19 @@ function readJsonBody(req) {
   });
 }
 
+const ALLOWED_FEDERATED_ORIGINS = new Set([
+  'https://fix.miltongroupsecurity.org',
+  'https://miltongroupsecurity.org',
+  'https://www.miltongroupsecurity.org'
+]);
+
 const SECURITY_HEADERS = {
   'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'SAMEORIGIN',
   'X-Permitted-Cross-Domain-Policies': 'none',
   'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-  'Cross-Origin-Resource-Policy': 'same-origin',
+  'Cross-Origin-Resource-Policy': 'same-site',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(self), geolocation=(self), payment=(self)',
   'Content-Security-Policy': "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; connect-src 'self' https:; frame-ancestors 'self'; base-uri 'self'"
@@ -2082,10 +2088,12 @@ function checkRateLimit(req, bucketName, maxHits = 30, windowMs = 60000) {
 }
 
 function sendJson(res, status, data, extraHeaders = {}) {
+  const corsHeaders = res._mgcCorsHeaders || {};
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
     ...SECURITY_HEADERS,
+    ...corsHeaders,
     ...extraHeaders
   });
   res.end(JSON.stringify(data));
@@ -2159,6 +2167,23 @@ const MIME = {
 
 const server = http.createServer(async (req, res) => {
   try {
+    const reqOrigin = String(req.headers.origin || '').trim();
+    if (ALLOWED_FEDERATED_ORIGINS.has(reqOrigin)) {
+      res._mgcCorsHeaders = {
+        'Access-Control-Allow-Origin': reqOrigin,
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+        'Vary': 'Origin'
+      };
+    }
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, {
+        ...SECURITY_HEADERS,
+        ...(res._mgcCorsHeaders || {})
+      });
+      return res.end();
+    }
     const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = decodeURIComponent(parsedUrl.pathname);
 
