@@ -47,6 +47,52 @@
       box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65);
       position: relative;
     }
+    .mgc-filter-header {
+      padding: 14px 18px;
+      background: linear-gradient(90deg, rgba(7, 13, 26, 0.98) 0%, rgba(16, 29, 56, 0.96) 50%, rgba(7, 13, 26, 0.98) 100%);
+      border-bottom: 1px solid rgba(197, 179, 88, 0.42);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mgc-filter-dock {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(4, 8, 20, 0.92);
+      border: 1.5px solid rgba(197, 179, 88, 0.48);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7), 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+    .mgc-filter-pill {
+      appearance: none;
+      cursor: pointer;
+      padding: 7px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      color: #cbd5e1;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mgc-filter-pill:hover {
+      color: #ffffff;
+      border-color: rgba(197, 179, 88, 0.68);
+      background: rgba(30, 41, 59, 0.88);
+      transform: translateY(-1px);
+    }
+    .mgc-filter-pill.active {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 58%, #7e1f2e 100%);
+      border: 1.5px solid #C5B358;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(29, 78, 216, 0.42), 0 0 14px rgba(197, 179, 88, 0.28);
+    }
     .mgc-vertical-viewport {
       height: 760px;
       overflow: hidden;
@@ -825,41 +871,19 @@
 
       const liveStreamHtml = `
         <div class="mgc-live-stream-shell" id="mgcLiveVerticalStream">
-          <div style="padding:14px 18px;background:linear-gradient(90deg,rgba(15,23,42,0.98),rgba(11,20,38,0.95));border-bottom:1px solid rgba(197,179,88,0.38);display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                <span style="width:9px;height:9px;border-radius:999px;background:#34d399;box-shadow:0 0 10px #34d399;display:inline-block;animation:mgcLiveDotPing 1.8s infinite"></span>
-                <span style="font-size:13.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:#C5B358">The Executive Dispatch · Live Wire</span>
-                <span style="font-size:11px;font-family:monospace;color:#94a3b8;border-left:1px solid rgba(255,255,255,0.15);padding-left:10px">Reuters · Google News · DefenseScoop · CISA</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px">
-                <span style="padding:4px 9px;border-radius:999px;background:rgba(4,9,20,0.9);border:1px solid rgba(197,179,88,0.45);font-family:monospace;font-size:11px;color:#fde047">
-                  Refresh <strong id="mgcStreamCountdownVal">${streamRefreshCountdown}s</strong>
-                </span>
-                <button type="button" class="btn" id="btnToggleStreamPause" style="padding:5px 10px;font-size:11px">
-                  ${streamPaused ? '▶ Resume Scroll' : '⏸ Pause Scroll'}
+          <div class="mgc-filter-header">
+            <div class="mgc-filter-dock" role="tablist" aria-label="Briefing Filter Categories">
+              ${[
+                { id: 'all', label: 'All Live Feeds' },
+                { id: 'ai-workflow', label: 'AI & Automation' },
+                { id: 'federal', label: 'Federal & SDVOSB' },
+                { id: 'cyber', label: 'Security & Compliance' },
+                { id: 'logistics', label: 'Operations' }
+              ].map(t => `
+                <button type="button" class="mgc-filter-pill ${activeStreamTrack === t.id ? 'active' : ''}" data-stream-track="${t.id}" role="tab" aria-selected="${activeStreamTrack === t.id ? 'true' : 'false'}">
+                  ${t.label}
                 </button>
-                <button type="button" class="btn" id="btnRefreshLiveStream" style="padding:5px 10px;font-size:11px;border-color:rgba(52,211,153,0.45);color:#34d399">
-                  ↻ Refresh
-                </button>
-              </div>
-            </div>
-
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
-              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                ${[
-                  { id: 'all', label: 'All Live Feeds' },
-                  { id: 'ai-workflow', label: 'AI & Automation' },
-                  { id: 'federal', label: 'Federal & SDVOSB' },
-                  { id: 'cyber', label: 'Security & Compliance' },
-                  { id: 'logistics', label: 'Operations' }
-                ].map(t => `
-                  <button type="button" class="btn ${activeStreamTrack === t.id ? 'pri' : ''}" data-stream-track="${t.id}" style="padding:4px 10px;font-size:11px;border-radius:999px">
-                    ${t.label}
-                  </button>
-                `).join('')}
-              </div>
-              <span style="font-size:11px;color:#fde047;font-weight:600">Hover to pause · Click any story to open the 3-Paragraph Broadsheet Reader ↗</span>
+              `).join('')}
             </div>
           </div>
 
