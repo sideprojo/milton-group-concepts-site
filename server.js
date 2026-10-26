@@ -2826,23 +2826,44 @@ const server = http.createServer(async (req, res) => {
       global.__MGC_LIVE_NEWS_CACHE = { fetchedAt: 0, items: [] };
     }
 
+    function decodeXmlEntities(raw) {
+      let str = String(raw || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1');
+      for (let pass = 0; pass < 3; pass++) {
+        str = str
+          .replace(/&nbsp;|&#160;|&#xa0;/gi, ' ')
+          .replace(/&lt;|&#60;|&#x3c;/gi, '<')
+          .replace(/&gt;|&#62;|&#x3e;/gi, '>')
+          .replace(/&quot;|&#34;|&#x22;/gi, '"')
+          .replace(/&#39;|&apos;|&#8216;|&#8217;|&lsquo;|&rsquo;|&#x27;/gi, "'")
+          .replace(/&#8220;|&#8221;|&ldquo;|&rdquo;/gi, '"')
+          .replace(/&#8211;|&#8212;|&ndash;|&mdash;/gi, ' ')
+          .replace(/&#(\d+);/g, (_, dec) => {
+            const code = Number(dec);
+            if (code === 8216 || code === 8217 || code === 39) return "'";
+            if (code === 8220 || code === 8221 || code === 34) return '"';
+            if (code === 8211 || code === 8212 || code === 45) return ' ';
+            return code >= 32 && code <= 126 ? String.fromCharCode(code) : ' ';
+          })
+          .replace(/&amp;|&#38;|&#x26;/gi, '&');
+      }
+      return str;
+    }
+
+    function extractFirstHrefFromHtml(raw) {
+      const decoded = decodeXmlEntities(raw);
+      const m = decoded.match(/href\s*=\s*["']?(https?:\/\/[^\s"'<>]+)/i);
+      return m ? m[1].trim() : '';
+    }
+
     function stripRssHtml(raw) {
-      return String(raw || '')
-        .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+      return decodeXmlEntities(raw)
+        .replace(/<a\b[^>]*>([\s\S]*?)<\/a>/gi, '$1. ')
+        .replace(/<font\b[^>]*>[\s\S]*?<\/font>/gi, ' ')
         .replace(/<[^>]*>/g, ' ')
-        .replace(/&nbsp;/gi, ' ')
-        .replace(/&amp;/gi, '&')
-        .replace(/&quot;/gi, '"')
-        .replace(/&#39;|&apos;|&#8216;|&#8217;|&lsquo;|&rsquo;/gi, "'")
-        .replace(/&#8220;|&#8221;|&ldquo;|&rdquo;/gi, '"')
-        .replace(/&#8211;|&#8212;|&ndash;|&mdash;|-+/g, ' ')
-        .replace(/&#(\d+);/g, (_, dec) => {
-          const code = Number(dec);
-          if (code === 8216 || code === 8217 || code === 39) return "'";
-          if (code === 8220 || code === 8221 || code === 34) return '"';
-          if (code === 8211 || code === 8212 || code === 45) return ' ';
-          return code >= 32 && code <= 126 ? String.fromCharCode(code) : ' ';
-        })
+        .replace(/\b(?:href|target|rel|font|color|style)\s*=\s*["']?[^\s"'<>]+["']?/gi, ' ')
+        .replace(/https?:\/\/\S+/gi, ' ')
+        .replace(/[-–—]+/g, ' ')
+        .replace(/\.\s*\./g, '.')
         .replace(/\s+/g, ' ')
         .trim();
     }
@@ -2858,9 +2879,14 @@ const server = http.createServer(async (req, res) => {
       return `LIVE • ${diffDays}d ago`;
     }
 
-    function buildNaturalMgcSynthesis(cleanTitle, rawDesc, sourceName) {
-      const t = cleanTitle.toLowerCase();
-      const baseTitle = cleanTitle.replace(/\s+\|\s+.*$/, '').replace(/\s+-\s+[A-Za-z0-9 .]+$/, '').trim();
+    function buildNaturalMgcSynthesis(cleanTitle, rawDesc, sourceName, embeddedHref) {
+      const rawTitleDecoded = decodeXmlEntities(cleanTitle);
+      const t = rawTitleDecoded.toLowerCase();
+      const baseTitle = rawTitleDecoded
+        .replace(/\s+(?:[-–—|•])\s+[A-Za-z0-9 .,'&/]+$/, '')
+        .replace(/<[^>]*>/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
       let track = 'ai-workflow';
       let trackLabel = 'AI & WORKFLOW';
       let agency = 'Commercial & Cloud';
@@ -2890,14 +2916,19 @@ const server = http.createServer(async (req, res) => {
 
       if (sourceName === 'Reuters' || sourceName === 'Google News') score += 2;
 
-      const cleanedSnippet = stripRssHtml(rawDesc).replace(baseTitle, '').trim();
+      const cleanedSnippet = stripRssHtml(rawDesc)
+        .replace(baseTitle, '')
+        .replace(new RegExp(sourceName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i'), '')
+        .trim();
+      const hasCleanProse = cleanedSnippet.length > 45 && !/(?:href=|https?:\/\/|&lt;|&gt;|target=|_blank)/i.test(cleanedSnippet);
       let summary = '';
-      if (cleanedSnippet && cleanedSnippet.length > 35) {
+      if (hasCleanProse) {
         const firstSent = cleanedSnippet.split(/(?<=[.!?])\s+/)[0] || cleanedSnippet;
-        summary = firstSent.slice(0, 210).replace(/[-–—]/g, ' ');
+        summary = firstSent.slice(0, 210).replace(/[-–—]/g, ' ').replace(/^[^A-Za-z0-9]+/, '').trim();
         if (!/[.!?]$/.test(summary)) summary += '.';
-      } else {
-        summary = `${sourceName} reports on ${baseTitle.toLowerCase()}, highlighting practical shifts in how organizations run and protect their daily systems.`;
+      }
+      if (!summary || summary.length < 35) {
+        summary = `${sourceName} reports on ${baseTitle}, highlighting practical shifts in how organizations run, secure, and modernize their daily operations.`;
       }
 
       let dek = '';
@@ -3239,11 +3270,13 @@ const server = http.createServer(async (req, res) => {
         const descMatch = block.match(/<description[^>]*>([\s\S]*?)<\/description>/i);
         const pubMatch = block.match(/<pubDate[^>]*>([\s\S]*?)<\/pubDate>/i);
         const rawTitle = stripRssHtml(titleMatch ? titleMatch[1] : '');
-        const rawLink = stripRssHtml(linkMatch ? linkMatch[1] : feedMeta.homeUrl);
-        const rawDesc = stripRssHtml(descMatch ? descMatch[1] : '');
+        const rawLinkXml = linkMatch ? linkMatch[1] : '';
+        const rawDescXml = descMatch ? descMatch[1] : '';
+        const extractedHref = extractFirstHrefFromHtml(rawDescXml) || decodeXmlEntities(rawLinkXml).replace(/<[^>]*>/g, '').trim() || feedMeta.homeUrl;
+        const rawDesc = stripRssHtml(rawDescXml);
         const rawPub = stripRssHtml(pubMatch ? pubMatch[1] : '');
         if (!rawTitle || rawTitle.length < 12) continue;
-        const synth = buildNaturalMgcSynthesis(rawTitle, rawDesc, feedMeta.source);
+        const synth = buildNaturalMgcSynthesis(rawTitle, rawDesc, feedMeta.source, extractedHref);
         const pubTimestamp = Date.parse(rawPub) || (Date.now() - idx * 900000);
         items.push({
           id: `${feedMeta.code.toLowerCase()}-${idx}-${Buffer.from(synth.title.slice(0, 24)).toString('hex').slice(0, 8)}`,
@@ -3266,7 +3299,7 @@ const server = http.createServer(async (req, res) => {
           agency: synth.agency,
           track: synth.track,
           trackLabel: synth.trackLabel,
-          url: /^https?:\/\//i.test(rawLink) ? rawLink : feedMeta.homeUrl,
+          url: /^https?:\/\//i.test(extractedHref) ? extractedHref : feedMeta.homeUrl,
           isKeyStory: synth.score >= 6,
           curatedBy: 'Executive Dispatch Desk'
         });

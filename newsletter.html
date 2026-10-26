@@ -91,13 +91,54 @@
     .mgc-broadsheet-dropcap::first-letter {
       float: left;
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: 3.35em;
-      line-height: 0.84;
-      padding-top: 4px;
-      padding-right: 12px;
-      padding-bottom: 2px;
+      font-size: 3.15em;
+      line-height: 0.88;
+      margin-top: 2px;
+      margin-right: 12px;
+      margin-bottom: -2px;
       font-weight: 800;
       color: #C5B358;
+    }
+    .mgc-reader-body {
+      max-width: 68ch;
+      overflow-wrap: break-word;
+      word-break: normal;
+      hyphens: auto;
+    }
+    .mgc-reader-body p {
+      margin: 0 0 22px 0;
+      text-align: left;
+      text-indent: 1.65em;
+      text-rendering: optimizeLegibility;
+      letter-spacing: 0.004em;
+    }
+    .mgc-reader-body p.mgc-broadsheet-dropcap {
+      text-indent: 0;
+    }
+    .mgc-source-redirect-banner {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-16px);
+      z-index: 10005;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(10, 18, 36, 0.98), rgba(17, 29, 54, 0.98));
+      border: 1.5px solid #fde047;
+      color: #f8fafc;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.68);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    .mgc-source-redirect-banner.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
     /* Watched Broadsheet Paper Theme Transition System */
     #nlReaderSheet {
@@ -151,6 +192,7 @@
   <meta property="og:image" content="assets/og-mgc-banner.jpg">
 </head>
 <body>
+  <div class="mgc-source-redirect-banner" id="nlRedirectNoticeBanner" role="status" aria-live="assertive"></div>
   <main class="wrap" id="app"></main>
   <script src="mgc-workspace-core.js"></script>
   <script>
@@ -418,21 +460,97 @@
       if (elCarrier) subInputDraft.carrier = elCarrier.value;
     }
 
+    function extractFirstHrefFromText(raw) {
+      let s = String(raw || '');
+      for (let i = 0; i < 3; i++) {
+        s = s
+          .replace(/&lt;/gi, '<')
+          .replace(/&gt;/gi, '>')
+          .replace(/&quot;/gi, '"')
+          .replace(/&#39;|&apos;/gi, "'")
+          .replace(/&amp;/gi, '&');
+      }
+      const m = s.match(/href\s*=\s*["']?(https?:\/\/[^\s"'<>]+)/i) || s.match(/(https?:\/\/[^\s"'<>]+)/i);
+      return m && m[1] ? m[1].trim() : '';
+    }
+
+    function cleanEditorialText(raw) {
+      let s = String(raw || '');
+      for (let i = 0; i < 3; i++) {
+        s = s
+          .replace(/&lt;/gi, '<')
+          .replace(/&gt;/gi, '>')
+          .replace(/&quot;/gi, '"')
+          .replace(/&#39;|&apos;/gi, "'")
+          .replace(/&nbsp;|&#160;/gi, ' ')
+          .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code) || 32))
+          .replace(/&amp;/gi, '&');
+      }
+      return s
+        .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1')
+        .replace(/<a\b[^>]*>([\s\S]*?)<\/a>/gi, '$1. ')
+        .replace(/<font\b[^>]*>[\s\S]*?<\/font>/gi, ' ')
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&lt;\/?[a-z][^&>\s]*/gi, ' ')
+        .replace(/\bhref\s*=\s*["']?[^\s"'<>]+["']?/gi, ' ')
+        .replace(/\btarget\s*=\s*["']?[^\s"'<>]+["']?/gi, ' ')
+        .replace(/https?:\/\/\S+/gi, ' ')
+        .replace(/\.\s*\./g, '.')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    let nlRedirectTimer = null;
+    function triggerNlSourceRedirect(targetUrl, sourceLabel) {
+      const safeUrl = String(targetUrl || 'https://news.google.com/').trim();
+      const label = cleanEditorialText(sourceLabel || 'Verified News Source') || 'Verified News Source';
+      const banner = document.getElementById('nlRedirectNoticeBanner');
+      const bannerText = document.getElementById('nlRedirectNoticeText');
+      if (bannerText) {
+        bannerText.textContent = `↗ Redirecting to verified source (${label})...`;
+      }
+      if (banner) {
+        banner.classList.add('is-active');
+      }
+      if (W && W.toast) {
+        W.toast(`↗ Redirecting to verified source (${label})...`);
+      }
+      if (nlRedirectTimer) clearTimeout(nlRedirectTimer);
+      nlRedirectTimer = setTimeout(() => {
+        try {
+          window.open(safeUrl, '_blank', 'noopener,noreferrer');
+        } catch (_) {
+          window.location.href = safeUrl;
+        }
+        setTimeout(() => {
+          if (banner) banner.classList.remove('is-active');
+        }, 1200);
+      }, 650);
+    }
+
     function normalizeStoryItem(item) {
       if (!item) return null;
-      const cleanSummary = String(item.summary || item.mgcSummation || '')
-        .replace(/^MGC\s+(Summation|Summary):\s*/i, '')
-        .trim();
-      const cleanQuote = String(item.pullQuote || item.mgcComment || '')
-        .replace(/^MGC\s+(Take|Summation|Summary):\s*/i, '')
-        .trim();
-      const paras = (Array.isArray(item.paragraphs) && item.paragraphs.length >= 2)
-        ? item.paragraphs
+      const extractedHref = extractFirstHrefFromText(item.summary || item.dek || (Array.isArray(item.paragraphs) ? item.paragraphs[0] : ''));
+      const cleanTitle = cleanEditorialText(item.title || 'Enterprise & Federal Briefing');
+      const cleanSummary = cleanEditorialText(String(item.summary || item.mgcSummation || '')
+        .replace(/^MGC\s+(Summation|Summary):\s*/i, ''))
+        || `${cleanTitle}. Leaders are prioritizing practical execution, transparent unit economics, and verified identity controls.`;
+      const cleanQuote = cleanEditorialText(String(item.pullQuote || item.mgcComment || '')
+        .replace(/^MGC\s+(Take|Summation|Summary):\s*/i, ''))
+        || 'Practical execution, transparent unit economics, and verified identity controls separate high performing organizations from the rest of the field.';
+      const rawParas = (Array.isArray(item.paragraphs) && item.paragraphs.length >= 2)
+        ? item.paragraphs.map(p => cleanEditorialText(p)).filter(Boolean)
+        : [];
+      const paras = (rawParas.length >= 2)
+        ? rawParas
         : [
             cleanSummary || 'Enterprise and public sector teams are accelerating cloud, security, and workflow modernization to lower overhead and improve operational speed.',
             'Across commercial operators and federal agencies alike, leaders are replacing disconnected manual processes with focused, browser accessible tools that deliver measurable results from day one.',
-            cleanQuote || 'Practical execution, transparent unit economics, and verified identity controls separate high performing organizations from the rest of the field.'
+            cleanQuote
           ];
+      if (!paras[0] || paras[0].length < 45 || paras[0].toLowerCase() === cleanTitle.toLowerCase()) {
+        paras[0] = `${cleanTitle}. New reporting from ${cleanEditorialText(item.source || 'The Executive Dispatch')} highlights shifting operational priorities across commercial and public sector technology programs.`;
+      }
       const defaultMetrics = item.track === 'cyber'
         ? { costImpact: '$0 Native Identity Hardening', deploySpeed: 'Same-Day Policy Rollout', readinessScore: '99.4% Session Protection' }
         : item.track === 'federal'
@@ -448,8 +566,10 @@
             'Track measurable unit economics and operational readiness across every team sprint.'
           ];
       return Object.assign({}, item, {
+        title: cleanTitle,
+        url: item.url || extractedHref || 'https://news.google.com/',
         summary: cleanSummary,
-        dek: item.dek || cleanSummary,
+        dek: cleanEditorialText(item.dek || cleanSummary) || cleanSummary,
         pullQuote: cleanQuote,
         paragraphs: paras,
         impactMetrics: item.impactMetrics || defaultMetrics,
@@ -574,7 +694,7 @@
                 <button type="button" class="btn pri" data-open-reader="${esc(item.id)}" style="padding:6px 12px;font-size:11.5px;font-weight:800">📖 Open Reader Edition ↗</button>
                 <button type="button" class="btn" data-download-md="${esc(item.id)}" style="padding:5px 10px;font-size:11px;border-color:rgba(52,211,153,0.45);color:#34d399" title="Download Markdown Executive Brief & Playbook">📥 Brief (.MD)</button>
                 <button type="button" class="btn" data-deliver-single="${esc(item.id)}" style="padding:5px 10px;font-size:11px;border-color:rgba(56,189,248,0.45);color:#7dd3fc">✉️ Deliver</button>
-                <a href="${esc(item.url || 'https://news.google.com/')}" target="_blank" rel="noopener noreferrer" class="btn" data-stop-card-open="1" style="padding:5px 10px;font-size:11px;border-color:rgba(197,179,88,0.55);color:#fde047;text-decoration:none">Source ↗</a>
+                <a href="${esc(item.url || 'https://news.google.com/')}" target="_blank" rel="noopener noreferrer" class="btn" data-stop-card-open="1" data-nl-source-redirect="${esc(item.url || 'https://news.google.com/')}" data-nl-source-label="${esc(item.source || 'News Wire')}" style="padding:5px 10px;font-size:11px;border-color:rgba(197,179,88,0.55);color:#fde047;text-decoration:none" title="Redirect to verified source (${esc(item.source || 'News Wire')})">Source ↗</a>
               </div>
             </div>
           </div>
@@ -690,7 +810,7 @@
                   </div>
                 </div>
 
-                <div style="font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:${activeReaderFontPx};line-height:1.82;color:var(--r-ink-body)">
+                <div class="mgc-reader-body" style="font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:${activeReaderFontPx};line-height:1.84;color:var(--r-ink-body)">
                   <p class="mgc-broadsheet-dropcap" style="margin:0 0 22px 0">${esc(readerStoryNorm.paragraphs[0])}</p>
                   ${readerStoryNorm.paragraphs[1] ? `<p style="margin:0 0 22px 0">${esc(readerStoryNorm.paragraphs[1])}</p>` : ''}
 
@@ -699,6 +819,16 @@
                   </blockquote>
 
                   ${readerStoryNorm.paragraphs[2] ? `<p style="margin:0 0 22px 0">${esc(readerStoryNorm.paragraphs[2])}</p>` : ''}
+                </div>
+
+                <!-- Clean Source Hyperlink Callout (Zero Exposed URLs) -->
+                <div style="margin:16px 0 20px 0;padding:12px 16px;border-radius:10px;background-color:var(--r-elevated);border:1px solid rgba(197,179,88,0.42);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+                  <div style="font-size:13px;color:var(--r-ink-muted)">
+                    <strong>Original Dispatch Reference:</strong> Verified wire report from <strong style="color:var(--r-ink-pri)">${esc(readerStoryNorm.source)}</strong>
+                  </div>
+                  <a href="${esc(readerStoryNorm.url)}" target="_blank" rel="noopener noreferrer" class="btn" data-nl-source-redirect="${esc(readerStoryNorm.url)}" data-nl-source-label="${esc(readerStoryNorm.source)}" style="padding:5px 12px;font-size:11.5px;font-weight:800;border-color:rgba(197,179,88,0.65);color:var(--r-gold);text-decoration:none">
+                    Read Original Article on ${esc(readerStoryNorm.source)} ↗
+                  </a>
                 </div>
 
                 <!-- 3-Step Actionable Implementation Playbook Deliverable -->
@@ -727,7 +857,7 @@
                 <div style="margin-top:22px;padding-top:14px;border-top:1px solid var(--r-rule);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
                   <span style="font-size:12px;color:var(--r-ink-muted)">Curated from <strong>${esc(readerStoryNorm.source)}</strong> (${esc(readerStoryNorm.agency || 'Executive Desk')})</span>
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                    <a href="${esc(readerStoryNorm.url)}" target="_blank" rel="noopener noreferrer" class="btn" style="padding:6px 12px;font-size:11.5px;text-decoration:none">Verify Original Source (${esc(readerStoryNorm.source)}) ↗</a>
+                    <a href="${esc(readerStoryNorm.url)}" target="_blank" rel="noopener noreferrer" class="btn" data-nl-source-redirect="${esc(readerStoryNorm.url)}" data-nl-source-label="${esc(readerStoryNorm.source)}" style="padding:6px 12px;font-size:11.5px;text-decoration:none">Verify Original Source (${esc(readerStoryNorm.source)}) ↗</a>
                   </div>
                 </div>
               </div>
@@ -1043,6 +1173,16 @@
         btn.onclick = (ev) => {
           ev.stopPropagation();
           openStoryReaderById(btn.getAttribute('data-open-reader'), true);
+        };
+      });
+
+      app.querySelectorAll('[data-nl-source-redirect]').forEach(linkEl => {
+        linkEl.onclick = (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const targetUrl = linkEl.getAttribute('data-nl-source-redirect') || linkEl.getAttribute('href');
+          const sourceLabel = linkEl.getAttribute('data-nl-source-label') || 'Verified News Source';
+          triggerNlSourceRedirect(targetUrl, sourceLabel);
         };
       });
 

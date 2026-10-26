@@ -325,21 +325,95 @@
       font-size: var(--body-font-size);
       line-height: var(--body-line-height);
       color: var(--ink-body);
+      max-width: 68ch;
+      overflow-wrap: break-word;
+      word-break: normal;
+      hyphens: auto;
     }
     .news-body p {
-      margin: 0 0 24px 0;
+      margin: 0 0 22px 0;
+      text-align: left;
+      text-indent: 1.65em;
       text-rendering: optimizeLegibility;
+      letter-spacing: 0.004em;
+    }
+    .news-body p.lead-paragraph {
+      text-indent: 0;
     }
     .news-body p.lead-paragraph::first-letter {
       float: left;
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: 3.45em;
-      line-height: 0.82;
-      padding-top: 4px;
-      padding-right: 12px;
-      padding-bottom: 2px;
+      font-size: 3.15em;
+      line-height: 0.88;
+      margin-top: 2px;
+      margin-right: 12px;
+      margin-bottom: -2px;
       font-weight: 800;
       color: var(--gold);
+    }
+
+    /* Editorial Source Reference Callout & Quick Redirecting Notice */
+    .source-ref-callout {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 0 0 24px 0;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: var(--paper-elevated);
+      border: 1px solid var(--rule-subtle);
+      border-left: 3px solid var(--gold);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--ink-body);
+    }
+    .source-ref-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 13px;
+      border-radius: 8px;
+      background: rgba(197, 179, 88, 0.16);
+      border: 1px solid var(--rule-strong);
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 12.5px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .source-ref-link:hover {
+      background: linear-gradient(135deg, #C5B358, #a38f36);
+      color: #050a18;
+      border-color: #fde047;
+      transform: translateY(-1px);
+    }
+    .redirect-notice-banner {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-16px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(10, 18, 36, 0.98), rgba(17, 29, 54, 0.98));
+      border: 1.5px solid #fde047;
+      color: #f8fafc;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    .redirect-notice-banner.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     /* Editorial Pull-Quote */
@@ -554,6 +628,7 @@
 <body>
   <div class="theme-wash-veil" id="themeWashVeil" aria-hidden="true"></div>
   <div class="theme-status-pill" id="themeStatusPill" role="status" aria-live="polite"></div>
+  <div class="redirect-notice-banner" id="redirectNoticeBanner" role="status" aria-live="assertive"></div>
   <div class="broadsheet-shell" id="readerRoot"></div>
 
   <script>
@@ -741,21 +816,90 @@
       if (el) el.textContent = '✓ ' + msg;
     }
 
+    function cleanEditorialText(raw, fallbackUrlHolder) {
+      let s = String(raw == null ? '' : raw);
+      const hrefMatch = s.match(/href\s*=\s*["']?(https?:\/\/[^\s"'<>]+)/i);
+      if (hrefMatch && fallbackUrlHolder && (!fallbackUrlHolder.url || fallbackUrlHolder.url === 'https://news.google.com/')) {
+        fallbackUrlHolder.url = hrefMatch[1].trim();
+      }
+      for (let i = 0; i < 3; i++) {
+        s = s
+          .replace(/&nbsp;|&#160;/gi, ' ')
+          .replace(/&lt;|&#60;/gi, '<')
+          .replace(/&gt;|&#62;/gi, '>')
+          .replace(/&quot;|&#34;/gi, '"')
+          .replace(/&#39;|&apos;|&#8216;|&#8217;/gi, "'")
+          .replace(/&amp;|&#38;/gi, '&');
+      }
+      return s
+        .replace(/<a\b[^>]*>([\s\S]*?)<\/a>/gi, '$1. ')
+        .replace(/<font\b[^>]*>[\s\S]*?<\/font>/gi, ' ')
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&lt;\s*\/?\s*[a-z0-9]+[^&]*&gt;/gi, ' ')
+        .replace(/\b(?:href|target|rel|font|color|style)\s*=\s*["']?[^\s"'<>]+["']?/gi, ' ')
+        .replace(/https?:\/\/\S+/gi, ' ')
+        .replace(/^\s*(?:&lt;|<)?\s*a\b[^A-Z]*/i, '')
+        .replace(/\.\s*\./g, '.')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    let redirectNoticeTimer = null;
+    function triggerSourceRedirectWithNotice(targetUrl, sourceLabel) {
+      const cleanUrl = /^https?:\/\//i.test(String(targetUrl || '').trim())
+        ? String(targetUrl).trim()
+        : 'https://news.google.com/';
+      const label = sourceLabel || 'Original Source';
+      const banner = document.getElementById('redirectNoticeBanner');
+      if (banner) {
+        banner.innerHTML = '<span>↗ Redirecting to verified source (<strong>' + esc(label) + '</strong>)...</span>';
+        banner.classList.add('visible');
+        if (redirectNoticeTimer) clearTimeout(redirectNoticeTimer);
+      }
+      setTimeout(() => {
+        try {
+          window.open(cleanUrl, '_blank', 'noopener,noreferrer');
+        } catch (_) {
+          location.href = cleanUrl;
+        }
+        if (banner) {
+          redirectNoticeTimer = setTimeout(() => banner.classList.remove('visible'), 1400);
+        }
+      }, 680);
+    }
+
     function ensureThreeParagraphs(story) {
       if (!story) return DEFAULT_STORIES[0].paragraphs;
+      const urlHolder = { url: story.url };
       if (Array.isArray(story.paragraphs) && story.paragraphs.length >= 2) {
-        return story.paragraphs;
+        const cleanedParas = story.paragraphs.map((p, idx) => {
+          const c = cleanEditorialText(p, urlHolder);
+          if (idx === 0 && c.length < 60) {
+            return `${story.source || 'The wire'} reports on ${story.title || 'this operational shift'}. Across both federal enclaves and commercial cloud environments, engineering and security teams are modernizing their daily workflows to improve reliability and speed.`;
+          }
+          return c;
+        });
+        if (urlHolder.url) story.url = urlHolder.url;
+        return cleanedParas;
       }
-      const p1 = story.summary || story.mgcSummation || DEFAULT_STORIES[0].paragraphs[0];
+      const p1 = cleanEditorialText(story.summary || story.mgcSummation || DEFAULT_STORIES[0].paragraphs[0], urlHolder);
       const p2 = 'Across commercial enterprises and public sector agencies, engineering and operations teams are moving rapidly toward practical, browser accessible workflows that eliminate manual bottlenecks and reduce recurring cloud overhead.';
-      const p3 = (story.pullQuote || story.mgcComment || DEFAULT_STORIES[0].paragraphs[2]).replace(/^MGC\s+(Take|Summation|Summary):\s*/i, '');
+      const p3 = cleanEditorialText((story.pullQuote || story.mgcComment || DEFAULT_STORIES[0].paragraphs[2]).replace(/^MGC\s+(Take|Summation|Summary):\s*/i, ''), urlHolder);
+      if (urlHolder.url) story.url = urlHolder.url;
       return [p1, p2, p3];
     }
 
     function normalizeStory(raw) {
       if (!raw) return DEFAULT_STORIES[0];
-      const cleanSummary = String(raw.summary || raw.mgcSummation || '').replace(/^MGC\s+(Summation|Summary):\s*/i, '').trim();
-      const cleanQuote = String(raw.pullQuote || raw.mgcComment || '').replace(/^MGC\s+(Take|Summation|Summary):\s*/i, '').trim();
+      const urlHolder = { url: raw.url };
+      const cleanTitle = cleanEditorialText(raw.title || DEFAULT_STORIES[0].title, urlHolder)
+        .replace(/\s+(?:[-–—|•])\s+[A-Za-z0-9 .,'&/]+$/, '')
+        .trim();
+      const rawSummaryCleaned = cleanEditorialText(String(raw.summary || raw.mgcSummation || '').replace(/^MGC\s+(Summation|Summary):\s*/i, ''), urlHolder);
+      const cleanSummary = (rawSummaryCleaned && rawSummaryCleaned.length >= 35 && rawSummaryCleaned.toLowerCase() !== cleanTitle.toLowerCase())
+        ? rawSummaryCleaned
+        : `${raw.source || 'News Wire'} reports on ${cleanTitle}, highlighting practical shifts in how organizations run, secure, and modernize their daily operations.`;
+      const cleanQuote = cleanEditorialText(String(raw.pullQuote || raw.mgcComment || '').replace(/^MGC\s+(Take|Summation|Summary):\s*/i, ''), urlHolder);
       const defaultMetrics = raw.track === 'cyber'
         ? { costImpact: '$0 Native Identity Hardening', deploySpeed: 'Same-Day Policy Rollout', readinessScore: '99.4% Session Protection' }
         : raw.track === 'federal'
@@ -766,16 +910,19 @@
       const defaultPlaybook = (Array.isArray(raw.actionPlaybook) && raw.actionPlaybook.length)
         ? raw.actionPlaybook
         : DEFAULT_STORIES[0].actionPlaybook;
-      return Object.assign({}, raw, {
+      const merged = Object.assign({}, raw, {
+        title: cleanTitle || DEFAULT_STORIES[0].title,
+        url: urlHolder.url || raw.url || 'https://news.google.com/',
         summary: cleanSummary || DEFAULT_STORIES[0].summary,
-        dek: raw.dek || cleanSummary || DEFAULT_STORIES[0].dek,
-        pullQuote: cleanQuote || DEFAULT_STORIES[0].pullQuote,
-        paragraphs: ensureThreeParagraphs(Object.assign({}, raw, { summary: cleanSummary, pullQuote: cleanQuote })),
-        impactMetrics: raw.impactMetrics || defaultMetrics,
-        actionPlaybook: defaultPlaybook,
-        deliverableArtifact: raw.deliverableArtifact || 'Executive Dispatch & Action Playbook Packet',
-        readTime: raw.readTime || '3 min read'
+        dek: cleanEditorialText(raw.dek || cleanSummary || DEFAULT_STORIES[0].dek, urlHolder),
+        pullQuote: cleanQuote || DEFAULT_STORIES[0].pullQuote
       });
+      merged.paragraphs = ensureThreeParagraphs(merged);
+      merged.impactMetrics = raw.impactMetrics || defaultMetrics;
+      merged.actionPlaybook = defaultPlaybook;
+      merged.deliverableArtifact = raw.deliverableArtifact || 'Executive Dispatch & Action Playbook Packet';
+      merged.readTime = raw.readTime || '3 min read';
+      return merged;
     }
 
     function buildMarkdownBrief(story) {
@@ -985,7 +1132,7 @@
                 By <strong style="color:var(--ink-primary)">Executive Dispatch Editorial Desk</strong> · Curated from <strong>${esc(activeStory.source)}</strong> (${esc(activeStory.agency || 'Sector Wire')})
               </div>
               <div style="display:flex;align-items:center;gap:10px">
-                <a href="${esc(activeStory.url || 'https://news.google.com/')}" target="_blank" rel="noopener noreferrer" class="reader-btn" style="padding:4px 10px;font-size:11.5px">Verify Original Source ↗</a>
+                <a href="${esc(activeStory.url || 'https://news.google.com/')}" data-source-redirect="${esc(activeStory.url || 'https://news.google.com/')}" data-source-label="${esc(activeStory.source || 'Original Source')}" class="reader-btn" style="padding:4px 10px;font-size:11.5px">Verify Original Source ↗</a>
               </div>
             </div>
 
@@ -1004,6 +1151,16 @@
                 <div class="signal-metric-value">${esc((activeStory.impactMetrics && activeStory.impactMetrics.readinessScore) || '98% Workflow Accuracy')}</div>
               </div>
             </section>
+
+            <div class="source-ref-callout">
+              <div>
+                <strong style="color:var(--ink-primary)">Primary Wire Reference:</strong> Curated from <strong>${esc(activeStory.source)}</strong> (${esc(activeStory.agency || 'Executive Wire')})
+              </div>
+              <a href="${esc(activeStory.url || 'https://news.google.com/')}" data-source-redirect="${esc(activeStory.url || 'https://news.google.com/')}" data-source-label="${esc(activeStory.source || 'Original Source')}" class="source-ref-link">
+                <span>Read Original Article on ${esc(activeStory.source)}</span>
+                <span>↗</span>
+              </a>
+            </div>
 
             <div class="news-body">
               <p class="lead-paragraph">${esc(paras[0])}</p>
@@ -1137,6 +1294,15 @@
       if (btnPrintPdf) {
         btnPrintPdf.onclick = () => window.print();
       }
+
+      root.querySelectorAll('[data-source-redirect]').forEach(linkEl => {
+        linkEl.onclick = (ev) => {
+          ev.preventDefault();
+          const url = linkEl.getAttribute('data-source-redirect');
+          const label = linkEl.getAttribute('data-source-label') || activeStory.source || 'Original Source';
+          triggerSourceRedirectWithNotice(url, label);
+        };
+      });
 
       root.querySelectorAll('[data-story-id]').forEach(btn => {
         btn.onclick = () => {
