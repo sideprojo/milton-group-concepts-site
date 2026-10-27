@@ -3690,8 +3690,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === '/api/newsletter/live-stream' && req.method === 'GET') {
-      const force = urlObj.searchParams.get('refresh') === '1';
-      const trackFilter = sanitizeInput(urlObj.searchParams.get('track') || 'all', 32).toLowerCase();
+      const force = parsedUrl.searchParams.get('refresh') === '1';
+      const trackFilter = sanitizeInput(parsedUrl.searchParams.get('track') || 'all', 32).toLowerCase();
       const allItems = await getLiveCuratedNewsStream(force);
       const filtered = (trackFilter && trackFilter !== 'all')
         ? allItems.filter(it => it.track === trackFilter)
@@ -8163,7 +8163,7 @@ const server = http.createServer(async (req, res) => {
 
     // Enforce Mobile-Only Minimalist Control & Workflow Experience AFTER all authentication & RBAC gates pass
     const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
-    const isStandaloneMobilePage = pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html' || pathname === '/newsletter' || pathname === '/newsletter.html' || pathname === '/briefing-reader' || pathname === '/briefing-reader.html' || pathname === '/apps' || pathname === '/saas-apps-and-lms-showcase.html' || baseName === 'access-admin.html' || baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html' || parsedUrl.searchParams.get('onboard') === '1';
+    const isStandaloneMobilePage = baseName === 'marketing-home.html' || baseName === 'checkout.html' || pathname === '/' || pathname === '/home' || pathname === '/about' || pathname === '/services' || pathname === '/contact' || pathname === '/checkout' || pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html' || pathname === '/newsletter' || pathname === '/newsletter.html' || pathname === '/briefing-reader' || pathname === '/briefing-reader.html' || pathname === '/apps' || pathname === '/saas-apps-and-lms-showcase.html' || baseName === 'access-admin.html' || baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html' || parsedUrl.searchParams.get('onboard') === '1';
     if (isHtmlRoute && !isStandaloneMobilePage && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
       cleanRel = 'mobile-control.html';
     }
