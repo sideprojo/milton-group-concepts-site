@@ -2188,11 +2188,15 @@ const server = http.createServer(async (req, res) => {
     const pathname = decodeURIComponent(parsedUrl.pathname);
 
     if (pathname === '/healthz' || pathname === '/api/ops/watchdog') {
-      const requiredFiles = ['marketing-home.html', 'newsletter.html', 'login.html', 'checkout.html', 'access-admin.html'];
+      const requiredFiles = ['marketing-home.html', 'mobile-control.html', 'newsletter.html', 'login.html', 'checkout.html', 'access-admin.html'];
       const missingFiles = requiredFiles.filter(f => !fs.existsSync(path.resolve(ROOT, f)));
       if (!S || typeof S !== 'object' || !S.users || !S.newsletter) {
         S = seedState();
         saveState(S);
+      }
+      let mirrorSync = null;
+      if (pathname === '/api/ops/watchdog' && (process.env.K_SERVICE === 'mgc-external-site' || parsedUrl.searchParams.get('sync') === '1')) {
+        mirrorSync = await syncPrimaryProductionService();
       }
       const healthy = missingFiles.length === 0;
       return sendJson(res, healthy ? 200 : 503, {
@@ -2200,6 +2204,7 @@ const server = http.createServer(async (req, res) => {
         service: process.env.K_SERVICE || 'mgc-command-workspace',
         revision: process.env.K_REVISION || 'local',
         selfHealed: true,
+        mirrorSync,
         missingFiles,
         uptimeSec: Math.round(process.uptime()),
         ts: now()
@@ -8177,8 +8182,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     // Enforce Mobile-Only Minimalist Control & Workflow Experience AFTER all authentication & RBAC gates pass
+    // Note: Root '/' on mobile routes to 'mobile-control.html' unless ?desktop=1 is set; '/about', '/services', '/contact', '/checkout', '/newsletter', '/auth' remain directly accessible with responsive mobile headers.
     const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
-    const isStandaloneMobilePage = baseName === 'marketing-home.html' || baseName === 'checkout.html' || pathname === '/' || pathname === '/home' || pathname === '/about' || pathname === '/services' || pathname === '/contact' || pathname === '/checkout' || pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html' || pathname === '/newsletter' || pathname === '/newsletter.html' || pathname === '/briefing-reader' || pathname === '/briefing-reader.html' || pathname === '/apps' || pathname === '/saas-apps-and-lms-showcase.html' || baseName === 'access-admin.html' || baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html' || parsedUrl.searchParams.get('onboard') === '1';
+    const isStandaloneMobilePage = baseName === 'checkout.html' || pathname === '/about' || pathname === '/services' || pathname === '/contact' || pathname === '/checkout' || pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html' || pathname === '/newsletter' || pathname === '/newsletter.html' || pathname === '/briefing-reader' || pathname === '/briefing-reader.html' || pathname === '/apps' || pathname === '/saas-apps-and-lms-showcase.html' || baseName === 'access-admin.html' || baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html' || parsedUrl.searchParams.get('onboard') === '1';
     if (isHtmlRoute && !isStandaloneMobilePage && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
       cleanRel = 'mobile-control.html';
     }
@@ -8201,6 +8207,64 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+async function syncPrimaryProductionService() {
+  try {
+    const tokRes = await fetch('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token', {
+      headers: { 'Metadata-Flavor': 'Google' }
+    });
+    if (!tokRes.ok) return { synced: false, reason: 'no_metadata_token' };
+    const tokData = await tokRes.json();
+    const token = tokData && tokData.access_token;
+    if (!token) return { synced: false, reason: 'empty_token' };
+
+    const baseApi = 'https://us-west1-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/gen-lang-client-0636792472/services';
+    const [srcRes, dstRes] = await Promise.all([
+      fetch(`${baseApi}/mgc-external-site`, { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(`${baseApi}/milton-group-concepts-llc`, { headers: { Authorization: `Bearer ${token}` } })
+    ]);
+    if (!srcRes.ok || !dstRes.ok) {
+      return { synced: false, reason: `api_status_${srcRes.status}_${dstRes.status}` };
+    }
+    const srcSvc = await srcRes.json();
+    const dstSvc = await dstRes.json();
+    const srcImage = srcSvc?.spec?.template?.spec?.containers?.[0]?.image;
+    const dstImage = dstSvc?.spec?.template?.spec?.containers?.[0]?.image;
+    if (!srcImage || !dstImage) return { synced: false, reason: 'missing_image_field' };
+    if (srcImage === dstImage) {
+      return { synced: true, action: 'already_in_sync', image: srcImage };
+    }
+
+    dstSvc.spec.template.spec.containers[0].image = srcImage;
+    if (dstSvc.spec.template.metadata) {
+      delete dstSvc.spec.template.metadata.name;
+      if (dstSvc.spec.template.metadata.annotations) {
+        dstSvc.spec.template.metadata.annotations['client.knative.dev/user-image'] = srcImage;
+      }
+    }
+    dstSvc.spec.traffic = [{ percent: 100, latestRevision: true }];
+
+    const putRes = await fetch(`${baseApi}/milton-group-concepts-llc`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dstSvc)
+    });
+    return {
+      synced: putRes.ok,
+      action: putRes.ok ? 'updated_milton_group_concepts_llc' : 'put_failed',
+      status: putRes.status,
+      image: srcImage
+    };
+  } catch (e) {
+    return { synced: false, error: String(e && e.message ? e.message : e) };
+  }
+}
+
 server.listen(PORT, () => {
   console.log(`MGC & F.I.X Authenticated Cloud Run Server listening on http://localhost:${PORT}`);
+  if (process.env.K_SERVICE === 'mgc-external-site') {
+    setTimeout(() => { syncPrimaryProductionService().catch(() => {}); }, 2500);
+  }
 });

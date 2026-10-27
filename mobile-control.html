@@ -468,16 +468,26 @@
       showToast._timer = setTimeout(() => { t.style.display = 'none'; }, 2800);
     }
 
+    let activeNlTrack = 'all';
+    let liveStreamItems = [];
+
     async function loadNewsletter() {
       try {
-        const r = await fetch('/api/newsletter');
-        if (r.ok) {
-          const d = await r.json();
-          if (d && d.ok) {
-            newsletterData = d;
-            if (currentTab === 'briefings') render(false);
+        const [rNl, rLive] = await Promise.all([
+          fetch('/api/newsletter').catch(() => null),
+          fetch('/api/newsletter/live-stream').catch(() => null)
+        ]);
+        if (rNl && rNl.ok) {
+          const d = await rNl.json();
+          if (d && d.ok) newsletterData = d;
+        }
+        if (rLive && rLive.ok) {
+          const dl = await rLive.json();
+          if (dl && dl.ok && Array.isArray(dl.items)) {
+            liveStreamItems = dl.items;
           }
         }
+        if (currentTab === 'briefings') render(false);
       } catch (_) {}
     }
 
@@ -503,13 +513,13 @@
         const cleanName = String(u.name || '').replace(/\s*\(Administrator\)\s*/i, '').trim();
         hdrTitle.textContent = (u.brand === 'FIX' ? 'F.I.X' : 'MGC') + ' // ' + meta.badge;
         hdrSub.textContent = cleanName + ' · ' + meta.sub;
-        hdrAuth.innerHTML = '<button type="button" class="m-btn inline" id="mBtnSignOut" aria-label="Sign out of session">Sign Out</button>';
+        hdrAuth.innerHTML = '<div style="display:flex;gap:6px;align-items:center"><a href="/?desktop=1" class="m-btn inline" style="padding:8px 10px;font-size:11px">Public Site</a><button type="button" class="m-btn inline" id="mBtnSignOut" aria-label="Sign out of session">Sign Out</button></div>';
         const so = document.getElementById('mBtnSignOut');
         if (so) so.onclick = () => W.signOut();
       } else {
         hdrTitle.textContent = 'MGC // MOBILE';
         hdrSub.textContent = 'Client & Staff Portal';
-        hdrAuth.innerHTML = '<a href="/auth" class="m-btn pri inline" aria-label="Sign in to Workspace">Sign In</a>';
+        hdrAuth.innerHTML = '<div style="display:flex;gap:6px;align-items:center"><a href="/?desktop=1" class="m-btn inline" style="padding:8px 10px;font-size:11px">Public Site</a><a href="/auth" class="m-btn pri inline" aria-label="Sign in to Workspace">Sign In</a></div>';
       }
     }
 
@@ -550,11 +560,15 @@
             </div>
 
             <div class="m-card">
-              <h2>Public Channels</h2>
-              <p>Schedule a consultation or read monthly briefings:</p>
+              <h2>Public Channels &amp; Contributions</h2>
+              <p>Explore the public website, schedule a consultation, read live briefings, or support MGC initiatives via 3rd-party platforms:</p>
               <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+                <a href="/?desktop=1" class="m-btn pri">View Full Public Website →</a>
                 <a href="/consultation" class="m-btn gold">Submit Request &amp; Consultation →</a>
-                <button type="button" class="m-btn" data-jump-tab="briefings">Read Executive Newsletter</button>
+                <div class="m-grid-2">
+                  <button type="button" class="m-btn" data-jump-tab="briefings">📰 Live Newsletter</button>
+                  <a href="/checkout" class="m-btn ok">💳 Support / Donate</a>
+                </div>
               </div>
             </div>
           </section>
@@ -928,11 +942,33 @@
     /* ---------- TAB 4: NEWSLETTER & BRIEFINGS ---------- */
     function renderBriefingsTab(u) {
       const issues = newsletterData.issues || [];
+      const TRACKS = [
+        { id: 'all',      label: 'All Live Feeds',       icon: '🌐' },
+        { id: 'ai',       label: 'AI & Automation',      icon: '🤖' },
+        { id: 'federal',  label: 'Federal & SDVOSB',     icon: '🏛️' },
+        { id: 'security', label: 'Security & Compliance',icon: '🛡️' },
+        { id: 'ops',      label: 'Operations',           icon: '⚡' }
+      ];
+      const filteredLive = activeNlTrack === 'all'
+        ? liveStreamItems
+        : liveStreamItems.filter(it => String(it.track || '').toLowerCase() === activeNlTrack);
+
       return `
         <section class="m-pane" aria-label="Executive Intelligence Newsletter">
+          <!-- Centered & Thematically Styled 5-Category Filter Bar -->
+          <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:10px;border-radius:18px;background:rgba(10,18,36,0.96);border:1.5px solid rgba(59,130,246,0.35);margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,0.45)">
+            ${TRACKS.map(t => {
+              const active = activeNlTrack === t.id;
+              return `<button type="button" data-nl-track="${t.id}" style="padding:8px 12px;border-radius:999px;border:1px solid ${active ? 'rgba(147,197,253,0.75)' : 'rgba(148,163,184,0.22)'};background:${active ? 'linear-gradient(135deg,#2563eb,#1d4ed8)' : 'rgba(15,23,42,0.75)'};color:${active ? '#fff' : '#cbd5e1'};font:inherit;font-size:11.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px">${t.icon} <span>${esc(t.label)}</span></button>`;
+            }).join('')}
+          </div>
+
           <div class="m-card priority">
-            <h1>Executive Newsletter</h1>
-            <p>Concise monthly briefings on security, contracting, and autonomous AI workflows.</p>
+            <div class="m-row" style="margin-bottom:6px">
+              <h1 style="margin:0">Executive Newsletter</h1>
+              <a href="/newsletter?desktop=1" class="m-btn inline" style="padding:6px 10px;font-size:11px;min-height:34px">Full Reader ↗</a>
+            </div>
+            <p>Concise briefings on AI automation, federal SDVOSB contracting, zero-trust security, and operations.</p>
             <form id="mNewsletterSubForm" style="margin-top:12px" novalidate>
               <label class="sr-only" for="mnlEmail">Subscriber Email</label>
               <input class="m-input" id="mnlEmail" type="email" placeholder="Enter your email for briefings..." value="${u ? esc(u.email) : ''}" required autocomplete="email" />
@@ -945,6 +981,34 @@
               </select>
               <button type="submit" class="m-btn pri" id="mnlSubBtn">Subscribe to Briefings</button>
             </form>
+          </div>
+
+          ${filteredLive.length ? `
+          <div class="m-card">
+            <h2>Live Curated Feed (${filteredLive.length})</h2>
+            ${filteredLive.slice(0, 8).map(item => `
+              <article style="padding:14px;border-radius:12px;background:rgba(4,8,20,0.88);border:1px solid var(--line);margin-bottom:10px">
+                <div class="m-row" style="margin-bottom:4px">
+                  <span class="m-pill blue" style="font-size:10px;padding:2px 8px">${esc(item.category || item.track || 'Briefing')}</span>
+                  <span style="font-size:11px;color:var(--mut)">${esc(item.source || 'MGC Intelligence')}</span>
+                </div>
+                <h3 style="font-size:14.5px;font-weight:800;margin:4px 0 6px;color:#fff">${esc(item.title)}</h3>
+                <p style="font-size:13px;color:var(--mut);margin:0 0 8px">${esc(item.summary || item.excerpt || '')}</p>
+                <a href="/briefing-reader?id=${encodeURIComponent(item.id || '')}" class="m-btn inline" style="font-size:12px;min-height:36px;padding:6px 12px">Read Briefing →</a>
+              </article>
+            `).join('')}
+          </div>` : ''}
+
+          <div class="m-card" style="border-color:rgba(251,191,36,0.45)">
+            <h2>Support Research &amp; Public Briefings</h2>
+            <p>Contribute via verified 3rd-party payment and fundraising redirects (Stripe, GoFundMe, or PayPal):</p>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+              <a href="/checkout?amount=100&provider=stripe" class="m-btn pri">💳 Stripe Payment Link →</a>
+              <div class="m-grid-2">
+                <a href="/checkout?amount=100&provider=gofundme" class="m-btn ok">🌱 GoFundMe</a>
+                <a href="/checkout?amount=100&provider=paypal" class="m-btn gold">🅿️ PayPal Donate</a>
+              </div>
+            </div>
           </div>
 
           ${u && u.role === 'owner' ? `
@@ -960,7 +1024,7 @@
           </div>` : ''}
 
           <div class="m-card">
-            <h2>Recent Briefings</h2>
+            <h2>Monthly Executive Issues</h2>
             ${issues.map(iss => `
               <article style="padding:14px;border-radius:12px;background:rgba(4,8,20,0.88);border:1px solid var(--line);margin-bottom:10px">
                 <h3 style="font-size:15px;font-weight:800;margin:0 0 6px;color:#fff">${esc(iss.title)}</h3>
@@ -991,6 +1055,13 @@
           currentTab = btn.dataset.jumpTab;
           history.replaceState(null, '', '#' + currentTab);
           render(true);
+        };
+      });
+
+      mainEl.querySelectorAll('[data-nl-track]').forEach(btn => {
+        btn.onclick = () => {
+          activeNlTrack = btn.getAttribute('data-nl-track') || 'all';
+          render(false);
         };
       });
 
