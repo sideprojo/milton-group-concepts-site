@@ -129,11 +129,13 @@ function Test-AllEndpoints([string]$BaseUrl = "https://miltongroupsecurity.org",
         @{ Name = "API Live News Stream (/api/newsletter/live-stream)"; Url = "$BaseUrl/api/newsletter/live-stream"; Headers = @{ "User-Agent" = $DesktopUA }; Expected = 200; MustContain = '"ok":true' },
         @{ Name = "API Auth Session (/api/auth/session)"; Url = "$BaseUrl/api/auth/session"; Headers = @{ "User-Agent" = $DesktopUA }; Expected = 200; MustContain = '"ok":true' },
         @{ Name = "API Checkout Compliance (/api/checkout/verify-compliance)"; Url = "$BaseUrl/api/checkout/verify-compliance"; Headers = @{ "User-Agent" = $DesktopUA }; Expected = 200; MustContain = '"achDisabledOnCustomerCheckout":true' },
-        @{ Name = "Cloud Self-Healing Watchdog (/api/ops/watchdog)"; Url = "$BaseUrl/api/ops/watchdog"; Headers = @{ "User-Agent" = $DesktopUA }; Expected = 200; MustContain = '"selfHealed":true' },
         @{ Name = "Federated CORS Preflight (F.I.X -> MGC)"; Url = "$BaseUrl/api/auth/login"; Method = "OPTIONS"; Headers = @{ "Origin" = "https://fix.miltongroupsecurity.org"; "Access-Control-Request-Method" = "POST" }; Expected = 204; MustContain = "fix\.miltongroupsecurity\.org" }
     )
     if ($IncludeFixSubdomain) {
+        $probes += @{ Name = "Cloud Self-Healing Watchdog (mgc-external-site)"; Url = "https://mgc-external-site-254657731107.us-west1.run.app/api/ops/watchdog"; Headers = @{ "User-Agent" = $DesktopUA }; Expected = 200; MustContain = '"selfHealed":true' }
         $probes += @{ Name = "F.I.X Public Portal (fix.miltongroupsecurity.org)"; Url = "https://fix.miltongroupsecurity.org/"; Headers = @{ "User-Agent" = $DesktopUA }; Expected = 200; MustContain = "F\.I\.X Solutions" }
+    } else {
+        $probes += @{ Name = "Local Self-Healing Watchdog (/api/ops/watchdog)"; Url = "$BaseUrl/api/ops/watchdog"; Headers = @{ "User-Agent" = $DesktopUA }; Expected = 200; MustContain = '"selfHealed":true' }
     }
 
     $results = @()
@@ -163,6 +165,12 @@ function Get-ActiveCloudRunRevisions {
 }
 
 function Save-HealthyRevisionLedger([hashtable]$RevMap) {
+    if (-not $RevMap -or $RevMap.Count -eq 0) {
+        if (Test-Path $LedgerFile) {
+            Write-Step "Preserving existing certified revision ledger ($LedgerFile)" "DarkGreen"
+            return
+        }
+    }
     $payload = @{
         certifiedAt = (Get-Date).ToUniversalTime().ToString("o")
         project     = $Project
