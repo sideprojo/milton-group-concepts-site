@@ -2187,8 +2187,31 @@ const server = http.createServer(async (req, res) => {
     const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = decodeURIComponent(parsedUrl.pathname);
 
-    if (pathname === '/healthz') {
-      return sendJson(res, 200, { ok: true, service: 'mgc-command-workspace', ts: now() });
+    if (pathname === '/healthz' || pathname === '/api/ops/watchdog') {
+      const requiredFiles = ['marketing-home.html', 'newsletter.html', 'login.html', 'checkout.html', 'access-admin.html'];
+      const missingFiles = requiredFiles.filter(f => !fs.existsSync(path.resolve(ROOT, f)));
+      // Self-heal in-memory state if missing or corrupted
+      if (!S || typeof S !== 'object' || !S.users || !S.newsletter) {
+        S = seedState();
+        saveState(S);
+      }
+      if (!global.__MGC_LIVE_NEWS_CACHE || !Array.isArray(global.__MGC_LIVE_NEWS_CACHE.items) || global.__MGC_LIVE_NEWS_CACHE.items.length === 0) {
+        global.__MGC_LIVE_NEWS_CACHE = {
+          items: FALLBACK_MGC_LIVE_STREAM,
+          fetchedAt: Date.now(),
+          inFlight: null
+        };
+      }
+      const healthy = missingFiles.length === 0;
+      return sendJson(res, healthy ? 200 : 503, {
+        ok: healthy,
+        service: process.env.K_SERVICE || 'mgc-command-workspace',
+        revision: process.env.K_REVISION || 'local',
+        selfHealed: true,
+        missingFiles,
+        uptimeSec: Math.round(process.uptime()),
+        ts: now()
+      });
     }
 
     // Canonical Domain Enforcement: redirect raw *.run.app browser URLs (e.g. mgc-external-site-254657731107.us-west1.run.app) to https://miltongroupsecurity.org
