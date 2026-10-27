@@ -311,11 +311,7 @@
     const esc = W.esc;
     const app = document.getElementById('app');
 
-    // Enforce minimalist mobile control deck on mobile devices
-    if (window.innerWidth < 768 || /Mobile|Android|iP(hone|od|ad)|IEMobile/i.test(navigator.userAgent)) {
-      location.replace('/mobile#briefings');
-      return;
-    }
+    // Responsive layout supports both desktop and mobile viewports directly
 
     let nlState = {
       subscribersCount: 142,
