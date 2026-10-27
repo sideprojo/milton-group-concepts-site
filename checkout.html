@@ -194,7 +194,7 @@
       id: sessionId || ('MGC-CHK-' + Date.now().toString(36).toUpperCase().slice(-6)),
       type: params.get('type') || 'donation',
       merchantEntity: (params.get('entity') || 'MGC').toUpperCase(),
-      title: params.get('title') || 'Veteran-Owned Disabled Support',
+      title: params.get('title') || 'Contribution Summary',
       amountUsd: Math.max(1, Number(params.get('amount') || 25)),
       method: params.get('method') || 'card',
       customerName: params.get('name') || '',
@@ -327,8 +327,8 @@
       const amtStr = '$' + Number(session.amountUsd).toFixed(2);
       const isFix = session.merchantEntity === 'FIX';
       const merchantLabel = isFix ? 'F.I.X Solutions LLC' : 'Milton Group Concepts LLC';
-      const displayTitle = (!session.title || /Executive Briefings/i.test(session.title))
-        ? 'Veteran-Owned Disabled Support'
+      const displayTitle = (!session.title || /Executive Briefings|Veteran-Owned Disabled Support|SDVOSB Initiatives/i.test(session.title))
+        ? (session.type === 'subscription' ? 'Subscription Summary' : 'Contribution Summary')
         : session.title;
 
       app.innerHTML = `
@@ -351,9 +351,6 @@
         <div class="chk-grid">
           <!-- LEFT: Summary & Official Legal Notice -->
           <div class="chk-panel">
-            <div style="font-size:11px;font-weight:700;color:#c5b358;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">
-              ${session.type === 'subscription' ? 'Subscription Summary' : 'Veteran-Owned Disabled Support'}
-            </div>
             <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#fff">${esc(displayTitle)}</h1>
             <div style="font-size:36px;font-weight:900;color:#34d399;margin:12px 0 18px;letter-spacing:-0.02em">
               ${amtStr} <span style="font-size:14px;font-weight:600;color:#94a3b8">USD</span>
@@ -361,18 +358,18 @@
 
             <div style="padding:14px;border-radius:12px;background:rgba(4,8,20,0.75);border:1px solid rgba(148,163,184,0.18);margin-bottom:16px">
               <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px">
-                <span style="color:#94a3b8">Merchant</span>
+                <span style="color:#94a3b8">Recipient</span>
                 <strong style="color:#fff">${esc(merchantLabel)}</strong>
               </div>
               <div style="display:flex;justify-content:space-between;font-size:12.5px;padding-top:8px;border-top:1px solid rgba(148,163,184,0.15)">
-                <span style="color:#cbd5e1;font-weight:700">Total Due Today</span>
+                <span style="color:#cbd5e1;font-weight:700">Total Amount</span>
                 <strong style="color:#fff;font-size:14px">${amtStr} USD</strong>
               </div>
             </div>
 
             <div id="statutoryTaxDisclosureBox" style="padding:13px 15px;border-radius:11px;background:rgba(15,23,42,0.72);border:1px solid rgba(148,163,184,0.22);font-size:11.5px;color:#cbd5e1;line-height:1.55">
-              <div style="font-weight:700;color:#e2e8f0;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Official Legal Notice</div>
-              Contributions and payments are made to <strong>${esc(merchantLabel)}</strong>, a Service-Disabled Veteran-Owned Small Business. Contributions are not tax-deductible as charitable contributions for federal income tax purposes. Transactions are processed subject to our <a href="/terms-of-service.html" target="_blank" style="color:#93c5fd;text-decoration:underline">Terms of Service</a> and <a href="/privacy-policy.html" target="_blank" style="color:#93c5fd;text-decoration:underline">Privacy Policy</a>. For billing support, refunds, or cancellations, contact <a href="mailto:connect@miltongroupsecurity.org" style="color:#93c5fd">connect@miltongroupsecurity.org</a>.
+              <div style="font-weight:700;color:#e2e8f0;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Notice</div>
+              Contributions and payments are made to <strong>${esc(merchantLabel)}</strong> and are not tax-deductible as charitable contributions for federal income tax purposes. Transactions are processed subject to our <a href="/terms-of-service.html" target="_blank" style="color:#93c5fd;text-decoration:underline">Terms of Service</a> and <a href="/privacy-policy.html" target="_blank" style="color:#93c5fd;text-decoration:underline">Privacy Policy</a>. For billing inquiries, contact <a href="mailto:connect@miltongroupsecurity.org" style="color:#93c5fd">connect@miltongroupsecurity.org</a>.
             </div>
           </div>
 

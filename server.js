@@ -3979,7 +3979,7 @@ const server = http.createServer(async (req, res) => {
         });
       }
       const amountUsd = Math.round(numAmt * 100) / 100;
-      const note = sanitizeInput(body.note || 'Veteran-Owned Disabled Support', 200);
+      const note = sanitizeInput(body.note || 'Contribution Summary', 200);
       const method = ['card', 'cashapp', 'wallet', 'card_tokenized', 'card_donation'].includes(body.method) ? body.method : 'card';
       const last4 = /^\d{4}$/.test(rawPanCandidate)
         ? rawPanCandidate
@@ -4028,7 +4028,7 @@ const server = http.createServer(async (req, res) => {
           accountCode: '4010',
           counterparty: donorName,
           counterpartyEmail: donorEmail,
-          description: `Veteran-Owned Disabled Support [${donationId} · ${method.toUpperCase()}]`,
+          description: `Contribution [${donationId} · ${method.toUpperCase()}]`,
           rail: railCode,
           grossUsd: amountUsd,
           status: 'SETTLED'
@@ -4274,7 +4274,7 @@ const server = http.createServer(async (req, res) => {
       const method = ['stripe', 'gofundme', 'paypal', 'card', 'cashapp', 'wallet', 'gpc_wawf'].includes(body.method) ? body.method : 'stripe';
       const customerName = sanitizeInput(body.donorName || body.customerName || (u && u.name) || 'Community Supporter', 100);
       const customerEmail = sanitizeInput(body.donorEmail || body.customerEmail || (u && u.email) || 'supporter@miltongroupsecurity.org', 140).toLowerCase();
-      const title = sanitizeInput(body.title || (type === 'subscription' ? 'MGC & F.I.X Workspace Subscription' : 'Veteran-Owned Disabled Support'), 160);
+      const title = sanitizeInput(body.title || (type === 'subscription' ? 'MGC & F.I.X Workspace Subscription' : 'Contribution Summary'), 160);
       const planTier = sanitizeInput(body.planTier || '', 60);
       const unlockAppId = sanitizeInput(body.unlockAppId || '', 64);
       const rawReturn = sanitizeInput(body.returnPath || (type === 'subscription' ? '/workspace' : '/newsletter'), 120);
@@ -4407,7 +4407,7 @@ const server = http.createServer(async (req, res) => {
             donorName: u.name || sess.customerName,
             donorEmail: u.email || sess.customerEmail,
             amountUsd: sess.amountUsd,
-            note: sess.title || 'Veteran-Owned Disabled Support',
+            note: sess.title || 'Contribution Summary',
             method,
             last4: refCode,
             vaultToken,
@@ -4490,7 +4490,7 @@ const server = http.createServer(async (req, res) => {
           id: newSid,
           type,
           merchantEntity,
-          title: sanitizeInput(body.title || 'Veteran-Owned Disabled Support', 160),
+          title: sanitizeInput(body.title || 'Contribution Summary', 160),
           amountUsd,
           method,
           customerName,
@@ -4601,7 +4601,7 @@ const server = http.createServer(async (req, res) => {
         donorName: customerName,
         donorEmail: customerEmail,
         amountUsd,
-        note: sess.title || 'Veteran-Owned Disabled Support',
+        note: sess.title || 'Contribution Summary',
         method,
         last4: refCode,
         vaultToken,
@@ -4628,7 +4628,7 @@ const server = http.createServer(async (req, res) => {
           accountCode: '4010',
           counterparty: customerName,
           counterpartyEmail: customerEmail,
-          description: `Veteran-Owned Disabled Support [${donationId} · ${method.toUpperCase()}]`,
+          description: `Contribution [${donationId} · ${method.toUpperCase()}]`,
           rail: railCode,
           grossUsd: amountUsd,
           status: 'SETTLED'
