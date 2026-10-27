@@ -8202,11 +8202,18 @@ const server = http.createServer(async (req, res) => {
     }
 
     // Enforce Mobile-Only Minimalist Control & Workflow Experience AFTER all authentication & RBAC gates pass
-    // Note: Root '/' on mobile routes to 'mobile-control.html' unless ?desktop=1 is set; '/about', '/services', '/contact', '/checkout', '/newsletter', '/auth' remain directly accessible with responsive mobile headers.
+    // Redirect mobile requests on miltongroupsecurity.org (/, /home, /about, /services, /contact, /newsletter) directly to /mobile (unless ?desktop=1 is set)
     const isHtmlRoute = cleanRel.endsWith('.html') && !cleanRel.startsWith('projects/');
-    const isStandaloneMobilePage = baseName === 'checkout.html' || pathname === '/about' || pathname === '/services' || pathname === '/contact' || pathname === '/checkout' || pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html' || pathname === '/newsletter' || pathname === '/newsletter.html' || pathname === '/briefing-reader' || pathname === '/briefing-reader.html' || pathname === '/apps' || pathname === '/saas-apps-and-lms-showcase.html' || baseName === 'access-admin.html' || baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html' || parsedUrl.searchParams.get('onboard') === '1';
+    const isStandaloneMobilePage = baseName === 'checkout.html' || pathname === '/checkout' || pathname === '/auth' || pathname === '/login' || pathname === '/login.html' || pathname === '/portal' || pathname === '/client-portal' || pathname === '/employee-login' || pathname === '/employee-login.html' || pathname === '/staff-login' || pathname === '/consultation' || pathname === '/consultation-form' || pathname === '/consultation.html' || pathname === '/briefing-reader' || pathname === '/briefing-reader.html' || pathname === '/apps' || pathname === '/saas-apps-and-lms-showcase.html' || baseName === 'access-admin.html' || baseName === 'admin-command-portal.html' || baseName === 'onboarding-portal.html' || parsedUrl.searchParams.get('onboard') === '1' || ((pathname === '/newsletter' || pathname === '/newsletter.html') && parsedUrl.searchParams.get('desktop') === '1');
     if (isHtmlRoute && !isStandaloneMobilePage && cleanRel !== 'mobile-control.html' && isMobileRequest(req, parsedUrl)) {
-      cleanRel = 'mobile-control.html';
+      const mobileDest = (pathname === '/newsletter' || pathname === '/newsletter.html') ? '/mobile#briefings' : '/mobile';
+      res.writeHead(302, {
+        'Location': mobileDest,
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Vary': 'User-Agent, Sec-CH-UA-Mobile',
+        ...SECURITY_HEADERS
+      });
+      return res.end();
     }
 
     const filePath = path.resolve(ROOT, cleanRel);

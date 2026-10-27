@@ -311,7 +311,11 @@
     const esc = W.esc;
     const app = document.getElementById('app');
 
-    // Responsive layout supports both desktop and mobile viewports directly
+    // Redirect mobile devices to /mobile#briefings unless ?desktop=1 is set
+    if (!location.search.includes('desktop=1') && (window.innerWidth < 768 || /Mobile|Android|iP(hone|od|ad)|IEMobile/i.test(navigator.userAgent))) {
+      location.replace('/mobile#briefings');
+      return;
+    }
 
     let nlState = {
       subscribersCount: 142,
