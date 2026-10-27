@@ -2253,7 +2253,12 @@
       const file = (pathLower.split('/').pop() || '').toLowerCase();
       const qs = new URLSearchParams(location.search);
       const isStandaloneMobileRoute =
+        pathLower === '/' ||
+        pathLower === '' ||
         pathLower.includes('mobile') ||
+        pathLower.includes('checkout') ||
+        pathLower.includes('workspace') ||
+        pathLower.includes('member-portal') ||
         pathLower.includes('auth') ||
         pathLower.includes('login') ||
         pathLower.includes('portal') ||

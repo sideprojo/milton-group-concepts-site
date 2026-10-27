@@ -2187,6 +2187,20 @@ const server = http.createServer(async (req, res) => {
     const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = decodeURIComponent(parsedUrl.pathname);
 
+    if (!global._recentBrowserReqs) global._recentBrowserReqs = [];
+    if (pathname !== '/healthz' && pathname !== '/api/ops/watchdog' && !String(req.headers['user-agent'] || '').includes('Google-Cloud-Uptime')) {
+      global._recentBrowserReqs.unshift({
+        ts: now(),
+        method: req.method,
+        url: req.url,
+        host: req.headers['x-forwarded-host'] || req.headers.host || '',
+        mobile: isMobileRequest(req, parsedUrl),
+        chMobile: req.headers['sec-ch-ua-mobile'] || '',
+        ua: String(req.headers['user-agent'] || '').slice(0, 110)
+      });
+      if (global._recentBrowserReqs.length > 35) global._recentBrowserReqs.length = 35;
+    }
+
     if (pathname === '/healthz' || pathname === '/api/ops/watchdog') {
       const requiredFiles = ['marketing-home.html', 'mobile-control.html', 'newsletter.html', 'login.html', 'checkout.html', 'access-admin.html'];
       const missingFiles = requiredFiles.filter(f => !fs.existsSync(path.resolve(ROOT, f)));
@@ -2198,6 +2212,10 @@ const server = http.createServer(async (req, res) => {
       if (pathname === '/api/ops/watchdog' && (process.env.K_SERVICE === 'mgc-external-site' || parsedUrl.searchParams.get('sync') === '1')) {
         mirrorSync = await syncPrimaryProductionService();
       }
+      let cloudDiag = null;
+      if (pathname === '/api/ops/watchdog' && parsedUrl.searchParams.get('diag') === '1') {
+        cloudDiag = await runCloudDiagnostics();
+      }
       const healthy = missingFiles.length === 0;
       return sendJson(res, healthy ? 200 : 503, {
         ok: healthy,
@@ -2205,6 +2223,8 @@ const server = http.createServer(async (req, res) => {
         revision: process.env.K_REVISION || 'local',
         selfHealed: true,
         mirrorSync,
+        cloudDiag,
+        recentBrowserReqs: global._recentBrowserReqs.slice(0, 15),
         missingFiles,
         uptimeSec: Math.round(process.uptime()),
         ts: now()
@@ -8260,6 +8280,60 @@ async function syncPrimaryProductionService() {
   } catch (e) {
     return { synced: false, error: String(e && e.message ? e.message : e) };
   }
+}
+
+async function runCloudDiagnostics() {
+  const out = { logs: [], dnsZones: [] };
+  try {
+    const tokRes = await fetch('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token', {
+      headers: { 'Metadata-Flavor': 'Google' }
+    });
+    if (!tokRes.ok) return { error: 'no_metadata_token' };
+    const { access_token: token } = await tokRes.json();
+
+    // 1. Query recent Cloud Run HTTP request logs for milton-group-concepts-llc
+    const logRes = await fetch('https://logging.googleapis.com/v2/entries:list', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        resourceNames: ['projects/gen-lang-client-0636792472'],
+        filter: 'resource.type="cloud_run_revision" AND resource.labels.service_name="milton-group-concepts-llc" AND httpRequest.requestUrl!="" AND NOT httpRequest.userAgent:"Google-Cloud-Uptime"',
+        orderBy: 'timestamp desc',
+        pageSize: 30
+      })
+    });
+    if (logRes.ok) {
+      const ld = await logRes.json();
+      out.logs = (ld.entries || []).map(e => ({
+        ts: e.timestamp,
+        status: e.httpRequest && e.httpRequest.status,
+        method: e.httpRequest && e.httpRequest.requestMethod,
+        url: e.httpRequest && e.httpRequest.requestUrl,
+        ip: e.httpRequest && e.httpRequest.remoteIp,
+        ua: String((e.httpRequest && e.httpRequest.userAgent) || '').slice(0, 100)
+      }));
+    } else {
+      out.logError = `${logRes.status}`;
+    }
+
+    // 2. Check Cloud DNS managed zones across MGC projects
+    for (const proj of ['gen-lang-client-0636792472', 'smiling-man-ace8f', 'maximal-ship-467003-h5']) {
+      try {
+        const zRes = await fetch(`https://dns.googleapis.com/dns/v1/projects/${proj}/managedZones`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (zRes.ok) {
+          const zd = await zRes.json();
+          out.dnsZones.push({ project: proj, zones: zd.managedZones || [] });
+        } else {
+          out.dnsZones.push({ project: proj, status: zRes.status });
+        }
+      } catch (_) {}
+    }
+  } catch (e) {
+    out.error = String(e && e.message ? e.message : e);
+  }
+  return out;
 }
 
 server.listen(PORT, () => {
