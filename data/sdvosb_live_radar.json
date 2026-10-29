@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-28T16:21:47.839424Z",
+  "fetchedAt": "2026-10-29T16:30:49.065078Z",
   "source": "USAspending.gov Official v2 API + SAM.gov NAICS Filter (541611, 541512, 541614, 541330)",
   "region": "VA / DC / MD Defense & Federal Corridor",
   "count": 20,
@@ -197,6 +197,22 @@
       "generated_internal_id": "CONT_AWD_47QFCA22F0051_4732_GS00Q14OADU122_4732"
     },
     {
+      "internal_id": 281082126,
+      "Award ID": "47QFCA19F0006",
+      "Recipient Name": "CACI, INC. - FEDERAL",
+      "Start Date": "2019-05-20",
+      "End Date": "2026-11-19",
+      "Award Amount": 979385697.35,
+      "Awarding Agency": "General Services Administration",
+      "Awarding Sub Agency": "Federal Acquisition Service",
+      "Description": "IGF::OT::IGF",
+      "NAICS Code": null,
+      "Place of Performance State Code": "VA",
+      "awarding_agency_id": 614,
+      "agency_slug": "general-services-administration",
+      "generated_internal_id": "CONT_AWD_47QFCA19F0006_4732_47QTCK18D0009_4732"
+    },
+    {
       "internal_id": 281086673,
       "Award ID": "47QFRA24F0005",
       "Recipient Name": "CACI, INC. - FEDERAL",
@@ -211,22 +227,6 @@
       "awarding_agency_id": 614,
       "agency_slug": "general-services-administration",
       "generated_internal_id": "CONT_AWD_47QFRA24F0005_4732_47QTCK18D0009_4732"
-    },
-    {
-      "internal_id": 281082126,
-      "Award ID": "47QFCA19F0006",
-      "Recipient Name": "CACI, INC. - FEDERAL",
-      "Start Date": "2019-05-20",
-      "End Date": "2026-11-19",
-      "Award Amount": 975282370.96,
-      "Awarding Agency": "General Services Administration",
-      "Awarding Sub Agency": "Federal Acquisition Service",
-      "Description": "IGF::OT::IGF",
-      "NAICS Code": null,
-      "Place of Performance State Code": "VA",
-      "awarding_agency_id": 614,
-      "agency_slug": "general-services-administration",
-      "generated_internal_id": "CONT_AWD_47QFCA19F0006_4732_47QTCK18D0009_4732"
     },
     {
       "internal_id": 292112757,
