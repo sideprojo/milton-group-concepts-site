@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-29T16:30:49.065078Z",
+  "fetchedAt": "2026-10-30T16:22:52.702533Z",
   "source": "USAspending.gov Official v2 API + SAM.gov NAICS Filter (541611, 541512, 541614, 541330)",
   "region": "VA / DC / MD Defense & Federal Corridor",
   "count": 20,
@@ -218,7 +218,7 @@
       "Recipient Name": "CACI, INC. - FEDERAL",
       "Start Date": "2024-05-01",
       "End Date": "2027-04-30",
-      "Award Amount": 977906126.78,
+      "Award Amount": 977933614.86,
       "Awarding Agency": "General Services Administration",
       "Awarding Sub Agency": "Federal Acquisition Service",
       "Description": "CDM DEFEND GROUP A  BRIDGE TASK ORDER",
