@@ -2113,8 +2113,8 @@
   body.w-fix{--bg:#050811;--card:rgba(10,15,28,0.84);--card2:rgba(14,21,38,0.86);--line:rgba(197,179,88,0.32);--tx:#F8FAFC;--mut:#94A3B8;--ac:#C5B358;--acx:#050811;--ok:#10B981;
     background:#050811}
   body.w-mgc::before,body.w-fix::before{content:'';position:fixed;inset:0;z-index:-10;pointer-events:none;background-size:cover;background-position:center 25%;background-repeat:no-repeat}
-  body.w-mgc::before{background-image:linear-gradient(180deg,rgba(5,8,17,0.74) 0%,rgba(10,16,30,0.82) 55%,rgba(5,8,17,0.90) 100%),url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=80')}
-  body.w-fix::before{background-image:linear-gradient(180deg,rgba(5,8,17,0.74) 0%,rgba(10,16,30,0.82) 55%,rgba(5,8,17,0.90) 100%),url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2000&q=80')}
+  body.w-mgc::before{background-image:linear-gradient(180deg,rgba(4,8,18,0.68) 0%,rgba(9,15,29,0.78) 55%,rgba(4,8,18,0.88) 100%),var(--mgc-route-bg,url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=2200&q=82'))}
+  body.w-fix::before{background-image:linear-gradient(180deg,rgba(4,8,18,0.68) 0%,rgba(9,15,29,0.78) 55%,rgba(4,8,18,0.88) 100%),var(--mgc-route-bg,url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=2200&q=82'))}
   *{box-sizing:border-box}
   body{margin:0;font-family:var(--font-sans);font-size:13.5px;line-height:1.5;color:var(--tx);min-height:100vh;position:relative;isolation:isolate;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-feature-settings:"cv02","cv03","cv04","cv11"}
   code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
@@ -2322,7 +2322,40 @@
   }
 
   function injectCss() { maskExposedUrl(); if (!document.getElementById('w-css')) { const s = document.createElement('style'); s.id = 'w-css'; s.textContent = CSS; document.head.appendChild(s); } if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wireSmoothTransitions, { once: true }); else wireSmoothTransitions(); }
-  function theme(brand) { document.body.classList.remove('w-mgc', 'w-fix'); document.body.classList.add(brand === 'FIX' ? 'w-fix' : 'w-mgc'); }
+  function resolveRelevantRouteBackdrop() {
+    try {
+      const pathStr = ((location.pathname || '') + ' ' + (location.search || '')).toLowerCase();
+      if (pathStr.includes('access-admin') || pathStr.includes('command')) {
+        return "url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=2000&q=80')"; // Cybersecurity SOC & Active Directory
+      }
+      if (pathStr.includes('sam-radar') || pathStr.includes('sdvosb') || pathStr.includes('trust-center') || pathStr.includes('compliance')) {
+        return "url('https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=2000&q=80')"; // Washington D.C. Federal Defense Corridor
+      }
+      if (pathStr.includes('finance') || pathStr.includes('checkout') || pathStr.includes('view=payment')) {
+        return "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80')"; // Financial District Skyline & Treasury
+      }
+      if (pathStr.includes('newsletter') || pathStr.includes('briefing')) {
+        return "url('https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=2000&q=80')"; // Global Intelligence Newsroom
+      }
+      if (pathStr.includes('earth-3d') || pathStr.includes('vr-deck') || pathStr.includes('vr-command')) {
+        return "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80')"; // Orbital Earth Night Lights
+      }
+      if (pathStr.includes('chronos') || pathStr.includes('historical')) {
+        return "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=2000&q=80')"; // Historical Archive & Classical Research
+      }
+      if (pathStr.includes('academy') || pathStr.includes('elearning') || pathStr.includes('view=resources')) {
+        return "url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2000&q=80')"; // Executive Academy & Technical Upskilling
+      }
+      if (pathStr.includes('agile')) {
+        return "url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=2000&q=80')"; // Agile Sprint Telemetry & Engineering
+      }
+      if (pathStr.includes('consultation') || pathStr.includes('request-access')) {
+        return "url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2000&q=80')"; // Executive Client Advisory Boardroom
+      }
+    } catch (_) {}
+    return "url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=2200&q=82')"; // Nighttime Cityscape & Enterprise Cloud Hub
+  }
+  function theme(brand) { document.body.classList.remove('w-mgc', 'w-fix'); document.body.classList.add(brand === 'FIX' ? 'w-fix' : 'w-mgc'); try { document.body.style.setProperty('--mgc-route-bg', resolveRelevantRouteBackdrop()); } catch (_) {} }
   function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2400); }
   function unread(uidv) { return S.notifications.filter(n => n.toUid === uidv && !n.read).length; }
 

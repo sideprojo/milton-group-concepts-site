@@ -1,0 +1,130 @@
+﻿{
+    "status":  "HEALTHY",
+    "timestamp":  "2026-10-27T03:30:12.0194127Z",
+    "revisions":  {
+
+                  },
+    "mode":  "AutoRemediate",
+    "probes":  [
+                   {
+                       "Name":  "Desktop Home (/)",
+                       "Url":  "https://miltongroupsecurity.org/",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  195,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "Mobile Home (/)",
+                       "Url":  "https://miltongroupsecurity.org/",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  202,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "Desktop About (/about)",
+                       "Url":  "https://miltongroupsecurity.org/about",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  190,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "Desktop Services (/services)",
+                       "Url":  "https://miltongroupsecurity.org/services",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  189,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "Desktop Contact (/contact)",
+                       "Url":  "https://miltongroupsecurity.org/contact",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  193,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "Desktop Newsletter (/newsletter)",
+                       "Url":  "https://miltongroupsecurity.org/newsletter",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  306,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "Mobile Newsletter (/newsletter)",
+                       "Url":  "https://miltongroupsecurity.org/newsletter",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  274,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "Federated Auth Portal (/auth)",
+                       "Url":  "https://miltongroupsecurity.org/auth",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  277,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "3rd-Party Checkout (/checkout)",
+                       "Url":  "https://miltongroupsecurity.org/checkout?amount=250",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  194,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "API Live News Stream (/api/newsletter/live-stream)",
+                       "Url":  "https://miltongroupsecurity.org/api/newsletter/live-stream",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  224,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "API Auth Session (/api/auth/session)",
+                       "Url":  "https://miltongroupsecurity.org/api/auth/session",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  198,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "API Checkout Compliance (/api/checkout/verify-compliance)",
+                       "Url":  "https://miltongroupsecurity.org/api/checkout/verify-compliance",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  185,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "Federated CORS Preflight (F.I.X -\u003e MGC)",
+                       "Url":  "https://miltongroupsecurity.org/api/auth/login",
+                       "Ok":  true,
+                       "StatusCode":  204,
+                       "LatencyMs":  187,
+                       "Reason":  "HTTP 204"
+                   },
+                   {
+                       "Name":  "Cloud Self-Healing Watchdog (mgc-external-site)",
+                       "Url":  "https://mgc-external-site-254657731107.us-west1.run.app/api/ops/watchdog",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  223,
+                       "Reason":  "HTTP 200"
+                   },
+                   {
+                       "Name":  "F.I.X Public Portal (fix.miltongroupsecurity.org)",
+                       "Url":  "https://fix.miltongroupsecurity.org/",
+                       "Ok":  true,
+                       "StatusCode":  200,
+                       "LatencyMs":  430,
+                       "Reason":  "HTTP 200"
+                   }
+               ]
+}

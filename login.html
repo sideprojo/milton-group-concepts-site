@@ -5,30 +5,42 @@
 <title>Workspace Access | MGC &amp; F.I.X</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
-  /* Faded Human-Touch Background (Executive & Client Partnership) */
+  /* Thematic Nighttime Cityscape Backdrop (/portal · /auth · /login) */
+  body, body.w-mgc, body.w-fix {
+    background: #030712 !important;
+  }
+  body.w-mgc::before,
+  body.w-fix::before {
+    display: none !important;
+  }
   .thematic-city-backdrop {
     position: fixed;
     inset: 0;
-    z-index: -2;
+    z-index: 0;
     overflow: hidden;
     pointer-events: none;
-    background: #040814;
-    background-image:
-      linear-gradient(180deg, rgba(4, 8, 20, 0.70) 0%, rgba(11, 19, 37, 0.80) 52%, rgba(4, 8, 20, 0.90) 100%),
-      url("https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2000&q=80");
-    background-size: cover;
-    background-position: center 25%;
-    background-repeat: no-repeat;
+    background: #030712;
   }
   .thematic-city-backdrop .city-photo {
-    display: none;
+    display: block;
+    position: absolute;
+    inset: -4%;
+    background-image:
+      linear-gradient(180deg, rgba(3, 7, 18, 0.36) 0%, rgba(6, 13, 28, 0.52) 52%, rgba(3, 7, 18, 0.78) 100%),
+      url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=2400&q=85");
+    background-size: cover;
+    background-position: center 58%;
+    background-repeat: no-repeat;
+    filter: saturate(1.22) contrast(1.08);
+    animation: cityHorizonPan 28s ease-in-out infinite alternate;
   }
   .thematic-city-backdrop .city-atmosphere {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(circle at 18% 18%, rgba(37, 99, 235, 0.24), transparent 44%),
-      radial-gradient(circle at 82% 22%, rgba(245, 158, 11, 0.18), transparent 42%);
+      radial-gradient(circle at 18% 18%, rgba(37, 99, 235, 0.28), transparent 46%),
+      radial-gradient(circle at 82% 24%, rgba(245, 158, 11, 0.24), transparent 44%),
+      radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.16), transparent 52%);
   }
   .thematic-city-backdrop .city-grid {
     position: absolute;
@@ -45,7 +57,7 @@
     bottom: -20px;
     width: min(26vw, 320px);
     height: 82vh;
-    opacity: 0.42;
+    opacity: 0.52;
     filter: drop-shadow(-14px 10px 28px rgba(0, 0, 0, 0.85));
   }
   @keyframes cityHorizonPan {
@@ -64,13 +76,13 @@
   }
   .login-card {
     width: min(880px, 100%);
-    background: linear-gradient(180deg, rgba(10, 17, 34, 0.96) 0%, rgba(6, 11, 24, 0.98) 100%) !important;
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1.5px solid rgba(197, 179, 88, 0.55) !important;
+    background: linear-gradient(180deg, rgba(8, 15, 30, 0.84) 0%, rgba(5, 10, 22, 0.90) 100%) !important;
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1.5px solid rgba(197, 179, 88, 0.62) !important;
     border-radius: 22px !important;
     padding: 32px 34px !important;
-    box-shadow: 0 32px 90px rgba(0, 0, 0, 0.88), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 32px 90px rgba(0, 0, 0, 0.82), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     position: relative;
     z-index: 10;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
