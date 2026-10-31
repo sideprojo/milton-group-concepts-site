@@ -5,7 +5,7 @@
 <title>Workspace Access | MGC &amp; F.I.X</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
-  /* Thematic Cityscape Background (MGC & F.I.X Horizon Skyline) */
+  /* Faded Human-Touch Background (Executive & Client Partnership) */
   .thematic-city-backdrop {
     position: fixed;
     inset: 0;
@@ -13,6 +13,12 @@
     overflow: hidden;
     pointer-events: none;
     background: #040814;
+    background-image:
+      linear-gradient(180deg, rgba(4, 8, 20, 0.70) 0%, rgba(11, 19, 37, 0.80) 52%, rgba(4, 8, 20, 0.90) 100%),
+      url("https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2000&q=80");
+    background-size: cover;
+    background-position: center 25%;
+    background-repeat: no-repeat;
   }
   .thematic-city-backdrop .city-photo {
     display: none;
@@ -21,9 +27,8 @@
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(circle at 18% 18%, rgba(37, 99, 235, 0.28), transparent 44%),
-      radial-gradient(circle at 82% 22%, rgba(245, 158, 11, 0.22), transparent 42%),
-      linear-gradient(180deg, rgba(4, 8, 20, 0.42) 0%, rgba(11, 19, 37, 0.68) 52%, rgba(4, 8, 20, 0.92) 100%);
+      radial-gradient(circle at 18% 18%, rgba(37, 99, 235, 0.24), transparent 44%),
+      radial-gradient(circle at 82% 22%, rgba(245, 158, 11, 0.18), transparent 42%);
   }
   .thematic-city-backdrop .city-grid {
     position: absolute;

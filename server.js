@@ -453,12 +453,14 @@ function seedState() {
 }
 
 const CLOUD_DB_CONFIG = {
-  gcpProjectId: process.env.GCP_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT || 'milton-group-concepts-llc',
+  gcpProjectId: process.env.GCP_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT || 'gen-lang-client-0636792472',
+  gcsBucket: process.env.MGCW_GCS_BUCKET || 'gen-lang-client-0636792472_cloudbuild',
+  gcsObjectName: process.env.MGCW_GCS_STATE_OBJECT || 'mgc_state/workspace-state-v1.json',
   firestoreCollection: process.env.FIRESTORE_COLLECTION || 'mgc_workspace',
   googleSheetsWebhookUrl: process.env.GOOGLE_SHEETS_WEBHOOK_URL || '',
   sharepointSiteId: process.env.SHAREPOINT_SITE_ID || '',
   sharepointListId: process.env.SHAREPOINT_LIST_ID || '',
-  primaryProvider: 'Google Cloud Firestore (nam5 Native Free-Tier) + ACID-JSON-WAL',
+  primaryProvider: 'Google Cloud Storage + Firestore (Free-Tier Native Persistence) + ACID-JSON-WAL',
   fallbackProviders: ['Google Workspace Sheets / Drive AppData API', 'Microsoft SharePoint List (Graph REST v1.0)']
 };
 
@@ -472,8 +474,17 @@ const DB_STATS = {
   estimatedCostUsd: 0.00,
   circuitBreakerTripped: false,
   lastWriteAt: now(),
-  lastCloudSyncStatus: 'READY_STANDBY (Local WAL Active · Cloud Run ADC Auto-Binds on Deploy)',
+  lastCloudSyncStatus: 'INITIALIZING_CLOUD_SYNC',
   cloudProviders: {
+    googleCloudStorage: {
+      preferred: true,
+      projectId: CLOUD_DB_CONFIG.gcpProjectId,
+      bucket: CLOUD_DB_CONFIG.gcsBucket,
+      objectName: CLOUD_DB_CONFIG.gcsObjectName,
+      uploadEndpoint: `https://storage.googleapis.com/upload/storage/v1/b/${CLOUD_DB_CONFIG.gcsBucket}/o?uploadType=media&name=${encodeURIComponent(CLOUD_DB_CONFIG.gcsObjectName)}`,
+      downloadEndpoint: `https://storage.googleapis.com/storage/v1/b/${CLOUD_DB_CONFIG.gcsBucket}/o/${encodeURIComponent(CLOUD_DB_CONFIG.gcsObjectName)}?alt=media`,
+      freeTierQuota: '5 GB Standard Storage · Cloud Run Built-In Service Account ($0.00)'
+    },
     googleFirestore: {
       preferred: true,
       projectId: CLOUD_DB_CONFIG.gcpProjectId,
@@ -505,7 +516,7 @@ function fetchCloudRunAdcToken() {
       path: '/computeMetadata/v1/instance/service-accounts/default/token',
       method: 'GET',
       headers: { 'Metadata-Flavor': 'Google' },
-      timeout: 650
+      timeout: 1200
     }, (res) => {
       let raw = '';
       res.on('data', (c) => { raw += c; });
@@ -524,67 +535,122 @@ function fetchCloudRunAdcToken() {
   });
 }
 
+let _cloudSyncTimer = null;
 async function syncCloudDatabaseSilent(state) {
   if (DB_STATS.circuitBreakerTripped) return;
+  if (_cloudSyncTimer) clearTimeout(_cloudSyncTimer);
+  _cloudSyncTimer = setTimeout(async () => {
+    try {
+      const gcpToken = await fetchCloudRunAdcToken();
+      if (gcpToken) {
+        const rawJson = JSON.stringify(state);
+        // 1. Primary Zero-Cost Cloud Persistence: Google Cloud Storage JSON Object
+        try {
+          const gcsRes = await fetch(DB_STATS.cloudProviders.googleCloudStorage.uploadEndpoint, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${gcpToken}`,
+              'Content-Type': 'application/json; charset=utf-8'
+            },
+            body: rawJson
+          });
+          if (gcsRes.ok) {
+            DB_STATS.lastCloudSyncStatus = `SYNCED_GCS_PERSISTENT (${now()})`;
+          } else {
+            DB_STATS.lastCloudSyncStatus = `GCS_HTTP_${gcsRes.status}`;
+          }
+        } catch (_) {}
+
+        // 2. Secondary Cloud Persistence: Google Cloud Firestore Native REST v1
+        if (process.env.MGCW_ENABLE_FIRESTORE_SYNC !== '0') {
+          const payload = JSON.stringify({
+            fields: {
+              updatedAt: { stringValue: now() },
+              version: { integerValue: String(state.v || 1) },
+              snapshotJson: { stringValue: rawJson }
+            }
+          });
+          const u = new URL(DB_STATS.cloudProviders.googleFirestore.endpoint);
+          const req = https.request({
+            hostname: u.hostname,
+            path: u.pathname,
+            method: 'PATCH',
+            headers: {
+              'Authorization': `Bearer ${gcpToken}`,
+              'Content-Type': 'application/json',
+              'Content-Length': Buffer.byteLength(payload)
+            },
+            timeout: 2500
+          }, (res) => {
+            if (res.statusCode < 300) {
+              DB_STATS.lastCloudSyncStatus = `SYNCED_GCS_AND_FIRESTORE (${now()})`;
+            }
+          });
+          req.on('error', () => {});
+          req.write(payload);
+          req.end();
+        }
+      }
+      // 3. Optional: Microsoft SharePoint List via Graph REST v1.0
+      if (CLOUD_DB_CONFIG.sharepointSiteId && CLOUD_DB_CONFIG.sharepointListId && process.env.SHAREPOINT_BEARER_TOKEN) {
+        const spBody = JSON.stringify({
+          fields: {
+            Title: 'MGC_Workspace_State_v1',
+            UpdatedAt: now(),
+            PayloadJson: JSON.stringify(state)
+          }
+        });
+        const spUrl = new URL(DB_STATS.cloudProviders.sharepointGraph.endpoint);
+        const spReq = https.request({
+          hostname: spUrl.hostname,
+          path: spUrl.pathname,
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.SHAREPOINT_BEARER_TOKEN}`,
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(spBody)
+          },
+          timeout: 2500
+        }, () => {
+          DB_STATS.lastCloudSyncStatus = `SYNCED_SHAREPOINT_GRAPH (${now()})`;
+        });
+        spReq.on('error', () => {});
+        spReq.write(spBody);
+        spReq.end();
+      }
+    } catch (_) {}
+  }, 450);
+}
+
+async function hydrateStateFromCloudOnBoot() {
   try {
-    // 1. Preferred: Google Cloud Firestore Native REST v1 (via Cloud Run ADC or GOOGLE_CLOUD_ACCESS_TOKEN)
     const gcpToken = await fetchCloudRunAdcToken();
-    if (gcpToken && process.env.MGCW_ENABLE_FIRESTORE_SYNC === '1') {
-      const payload = JSON.stringify({
-        fields: {
-          updatedAt: { stringValue: now() },
-          version: { integerValue: String(state.v || 1) },
-          snapshotJson: { stringValue: JSON.stringify(state) }
-        }
-      });
-      const u = new URL(DB_STATS.cloudProviders.googleFirestore.endpoint);
-      const req = https.request({
-        hostname: u.hostname,
-        path: u.pathname,
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${gcpToken}`,
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(payload)
-        },
-        timeout: 2500
-      }, (res) => {
-        DB_STATS.lastCloudSyncStatus = res.statusCode < 300
-          ? `SYNCED_GOOGLE_FIRESTORE (${now()})`
-          : `FIRESTORE_HTTP_${res.statusCode}`;
-      });
-      req.on('error', () => {});
-      req.write(payload);
-      req.end();
+    if (!gcpToken) {
+      DB_STATS.lastCloudSyncStatus = 'LOCAL_DISK_WAL_ONLY (No Cloud Run Metadata Token)';
+      return;
     }
-    // 2. Optional: Microsoft SharePoint List via Graph REST v1.0
-    if (CLOUD_DB_CONFIG.sharepointSiteId && CLOUD_DB_CONFIG.sharepointListId && process.env.SHAREPOINT_BEARER_TOKEN) {
-      const spBody = JSON.stringify({
-        fields: {
-          Title: 'MGC_Workspace_State_v1',
-          UpdatedAt: now(),
-          PayloadJson: JSON.stringify(state)
-        }
-      });
-      const spUrl = new URL(DB_STATS.cloudProviders.sharepointGraph.endpoint);
-      const spReq = https.request({
-        hostname: spUrl.hostname,
-        path: spUrl.pathname,
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.SHAREPOINT_BEARER_TOKEN}`,
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(spBody)
-        },
-        timeout: 2500
-      }, () => {
-        DB_STATS.lastCloudSyncStatus = `SYNCED_SHAREPOINT_GRAPH (${now()})`;
-      });
-      spReq.on('error', () => {});
-      spReq.write(spBody);
-      spReq.end();
+    const gcsRes = await fetch(DB_STATS.cloudProviders.googleCloudStorage.downloadEndpoint, {
+      headers: { 'Authorization': `Bearer ${gcpToken}` }
+    });
+    if (gcsRes.ok) {
+      const cloudState = await gcsRes.json();
+      if (cloudState && cloudState.v === 1 && cloudState.users) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+        fs.writeFileSync(DATA_FILE, JSON.stringify(cloudState, null, 2), 'utf8');
+        S = loadState();
+        DB_STATS.lastCloudSyncStatus = `HYDRATED_FROM_GCS (${now()})`;
+        return;
+      }
+    } else if (gcsRes.status === 404) {
+      // First-time cloud initialization: upload current state immediately
+      await syncCloudDatabaseSilent(S);
+      DB_STATS.lastCloudSyncStatus = `INITIALIZED_GCS_STATE (${now()})`;
+    } else {
+      DB_STATS.lastCloudSyncStatus = `GCS_HYDRATE_HTTP_${gcsRes.status}`;
     }
-  } catch (_) {}
+  } catch (e) {
+    DB_STATS.lastCloudSyncStatus = 'CLOUD_HYDRATE_FALLBACK_LOCAL';
+  }
 }
 
 function loadState() {
@@ -2076,12 +2142,19 @@ function computeDivergentRecommendations(user) {
 }
 
 const RATE_BUCKETS = new Map();
+const IP_LOCKOUTS = new Map();
 function checkRateLimit(req, bucketName, maxHits = 30, windowMs = 60000) {
   const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'local').split(',')[0].trim();
   const key = `${bucketName}:${ip}`;
   const nowTs = Date.now();
+  const lockedUntil = IP_LOCKOUTS.get(key) || 0;
+  if (lockedUntil > nowTs) return false;
   const hits = (RATE_BUCKETS.get(key) || []).filter(ts => nowTs - ts < windowMs);
-  if (hits.length >= maxHits) return false;
+  if (hits.length >= maxHits) {
+    IP_LOCKOUTS.set(key, nowTs + Math.min(windowMs * 2, 10 * 60 * 1000));
+    try { logAudit('system', 'security.rate_limit_lockout', `Throttled IP ${ip} on bucket=${bucketName} (${hits.length}/${maxHits})`); } catch (_) {}
+    return false;
+  }
   hits.push(nowTs);
   RATE_BUCKETS.set(key, hits);
   return true;
@@ -2208,31 +2281,53 @@ const server = http.createServer(async (req, res) => {
         S = seedState();
         saveState(S);
       }
+      const caller = getAuthenticatedUser(req);
+      const watchdogKeyHdr = String(req.headers['x-mgc-watchdog-key'] || '').trim();
+      const expectedWatchdogKey = process.env.MGCW_WATCHDOG_KEY || SESSION_SECRET.slice(0, 24);
+      const isAuthorizedWatchdogAdmin = isOwnerUser(caller) || (watchdogKeyHdr.length >= 16 && watchdogKeyHdr === expectedWatchdogKey);
+
       let mirrorSync = null;
-      if (pathname === '/api/ops/watchdog' && (process.env.K_SERVICE === 'mgc-external-site' || parsedUrl.searchParams.get('sync') === '1')) {
+      if (pathname === '/api/ops/watchdog' && (process.env.K_SERVICE === 'mgc-external-site' || (isAuthorizedWatchdogAdmin && parsedUrl.searchParams.get('sync') === '1'))) {
         mirrorSync = await syncPrimaryProductionService();
       }
       let cloudDiag = null;
       if (pathname === '/api/ops/watchdog' && parsedUrl.searchParams.get('diag') === '1') {
+        if (!isAuthorizedWatchdogAdmin) {
+          return sendJson(res, 403, {
+            ok: false,
+            error: 'Owner authentication or X-MGC-Watchdog-Key required for diagnostic telemetry.'
+          });
+        }
         cloudDiag = await runCloudDiagnostics();
       }
       const healthy = missingFiles.length === 0;
       return sendJson(res, healthy ? 200 : 503, {
         ok: healthy,
+        status: healthy ? 'HEALTHY' : 'DEGRADED',
         service: process.env.K_SERVICE || 'mgc-command-workspace',
         revision: process.env.K_REVISION || 'local',
         selfHealed: true,
-        mirrorSync,
-        cloudDiag,
-        recentBrowserReqs: global._recentBrowserReqs.slice(0, 15),
+        cloudStateSync: DB_STATS.lastCloudSyncStatus,
+        ...(isAuthorizedWatchdogAdmin ? {
+          mirrorSync,
+          cloudDiag,
+          recentBrowserReqs: global._recentBrowserReqs.slice(0, 15)
+        } : {}),
         missingFiles,
         uptimeSec: Math.round(process.uptime()),
         ts: now()
       });
     }
 
-    // Canonical Domain Enforcement: redirect raw *.run.app browser URLs (e.g. mgc-external-site-254657731107.us-west1.run.app) to https://miltongroupsecurity.org
+    // Canonical Domain Enforcement: redirect www.miltongroupsecurity.org and raw *.run.app browser URLs to https://miltongroupsecurity.org
     const rawHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase();
+    if (rawHost === 'www.miltongroupsecurity.org') {
+      res.writeHead(301, {
+        'Location': `https://miltongroupsecurity.org${req.url || '/'}`,
+        ...SECURITY_HEADERS
+      });
+      return res.end();
+    }
     if (req.method === 'GET' && rawHost.endsWith('.run.app') && !pathname.startsWith('/api/') && !req.headers['x-mgc-proxy']) {
       let cleanPath = toCleanRoute(pathname) || pathname;
       if (cleanPath === '/' && rawHost.startsWith('mgc-external-site')) {
@@ -2535,10 +2630,16 @@ const server = http.createServer(async (req, res) => {
         ? resolveAuthorizedRoleRedirect(existingCaller, nextParam, mobileClient)
         : null;
 
+      const cfgOauth = getOauthConfig();
+      const bridgeBase = 'https://gen-lang-client-0636792472.firebaseapp.com/oauth-bridge.html?start=1';
       const targetUrls = {
-        google: 'https://gen-lang-client-0636792472.firebaseapp.com/oauth-bridge.html?start=1&state=' + encodeURIComponent(stateTok),
-        microsoft: 'https://login.live.com/',
-        apple: 'https://account.apple.com/sign-in'
+        google: `${bridgeBase}&provider=google&state=${encodeURIComponent(stateTok)}`,
+        microsoft: cfgOauth.microsoftClientId
+          ? `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${encodeURIComponent(cfgOauth.microsoftClientId)}&response_type=id_token&redirect_uri=${encodeURIComponent('https://miltongroupsecurity.org/api/auth/oauth/callback')}&scope=openid%20profile%20email&response_mode=fragment&state=${encodeURIComponent(stateTok)}&nonce=${encodeURIComponent(nonce)}`
+          : `${bridgeBase}&provider=microsoft&state=${encodeURIComponent(stateTok)}`,
+        apple: cfgOauth.appleClientId
+          ? `https://appleid.apple.com/auth/authorize?client_id=${encodeURIComponent(cfgOauth.appleClientId)}&response_type=code%20id_token&redirect_uri=${encodeURIComponent('https://miltongroupsecurity.org/api/auth/oauth/callback')}&scope=name%20email&response_mode=fragment&state=${encodeURIComponent(stateTok)}&nonce=${encodeURIComponent(nonce)}`
+          : `${bridgeBase}&provider=apple&state=${encodeURIComponent(stateTok)}`
       };
       const targetUrl = verifiedRbacTarget || targetUrls[provider] || targetUrls.google;
 
@@ -8244,6 +8345,25 @@ async function syncPrimaryProductionService() {
     const token = tokData && tokData.access_token;
     if (!token) return { synced: false, reason: 'empty_token' };
 
+    const domainApi = 'https://us-west1-run.googleapis.com/apis/domains.cloudrun.com/v1/namespaces/gen-lang-client-0636792472/domainmappings';
+    try {
+      const dmCheck = await fetch(`${domainApi}/www.miltongroupsecurity.org`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (dmCheck.status === 404) {
+        await fetch(domainApi, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            apiVersion: 'domains.cloudrun.com/v1',
+            kind: 'DomainMapping',
+            metadata: { name: 'www.miltongroupsecurity.org', namespace: 'gen-lang-client-0636792472' },
+            spec: { routeName: 'milton-group-concepts-llc', certificateMode: 'AUTOMATIC' }
+          })
+        });
+      }
+    } catch (_) {}
+
     const baseApi = 'https://us-west1-run.googleapis.com/apis/serving.knative.dev/v1/namespaces/gen-lang-client-0636792472/services';
     const [srcRes, dstRes] = await Promise.all([
       fetch(`${baseApi}/mgc-external-site`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -8345,6 +8465,7 @@ async function runCloudDiagnostics() {
 
 server.listen(PORT, () => {
   console.log(`MGC & F.I.X Authenticated Cloud Run Server listening on http://localhost:${PORT}`);
+  hydrateStateFromCloudOnBoot().catch(() => {});
   if (process.env.K_SERVICE === 'mgc-external-site') {
     setTimeout(() => { syncPrimaryProductionService().catch(() => {}); }, 2500);
   }

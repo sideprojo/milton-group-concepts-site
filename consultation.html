@@ -20,7 +20,9 @@
       margin: 0;
       min-height: 100vh;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at 50% 0%, #0f1d3a 0%, #050a18 70%);
+      background:
+        linear-gradient(160deg, rgba(5, 10, 24, 0.72) 0%, rgba(9, 16, 34, 0.82) 55%, rgba(5, 10, 24, 0.90) 100%),
+        url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2000&q=80') center 25%/cover no-repeat fixed;
       color: var(--text);
       padding: 24px 18px;
       display: flex;
@@ -30,7 +32,9 @@
     .popout-shell {
       width: 100%;
       max-width: 820px;
-      background: var(--card);
+      background: rgba(9, 16, 34, 0.86);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--gold);
       border-radius: 18px;
       padding: 24px 26px;

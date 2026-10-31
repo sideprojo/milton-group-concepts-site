@@ -2104,17 +2104,17 @@
     S.shares = S.shares.filter(x => x.id !== id); if (s) log('owner', 'share.revoke', id); commit();
   }
 
-  /* ---------- SaaS Apps Standard Theme Shell + Thematic Cityscape Background ---------- */
+  /* ---------- SaaS Apps Standard Theme Shell + Faded Human-Touch Background ---------- */
   const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
   :root{--r:12px;--bg-deep:#050811;--border-subtle:rgba(148,163,184,0.2);--border-gold:rgba(197,179,88,0.38);--gold:#c5b358;--blue:#3b82f6;--emerald:#10b981;--font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
-  body.w-mgc{--bg:#050811;--card:rgba(10,15,28,0.96);--card2:rgba(14,21,38,0.95);--line:rgba(148,163,184,0.22);--tx:#F8FAFC;--mut:#94A3B8;--ac:#3B82F6;--acx:#FFFFFF;--ok:#10B981;
-    background:radial-gradient(circle at 12% 15%,rgba(37,99,235,0.16),transparent 42%),radial-gradient(circle at 88% 12%,rgba(148,163,184,0.08),transparent 38%),#050811}
-  body.w-fix{--bg:#050811;--card:rgba(10,15,28,0.96);--card2:rgba(14,21,38,0.95);--line:rgba(197,179,88,0.28);--tx:#F8FAFC;--mut:#94A3B8;--ac:#C5B358;--acx:#050811;--ok:#10B981;
-    background:radial-gradient(circle at 12% 15%,rgba(37,99,235,0.16),transparent 42%),radial-gradient(circle at 50% 85%,rgba(197,179,88,0.12),transparent 45%),#050811}
-  body.w-mgc::before,body.w-fix::before{content:'';position:fixed;inset:0;z-index:-10;pointer-events:none}
-  body.w-mgc::before{background:linear-gradient(180deg,rgba(5,8,17,0.92) 0%,rgba(10,16,30,0.96) 55%,rgba(5,8,17,0.99) 100%),linear-gradient(rgba(148,163,184,.025) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(148,163,184,.025) 1px,transparent 1px) 0 0/44px 44px}
-  body.w-fix::before{background:linear-gradient(180deg,rgba(5,8,17,0.92) 0%,rgba(10,16,30,0.96) 55%,rgba(5,8,17,0.99) 100%),linear-gradient(rgba(197,179,88,.025) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(197,179,88,.025) 1px,transparent 1px) 0 0/44px 44px}
+  body.w-mgc{--bg:#050811;--card:rgba(10,15,28,0.84);--card2:rgba(14,21,38,0.86);--line:rgba(148,163,184,0.26);--tx:#F8FAFC;--mut:#94A3B8;--ac:#3B82F6;--acx:#FFFFFF;--ok:#10B981;
+    background:#050811}
+  body.w-fix{--bg:#050811;--card:rgba(10,15,28,0.84);--card2:rgba(14,21,38,0.86);--line:rgba(197,179,88,0.32);--tx:#F8FAFC;--mut:#94A3B8;--ac:#C5B358;--acx:#050811;--ok:#10B981;
+    background:#050811}
+  body.w-mgc::before,body.w-fix::before{content:'';position:fixed;inset:0;z-index:-10;pointer-events:none;background-size:cover;background-position:center 25%;background-repeat:no-repeat}
+  body.w-mgc::before{background-image:linear-gradient(180deg,rgba(5,8,17,0.74) 0%,rgba(10,16,30,0.82) 55%,rgba(5,8,17,0.90) 100%),url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=80')}
+  body.w-fix::before{background-image:linear-gradient(180deg,rgba(5,8,17,0.74) 0%,rgba(10,16,30,0.82) 55%,rgba(5,8,17,0.90) 100%),url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2000&q=80')}
   *{box-sizing:border-box}
   body{margin:0;font-family:var(--font-sans);font-size:13.5px;line-height:1.5;color:var(--tx);min-height:100vh;position:relative;isolation:isolate;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-feature-settings:"cv02","cv03","cv04","cv11"}
   code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
