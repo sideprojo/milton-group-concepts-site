@@ -378,7 +378,7 @@
       border-top: 1.5px solid rgba(148, 163, 184, 0.28);
       padding: 6px 8px calc(8px + env(safe-area-inset-bottom, 0px));
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 6px;
       box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.7);
     }
@@ -454,22 +454,26 @@
 
   <div id="m-toast" role="status" aria-live="polite"></div>
 
-  <nav class="m-tabbar" role="tablist" aria-label="Mobile Workflow Navigation">
+  <nav class="m-tabbar" role="tablist" aria-label="Mobile Quick-Action Dock">
     <button type="button" class="m-tab" role="tab" id="tab-btn-control" data-tab="control" aria-selected="true" aria-controls="main-content">
-      <span class="ico" aria-hidden="true">⚡</span>
-      <span>Control</span>
-    </button>
-    <button type="button" class="m-tab" role="tab" id="tab-btn-workflows" data-tab="workflows" aria-selected="false" aria-controls="main-content">
-      <span class="ico" aria-hidden="true">☑️</span>
-      <span>Workflows</span>
-    </button>
-    <button type="button" class="m-tab" role="tab" id="tab-btn-sprint" data-tab="sprint" aria-selected="false" aria-controls="main-content">
-      <span class="ico" aria-hidden="true">🗂️</span>
-      <span>Sprint</span>
+      <span class="ico" aria-hidden="true">🏠</span>
+      <span>Home</span>
     </button>
     <button type="button" class="m-tab" role="tab" id="tab-btn-briefings" data-tab="briefings" aria-selected="false" aria-controls="main-content">
       <span class="ico" aria-hidden="true">📰</span>
-      <span>Newsletter</span>
+      <span>Briefings</span>
+    </button>
+    <button type="button" class="m-tab" role="tab" id="tab-btn-workflows" data-tab="workflows" aria-selected="false" aria-controls="main-content">
+      <span class="ico" aria-hidden="true">⚡</span>
+      <span>Apps</span>
+    </button>
+    <button type="button" class="m-tab" role="tab" id="tab-btn-sprint" data-tab="sprint" aria-selected="false" aria-controls="main-content">
+      <span class="ico" aria-hidden="true">📅</span>
+      <span>Consult</span>
+    </button>
+    <button type="button" class="m-tab" role="tab" id="tab-btn-portal" data-tab="portal" aria-selected="false" aria-controls="main-content" onclick="window.location.href='/auth'">
+      <span class="ico" aria-hidden="true">🔐</span>
+      <span>Portal</span>
     </button>
   </nav>
 
@@ -588,6 +592,15 @@
       if (!u) {
         return `
           <section class="m-pane" aria-label="Mobile Authentication">
+            <div class="m-card" style="border-color:rgba(197,179,88,0.55);background:linear-gradient(135deg,rgba(15,23,42,0.92),rgba(8,14,28,0.96))">
+              <div class="m-row" style="margin-bottom:6px">
+                <span class="m-badge gold">📲 MGC COMMAND GATEWAY</span>
+                <span style="font-size:11px;color:#6ee7b7;font-weight:700">Alerts &amp; Quick Tasks</span>
+              </div>
+              <h2 style="font-size:15px;margin:2px 0 4px">Add MGC Gateway to Home Screen</h2>
+              <p style="font-size:12.5px;color:#cbd5e1;margin:0 0 10px">Pin the 1-tap MGC Command Gateway icon to your phone for instant Executive Briefings, status alerts, and simple tasks. (Multi-monitor Pop-Out Studios run exclusively on Desktop).</p>
+              <button type="button" class="m-btn" data-open-command-gateway="1" style="min-height:42px;font-size:12.5px;border-color:rgba(197,179,88,0.6);color:#fde047">📲 Add MGC Command Gateway Icon</button>
+            </div>
             <div class="m-card priority">
               <h1>Mobile Sign In</h1>
               <p>Sign in with your account credentials or connected identity provider.</p>

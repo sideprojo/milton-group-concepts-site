@@ -2385,7 +2385,7 @@
         { id: 'otto_step_entitled', label: '1. Tour Included Apps (3)', targetSelector: '#swimlaneEntitled, #netflixSpotlightHero', speech: 'Here are your 3 ready-to-launch applications: Argo, Arya, and Orin. Click any card to open it immediately.' },
         { id: 'otto_step_spotlight', label: '2. Cycle Spotlight Preview', targetSelector: '#netflixSpotlightHero', action: 'cycleSpotlight', speech: 'I switched the Spotlight preview so you can inspect each application and its capabilities.' },
         { id: 'otto_step_path', label: '3. Next Learning Step', targetSelector: '#divergentLearningSummaryBanner, #netflixSwimlanesContainer', speech: 'Complete your current step in the sequence below to advance your progress.' },
-        { id: 'otto_step_unlock', label: '4. Preview Unlock Options', targetSelector: '#swimlaneLocked', action: 'openPaywall', speech: 'Ready for more? You can unlock any individual app for $19/mo or all 9 apps for $49/mo.' }
+        { id: 'otto_step_unlock', label: '4. Preview Unlock Options', targetSelector: '#swimlaneLocked', action: 'openPaywall', speech: 'Ready for more? You can unlock any individual app for $19/mo or all 10 apps for $49/mo.' }
       ]
     },
     atlas: {
@@ -2398,9 +2398,9 @@
       controlledBy: 'Sovereign (Admin)',
       accent: '#10b981',
       secondary: '#60a5fa',
-      greeting: 'Welcome back. All 9 applications and delivery tools are ready.',
+      greeting: 'Welcome back. All 10 applications and delivery tools are ready.',
       steps: [
-        { id: 'atlas_step_apps', label: '1. Review All 9 Apps', targetSelector: '#swimlaneEntitled, #netflixSpotlightHero, #agileTelemetryRibbon', speech: 'All 9 applications are unlocked for your workspace. Select any card to launch.' },
+        { id: 'atlas_step_apps', label: '1. Review All 10 Apps', targetSelector: '#swimlaneEntitled, #netflixSpotlightHero, #agileTelemetryRibbon', speech: 'All 10 applications are unlocked for your workspace. Select any card to launch.' },
         { id: 'atlas_step_templates', label: '2. Open Fast-Track Templates', targetSelector: '[data-tab="resources"], #rftTemplateSelect', action: 'goResources', speech: 'Opening your guided Fast-Track templates to organize your current milestone.' },
         { id: 'atlas_step_sprint', label: '3. Inspect Active Sprint', targetSelector: '#agileTelemetryRibbon, .cols, [href="agile-board.html"]', action: 'goAgile', speech: 'Here is your live sprint progress. Review active stories or add a new item to the backlog.' },
         { id: 'atlas_step_briefing', label: '4. Schedule Briefing', targetSelector: '[data-tab="consultation"], #guidedConsultationForm', action: 'goConsultation', speech: 'Use this view to schedule your next architecture or milestone review.' }
@@ -2438,7 +2438,7 @@
         { id: 'sov_cmd_otto', label: 'Command Otto (Showcase)', smlPrompt: 'Direct Otto to highlight locked pro applications and guide showcase members to the $49 all-access pass', targetAgent: 'otto' },
         { id: 'sov_cmd_atlas', label: 'Command Atlas (Workspace)', smlPrompt: 'Direct Atlas to prioritize Sprint 1 deliverables and fast-track templates for workspace partners', targetAgent: 'atlas' },
         { id: 'sov_cmd_sentinel', label: 'Command Sentinel (Staff)', smlPrompt: 'Direct Sentinel to triage external client directory accounts and open consultation requests', targetAgent: 'sentinel' },
-        { id: 'sov_cmd_status', label: 'Run Full Fleet Sync', smlPrompt: 'Synchronize Otto, Atlas, and Sentinel guidance states and verify all 9 application gates', targetAgent: 'all' }
+        { id: 'sov_cmd_status', label: 'Run Full Fleet Sync', smlPrompt: 'Synchronize Otto, Atlas, and Sentinel guidance states and verify all 10 application gates', targetAgent: 'all' }
       ]
     }
   };
@@ -3138,5 +3138,239 @@
     }
   }
 
-  global.MGCW = { ANIMATED_AGENTS, getAssignedAnimatedAgent, renderAnimatedAvatarSvg, triggerGuidedHighlight, mountFloatingCompanion, applyStaggerCascade, CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isTrueSoleAdmin, getAdminRoleView, setAdminRoleView, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, isMobileClientDevice, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
+  
+  // ==========================================================================
+  // DESKTOP-ONLY POP-OUT APP LAUNCHER, COMMAND GATEWAY INSTALLER & 4-STAGE TRACKER
+  // ==========================================================================
+  let deferredGatewayInstallPrompt = null;
+  if (typeof window !== 'undefined') {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredGatewayInstallPrompt = e;
+    });
+  }
+
+  function injectGatewayDescriptorLink() {
+    if (typeof document === 'undefined' || !document.head) return;
+    if (!document.querySelector('link[href*="mgc-gateway.json"]')) {
+      const lk = document.createElement('link');
+      lk.rel = 'manifest';
+      lk.href = '/mgc-gateway.json';
+      document.head.appendChild(lk);
+    }
+  }
+
+  function isDesktopPopoutCapable() {
+    if (typeof window === 'undefined') return false;
+    if (isMobileClientDevice && isMobileClientDevice()) return false;
+    return (window.innerWidth || 1280) > 820;
+  }
+
+  function launchDesktopAppWindow(href, appId, callSign, primaryTool, baselineKey) {
+    const cleanHref = String(href || '/workspace');
+    try {
+      localStorage.setItem('mgc_active_otto_handoff', JSON.stringify({
+        orchestrator: 'OTTO-01',
+        targetApp: appId || 'app',
+        targetCallSign: callSign || 'ARGO-01',
+        primaryTool: primaryTool || '',
+        baselineKey: baselineKey || 'en_arabic_heritage',
+        launchedInPopout: isDesktopPopoutCapable(),
+        timestamp: new Date().toISOString()
+      }));
+    } catch (_) {}
+
+    // Mobile is strictly for alerts & simple tasks — never pop out multi-window sessions on mobile
+    if (!isDesktopPopoutCapable()) {
+      window.location.href = cleanHref;
+      return null;
+    }
+
+    const sep = cleanHref.includes('?') ? '&' : '?';
+    const popUrl = cleanHref + sep + 'popout=1&app=' + encodeURIComponent(appId || '') + '&callsign=' + encodeURIComponent(callSign || 'ARGO-01');
+    const w = Math.min(1360, Math.max(960, (window.screen && window.screen.availWidth ? window.screen.availWidth - 80 : 1360)));
+    const h = Math.min(860, Math.max(680, (window.screen && window.screen.availHeight ? window.screen.availHeight - 80 : 860)));
+    const left = Math.max(20, Math.round(((window.screen ? window.screen.availWidth : 1440) - w) / 2));
+    const top = Math.max(20, Math.round(((window.screen ? window.screen.availHeight : 900) - h) / 2));
+    const winName = 'MGCAppPopout_' + String(appId || 'studio').replace(/[^a-zA-Z0-9_]/g, '_');
+    const win = window.open(
+      popUrl,
+      winName,
+      'popup=yes,width=' + w + ',height=' + h + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes'
+    );
+    if (win) {
+      try { win.focus(); } catch (_) {}
+      toast('Launched ' + (callSign || appId || 'Application') + ' in dedicated Workspace Window');
+      return win;
+    }
+    // Fallback if browser policy prevented popup
+    window.open(cleanHref, '_blank', 'noopener');
+    return null;
+  }
+
+  function openCommandGatewayModal() {
+    if (deferredGatewayInstallPrompt) {
+      deferredGatewayInstallPrompt.prompt();
+      deferredGatewayInstallPrompt.userChoice.then(() => { deferredGatewayInstallPrompt = null; }).catch(() => {});
+      return;
+    }
+    if (typeof document === 'undefined') return;
+    let existing = document.getElementById('mgcCommandGatewayModal');
+    if (existing) existing.remove();
+    const isMob = !isDesktopPopoutCapable();
+    const modal = document.createElement('div');
+    modal.id = 'mgcCommandGatewayModal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(2,6,18,0.88);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;padding:18px';
+    modal.innerHTML =
+      '<div style="width:min(540px,100%);background:linear-gradient(180deg,rgba(10,18,36,0.98),rgba(5,10,22,0.99));border:1.5px solid rgba(197,179,88,0.72);border-radius:20px;padding:24px 26px;box-shadow:0 32px 80px rgba(0,0,0,0.85);color:#f8fafc;font-family:Inter,system-ui,sans-serif">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(148,163,184,0.22)">' +
+          '<div style="display:flex;align-items:center;gap:12px">' +
+            '<img src="/assets/mgc-crest.png" alt="MGC Crest" style="width:44px;height:44px;border-radius:11px;border:1px solid rgba(197,179,88,0.6);object-fit:contain;background:#040814" onerror="this.style.display=\'none\'" />' +
+            '<div>' +
+              '<span style="font-size:10px;font-weight:800;color:#fde047;text-transform:uppercase;letter-spacing:.08em">Unified Portal Launcher</span>' +
+              '<h3 style="margin:2px 0 0;font-size:18px;font-weight:900;color:#fff">Install MGC Command Gateway</h3>' +
+            '</div>' +
+          '</div>' +
+          '<button type="button" id="btnCloseGatewayModal" style="padding:6px 12px;border-radius:9px;border:1px solid rgba(148,163,184,0.35);background:rgba(15,23,42,0.85);color:#e2e8f0;font-weight:700;cursor:pointer">Close ✕</button>' +
+        '</div>' +
+        '<p style="margin:0 0 14px;font-size:13px;color:#cbd5e1;line-height:1.55">' +
+          (isMob
+            ? 'Add the <strong>MGC Command Gateway</strong> icon to your phone Home Screen for 1-tap access to live Executive Briefings, instant alerts, and simple status workflows.'
+            : 'Launch the unified <strong>MGC Command Gateway</strong> directly from your Windows Taskbar or macOS Dock—with shared Single Sign-On, live Executive Briefings, and dedicated Pop-Out Application Windows across all 10 Persona SaaS studios.') +
+        '</p>' +
+        '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">' +
+          (isMob
+            ? '<div style="padding:12px 14px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid rgba(56,189,248,0.4);font-size:12.5px;color:#e2e8f0"><strong>iPhone / iPad (Safari):</strong> Tap the <strong>Share (↑)</strong> button at the bottom of your screen and select <strong>Add to Home Screen</strong>.</div>' +
+              '<div style="padding:12px 14px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid rgba(16,185,129,0.4);font-size:12.5px;color:#e2e8f0"><strong>Android (Chrome):</strong> Tap the <strong>⋮ Menu</strong> in the top-right corner and select <strong>Add to Home screen / Install app</strong>.</div>'
+            : '<div style="padding:12px 14px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid rgba(56,189,248,0.4);font-size:12.5px;color:#e2e8f0"><strong>Chrome / Microsoft Edge (Desktop):</strong> Click the <strong>Install MGC Command Gateway (⊕)</strong> icon on the right side of your address bar (or open Menu → <strong>Save and share → Install page as app</strong>) to pin MGC Gateway to your Taskbar.</div>' +
+              '<div style="padding:12px 14px;border-radius:12px;background:rgba(15,23,42,0.85);border:1px solid rgba(16,185,129,0.4);font-size:12.5px;color:#e2e8f0"><strong>Multi-Monitor Pop-Out Ready:</strong> Once inside the Gateway, click <strong>🪟 Launch App Window ↗</strong> on any entitled app to float it on a second monitor with live SCORM &amp; Otto state sync.</div>') +
+        '</div>' +
+        '<div style="display:flex;justify-content:flex-end;gap:10px">' +
+          '<button type="button" id="btnDoneGatewayModal" style="padding:10px 20px;border-radius:10px;border:1px solid #3b82f6;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-weight:800;font-size:13px;cursor:pointer">Got It — Ready</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(modal);
+    const closeFn = () => modal.remove();
+    modal.querySelector('#btnCloseGatewayModal').onclick = closeFn;
+    modal.querySelector('#btnDoneGatewayModal').onclick = closeFn;
+    modal.onclick = (e) => { if (e.target === modal) closeFn(); };
+  }
+
+  function downloadConsultationIcs(opts) {
+    const o = opts || {};
+    const title = o.title || ('MGC Executive Architecture Session — ' + (o.scope || 'Turnkey AI, Cyber & Cloud'));
+    const receiptId = o.receiptId || ('MGC-' + Date.now().toString(36).toUpperCase().slice(-6));
+    const desc = [
+      'Milton Group Concepts LLC & F.I.X Solutions LLC Executive Session',
+      'Receipt / Reference ID: ' + receiptId,
+      'Scope: ' + (o.scope || 'Enterprise Architecture & SaaS Workspace'),
+      'Preferred Window: ' + (o.preferredWindow || 'Next Available Executive Slot'),
+      'Coordinator: Connect-01 (connect@miltongroupsecurity.org)',
+      'Portal URL: https://miltongroupsecurity.org/workspace'
+    ].join('\\n');
+    const startDate = new Date(Date.now() + 24 * 3600 * 1000);
+    startDate.setUTCHours(14, 0, 0, 0);
+    const endDate = new Date(startDate.getTime() + 45 * 60 * 1000);
+    const fmt = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const icsLines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Milton Group Concepts LLC//MGC Command Gateway//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      'UID:' + receiptId + '@miltongroupsecurity.org',
+      'DTSTAMP:' + fmt(new Date()),
+      'DTSTART:' + fmt(startDate),
+      'DTEND:' + fmt(endDate),
+      'SUMMARY:' + title.replace(/[,;]/g, ' '),
+      'DESCRIPTION:' + desc,
+      'LOCATION:https://miltongroupsecurity.org/workspace (Video Briefing & Screen Share)',
+      'STATUS:CONFIRMED',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ];
+    const blob = new Blob([icsLines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'MGC-Executive-Session-' + receiptId + '.ics';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      a.remove();
+      URL.revokeObjectURL(url);
+    }, 300);
+    toast('Downloaded calendar invite (.ics)');
+  }
+
+  function renderFourStageTimelineHtml(opts) {
+    const o = opts || {};
+    const mode = o.mode === 'checkout' ? 'checkout' : 'consultation';
+    const receiptId = esc(o.receiptId || 'MGC-VERIFIED');
+    const scope = esc(o.scope || (mode === 'checkout' ? 'Pro Persona SaaS & Workspace Entitlement' : 'Turnkey Web, AI & Zero-Trust Scope'));
+    const subline = esc(o.subline || (mode === 'checkout' ? 'Instant entitlement active across your workspace' : 'Connect-01 (connect@miltongroupsecurity.org) has logged and routed your briefing'));
+    const step4Label = mode === 'checkout' ? '4. Entitlement Active' : '4. Calendar Slot Ready';
+    const step4Sub = mode === 'checkout' ? 'Apps & SCORM Unlocked' : '1-Click .ics Invite Ready';
+    return (
+      '<div class="mgc-four-stage-tracker" data-tracker-mode="' + mode + '" style="margin:12px 0;padding:16px 18px;border-radius:14px;background:linear-gradient(135deg,rgba(6,78,59,0.34),rgba(8,15,30,0.96));border:1.5px solid rgba(16,185,129,0.58);box-shadow:0 14px 36px rgba(0,0,0,0.5)">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">' +
+          '<div>' +
+            '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+              '<span style="padding:2px 9px;border-radius:999px;background:rgba(16,185,129,0.22);border:1px solid #10b981;color:#6ee7b7;font-size:10.5px;font-weight:800">✓ LIVE 4-STAGE FULFILLMENT TRACKER</span>' +
+              '<code style="font-size:11.5px;color:#fde047;font-weight:700">' + receiptId + '</code>' +
+            '</div>' +
+            '<div style="font-size:14px;font-weight:800;color:#fff;margin-top:4px">' + scope + '</div>' +
+            '<div style="font-size:12px;color:#cbd5e1">' + subline + '</div>' +
+          '</div>' +
+          '<button type="button" class="btn pri" data-download-mgc-ics="1" data-ics-receipt="' + receiptId + '" data-ics-scope="' + scope + '" style="padding:8px 14px;font-size:12px;font-weight:800;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-color:#60a5fa;color:#fff;cursor:pointer;border-radius:9px">📅 Download .ics Calendar Invite</button>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:8px">' +
+          '<div style="padding:10px 12px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(16,185,129,0.55)">' +
+            '<div style="font-size:10.5px;font-weight:800;color:#34d399">✓ 1. Request Logged</div>' +
+            '<div style="font-size:11.5px;color:#e2e8f0;margin-top:2px">Ledger &amp; SHA-256 Receipt</div>' +
+          '</div>' +
+          '<div style="padding:10px 12px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(16,185,129,0.55)">' +
+            '<div style="font-size:10.5px;font-weight:800;color:#34d399">✓ 2. Connect-01 Dispatched</div>' +
+            '<div style="font-size:11.5px;color:#e2e8f0;margin-top:2px">connect@miltongroupsecurity.org</div>' +
+          '</div>' +
+          '<div style="padding:10px 12px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(16,185,129,0.55)">' +
+            '<div style="font-size:10.5px;font-weight:800;color:#34d399">✓ 3. Scope Matched</div>' +
+            '<div style="font-size:11.5px;color:#e2e8f0;margin-top:2px">Otto &amp; Architecture Blueprint</div>' +
+          '</div>' +
+          '<div style="padding:10px 12px;border-radius:10px;background:rgba(4,8,20,0.82);border:1px solid rgba(253,224,71,0.65)">' +
+            '<div style="font-size:10.5px;font-weight:800;color:#fde047">★ ' + step4Label + '</div>' +
+            '<div style="font-size:11.5px;color:#e2e8f0;margin-top:2px">' + step4Sub + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  if (typeof document !== 'undefined') {
+    document.addEventListener('click', (e) => {
+      const icsBtn = e.target && e.target.closest ? e.target.closest('[data-download-mgc-ics]') : null;
+      if (icsBtn) {
+        e.preventDefault();
+        downloadConsultationIcs({
+          receiptId: icsBtn.getAttribute('data-ics-receipt') || 'MGC-SESSION',
+          scope: icsBtn.getAttribute('data-ics-scope') || 'Executive Architecture Briefing'
+        });
+      }
+      const gwBtn = e.target && e.target.closest ? e.target.closest('[data-open-command-gateway]') : null;
+      if (gwBtn) {
+        e.preventDefault();
+        openCommandGatewayModal();
+      }
+    });
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectGatewayDescriptorLink);
+    } else {
+      injectGatewayDescriptorLink();
+    }
+  }
+
+  global.MGCW = { launchDesktopAppWindow, isDesktopPopoutCapable, openCommandGatewayModal, downloadConsultationIcs, renderFourStageTimelineHtml, ANIMATED_AGENTS, getAssignedAnimatedAgent, renderAnimatedAvatarSvg, triggerGuidedHighlight, mountFloatingCompanion, applyStaggerCascade, CATALOG, APPS_CATALOG, RESOURCES_CATALOG, AGENTS_CATALOG, WORKSPACE_DIRECTORY_ACCOUNTS, ONBOARDING_CATEGORIES, DIVERGENT_BRIDGES, DEFINED_AI_TEMPLATES, OPTION_A3_APP_THRESHOLD, DEFAULT_CUSTOMER_APPS, DEFAULT_CUSTOMER_RESOURCES, DEFAULT_CUSTOMER_PAGES, TAILOR, STEPS, STATUS_LABEL, INACTIVITY_TIMEOUT_MS, get S() { return S; }, get lastIntakeResult() { return lastIntakeResult; }, getResourcesCatalog, getAgentsCatalog, updateAgentAccess, addCustomResource, getCatalogThresholdStatus, recordAssociativeMastery, completeNetflixOnboarding, sanitizeField, hasInjectionPayload, resolveEmployeeAssignedRecord, validateUsernameStandard, validatePasswordStandard, validatePhoneStandard, validateAddressStandard, postAccountingEntry, reconcileAccountingEntry, costGuard, commit, me, isTrueSoleAdmin, getAdminRoleView, setAdminRoleView, isOwner, isEmployee, isClient, isWorkspaceClient, isAccessClient, isMobileClientDevice, connectWorkspace, touchActivity, getRemainingInactivityMs, checkInactivityAutoLogoff, signInAs, signOut, provisionCustomerSso, requestAppAccess, toggleUserFeature, submitPayment, submitConsultation, updateConsultationStatus, setUserDirectoryProfile, setUserPassword, savePciGatewayConfig, can, notify, log, submitRequest, approve, deny, completeTask, subscribeBase, toggleAddon, share, revoke, header, theme, toast, esc, uid, now, injectCss, subActive, postServerAction, getAllowedPortalsForUser, mgcDigest, isValidAdminSecret, resolveCaseInsensitiveIdentifier };
 })(window);

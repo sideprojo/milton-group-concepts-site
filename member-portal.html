@@ -56,7 +56,9 @@
   let showPaywallModal = Boolean(qs.get('paywall'));
   let paywallTargetAppId = qs.get('paywall') || '';
   let selectedPaywallTier = qs.get('paywall') && qs.get('paywall') !== 'pro' && qs.get('paywall') !== 'enterprise' ? 'single_app_19' : 'pro_49';
-  let paywallMethod = 'ach_nacha';
+  let paywallMethod = 'card';
+  let activeLivePreviewAppId = '';
+  let activeLivePreviewTab = 'telemetry';
   let paywallLast4 = '4829';
   let paywallZip = '23294';
   let paywallError = '';
@@ -165,11 +167,16 @@
           '<span style="padding:2px 8px;border-radius:999px;background:rgba(197,179,88,0.16);border:1px solid rgba(197,179,88,0.48);color:#fde047;font-size:10.5px;font-weight:800">' + esc(a.codename || 'App') + '</span>' +
           statusPill +
         '</div>';
+      const isDeskPop = W.isDesktopPopoutCapable ? W.isDesktopPopoutCapable() : (window.innerWidth > 820);
       const act = entitled
-        ? '<a class="btn pri" data-launch-handoff-app="' + esc(a.id) + '" data-handoff-callsign="' + esc(a.callSign || 'ARGO-01') + '" data-handoff-tool="' + esc(a.primaryTool || '') + '" href="' + esc(a.href) + '" target="_blank" rel="noopener">Open App ↗</a>' +
+        ? (isDeskPop
+            ? '<button type="button" class="btn pri" data-popout-app="' + esc(a.id) + '" data-popout-href="' + esc(a.href) + '" data-handoff-callsign="' + esc(a.callSign || 'ARGO-01') + '" data-handoff-tool="' + esc(a.primaryTool || '') + '">🪟 Launch App Window ↗</button>' +
+              ' <a class="btn" data-launch-handoff-app="' + esc(a.id) + '" data-handoff-callsign="' + esc(a.callSign || 'ARGO-01') + '" data-handoff-tool="' + esc(a.primaryTool || '') + '" href="' + esc(a.href) + '" target="_blank" rel="noopener" style="padding:6px 10px;font-size:11.5px" title="Open in Standard Browser Tab">Tab ↗</a>'
+            : '<a class="btn pri" data-launch-handoff-app="' + esc(a.id) + '" data-handoff-callsign="' + esc(a.callSign || 'ARGO-01') + '" data-handoff-tool="' + esc(a.primaryTool || '') + '" href="' + esc(a.href) + '" target="_blank" rel="noopener">Open App ↗</a>') +
           (a.primaryTool ? ' <button type="button" class="btn" data-run-persona-tool="' + esc(a.primaryTool) + '" style="border-color:rgba(59,130,246,0.45);color:#93c5fd">Preview</button>' : '')
-        : '<button type="button" class="btn pri" data-open-paywall="' + esc(a.id) + '" style="background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">Unlock ($19)</button>' +
-          ' <button type="button" class="btn" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(a.id) + '" style="border-color:rgba(16,185,129,0.5);color:#6ee7b7">Unlock All ($49)</button>';
+        : '<button type="button" class="btn" data-live-preview-drawer="' + esc(a.id) + '" style="border-color:rgba(56,189,248,0.6);background:rgba(14,165,233,0.14);color:#7dd3fc;font-weight:700">👁️ 30s Live Preview</button>' +
+          ' <button type="button" class="btn pri" data-open-paywall="' + esc(a.id) + '" style="background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">Unlock ($19)</button>' +
+          ' <button type="button" class="btn" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(a.id) + '" style="border-color:rgba(16,185,129,0.5);color:#6ee7b7">Unlock All 10 ($49)</button>';
       return '<div class="compact-card" data-app-card="' + esc(a.id) + '" data-app-entitled="' + String(entitled) + '" style="border-color:' + (entitled ? 'rgba(16,185,129,0.42)' : 'rgba(234,179,8,0.45)') + ';background:' + (entitled ? 'rgba(8,15,30,0.92)' : 'linear-gradient(135deg,rgba(30,24,10,0.45),rgba(8,14,28,0.95))') + ';padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;gap:12px">' +
         '<div>' + badgeRow + '<h3 style="margin:2px 0 4px;font-size:15px">' + esc(a.title) + '</h3><p style="margin:0;font-size:12.5px;color:#cbd5e1">' + esc(a.desc || '') + '</p></div>' +
         '<div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap">' + act + '</div></div>';
@@ -181,9 +188,9 @@
       ? '<button type="button" class="btn" data-go-resources="1" style="border-color:rgba(197,179,88,0.45);color:#fde047">' + (accessOnly ? 'Tools &amp; Insights' : ('Resources &amp; Otto (' + qualifiedRes.length + ')')) + '</button>'
       : '';
 
-    const personalizeBtnHtml = '<button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Otto Setup</button>';
+    const personalizeBtnHtml = '<button type="button" class="btn" data-open-command-gateway="1" style="border-color:rgba(56,189,248,0.5);color:#7dd3fc" title="Install Unified MGC Command Gateway">🖥️ Command Gateway</button><button type="button" class="btn" id="btnOpenNetflixOnboarding" style="border-color:rgba(16,185,129,0.45);color:#6ee7b7">Otto Setup</button>';
     const paywallBtnHtml = (!isSoleAdmin() && !isEmp())
-      ? '<button type="button" class="btn" data-open-paywall="' + esc((lockedApps[0] && lockedApps[0].id) || 'eveng-netprism-studio') + '" style="border-color:rgba(234,179,8,0.55);color:#fde047">' + (lockedApps.length > 0 ? ('🔓 Unlock Pro Apps (' + lockedApps.length + ' Locked)') : '✓ All 9 Apps Unlocked') + '</button>'
+      ? '<button type="button" class="btn" data-open-paywall="' + esc((lockedApps[0] && lockedApps[0].id) || 'eveng-netprism-studio') + '" style="border-color:rgba(234,179,8,0.55);color:#fde047">' + (lockedApps.length > 0 ? ('🔓 Unlock Pro Apps (' + lockedApps.length + ' Locked)') : '✓ All 10 Apps Unlocked') + '</button>'
       : '<button type="button" class="btn" data-open-paywall="eveng-netprism-studio" style="border-color:rgba(234,179,8,0.55);color:#fde047">💳 Preview Paywall Modal</button>';
 
     const topRightActions = isEmp()
@@ -200,11 +207,11 @@
     const isFullPartner = isSoleAdmin() || isEmp() || isWorkspaceClientUser() || (u && u.securityGroup === 'EXTERNAL_CLIENT_PARTNER') || (u && u.plan && u.plan.planTier === 'sdvosb_contract_retainer');
     const secGroup = isSoleAdmin() ? 'DOMAIN_ADMIN' : (isEmp() ? 'INTERNAL_ANALYST' : (isFullPartner ? 'EXTERNAL_CLIENT_PARTNER' : 'EXTERNAL_SAAS_LMS'));
     const tierBadgeText = isSoleAdmin()
-      ? 'Administrator · All 9 Apps Active'
+      ? 'Administrator · All 10 Apps Active'
       : isEmp()
         ? 'Internal Staff · Client Operations'
         : isFullPartner
-          ? 'Workspace Partner · All 9 Apps Active'
+          ? 'Workspace Partner · All 10 Apps Active'
           : 'Showcase Member · ' + unlockedApps.length + ' Included Apps';
 
     const stepModeLabel = guidedSinglePageMode ? ('Guided Step ' + (activeGuideStepIdx + 1) + ' of ' + Math.max(1, (W.getAssignedAnimatedAgent ? (W.getAssignedAnimatedAgent(u).steps || []).length : 4))) : 'All Sections Visible';
@@ -218,7 +225,7 @@
           '</div>' +
           '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
             '<button type="button" class="btn" id="btnToggleGuidedPageMode" style="padding:5px 11px;font-size:11.5px;border-color:rgba(56,189,248,0.45);color:#bae6fd">' + (guidedSinglePageMode ? 'Show All Sections' : 'Guided Step Mode') + '</button>' +
-            (!isEmp() && lockedApps.length > 0 ? '<button type="button" class="btn pri" data-open-paywall="' + esc(lockedApps[0].id) + '" style="padding:5px 12px;font-size:11.5px;background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">Unlock All 9 Apps ($49/mo)</button>' : '') +
+            (!isEmp() && lockedApps.length > 0 ? '<button type="button" class="btn pri" data-open-paywall="' + esc(lockedApps[0].id) + '" style="padding:5px 12px;font-size:11.5px;background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">Unlock All 10 Apps ($49/mo)</button>' : '') +
             (!isEmp() ? '<button type="button" class="btn" data-open-onboarding="1" style="padding:5px 11px;font-size:11.5px">Customize Path</button>' : '') +
           '</div>' +
         '</div>' +
@@ -318,7 +325,7 @@
               '<span style="padding:3px 10px;border-radius:999px;background:rgba(197,179,88,0.18);border:1px solid rgba(197,179,88,0.55);color:#fde047;font-size:10.5px;font-weight:800">' + esc(featuredApp.codename || 'Orin') + '</span>' +
               (featuredEntitled
                 ? '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.2);border:1px solid #10b981;color:#a7f3d0;font-size:10.5px;font-weight:800">✓ Included</span>'
-                : '<span style="padding:3px 10px;border-radius:999px;background:rgba(234,179,8,0.22);border:1px solid #fde047;color:#fde047;font-size:10.5px;font-weight:800">🔒 $19 Single · $49 All 9</span>') +
+                : '<span style="padding:3px 10px;border-radius:999px;background:rgba(234,179,8,0.22);border:1px solid #fde047;color:#fde047;font-size:10.5px;font-weight:800">🔒 $19 Single · $49 All 10</span>') +
             '</div>' +
             '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
               apps.map(a => '<button type="button" class="btn" data-select-spotlight="' + esc(a.id) + '" style="padding:4px 9px;font-size:10.5px;border-color:' + (a.id === featuredApp.id ? '#fde047' : 'rgba(148,163,184,0.28)') + ';background:' + (a.id === featuredApp.id ? 'rgba(197,179,88,0.22)' : 'rgba(15,23,42,0.85)') + ';color:' + (a.id === featuredApp.id ? '#fde047' : '#cbd5e1') + '">' + (isEntitledApp(a.id) ? '✓ ' : '🔒 ') + esc(a.codename || a.title.split(' ')[0]) + '</button>').join('') +
@@ -329,9 +336,9 @@
           '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">' +
             '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">' +
               (featuredEntitled
-                ? '<a class="btn pri" data-launch-handoff-app="' + esc(featuredApp.id) + '" data-handoff-callsign="' + esc(featuredApp.callSign || 'ORIN-01') + '" data-handoff-tool="' + esc(featuredApp.primaryTool || '') + '" href="' + esc(featuredApp.href) + '" target="_blank" rel="noopener" style="padding:9px 18px;font-size:13px;font-weight:800">Open App ↗</a>'
+                ? ((W.isDesktopPopoutCapable ? W.isDesktopPopoutCapable() : (window.innerWidth > 820)) ? '<button type="button" class="btn pri" data-popout-app="' + esc(featuredApp.id) + '" data-popout-href="' + esc(featuredApp.href) + '" data-handoff-callsign="' + esc(featuredApp.callSign || 'ORIN-01') + '" data-handoff-tool="' + esc(featuredApp.primaryTool || '') + '" style="padding:9px 18px;font-size:13px;font-weight:800">🪟 Launch App Window ↗</button>' : '<a class="btn pri" data-launch-handoff-app="' + esc(featuredApp.id) + '" data-handoff-callsign="' + esc(featuredApp.callSign || 'ORIN-01') + '" data-handoff-tool="' + esc(featuredApp.primaryTool || '') + '" href="' + esc(featuredApp.href) + '" target="_blank" rel="noopener" style="padding:9px 18px;font-size:13px;font-weight:800">Open App ↗</a>')
                 : '<button type="button" class="btn pri" data-open-paywall="' + esc(featuredApp.id) + '" style="padding:9px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047">Unlock App ($19)</button>' +
-                  '<button type="button" class="btn" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(featuredApp.id) + '" style="padding:9px 16px;font-size:12.5px;border-color:#10b981;color:#6ee7b7">Unlock All 9 ($49)</button>') +
+                  '<button type="button" class="btn" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(featuredApp.id) + '" style="padding:9px 16px;font-size:12.5px;border-color:#10b981;color:#6ee7b7">Unlock All 10 ($49)</button>') +
               (featuredApp.primaryTool ? '<button type="button" class="btn" data-run-persona-tool="' + esc(featuredApp.primaryTool) + '" style="padding:9px 15px;font-size:12.5px;border-color:rgba(59,130,246,0.5);color:#93c5fd">Preview ' + esc(featuredApp.codename || 'App') + '</button>' : '') +
             '</div>' +
             '<div style="display:flex;gap:6px;align-items:center">' +
@@ -384,7 +391,7 @@
 
     const swimlaneCommercial = apps.filter(a => ['client-turnkey-forge', 'sterling-auto-repair', 'traffic-roi-simulator', 'samgov-contract-matchmaker'].includes(a.id));
     const swimlaneCyberGeo = apps.filter(a => ['eveng-netprism-studio', 'ghost-cli-trainer', 'maps-geospatial-insights'].includes(a.id));
-    const swimlaneCognitive = apps.filter(a => ['spanish-acquisition-os', 'chronos-aetheria-scorm'].includes(a.id));
+    const swimlaneCognitive = apps.filter(a => ['spanish-acquisition-os', 'chronos-aetheria-scorm', 'el-cid-codex-os'].includes(a.id));
 
     const netflixSwimlanesHtml =
       '<div id="netflixSwimlanesContainer" style="display:flex;flex-direction:column;gap:14px">' +
@@ -411,7 +418,7 @@
                 '</div>' +
                 '<div style="display:flex;gap:8px;align-items:center">' +
                   '<button type="button" class="btn" data-fluid-guide-idx="' + prevStepIdx + '" style="padding:6px 11px;font-size:11.5px">← Back</button>' +
-                  '<button type="button" class="btn pri" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(lockedApps[0].id) + '" style="background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">Unlock All 9 Apps ($49/mo)</button>' +
+                  '<button type="button" class="btn pri" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(lockedApps[0].id) + '" style="background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">Unlock All 10 Apps ($49/mo)</button>' +
                 '</div>' +
               '</div>' +
               '<div class="bento-3">' + lockedApps.map(a => renderAppCard(a, true)).join('') + '</div>' +
@@ -419,7 +426,85 @@
           : '') +
       '</div>';
 
-    return securityBoundaryRibbon +
+
+    constPREVIEW_TELEMETRY = {
+      'eveng-netprism-studio': {
+        metric1: '42 Active BGP/OSPF Nodes', metric2: '99.98% Packet Convergence', metric3: 'SCORM 2004 Lab Ready',
+        liveFeed: 'ZENO-01 EVE-NG Workbench: Multi-AS BGP Peering & Zero-Trust Micro-Segmentation topology verified (0% packet loss across 12 virtual routers).',
+        arch: 'Interactive EVE-NG Topology Canvas + Automated CLI Grader + SCORM 2004 4th Ed. Gradebook Export.'
+      },
+      'samgov-contract-matchmaker': {
+        metric1: '18 Active SDVOSB Set-Asides', metric2: 'NAICS 541512 / 541519', metric3: '94% Capability Match',
+        liveFeed: 'CATO-01 Federal Radar: Matched 6 high-probability DoD & DHS solicitations with automated WAWF/PIEE & capability matrix alignment.',
+        arch: 'Live SAM.gov Opportunity Scorer + Capability Statement Generator + Teaming Partner Matrix.'
+      },
+      'ghost-cli-trainer': {
+        metric1: '120+ Red/Blue CLI Drills', metric2: '< 40ms Command Grading', metric3: 'CMMC 2.0 Mapped',
+        liveFeed: 'KAEL-01 Terminal Studio: Linux hardening, firewall rule verification, and incident response drills running with real-time command telemetry.',
+        arch: 'Sandboxed Browser CLI Emulator + Automated Checkpoint Validator + SCORM Mastery Ledger.'
+      },
+      'traffic-roi-simulator': {
+        metric1: '+38% Lead Conversion Lift', metric2: '$0.00 Idle Cloud Overhead', metric3: 'Real-Time Funnel Sim',
+        liveFeed: 'VALEN-01 ROI Simulator: Modeling 10,000 monthly visitor sessions with 24/7 AI Receptionist intake and automated Stripe/WAWF checkout.',
+        arch: 'Interactive Monte Carlo Revenue & Conversion Modeler + Cloud Run Unit Economics Calculator.'
+      },
+      'spanish-acquisition-os': {
+        metric1: 'CEFR A1–C1 Associative Bridge', metric2: '96% Retention Velocity', metric3: 'Voice & Cognate Engine',
+        liveFeed: 'LUCIAN-01 Acquisition Studio: Cross-mapping English/Arabic/Farsi/Spanish root cognates with interactive spaced-repetition recall.',
+        arch: 'Associative Cognate Graph + Interactive Audio/Typing Drills + SCORM 2004 Progress Sync.'
+      },
+      'chronos-aetheria-scorm': {
+        metric1: '3D Epigraphic & Historical Sim', metric2: 'SCORM 2004 4th Ed.', metric3: 'Multi-Track Mastery',
+        liveFeed: 'THERON-01 Chronos Studio: Interactive primary-source reconstruction and comparative civilization analytics.',
+        arch: 'Paginated 5-Stage Historical & Analytical Codex + Automated Assessment Engine.'
+      }
+    };
+    const previewAppObj = activeLivePreviewAppId ? apps.find(a => a.id === activeLivePreviewAppId) : null;
+    const previewTelem = (previewAppObj && constPREVIEW_TELEMETRY[previewAppObj.id]) || {
+      metric1: 'Real-Time Studio Telemetry', metric2: 'SCORM 2004 & API Ready', metric3: 'Scale-to-Zero Cloud',
+      liveFeed: (previewAppObj ? (previewAppObj.title + ' (' + (previewAppObj.callSign || 'PERSONA') + '): ') : '') + 'Interactive workspace studio running live sample telemetry and automated workflow checkpoints.',
+      arch: 'Dedicated Pop-Out Window Support + Otto Orchestration Handoff + Instant Export.'
+    };
+    const livePreviewDrawerHtml = previewAppObj
+      ? '<div class="card" id="mgcLiveAppPreviewDrawer" style="padding:18px 22px;margin-bottom:14px;border:2px solid #38bdf8;background:linear-gradient(135deg,rgba(8,24,48,0.96),rgba(5,10,22,0.99));box-shadow:0 24px 60px rgba(0,0,0,0.8)">' +
+          '<div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:10px">' +
+            '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(14,165,233,0.22);border:1px solid #38bdf8;color:#7dd3fc;font-size:10.5px;font-weight:800">👁️ 30-SECOND INTERACTIVE LIVE PREVIEW</span>' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(197,179,88,0.18);border:1px solid #fde047;color:#fde047;font-size:10.5px;font-weight:800">' + esc(previewAppObj.codename || 'Persona') + ' · ' + esc(previewAppObj.callSign || 'STUDIO') + '</span>' +
+            '</div>' +
+            '<button type="button" class="btn" id="btnCloseLivePreviewDrawer" style="padding:5px 11px;font-size:11.5px">Close Preview ✕</button>' +
+          '</div>' +
+          '<h3 style="margin:0 0 6px;font-size:18px;font-weight:900;color:#fff">' + esc(previewAppObj.title) + ' — Live Sandbox Snapshot</h3>' +
+          '<p style="margin:0 0 12px;font-size:12.5px;color:#cbd5e1">' + esc(previewAppObj.desc || '') + '</p>' +
+          '<div class="bento-3" style="margin-bottom:12px">' +
+            '<div class="compact-card" style="padding:10px 12px;background:rgba(4,8,20,0.85);border-color:rgba(56,189,248,0.4)"><small style="color:#94a3b8;font-size:10px;font-weight:700;text-transform:uppercase">Live Benchmark</small><div style="font-size:13.5px;font-weight:800;color:#38bdf8;margin-top:2px">' + esc(previewTelem.metric1) + '</div></div>' +
+            '<div class="compact-card" style="padding:10px 12px;background:rgba(4,8,20,0.85);border-color:rgba(16,185,129,0.4)"><small style="color:#94a3b8;font-size:10px;font-weight:700;text-transform:uppercase">Operational SLA</small><div style="font-size:13.5px;font-weight:800;color:#34d399;margin-top:2px">' + esc(previewTelem.metric2) + '</div></div>' +
+            '<div class="compact-card" style="padding:10px 12px;background:rgba(4,8,20,0.85);border-color:rgba(253,224,71,0.4)"><small style="color:#94a3b8;font-size:10px;font-weight:700;text-transform:uppercase">Compliance &amp; Export</small><div style="font-size:13.5px;font-weight:800;color:#fde047;margin-top:2px">' + esc(previewTelem.metric3) + '</div></div>' +
+          '</div>' +
+          '<div style="padding:12px 14px;border-radius:10px;background:rgba(4,8,20,0.92);border:1px solid rgba(148,163,184,0.28);font-family:monospace;font-size:12px;color:#a7f3d0;margin-bottom:12px">' +
+            '<div><strong>[LIVE STREAM]</strong> ' + esc(previewTelem.liveFeed) + '</div>' +
+            '<div style="color:#93c5fd;margin-top:4px"><strong>[ARCHITECTURE]</strong> ' + esc(previewTelem.arch) + '</div>' +
+          '</div>' +
+          '<div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:10px">' +
+            '<span style="font-size:11.5px;color:#94a3b8">Unlock full interactive controls, Pop-Out multi-monitor mode, and SCORM exports:</span>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+              '<button type="button" class="btn pri" data-open-paywall="' + esc(previewAppObj.id) + '" style="background:linear-gradient(135deg,#fde047,#eab308);color:#060b16;border-color:#fde047;font-weight:800">🔓 Unlock ' + esc(previewAppObj.codename || 'App') + ' ($19/mo)</button>' +
+              '<button type="button" class="btn" data-open-paywall-tier="pro_49" data-open-paywall="' + esc(previewAppObj.id) + '" style="border-color:#10b981;color:#6ee7b7;font-weight:800">Unlock All 10 Apps ($49/mo)</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      : '';
+    const settledCheckoutTrackerHtml = (qs.get('checkout_status') === 'settled' || lastPaymentReceipt)
+      ? (W.renderFourStageTimelineHtml ? W.renderFourStageTimelineHtml({
+          mode: 'checkout',
+          receiptId: qs.get('receipt') || (lastPaymentReceipt && lastPaymentReceipt.receipt && lastPaymentReceipt.receipt.receiptId) || 'MGC-SETTLED',
+          scope: 'Pro Persona SaaS & Workspace Entitlement Active',
+          subline: 'Your account entitlements and Connect-01 receipt have been synchronized.'
+        }) : '')
+      : '';
+
+    return settledCheckoutTrackerHtml + securityBoundaryRibbon +
+      livePreviewDrawerHtml +
       accessClientBoundaryBanner +
       ottoCommandBarHtml +
       netflixSpotlightHtml +
@@ -453,7 +538,7 @@
           '<div>' +
             '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">' +
               '<span style="padding:3px 10px;border-radius:999px;background:rgba(234,179,8,0.2);border:1px solid #fde047;color:#fde047;font-size:10.5px;font-weight:800">🔒 Instant App Unlock &amp; Membership Upgrade</span>' +
-              '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.18);border:1px solid #10b981;color:#6ee7b7;font-size:10.5px;font-weight:800">Bank Transfer · Card · Invoice</span>' +
+              '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.18);border:1px solid #10b981;color:#6ee7b7;font-size:10.5px;font-weight:800">Card · Cash App Pay · Apple/Google Pay · WAWF</span>' +
             '</div>' +
             '<h2 style="margin:2px 0 0;font-size:20px;font-weight:900;color:#fff">Unlock ' + esc(targetApp ? (targetApp.title + ' (' + (targetApp.callSign || 'PERSONA') + ')') : 'Specialist Persona Suite') + '</h2></div>' +
           '</div>' +
@@ -476,8 +561,8 @@
             'Recommended · Best Value',
             'Pro All-Access SaaS & LMS Pass',
             '$49 / mo',
-            'Unlocks all 9 Specialist Persona SaaS Applications + Otto Fast-Track Templates.',
-            ['All 9 Persona SaaS Apps (Argo–Orin)', 'Full Otto (OTTO-01) Orchestration Studio', 'All SCORM 2004 Labs & Geospatial Insights']
+            'Unlocks all 10 Specialist Persona SaaS Applications + Otto Fast-Track Templates.',
+            ['All 10 Persona SaaS Apps (Argo–El Cid)', 'Full Otto (OTTO-01) Orchestration Studio', 'All SCORM 2004 Labs & Geospatial Insights']
           ) +
           tierCard(
             'sdvosb_contract_retainer',
@@ -485,7 +570,7 @@
             'Workspace Partner & Agile Retainer',
             '$250 / mo',
             'Upgrades account to EXTERNAL_CLIENT_PARTNER with Dedicated Agile Sprint Board.',
-            ['All 9 Persona SaaS Apps + Resources', 'Dedicated Agile Delivery & Kanban Board', 'Priority Executive Architecture Briefings']
+            ['All 10 Persona SaaS Apps + Resources', 'Dedicated Agile Delivery & Kanban Board', 'Priority Executive Architecture Briefings']
           ) +
         '</div>' +
 
@@ -531,14 +616,13 @@
     const activeTrackObj = CONSULTATION_TRACKS.find(t => t.id === selectedConsultTrack) || CONSULTATION_TRACKS[0];
 
     const confirmBanner = lastConsultationReceipt
-      ? '<div class="card" id="consultationConfirmedBanner" style="padding:14px 18px;margin-bottom:12px;border-color:rgba(16,185,129,0.52);background:linear-gradient(135deg,rgba(6,78,59,0.34),rgba(9,16,32,0.96))">' +
-          '<div class="row">' +
-            '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
-              '<strong style="font-size:13.5px;color:#fff">✓ ' + esc(lastConsultationReceipt.architectureScope) + '</strong>' +
-              '<span style="font-size:12.5px;color:#a7f3d0">' + esc(lastConsultationReceipt.timeline) + ' · ' + esc(lastConsultationReceipt.preferredWindow) + '</span>' +
-            '</div>' +
-            '<code style="font-size:11.5px;color:#34d399">' + esc(lastConsultationReceipt.receiptId) + '</code>' +
-          '</div>' +
+      ? '<div id="consultationConfirmedBanner">' +
+          (W.renderFourStageTimelineHtml ? W.renderFourStageTimelineHtml({
+            mode: 'consultation',
+            receiptId: lastConsultationReceipt.receiptId,
+            scope: lastConsultationReceipt.architectureScope,
+            subline: lastConsultationReceipt.timeline + ' · ' + lastConsultationReceipt.preferredWindow
+          }) : '') +
         '</div>'
       : '';
 
@@ -1659,7 +1743,7 @@
             Object.assign(W.S, data.state);
           }
           showPaywallModal = false;
-          W.toast('Unlocked! Receipt ' + data.receipt.receiptId + ' (' + (u.allowedApps || []).length + '/9 Apps Active)');
+          W.toast('Unlocked! Receipt ' + data.receipt.receiptId + ' (' + (u.allowedApps || []).length + '/10 Apps Active)');
           render();
         } catch (_) {
           paywallError = 'Network error while processing instant unlock.';
@@ -1670,6 +1754,37 @@
     app.querySelectorAll('[data-run-persona-tool]').forEach(btn => {
       btn.onclick = () => executePortalOttoTool(btn.getAttribute('data-run-persona-tool'));
     });
+
+    app.querySelectorAll('[data-popout-app]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        const appId = btn.getAttribute('data-popout-app');
+        const href = btn.getAttribute('data-popout-href');
+        const callSign = btn.getAttribute('data-handoff-callsign');
+        const tool = btn.getAttribute('data-handoff-tool');
+        if (W.launchDesktopAppWindow) {
+          W.launchDesktopAppWindow(href, appId, callSign, tool, (u && u.divergentBaseline) || selectedDivergentBaseline);
+        } else {
+          window.open(href, '_blank', 'noopener');
+        }
+      };
+    });
+    app.querySelectorAll('[data-live-preview-drawer]').forEach(btn => {
+      btn.onclick = () => {
+        activeLivePreviewAppId = btn.getAttribute('data-live-preview-drawer') || '';
+        render();
+        const dr = document.getElementById('mgcLiveAppPreviewDrawer');
+        if (dr && dr.scrollIntoView) dr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+    });
+    const btnClosePrevDrawer = document.getElementById('btnCloseLivePreviewDrawer');
+    if (btnClosePrevDrawer) {
+      btnClosePrevDrawer.onclick = () => {
+        activeLivePreviewAppId = '';
+        render();
+      };
+    }
+
     app.querySelectorAll('[data-launch-handoff-app]').forEach(link => {
       link.onclick = () => {
         try {

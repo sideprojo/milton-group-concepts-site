@@ -2250,7 +2250,7 @@ function renderLockedHtml(u, title, message, ctaHref, ctaLabel) {
       <div>Account<strong>${u ? (u.email || u.name) : 'Guest'}</strong></div>
       <div>Membership Tier<strong>${grpLabel}</strong></div>
       <div>Included Apps<strong>${allowedCount} / 9 Active</strong></div>
-      <div>Unlock Options<strong>$19 Single App · $49 All 9 Apps · $250 Workspace</strong></div>
+      <div>Unlock Options<strong>$19 Single App · $49 All 10 Apps · $250 Workspace</strong></div>
     </div>
     <div class="actions">
       <a class="btn gold" href="${ctaHref || '/workspace?view=payment'}">${ctaLabel || '🔓 Unlock Now →'}</a>
@@ -5656,9 +5656,9 @@ const server = http.createServer(async (req, res) => {
         base_5: { amountUsd: 5.00, label: 'Base SaaS & LMS Access ($5/mo)' },
         saas_lms_base: { amountUsd: 5.00, label: 'Base SaaS & LMS Access ($5/mo)' },
         single_app_19: { amountUsd: 19.00, label: targetUnlockApp ? `Single Persona SaaS Unlock: ${targetUnlockApp.title} ($19/mo)` : 'Single Specialist Persona SaaS Pass ($19/mo)' },
-        pro_49: { amountUsd: 49.00, label: 'Pro All-Access 9 Persona SaaS & LMS Pass ($49/mo)' },
+        pro_49: { amountUsd: 49.00, label: 'Pro All-Access 10 Persona SaaS & LMS Pass ($49/mo)' },
         pro_99: { amountUsd: 99.00, label: 'Pro App & Course LMS Subscriber ($99/mo)' },
-        pro_enterprise: { amountUsd: 49.00, label: 'Pro All-Access 9 Persona SaaS & LMS Pass ($49/mo)' },
+        pro_enterprise: { amountUsd: 49.00, label: 'Pro All-Access 10 Persona SaaS & LMS Pass ($49/mo)' },
         enterprise_499: { amountUsd: 499.00, label: 'Enterprise Custom Build & Full Workspace Suite ($499/mo)' },
         sdvosb_contract_retainer: { amountUsd: 250.00, label: 'Enterprise Workspace & SDVOSB/Commercial Retainer ($250/mo)' },
         custom_retainer: { amountUsd: Math.max(1, Math.min(250000, Number(body.amountUsd) || 2500.00)), label: 'Custom Commercial / Federal Milestone Retainer ($2,500)' },
@@ -6660,7 +6660,7 @@ const server = http.createServer(async (req, res) => {
           promptable: false,
           controlledBy: 'SOVEREIGN-01',
           visualStyle: 'emerald-prism-gyro',
-          activeDirective: 'Guide workspace partners through all 9 unlocked applications, fast-track templates, and active sprint deliverables.',
+          activeDirective: 'Guide workspace partners through all 10 unlocked applications, fast-track templates, and active sprint deliverables.',
           currentMood: 'synchronizing'
         },
         sentinel: {
@@ -6826,7 +6826,7 @@ const server = http.createServer(async (req, res) => {
           const targetUser = Object.values(S.users || {}).find(x => String(x.email || '').toLowerCase() === targetEmail);
           if (targetUser) {
             targetUser.allowedApps = APPS_CATALOG.map(a => a.id);
-            unlockedUserMsg = ' Unlocked all 9 applications for ' + targetEmail + '.';
+            unlockedUserMsg = ' Unlocked all 10 applications for ' + targetEmail + '.';
           }
         }
       }
@@ -8188,7 +8188,7 @@ const server = http.createServer(async (req, res) => {
       lowerRel.startsWith('node_modules/') ||
       lowerRel.includes('/.') ||
       /\.(ps1|sh|env|yaml|yml|md|sql|log|bak|lock|map|pem|key)$/i.test(lowerBase) ||
-      (lowerBase.endsWith('.json') && !lowerRel.startsWith('projects/'));
+      (lowerBase.endsWith('.json') && !lowerRel.startsWith('projects/') && lowerBase !== 'mgc-gateway.json' && lowerBase !== 'manifest.json');
     if (isBlockedStatic) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS });
       return res.end('Not Found');
@@ -8211,7 +8211,7 @@ const server = http.createServer(async (req, res) => {
           return res.end(renderLockedHtml(
             u,
             `Paywall & Entitlement Boundary · ${gatedApp.title} (${gatedApp.callSign || 'PERSONA'})`,
-            `Your current membership scope (${u.securityGroup || 'EXTERNAL_SAAS_LMS'}) includes ${(u.allowedApps || []).length}/9 Persona SaaS apps. Unlock "${gatedApp.title}" instantly via Single-App Pass ($19/mo) or All-Access Pro Pass ($49/mo).`,
+            `Your current membership scope (${u.securityGroup || 'EXTERNAL_SAAS_LMS'}) includes ${(u.allowedApps || []).length}/10 Persona SaaS apps. Unlock "${gatedApp.title}" instantly via Single-App Pass ($19/mo) or All-Access Pro Pass ($49/mo).`,
             `/workspace?paywall=${encodeURIComponent(appSlug)}`,
             `🔓 Unlock ${gatedApp.codename || gatedApp.title} Instantly ($19/mo) →`
           ));
@@ -8362,6 +8362,66 @@ const server = http.createServer(async (req, res) => {
     }
 
     const ext = path.extname(filePath).toLowerCase();
+
+    if (ext === '.html' && cleanRel.startsWith('projects/')) {
+      let htmlContent = fs.readFileSync(filePath, 'utf8');
+      const popoutBarScript = `<script>
+(function(){
+  try {
+    var isMob = window.innerWidth <= 820 || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+    if (isMob) return;
+    var qs = new URLSearchParams(location.search);
+    var isPopout = qs.get('popout') === '1' || Boolean(window.opener);
+    if (!isPopout) return;
+    var handoff = {};
+    try { handoff = JSON.parse(localStorage.getItem('mgc_active_otto_handoff') || '{}'); } catch(e){}
+    var callSign = qs.get('callsign') || handoff.targetCallSign || 'PERSONA-01';
+    var appId = qs.get('app') || handoff.targetApp || 'studio';
+    var bar = document.createElement('div');
+    bar.id = 'mgcPopoutReturnBar';
+    bar.style.cssText = 'position:sticky;top:0;left:0;right:0;z-index:99999;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:8px 16px;background:linear-gradient(90deg,#040814,#0f172a,#040814);border-bottom:1.5px solid rgba(197,179,88,0.65);font-family:Inter,system-ui,sans-serif;color:#f8fafc;box-shadow:0 8px 24px rgba(0,0,0,0.65)';
+    bar.innerHTML =
+      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+        '<button type="button" id="btnPopoutReturnWorkspace" style="padding:6px 12px;border-radius:8px;border:1px solid rgba(96,165,250,0.65);background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-size:12px;font-weight:800;cursor:pointer">← Return to MGC Workspace</button>' +
+        '<span style="padding:3px 10px;border-radius:999px;background:rgba(16,185,129,0.18);border:1px solid rgba(16,185,129,0.55);color:#6ee7b7;font-size:11px;font-weight:800">● Otto Handoff Active (' + callSign + ')</span>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<button type="button" id="btnPopoutSyncScorm" style="padding:5px 11px;border-radius:8px;border:1px solid rgba(197,179,88,0.6);background:rgba(15,23,42,0.9);color:#fde047;font-size:11.5px;font-weight:700;cursor:pointer">↻ 1-Click SCORM &amp; State Sync</button>' +
+        '<span id="popoutSyncStatus" style="font-size:11px;color:#94a3b8;font-weight:600">Live Sync Ready</span>' +
+      '</div>';
+    document.body.prepend(bar);
+    document.getElementById('btnPopoutReturnWorkspace').onclick = function() {
+      if (window.opener && !window.opener.closed) {
+        try { window.opener.focus(); } catch(e){}
+        window.close();
+      } else {
+        location.href = '/workspace';
+      }
+    };
+    document.getElementById('btnPopoutSyncScorm').onclick = function() {
+      try {
+        var bc = new BroadcastChannel('mgc_db_sync');
+        bc.postMessage({ type: 'scorm_popout_sync', appId: appId, callSign: callSign, ts: Date.now() });
+      } catch(e){}
+      var st = document.getElementById('popoutSyncStatus');
+      if (st) { st.style.color = '#34d399'; st.textContent = '✓ Synced to Workspace'; }
+    };
+  } catch(e){}
+})();
+</script>`;
+      if (htmlContent.includes('</body>')) {
+        htmlContent = htmlContent.replace('</body>', popoutBarScript + '</body>');
+      } else {
+        htmlContent += popoutBarScript;
+      }
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store',
+        ...SECURITY_HEADERS
+      });
+      return res.end(htmlContent);
+    }
+
     res.writeHead(200, {
       'Content-Type': MIME[ext] || 'application/octet-stream',
       'Cache-Control': ext === '.html' ? 'no-store' : 'public, max-age=300',

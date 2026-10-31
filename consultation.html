@@ -289,6 +289,95 @@
       return /<\s*script|javascript:|on\w+\s*=|union\s+select|drop\s+table|\$\{|\{\{/i.test(raw);
     }
 
+
+    // Pre-fill scope, scale, timeline, and brief when navigated from /services Estimator
+    try {
+      const qs = new URLSearchParams(location.search);
+      const trackParam = qs.get('track') || '';
+      const scopeParam = qs.get('scope') || '';
+      const scaleParam = qs.get('scale') || '';
+      const timelineParam = qs.get('timeline') || '';
+      const briefParam = qs.get('brief') || '';
+      const trackToScope = {
+        'ai-web': 'Turnkey Web, Autonomous AI Receptionist & SaaS Portal',
+        'cyber': 'Zero-Trust Cyber, CMMC 2.0 & Cloud Governance',
+        'federal': 'SDVOSB Federal Teaming & Custom Engineering',
+        'training': 'Executive Workforce Upskilling & SCORM LMS'
+      };
+      const resolvedScope = scopeParam || trackToScope[trackParam] || '';
+      const scopeEl = document.getElementById('reqScope');
+      if (scopeEl && resolvedScope) {
+        Array.from(scopeEl.options).forEach(opt => {
+          if (opt.value === resolvedScope || opt.textContent.includes(resolvedScope.slice(0, 18))) {
+            scopeEl.value = opt.value;
+          }
+        });
+      }
+      const scaleEl = document.getElementById('reqScaleTier');
+      if (scaleEl && scaleParam) {
+        Array.from(scaleEl.options).forEach(opt => {
+          if (opt.value === scaleParam) scaleEl.value = opt.value;
+        });
+      }
+      const tlEl = document.getElementById('reqTimeline');
+      if (tlEl && timelineParam) {
+        Array.from(tlEl.options).forEach(opt => {
+          if (opt.value === timelineParam) tlEl.value = opt.value;
+        });
+      }
+      const briefEl = document.getElementById('reqBrief');
+      if (briefEl && briefParam && !briefEl.value) {
+        briefEl.value = briefParam;
+      }
+      if (resolvedScope || briefParam) {
+        receiptBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><strong style="color:#34d399;font-size:12.5px">✓ Scope Pre-Filled from Capabilities Estimator: ' + esc(resolvedScope || 'Custom Track') + '</strong><span style="font-size:11px;color:#a7f3d0">Complete your contact details below to schedule</span></div>';
+        receiptBox.style.display = 'block';
+      }
+    } catch (_) {}
+
+    function downloadConsultIcsFile(receiptId, scopeText, windowText) {
+      const start = new Date(Date.now() + 24 * 3600 * 1000);
+      start.setUTCHours(14, 0, 0, 0);
+      const end = new Date(start.getTime() + 45 * 60 * 1000);
+      const fmt = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+      const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Milton Group Concepts LLC//Consultation//EN',
+        'BEGIN:VEVENT',
+        'UID:' + receiptId + '@miltongroupsecurity.org',
+        'DTSTAMP:' + fmt(new Date()),
+        'DTSTART:' + fmt(start),
+        'DTEND:' + fmt(end),
+        'SUMMARY:MGC Executive Consultation - ' + String(scopeText || 'Architecture Briefing').replace(/[,;]/g, ' '),
+        'DESCRIPTION:Receipt ID: ' + receiptId + '\\nPreferred Window: ' + (windowText || 'Executive Slot') + '\\nCoordinator: connect@miltongroupsecurity.org',
+        'LOCATION:https://miltongroupsecurity.org/workspace',
+        'STATUS:CONFIRMED',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      const u = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = u;
+      a.download = 'MGC-Consultation-' + receiptId + '.ics';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { a.remove(); URL.revokeObjectURL(u); }, 300);
+    }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('[data-dl-consult-ics]') : null;
+      if (btn) {
+        e.preventDefault();
+        downloadConsultIcsFile(
+          btn.getAttribute('data-ics-id') || 'MGC-REQ',
+          btn.getAttribute('data-ics-scope') || 'Architecture Consultation',
+          btn.getAttribute('data-ics-win') || 'Next Available Slot'
+        );
+      }
+    });
+
     if (closeBtn) {
       closeBtn.onclick = () => {
         if (window.opener && !window.opener.closed) {

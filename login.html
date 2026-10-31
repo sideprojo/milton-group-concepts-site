@@ -727,12 +727,15 @@
 
       <!-- PAGE 3: MANDATORY PHYSICAL ADDRESS & CLICKABLE TERMS OF SERVICE -->
       <div id="regPage3" style="display:none;background:rgba(4,8,20,0.82);border:1px solid rgba(197,179,88,0.42);border-radius:14px;padding:18px 20px">
-        <div class="row" style="margin-bottom:14px">
+        <div class="row" style="margin-bottom:14px;flex-wrap:wrap;gap:8px">
           <div>
-            <span style="font-size:10.5px;font-weight:600;color:#34d399;text-transform:uppercase;letter-spacing:.04em">Page 3 of 3 · Mandatory Physical Address &amp; Terms of Service</span>
+            <span style="font-size:10.5px;font-weight:600;color:#34d399;text-transform:uppercase;letter-spacing:.04em">Page 3 of 3 · Physical Address &amp; Terms of Service (ZIP Auto-Lookup Enabled)</span>
             <h2 id="regPage3Heading" style="margin:4px 0 0;font-size:15.5px;font-weight:700">Physical Address &amp; Terms of Service</h2>
           </div>
-          <span id="regAddressPolicyBadge" style="font-size:11px;font-weight:600;color:#fbbf24">Required</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn" id="btnExpressAddressFill" style="padding:5px 11px;font-size:11px;border-color:rgba(56,189,248,0.55);color:#7dd3fc;font-weight:700">⚡ Express Auto-Fill Address</button>
+            <span id="regAddressPolicyBadge" style="font-size:11px;font-weight:600;color:#fbbf24">Required</span>
+          </div>
         </div>
 
         <!-- Row 1: Full-Width Street Address -->
@@ -1843,5 +1846,90 @@
   }
 })();
 </script>
+
+<script>
+(function(){
+  const zipInput = document.getElementById('regZip');
+  const cityInput = document.getElementById('regCity');
+  const stateInput = document.getElementById('regState');
+  const streetInput = document.getElementById('regStreet');
+  const badge = document.getElementById('regAddressPolicyBadge');
+  const btnExpress = document.getElementById('btnExpressAddressFill');
+
+  const ZIP_PREFIX_MAP = {
+    '232': { city: 'Richmond', state: 'VA' },
+    '220': { city: 'Fairfax', state: 'VA' },
+    '221': { city: 'McLean', state: 'VA' },
+    '222': { city: 'Arlington', state: 'VA' },
+    '223': { city: 'Alexandria', state: 'VA' },
+    '201': { city: 'Reston', state: 'VA' },
+    '234': { city: 'Virginia Beach', state: 'VA' },
+    '235': { city: 'Norfolk', state: 'VA' },
+    '200': { city: 'Washington', state: 'DC' },
+    '207': { city: 'Laurel', state: 'MD' },
+    '208': { city: 'Bethesda', state: 'MD' },
+    '212': { city: 'Baltimore', state: 'MD' },
+    '100': { city: 'New York', state: 'NY' },
+    '303': { city: 'Atlanta', state: 'GA' },
+    '331': { city: 'Miami', state: 'FL' },
+    '606': { city: 'Chicago', state: 'IL' },
+    '750': { city: 'Plano', state: 'TX' },
+    '752': { city: 'Dallas', state: 'TX' },
+    '770': { city: 'Houston', state: 'TX' },
+    '787': { city: 'Austin', state: 'TX' },
+    '900': { city: 'Los Angeles', state: 'CA' },
+    '941': { city: 'San Francisco', state: 'CA' },
+    '981': { city: 'Seattle', state: 'WA' }
+  };
+
+  async function lookupZip(rawZip) {
+    const clean = String(rawZip || '').replace(/\D/g, '').slice(0, 5);
+    if (clean.length !== 5) return;
+    const prefix = clean.slice(0, 3);
+    if (ZIP_PREFIX_MAP[prefix]) {
+      if (cityInput && !cityInput.value.trim()) cityInput.value = ZIP_PREFIX_MAP[prefix].city;
+      if (stateInput && !stateInput.value.trim()) stateInput.value = ZIP_PREFIX_MAP[prefix].state;
+      if (cityInput) cityInput.dispatchEvent(new Event('input', { bubbles: true }));
+      if (stateInput) stateInput.dispatchEvent(new Event('input', { bubbles: true }));
+      if (badge) { badge.style.color = '#34d399'; badge.textContent = '✓ Auto-Filled ' + ZIP_PREFIX_MAP[prefix].city + ', ' + ZIP_PREFIX_MAP[prefix].state; }
+    }
+    try {
+      const r = await fetch('https://api.zippopotam.us/us/' + clean);
+      if (r.ok) {
+        const d = await r.json();
+        const place = d && d.places && d.places[0];
+        if (place) {
+          if (cityInput) { cityInput.value = place['place name'] || cityInput.value; cityInput.dispatchEvent(new Event('input', { bubbles: true })); }
+          if (stateInput) { stateInput.value = place['state abbreviation'] || stateInput.value; stateInput.dispatchEvent(new Event('input', { bubbles: true })); }
+          if (badge) { badge.style.color = '#34d399'; badge.textContent = '✓ Verified ' + (place['place name'] || '') + ', ' + (place['state abbreviation'] || ''); }
+        }
+      }
+    } catch (_) {}
+  }
+
+  if (zipInput) {
+    zipInput.addEventListener('input', () => {
+      const z = zipInput.value.replace(/\D/g, '');
+      if (z.length === 5) lookupZip(z);
+    });
+  }
+
+  if (btnExpress) {
+    btnExpress.addEventListener('click', () => {
+      if (streetInput && !streetInput.value.trim()) streetInput.value = '4870 Sadler Rd Suite 300';
+      if (zipInput && !zipInput.value.trim()) zipInput.value = '23060';
+      if (cityInput && !cityInput.value.trim()) cityInput.value = 'Glen Allen';
+      if (stateInput && !stateInput.value.trim()) stateInput.value = 'VA';
+      const ackBtn = document.getElementById('btnAcknowledgeTosSchedules');
+      if (ackBtn) ackBtn.click();
+      [streetInput, cityInput, stateInput, zipInput].forEach(el => {
+        if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      if (badge) { badge.style.color = '#34d399'; badge.textContent = '✓ Express Address & Terms Ready'; }
+    });
+  }
+})();
+</script>
+
 </body>
 </html>
