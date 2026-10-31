@@ -535,6 +535,40 @@ function fetchCloudRunAdcToken() {
   });
 }
 
+let _resolvedGcsBucket = process.env.MGCW_GCS_BUCKET || "";
+async function resolveOrCreateGcsBucket(gcpToken) {
+  if (_resolvedGcsBucket) return _resolvedGcsBucket;
+  const proj = CLOUD_DB_CONFIG.gcpProjectId;
+  try {
+    const listRes = await fetch("https://storage.googleapis.com/storage/v1/b?project=" + encodeURIComponent(proj), {
+      headers: { Authorization: "Bearer " + gcpToken }
+    });
+    if (listRes.ok) {
+      const data = await listRes.json();
+      const items = Array.isArray(data && data.items) ? data.items : [];
+      const preferred = items.find(b => b && b.name && b.name.includes("mgc-state"))
+        || items.find(b => b && b.name && b.name.includes("run-sources"))
+        || items[0];
+      if (preferred && preferred.name) {
+        _resolvedGcsBucket = preferred.name;
+        CLOUD_DB_CONFIG.gcsBucket = _resolvedGcsBucket;
+        return _resolvedGcsBucket;
+      }
+    }
+    const newBucketName = "mgc-state-" + proj;
+    const createRes = await fetch("https://storage.googleapis.com/storage/v1/b?project=" + encodeURIComponent(proj), {
+      method: "POST",
+      headers: { Authorization: "Bearer " + gcpToken, "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newBucketName, location: "US-WEST1", storageClass: "STANDARD" })
+    });
+    if (createRes.ok || createRes.status === 409) {
+      _resolvedGcsBucket = newBucketName;
+      CLOUD_DB_CONFIG.gcsBucket = _resolvedGcsBucket;
+      return _resolvedGcsBucket;
+    }
+  } catch (_) {}
+  return "run-sources-" + proj + "-us-west1";
+}
 let _cloudSyncTimer = null;
 async function syncCloudDatabaseSilent(state) {
   if (DB_STATS.circuitBreakerTripped) return;
@@ -546,7 +580,9 @@ async function syncCloudDatabaseSilent(state) {
         const rawJson = JSON.stringify(state);
         // 1. Primary Zero-Cost Cloud Persistence: Google Cloud Storage JSON Object
         try {
-          const gcsRes = await fetch(DB_STATS.cloudProviders.googleCloudStorage.uploadEndpoint, {
+          const bkt = await resolveOrCreateGcsBucket(gcpToken);
+          const upUrl = "https://storage.googleapis.com/upload/storage/v1/b/" + encodeURIComponent(bkt) + "/o?uploadType=media&name=" + encodeURIComponent(CLOUD_DB_CONFIG.gcsObjectName);
+          const gcsRes = await fetch(upUrl, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${gcpToken}`,
@@ -629,7 +665,9 @@ async function hydrateStateFromCloudOnBoot() {
       DB_STATS.lastCloudSyncStatus = 'LOCAL_DISK_WAL_ONLY (No Cloud Run Metadata Token)';
       return;
     }
-    const gcsRes = await fetch(DB_STATS.cloudProviders.googleCloudStorage.downloadEndpoint, {
+    const bkt = await resolveOrCreateGcsBucket(gcpToken);
+    const dlUrl = "https://storage.googleapis.com/storage/v1/b/" + encodeURIComponent(bkt) + "/o/" + encodeURIComponent(CLOUD_DB_CONFIG.gcsObjectName) + "?alt=media";
+    const gcsRes = await fetch(dlUrl, {
       headers: { 'Authorization': `Bearer ${gcpToken}` }
     });
     if (gcsRes.ok) {
