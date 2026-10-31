@@ -24,30 +24,31 @@
   .thematic-city-backdrop .city-photo {
     display: block;
     position: absolute;
-    inset: -4%;
+    inset: -3%;
     background-image:
-      linear-gradient(180deg, rgba(3, 7, 18, 0.36) 0%, rgba(6, 13, 28, 0.52) 52%, rgba(3, 7, 18, 0.78) 100%),
-      url("https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=2400&q=85");
+      linear-gradient(180deg, rgba(3, 7, 18, 0.26) 0%, rgba(6, 13, 28, 0.42) 52%, rgba(3, 7, 18, 0.72) 100%),
+      url("https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=3840&q=95");
     background-size: cover;
     background-position: center 58%;
     background-repeat: no-repeat;
-    filter: saturate(1.22) contrast(1.08);
+    filter: contrast(1.18) saturate(1.26) brightness(1.03);
+    image-rendering: -webkit-optimize-contrast;
     animation: cityHorizonPan 28s ease-in-out infinite alternate;
   }
   .thematic-city-backdrop .city-atmosphere {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(circle at 18% 18%, rgba(37, 99, 235, 0.28), transparent 46%),
-      radial-gradient(circle at 82% 24%, rgba(245, 158, 11, 0.24), transparent 44%),
-      radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.16), transparent 52%);
+      radial-gradient(circle at 18% 18%, rgba(37, 99, 235, 0.32), transparent 46%),
+      radial-gradient(circle at 82% 24%, rgba(245, 158, 11, 0.28), transparent 44%),
+      radial-gradient(circle at 50% 85%, rgba(14, 165, 233, 0.18), transparent 52%);
   }
   .thematic-city-backdrop .city-grid {
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(148, 163, 184, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(148, 163, 184, 0.045) 1px, transparent 1px);
+      linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
     background-size: 48px 48px;
     mask-image: radial-gradient(ellipse at center, black 45%, transparent 90%);
   }
@@ -55,14 +56,14 @@
     position: absolute;
     right: 2%;
     bottom: -20px;
-    width: min(26vw, 320px);
-    height: 82vh;
-    opacity: 0.52;
-    filter: drop-shadow(-14px 10px 28px rgba(0, 0, 0, 0.85));
+    width: min(26vw, 330px);
+    height: 84vh;
+    opacity: 0.68;
+    filter: drop-shadow(-16px 10px 32px rgba(0, 0, 0, 0.9));
   }
   @keyframes cityHorizonPan {
-    0%   { transform: scale(1.03) translate(0, 0); }
-    100% { transform: scale(1.09) translate(-1.2%, -0.8%); }
+    0%   { transform: scale(1.02) translate(0, 0); }
+    100% { transform: scale(1.07) translate(-1.1%, -0.7%); }
   }
 
   .login-shell {
@@ -76,13 +77,13 @@
   }
   .login-card {
     width: min(880px, 100%);
-    background: linear-gradient(180deg, rgba(8, 15, 30, 0.84) 0%, rgba(5, 10, 22, 0.90) 100%) !important;
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border: 1.5px solid rgba(197, 179, 88, 0.62) !important;
+    background: linear-gradient(180deg, rgba(8, 15, 30, 0.80) 0%, rgba(5, 10, 22, 0.87) 100%) !important;
+    backdrop-filter: blur(24px) saturate(175%);
+    -webkit-backdrop-filter: blur(24px) saturate(175%);
+    border: 1.5px solid rgba(197, 179, 88, 0.72) !important;
     border-radius: 22px !important;
     padding: 32px 34px !important;
-    box-shadow: 0 32px 90px rgba(0, 0, 0, 0.82), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 36px 96px rgba(0, 0, 0, 0.85), 0 0 36px rgba(197, 179, 88, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
     position: relative;
     z-index: 10;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
@@ -432,23 +433,38 @@
   <div class="city-atmosphere"></div>
   <div class="city-grid"></div>
   <svg class="skyscraper-silhouette" viewBox="0 0 200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="100" y1="10" x2="100" y2="170" stroke="#cbd5e1" stroke-width="3"/>
-    <circle cx="100" cy="10" r="4" fill="#ef4444"/>
+    <defs>
+      <linearGradient id="portalTowerBody" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#0f172a"/>
+        <stop offset="50%" stop-color="#091022"/>
+        <stop offset="100%" stop-color="#030712"/>
+      </linearGradient>
+      <pattern id="portalTowerWindows" width="18" height="14" patternUnits="userSpaceOnUse">
+        <rect x="2" y="2" width="6" height="8" rx="0.8" fill="#38bdf8" fill-opacity="0.24"/>
+        <rect x="10" y="2" width="6" height="8" rx="0.8" fill="#fde047" fill-opacity="0.32"/>
+      </pattern>
+    </defs>
+    <line x1="100" y1="10" x2="100" y2="170" stroke="#e2e8f0" stroke-width="3"/>
+    <circle cx="100" cy="10" r="5" fill="#ef4444"/>
+    <circle cx="100" cy="10" r="10" fill="#ef4444" fill-opacity="0.32"/>
     <g transform="translate(102, 22)">
-      <rect width="74" height="42" rx="2" fill="#1e3a8a" opacity="0.85"/>
-      <rect y="0" width="74" height="6" fill="#dc2626" opacity="0.85"/>
-      <rect y="12" width="74" height="6" fill="#dc2626" opacity="0.85"/>
-      <rect y="24" width="74" height="6" fill="#dc2626" opacity="0.85"/>
-      <rect y="36" width="74" height="6" fill="#dc2626" opacity="0.85"/>
+      <rect width="74" height="42" rx="2" fill="#1e3a8a" opacity="0.92"/>
+      <rect y="0" width="74" height="6" fill="#dc2626" opacity="0.92"/>
+      <rect y="12" width="74" height="6" fill="#dc2626" opacity="0.92"/>
+      <rect y="24" width="74" height="6" fill="#dc2626" opacity="0.92"/>
+      <rect y="36" width="74" height="6" fill="#dc2626" opacity="0.92"/>
       <rect width="30" height="22" fill="#1e3a8a"/>
     </g>
-    <rect x="65" y="170" width="70" height="45" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
-    <rect x="45" y="215" width="110" height="65" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
-    <rect x="25" y="280" width="150" height="480" fill="#091022" stroke="#94a3b8" stroke-width="1.5"/>
-    <line x1="55" y1="280" x2="55" y2="760" stroke="#334155" stroke-width="1"/>
-    <line x1="85" y1="280" x2="85" y2="760" stroke="#334155" stroke-width="1"/>
-    <line x1="115" y1="280" x2="115" y2="760" stroke="#334155" stroke-width="1"/>
-    <line x1="145" y1="280" x2="145" y2="760" stroke="#334155" stroke-width="1"/>
+    <rect x="65" y="170" width="70" height="45" fill="url(#portalTowerBody)" stroke="#C5B358" stroke-opacity="0.65" stroke-width="1.5"/>
+    <rect x="71" y="176" width="58" height="33" fill="url(#portalTowerWindows)"/>
+    <rect x="45" y="215" width="110" height="65" fill="url(#portalTowerBody)" stroke="#94a3b8" stroke-opacity="0.75" stroke-width="1.5"/>
+    <rect x="52" y="222" width="96" height="51" fill="url(#portalTowerWindows)"/>
+    <rect x="25" y="280" width="150" height="480" fill="url(#portalTowerBody)" stroke="#cbd5e1" stroke-opacity="0.8" stroke-width="1.5"/>
+    <rect x="32" y="288" width="136" height="464" fill="url(#portalTowerWindows)"/>
+    <line x1="55" y1="280" x2="55" y2="760" stroke="#475569" stroke-width="1.2"/>
+    <line x1="85" y1="280" x2="85" y2="760" stroke="#475569" stroke-width="1.2"/>
+    <line x1="115" y1="280" x2="115" y2="760" stroke="#475569" stroke-width="1.2"/>
+    <line x1="145" y1="280" x2="145" y2="760" stroke="#475569" stroke-width="1.2"/>
   </svg>
 </div>
 

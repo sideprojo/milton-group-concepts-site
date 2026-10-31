@@ -11,19 +11,61 @@
     ::view-transition-new(root) { animation: nlIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
     @keyframes nlOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-6px); } }
     @keyframes nlIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    body, body.w-mgc, body.w-fix {
+      background: #030712 !important;
+    }
+    body.w-mgc::before,
+    body.w-fix::before {
+      display: none !important;
+    }
+    .nl-cityscape-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      background: #030712;
+    }
+    .nl-cityscape-backdrop .nl-city-photo {
+      position: absolute;
+      inset: -2%;
+      background-image:
+        linear-gradient(180deg, rgba(3, 7, 18, 0.34) 0%, rgba(6, 13, 28, 0.54) 50%, rgba(3, 7, 18, 0.78) 100%),
+        url("https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=3840&q=95");
+      background-size: cover;
+      background-position: center 54%;
+      background-repeat: no-repeat;
+      filter: contrast(1.18) saturate(1.24) brightness(1.02);
+      image-rendering: -webkit-optimize-contrast;
+    }
+    .nl-cityscape-backdrop .nl-city-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 16% 18%, rgba(37, 99, 235, 0.28), transparent 46%),
+        radial-gradient(circle at 84% 22%, rgba(245, 158, 11, 0.24), transparent 44%),
+        radial-gradient(circle at 50% 88%, rgba(14, 165, 233, 0.16), transparent 52%);
+    }
+    main#app.wrap {
+      position: relative;
+      z-index: 2;
+    }
     .nl-grid { display: grid; grid-template-columns: 390px 1fr; gap: 20px; align-items: start; }
     @media (max-width: 900px) { .nl-grid { grid-template-columns: 1fr; } }
     .issue-card {
-      background: rgba(9, 16, 32, 0.96);
-      border: 1.5px solid rgba(148, 163, 184, 0.32);
+      background: rgba(9, 16, 32, 0.84);
+      backdrop-filter: blur(20px) saturate(165%);
+      -webkit-backdrop-filter: blur(20px) saturate(165%);
+      border: 1.5px solid rgba(148, 163, 184, 0.38);
       border-radius: 18px;
       padding: 20px 22px;
       margin-bottom: 14px;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.12);
       transition: transform 0.22s ease, border-color 0.22s ease;
     }
     .issue-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(96, 165, 250, 0.6);
+      border-color: rgba(96, 165, 250, 0.65);
     }
     #nlConsultationForm input,
     #nlConsultationForm select,
@@ -40,11 +82,13 @@
       50% { transform: scale(1.45); opacity: 0.45; }
     }
     .mgc-live-stream-shell {
-      background: linear-gradient(180deg, rgba(8, 15, 30, 0.96), rgba(5, 10, 22, 0.98));
-      border: 1.5px solid rgba(197, 179, 88, 0.42);
+      background: linear-gradient(180deg, rgba(8, 15, 30, 0.82), rgba(5, 10, 22, 0.88));
+      backdrop-filter: blur(22px) saturate(170%);
+      -webkit-backdrop-filter: blur(22px) saturate(170%);
+      border: 1.5px solid rgba(197, 179, 88, 0.56);
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.14);
       position: relative;
     }
     .mgc-filter-header {
@@ -158,13 +202,14 @@
       height: 100%;
       object-fit: cover;
       object-position: center 30%;
-      opacity: 0.21;
-      filter: grayscale(25%) contrast(1.08) saturate(0.88);
+      opacity: 0.34;
+      filter: contrast(1.18) saturate(1.16) brightness(1.03);
+      image-rendering: -webkit-optimize-contrast;
       transform: scale(1.02);
       transition: opacity 0.35s ease, transform 0.45s ease;
     }
     .mgc-live-article-card:hover .mgc-card-atmo-bg img {
-      opacity: 0.28;
+      opacity: 0.44;
       transform: scale(1.05);
     }
     .mgc-modal-atmo-bg {
@@ -190,8 +235,9 @@
       height: 100%;
       object-fit: cover;
       object-position: center 28%;
-      opacity: 0.23;
-      filter: grayscale(26%) contrast(1.08);
+      opacity: 0.36;
+      filter: contrast(1.18) saturate(1.14) brightness(1.02);
+      image-rendering: -webkit-optimize-contrast;
     }
     #nlReaderSheet.theme-ivory .mgc-modal-atmo-bg img {
       opacity: 0.15;
@@ -302,6 +348,10 @@
   <meta property="og:image" content="assets/og-mgc-banner.jpg">
 </head>
 <body>
+  <div class="nl-cityscape-backdrop" aria-hidden="true">
+    <div class="nl-city-photo"></div>
+    <div class="nl-city-glow"></div>
+  </div>
   <div class="mgc-source-redirect-banner" id="nlRedirectNoticeBanner" role="status" aria-live="assertive"></div>
   <main class="wrap" id="app"></main>
   <script src="mgc-workspace-core.js"></script>
@@ -637,28 +687,28 @@
 
     const NL_IMAGE_POOL = {
       'ai-workflow': [
-        { url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80', caption: 'Scale-to-Zero Cloud Compute & Task Agent Infrastructure' },
-        { url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1280&q=80', caption: 'Enterprise AI Architecture & High-Density Silicon Telemetry' },
-        { url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1280&q=80', caption: 'Automated Data Triage & Low-Latency Cloud Pipelines' },
-        { url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1280&q=80', caption: 'Global Cloud Network & Autonomous Workflow Mesh' }
+        { url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2560&q=95', caption: 'Scale-to-Zero Cloud Compute & Task Agent Infrastructure' },
+        { url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2560&q=95', caption: 'Enterprise AI Architecture & High-Density Silicon Telemetry' },
+        { url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=2560&q=95', caption: 'Automated Data Triage & Low-Latency Cloud Pipelines' },
+        { url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2560&q=95', caption: 'Global Cloud Network & Autonomous Workflow Mesh' }
       ],
       'federal': [
-        { url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1280&q=80', caption: 'Washington, D.C. Federal Acquisition & Mission Briefing Corridor' },
-        { url: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1280&q=80', caption: 'Joint Defense Readiness & Mission Command Architecture' },
-        { url: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=1280&q=80', caption: 'SDVOSB Engineering & Rapid ATO Program Delivery' },
-        { url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1280&q=80', caption: 'Public-Sector Cloud Modernization & Command Operations' }
+        { url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=2560&q=95', caption: 'Washington, D.C. Federal Acquisition & Mission Briefing Corridor' },
+        { url: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=2560&q=95', caption: 'Joint Defense Readiness & Mission Command Architecture' },
+        { url: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=2560&q=95', caption: 'SDVOSB Engineering & Rapid ATO Program Delivery' },
+        { url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2560&q=95', caption: 'Public-Sector Cloud Modernization & Command Operations' }
       ],
       'cyber': [
-        { url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1280&q=80', caption: 'Zero-Trust Identity Verification & Session Hardening Console' },
-        { url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1280&q=80', caption: 'Continuous Threat Telemetry & Cryptographic Token Defense' },
-        { url: 'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1280&q=80', caption: 'CISA Directive Compliance & Enclave Boundary Protection' },
-        { url: 'https://images.unsplash.com/photo-1526378722484-bd91ca387e72?auto=format&fit=crop&w=1280&q=80', caption: 'Automated Security Posture & Federated Access Governance' }
+        { url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=2560&q=95', caption: 'Zero-Trust Identity Verification & Session Hardening Console' },
+        { url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=2560&q=95', caption: 'Continuous Threat Telemetry & Cryptographic Token Defense' },
+        { url: 'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=2560&q=95', caption: 'CISA Directive Compliance & Enclave Boundary Protection' },
+        { url: 'https://images.unsplash.com/photo-1526378722484-bd91ca387e72?auto=format&fit=crop&w=2560&q=95', caption: 'Automated Security Posture & Federated Access Governance' }
       ],
       'logistics': [
-        { url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1280&q=80', caption: 'Regional Supply Chain & Automated Dispatch Operations' },
-        { url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1280&q=80', caption: 'Commercial Service Bay & Live Digital Intake Tracking' },
-        { url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1280&q=80', caption: 'Precision Engineering & Turnkey Field Operations' },
-        { url: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1280&q=80', caption: 'Fleet Logistics & Real-Time Customer Status Telemetry' }
+        { url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2560&q=95', caption: 'Regional Supply Chain & Automated Dispatch Operations' },
+        { url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=2560&q=95', caption: 'Commercial Service Bay & Live Digital Intake Tracking' },
+        { url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2560&q=95', caption: 'Precision Engineering & Turnkey Field Operations' },
+        { url: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=2560&q=95', caption: 'Fleet Logistics & Real-Time Customer Status Telemetry' }
       ]
     };
 

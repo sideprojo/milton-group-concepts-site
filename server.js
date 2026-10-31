@@ -3275,28 +3275,28 @@ const server = http.createServer(async (req, res) => {
 
     const EDITORIAL_IMAGE_POOL = {
       'ai-workflow': [
-        { url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80', caption: 'Scale-to-Zero Cloud Compute & Task Agent Infrastructure' },
-        { url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1280&q=80', caption: 'Enterprise AI Architecture & High-Density Silicon Telemetry' },
-        { url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1280&q=80', caption: 'Automated Data Triage & Low-Latency Cloud Pipelines' },
-        { url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1280&q=80', caption: 'Global Cloud Network & Autonomous Workflow Mesh' }
+        { url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2560&q=95', caption: 'Scale-to-Zero Cloud Compute & Task Agent Infrastructure' },
+        { url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2560&q=95', caption: 'Enterprise AI Architecture & High-Density Silicon Telemetry' },
+        { url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=2560&q=95', caption: 'Automated Data Triage & Low-Latency Cloud Pipelines' },
+        { url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2560&q=95', caption: 'Global Cloud Network & Autonomous Workflow Mesh' }
       ],
       'federal': [
-        { url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1280&q=80', caption: 'Washington, D.C. Federal Acquisition & Mission Briefing Corridor' },
-        { url: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1280&q=80', caption: 'Joint Defense Readiness & Mission Command Architecture' },
-        { url: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=1280&q=80', caption: 'SDVOSB Engineering & Rapid ATO Program Delivery' },
-        { url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1280&q=80', caption: 'Public-Sector Cloud Modernization & Command Operations' }
+        { url: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=2560&q=95', caption: 'Washington, D.C. Federal Acquisition & Mission Briefing Corridor' },
+        { url: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=2560&q=95', caption: 'Joint Defense Readiness & Mission Command Architecture' },
+        { url: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=2560&q=95', caption: 'SDVOSB Engineering & Rapid ATO Program Delivery' },
+        { url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2560&q=95', caption: 'Public-Sector Cloud Modernization & Command Operations' }
       ],
       'cyber': [
-        { url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1280&q=80', caption: 'Zero-Trust Identity Verification & Session Hardening Console' },
-        { url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1280&q=80', caption: 'Continuous Threat Telemetry & Cryptographic Token Defense' },
-        { url: 'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1280&q=80', caption: 'CISA Directive Compliance & Enclave Boundary Protection' },
-        { url: 'https://images.unsplash.com/photo-1526378722484-bd91ca387e72?auto=format&fit=crop&w=1280&q=80', caption: 'Automated Security Posture & Federated Access Governance' }
+        { url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=2560&q=95', caption: 'Zero-Trust Identity Verification & Session Hardening Console' },
+        { url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=2560&q=95', caption: 'Continuous Threat Telemetry & Cryptographic Token Defense' },
+        { url: 'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=2560&q=95', caption: 'CISA Directive Compliance & Enclave Boundary Protection' },
+        { url: 'https://images.unsplash.com/photo-1526378722484-bd91ca387e72?auto=format&fit=crop&w=2560&q=95', caption: 'Automated Security Posture & Federated Access Governance' }
       ],
       'logistics': [
-        { url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1280&q=80', caption: 'Regional Supply Chain & Automated Dispatch Operations' },
-        { url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1280&q=80', caption: 'Commercial Service Bay & Live Digital Intake Tracking' },
-        { url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1280&q=80', caption: 'Precision Engineering & Turnkey Field Operations' },
-        { url: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1280&q=80', caption: 'Fleet Logistics & Real-Time Customer Status Telemetry' }
+        { url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2560&q=95', caption: 'Regional Supply Chain & Automated Dispatch Operations' },
+        { url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=2560&q=95', caption: 'Commercial Service Bay & Live Digital Intake Tracking' },
+        { url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2560&q=95', caption: 'Precision Engineering & Turnkey Field Operations' },
+        { url: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=2560&q=95', caption: 'Fleet Logistics & Real-Time Customer Status Telemetry' }
       ]
     };
 
@@ -3480,8 +3480,8 @@ const server = http.createServer(async (req, res) => {
         source: 'Reuters',
         sourceCode: 'REUTERS',
         accentColor: '#f97316',
-        imageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80',
-        fallbackImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2560&q=95',
+        fallbackImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2560&q=95',
         imageCaption: 'Scale-to-Zero Cloud Compute & Task Agent Infrastructure',
         title: 'Enterprise Teams Shift AI Budgets Toward Focused Task Agents and Lower Cloud Spend',
         dek: 'Technology buyers are moving past expensive general chat subscriptions in favor of lean, task specific automation that runs at near zero idle cost.',
@@ -3520,8 +3520,8 @@ const server = http.createServer(async (req, res) => {
         source: 'Google News',
         sourceCode: 'GNEWS',
         accentColor: '#38bdf8',
-        imageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1280&q=80',
-        fallbackImageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1280&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=2560&q=95',
+        fallbackImageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=2560&q=95',
         imageCaption: 'Washington, D.C. Federal Acquisition & Mission Briefing Corridor',
         title: 'Federal Agencies Expand Fast Track Cloud and Cyber Awards for Small Veteran Contractors',
         dek: 'Streamlined procurement pathways are helping verified veteran owned engineering firms deliver secure cloud portals directly to mission teams.',
@@ -3560,8 +3560,8 @@ const server = http.createServer(async (req, res) => {
         source: 'CISA Advisories',
         sourceCode: 'CISA',
         accentColor: '#f87171',
-        imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1280&q=80',
-        fallbackImageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1280&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=2560&q=95',
+        fallbackImageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=2560&q=95',
         imageCaption: 'Zero-Trust Identity Verification & Session Hardening Console',
         title: 'CISA Directs Immediate Identity Hardening Against Session and Token Theft',
         dek: 'New federal cybersecurity directives target browser session hijacking with mandatory federated sign on, strict idle lockouts, and token binding.',
@@ -3600,8 +3600,8 @@ const server = http.createServer(async (req, res) => {
         source: 'DefenseScoop',
         sourceCode: 'DSCOOP',
         accentColor: '#C5B358',
-        imageUrl: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1280&q=80',
-        fallbackImageUrl: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1280&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=2560&q=95',
+        fallbackImageUrl: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=2560&q=95',
         imageCaption: 'Joint Defense Readiness & Mission Command Architecture',
         title: 'Defense Commands Prioritize Real Time Readiness Dashboards and Automated Field Training',
         dek: 'Browser based simulation labs and SCORM telemetry are replacing static classroom slides across joint operational training commands.',
@@ -3640,8 +3640,8 @@ const server = http.createServer(async (req, res) => {
         source: 'Reuters',
         sourceCode: 'REUTERS',
         accentColor: '#f97316',
-        imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1280&q=80',
-        fallbackImageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1280&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=2560&q=95',
+        fallbackImageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=2560&q=95',
         imageCaption: 'Commercial Service Bay & Live Digital Intake Tracking',
         title: 'Service Businesses Adopt Automated Reception and Instant Customer Status Tracking',
         dek: 'Automotive, fleet, and commercial service operators are turning missed phone calls into booked jobs with 24/7 digital intake and live bay tracking.',
@@ -3680,8 +3680,8 @@ const server = http.createServer(async (req, res) => {
         source: 'Federal News Network',
         sourceCode: 'FNN',
         accentColor: '#60a5fa',
-        imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1280&q=80',
-        fallbackImageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1280&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=2560&q=95',
+        fallbackImageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=2560&q=95',
         imageCaption: 'Continuous Threat Telemetry & Cryptographic Token Defense',
         title: 'Agencies Streamline Authority to Operate Reviews for Zero Trust Web Portals',
         dek: 'Reusable cloud security patterns and automated compliance evidence are cutting federal authorization timelines from months to days.',
